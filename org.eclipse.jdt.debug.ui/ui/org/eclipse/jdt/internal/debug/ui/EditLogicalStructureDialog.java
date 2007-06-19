@@ -521,26 +521,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 	}
 
-	/**
-	 * Set the data and enable/disablet the attribute widgets for the current selection.
-	 */
-	private void setNameValueToSelection() {
-		if (fCurrentAttributeSelection.size() == 1) {
-			String[] variable= (String[]) fCurrentAttributeSelection.getFirstElement();
-			fAttributeNameText.setText(variable[0]);
-			fSnippetDocument.set(variable[1]);
-			fAttributeNameText.setEnabled(true);
-			fSnippetViewer.setEditable(true);
-			fAttributeNameText.setSelection(0, variable[0].length());
-			fAttributeNameText.setFocus();
-		} else {
-			fAttributeNameText.setEnabled(false);
-			fSnippetViewer.setEditable(false);
-			fAttributeNameText.setText(""); //$NON-NLS-1$
-			fSnippetDocument.set(""); //$NON-NLS-1$
-		}
-	}
-
 	// save the code to the current attribute.
 	private void saveAttributeValue() {
 		if (fCurrentAttributeSelection.size() == 1) {
@@ -554,25 +534,25 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public void selectionChanged(SelectionChangedEvent event) {
 		saveAttributeValue();
 		fCurrentAttributeSelection= (IStructuredSelection) event.getSelection();
-		setNameValueToSelection();
-		updateAttributeListButtons();
-	}
-	
-	/**
-	 * Enable/disable the attribute buttons for the current selection.
-	 */
-	private void updateAttributeListButtons() {
-		int selectionSize= fCurrentAttributeSelection.size();
-		if (selectionSize > 0) {
-			fAttributeRemoveButton.setEnabled(true);
-			Object[] elements= fAttributesContentProvider.getElements();
-			fAttributeUpButton.setEnabled(fCurrentAttributeSelection.getFirstElement() != elements[0]);
-			fAttributeDownButton.setEnabled(fCurrentAttributeSelection.toArray()[selectionSize - 1] != elements[elements.length - 1]);
+		boolean sizeone = fCurrentAttributeSelection.size() == 1;
+	//update viewers
+		fAttributeNameText.setEnabled(sizeone);
+		fSnippetViewer.setEditable(sizeone);
+		if (sizeone) {
+			String[] variable = (String[]) fCurrentAttributeSelection.getFirstElement();
+			fAttributeNameText.setText(variable[0]);
+			fSnippetDocument.set(variable[1]);
+			fAttributeNameText.setSelection(0, variable[0].length());
+			fAttributeNameText.setFocus();
 		} else {
-			fAttributeRemoveButton.setEnabled(false);
-			fAttributeUpButton.setEnabled(false);
-			fAttributeDownButton.setEnabled(false);
+			fAttributeNameText.setText(""); //$NON-NLS-1$
+			fSnippetDocument.set(""); //$NON-NLS-1$
 		}
+	//update buttons
+		fAttributeRemoveButton.setEnabled(fCurrentAttributeSelection.size() > 0);
+		int index = fAttributeListViewer.getTable().getSelectionIndex();
+		fAttributeUpButton.setEnabled(sizeone && (index != 0));
+		fAttributeDownButton.setEnabled(sizeone && (index != fAttributeListViewer.getTable().getItemCount()-1));
 	}
 
 	/**
