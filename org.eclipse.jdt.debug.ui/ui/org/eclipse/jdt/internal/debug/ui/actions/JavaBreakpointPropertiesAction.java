@@ -38,29 +38,31 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-	    IShellProvider provider;
-	    if (fPart != null) {
-	        provider = fPart.getSite();
-	    } else {
-	        provider = new IShellProvider() {
-	            public Shell getShell() {
-	                return JDIDebugUIPlugin.getActiveWorkbenchShell();
-	            }
-	        };
-        }
-		PropertyDialogAction propertyAction= 
-			new PropertyDialogAction(provider, new ISelectionProvider() {
-				public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				}
-				public ISelection getSelection() {
-					return new StructuredSelection(fBreakpoint);
-				}
-				public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				}
-				public void setSelection(ISelection selection) {
-				}
-			});
-		propertyAction.run();
+		if(fBreakpoint != null) {
+		    IShellProvider provider;
+		    if (fPart != null) {
+		        provider = fPart.getSite();
+		    } else {
+		        provider = new IShellProvider() {
+		            public Shell getShell() {
+		                return JDIDebugUIPlugin.getActiveWorkbenchShell();
+		            }
+		        };
+	        }
+			PropertyDialogAction propertyAction= 
+				new PropertyDialogAction(provider, new ISelectionProvider() {
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public ISelection getSelection() {
+						return new StructuredSelection(fBreakpoint);
+					}
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public void setSelection(ISelection selection) {
+					}
+				});
+			propertyAction.run();
+		}
 	}
 
 	/**
@@ -75,6 +77,9 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 			Object element= ss.getFirstElement();
 			if (element instanceof IJavaBreakpoint) {
 				setBreakpoint((IJavaBreakpoint)element);
+			}
+			else {
+				setBreakpoint(null);
 			}
 		}
 	}
