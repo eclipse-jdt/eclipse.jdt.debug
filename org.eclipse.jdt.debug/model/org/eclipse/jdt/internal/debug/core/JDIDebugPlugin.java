@@ -40,7 +40,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.eval.JavaEvaluationEngineManager;
 import org.osgi.framework.BundleContext;
 
 import com.sun.jdi.VirtualMachineManager;
@@ -117,8 +116,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * Detected (speculated) JDI interface version
 	 */
 	private static int[] fJDIVersion = null;
-	
-	private JavaEvaluationEngineManager fEvaluationEngineManager;
 
 	/**
 	 * Status code used by the debug model to retrieve a thread to use
@@ -235,7 +232,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		});
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList();
-		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 	}
 	
 	/**
@@ -263,7 +259,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		try {
 			getPluginPreferences().removePropertyChangeListener(this); //added in the preference initializer
 			JavaHotCodeReplaceManager.getDefault().shutdown();
-			fEvaluationEngineManager.dispose();
 			ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 			IDebugTarget[] targets= launchManager.getDebugTargets();
 			for (int i= 0 ; i < targets.length; i++) {
@@ -594,15 +589,22 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 	
 	/**
-	 * Returns an evaluation engine for the given project in the given debug target.
+	 * Returns an evaluation engine for the given project in the given debug target or
+	 * <code>null</code> if target does not have a IJavaDebugTarget that is a JDIDebugTarget
+	 * implementation.
 	 * 
 	 * @see JavaEvaluationEngineManager#getEvaluationEngine(IJavaProject, IJavaDebugTarget)
 	 * 
 	 * @param project java project
 	 * @param target the debug target
-	 * @return evaluation engine
+	 * @return evaluation engine or <code>null</code>
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
-		return fEvaluationEngineManager.getEvaluationEngine(project, target);
+		// get adapter for those that wrapper us
+		IJavaDebugTarget javaTarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
+		if (javaTarget instanceof JDIDebugTarget) {
+			return ((JDIDebugTarget)javaTarget).getEvaluationEngine(project);
+		}
+		return null;
 	}
 }
