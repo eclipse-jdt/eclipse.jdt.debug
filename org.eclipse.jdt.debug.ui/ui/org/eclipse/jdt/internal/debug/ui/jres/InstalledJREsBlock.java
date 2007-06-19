@@ -62,13 +62,11 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -228,61 +226,43 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 *  or to provide 'add, remove, edit, and search' buttons.
 	 */
 	public void createControl(Composite ancestor) {
-		
-		Composite parent= new Composite(ancestor, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
 		Font font = ancestor.getFont();
-		parent.setFont(font);	
+		Composite parent= SWTFactory.createComposite(ancestor, font, 2, 1, GridData.FILL_BOTH);
 		fControl = parent;	
-		
-		GridData data;
 				
-		Label tableLabel = new Label(parent, SWT.NONE);
-		tableLabel.setText(JREMessages.InstalledJREsBlock_15); 
-		data = new GridData();
-		data.horizontalSpan = 2;
-		tableLabel.setLayoutData(data);
-		tableLabel.setFont(font);
+		SWTFactory.createLabel(parent, JREMessages.InstalledJREsBlock_15, 2);
 				
 		fTable= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		
-		data= new GridData(GridData.FILL_BOTH);
-        data.widthHint = 450;
-		fTable.setLayoutData(data);
+		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTable.setFont(font);
-				
 		fTable.setHeaderVisible(true);
-		fTable.setLinesVisible(true);		
+		fTable.setLinesVisible(true);	
 
-		TableColumn column1= new TableColumn(fTable, SWT.NULL);
-		column1.setText(JREMessages.InstalledJREsBlock_0); 
-		column1.addSelectionListener(new SelectionAdapter() {
+		TableColumn column = new TableColumn(fTable, SWT.NULL);
+		column.setText(JREMessages.InstalledJREsBlock_0); 
+		column.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
 			}
 		});
 	
-		TableColumn column2= new TableColumn(fTable, SWT.NULL);
-		column2.setText(JREMessages.InstalledJREsBlock_1); 
-		column2.addSelectionListener(new SelectionAdapter() {
+		column = new TableColumn(fTable, SWT.NULL);
+		column.setText(JREMessages.InstalledJREsBlock_1); 
+		column.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
 			}
 		});
         
-		TableColumn column3= new TableColumn(fTable, SWT.NULL);
-		column3.setText(JREMessages.InstalledJREsBlock_2); 
-		column3.addSelectionListener(new SelectionAdapter() {
+		column = new TableColumn(fTable, SWT.NULL);
+		column.setText(JREMessages.InstalledJREsBlock_2); 
+		column.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
 		});
 
-		fVMList= new CheckboxTableViewer(fTable);			
+		fVMList = new CheckboxTableViewer(fTable);			
 		fVMList.setLabelProvider(new VMLabelProvider());
 		fVMList.setContentProvider(new JREsContentProvider());
 		// by default, sort by name
@@ -319,52 +299,39 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});	
 		
-		Composite buttons= new Composite(parent, SWT.NULL);
-		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		buttons.setLayout(layout);
-		buttons.setFont(font);
+		Composite buttons = SWTFactory.createComposite(parent, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING);
 		
-		fAddButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_3); 
+		fAddButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_3, null); 
 		fAddButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				addVM();
 			}
 		});
 		
-		fEditButton= createPushButton(buttons, JREMessages.InstalledJREsBlock_4); 
+		fEditButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_4, null); 
 		fEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				editVM();
 			}
 		});
 		
-		fCopyButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_16); 
+		fCopyButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_16, null); 
 		fCopyButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				copyVM();
 			}
 		});
 		
-		fRemoveButton= createPushButton(buttons, JREMessages.InstalledJREsBlock_5); 
+		fRemoveButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_5, null); 
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				removeVMs();
 			}
 		});
 		
-		// copied from ListDialogField.CreateSeparator()
-		Label separator= new Label(buttons, SWT.NONE);
-		separator.setVisible(false);
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.FILL;
-		gd.verticalAlignment= GridData.BEGINNING;
-		gd.heightHint= 4;
-		separator.setLayoutData(gd);
+		SWTFactory.createVerticalSpacer(parent, 1);
 		
-		fSearchButton = createPushButton(buttons, JREMessages.InstalledJREsBlock_6); 
+		fSearchButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_6, null); 
 		fSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
 				search();
@@ -508,6 +475,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fSortColumn = 2;		
 	}
 		
+	/**
+	 * Enables the buttons based on selected items counts in the viewer
+	 */
 	private void enableButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
 		int selectionCount= selection.size();
@@ -528,13 +498,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 	}	
 	
+	/**
+	 * Returns if the specified VM install has been contributed
+	 * @param install
+	 * @return true if the specified VM is contributed, false otherwise
+	 */
 	private boolean isContributed(IVMInstall install) {
 		return JavaRuntime.isContributedVMInstall(install.getId());
 	}
-	
-	protected Button createPushButton(Composite parent, String label) {
-		return SWTFactory.createPushButton(parent, label, null);
-	}	
 	
 	/**
 	 * Returns this block's control
@@ -601,6 +572,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		return false;
 	}	
 	
+	/**
+	 * Performs the edit VM action when the Edit... button is pressed
+	 */
 	private void editVM() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
 		IVMInstall vm= (IVMInstall)selection.getFirstElement();
@@ -620,6 +594,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 	}
 	
+	/**
+	 * Performs the remove VM(s) action when the Remove... button is pressed
+	 */
 	private void removeVMs() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
 		IVMInstall[] vms = new IVMInstall[selection.size()];
@@ -896,16 +873,20 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 	}
 	
+	/**
+	 * Restores the column widths from dialog settings
+	 * @param settings
+	 * @param qualifier
+	 */
 	private void restoreColumnWidths(IDialogSettings settings, String qualifier) {
         int columnCount = fTable.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             int width = -1;
-            
             try {
                 width = settings.getInt(qualifier + ".columnWidth" + i); //$NON-NLS-1$
             } catch (NumberFormatException e) {}
             
-            if (width <= 0) {
+            if ((width <= 0) || (i == fTable.getColumnCount() - 1)) {
                 fTable.getColumn(i).pack();
             } else {
                 fTable.getColumn(i).setWidth(width);
