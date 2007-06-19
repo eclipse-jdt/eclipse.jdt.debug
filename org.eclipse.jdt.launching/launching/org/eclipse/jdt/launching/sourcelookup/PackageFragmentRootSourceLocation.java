@@ -13,17 +13,16 @@ package org.eclipse.jdt.launching.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -38,6 +37,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Locates source elements in a package fragment root. Returns
@@ -131,12 +132,8 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 				handle = getPackageFragmentRoot().getHandleIdentifier();
 			}
 			node.setAttribute("handleId", handle); //$NON-NLS-1$
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
+			return DebugPlugin.serializeDocument(doc);
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
-		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
 		}
 		// execution will not reach here

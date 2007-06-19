@@ -12,11 +12,7 @@
 package org.eclipse.jdt.internal.launching;
 
 
-import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
-
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -29,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -39,6 +36,8 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An entry on the runtime classpath that the user can manipulate
@@ -299,15 +298,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (getJavaProject() != null) {
 			node.setAttribute("javaProject", getJavaProject().getElementName()); //$NON-NLS-1$
 		}
-		try {
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
-			throw new CoreException(status);
-		} catch (TransformerException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
-			throw new CoreException(status);
-		}
+		return DebugPlugin.serializeDocument(doc);
 	}
 
 	/**

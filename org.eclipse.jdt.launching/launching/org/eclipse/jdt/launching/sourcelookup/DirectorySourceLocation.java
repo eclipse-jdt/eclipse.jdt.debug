@@ -13,12 +13,10 @@ package org.eclipse.jdt.launching.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -26,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -36,6 +35,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * Locates source elements in a directory in the local
@@ -156,12 +157,8 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
 			doc.appendChild(node);
 			node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
+			return DebugPlugin.serializeDocument(doc);
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
-		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
 		}
 		// execution will not reach here

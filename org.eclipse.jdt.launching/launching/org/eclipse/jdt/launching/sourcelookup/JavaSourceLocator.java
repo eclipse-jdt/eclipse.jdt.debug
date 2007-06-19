@@ -14,7 +14,6 @@ package org.eclipse.jdt.launching.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +22,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -59,6 +57,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 
 /**
@@ -390,14 +390,10 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				node.appendChild(child);
 			}
 		
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); 
+			return DebugPlugin.serializeDocument(doc);
 		} catch (ParserConfigurationException e) {
 			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); 
-		} catch (TransformerException e) {
-			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); 
-		} 
+		}
 		// execution will not reach here
 		return null;
 	}

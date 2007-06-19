@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1367,12 +1366,8 @@ public final class JavaRuntime {
 		try {
 			String xml = getVMsAsXML();
 			getPreferences().setValue(PREF_VM_XML, xml);
-			savePreferences();
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); 
+			savePreferences(); 
 		} catch (ParserConfigurationException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); 
-		} catch (TransformerException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); 
 		}
 	}
@@ -1384,7 +1379,7 @@ public final class JavaRuntime {
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
 	 */
-	private static String getVMsAsXML() throws IOException, ParserConfigurationException, TransformerException {
+	private static String getVMsAsXML() throws CoreException, ParserConfigurationException {
 		VMDefinitionsContainer container = new VMDefinitionsContainer();	
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
 		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
@@ -2593,9 +2588,7 @@ public final class JavaRuntime {
 					LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, xml);
 				} catch (ParserConfigurationException e) {
 					LaunchingPlugin.log(e);
-				} catch (IOException e) {
-					LaunchingPlugin.log(e);
-				} catch (TransformerException e) {
+				} catch (CoreException e) {
 					LaunchingPlugin.log(e);
 				}
 				

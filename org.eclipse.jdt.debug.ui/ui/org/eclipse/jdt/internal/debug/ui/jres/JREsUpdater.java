@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
@@ -90,11 +89,9 @@ public class JREsUpdater {
 					monitor.worked(30);
 					JavaRuntime.savePreferences();
 					monitor.worked(30);
-				} catch (IOException ioe) {
-					JDIDebugUIPlugin.log(ioe);
 				} catch (ParserConfigurationException e) {
 					JDIDebugUIPlugin.log(e);
-				} catch (TransformerException e) {
+				} catch (CoreException e) {
 					JDIDebugUIPlugin.log(e);
 				} finally {
 					monitor.done();

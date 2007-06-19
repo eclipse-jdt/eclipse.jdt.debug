@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
@@ -310,13 +310,11 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				}
 			}
 			if (count > 0) {
-				return LaunchingPlugin.serializeDocument(doc);
+				return DebugPlugin.serializeDocument(doc);
 			}
 		} catch (ParserConfigurationException e) {
 			LaunchingPlugin.log(e);
-		} catch (IOException e) {
-			LaunchingPlugin.log(e);
-		} catch (TransformerException e) {
+		} catch (CoreException e) {
 			LaunchingPlugin.log(e);
 		}
 		return ""; //$NON-NLS-1$

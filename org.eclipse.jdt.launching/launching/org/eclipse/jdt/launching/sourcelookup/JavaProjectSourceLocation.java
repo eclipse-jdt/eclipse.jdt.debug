@@ -13,13 +13,11 @@ package org.eclipse.jdt.launching.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -39,6 +38,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * Locates source elements in all source folders of the
@@ -162,12 +163,8 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
 			doc.appendChild(node);
 			node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.JavaProjectSourceLocation_Unable_to_create_memento_for_Java_project_source_location__0__1, new String[] {getJavaProject().getElementName()}), e); 
+			return DebugPlugin.serializeDocument(doc);
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.JavaProjectSourceLocation_Unable_to_create_memento_for_Java_project_source_location__0__1, new String[] {getJavaProject().getElementName()}), e); 
-		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.JavaProjectSourceLocation_Unable_to_create_memento_for_Java_project_source_location__0__1, new String[] {getJavaProject().getElementName()}), e); 
 		}
 		// execution will not reach here

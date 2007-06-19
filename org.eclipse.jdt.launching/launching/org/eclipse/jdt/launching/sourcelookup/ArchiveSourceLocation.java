@@ -13,7 +13,6 @@ package org.eclipse.jdt.launching.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +22,6 @@ import java.util.zip.ZipFile;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -39,6 +38,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * Locates source elements in an archive (zip) in the local file system. Returns
@@ -316,12 +317,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				node.setAttribute("rootPath", getRootPath().toString()); //$NON-NLS-1$
 			}
 		
-			return LaunchingPlugin.serializeDocument(doc);
-		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
+			return DebugPlugin.serializeDocument(doc); 
 		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
-		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_create_memento_for_archive_source_location__0__1, new String[] {getName()}), e); 
 		}
 		// execution will not reach here

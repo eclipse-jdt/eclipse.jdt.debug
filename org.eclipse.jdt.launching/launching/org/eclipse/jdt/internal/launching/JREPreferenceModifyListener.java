@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.PreferenceModifyListener;
@@ -114,10 +114,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					} catch (ParserConfigurationException e) {
 						LaunchingPlugin.log(e);
 						return false;
-					} catch (IOException e) {
-						LaunchingPlugin.log(e);
-						return false;
-					} catch (TransformerException e) {
+					} catch (CoreException e) {
 						LaunchingPlugin.log(e);
 						return false;
 					}

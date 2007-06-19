@@ -27,10 +27,11 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -235,7 +236,7 @@ public class VMDefinitionsContainer {
 	 * @throws ParserConfigurationException if creation of the XML document failed
 	 * @throws TransformerException if serialization of the XML document failed
 	 */
-	public String getAsXML() throws ParserConfigurationException, IOException, TransformerException {
+	public String getAsXML() throws CoreException, ParserConfigurationException {
 		
 		// Create the Document and the top-level node
 		Document doc = LaunchingPlugin.getDocument();
@@ -262,7 +263,7 @@ public class VMDefinitionsContainer {
 		}
 		
 		// Serialize the Document and return the resulting String
-		return LaunchingPlugin.serializeDocument(doc);
+		return DebugPlugin.serializeDocument(doc);
 	}
 	
 	/**
