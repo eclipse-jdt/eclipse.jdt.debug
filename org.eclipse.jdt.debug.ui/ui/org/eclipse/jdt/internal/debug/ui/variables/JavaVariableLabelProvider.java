@@ -22,12 +22,15 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Base implementation of a label provider for Java variables
@@ -51,7 +54,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	 */
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		if (value instanceof IJavaValue) {
-			return escapeSpecialChars(fLabelProvider.getFormattedValueText((IJavaValue) value));
+			return fLabelProvider.getFormattedValueText((IJavaValue) value);
 		}
 		return super.getValueText(variable, value, context);
 	}
@@ -141,7 +144,20 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	protected boolean requiresUIJob(ILabelUpdate[] updates) {
 		return !JDIModelPresentation.isInitialized();
 	}
-	
-	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
+	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
+		if (columnId == null) {
+			// when no columns, handle special escaping ourselves
+			IDebugModelPresentation presentation = getModelPresentation(context, JDIDebugModel.getPluginIdentifier());
+			if (presentation != null) {
+				return presentation.getText(elementPath.getLastSegment());
+			}
+		}
+		return super.getLabel(elementPath, context, columnId);
+	}
+	
+	
 }

@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -451,7 +452,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (isString) {
 				buffer.append('"');
 			}
-			buffer.append(valueString);
+			if ("C".equals(signature)) { //$NON-NLS-1$
+				buffer.append(valueString);
+			} else {
+				buffer.append(DefaultLabelProvider.escapeSpecialChars(valueString));
+			}
 			if (isString) {
 				buffer.append('"');
 			}
