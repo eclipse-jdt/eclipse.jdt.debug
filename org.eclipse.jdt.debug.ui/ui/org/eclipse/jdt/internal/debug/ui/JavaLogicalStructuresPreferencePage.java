@@ -238,6 +238,14 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
@@ -245,8 +253,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         createTable(comp);
 		createTableButtons(comp);
         createSourceViewer(comp);
-        noDefaultAndApplyButton();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
+        noDefaultAndApplyButton();;
 		return comp;
 	}
     

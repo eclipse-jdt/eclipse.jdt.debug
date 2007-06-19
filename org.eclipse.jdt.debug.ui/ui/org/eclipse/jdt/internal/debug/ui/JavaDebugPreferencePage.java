@@ -90,15 +90,23 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		//The main composite
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, GridData.FILL);
-		new PreferenceLinkArea(composite, SWT.NONE,
+		PreferenceLinkArea link = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.debug.ui.DebugPreferencePage", DebugUIMessages.JavaDebugPreferencePage_0, //$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
-		
+		link.getControl().setFont(composite.getFont());
 		Group group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1, 2, 1, GridData.FILL_HORIZONTAL); 
 		fSuspendButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1, null, false, 2); 
 		fSuspendOnCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1, null, false, 2); 
@@ -108,6 +116,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_21, 1);
 		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
+		fSuspendVMorThread.setFont(group.getFont());
 			
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
 		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
@@ -141,8 +150,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		setValues();
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText.setPropertyChangeListener(this);
-		applyDialogFont(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 		return composite;		
 	}
 		
