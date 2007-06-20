@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * Exception breakpoint attribute storing the suspend on caught value
 	 * (value <code>"org.eclipse.jdt.debug.core.caught"</code>). This attribute is stored as a <code>boolean</code>.
 	 * When this attribute is <code>true</code>, a caught exception of the associated
-	 * type will cause excecution to suspend .
+	 * type will cause execcution to suspend .
 	 */
 	protected static final String CAUGHT = "org.eclipse.jdt.debug.core.caught"; //$NON-NLS-1$
 	/**
