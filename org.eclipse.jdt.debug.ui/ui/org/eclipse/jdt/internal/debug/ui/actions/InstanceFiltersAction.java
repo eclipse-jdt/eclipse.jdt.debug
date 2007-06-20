@@ -32,6 +32,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -43,6 +44,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -66,7 +68,12 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 		}
 		
-		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.dialogs.SelectionDialog#createMessageArea(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Label createMessageArea(Composite composite) {
+			return SWTFactory.createWrapLabel(composite, getMessage(), 1, 300); //the width hint is the default width for ListSelectionDialog 
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -77,9 +84,12 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 				parent,
 				IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG);				
 			return control;
-			
 		}
 
+        /**
+         * Returns the dialog settings section name
+         * @return the dialog settings section name
+         */
         protected String getDialogSettingsSectionName() {
             return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
         }
