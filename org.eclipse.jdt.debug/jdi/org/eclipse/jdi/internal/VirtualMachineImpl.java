@@ -935,8 +935,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				eventRequestManagerImpl().enableInternalClassPrepareEvent();
 			}
 
-		} catch (IOException e) {
-e.printStackTrace();		    
+		} catch (IOException e) {	    
 			fVersionDescription = null;
 			defaultIOExceptionHandler(e);
 		} finally {
