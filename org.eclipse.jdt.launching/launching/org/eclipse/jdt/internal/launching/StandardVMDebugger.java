@@ -154,15 +154,6 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		// VM arguments are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first options
-		String[] allVMArgs = combineVmArgs(config, fVMInstance);
-		addArguments(allVMArgs, arguments);
-		addBootClassPathArguments(arguments, config);
-		
-		String[] cp= config.getClassPath();
-		if (cp.length > 0) {
-			arguments.add("-classpath"); //$NON-NLS-1$
-			arguments.add(convertClassPath(cp));
-		}
 		double version = getJavaVersion();
 		if (version < 1.5) {
 			arguments.add("-Xdebug"); //$NON-NLS-1$
@@ -178,7 +169,17 @@ public class StandardVMDebugger extends StandardVMRunner {
 		} else {
 			arguments.add("-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
 		}
-
+		
+		String[] allVMArgs = combineVmArgs(config, fVMInstance);
+		addArguments(allVMArgs, arguments);
+		addBootClassPathArguments(arguments, config);
+		
+		String[] cp= config.getClassPath();
+		if (cp.length > 0) {
+			arguments.add("-classpath"); //$NON-NLS-1$
+			arguments.add(convertClassPath(cp));
+		}
+		
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);
 		String[] cmdLine= new String[arguments.size()];
