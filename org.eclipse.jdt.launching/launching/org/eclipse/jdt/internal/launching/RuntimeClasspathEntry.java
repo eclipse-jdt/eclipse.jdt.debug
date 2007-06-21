@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -260,14 +258,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-	
-		Document doc;
-		try {
-			doc = LaunchingPlugin.getDocument();
-		} catch (ParserConfigurationException e) {
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.RuntimeClasspathEntry_An_exception_occurred_generating_runtime_classpath_memento_8, e); 
-			throw new CoreException(status);
-		}
+		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
 		doc.appendChild(node);
 		node.setAttribute("type", (new Integer(getType())).toString()); //$NON-NLS-1$

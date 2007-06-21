@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -111,10 +109,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					try {
 						String xml = vms.getAsXML();
 						node.put(JavaRuntime.PREF_VM_XML, xml);
-					} catch (ParserConfigurationException e) {
-						LaunchingPlugin.log(e);
-						return false;
-					} catch (CoreException e) {
+					}  catch (CoreException e) {
 						LaunchingPlugin.log(e);
 						return false;
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -294,7 +293,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	private String getDefatulVMsAsXML() {
 		int count = 0;
 		try {
-			Document doc = LaunchingPlugin.getDocument();
+			Document doc = DebugPlugin.newDocument();
 			Element envs = doc.createElement(DEFAULT_ENVIRONMENTS);
 			doc.appendChild(envs);
 			IExecutionEnvironment[] environments = getExecutionEnvironments();
@@ -312,8 +311,6 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			if (count > 0) {
 				return DebugPlugin.serializeDocument(doc);
 			}
-		} catch (ParserConfigurationException e) {
-			LaunchingPlugin.log(e);
 		} catch (CoreException e) {
 			LaunchingPlugin.log(e);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
  
 /**
  * Locates source elements in all source folders of the
@@ -158,17 +156,11 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		try {
-			Document doc = LaunchingPlugin.getDocument();
-			Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
-			doc.appendChild(node);
-			node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
-			return DebugPlugin.serializeDocument(doc);
-		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.JavaProjectSourceLocation_Unable_to_create_memento_for_Java_project_source_location__0__1, new String[] {getJavaProject().getElementName()}), e); 
-		}
-		// execution will not reach here
-		return null;
+		Document doc = DebugPlugin.newDocument();
+		Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
+		doc.appendChild(node);
+		node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
+		return DebugPlugin.serializeDocument(doc);  
 	}
 
 	/* (non-Javadoc)

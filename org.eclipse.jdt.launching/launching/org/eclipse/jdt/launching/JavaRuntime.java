@@ -2586,9 +2586,7 @@ public final class JavaRuntime {
 				try {
 					String xml = vmDefs.getAsXML();
 					LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, xml);
-				} catch (ParserConfigurationException e) {
-					LaunchingPlugin.log(e);
-				} catch (CoreException e) {
+				}  catch (CoreException e) {
 					LaunchingPlugin.log(e);
 				}
 				

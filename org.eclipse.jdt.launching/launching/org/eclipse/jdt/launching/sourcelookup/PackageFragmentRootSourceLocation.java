@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Locates source elements in a package fragment root. Returns
@@ -123,21 +121,15 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		try {
-			Document doc = LaunchingPlugin.getDocument();
-			Element node = doc.createElement("javaPackageFragmentRootSourceLocation"); //$NON-NLS-1$
-			doc.appendChild(node);
-			String handle = ""; //$NON-NLS-1$
-			if (getPackageFragmentRoot() != null) {
-				handle = getPackageFragmentRoot().getHandleIdentifier();
-			}
-			node.setAttribute("handleId", handle); //$NON-NLS-1$
-			return DebugPlugin.serializeDocument(doc);
-		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.PackageFragmentRootSourceLocation_Unable_to_create_memento_for_package_fragment_root_source_location__0__5, new String[] {getPackageFragmentRoot().getElementName()}), e); 
+		Document doc = DebugPlugin.newDocument();
+		Element node = doc.createElement("javaPackageFragmentRootSourceLocation"); //$NON-NLS-1$
+		doc.appendChild(node);
+		String handle = ""; //$NON-NLS-1$
+		if (getPackageFragmentRoot() != null) {
+			handle = getPackageFragmentRoot().getHandleIdentifier();
 		}
-		// execution will not reach here
-		return null;
+		node.setAttribute("handleId", handle); //$NON-NLS-1$
+		return DebugPlugin.serializeDocument(doc); 
 	}
 
 	/* (non-Javadoc)

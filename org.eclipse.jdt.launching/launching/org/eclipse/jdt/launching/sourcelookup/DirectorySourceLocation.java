@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,17 +152,11 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		try {
-			Document doc = LaunchingPlugin.getDocument();
-			Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
-			doc.appendChild(node);
-			node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
-			return DebugPlugin.serializeDocument(doc);
-		} catch (ParserConfigurationException e) {
-			abort(MessageFormat.format(LaunchingMessages.DirectorySourceLocation_Unable_to_create_memento_for_directory_source_location__0__1, new String[] {getDirectory().getAbsolutePath()}), e); 
-		}
-		// execution will not reach here
-		return null;
+		Document doc = DebugPlugin.newDocument();
+		Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
+		doc.appendChild(node);
+		node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
+		return DebugPlugin.serializeDocument(doc);
 	}
 
 	/* (non-Javadoc)

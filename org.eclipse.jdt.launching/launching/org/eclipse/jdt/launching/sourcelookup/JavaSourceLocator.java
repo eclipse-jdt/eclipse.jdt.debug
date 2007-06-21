@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -377,25 +377,18 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		try {
-			Document doc = LaunchingPlugin.getDocument();
-			Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
-			doc.appendChild(node);
-			
-			IJavaSourceLocation[] locations = getSourceLocations();
-			for (int i = 0; i < locations.length; i++) {
-				Element child = doc.createElement("javaSourceLocation"); //$NON-NLS-1$
-				child.setAttribute("class", locations[i].getClass().getName()); //$NON-NLS-1$
-				child.setAttribute("memento", locations[i].getMemento()); //$NON-NLS-1$
-				node.appendChild(child);
-			}
+		Document doc = DebugPlugin.newDocument();
+		Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
+		doc.appendChild(node);
 		
-			return DebugPlugin.serializeDocument(doc);
-		} catch (ParserConfigurationException e) {
-			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); 
+		IJavaSourceLocation[] locations = getSourceLocations();
+		for (int i = 0; i < locations.length; i++) {
+			Element child = doc.createElement("javaSourceLocation"); //$NON-NLS-1$
+			child.setAttribute("class", locations[i].getClass().getName()); //$NON-NLS-1$
+			child.setAttribute("memento", locations[i].getMemento()); //$NON-NLS-1$
+			node.appendChild(child);
 		}
-		// execution will not reach here
-		return null;
+		return DebugPlugin.serializeDocument(doc); 
 	}
 
 	/* (non-Javadoc)

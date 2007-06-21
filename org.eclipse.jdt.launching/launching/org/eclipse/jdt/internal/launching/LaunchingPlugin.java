@@ -817,9 +817,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
 	 */
-	private static String getLibraryInfoAsXML() throws CoreException, ParserConfigurationException {
+	private static String getLibraryInfoAsXML() throws CoreException {
 		
-		Document doc = getDocument();
+		Document doc = DebugPlugin.newDocument();
 		Element config = doc.createElement("libraryInfos");    //$NON-NLS-1$
 		doc.appendChild(config);
 						
@@ -837,18 +837,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return DebugPlugin.serializeDocument(doc);
 	}	
 	
-	/**
-	 * Returns a Document that can be used to build a DOM tree
-	 * @return the Document
-	 * @throws ParserConfigurationException if an exception occurs creating the document builder
-	 */
-	public static Document getDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
-		Document doc= docBuilder.newDocument();
-		return doc;
-	}
-
 	/**
 	 * Creates an XML element for the given info.
 	 * 
@@ -904,9 +892,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 		} catch (IOException e) {
 			log(e);
-		} catch (ParserConfigurationException e) {
-			log(e);
-		} catch (CoreException e) {
+		}  catch (CoreException e) {
 			log(e);
 		} finally {
 			if (stream != null) {

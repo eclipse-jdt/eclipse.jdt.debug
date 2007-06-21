@@ -236,10 +236,10 @@ public class VMDefinitionsContainer {
 	 * @throws ParserConfigurationException if creation of the XML document failed
 	 * @throws TransformerException if serialization of the XML document failed
 	 */
-	public String getAsXML() throws CoreException, ParserConfigurationException {
+	public String getAsXML() throws CoreException {
 		
 		// Create the Document and the top-level node
-		Document doc = LaunchingPlugin.getDocument();
+		Document doc = DebugPlugin.newDocument();
 		Element config = doc.createElement("vmSettings");    //$NON-NLS-1$
 		doc.appendChild(config);
 		
