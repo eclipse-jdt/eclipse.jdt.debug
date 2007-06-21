@@ -14,16 +14,14 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,11 +38,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class StringValueInputDialog extends ExpressionInputDialog {
 
-    private TextViewer fTextViewer;
+	private Group fTextGroup;
+	private TextViewer fTextViewer;
     private Button fTextButton;
     private Button fEvaluationButton;
     private Button fWrapText;
-    private Group fTextGroup;
     
     private boolean fUseLiteralValue= true;
     private static final String USE_EVALUATION = "USE_EVALUATION"; //$NON-NLS-1$
@@ -62,39 +60,43 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
+    	Control control = super.createDialogArea(parent);
     	IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getHelpSystem().setHelp(
-				parent,
-				IJavaDebugHelpContextIds.STRING_VALUE_INPUT_DIALOG);
-    	return super.createDialogArea(parent);
+		workbench.getHelpSystem().setHelp(parent, IJavaDebugHelpContextIds.STRING_VALUE_INPUT_DIALOG);
+		return control;
     }
     
-    /**
-     * Override superclass method to insert toggle buttons
-     * immediately after the input area.
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createInputArea(org.eclipse.swt.widgets.Composite)
      */
-    protected void createInputArea(Composite parent) {
-        super.createInputArea(parent);
-        createRadioButtons(parent);
-        Dialog.applyDialogFont(parent);
+    protected Composite createInputArea(Composite parent) {
+    	Composite composite = super.createInputArea(parent);
+    	createRadioButtons(parent);
+    	return composite;
     }
-
+    
     /**
      * Override superclass method to create the appropriate viewer
      * (source viewer or simple text viewer) in the input area.
      */
-    protected void populateInputArea() {
+    protected void populateInputArea(Composite parent) {
+    	super.populateInputArea(parent);
+    	createTextViewer(parent);
+    	
+    	// Use the stored dialog settings to determine what radio button is selected and what viewer to show.
         boolean useEvaluation= false;
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             useEvaluation= settings.getBoolean(USE_EVALUATION);
         }
         if (useEvaluation) {
-            createSourceViewer();
+        	setTextViewerVisible(false);
+        	setSourceViewerVisible(true);
             fUseLiteralValue= false;
             fEvaluationButton.setSelection(true);
         } else {
-            createTextViewer();
+        	setSourceViewerVisible(false);
+            setTextViewerVisible(true);
             fTextButton.setSelection(true);
         }
     }
@@ -102,16 +104,12 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     /**
      * Creates the text viewer that allows the user to enter a new String
      * value.
+     * @param parent parent composite
      */
-    private void createTextViewer() {
-        fTextGroup= new Group(fInputArea, SWT.NONE);
-        fTextGroup.setLayout(new GridLayout());
-        fTextGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-        fTextGroup.setText(ActionMessages.StringValueInputDialog_0); 
-
-        Composite parent= fTextGroup; 
-        
-        fTextViewer= new TextViewer(parent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+    private void createTextViewer(Composite parent) {
+    	fTextGroup = SWTFactory.createGroup(parent, ActionMessages.StringValueInputDialog_0, 1, 1, GridData.FILL_BOTH);
+    	                
+        fTextViewer= new TextViewer(fTextGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fTextViewer.setDocument(new Document());
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.widthHint= 300;
@@ -125,22 +123,19 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             JDIDebugUIPlugin.log(e);
         }
         fTextViewer.getControl().setFocus();
-        fWrapText= new Button(parent, SWT.CHECK);
-        fWrapText.setText(ActionMessages.StringValueInputDialog_4); 
+        
         boolean wrap= true;
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             wrap= settings.getBoolean(WRAP_TEXT);
         }
-        fWrapText.setSelection(wrap);
+        fWrapText = SWTFactory.createCheckButton(fTextGroup, ActionMessages.StringValueInputDialog_4, null, wrap, 1);
         updateWordWrap();
         fWrapText.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateWordWrap();
             }
         });
-        
-        Dialog.applyDialogFont(fInputArea);
     }
     
     private void updateWordWrap() {
@@ -152,15 +147,14 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * simple text mode and evaluation mode.
      */
     protected void createRadioButtons(Composite parent) {
-        fTextButton= new Button(parent, SWT.RADIO);
-        fTextButton.setText(ActionMessages.StringValueInputDialog_1); 
+    	
+    	fTextButton = SWTFactory.createRadioButton(parent, ActionMessages.StringValueInputDialog_1);
         fTextButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 handleRadioSelectionChanged();
             }
         });
-        fEvaluationButton= new Button(parent, SWT.RADIO);
-        fEvaluationButton.setText(ActionMessages.StringValueInputDialog_2); 
+        fEvaluationButton = SWTFactory.createRadioButton(parent, ActionMessages.StringValueInputDialog_2);
     }
     
     /**
@@ -172,39 +166,28 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         if (literal != fUseLiteralValue) {
 			fUseLiteralValue= literal;
 	        if (fUseLiteralValue) {
-	            disposeSourceViewer();
-	            createTextViewer();
+	        	setSourceViewerVisible(false);
+	        	setTextViewerVisible(true);
 	        } else {
-	            // Evaluation button selected
-	            disposeTextViewer();
-	            createSourceViewer();
+	        	setTextViewerVisible(false);
+	        	setSourceViewerVisible(true);
 	        }
 	        fInputArea.layout(true, true);
         }
     }
     
     /**
-     * Disposes of the text viewer and associated widgets.
+     * Sets the visibility of the source viewer and the exclude attribute of its layout.
+     * @param value If <code>true</code>, the viewer will be visible, if <code>false</code>, the viewer will be hidden.
      */
-    protected void disposeTextViewer() {
-        if (fTextGroup != null) {
-            fTextGroup.dispose();
-            fTextGroup= null;
-        }
-       
-        if (fTextViewer != null) {
-            StyledText textWidget = fTextViewer.getTextWidget();
-            if (textWidget != null) {
-                textWidget.dispose();
-            }
-            fTextViewer= null;
-        }
-        if (fWrapText != null) {
-            fWrapText.dispose();
-            fWrapText= null;
-        }
+    protected void setTextViewerVisible(boolean value){
+    	if (fTextGroup != null){
+    		fTextGroup.setVisible(value);
+	    	GridData data = (GridData)fTextGroup.getLayoutData();
+			data.exclude = !value;
+    	}
     }
-    
+      
     /**
      * Updates the error message based on the user's input.
      */
@@ -254,19 +237,6 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             return fTextViewer.getDocument().get();
         }
         return super.getText();
-    }
-    
-    /**
-     * Override superclass method to dispose of the simple text viewer
-     * if appropriate.
-     * @see ExpressionInputDialog#dispose()
-     */
-    protected void dispose() {
-        if (fTextButton.getSelection()) {
-            disposeTextViewer();
-        } else {
-            super.dispose();
-        }
     }
     
     /**

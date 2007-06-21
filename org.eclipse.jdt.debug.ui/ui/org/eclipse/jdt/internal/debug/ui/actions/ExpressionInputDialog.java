@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
@@ -22,6 +20,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
@@ -43,10 +42,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -54,6 +51,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A dialog which prompts the user to enter an expression for
@@ -68,7 +67,7 @@ public class ExpressionInputDialog extends TrayDialog {
     // input widgetry that is created/disposed dynamically.
     protected Composite fInputArea;
     // Source viewer widgets
-    protected Label fEvaluateLabel;
+    protected Composite fSourceViewerComposite;
     protected JDISourceViewer fSourceViewer;
     protected IContentAssistProcessor fCompletionProcessor;
     protected IDocumentListener fDocumentListener;
@@ -79,7 +78,8 @@ public class ExpressionInputDialog extends TrayDialog {
     protected Text fErrorText;
     
     /**
-     * @param parentShell
+     * @param parentShell the shell to create the dialog in
+     * @param variable the variable being edited
      */
     protected ExpressionInputDialog(Shell parentShell, IJavaVariable variable) {
         super(parentShell);
@@ -87,8 +87,8 @@ public class ExpressionInputDialog extends TrayDialog {
         fVariable= variable;
     }
 
-    /**
-     * Creates and populates the dialog area
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
     	IWorkbench workbench = PlatformUI.getWorkbench();
@@ -99,77 +99,79 @@ public class ExpressionInputDialog extends TrayDialog {
         Composite composite= (Composite) super.createDialogArea(parent);
         
         // Create the composite which will hold the input widgetry
-        createInputArea(composite);
+        fInputArea = createInputArea(composite);
         // Create the error reporting text area
-        createErrorText(composite);
-
+        fErrorText = createErrorText(composite);
         // Create the source viewer after creating the error text so that any
         // necessary error messages can be set.
-        populateInputArea();
+        populateInputArea(fInputArea);
         return composite;
     }
     
     /**
-     * Creates the text widget for reporting errors
+     * Returns the text widget for reporting errors
+     * @param parent parent composite
+     * @return the error text widget
      */
-    protected void createErrorText(Composite parent) {
-        fErrorText= new Text(parent, SWT.READ_ONLY);
-        fErrorText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_FILL));
-        fErrorText.setBackground(fErrorText.getDisplay()
-                .getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-        fErrorText.setFont(parent.getFont());
+    protected Text createErrorText(Composite parent) {
+        Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, ""); //$NON-NLS-1$
+        text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        return text;
     }
 
     /**
-     * Creates the composite that will be used to contain the
+     * Returns the composite that will be used to contain the
      * input widgetry.
      * @param composite the parent composite
+     * @return the composite that will contain the input widgets
      */
-    protected void createInputArea(Composite parent) {
-        fInputArea= new Composite(parent, SWT.NONE);
-        GridData gridData = new GridData(GridData.FILL_BOTH);
-        fInputArea.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight= 0;
-        layout.marginWidth= 0;
-        fInputArea.setLayout(layout);
-        Dialog.applyDialogFont(fInputArea);
+    protected Composite createInputArea(Composite parent) {
+    	Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+    	Dialog.applyDialogFont(composite);
+    	return composite;
     }
     
     /**
      * Creates the appropriate widgetry in the input area. This
      * method is intended to be overridden by subclasses who wish
      * to use alternate input widgets.
+     * @param parent parent composite
      */
-    protected void populateInputArea() {
-        createSourceViewer();
-    }
-
-    /**
-     * Creates the source viewer that allows the user to enter
-     * an evaluation expression.
-     */
-    protected void createSourceViewer() {
-        Composite parent= fInputArea;
-        String name= ActionMessages.ExpressionInputDialog_3; 
+    protected void populateInputArea(Composite parent) {
+    	fSourceViewerComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+    	
+    	String name= ActionMessages.ExpressionInputDialog_3; 
         try {
             name= fVariable.getName();
         } catch (DebugException e) {
             JDIDebugUIPlugin.log(e);
         }
         
-        fEvaluateLabel= new Label(parent, SWT.WRAP);
-        fEvaluateLabel.setText(MessageFormat.format(ActionMessages.ExpressionInputDialog_0, new String[] {name})); 
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-        fEvaluateLabel.setLayoutData(data);
-        fEvaluateLabel.setFont(parent.getFont());
+        SWTFactory.createWrapLabel(fSourceViewerComposite, MessageFormat.format(ActionMessages.ExpressionInputDialog_0, new String[] {name}), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
         
-        fSourceViewer= new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        fSourceViewer.setInput(parent);
+        fSourceViewer= new JDISourceViewer(fSourceViewerComposite, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fSourceViewer.setInput(fSourceViewerComposite);
         configureSourceViewer();
         fSourceViewer.doOperation(ITextOperationTarget.SELECT_ALL);
+    }
+
+    /**
+     * Sets the visibility of the source viewer and the exclude attribute of its layout.
+     * @param value If <code>true</code>, the viewer will be visible, if <code>false</code>, the viewer will be hidden.
+     */
+    protected void setSourceViewerVisible(boolean value) {
+    	if (fSourceViewerComposite != null){
+    		fSourceViewerComposite.setVisible(value);
+    		GridData data = (GridData)fSourceViewerComposite.getLayoutData();
+    		data.exclude = !value;
+    		if (value){
+    			fSourceViewer.getDocument().addDocumentListener(fDocumentListener);
+    			activateHandler();
+    		} else if (fActivation != null) {
+    			fSourceViewer.getDocument().removeDocumentListener(fDocumentListener);
+	    		fService.deactivateHandler(fActivation);
+    		}
+    	}
     }
     
     /**
@@ -210,9 +212,16 @@ public class ExpressionInputDialog extends TrayDialog {
         };
 		fSourceViewer.getDocument().addDocumentListener(fDocumentListener);
 		
-		IHandler handler = new AbstractHandler() {
+		activateHandler();
+    }
+    
+    /**
+     * Activates the content assist handler.
+     */
+    private void activateHandler(){
+    	IHandler handler = new AbstractHandler() {
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
-				 fSourceViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				fSourceViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				return null;
 			}
 		};
@@ -220,7 +229,7 @@ public class ExpressionInputDialog extends TrayDialog {
 		fService = (IHandlerService)workbench.getAdapter(IHandlerService.class);
 		fActivation = fService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
     }
-    
+      
     /**
      * Returns the text that should be shown in the source viewer upon
      * initialization. The text should be presented in such a way that
@@ -331,30 +340,24 @@ public class ExpressionInputDialog extends TrayDialog {
      * by subclasses.
      */
     protected void dispose() {
-        disposeSourceViewer();
-    }
-
-    /**
-     * Disposes the source viewer and all associated widgetry.
-     */
-    protected void disposeSourceViewer() {
     	if(fActivation != null) {
     		fService.deactivateHandler(fActivation);
     	}
-		if (fSourceViewer != null) {
+    	if (fSourceViewer != null) {
 	    	fSourceViewer.getDocument().removeDocumentListener(fDocumentListener);
 	    	fSourceViewer.getTextWidget().dispose();
 		    fSourceViewer.dispose();
 		    fSourceViewer= null;
 		}
-	    if (fEvaluateLabel != null) {
-		    fEvaluateLabel.dispose();
-		    fEvaluateLabel= null;
-	    }		
+    	if (fSourceViewerComposite != null){
+    		fSourceViewerComposite.dispose();
+    		fSourceViewerComposite = null;
+    	}
 	    fDocumentListener= null;
 	    fCompletionProcessor= null;
     }
-    
+
+  
     /**
      * Returns the text entered by the user or <code>null</code> if the user cancelled.
      * @return the text entered by the user or <code>null</code> if the user cancelled
@@ -402,6 +405,9 @@ public class ExpressionInputDialog extends TrayDialog {
          return section;
     }
 	
+	/**
+	 * @return the name to use to save the dialog settings
+	 */
 	protected String getDialogSettingsSectionName() {
 		return "EXPRESSION_INPUT_DIALOG"; //$NON-NLS-1$
 	}
