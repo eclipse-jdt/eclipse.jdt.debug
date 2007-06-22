@@ -52,7 +52,6 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRuntime_25;
 
 	public static String JavaRuntime_badFormat;
-	public static String JavaRuntime_exceptionsOccurred;
 	public static String JavaRuntime_Specified_VM_install_type_does_not_exist___0__2;
 	public static String JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2;
 	public static String JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1;

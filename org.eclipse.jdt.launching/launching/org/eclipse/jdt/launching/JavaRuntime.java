@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1363,23 +1362,17 @@ public final class JavaRuntime {
 			// if the VM types have not been instantiated, there can be no changes.
 			return;
 		}
-		try {
-			String xml = getVMsAsXML();
-			getPreferences().setValue(PREF_VM_XML, xml);
-			savePreferences(); 
-		} catch (ParserConfigurationException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); 
-		}
+		String xml = getVMsAsXML();
+		getPreferences().setValue(PREF_VM_XML, xml);
+		savePreferences(); 
 	}
 	
 	/**
 	 * Returns the listing of currently installed VMs as a single XML file
 	 * @return an XML representation of all of the currently installed VMs
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
+	 * @throws CoreException
 	 */
-	private static String getVMsAsXML() throws CoreException, ParserConfigurationException {
+	private static String getVMsAsXML() throws CoreException {
 		VMDefinitionsContainer container = new VMDefinitionsContainer();	
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
 		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
