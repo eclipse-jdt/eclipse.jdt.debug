@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
@@ -188,7 +189,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				return (VoidValueImpl) value;
 			}
 		}
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
+		throw new InvalidTypeException(MessageFormat.format(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1, new String[]{value.type().name(), type.name()})); 
 	}
 
 	/**
@@ -248,7 +249,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	        }
         }
             
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
+		throw new InvalidTypeException(MessageFormat.format(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1, new String[]{valueType.name(), type.name()})); 
     }
     
     private static boolean checkInterfaceType(InterfaceType valueType, InterfaceType type) {
@@ -305,6 +306,6 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				}
 				break;
 		}
-		throw new InvalidTypeException(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1); 
+		throw new InvalidTypeException(MessageFormat.format(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1, new String[]{valueType.name(), type.name()})); 
 	}
 }

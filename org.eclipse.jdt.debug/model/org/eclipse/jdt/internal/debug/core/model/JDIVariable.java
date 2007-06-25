@@ -135,7 +135,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * @see IValueModification#verifyValue(IValue)
 	 */
-	public boolean verifyValue(IValue value) {
+	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
 	}		
 	 	

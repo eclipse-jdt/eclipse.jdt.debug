@@ -50,15 +50,9 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
      */
     public boolean saveVariable(IVariable variable, String expression, Shell shell) {
-        try {
-	        if (JDIModelPresentation.isObjectValue(getSignature(variable))) {
-	            IVariableValueEditor editor= new JavaObjectValueEditor();
-	            return editor.saveVariable(variable, expression, shell);
-	        }
-	    } catch (DebugException e) {
-	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
-	    }
-        return false;
+        // support expressions for primitives as well as literals
+        IVariableValueEditor editor= new JavaObjectValueEditor();
+        return editor.saveVariable(variable, expression, shell);
     }
     
     public static String getSignature(IVariable variable) throws DebugException {

@@ -11,10 +11,10 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
+
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
@@ -29,7 +29,7 @@ import com.sun.jdi.Value;
 
 public class JDILocalVariable extends JDIModificationVariable {
 	/**
-	 * The wrappered local variable
+	 * The underlying local variable
 	 */
 	private LocalVariable fLocal;
 	
@@ -39,7 +39,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	private JDIStackFrame fStackFrame;
 	
 	/**
-	 * Constructs a local variable wrappering the given local from
+	 * Constructs a local variable for the given local
 	 * in a stack frame.
 	 */
 	public JDILocalVariable(JDIStackFrame frame, LocalVariable local) {
@@ -175,16 +175,6 @@ public class JDILocalVariable extends JDIModificationVariable {
 	public String toString() {
 		return getLocal().toString();
 	}
-	
-	/**
-	 * @see IValueModification#setValue(IValue)
-	 */
-	public	void setValue(IValue v) throws DebugException {
-		if (verifyValue(v)) {
-			JDIValue value = (JDIValue)v;
-			setJDIValue(value.getUnderlyingValue());
-		}
-	}
 
 	/**
 	 * @see JDIVariable#getUnderlyingType()
@@ -197,7 +187,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_retrieving_type_of_local_variable, new String[]{e.toString()}), e); 
 		}
-		// this line will not be exceucted as an exception
+		// this line will not be executed as an exception
 		// will be throw in type retrieval fails
 		return null;
 	}

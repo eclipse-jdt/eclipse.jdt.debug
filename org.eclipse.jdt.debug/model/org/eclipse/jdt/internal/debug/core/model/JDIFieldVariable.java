@@ -11,14 +11,14 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
+
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -34,7 +34,7 @@ import com.sun.jdi.Value;
  */
 public class JDIFieldVariable extends JDIModificationVariable implements IJavaFieldVariable {
 	/**
-	 * The wrappered field
+	 * The underlying field
 	 */
 	private Field fField;
 	/**
@@ -48,7 +48,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	private ReferenceType fType;
 	
 	/**
-	 * Constructs a field wrappering the given field.
+	 * Constructs a field for the given field.
 	 */
 	public JDIFieldVariable(JDIDebugTarget target, Field field, ObjectReference objectRef) {
 		super(target);
@@ -255,15 +255,6 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 */
 	public String toString() {
 		return getField().toString();
-	}
-	
-	/**
-	 * @see IValueModification#setValue(IValue)
-	 */
-	public	void setValue(IValue v) throws DebugException {
-		if (verifyValue(v)) {
-			setJDIValue(((JDIValue)v).getUnderlyingValue());
-		}
 	}
 	
 	/**

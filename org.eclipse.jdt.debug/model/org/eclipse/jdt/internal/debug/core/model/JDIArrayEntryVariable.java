@@ -11,12 +11,10 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
@@ -162,16 +160,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			return null;
 		}
 	}
-	
-	/**
-	 * @see IValueModification#setValue(IValue)
-	 */
-	public	void setValue(IValue v) throws DebugException {
-		if (verifyValue(v)) {
-			JDIValue value = (JDIValue)v;
-			setJDIValue(value.getUnderlyingValue());
-		}
-	}	
 	
 	/**
 	 * @see JDIVariable#getUnderlyingType()

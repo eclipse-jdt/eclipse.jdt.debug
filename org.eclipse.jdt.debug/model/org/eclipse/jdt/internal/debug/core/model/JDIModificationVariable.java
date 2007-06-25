@@ -14,8 +14,10 @@ import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdi.internal.ValueImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
 
+import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
  
@@ -161,16 +163,24 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
 	public boolean verifyValue(String expression) throws DebugException {
-		IValue value = JDIValue.createValue(getJavaDebugTarget(), generateVMValue(expression));
+		Value vmValue = generateVMValue(expression);
+		IValue value = JDIValue.createValue(getJavaDebugTarget(), vmValue);
 		return verifyValue(value);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean verifyValue(IValue value) {
-		return value instanceof IJavaValue &&
-			value.getDebugTarget().equals(getDebugTarget());
+	public boolean verifyValue(IValue value) throws DebugException {
+		if (value instanceof JDIValue && value.getDebugTarget().equals(getDebugTarget())) {
+			JDIValue jv = (JDIValue)value;
+			try {
+				ValueImpl.checkValue(jv.getUnderlyingValue(), getUnderlyingType(), (VirtualMachineImpl)getVM());
+				return true;
+			} catch (InvalidTypeException e) {
+			}
+		}
+		return false;
 	}	
 	
 	/* (non-Javadoc)
@@ -180,6 +190,16 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 	Value value= generateVMValue(expression);
 		setJDIValue(value);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIVariable#setValue(org.eclipse.debug.core.model.IValue)
+	 */
+	public final void setValue(IValue v) throws DebugException {
+		if (v instanceof JDIValue) {
+			JDIValue value = (JDIValue)v;
+			setJDIValue(value.getUnderlyingValue());
+		}
+	}	
 
 	/**
 	 * Set this variable's value to the given value
