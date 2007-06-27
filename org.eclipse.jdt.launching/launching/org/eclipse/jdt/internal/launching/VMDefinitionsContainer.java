@@ -30,7 +30,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -45,6 +48,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This is a container for VM definitions such as the VM definitions that are
@@ -90,6 +95,11 @@ public class VMDefinitionsContainer {
 	 * The identifier of the connector to use for the default VM.
 	 */
 	private String fDefaultVMInstallConnectorTypeID;
+	
+	/**
+	 * Contains any error/information status of parsing XML
+	 */
+	private MultiStatus fStatus;
 	
 	/**
 	 * Constructs an empty VM container 
@@ -384,8 +394,7 @@ public class VMDefinitionsContainer {
 	 * the XML contained in <code>inputStream</code>.
 	 * </p>
 	 * @param inputStream the <code>InputStream</code> containing XML that declares a set of VMs and a default VM
-	 * @param container the container to add the VM defs to
-	 * @return VMDefinitionsContainer a container for the VM objects declared in <code>inputStream</code>
+	 * @param container the container to add the VM definitions to
 	 * @throws IOException if this method fails. Reasons include:<ul>
 	 * <li>the XML in <code>inputStream</code> was badly formatted</li>
 	 * <li>the top-level node was not 'vmSettings'</li>
@@ -441,7 +450,6 @@ public class VMDefinitionsContainer {
 	 * to the specified container.
 	 */
 	private static void populateVMTypes(Element vmTypeElement, VMDefinitionsContainer container) {
-		
 		// Retrieve the 'id' attribute and the corresponding VM type object
 		String id = vmTypeElement.getAttribute("id");         //$NON-NLS-1$
 		IVMInstallType vmType= JavaRuntime.getVMInstallType(id);
@@ -452,13 +460,35 @@ public class VMDefinitionsContainer {
 				populateVMForType(vmType, (Element) vmNodeList.item(i), container);
 			}
 		} else {
-			LaunchingPlugin.log("VM type element with unknown id.");  //$NON-NLS-1$
+			// status information for removed VMs (missing VM type)
+			NodeList vmNodeList = vmTypeElement.getElementsByTagName("vm"); //$NON-NLS-1$
+			for (int i = 0; i < vmNodeList.getLength(); ++i) {
+				Element vmElement = (Element) vmNodeList.item(i);
+				String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
+				String name = vmElement.getAttribute("name"); //$NON-NLS-1$
+				IStatus status = null;
+				if (name != null) {
+					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_0, new String[]{name}));
+				} else if (installPath != null) {
+					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_0, new String[]{installPath}));
+				} else {
+					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_2, new String[]{id}));
+				}
+				container.addStatus(status);
+			}
 		}
 	}
 
 	/**
 	 * Parse the specified VM node, create a VMStandin for it, and add this to the 
 	 * specified container.
+	 * 
+	 * @param vmType vm type
+	 * @param vmElement XML element
+	 * @param container container to add VM to
 	 */
 	private static void populateVMForType(IVMInstallType vmType, Element vmElement, VMDefinitionsContainer container) {
 		String id= vmElement.getAttribute("id"); //$NON-NLS-1$
@@ -466,13 +496,27 @@ public class VMDefinitionsContainer {
 			
 			// Retrieve the 'path' attribute.  If none, skip this node.
 			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
+			String name = vmElement.getAttribute("name"); //$NON-NLS-1$
+			if (name == null) {
+				if (installPath == null) {
+					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_3, new String[]{vmType.getName()})));
+					return;
+				} else {
+					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
+					return;
+				}
+			}
 			if (installPath == null) {
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_5, new String[]{name})));
 				return;
 			}
 						
 			// Create a VMStandin for the node and set its 'name' & 'installLocation' attributes
 			VMStandin vmStandin = new VMStandin(vmType, id);
-			vmStandin.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
+			vmStandin.setName(name);
 			File installLocation= new File(installPath);
 			vmStandin.setInstallLocation(installLocation);
 			container.addVM(vmStandin);
@@ -504,7 +548,8 @@ public class VMDefinitionsContainer {
 				try {
 					vmStandin.setJavadocLocation(new URL(externalForm));
 				} catch (MalformedURLException e) {
-					LaunchingPlugin.log(e);
+					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
 				}
 			}
 			
@@ -513,8 +558,20 @@ public class VMDefinitionsContainer {
 			if (vmArgs != null && vmArgs.length() >0) {
 				vmStandin.setVMArgs(vmArgs);
 			}
+
 		} else {
-			LaunchingPlugin.log("id attribute missing from VM element specification.");  //$NON-NLS-1$
+			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
+			String name = vmElement.getAttribute("name"); //$NON-NLS-1$
+			if (name != null) {
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_7, new String[]{name})));
+			} else if (installPath != null) {
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_7, new String[]{installPath})));
+			} else {
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+					MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_9, new String[]{vmType.getName()})));
+			}
 		}
 	}	
 	
@@ -568,7 +625,7 @@ public class VMDefinitionsContainer {
 	/**
 	 * Removes the VM from this container.
 	 * 
-	 * @param vm vm intall
+	 * @param vm vm install
 	 */
 	public void removeVM(IVMInstall vm) {
 		fVMList.remove(vm);
@@ -579,4 +636,19 @@ public class VMDefinitionsContainer {
 		}
 	}
 		
+	private void addStatus(IStatus status) {
+		if (fStatus == null) {
+			fStatus = new MultiStatus(LaunchingPlugin.ID_PLUGIN, 0, LaunchingMessages.VMDefinitionsContainer_10, null);
+		}
+		fStatus.add(status);
+	}
+
+	/**
+	 * Returns status from parsing VM installs or <code>null</code> if none.
+	 * 
+	 * @return status or <code>null</code>
+	 */
+	public IStatus getStatus() {
+		return fStatus;
+	}
 }

@@ -2496,6 +2496,21 @@ public final class JavaRuntime {
 						vmDefs = new VMDefinitionsContainer();
 						// 2. add persisted VMs
 						setPref = addPersistedVMs(vmDefs);
+						IStatus status = vmDefs.getStatus();
+						if (status != null) {
+							if (status.isMultiStatus()) {
+								MultiStatus multi = (MultiStatus) status;
+								IStatus[] children = multi.getChildren();
+								for (int i = 0; i < children.length; i++) {
+									IStatus child = children[i];
+									if (!child.isOK()) {
+										LaunchingPlugin.log(child);
+									}
+								}
+							} else if (!status.isOK()) {
+								LaunchingPlugin.log(status);
+							}
+						}
 						
 						// 3. if there are none, detect the eclipse runtime
 						if (vmDefs.getValidVMList().isEmpty()) {

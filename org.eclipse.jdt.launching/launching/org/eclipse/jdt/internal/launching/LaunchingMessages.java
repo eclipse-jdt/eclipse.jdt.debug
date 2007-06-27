@@ -111,6 +111,24 @@ public class LaunchingMessages extends NLS {
 	public static String StandardVMType_Not_a_JDK_root__System_library_was_not_found__1;
 	public static String StandardVMType_Standard_VM_not_supported_on_MacOS__1;
 
+	public static String VMDefinitionsContainer_0;
+
+	public static String VMDefinitionsContainer_10;
+
+	public static String VMDefinitionsContainer_2;
+
+	public static String VMDefinitionsContainer_3;
+
+	public static String VMDefinitionsContainer_4;
+
+	public static String VMDefinitionsContainer_5;
+
+	public static String VMDefinitionsContainer_6;
+
+	public static String VMDefinitionsContainer_7;
+
+	public static String VMDefinitionsContainer_9;
+
 	public static String vmInstall_assert_idNotNull;
 	public static String vmInstall_assert_typeNotNull;
 
