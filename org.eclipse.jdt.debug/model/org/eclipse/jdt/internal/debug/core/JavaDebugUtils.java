@@ -191,9 +191,8 @@ public class JavaDebugUtils {
      * @param qualifiedName fully qualified type name
      * @param javaElement java element containing the type
      * @return type
-     * @throws CoreException
      */
-    private static IType resolveType(String qualifiedName, IJavaElement javaElement) throws CoreException {
+    private static IType resolveType(String qualifiedName, IJavaElement javaElement) {
     	IType type = null;
         String[] typeNames = getNestedTypeNames(qualifiedName);
         if (javaElement instanceof IClassFile) {
