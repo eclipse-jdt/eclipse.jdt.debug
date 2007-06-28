@@ -39,6 +39,14 @@ public class DebugUIMessages extends NLS {
 
 	public static String JavaDebugPreferencePage_23;
 
+	public static String JavaDebugPreferencePage_24;
+
+	public static String JavaDebugPreferencePage_25;
+
+	public static String JavaDebugPreferencePage_26;
+
+	public static String JavaDebugPreferencePage_27;
+
 	public static String JavaDebugPreferencePage_description;
 	public static String JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1;
 	public static String JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1;

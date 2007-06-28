@@ -53,9 +53,15 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * integer preference controlling if we should, by default, suspend the VM instead of the thread
 	 * 
 	 * @since 3.2
-	 * @TODO make API once the freeze is over (post 3.2)
 	 */
 	public static final String PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY = JDIDebugPlugin.getUniqueIdentifier() + ".default_breakpoint_suspend_policy"; //$NON-NLS-1$
+	
+	/**
+	 * integer preference controlling which default suspend option to set on new watchpoints
+	 * 
+	 * @since 3.3.1
+	 */
+	public static final String PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY = JDIDebugPlugin.getUniqueIdentifier() + "default_watchpoint_suspend_policy"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference controlling if references should be displayed as variables in the variables and expressions view

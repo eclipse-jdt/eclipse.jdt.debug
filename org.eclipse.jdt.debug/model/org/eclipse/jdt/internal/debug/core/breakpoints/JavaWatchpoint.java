@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
@@ -336,11 +337,41 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <ul>
 	 */
 	protected void setDefaultAccessAndModification() throws CoreException {
-		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
-		String[] attributes= new String[]{ACCESS, MODIFICATION};
+		Object[] values = new Object[]{getDefaultAccessAndModificationValues()};
+		String[] attributes = new String[]{ACCESS, MODIFICATION};
 		setAttributes(attributes, values);
 	}
 
+	/**
+	 * Returns the default access and modification suspend option for a new watchpoint based on the user preference settings
+	 * The return array will only ever contain two values, where the possibilities are:
+	 * <ul>
+	 * <li> <code>{true, true}</code> - both access and modification are enabled</li>
+	 * <li> <code>{true, false}</code> - access is enabled and modification is disabled</li>
+	 * <li> <code>{false, true}</code> -access is disabled and modification is enabled</li>
+	 * </ul>
+	 * The default returned array is <code>{true, true}</code>
+	 * @return an array of two boolean values representing the default access and modification settings
+	 * 
+	 * @since 3.3.1
+	 */
+	protected boolean[] getDefaultAccessAndModificationValues() {
+		int value = JDIDebugPlugin.getDefault().getPluginPreferences().getInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY);
+		switch(value) {
+			case 0: {
+				return new boolean[] {true, true};
+			}
+			case 1: {
+				return new boolean[] {true, false};
+			}
+			case 2: {
+				return new boolean[] {false, true};
+			}
+			default: {
+				return new boolean[] {true, true};
+			}
+		}
+	}
 
 	/**
 	 * Adds the default access and modification attributes of
@@ -352,8 +383,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <ul>
 	 */
 	protected void addDefaultAccessAndModification(Map attributes) {
-		attributes.put(ACCESS, Boolean.TRUE);
-		attributes.put(MODIFICATION, Boolean.TRUE);
+		boolean[] values = getDefaultAccessAndModificationValues();
+		attributes.put(ACCESS, (values[0] ? Boolean.TRUE : Boolean.FALSE));
+		attributes.put(MODIFICATION, (values[1] ? Boolean.TRUE : Boolean.FALSE));
 		attributes.put(AUTO_DISABLED, Boolean.FALSE);
 	}
 	

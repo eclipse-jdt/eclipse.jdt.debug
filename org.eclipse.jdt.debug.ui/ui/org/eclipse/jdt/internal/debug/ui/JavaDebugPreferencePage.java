@@ -73,6 +73,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fOpenInspector;
 	private Button fPromptUnableToInstallBreakpoint;
 	private Combo fSuspendVMorThread;
+	private Combo fWatchpoint;
 	
 	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
@@ -117,6 +118,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
 		fSuspendVMorThread.setFont(group.getFont());
+		
+		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_24, 1);
+		fWatchpoint = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+		fWatchpoint.setItems(new String[] {DebugUIMessages.JavaDebugPreferencePage_25, DebugUIMessages.JavaDebugPreferencePage_26, DebugUIMessages.JavaDebugPreferencePage_27});
+		fWatchpoint.setFont(group.getFont());
 			
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
 		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
@@ -175,6 +181,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			policy = IJavaBreakpoint.SUSPEND_VM;
 		}
 		coreStore.setValue(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, policy);
+		coreStore.setValue(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, fWatchpoint.getSelectionIndex());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, fAlertHCRNotSupportedButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
@@ -201,6 +208,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendDuringEvaluations.setSelection(coreStore.getDefaultBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION));
 		int value = coreStore.getDefaultInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY);
 		fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD) ? 0 : 1);
+		value = coreStore.getDefaultInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY);
+		fWatchpoint.select(value);
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
@@ -226,6 +235,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendDuringEvaluations.setSelection(coreStore.getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION));
 		int value = coreStore.getInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY);
 		fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD ? 0 : 1));
+		fWatchpoint.select(coreStore.getInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY));
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
