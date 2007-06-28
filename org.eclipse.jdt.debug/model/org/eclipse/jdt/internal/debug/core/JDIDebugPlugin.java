@@ -282,8 +282,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public static void log(Throwable t) {
 		Throwable top= t;
-		if (t instanceof DebugException) {
-			DebugException de = (DebugException)t;
+		if (t instanceof CoreException) {
+			CoreException de = (CoreException)t;
 			IStatus status = de.getStatus();
 			if (status.getException() != null) {
 				top = status.getException();

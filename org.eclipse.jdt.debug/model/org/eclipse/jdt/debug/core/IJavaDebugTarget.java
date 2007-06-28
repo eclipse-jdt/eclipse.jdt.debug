@@ -397,4 +397,15 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @see IJavaThread
 	 */
 	public boolean supportsForceReturn();
+	
+	/**
+	 * Returns whether this VM supports the ability to enable and disable garbage
+	 * collection of individual objects.
+	 * 
+	 * @return whether this VM supports the ability to enable and disable garbage
+	 * collection of individual objects
+	 * @see IJavaObject
+	 * @since 3.4
+	 */
+	public boolean supportsSelectiveGarbageCollection();
 }

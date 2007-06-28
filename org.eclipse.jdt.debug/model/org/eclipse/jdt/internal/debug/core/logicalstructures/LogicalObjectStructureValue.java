@@ -175,4 +175,17 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public IJavaObject[] getReferringObjects(long max) throws DebugException {
 		return fObject.getReferringObjects(max);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
+	 */
+	public void disableCollection() throws DebugException {
+		fObject.disableCollection();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
+	 */
+	public void enableCollection() throws DebugException {
+		fObject.enableCollection();
+	}	
 }

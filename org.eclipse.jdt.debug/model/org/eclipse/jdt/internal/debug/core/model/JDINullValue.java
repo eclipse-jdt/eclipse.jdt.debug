@@ -172,4 +172,19 @@ public class JDINullValue extends JDIObjectValue {
 		requestFailed(MessageFormat.format(JDIDebugModelMessages.JDINullValue_0, new String[]{buffer.toString()}), null);
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#disableCollection()
+	 */
+	public void disableCollection() throws DebugException {
+		// Do nothing for null values
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#enableCollection()
+	 */
+	public void enableCollection() throws DebugException {
+		// Do nothing for null values
+	}
+	
 }

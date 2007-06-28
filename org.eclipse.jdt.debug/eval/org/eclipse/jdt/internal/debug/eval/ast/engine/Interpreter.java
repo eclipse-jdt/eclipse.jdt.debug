@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
@@ -34,6 +39,11 @@ public class Interpreter {
 	 */
 	private Map fInternalVariables;
 	
+	/**
+	 * List of objects for which GC has been disabled
+	 */
+	private List fPermStorage = null;
+	
 	private boolean fStopped= false;
 	
 	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
@@ -43,12 +53,16 @@ public class Interpreter {
 	}
 	
 	public void execute() throws CoreException {
-		reset();
-		while(fInstructionCounter < fInstructions.length && !fStopped) {
-			Instruction instruction= fInstructions[fInstructionCounter++];
-			instruction.setInterpreter(this);
-			instruction.execute();
-			instruction.setInterpreter(null);
+		try {
+			reset();
+			while(fInstructionCounter < fInstructions.length && !fStopped) {
+				Instruction instruction= fInstructions[fInstructionCounter++];
+				instruction.setInterpreter(this);
+				instruction.execute();
+				instruction.setInterpreter(null);
+			}
+		} finally {
+			releaseObjects();
 		}
 	}
 	
@@ -69,10 +83,50 @@ public class Interpreter {
 	}		
 	
 	/**
-	 * Pushes an object onto the stack
+	 * Pushes an object onto the stack. Disables garbage collection for any
+	 * interim object pushed onto the stack. Objects are released after the 
+	 * evaluation completes.
 	 */
 	public void push(Object object) {
 		fStack.push(object);
+		if (object instanceof IJavaObject) {
+			disableCollection((IJavaObject)object);
+		}
+	}
+	
+	/**
+	 * Avoid garbage collecting interim results.
+	 * 
+	 * @param value object to disable garbage collection for
+	 */
+	private void disableCollection(IJavaObject value) {
+		if (fPermStorage == null) {
+			fPermStorage = new ArrayList(5);
+		}
+		try {
+			value.disableCollection();
+			fPermStorage.add(value);
+		} catch (CoreException e) {
+			JDIDebugPlugin.log(e);
+		}
+	}
+	
+	/**
+	 * Re-enable garbage collection if interim results.
+	 */
+	private void releaseObjects() {
+		if (fPermStorage != null) {
+			Iterator iterator = fPermStorage.iterator();
+			while (iterator.hasNext()) {
+				IJavaObject object = (IJavaObject)iterator.next();
+				try {
+					object.enableCollection();
+				} catch (CoreException e) {
+					JDIDebugPlugin.log(e);
+				}
+			}
+			fPermStorage = null;
+		}
 	}
 
 	/**

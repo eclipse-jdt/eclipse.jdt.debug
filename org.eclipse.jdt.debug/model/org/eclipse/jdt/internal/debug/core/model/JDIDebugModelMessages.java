@@ -74,6 +74,10 @@ public class JDIDebugModelMessages extends NLS {
 
 	public static String JDIObjectValue_12;
 
+	public static String JDIObjectValue_13;
+
+	public static String JDIObjectValue_14;
+
 	public static String JDIObjectValue_exception_retrieving_field;
 	public static String JDIObjectValue_exception_retrieving_reference_type;
 	public static String JDIObjectValue_exception_while_performing_method_lookup_for_selector;

@@ -158,6 +158,29 @@ public interface IJavaObject extends IJavaValue {
      * @since 3.3
 	 */
 	public IJavaObject[] getReferringObjects(long max) throws DebugException;
+	
+	
+	/**
+	 * Permits this object to be garbage collected. Has no effect if this
+	 * VM does not support enabling/disabling of garbage collection of
+	 * specific objects.
+	 *  
+	 * @throws CoreException if request fails
+	 * @see IJavaDebugTarget
+	 * @since 3.4
+	 */
+	public void enableCollection() throws DebugException;
+	
+	/**
+	 * Prevents this object from being garbage collected. Has no effect if this
+	 * VM does not support enabling/disabling of garbage collection of specific
+	 * objects.
+	 *  
+	 * @throws CoreException if request fails
+	 * @see IJavaDebugTarget
+	 * @since 3.4
+	 */	
+	public void disableCollection() throws DebugException;	
 }
 
 

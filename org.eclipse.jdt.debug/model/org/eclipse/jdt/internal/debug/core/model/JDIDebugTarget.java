@@ -128,6 +128,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private boolean fSupportsDisconnect;
 	/**
+	 * Whether enable/disable object GC is allowed
+	 */
+	private boolean fSupportsDisableGC = false;
+	/**
 	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
 	private List fBreakpoints;
@@ -420,6 +424,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		List threads= null;
 		VirtualMachine vm = getVM();
 		if (vm != null) {
+			try {
+				String name = vm.name();
+				fSupportsDisableGC = !name.equals("Classic VM"); //$NON-NLS-1$
+			} catch (RuntimeException e) {
+				internalError(e);
+			}
 			try {
 				threads= vm.allThreads();
 			} catch (RuntimeException e) {
@@ -2453,5 +2463,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return false;
 		}
 		return machine.canForceEarlyReturn();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsSelectiveGarbageCollection()
+	 */
+	public boolean supportsSelectiveGarbageCollection() {
+		return fSupportsDisableGC;
 	}
 }

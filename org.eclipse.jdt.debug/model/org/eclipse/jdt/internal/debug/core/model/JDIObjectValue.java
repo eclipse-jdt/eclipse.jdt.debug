@@ -413,4 +413,29 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			fCachedReferences = null;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
+	 */
+	public void disableCollection() throws DebugException {
+		if (getJavaDebugTarget().supportsSelectiveGarbageCollection()) {
+			try {
+				getUnderlyingObject().disableCollection();
+			} catch (RuntimeException e) {
+				targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_13, e);
+			}
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
+	 */
+	public void enableCollection() throws DebugException {
+		if (getJavaDebugTarget().supportsSelectiveGarbageCollection()) {
+			try {
+				getUnderlyingObject().enableCollection();
+			} catch (RuntimeException e) {
+				targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_14, e);
+			}
+		}
+	}	
 }
