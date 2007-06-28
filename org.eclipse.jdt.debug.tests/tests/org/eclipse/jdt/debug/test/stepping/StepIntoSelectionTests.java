@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ivan Popov - [Bug 193488] org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests
+ *     					depend on VM behavior
  *******************************************************************************/
 package org.eclipse.jdt.debug.test.stepping;
 
@@ -76,7 +78,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(22, typeName);		
+		createLineBreakpoint(23, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -112,7 +114,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoSourceMethodWithParameters() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(35, typeName);		
+		createLineBreakpoint(36, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -148,7 +150,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryMethod() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(33, typeName);		
+		createLineBreakpoint(34, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -187,7 +189,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	 */
 	public void testStepIntoBinaryConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
-		createLineBreakpoint(33, typeName);		
+		createLineBreakpoint(34, typeName);		
 		
 		IJavaThread thread= null;
 		try {
