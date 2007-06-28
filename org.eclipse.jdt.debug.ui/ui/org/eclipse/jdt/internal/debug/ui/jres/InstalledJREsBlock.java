@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
@@ -637,6 +638,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void search() {
 		
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			doMacSearch();
+			return;
+		}
+		
 		// choose a root directory for the search 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(JREMessages.InstalledJREsBlock_9); 
@@ -720,6 +726,44 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 	}
 	
+	private void doMacSearch() {
+		final List added = new ArrayList();
+		IRunnableWithProgress r = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				VMStandin[] standins = new MacVMSearch().search(monitor);
+				Set exists = new HashSet();
+				Iterator iterator = fVMs.iterator();
+				while (iterator.hasNext()) {
+					IVMInstall vm = (IVMInstall) iterator.next();
+					exists.add(vm.getId());
+				}
+				for (int i = 0; i < standins.length; i++) {
+					if (!exists.contains(standins[i].getId())) {
+						added.add(standins[i]);
+					}
+				}
+				monitor.done();
+			}
+		};
+		
+		try {
+            ProgressMonitorDialog progress = new ProgressMonitorDialog(getShell());
+            progress.run(true, true, r);
+		} catch (InvocationTargetException e) {
+			JDIDebugUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			// canceled
+			return;
+		}
+		
+		Iterator iterator = added.iterator();
+		while (iterator.hasNext()) {
+			IVMInstall vm = (IVMInstall) iterator.next();
+			vmAdded(vm);
+		}
+
+	}
+
 	protected Shell getShell() {
 		return getControl().getShell();
 	}

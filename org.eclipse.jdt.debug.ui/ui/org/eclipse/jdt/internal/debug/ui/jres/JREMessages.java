@@ -80,6 +80,12 @@ public class JREMessages extends NLS {
 
 	public static String LibraryStandin_1;
 
+	public static String MacVMSearch_0;
+
+	public static String MacVMSearch_1;
+
+	public static String MacVMSearch_2;
+
 	public static String VMLibraryBlock_12;
 
 	public static String VMLibraryBlock_13;

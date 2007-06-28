@@ -22,6 +22,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -60,6 +61,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class AddVMDialog extends StatusDialog {
 	
+	/**
+	 * VM install type id for OSX VMs
+	 */
+	public static final String MACOSX_VM_TYPE_ID = "org.eclipse.jdt.internal.launching.macosx.MacOSXType"; //$NON-NLS-1$
+	
 	private IAddVMDialogRequestor fRequestor;
 	private IVMInstall fEditedVM;
 	private IVMInstallType[] fVMTypes;
@@ -92,7 +98,18 @@ public class AddVMDialog extends StatusDialog {
 		}
 		fVMTypes = vmInstallTypes;
 		sortVMTypes();
-		fSelectedVMType = editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[0];
+		int typeIndex = 0;
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// select OSX VM type by default
+			for (int i = 0; i < fVMTypes.length; i++) {
+				IVMInstallType type = fVMTypes[i];
+				if (type.getId().equals(MACOSX_VM_TYPE_ID)) {
+					typeIndex = i;
+					break;
+				}
+			}
+		}
+		fSelectedVMType = editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[typeIndex];
 		fEditedVM = editedVM;
 	//only detect the javadoc location if not already set
 		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
@@ -284,7 +301,7 @@ public class AddVMDialog extends StatusDialog {
 			fVMName.setText(""); //$NON-NLS-1$
 			fJRERoot.setText(""); //$NON-NLS-1$
 			fLibraryBlock.initializeFrom(null, fSelectedVMType);
-			fVMArgs.setText(""); //$NON-NLS-1$
+			fVMArgs.setText(""); //$NON-NLS-1$	
 		} else {
 			fVMCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
