@@ -45,7 +45,7 @@ import org.osgi.framework.BundleContext;
 import com.sun.jdi.VirtualMachineManager;
 
 /**
- * The plugin class for the JDI Debug Model plug-in.
+ * The plug-in class for the JDI Debug Model plug-in.
  */
 public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChangeListener {
 	
@@ -177,10 +177,10 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 	
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
-		// TODO review this change.  Unclear how the plugin id could ever be different
+		// TODO review this change.  Unclear how the plug-in id could ever be different
 		// should likely just be a constant reference.
 		return "org.eclipse.jdt.debug"; //$NON-NLS-1$
 	}
@@ -223,10 +223,10 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
-			public void doneSaving(ISaveContext context) {}
-			public void prepareToSave(ISaveContext context)	throws CoreException {}
-			public void rollback(ISaveContext context) {}
-			public void saving(ISaveContext context) throws CoreException {
+			public void doneSaving(ISaveContext c) {}
+			public void prepareToSave(ISaveContext c)	throws CoreException {}
+			public void rollback(ISaveContext c) {}
+			public void saving(ISaveContext c) throws CoreException {
 				savePluginPreferences();
 			}
 		});
@@ -236,7 +236,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	
 	/**
 	 * Adds the given hot code replace listener to the collection of listeners
-	 * that will be notified by the hot code replace manager in this plugin.
+	 * that will be notified by the hot code replace manager in this plug-in.
 	 */
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JavaHotCodeReplaceManager.getDefault().addHotCodeReplaceListener(listener);
@@ -244,7 +244,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 
 	/**
 	 * Removes the given hot code replace listener from the collection of listeners
-	 * that will be notified by the hot code replace manager in this plugin.
+	 * that will be notified by the hot code replace manager in this plug-in.
 	 */	
 	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JavaHotCodeReplaceManager.getDefault().removeHotCodeReplaceListener(listener);
