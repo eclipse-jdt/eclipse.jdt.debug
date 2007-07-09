@@ -184,7 +184,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws CoreException {
 
-		IType type = JavaDebugUtils.resolveType(javaValue);
+		IType type = null;
+		if (javaValue instanceof IJavaArray) {
+			IJavaArrayType arrType = (IJavaArrayType) javaValue.getJavaType();
+			IJavaType compType = arrType.getComponentType();
+			while (compType instanceof IJavaArrayType) {
+				compType = ((IJavaArrayType)compType).getComponentType();
+			}
+			type = JavaDebugUtils.resolveType(compType);
+		} else {
+			type = JavaDebugUtils.resolveType(javaValue);
+		}
 		if (type != null) {
 			return type.getJavaProject();
 		}
