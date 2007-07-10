@@ -92,7 +92,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		IStructuredContentProvider content = new ContentProvider(projects);
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects, content, labelProvider, ActionMessages.AddProjectAction_Choose__project_s__to_add__3); 
 		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); 
-		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddProjectAction_One_or_more_exceptions_occurred_while_adding_projects__1, null); 
+		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "One or more exceptions occurred while adding projects.", null);  //$NON-NLS-1$
 				
 		if (dialog.open() == Window.OK) {			
 			Object[] selections = dialog.getResult();

@@ -95,10 +95,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 			if (e.getTargetException() instanceof CoreException) {
 				throw (CoreException)e.getTargetException();
 			}
-			throw new CoreException(new Status(IStatus.ERROR,
-				JDIDebugUIPlugin.getUniqueIdentifier(),
-				IJavaDebugUIConstants.INTERNAL_ERROR,
-				LauncherMessages.JREContainerResolution_An_exception_occurred_while_updating_the_classpath__1, e.getTargetException())); 
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An exception occurred while updating the classpath.", e.getTargetException()));  //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// cancelled
 		}

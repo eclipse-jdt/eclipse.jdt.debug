@@ -258,9 +258,7 @@ public class JavaJRETab extends JavaLaunchTab {
 					} else {
 						setting = LauncherMessages.JavaJRETab_1;
 					}
-					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format(LauncherMessages.JavaJRETab_0, 
-									new String[]{setting, source, compliance}), null);
+					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID,IJavaDebugUIConstants.INTERNAL_ERROR, setting + " not compatible with " + source + " .class file compatibility: " + compliance, null);  //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

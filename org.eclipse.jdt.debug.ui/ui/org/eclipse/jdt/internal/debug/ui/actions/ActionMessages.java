@@ -61,8 +61,6 @@ public class ActionMessages extends NLS {
 	public static String AddProjectAction_Add_Project_1;
 	public static String AddProjectAction_Project_Selection_2;
 	public static String AddProjectAction_Choose__project_s__to_add__3;
-	public static String AddProjectAction_One_or_more_exceptions_occurred_while_adding_projects__1;
-
 	public static String ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1;
 	public static String ProjectSelectionDialog_Add_required_projects_of_selected_projects__2;
 
@@ -74,11 +72,8 @@ public class ActionMessages extends NLS {
 	public static String AddExternalJar_Jar_Selection_3;
 
 	public static String AddFolderAction_Add__Folders_1;
-	public static String AddFolderAction_Selection_must_be_a_folder_2;
 	public static String AddFolderAction_Folder_Selection_4;
 	public static String AddFolderAction_Choose_folders_to_add__5;
-	public static String AddFolderAction_Classpath_already_includes_selected_folder_s___1;
-
 	public static String AddExternalFolderAction_Add_External_Folder_1;
 	public static String AddExternalFolderAction_Folder_Selection_3;
 
@@ -115,12 +110,6 @@ public class ActionMessages extends NLS {
 	public static String BreakpointLocationVerifierJob_breakpointSetToRightType;
 	public static String PopupDisplayAction_2;
 
-	public static String RunToLineAdapter_0;
-	public static String RunToLineAdapter_1;
-	public static String RunToLineAdapter_2;
-	public static String RunToLineAdapter_3;
-	public static String RunToLineAdapter_4;
-
 	public static String ToggleBreakpointAdapter_0;
 	public static String ToggleBreakpointAdapter_1;
 	public static String ToggleBreakpointAdapter_2;
@@ -156,7 +145,5 @@ public class ActionMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
 	}
-
-	public static String OpenTypeAction_0;
 
 }

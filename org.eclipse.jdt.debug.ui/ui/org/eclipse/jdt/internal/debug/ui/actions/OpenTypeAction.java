@@ -57,7 +57,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				if (sourceElement != null) {
 					openInEditor(sourceElement);
 				} else {
-					IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.OpenTypeAction_0, null);
+					IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source not found", null); //$NON-NLS-1$
 					throw new CoreException(status);
 				}
 			}

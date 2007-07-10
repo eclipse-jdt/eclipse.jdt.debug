@@ -279,7 +279,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				} else {
 					fJREBlock.setCheckedJRE(def);
 				}
-				ErrorDialog.openError(getControl().getShell(), JREMessages.JREsPreferencePage_1, JREMessages.JREsPreferencePage_10, new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.JREsPreferencePage_11, null)); //  
+				ErrorDialog.openError(getControl().getShell(), JREMessages.JREsPreferencePage_1, JREMessages.JREsPreferencePage_10, new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "JRE removed", null)); //   //$NON-NLS-1$
 				return;
 			}
 		} else {

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,6 @@ public class JDIDebugBreakpointMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.core.breakpoints.JDIDebugBreakpointMessages";//$NON-NLS-1$
 
 	public static String JavaBreakpoint___Hit_Count___0___1;
-	public static String JavaBreakpoint_Exception;
 	public static String JavaPatternBreakpoint_0;
 	public static String JavaBreakpoint__suspend_policy__thread__1;
 	public static String JavaBreakpoint__suspend_policy__VM__2;

@@ -284,7 +284,6 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugOptionsManager_Method_breakpoint___2;
 	public static String JavaDebugOptionsManager_Watchpoint___3;
 	public static String JavaDebugOptionsManager_0;
-	public static String JavaDebugOptionsManager_1;
 	public static String JavaDebugOptionsManager_Line_breakpoint___4;
 	public static String JavaBreakpointWorkbenchAdapterFactory_1;
 

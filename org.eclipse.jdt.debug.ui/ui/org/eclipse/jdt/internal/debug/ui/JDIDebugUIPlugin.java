@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 20076 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,7 +285,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 		
 	/**
-	 * Utility method with conventions
+	 * Creates a new internal error status with the specified message and throwable, then displays
+	 * it in a status dialog.
+	 * 
+	 * @param message error message
+	 * @param t throwable cause or <code>null</code>
 	 */
 	public static void errorDialog(String message, Throwable t) {
 		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t);

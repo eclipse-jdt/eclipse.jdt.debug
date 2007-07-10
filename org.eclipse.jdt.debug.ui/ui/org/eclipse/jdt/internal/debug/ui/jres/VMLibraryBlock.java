@@ -188,8 +188,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		updateButtons();
 		IStatus status = Status.OK_STATUS;
 		if (fLibraryContentProvider.getLibraries().length == 0) { // && !isDefaultSystemLibrary()) {
-			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
-				JREMessages.VMLibraryBlock_Libraries_cannot_be_empty__1, null);
+			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Libraries cannot be empty.", null); //$NON-NLS-1$
 		}
 		LibraryStandin[] standins = fLibraryContentProvider.getStandins();
 		for (int i = 0; i < standins.length; i++) {

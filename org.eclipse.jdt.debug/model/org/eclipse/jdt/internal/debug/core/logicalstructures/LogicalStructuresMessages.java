@@ -30,11 +30,6 @@ public class LogicalStructuresMessages extends NLS {
 	public static String JDIAllInstancesValue_13;
 
 	public static String LogicalObjectStructureType_1;
-	public static String JavaLogicalStructures_0;
-	public static String JavaLogicalStructures_1;
-	public static String JavaLogicalStructures_2;
-	public static String JavaLogicalStructures_3;
-	public static String JavaLogicalStructures_4;
 	public static String JavaStructureErrorValue_0;
 	public static String JavaStructureErrorValue_1;
 	public static String JavaLogicalStructure_1;

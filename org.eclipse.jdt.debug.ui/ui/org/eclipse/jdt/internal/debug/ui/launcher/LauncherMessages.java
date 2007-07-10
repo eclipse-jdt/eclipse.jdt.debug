@@ -24,8 +24,6 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaClasspathTab_1;
 
-	public static String JavaJRETab_0;
-
 	public static String JavaJRETab_1;
 
 	public static String JavaJRETab_2;
@@ -150,7 +148,6 @@ public class LauncherMessages extends NLS {
 	public static String AppletMainTab_2;
 	public static String AppletMainTab_3;
 
-	public static String JREContainerResolution_An_exception_occurred_while_updating_the_classpath__1;
 	public static String JREContainerResolution_Select_a_system_library_to_use_when_building__0__2;
 	public static String JREContainerResolution_Unable_to_update_classpath_1;
 
@@ -161,7 +158,6 @@ public class LauncherMessages extends NLS {
 
 	public static String SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1;
 	public static String SelectDefaultSystemLibraryQuickFix__Select_the_system_library_to_use_by_default_for_building_and_running_Java_projects__2;
-	public static String SelectDefaultSystemLibraryQuickFix_An_exception_occurred_while_updating_the_default_system_library__3;
 	public static String SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4;
 	public static String SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5;
 

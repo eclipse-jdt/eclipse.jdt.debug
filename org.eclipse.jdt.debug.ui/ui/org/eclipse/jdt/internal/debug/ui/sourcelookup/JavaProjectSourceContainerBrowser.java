@@ -87,7 +87,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		IStructuredContentProvider content = new ContentProvider(projects);
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects, content, labelProvider, SourceLookupMessages.JavaProjectSourceContainerBrowser_0); 
 		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); 
-		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, SourceLookupMessages.JavaProjectSourceContainerBrowser_2, null); 
+		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Failed to add project(s)", null);  //$NON-NLS-1$
 				
 		List sourceContainers = new ArrayList();
 		if (dialog.open() == Window.OK) {			

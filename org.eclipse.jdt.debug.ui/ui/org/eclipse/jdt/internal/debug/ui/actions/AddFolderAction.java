@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,9 +78,9 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IContainer)) {
-						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddFolderAction_Selection_must_be_a_folder_2, null); 
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Selection must be a folder", null);  //$NON-NLS-1$
 					} else if (fAlreadySelected.contains(selection[i])) {
-						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.AddFolderAction_Classpath_already_includes_selected_folder_s___1, null); 
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Classpath already includes selected folder(s).", null);  //$NON-NLS-1$
 					}
 					
 				}

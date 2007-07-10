@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.net.URL;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -172,8 +171,7 @@ public final class LibraryStandin {
 	 */
 	IStatus validate() {
 		if (!getSystemLibraryPath().toFile().exists()) {
-			return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
-					MessageFormat.format(JREMessages.LibraryStandin_0, new String[]{getSystemLibraryPath().toOSString()}), null);
+			return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR,"System library does not exist: " + getSystemLibraryPath().toOSString(), null); //$NON-NLS-1$
 		}
 		IPath path = getSystemLibrarySourcePath();
 		if (!path.isEmpty()) {
@@ -181,8 +179,7 @@ public final class LibraryStandin {
 				// check for workspace resource
 				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (!resource.exists()) {
-					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format(JREMessages.LibraryStandin_1, new String[]{path.toOSString()}), null);
+					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source attachment does not exist: " + path.toOSString(), null); //$NON-NLS-1$
 				}
 			}
 		}

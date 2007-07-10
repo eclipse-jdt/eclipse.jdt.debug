@@ -307,8 +307,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				IJavaReferenceType recType = (IJavaReferenceType) javaTypes[0];
 				unit = parseCompilationUnit(mapper.getSource(recType, getJavaProject(), false).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 			} else {
-				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, 
-						EvaluationEngineMessages.ASTEvaluationEngine_1, null);
+				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Unable to retrieve type for java.lang.Object", null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		} catch (CoreException e) {

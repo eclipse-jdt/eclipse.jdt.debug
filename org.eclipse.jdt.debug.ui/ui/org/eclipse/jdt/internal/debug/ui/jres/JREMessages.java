@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,6 @@ public class JREMessages extends NLS {
 	public static String JREsPreferencePage_14;
 	public static String JREsPreferencePage_2;
 	public static String JREsPreferencePage_10;
-	public static String JREsPreferencePage_11;
 	public static String JREsPreferencePage_13;
 
 	public static String addVMDialog_browse1;
@@ -75,10 +74,6 @@ public class JREMessages extends NLS {
 	public static String AddVMDialog_JRE_system_libraries__1;
 	public static String AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1;
 	public static String AddVMDialog_23;
-
-	public static String LibraryStandin_0;
-
-	public static String LibraryStandin_1;
 
 	public static String MacVMSearch_0;
 
@@ -99,8 +94,6 @@ public class JREMessages extends NLS {
 	public static String VMLibraryBlock_17;
 
 	public static String VMLibraryBlock_18;
-
-	public static String VMLibraryBlock_Libraries_cannot_be_empty__1;
 
 	public static String JREsUpdater_0;
 	public static String VMLibraryBlock_0;
@@ -125,22 +118,6 @@ public class JREMessages extends NLS {
 	public static String JREsComboBlock_4;
 
 	public static String JREsComboBlock_5;
-
-	public static String JREsComboBlock_6;
-
-	public static String JREsComboBlock_7;
-
-	public static String JREsComboBlock_8;
-
-	public static String JREsComboBlock_9;
-
-	public static String JREsComboBlock_10;
-
-	public static String JREsComboBlock_11;
-
-	public static String JREsComboBlock_12;
-
-	public static String JREsComboBlock_13;
 
 	public static String JREProfilesPreferencePage_0;
 

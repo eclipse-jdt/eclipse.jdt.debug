@@ -624,8 +624,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			eThread.block();
 		}
 		if (getThread() == null) {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, 
-				SnippetMessages.getString("SnippetEditor.error.nocontext"), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Evaluation failed: internal error - unable to obtain an execution context.", null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, status); //$NON-NLS-1$
 			evaluationEnds();
 			return;

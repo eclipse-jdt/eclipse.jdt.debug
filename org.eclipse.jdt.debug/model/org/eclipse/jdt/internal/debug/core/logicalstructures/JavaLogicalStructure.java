@@ -188,28 +188,28 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	public JavaLogicalStructure(IConfigurationElement configurationElement) throws CoreException {
 		fType= configurationElement.getAttribute("type"); //$NON-NLS-1$
 		if (fType == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_0, null)); 
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Required attribute type missing for javaLogicalStructure element.", null));  //$NON-NLS-1$
 		}
 		fSubtypes= Boolean.valueOf(configurationElement.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
 		fValue= configurationElement.getAttribute("value"); //$NON-NLS-1$
 		fDescription= configurationElement.getAttribute("description"); //$NON-NLS-1$
 		if (fDescription == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_4, null)); 
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Required attribute description missing for javaLogicalStructure element.", null));  //$NON-NLS-1$
 		}
 		IConfigurationElement[] variableElements= configurationElement.getChildren("variable"); //$NON-NLS-1$
 		if (fValue== null && variableElements.length == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_1, null)); 
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "javaLogicalStructure element require an attribute value, or >0 variable element as children.", null));  //$NON-NLS-1$
 		}
 		fVariables= new String[variableElements.length][2];
 		for (int j= 0; j < fVariables.length; j++) {
 			String variableName= variableElements[j].getAttribute("name"); //$NON-NLS-1$
 			if (variableName == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_2, null)); 
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Required attribute name missing for javaLogicalStructure/variable element.", null));  //$NON-NLS-1$
 			}
 			fVariables[j][0]= variableName;
 			String variableValue= variableElements[j].getAttribute("value"); //$NON-NLS-1$
 			if (variableValue == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_3, null)); 
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Required attribute value missing for javaLogicalStructure/variable element.", null));  //$NON-NLS-1$
 			}
 			fVariables[j][1]= variableValue;
 		}

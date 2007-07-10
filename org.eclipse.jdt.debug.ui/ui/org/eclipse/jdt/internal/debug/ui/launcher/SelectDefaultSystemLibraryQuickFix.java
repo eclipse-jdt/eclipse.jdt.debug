@@ -63,10 +63,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 				if (e.getTargetException() instanceof CoreException) {
 					throw (CoreException)e.getTargetException();
 				}
-				throw new CoreException(new Status(IStatus.ERROR,
-					JDIDebugUIPlugin.getUniqueIdentifier(),
-					IJavaDebugUIConstants.INTERNAL_ERROR,
-					LauncherMessages.SelectDefaultSystemLibraryQuickFix_An_exception_occurred_while_updating_the_default_system_library__3, e.getTargetException())); 
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,	"An exception occurred while updating the default system library.", e.getTargetException()));  //$NON-NLS-1$
 			} catch (InterruptedException e) {
 				// canceled
 			}			
