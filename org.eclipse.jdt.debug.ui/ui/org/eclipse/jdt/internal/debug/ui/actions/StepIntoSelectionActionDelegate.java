@@ -21,6 +21,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -73,7 +74,12 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		ITextSelection textSelection = getTextSelection();
 		try {
-			IMethod method = StepIntoSelectionUtils.getMethod(getTextSelection(),StepIntoSelectionUtils.getJavaElement(getActiveEditor().getEditorInput()));
+			IEditorPart activeEditor = getActiveEditor();
+			IJavaElement javaElement= StepIntoSelectionUtils.getJavaElement(activeEditor.getEditorInput());
+			IMethod method = StepIntoSelectionUtils.getMethod(textSelection, javaElement);
+			if (method == null) {
+				method = StepIntoSelectionUtils.getFirstMethodOnLine(textSelection.getOffset(), activeEditor, javaElement);
+			}
 			IType callingType = getType();
 			if (method == null || callingType == null) {
 				return;
