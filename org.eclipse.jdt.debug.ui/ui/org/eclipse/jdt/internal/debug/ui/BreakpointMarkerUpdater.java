@@ -11,14 +11,19 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.actions.ValidBreakpointLocationLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,6 +50,9 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  * 
  * <li>If a line breakpoint would be moved to a valid method location with an invalid line number it is removed,
  * see  {@link https://bugs.eclipse.org/bugs/show_bug.cgi?id=188676} for details</li>
+ * 
+ * <li>If a line breakpoint will be moved to a line that already has a line breakpoint on it, the one
+ * being moved is removed, see {@link https://bugs.eclipse.org/bugs/show_bug.cgi?id=129066} for details</li>
  * 
  * <li>In the general deletion case if a valid breakpoint location can not be determined, it is removed</li>
  * </ul>
@@ -92,20 +100,71 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 					return false;
 				}
 				int line = loc.getLineLocation();
-				//if the line number is already good, perform no resource updating
+				//if the line number is already good, perform no marker updating
 				if(MarkerUtilities.getLineNumber(marker) == line) {
+					//if there exists a breakpoint on the line remove this one
+					if(isLineBreakpoint(marker)) {
+						return lineBreakpointExists(marker.getResource(), ((IJavaLineBreakpoint)breakpoint).getTypeName(), line, marker) == null;
+					}
 					return true;
 				}
 				//if the line info is a valid location with an invalid line number,
 				//a line breakpoint must be removed
-				if(MarkerUtilities.isMarkerType(marker, "org.eclipse.jdt.debug.javaLineBreakpointMarker") & line == -1) { //$NON-NLS-1$
+				if(isLineBreakpoint(marker) & line == -1) {
 					return false;
 				}
 				MarkerUtilities.setLineNumber(marker, line);
 				return true;
 			} 
-			catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
+			catch (BadLocationException e) {JDIDebugUIPlugin.log(e);} 
+			catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns if the specified marker is for an <code>IJavaLineBreakpoint</code>
+	 * @param marker
+	 * @return true if the marker is for an <code>IJavalineBreakpoint</code>, false otherwise
+	 * 
+	 * @since 3.4
+	 */
+	private boolean isLineBreakpoint(IMarker marker) {
+		return MarkerUtilities.isMarkerType(marker, "org.eclipse.jdt.debug.javaLineBreakpointMarker"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Searches for an existing line breakpoint on the specified line in the current type that does not match the id of the specified marker
+	 * @param resource the resource to care about
+	 * @param typeName the name of the type the breakpoint is in
+	 * @param lineNumber the number of the line the breakpoint is on
+	 * @param currentmarker the current marker we are comparing to see if it will be moved onto an existing one
+	 * @return an existing line breakpoint on the current line of the given resource and type if there is one
+	 * @throws CoreException
+	 * 
+	 * @since 3.4
+	 */
+	private IJavaLineBreakpoint lineBreakpointExists(IResource resource, String typeName, int lineNumber, IMarker currentmarker) throws CoreException {
+		String modelId = JDIDebugPlugin.getUniqueIdentifier();
+		String markerType= JavaLineBreakpoint.getMarkerType();
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints= manager.getBreakpoints(modelId);
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
+				continue;
+			}
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
+			IMarker marker = breakpoint.getMarker();
+			if (marker != null && marker.exists() && marker.getType().equals(markerType) && currentmarker.getId() != marker.getId()) {
+				String breakpointTypeName = breakpoint.getTypeName();
+				if ((breakpointTypeName.equals(typeName) || breakpointTypeName.startsWith(typeName + '$')) &&
+					breakpoint.getLineNumber() == lineNumber &&
+					resource.equals(marker.getResource())) {
+						return breakpoint;
+				}
+			}
+		}
+		return null;
+	}	
+	
 }
