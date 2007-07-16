@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -25,12 +24,13 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.IMarkerUpdater;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
 /**
  * This class provides a mechanism to correct the placement of a 
  * breakpoint marker when the related document is edited.
  * 
- * This updater is used to cover the line number discrepency cases that <code>BasicMarkerUpdater</code> does not:
+ * This updater is used to cover the line number discrepancy cases that <code>BasicMarkerUpdater</code> does not:
  * <ul>
  * <li>If you insert a blank line at the start of the line of code, the breakpoint 
  * is moved from the blank line to the next viable line down, 
@@ -42,6 +42,9 @@ import org.eclipse.ui.texteditor.IMarkerUpdater;
  * 
  * <li>If the breakpoint is on the last viable line of a class file and the line is removed via either of 
  * the aforementioned deletion cases, the breakpoint is removed</li>
+ * 
+ * <li>If a line breakpoint would be moved to a valid method location with an invalid line number it is removed,
+ * see  {@link https://bugs.eclipse.org/bugs/show_bug.cgi?id=188676} for details</li>
  * 
  * <li>In the general deletion case if a valid breakpoint location can not be determined, it is removed</li>
  * </ul>
@@ -88,15 +91,20 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
 					return false;
 				}
+				int line = loc.getLineLocation();
 				//if the line number is already good, perform no resource updating
-				if(marker.getAttribute(IMarker.LINE_NUMBER, -1) == loc.getLineLocation()) {
+				if(MarkerUtilities.getLineNumber(marker) == line) {
 					return true;
 				}
-				marker.setAttribute(IMarker.LINE_NUMBER, loc.getLineLocation());
+				//if the line info is a valid location with an invalid line number,
+				//a line breakpoint must be removed
+				if(MarkerUtilities.isMarkerType(marker, "org.eclipse.jdt.debug.javaLineBreakpointMarker") & line == -1) { //$NON-NLS-1$
+					return false;
+				}
+				MarkerUtilities.setLineNumber(marker, line);
 				return true;
 			} 
 			catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
-			catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		}
 		return false;
 	}
