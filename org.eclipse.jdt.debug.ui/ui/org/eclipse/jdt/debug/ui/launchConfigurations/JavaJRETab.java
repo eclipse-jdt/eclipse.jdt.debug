@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
@@ -198,10 +199,12 @@ public class JavaJRETab extends JavaLaunchTab {
 			setErrorMessage(status.getMessage());			 
 			return false;
 		}
-		status = checkCompliance();
-		if (!status.isOK()) {
-			setErrorMessage(status.getMessage());			 
-			return false;
+		if(!isExternalToolConfiguration(fLaunchConfiguration)) {
+			status = checkCompliance();
+			if (!status.isOK()) {
+				setErrorMessage(status.getMessage());			 
+				return false;
+			}
 		}
 
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
@@ -209,6 +212,29 @@ public class JavaJRETab extends JavaLaunchTab {
 			return dynamicTab.isValid(config);
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns if the specified <code>ILaunchConfiguration</code> is an ant or external tool
+	 * type.
+	 * @param configuration
+	 * @return true if the specified <code>ILaunchConfiguration</code> is an ant or external tools
+	 * type configuration
+	 * 
+	 * @since 3.4
+	 */
+	private boolean isExternalToolConfiguration(ILaunchConfiguration configuration) {
+		try {
+			ILaunchConfigurationType type = configuration.getType();
+			String id = type.getIdentifier();
+			return id != null && (id.equals("org.eclipse.ant.AntLaunchConfigurationType") || //$NON-NLS-1$
+			id.equals("org.eclipse.ant.AntBuilderLaunchConfigurationType") ||  //$NON-NLS-1$
+			id.equals("org.eclipse.ui.externaltools.ProgramLaunchConfigurationType") || //$NON-NLS-1$
+			id.equals("org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType")); //$NON-NLS-1$
+		} 
+		catch (CoreException e) {
+			return false;
+		}
 	}
 	
 	/**
