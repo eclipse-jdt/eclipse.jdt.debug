@@ -24,6 +24,8 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaClasspathTab_1;
 
+	public static String JavaJRETab_0;
+
 	public static String JavaJRETab_1;
 
 	public static String JavaJRETab_2;
