@@ -26,42 +26,88 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * The workbench menu action for adding an exception breakpoint
  */
 public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindowActionDelegate {
 	
+	public static final String CAUGHT_CHECKED = "caughtChecked"; //$NON-NLS-1$
+	public static final String UNCAUGHT_CHECKED = "uncaughtChecked"; //$NON-NLS-1$
+	public static final String DIALOG_SETTINGS = "AddExceptionDialog"; //$NON-NLS-1$
+	
+	private IWorkbenchWindow fWindow = null;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run(IAction action) {		
-		AddExceptionDialog dialog = new AddExceptionDialog();
-		if(dialog.open() == IDialogConstants.OK_ID) {
-			boolean caught = dialog.shouldHandleCaughtExceptions(),
-					uncaught = dialog.shouldHandleUncaughtExceptions();
-			Object[] results = dialog.getResult(); 
-			if(results != null && results.length > 0) {
-				try {
-					createBreakpoint(caught, uncaught, ((TypeNameMatch)results[0]).getType());
+	public void run(IAction action) {
+		try {
+			IDialogSettings settings = getDialogSettings();
+			AddExceptionTypeDialogExtension ext = new AddExceptionTypeDialogExtension(settings.getBoolean(CAUGHT_CHECKED), settings.getBoolean(UNCAUGHT_CHECKED));
+			SelectionDialog dialog = JavaUI.createTypeDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), 
+						fWindow, 
+						SearchEngine.createWorkspaceScope(), 
+						IJavaElementSearchConstants.CONSIDER_CLASSES, false, "*Exception*", ext); //$NON-NLS-1$
+			dialog.setTitle(BreakpointMessages.AddExceptionAction_0);
+			dialog.setMessage(BreakpointMessages.AddExceptionAction_1);
+			dialog.create();
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IJavaDebugHelpContextIds.ADD_EXCEPTION_DIALOG);
+			if(dialog.open() == IDialogConstants.OK_ID) {
+				boolean caught = ext.shouldHandleCaughtExceptions(),
+						uncaught = ext.shouldHandleUncaughtExceptions();
+				Object[] results = dialog.getResult(); 
+				if(results != null && results.length > 0) {
+					try {
+						createBreakpoint(caught, uncaught, (IType)results[0]);
+						settings.put(CAUGHT_CHECKED, caught);
+						settings.put(UNCAUGHT_CHECKED, uncaught);
+					}
+					catch (CoreException e) {JDIDebugUIPlugin.statusDialog(e.getStatus());}
 				}
-				catch (CoreException e) {JDIDebugUIPlugin.statusDialog(e.getStatus());}
+				
 			}
-		}
+		} 
+		catch (JavaModelException e1) {}
 	}
+	
+	/**
+	 * Returns the existing dialog settings for the persisted state of the caught and uncaught check boxes.
+	 * If no section exists then a new one is created
+	 * 
+	 * @return the dialog settings section for the type dialog extension
+	 * 
+	 * @since 3.4
+	 */
+	private IDialogSettings getDialogSettings() {
+        IDialogSettings allSetttings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = allSetttings.getSection(DIALOG_SETTINGS);
+        if (section == null) {
+            section = allSetttings.addNewSection(DIALOG_SETTINGS);
+            section.put(CAUGHT_CHECKED, true);
+            section.put(UNCAUGHT_CHECKED, true);
+        }
+        return section;
+    }
 	
 	/**
 	 * creates a single breakpoint of the specified type
@@ -140,10 +186,14 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
-	public void dispose() {}
+	public void dispose() {
+		fWindow = null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window) {}
+	public void init(IWorkbenchWindow window) {
+		fWindow = window;
+	}
 }
