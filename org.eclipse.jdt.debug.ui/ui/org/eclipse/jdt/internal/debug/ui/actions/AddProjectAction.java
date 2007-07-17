@@ -32,8 +32,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -87,10 +85,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 */	
 	public void run() {
 		List projects = getPossibleAdditions();
-		
-		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-		IStructuredContentProvider content = new ContentProvider(projects);
-		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects, content, labelProvider, ActionMessages.AddProjectAction_Choose__project_s__to_add__3); 
+		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects);
 		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); 
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "One or more exceptions occurred while adding projects.", null);  //$NON-NLS-1$
 				
@@ -127,9 +122,6 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			IRuntimeClasspathEntry[] entries = (IRuntimeClasspathEntry[])runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
 			getViewer().addEntries(entries);
 		}	
-		
-		content.dispose();
-		labelProvider.dispose();			
 		
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);

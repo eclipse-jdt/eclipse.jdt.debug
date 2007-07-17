@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -32,22 +33,14 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -56,55 +49,66 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class InstanceFiltersAction extends ObjectActionDelegate {
 	
-	class InstanceFilterDialog extends ListSelectionDialog {
+	/**
+	 * Dialog that allows the user to select one or more breakpoints that should be restricted
+	 * to a specific object instance.
+	 */
+	class InstanceFilterDialog extends AbstractDebugCheckboxSelectionDialog {
 		
-		public InstanceFilterDialog(
-			Shell parentShell,
-			Object input,
-			IStructuredContentProvider contentProvider,
-			ILabelProvider labelProvider,
-			String message) {
-			super(parentShell, input, contentProvider, labelProvider, message);
+		private Object fInput;
+		private String fMessage;
+		private IBaseLabelProvider fLabelProvider;
+		
+		public InstanceFilterDialog(Shell parentShell, Object input, IBaseLabelProvider labelProvider, String message){
+			super(parentShell);
+			fInput = input;
+			fMessage = message;
+			fLabelProvider = labelProvider;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
+			setShowSelectAllButtons(true);
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.SelectionDialog#createMessageArea(org.eclipse.swt.widgets.Composite)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#refreshEnablement()
 		 */
-		protected Label createMessageArea(Composite composite) {
-			return SWTFactory.createWrapLabel(composite, getMessage(), 1, 300); //the width hint is the default width for ListSelectionDialog 
+		protected void refreshEnablement() {
+			getButton(IDialogConstants.OK_ID).setEnabled(true);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
+		 */
+		protected String getDialogSettingsId() {
+			return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
-		protected Control createDialogArea(Composite parent) {
-			Control control = super.createDialogArea(parent);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(
-				parent,
-				IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG);				
-			return control;
+		protected String getHelpContextId() {
+			return IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG;
 		}
 
-        /**
-         * Returns the dialog settings section name
-         * @return the dialog settings section name
-         */
-        protected String getDialogSettingsSectionName() {
-            return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
-        }
-        
-         /* (non-Javadoc)
-         * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-         */
-        protected IDialogSettings getDialogBoundsSettings() {
-            IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
-            IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-            if (section == null) {
-                section = settings.addNewSection(getDialogSettingsSectionName());
-            } 
-            return section;
-        }
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+		 */
+		protected Object getViewerInput() {
+			return fInput;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+		 */
+		protected String getViewerLabel() {
+			return fMessage;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
+		 */
+		protected IBaseLabelProvider getLabelProvider() {
+			return fLabelProvider;
+		}
 }
 
 	/**
@@ -124,20 +128,11 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 				if (value instanceof IJavaObject) {
 					final IJavaObject object = (IJavaObject)value;
 					final List breakpoints = getApplicableBreakpoints(var, object);
-					IStructuredContentProvider content = new IStructuredContentProvider() {
-						public void dispose() {}
-						
-						public Object[] getElements(Object input) {
-							return breakpoints.toArray();
-						}
-						
-						public void inputChanged(Viewer viewer, Object a, Object b) {}
-					};
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
-					ListSelectionDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
+					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
-							Object[] checkBreakpoint= getViewer().getCheckedElements();
+							Object[] checkBreakpoint= getCheckBoxTableViewer().getCheckedElements();
 							for (int k= 0; k < checkBreakpoint.length; k++) {
 								IJavaBreakpoint breakpoint= (IJavaBreakpoint) checkBreakpoint[k];
 								try {

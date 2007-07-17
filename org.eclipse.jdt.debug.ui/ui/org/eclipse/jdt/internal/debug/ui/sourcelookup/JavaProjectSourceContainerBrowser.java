@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,8 +36,6 @@ import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourc
 import org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -82,10 +81,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 */
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		List projects = getPossibleAdditions(director);
-		
-		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-		IStructuredContentProvider content = new ContentProvider(projects);
-		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects, content, labelProvider, SourceLookupMessages.JavaProjectSourceContainerBrowser_0); 
+		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects);
 		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); 
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Failed to add project(s)", null);  //$NON-NLS-1$
 				
@@ -119,9 +115,6 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 				}
 			}
 		}	
-		
-		content.dispose();
-		labelProvider.dispose();			
 		
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);

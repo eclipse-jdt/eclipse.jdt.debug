@@ -56,11 +56,12 @@ public class ActionMessages extends NLS {
 	public static String MoveUpAction_Move_U_p_1;
 
 	public static String OpenTypeAction_2;
+
+	public static String ProjectSelectionDialog_0;
 	public static String RemoveAction__Remove_1;
 
 	public static String AddProjectAction_Add_Project_1;
 	public static String AddProjectAction_Project_Selection_2;
-	public static String AddProjectAction_Choose__project_s__to_add__3;
 	public static String ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1;
 	public static String ProjectSelectionDialog_Add_required_projects_of_selected_projects__2;
 

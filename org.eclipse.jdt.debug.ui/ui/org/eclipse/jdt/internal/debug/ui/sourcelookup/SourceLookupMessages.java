@@ -13,7 +13,6 @@ import org.eclipse.osgi.util.NLS;
 
 public class SourceLookupMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.sourcelookup.SourceLookupMessages";//$NON-NLS-1$
-	public static String JavaProjectSourceContainerBrowser_0;
 	public static String JavaProjectSourceContainerBrowser_1;
 	static {
 		// load message values from bundle file

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,54 +10,45 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.util.List;
 
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A dialog for selecting projects to add to a classpath or source
  * lookup path. Optionally specifies whether
  * exported entries and required projects should also be added.
  */
-public class ProjectSelectionDialog extends ListSelectionDialog {
+public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
 	
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
+	
+	private List fProjects;
 
 	/**
 	 * @see ListSelectionDialog
 	 */
-	public ProjectSelectionDialog(
-		Shell parentShell,
-		Object input,
-		IStructuredContentProvider contentProvider,
-		ILabelProvider labelProvider,
-		String message) {
-		super(parentShell, input, contentProvider, labelProvider, message);
+	public ProjectSelectionDialog(Shell parentShell, List projects){
+		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+		fProjects = projects;
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createDialogArea(Composite parent) {
-		Font font = parent.getFont();
-		
-		Composite composite = (Composite)super.createDialogArea(parent);
-		
-		final Button addExported = new Button(composite, SWT.CHECK);
+	protected void addCustomFooterControls(Composite parent) {
+		super.addCustomFooterControls(parent);
+		final Button addExported = new Button(parent, SWT.CHECK);
 		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1); 
 		addExported.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -65,9 +56,9 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 			}
 		});
 		addExported.setSelection(fAddExportedEntries);
-		addExported.setFont(font);
+		addExported.setFont(parent.getFont());
 		
-		final Button addRequired = new Button(composite, SWT.CHECK);
+		final Button addRequired = new Button(parent, SWT.CHECK);
 		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2); 
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -75,10 +66,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 			}
 		});
 		addRequired.setSelection(fAddRequiredProjects);
-		addRequired.setFont(font);		
-		
-		applyDialogFont(composite);
-		return composite;
+		addRequired.setFont(parent.getFont());		
 	}
 	
 	/**
@@ -99,24 +87,31 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 		return fAddRequiredProjects;
 	}
 	
-	/**
-	 * Returns the name of the section that this dialog stores its settings in
-	 * 
-	 * @return String
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
-	protected String getDialogSettingsSectionName() {
-		return IJavaDebugUIConstants.PLUGIN_ID + ".P	ROJECT_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
+	protected String getDialogSettingsId() {
+		return IJavaDebugUIConstants.PLUGIN_ID + ".PROJECT_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
-    protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
-         return section;
-    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IJavaDebugHelpContextIds.SELECT_PROJECT_DIALOG;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+	 */
+	protected Object getViewerInput() {
+		return fProjects;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+	 */
+	protected String getViewerLabel() {
+		return ActionMessages.ProjectSelectionDialog_0;
+	}
 }
