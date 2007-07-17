@@ -171,7 +171,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 		
 		String[] allVMArgs = combineVmArgs(config, fVMInstance);
-		addArguments(allVMArgs, arguments);
+		addArguments(ensureEncoding(launch, allVMArgs), arguments);
 		addBootClassPathArguments(arguments, config);
 		
 		String[] cp= config.getClassPath();
@@ -379,7 +379,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				}
 			}
 		} 
-		return super.prependJREPath(env, jdkpath);
+		return super.prependJREPath(env);
 	}
 	
 	/**

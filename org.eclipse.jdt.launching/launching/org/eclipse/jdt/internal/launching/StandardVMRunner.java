@@ -20,14 +20,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -232,7 +231,40 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return buf.toString();
 	}
 
-
+	/**
+	 * This method is used to ensure that the JVM file encoding matches that of the console preference for file encoding.
+	 * If the user explicitly declares a file encoding in the launch configuration, then that file encoding is used.
+	 * @param vmargs the original listing of JVM arguments
+	 * @return the listing of JVM arguments including file encoding if one was not specified
+	 * 
+	 * @since 3.4
+	 */
+	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) throws CoreException {
+		boolean foundencoding = false;
+		for(int i = 0; i < vmargs.length; i++) {
+			if(vmargs[i].startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
+				foundencoding = true; 
+			}
+		}
+		if(!foundencoding) {
+			String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
+			if(encoding == null) {
+				ILaunchConfiguration config = launch.getLaunchConfiguration();
+				if(config != null) {
+					encoding = config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+				}
+			}
+			if(encoding == null) {
+				return vmargs;
+			}
+			String[] newargs = new String[vmargs.length+1];
+			System.arraycopy(vmargs, 0, newargs, 0, vmargs.length);
+			newargs[newargs.length-1] = "-Dfile.encoding="+encoding; //$NON-NLS-1$
+			return newargs;
+		}
+		return vmargs;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMRunner#run(org.eclipse.jdt.launching.VMRunnerConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -254,7 +286,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		// VM args are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first option
 		String[] allVMArgs = combineVmArgs(config, fVMInstance);
-		addArguments(allVMArgs, arguments);
+		addArguments(ensureEncoding(launch, allVMArgs), arguments);
 		
 		addBootClassPathArguments(arguments, config);
 		
@@ -271,7 +303,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
-		String[] envp = prependJREPath(config.getEnvironment(), new Path(program));
+		String[] envp = prependJREPath(config.getEnvironment());
 		
 		subMonitor.worked(1);
 
@@ -307,7 +339,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @param jdkpath the path of the current jdk
 	 * @since 3.3
 	 */
-	protected String[] prependJREPath(String[] env, IPath jdkpath) {
+	protected String[] prependJREPath(String[] env) {
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			if (fVMInstance instanceof IVMInstall2) {
 				IVMInstall2 vm = (IVMInstall2) fVMInstance;
