@@ -739,6 +739,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								int f = javaField.getFlags();
 								boolean fin = Flags.isFinal(f);
 								allowed = !(fin) & !(Flags.isStatic(f) & fin);
+							} else if (element instanceof IJavaFieldVariable) {
+								IJavaFieldVariable var = (IJavaFieldVariable) element;
+								typeName = var.getDeclaringType().getName();
+								fieldName = var.getName();
+								boolean fin = var.isFinal();
+								allowed = !(fin) & !(var.isStatic() & fin);
 							}
 	                        breakpoint = getWatchpoint(typeName, fieldName);
 	                        if (breakpoint == null) {
@@ -749,14 +755,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        	int start = -1;
 	                            int end = -1;
 	                            attributes = new HashMap(10);
-                                IType type = javaField.getDeclaringType();
-                                ISourceRange range = javaField.getNameRange();
-                                if (range != null) {
-                                    start = range.getOffset();
-                                    end = start + range.getLength();
-                                }
-                                BreakpointUtils.addJavaBreakpointAttributes(attributes, javaField);
-                                resource = BreakpointUtils.getBreakpointResource(type);
+	                            if (javaField == null) {
+	                            	resource = ResourcesPlugin.getWorkspace().getRoot();
+	                            } else {
+	                                IType type = javaField.getDeclaringType();
+	                                ISourceRange range = javaField.getNameRange();
+	                                if (range != null) {
+	                                    start = range.getOffset();
+	                                    end = start + range.getLength();
+	                                }
+	                                BreakpointUtils.addJavaBreakpointAttributes(attributes, javaField);
+	                                resource = BreakpointUtils.getBreakpointResource(type);
+	                            }
 	                        	JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, start, end, 0, true, attributes);
 	                        } else {
 	                            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
