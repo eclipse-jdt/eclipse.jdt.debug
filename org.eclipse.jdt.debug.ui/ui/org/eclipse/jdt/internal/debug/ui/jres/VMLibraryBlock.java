@@ -205,8 +205,8 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	/**
 	 * Saves settings in the given working copy
 	 */
-	public void performApply(IVMInstall vm) {		
-		if (isDefaultLocations()) {
+	public void performApply(IVMInstall vm) {
+		if (isDefaultLocations(vm)) {
 			vm.setLibraryLocations(null);
 		} else {
 			LibraryLocation[] libs = fLibraryContentProvider.getLibraries();
@@ -215,17 +215,18 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	}	
 	
 	/**
-	 * Determines if the present setup is the default location s for this JRE
+	 * Determines if the current libraries displayed to the user are the default location
+	 * for the given vm working copy.
+	 * @param vm the virtual machine to check for the default location
 	 * @return true if the current set of locations are the defaults, false otherwise
 	 */
-	protected boolean isDefaultLocations() {
+	protected boolean isDefaultLocations(IVMInstall vm) {
 		LibraryLocation[] libraryLocations = fLibraryContentProvider.getLibraries();
-        IVMInstall install = getVMInstall();
         
-		if (install == null || libraryLocations == null) {
+		if (vm == null || libraryLocations == null) {
 			return true;
 		}
-		File installLocation = install.getInstallLocation();
+		File installLocation = vm.getInstallLocation();
 		if (installLocation != null) {
 			LibraryLocation[] def = getVMInstallType().getDefaultLibraryLocations(installLocation);
 			if (def.length == libraryLocations.length) {
