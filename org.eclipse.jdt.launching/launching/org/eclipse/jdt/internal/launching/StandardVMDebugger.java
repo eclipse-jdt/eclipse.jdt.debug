@@ -64,7 +64,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * 
 	 * String equals the word: <code>jre</code>
 	 * 
-	 * @since 3.4
+	 * @since 3.3.1
 	 */
 	protected static final String JRE = "jre"; //$NON-NLS-1$
 
@@ -73,7 +73,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * 
 	 * String equals the word: <code>bin</code>
 	 * 
-	 * @since 3.4
+	 * @since 3.3.1
 	 */
 	protected static final String BIN = "bin"; //$NON-NLS-1$
 	
