@@ -58,7 +58,25 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @since 3.3 OSX environment variable specifying JRE to use
 	 */
 	protected static final String JAVA_JVM_VERSION = "JAVA_JVM_VERSION"; //$NON-NLS-1$
+	
+	/**
+	 * Jre path segment descriptor
+	 * 
+	 * String equals the word: <code>jre</code>
+	 * 
+	 * @since 3.4
+	 */
+	protected static final String JRE = "jre"; //$NON-NLS-1$
 
+	/**
+	 * Bin path segment descriptor
+	 * 
+	 * String equals the word: <code>bin</code>
+	 * 
+	 * @since 3.4
+	 */
+	protected static final String BIN = "bin"; //$NON-NLS-1$
+	
 	/**
 	 * Used to attach to a VM in a separate thread, to allow for cancellation
 	 * and detect that the associated System process died before the connect
@@ -324,8 +342,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * For Windows:
 	 * Prepends the location of the JRE bin directory for the given JDK path to the PATH variable in Windows.
 	 * This method assumes that the JRE is located within the JDK install directory
-	 * in: <code><JDK install dir>/jre/bin/</code> where the JDK itself would be located 
-	 * in: <code><JDK install dir>/bin/</code> 
+	 * in: <code><JDK install dir>/jre/bin/</code> where the JRE itself would be located 
+	 * in: <code><JDK install dir>/bin/</code>  where the JDK itself is located
 	 * </p>
 	 * <p>
 	 * For Mac OS:
@@ -339,7 +357,15 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	protected String[] prependJREPath(String[] env, IPath jdkpath) {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
-			IPath jrepath = jdkpath.removeLastSegments(2).append("jre").append("bin"); //$NON-NLS-1$ //$NON-NLS-2$
+			IPath jrepath = jdkpath.removeLastSegments(1);
+			if(jrepath.lastSegment().equals(BIN)) {
+				if(!jrepath.segment(jrepath.segmentCount()-2).equals(JRE)) {
+					jrepath = jrepath.removeLastSegments(1).append(JRE).append(BIN);
+				}
+			}
+			else {
+				jrepath = jrepath.append(JRE).append(BIN);
+			}
 			if(jrepath.toFile().exists()) {
 				String jrestr = jrepath.toOSString();
 				if(env == null){
