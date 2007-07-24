@@ -65,6 +65,8 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage__Launch_timeout__ms___1;
 	public static String JavaDebugPreferencePage_14;
 
+	public static String JavaDetailFormattersManager_6;
+
 	public static String JavaDetailFormattersManager_7;
 	public static String JavaDetailFormattersManager_9;
 

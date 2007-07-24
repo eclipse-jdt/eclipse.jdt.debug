@@ -181,6 +181,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			String detail = e.getStatus().getMessage();
 			if (e.getStatus().getException() instanceof UnsupportedOperationException) {
 				detail = DebugUIMessages.JavaDetailFormattersManager_7;
+			} else if (e.getStatus().getCode() == IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE) {
+				detail = DebugUIMessages.JavaDetailFormattersManager_6;
 			}
 			listener.detailComputed(value, detail);
 		}
