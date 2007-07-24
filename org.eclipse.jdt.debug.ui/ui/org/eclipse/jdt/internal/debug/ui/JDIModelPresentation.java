@@ -459,7 +459,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (isString) {
 				buffer.append('"');
+				if(value instanceof IJavaObject){
+					buffer.append(" "); //$NON-NLS-1$
+					buffer.append(MessageFormat.format(DebugUIMessages.JDIModelPresentation_118, new String[]{String.valueOf(((IJavaObject)value).getUniqueId())})); 
+				}
 			}
+			
 		}
 		
 		// show unsigned value second, if applicable

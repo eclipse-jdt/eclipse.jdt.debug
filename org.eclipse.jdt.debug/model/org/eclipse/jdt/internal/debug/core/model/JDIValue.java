@@ -119,18 +119,17 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 				name.append(((ClassObjectReference)fValue).reflectedType());
 				name.append(')');  
 			}
-			name.append(" ("); //$NON-NLS-1$
-			name.append(JDIDebugModelMessages.JDIValue_id_8); 
-			name.append('=');  
+			long id = 0;
 			try {
-				name.append(((ObjectReference)fValue).uniqueID());
+				id = ((ObjectReference)fValue).uniqueID();
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_unique_id, new String[] {e.toString()}), e); 
 				// execution will not reach this line, as
 				// #targetRequestFailed will thrown an exception							
 				return null;
 			}
-			name.append(')'); 
+			name.append(" "); //$NON-NLS-1$
+			name.append(MessageFormat.format(JDIDebugModelMessages.JDIValue_id_8, new String[]{String.valueOf(id)})); 
 			return name.toString();
 		}
 		// see bug 43285

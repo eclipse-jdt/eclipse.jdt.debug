@@ -53,8 +53,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		fCachedReferences = null;
 	}
 
-	/**
-	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, boolean)
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException {
 		JDIThread javaThread = (JDIThread)thread;
@@ -86,8 +86,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
 	}
 	
-	/**
-	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread, String typeSignature)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, String typeSignature) throws DebugException {
 		JDIThread javaThread = (JDIThread)thread;
@@ -145,8 +145,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		return (ObjectReference)getUnderlyingValue();
 	}
 
-	/**
-	 * @see IJavaObject#getField(String, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String, boolean)
 	 */
 	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
@@ -177,9 +177,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		// it is possible to return null
 		return null;
 	}
-	
-	/**
-	 * @see IJavaObject#getField(String, String)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String, java.lang.String)
 	 */
 	public IJavaFieldVariable getField(String name, String declaringTypeSignature) throws DebugException {
 		ReferenceType ref= getUnderlyingReferenceType();
@@ -333,8 +333,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		return owningThread;
 	}
 	
-	/**
-	 * @see IValue#getReferenceTypeName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
@@ -347,13 +347,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		}
 	}
 	
-	/**
-	 * Returns the unique id for this object.
-	 * 
-	 * @return unique id or -1 if this value is null
-	 * @throws DebugException
-	 * 
-	 * TODO: make API on IJavaObject
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
 	public long getUniqueId() throws DebugException {
 		try {

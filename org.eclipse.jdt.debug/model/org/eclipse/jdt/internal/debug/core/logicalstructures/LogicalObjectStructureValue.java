@@ -34,6 +34,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * as children.
 	 * 
 	 * @param object original object
+	 * @param variables java variables to add as children to this object
 	 */
 	public LogicalObjectStructureValue(IJavaObject object, IJavaVariable[] variables) {
 		fObject = object;
@@ -151,8 +152,6 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public Object getAdapter(Class adapter) {
 		return fObject.getAdapter(adapter);
 	}
-	
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
@@ -160,7 +159,6 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public IJavaThread[] getWaitingThreads() throws DebugException {
 		return null;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
@@ -182,10 +180,18 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public void disableCollection() throws DebugException {
 		fObject.disableCollection();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
 	public void enableCollection() throws DebugException {
 		fObject.enableCollection();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
+	 */
+	public long getUniqueId() throws DebugException {
+		return fObject.getUniqueId();
 	}	
 }
