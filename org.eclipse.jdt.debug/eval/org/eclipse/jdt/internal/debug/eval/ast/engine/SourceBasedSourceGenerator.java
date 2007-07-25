@@ -235,23 +235,24 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 
 		if (fCreateInAStaticMethod) {
 			buffer.append("static "); //$NON-NLS-1$
-			// add type parameters as required
-			if (isSourceLevelGreaterOrEqual(1, 5)) {
-				if (!fTypeParameters.isEmpty()) {
-					Iterator iterator = fTypeParameters.iterator();
-					buffer.append(Signature.C_GENERIC_START);
-					while (iterator.hasNext()) {
-						String name = (String) iterator.next();
-						buffer.append(name);
-						if (iterator.hasNext()) {
-							buffer.append(", "); //$NON-NLS-1$
-						}
-					}
-					buffer.append(Signature.C_GENERIC_END);
-				}
-			}			
 		}
-
+		
+		// add type parameters as required
+		if (isSourceLevelGreaterOrEqual(1, 5)) {
+			if (!fTypeParameters.isEmpty()) {
+				Iterator iterator = fTypeParameters.iterator();
+				buffer.append(Signature.C_GENERIC_START);
+				while (iterator.hasNext()) {
+					String name = (String) iterator.next();
+					buffer.append(name);
+					if (iterator.hasNext()) {
+						buffer.append(", "); //$NON-NLS-1$
+					}
+				}
+				buffer.append(Signature.C_GENERIC_END);
+			}
+		}	
+		
 		buffer.append("void "); //$NON-NLS-1$
 		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
 		buffer.append('(');
