@@ -1908,7 +1908,7 @@
                icon="$nl$/icons/full/obj16/threadgroup_obj.gif"
                helpContextId="show_thread_groups_action_context"
                label="%showThreadGroupsAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
                tooltip="%showThreadGroupsAction.tooltip">
          </action>            
          <action
@@ -1918,7 +1918,7 @@
                icon="$nl$/icons/full/obj16/package_obj.gif"
                helpContextId="show_qualified_action_context"
                label="%showQualifiedAction.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
                tooltip="%showQualifiedAction.tooltip">
          </action>
          <action
@@ -1928,7 +1928,7 @@
                icon="$nl$/icons/full/obj16/thread_obj.gif"
                helpContextId="show_system_threads_action_context"
                label="%showSystemThreads.label"
-               menubarPath="javaActions"
+               menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
                tooltip="%showSystemThreads.tooltip">
          </action>
   <action
@@ -1938,8 +1938,16 @@
         tooltip="%showMonitorThreadInfo.tooltip"
         class="org.eclipse.jdt.internal.debug.ui.actions.ShowMonitorThreadInformation"
         style="toggle"
-        menubarPath="javaActions"
-        id="org.eclipse.jdt.debug.ui.launchViewActions.ShowMonitorThreadInfo"/>         
+        menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
+        id="org.eclipse.jdt.debug.ui.launchViewActions.ShowMonitorThreadInfo"/>
+  <menu
+        id="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu"
+        label="%LaunchViewJavaSubmenu.label"
+        path="javaActions">
+     <groupMarker
+           name="org.eclipse.jdt.debug.ui.javaPart">
+     </groupMarker>
+  </menu>         
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"
