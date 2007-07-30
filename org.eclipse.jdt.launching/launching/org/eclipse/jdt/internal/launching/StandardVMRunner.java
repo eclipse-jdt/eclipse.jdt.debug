@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -239,7 +238,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * 
 	 * @since 3.4
 	 */
-	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) throws CoreException {
+	protected String[] ensureEncoding(ILaunch launch, String[] vmargs) {
 		boolean foundencoding = false;
 		for(int i = 0; i < vmargs.length; i++) {
 			if(vmargs[i].startsWith("-Dfile.encoding=")) { //$NON-NLS-1$
@@ -248,12 +247,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		if(!foundencoding) {
 			String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-			if(encoding == null) {
-				ILaunchConfiguration config = launch.getLaunchConfiguration();
-				if(config != null) {
-					encoding = config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-				}
-			}
 			if(encoding == null) {
 				return vmargs;
 			}

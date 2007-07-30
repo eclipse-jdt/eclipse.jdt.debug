@@ -1045,11 +1045,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param target the full name of the target, as per MemberParser syntax
 	 * @return the requested Member
 	 */
-	protected IMember getMember(ICompilationUnit cu, String target)
-	{
+	protected IMember getMember(ICompilationUnit cu, String target) {
 		IMember toReturn = (new MemberParser()).getDeepest(cu,target);
 		return toReturn;
 	}
+	
+	/**
+	 * Delegate method to get a resource with a specific name from the testing workspace 'src' folder
+	 * @param name the name of the <code>IResource</code> to get
+	 * @return the specified <code>IResource</code> or <code>null</code> if it does not exist
+	 * 
+	 * @since 3.4
+	 */
+	protected IResource getResource(String name) {
+		return ResourcesPlugin.getWorkspace().getRoot().findMember(new Path("/DebugTests/src/"+name));
+	}
+	
 	/**
 	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
 	 * 

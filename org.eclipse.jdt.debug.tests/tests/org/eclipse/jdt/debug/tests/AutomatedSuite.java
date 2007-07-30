@@ -67,6 +67,8 @@ import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.launching.AcceleratorSubstitutionTests;
+import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
+import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
@@ -134,6 +136,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RefreshTabTests.class));
 		addTest(new TestSuite(LaunchHistoryTests.class));
 		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
+		addTest(new TestSuite(ConfigurationResourceMappingTests.class));
+		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));
