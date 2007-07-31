@@ -33,17 +33,39 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	public LaunchesTests(String name) {
 		super(name);
 	}
+	
+	
+
+	protected void setUp() throws Exception {
+		added = false;
+		removed = false;
+		terminated = false; 
+		super.setUp();
+	}
+
+
 
 	/**
-	 * Tests deferred breakpoints
+	 * Tests launch notification in debug mode.
 	 * @throws CoreException
 	 */
-	public void testDeferredBreakpoints() throws CoreException {
+	public void testDebugMode() throws CoreException {
+		doMode(ILaunchManager.DEBUG_MODE);
+	}
+	
+	/**
+	 * Tests launch notification in run mode.
+	 * @throws CoreException
+	 */
+	public void testRunMode() throws CoreException {
+		doMode(ILaunchManager.RUN_MODE);
+	}
+	
+	protected void doMode(String mode) throws CoreException {
 		String typeName = "Breakpoints";		 //$NON-NLS-1$
-
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
-		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
+		ILaunch launch = configuration.launch(mode, null);
 		synchronized (this) {
 			if (!added) {
 				try {
@@ -74,7 +96,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 				}
 			}
 		}
-		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$
+		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$		
 	}
 
 	/**
