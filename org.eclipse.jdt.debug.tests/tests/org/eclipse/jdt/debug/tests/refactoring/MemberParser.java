@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -421,11 +422,11 @@ public class MemberParser{
 			}
 			
 		}
-		return "";//entire thing is a number //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;//entire thing is a number //$NON-NLS-1$
 	}
 	
 	/**
-	 * @param head the string to parse for an occurance
+	 * @param head the string to parse for an occurrence
 	 * @return the name in the type, given in the format "Occurance#Type"
 	 * e.g. head = "1Type";
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import java.io.File;
 
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -36,7 +37,7 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
 		
-		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "", "Breakpoints.java");
+		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
 				
@@ -51,7 +52,7 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
 		
-		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "", "Breakpoints.java");
+		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
 				

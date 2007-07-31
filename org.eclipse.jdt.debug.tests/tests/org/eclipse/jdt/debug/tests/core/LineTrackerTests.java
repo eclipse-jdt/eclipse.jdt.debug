@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -92,7 +93,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			for (int i = 0; i < 10; i++) {
 				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
 			}
-			assertEquals("Should be an empty last line", "", fLinesRead.get(10));
+			assertEquals("Should be an empty last line", IInternalDebugUIConstants.EMPTY_STRING, fLinesRead.get(10));
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			terminateAndRemove(fTarget);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -449,7 +450,7 @@ public abstract class Tests extends AbstractDebugTest {
 			String message;
 			DebugException exception= result.getException();
 			if (exception == null) {
-				message= "";
+				message= IInternalDebugUIConstants.EMPTY_STRING;
 				String[] messages= result.getErrorMessages();
 				for (int i= 0, limit= messages.length; i < limit; i++) {
 					message += messages[i] + ", ";

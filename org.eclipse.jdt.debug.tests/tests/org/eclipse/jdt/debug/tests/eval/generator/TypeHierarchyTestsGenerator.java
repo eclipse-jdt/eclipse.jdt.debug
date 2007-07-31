@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.jdt.debug.tests.eval.generator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 
 public class TypeHierarchyTestsGenerator extends TestGenerator {
 
@@ -271,7 +273,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		
 		genCodeEval("\"" + strMethod + "()\"", true, code);
 		genCodeReturnTypeCheck(strMethod, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType(strMethod, "int", "Int", "" + values[level][method], true, code);
+		genCodeReturnValueCheckPrimitiveType(strMethod, "int", "Int", IInternalDebugUIConstants.EMPTY_STRING + values[level][method], true, code);
 
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
@@ -288,7 +290,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		
 		genCodeEval("\"" + strQualifier + "." + strMethod + "()\"", true, code);
 		genCodeReturnTypeCheck(strQualifier + "." + strMethod, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType(strQualifier + "." + strMethod, "int", "Int", "" + values[level[qualifier]][method], true, code);
+		genCodeReturnValueCheckPrimitiveType(strQualifier + "." + strMethod, "int", "Int", IInternalDebugUIConstants.EMPTY_STRING + values[level[qualifier]][method], true, code);
 
 		tryBlockEnd(code);
 		code.append("\t}\n\n");

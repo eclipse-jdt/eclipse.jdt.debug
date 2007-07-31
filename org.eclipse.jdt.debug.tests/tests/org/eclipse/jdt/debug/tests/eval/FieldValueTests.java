@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -31,13 +32,13 @@ public class FieldValueTests extends Tests {
 	public void testByteFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldByte);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldByte);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("byte field value : wrong type : ", "byte", typeName);
 		byte byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte field value : wrong result : ", xFieldByteValue, byteValue);
 
-		value = eval("" + yFieldByte);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("byte field value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
@@ -50,13 +51,13 @@ public class FieldValueTests extends Tests {
 	public void testCharFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldChar);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldChar);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("char field value : wrong type : ", "char", typeName);
 		char charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char field value : wrong result : ", xFieldCharValue, charValue);
 
-		value = eval("" + yFieldChar);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("char field value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
@@ -69,13 +70,13 @@ public class FieldValueTests extends Tests {
 	public void testShortFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldShort);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldShort);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("short field value : wrong type : ", "short", typeName);
 		short shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short field value : wrong result : ", xFieldShortValue, shortValue);
 
-		value = eval("" + yFieldShort);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("short field value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
@@ -88,13 +89,13 @@ public class FieldValueTests extends Tests {
 	public void testIntFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldInt);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldInt);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("int field value : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int field value : wrong result : ", xFieldIntValue, intValue);
 
-		value = eval("" + yFieldInt);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("int field value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
@@ -107,13 +108,13 @@ public class FieldValueTests extends Tests {
 	public void testLongFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldLong);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldLong);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("long field value : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long field value : wrong result : ", xFieldLongValue, longValue);
 
-		value = eval("" + yFieldLong);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldLong);
 		typeName = value.getReferenceTypeName();
 		assertEquals("long field value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
@@ -126,13 +127,13 @@ public class FieldValueTests extends Tests {
 	public void testFloatFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldFloat);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldFloat);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("float field value : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float field value : wrong result : ", xFieldFloatValue, floatValue, 0);
 
-		value = eval("" + yFieldFloat);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldFloat);
 		typeName = value.getReferenceTypeName();
 		assertEquals("float field value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
@@ -145,13 +146,13 @@ public class FieldValueTests extends Tests {
 	public void testDoubleFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldDouble);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldDouble);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("double field value : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double field value : wrong result : ", xFieldDoubleValue, doubleValue, 0);
 
-		value = eval("" + yFieldDouble);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldDouble);
 		typeName = value.getReferenceTypeName();
 		assertEquals("double field value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
@@ -164,13 +165,13 @@ public class FieldValueTests extends Tests {
 	public void testStringFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldString);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldString);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("java.lang.String field value : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String field value : wrong result : ", xFieldStringValue, stringValue);
 
-		value = eval("" + yFieldString);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldString);
 		typeName = value.getReferenceTypeName();
 		assertEquals("java.lang.String field value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
@@ -183,13 +184,13 @@ public class FieldValueTests extends Tests {
 	public void testBooleanFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval("" + xFieldBoolean);
+		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xFieldBoolean);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("boolean field value : wrong type : ", "boolean", typeName);
 		boolean booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean field value : wrong result : ", xFieldBooleanValue, booleanValue);
 
-		value = eval("" + yFieldBoolean);
+		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yFieldBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean field value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.jdt.debug.tests.eval.generator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 
 public class NestedTypeTestGenerator extends TestGenerator {
 
@@ -710,14 +712,14 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		code.append("\tpublic void testEvalNestedTypeTest_" + variable + "() throws Throwable {\n");
 		tryBlockBegin(code);
 		
-		genCodeEval("" + variable + "Int", true, code);
-		genCodeReturnTypeCheck("" + variable, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType("" + variable, "int", "Int", variable + "IntValue_" + level, true, code);
+		genCodeEval(IInternalDebugUIConstants.EMPTY_STRING + variable + "Int", true, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + variable, "int", true, code);
+		genCodeReturnValueCheckPrimitiveType(IInternalDebugUIConstants.EMPTY_STRING + variable, "int", "Int", variable + "IntValue_" + level, true, code);
 		code.append("\n");
 		
-		genCodeEval("" + variable + "String", false, code);
-		genCodeReturnTypeCheck("" + variable, "java.lang.String", false, code);
-		genCodeReturnValueCheckStringType("" + variable, variable + "StringValue_" + level, true, code);
+		genCodeEval(IInternalDebugUIConstants.EMPTY_STRING + variable + "String", false, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + variable, "java.lang.String", false, code);
+		genCodeReturnValueCheckStringType(IInternalDebugUIConstants.EMPTY_STRING + variable, variable + "StringValue_" + level, true, code);
 		
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
@@ -728,13 +730,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		tryBlockBegin(code);
 		
 		genCodeEval("THIS + " + variable + "Int", true, code);
-		genCodeReturnTypeCheck("" + variable, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType("" + variable, "int", "Int", variable + "IntValue_" + level, true, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + variable, "int", true, code);
+		genCodeReturnValueCheckPrimitiveType(IInternalDebugUIConstants.EMPTY_STRING + variable, "int", "Int", variable + "IntValue_" + level, true, code);
 		code.append("\n");
 		
 		genCodeEval("THIS + " + variable + "String", false, code);
-		genCodeReturnTypeCheck("" + variable, "java.lang.String", false, code);
-		genCodeReturnValueCheckStringType("" + variable, variable + "StringValue_" + level, true, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + variable, "java.lang.String", false, code);
+		genCodeReturnValueCheckStringType(IInternalDebugUIConstants.EMPTY_STRING + variable, variable + "StringValue_" + level, true, code);
 		
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
@@ -748,13 +750,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		tryBlockBegin(code);
 		
 		genCodeEval(strQualifier + " + " + variable + "Int", true, code);
-		genCodeReturnTypeCheck("" + strQualifier + "_" + variable, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType("" + strQualifier + "_" + variable, "int", "Int", variable + "IntValue_" + qualifiersLevel[qualifier], true, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + strQualifier + "_" + variable, "int", true, code);
+		genCodeReturnValueCheckPrimitiveType(IInternalDebugUIConstants.EMPTY_STRING + strQualifier + "_" + variable, "int", "Int", variable + "IntValue_" + qualifiersLevel[qualifier], true, code);
 		code.append("\n");
 		
 		genCodeEval(strQualifier + " + " + variable + "String", false, code);
-		genCodeReturnTypeCheck("" + strQualifier + "_" + variable, "java.lang.String", false, code);
-		genCodeReturnValueCheckStringType("" + strQualifier + "_" + variable, variable + "StringValue_" + qualifiersLevel[qualifier], true, code);
+		genCodeReturnTypeCheck(IInternalDebugUIConstants.EMPTY_STRING + strQualifier + "_" + variable, "java.lang.String", false, code);
+		genCodeReturnValueCheckStringType(IInternalDebugUIConstants.EMPTY_STRING + strQualifier + "_" + variable, variable + "StringValue_" + qualifiersLevel[qualifier], true, code);
 		
 		tryBlockEnd(code);
 		code.append("\t}\n\n");

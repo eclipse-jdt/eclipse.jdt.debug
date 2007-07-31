@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
@@ -76,7 +77,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			
 			// end the program
 			list = appendAndGet(fConsole, "three\n", 3);
-			verifyOutput(new String[]{"three", "exitthree", ""}, list);
+			verifyOutput(new String[]{"three", "exitthree", IInternalDebugUIConstants.EMPTY_STRING}, list);
 
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
@@ -122,7 +123,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			}
 			assertEquals("Wrong number of lines", 2, fLinesRead.size());
 			assertEquals("Should be EOF message", "EOF", fLinesRead.get(0));
-			assertEquals("Should be empty line", "", fLinesRead.get(1));
+			assertEquals("Should be empty line", IInternalDebugUIConstants.EMPTY_STRING, fLinesRead.get(1));
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
