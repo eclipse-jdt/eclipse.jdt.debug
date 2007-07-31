@@ -11,31 +11,20 @@
 
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
-import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
-import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
-import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
-import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
 // 
 //then check number of and location of created breakpoint
 /**
  * A set of tests which moves a CompilationUnit and verifies if 
  * various breakpoints associated with that C.U. were moved. 
  */
-public class MoveNonPublicTypeMethodUnitTests extends AbstractRefactoringDebugTest {
+public class MoveNonPublicTypeMethodUnitTests extends MoveRefactoringTest {
 
 	public MoveNonPublicTypeMethodUnitTests(String name) {
 		super(name);
@@ -94,49 +83,4 @@ public class MoveNonPublicTypeMethodUnitTests extends AbstractRefactoringDebugTe
 		}		
 	}
 	
-	///////////////////////////////////////////////////////////////////////////////////
-	/** Sets up a refactoring and executes it.
-	 * @param javaProject
-	 * @param cunit
-	 * @throws JavaModelException
-	 * @throws Exception
-	 */
-	protected void refactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException, Exception {
-		JavaMoveProcessor processor = setupRefactor(javaProject, type);
-		executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);
-	}
-	/** Configures a processor for refactoring
-	 * @param javaProject
-	 * @param type
-	 * @return the configured processor that will be used in refactoring
-	 * @throws JavaModelException
-	 */
-	protected JavaMoveProcessor setupRefactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException {
-		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
-				new IResource[0], 
-				new IJavaElement[] {type});
-		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
-		IJavaElement destination= getPackageFragmentRoot(javaProject, "src").getPackageFragment("a.b").getCompilationUnit("MoveeRecipient.java"); 
-		processor.setDestination(destination);
-		processor.setReorgQueries(new MockReorgQueries());
-		if(processor.canUpdateReferences())
-			processor.setUpdateReferences(true);//assuming is properly set otherwise
-		return processor;
-	}
-	
-	protected void executeRefactoring(Refactoring refactoring, int maxSeverity) throws Exception {
-		PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-		waitForBuild();
-		// Flush the undo manager to not count any already existing undo objects
-		// into the heap consumption
-		//RefactoringCore.getUndoManager().flush();
-
-		ResourcesPlugin.getWorkspace().run(operation, null);
-
-		assertEquals(true, operation.getConditionStatus().getSeverity() <= maxSeverity);
-		assertEquals(true, operation.getValidationStatus().isOK());
-
-		//RefactoringCore.getUndoManager().flush();
-	}
-
 }
