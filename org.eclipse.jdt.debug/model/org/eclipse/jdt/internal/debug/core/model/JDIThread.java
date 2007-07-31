@@ -2608,9 +2608,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
         			((Runnable) runnables[i]).run();
         		} catch (Exception e) {
         			if (failed == null) {
-        				failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Exception processing async thread queue", null);  //$NON-NLS-1$
+        				failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.ERROR, JDIDebugModelMessages.JDIThread_0, null); 
         			}
-        			failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Exception processing async thread queue", e));  //$NON-NLS-1$
+        			failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.ERROR, JDIDebugModelMessages.JDIThread_0, e)); 
         		}
         		i++;
         		monitor.worked(1);

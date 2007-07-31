@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 			if (javaTypes.length > 0) {
 				fReceivingType = (IJavaReferenceType) javaTypes[0];
 			} else {
-				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Unable to retrieve type for java.lang.Object", null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR,	EvaluationEngineMessages.ArrayRuntimeContext_0, null);
 				throw new CoreException(status);
 			}
 		}

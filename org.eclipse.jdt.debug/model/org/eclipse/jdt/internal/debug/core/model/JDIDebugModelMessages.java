@@ -164,6 +164,8 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIThread_44;
 	public static String JDIThread_45;
 	public static String JDIThread_46;
+	public static String JDIThread_0;
+
 	public static String JDIType_exception_while_retrieving_signature;
 	public static String JDIType_exception_while_retrieving_type_name;
 

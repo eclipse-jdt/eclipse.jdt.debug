@@ -404,8 +404,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			fCachedReferences = references;
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_12, e);
 			fCachedReferences = null;
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_12,new String[]{e.toString()}), e);
 		}
 	}
 	

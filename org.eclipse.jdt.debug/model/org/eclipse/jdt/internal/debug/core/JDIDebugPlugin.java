@@ -92,9 +92,16 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES= "javaLogicalStructures"; //$NON-NLS-1$
 
 	/**
-	 * Status code indicating an unexpected internal error.
+	 * Status code indicating an unexpected error.
 	 */
-	public static final int INTERNAL_ERROR = 120;
+	public static final int ERROR = 120;	
+	
+	/**
+	 * Status code indicating an unexpected internal error.  Internal errors 
+	 * should never be displayed to the user in dialogs or status text.
+	 * Internal error messages are not translated.
+	 */
+	public static final int INTERNAL_ERROR = 125;
 	
 	private static JDIDebugPlugin fgPlugin;
 	
