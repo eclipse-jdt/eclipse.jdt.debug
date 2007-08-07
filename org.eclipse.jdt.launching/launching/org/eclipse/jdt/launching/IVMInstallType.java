@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
  * JRE 1.3.
  * <p>
  * This interface is intended to be implemented by clients that contribute
- * to the <code>"org.eclipse.jdt.launching.vmType"</code> extension point.
+ * to the <code>"org.eclipse.jdt.launching.IVMInstallType"</code> extension point.
  * </p>
  * 
  * @see	IVMInstall
