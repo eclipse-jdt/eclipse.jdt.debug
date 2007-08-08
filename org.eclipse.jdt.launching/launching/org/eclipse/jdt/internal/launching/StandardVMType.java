@@ -294,7 +294,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		// Add all endorsed libraries - they are first, as they replace
 		List allLibs = new ArrayList(gatherAllLibraries(libInfo.getEndorsedDirs()));
 		
-		// next is the bootpath libraries
+		// next is the boot path libraries
 		String[] bootpath = libInfo.getBootpath();
 		List boot = new ArrayList(bootpath.length);
 		URL url = getDefaultJavadocLocation(installLocation);
@@ -314,13 +314,19 @@ public class StandardVMType extends AbstractVMInstallType {
 		// Add all extension libraries
 		allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
 		
-		//remove dupes
+		//remove duplicates
 		HashSet set = new HashSet();
 		LibraryLocation lib = null;
 		for(ListIterator liter = allLibs.listIterator(); liter.hasNext();) {
 			lib = (LibraryLocation) liter.next();
-			if(!set.add(lib.getSystemLibraryPath().toOSString())) {
-				//did not add it, dupe
+			IPath systemLibraryPath = lib.getSystemLibraryPath();
+			String device = systemLibraryPath.getDevice();
+			if (device != null) {
+				// @see Bug 197866 - Installed JRE Wizard creates duplicate system libraries when drive letter is lower case
+				systemLibraryPath = systemLibraryPath.setDevice(device.toUpperCase());
+			}
+			if(!set.add(systemLibraryPath.toOSString())) {
+				//did not add it, duplicate
 				liter.remove();
 			}
 		}
