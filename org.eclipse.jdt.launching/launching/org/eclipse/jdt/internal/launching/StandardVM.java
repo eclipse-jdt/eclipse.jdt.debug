@@ -41,6 +41,9 @@ public class StandardVM extends AbstractVMInstall {
         StandardVMType installType = (StandardVMType) getVMInstallType();
         File installLocation = getInstallLocation();
         if (installLocation != null) {
+        	if (EEVMType.isEEInstall(installLocation)) {
+        		return EEVMType.getJavaVersion(installLocation);
+        	}
             File executable = StandardVMType.findJavaExecutable(installLocation);
             if (executable != null) {
                 String vmVersion = installType.getVMVersion(installLocation, executable);

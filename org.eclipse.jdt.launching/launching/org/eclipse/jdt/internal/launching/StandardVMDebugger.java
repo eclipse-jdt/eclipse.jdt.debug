@@ -38,6 +38,7 @@ import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -427,11 +428,16 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @return the VM version
 	 */
 	private double getJavaVersion() {
-		LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
-		if (libInfo == null) {
-		    return 0D;
+		String version = null;
+		if (fVMInstance instanceof IVMInstall2) {
+			version = ((IVMInstall2)fVMInstance).getJavaVersion();
+		} else {
+			LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
+			if (libInfo == null) {
+			    return 0D;
+			}
+			version = libInfo.getVersion();
 		}
-		String version = libInfo.getVersion();
 		int index = version.indexOf("."); //$NON-NLS-1$
 		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
 		try {

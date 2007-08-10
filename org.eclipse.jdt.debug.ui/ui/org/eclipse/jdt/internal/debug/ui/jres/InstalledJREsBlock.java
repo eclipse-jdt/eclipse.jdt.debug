@@ -23,10 +23,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
@@ -719,6 +721,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					//set default java doc location
 					AbstractVMInstallType abs = (AbstractVMInstallType)type;
 					vm.setJavadocLocation(abs.getDefaultJavadocLocation(location));
+					String arguments = abs.getDefaultVMArguments(location);
+					if (arguments != null) {
+						if (vm instanceof IVMInstall2) {
+							IVMInstall2 vm2 = (IVMInstall2) vm;
+							vm2.setVMArgs(arguments);
+						} else {
+							String[] args2 = DebugPlugin.parseArguments(arguments);
+							vm.setVMArguments(args2);
+						}
+					}
 				}
 				vmAdded(vm);
 			}

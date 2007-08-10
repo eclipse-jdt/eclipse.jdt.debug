@@ -1658,7 +1658,11 @@ public final class JavaRuntime {
 				if (vmType instanceof AbstractVMInstallType) {
 				    AbstractVMInstallType abs = (AbstractVMInstallType)vmType;
 				    URL url = abs.getDefaultJavadocLocation(detectedLocation);
-				    detectedVMStandin.setJavadocLocation(url);						
+				    detectedVMStandin.setJavadocLocation(url);	
+				    String arguments = abs.getDefaultVMArguments(detectedLocation);
+					if (arguments != null) {
+						detectedVMStandin.setVMArgs(arguments);
+					}
 				}
 			}				
 		}

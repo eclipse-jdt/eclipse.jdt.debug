@@ -28,6 +28,7 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.StatusInfo;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -50,6 +51,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -74,10 +76,11 @@ public class AddVMDialog extends StatusDialog {
 	private Text fVMName;
 	private Text fVMArgs;
 	private Text fJRERoot;
+	private Button fFileButton;
 	private VMLibraryBlock fLibraryBlock;
 // the VM install's javadoc location
 	private URL fJavadocLocation = null;
-	private boolean fAutoDetectJavadocLocation = false;
+	private boolean fAutoDetectAttributes = false;
 	private IStatus[] fStatus;
 	private int fPrevIndex = -1;
 		
@@ -112,7 +115,7 @@ public class AddVMDialog extends StatusDialog {
 		fSelectedVMType = editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[typeIndex];
 		fEditedVM = editedVM;
 	//only detect the javadoc location if not already set
-		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
+		fAutoDetectAttributes = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
 	}
 
 	/**
@@ -182,17 +185,23 @@ public class AddVMDialog extends StatusDialog {
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		((GridLayout)parent.getLayout()).numColumns = 3;
-	//VM combo
+	//VM type
 		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreType, 1);
 		fVMCombo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 2, getVMTypeNames());
+	// VM location
+		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreHome, 1);
+		fJRERoot = SWTFactory.createSingleText(parent, 2);
+		Composite buttons = SWTFactory.createComposite(parent, parent.getFont(), 2, 4, GridData.HORIZONTAL_ALIGN_END, 0, 0);
+		Button folders = SWTFactory.createPushButton(buttons, JREMessages.AddVMDialog_22, null);
+		GridData data = (GridData) folders.getLayoutData();
+		data.horizontalAlignment = GridData.END;
+		fFileButton = SWTFactory.createPushButton(buttons, JREMessages.AddVMDialog_21, null);
+		data = (GridData) fFileButton.getLayoutData();
+		data.horizontalAlignment = GridData.END;
 	//VM name
 		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreName, 1);
 		fVMName = SWTFactory.createSingleText(parent, 2);
-	//VM root
-		SWTFactory.createLabel(parent, JREMessages.addVMDialog_jreHome, 1);
-		fJRERoot = SWTFactory.createSingleText(parent, 1);
-		Button browse = SWTFactory.createPushButton(parent, JREMessages.addVMDialog_browse1, null);
-	//VM args
+	//VM arguments
 		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_23, 1);
 		fVMArgs = SWTFactory.createSingleText(parent, 2);
 	//VM libraries block 
@@ -203,7 +212,7 @@ public class AddVMDialog extends StatusDialog {
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
 	
-	//init the fields
+	//initialize the fields
 		initializeFields();
 		
 	//add the listeners now to prevent them from monkeying with initialized settings
@@ -225,11 +234,16 @@ public class AddVMDialog extends StatusDialog {
 				updateStatusLine();
 			}
 		});
-		browse.addSelectionListener(new SelectionListener() {
+		folders.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setFilterPath(fJRERoot.getText());
+				File file = new File(fJRERoot.getText());
+				String text = fJRERoot.getText();
+				if (file.isFile()) {
+					text = file.getParentFile().getAbsolutePath();
+				}
+				dialog.setFilterPath(text);
 				dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); 
 				String newPath = dialog.open();
 				if (newPath != null) {
@@ -237,12 +251,24 @@ public class AddVMDialog extends StatusDialog {
 				}
 			}
 		});
+		fFileButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(getShell());
+				dialog.setFilterExtensions(new String[]{"*.ee"}); //$NON-NLS-1$
+				dialog.setFilterPath(fJRERoot.getText());
+				String newPath = dialog.open();
+				if (newPath != null) {
+					fJRERoot.setText(newPath);
+				}
+			}
+		});		
 		applyDialogFont(parent);
 		return parent;
 	}
 	
 	/**
-	 * Updates the JRE location status and inits the library block
+	 * Updates the JRE location status and initializes the library block
 	 */
 	private void updateVMType() {
 		int selIndex = fVMCombo.getSelectionIndex();
@@ -255,15 +281,27 @@ public class AddVMDialog extends StatusDialog {
 		}
 		validateJRELocation();
 		fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
+		updateFileButton();
 		updateStatusLine();
 	}	
+	
+	/**
+	 * Updates enabled state of the "Definition File..." button.
+	 */
+	private void updateFileButton() {
+		fFileButton.setEnabled(fSelectedVMType.getId().equals(StandardVMType.ID_STANDARD_VM_TYPE));
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.StatusDialog#create()
 	 */
 	public void create() {
 		super.create();
-		fVMName.setFocus();
+		if (fJRERoot.getText().length() == 0) {
+			fJRERoot.setFocus();
+		} else {
+			fVMName.setFocus();
+		}
 		selectVMType();  
 	}
 	
@@ -328,6 +366,7 @@ public class AddVMDialog extends StatusDialog {
 				}				
 			}
 		}
+		updateFileButton();
 		validateVMName();
 		updateStatusLine();
 	}
@@ -365,26 +404,35 @@ public class AddVMDialog extends StatusDialog {
 			String name = fVMName.getText();
 			if (name == null || name.trim().length() == 0) {
 				// auto-generate VM name
-				try {
-					String genName = null;
-					IPath path = new Path(file.getCanonicalPath());
-					int segs = path.segmentCount();
-					if (segs == 1) {
-						genName = path.segment(0);
-					} 
-					else if (segs >= 2) {
-						String last = path.lastSegment();
-						if ("jre".equalsIgnoreCase(last)) { //$NON-NLS-1$
-							genName = path.segment(segs - 2);
+				if (file.isFile()) {
+					String fileName = file.getName();
+					int index = fileName.lastIndexOf(".ee"); //$NON-NLS-1$
+					if (index > 0) {
+						fileName = fileName.substring(0, index);
+					}
+					fVMName.setText(fileName);
+				} else {
+					try {
+						String genName = null;
+						IPath path = new Path(file.getCanonicalPath());
+						int segs = path.segmentCount();
+						if (segs == 1) {
+							genName = path.segment(0);
 						} 
-						else {
-							genName = last;
+						else if (segs >= 2) {
+							String last = path.lastSegment();
+							if ("jre".equalsIgnoreCase(last)) { //$NON-NLS-1$
+								genName = path.segment(segs - 2);
+							} 
+							else {
+								genName = last;
+							}
 						}
-					}
-					if (genName != null) {
-						fVMName.setText(genName);
-					}
-				} catch (IOException e) {}
+						if (genName != null) {
+							fVMName.setText(genName);
+						}
+					} catch (IOException e) {}
+				}
 			}
 		} else {
 			fLibraryBlock.setHomeDirectory(null);
@@ -399,10 +447,14 @@ public class AddVMDialog extends StatusDialog {
 	 * Auto-detects the default javadoc location
 	 */
 	private void detectJavadocLocation() {
-		if (fAutoDetectJavadocLocation) {
+		if (fAutoDetectAttributes) {
 			if (fSelectedVMType instanceof AbstractVMInstallType) {
 				AbstractVMInstallType type = (AbstractVMInstallType)fSelectedVMType;
 				fJavadocLocation = type.getDefaultJavadocLocation(getInstallLocation());
+				String args = type.getDefaultVMArguments(getInstallLocation());
+				if (args != null) {
+					fVMArgs.setText(args);
+				}
 			}
 		} else {
 			fJavadocLocation = fEditedVM.getJavadocLocation();
@@ -486,8 +538,8 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	/**
-	 * init fields to the specified VM
-	 * @param vm the VM to init from
+	 * initialize fields to the specified VM
+	 * @param vm the VM to initialize from
 	 */
 	protected void setFieldValuesToVM(IVMInstall vm) {
 		File dir = new File(fJRERoot.getText());
@@ -549,7 +601,7 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	/**
-	 * Updates the status of the ok button to reflect the given status.
+	 * Updates the status of the OK button to reflect the given status.
 	 * Subclasses may override this method to update additional buttons.
 	 * @param status the status.
 	 */

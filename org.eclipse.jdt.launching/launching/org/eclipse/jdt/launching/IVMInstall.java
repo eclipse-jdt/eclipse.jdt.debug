@@ -68,17 +68,28 @@ public interface IVMInstall {
 	void setName(String name);
 	/**
 	 * Returns the root directory of the install location of this VM.
-	 * 
+	 * <p>
+	 * Since 3.4, this may also be a file describing a VM install.
+	 * For example, the standard VM installs support execution
+	 * environment description files, as described by
+	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * </p>
 	 * @return the root directory of this VM installation. May
 	 * 			return <code>null</code>.
 	 */
 	File getInstallLocation();
 	/**
 	 * Sets the root directory of the install location of this VM.
-	 * 
-	 * @param installLocation the root directory of this VM installation
+	 * <p>
+	 * Since 3.4, this may also be a file describing a VM install.
+	 * For example, the standard VM installs support execution
+	 * environment description files, as described by
+	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * </p>
+	 * @param installLocationOrDefinitionFile the root directory or definition file for
+	 * 	this VM installation
 	 */
-	void setInstallLocation(File installLocation);
+	void setInstallLocation(File installLocationOrDefinitionFile);
 		
 	/**
 	 * Returns the VM type of this VM.

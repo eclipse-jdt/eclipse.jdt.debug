@@ -21,6 +21,10 @@ public class JREMessages extends NLS {
 	public static String AbstractJavaCommandTab_4;
 	public static String AbstractJavaCommandTab_Java_executable_must_be_specified_5;
 
+	public static String AddVMDialog_21;
+
+	public static String AddVMDialog_22;
+
 	public static String BuildJREDescriptor_0;
 
 	public static String InstalledJREsBlock_0;

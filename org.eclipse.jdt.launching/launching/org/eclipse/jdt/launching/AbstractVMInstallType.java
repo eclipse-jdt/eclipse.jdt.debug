@@ -13,13 +13,14 @@ package org.eclipse.jdt.launching;
 
 import java.io.File;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract implementation of a VM install type.
@@ -156,17 +157,42 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * implementation returns <code>null</code>, subclasses must override as
 	 * appropriate.
 	 * <p>
+	 * Since 3.4, the argument may also be a file describing a VM install.
+	 * For example, the standard VM installs support execution
+	 * environment description files, as described by
+	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * </p>
+	 * <p>
 	 * Note, this method would ideally be added to <code>IVMInstallType</code>,
 	 * but it would have been a breaking API change between 2.0 and 2.1. Thus,
 	 * it has been added to the abstract base class that VM install types should
 	 * subclass.
 	 * </p>
 	 * 
-	 * @param installLocation home location
+	 * @param installLocationOrDefinitionFile home location or since 3.4, a definition file
 	 * @return default javadoc location or <code>null</code>
 	 * @since 2.1
 	 */
-	public URL getDefaultJavadocLocation(File installLocation) {
+	public URL getDefaultJavadocLocation(File installLocationOrDefinitionFile) {
 		return null;		
+	}
+	
+	/**
+	 * Returns a string of default VM arguments for a VM installed at the
+	 * given home location or definition file, or <code>null</code> if none.
+	 * The default implementation returns <code>null</code>, subclasses must override
+	 * as appropriate.
+	 * <p>
+	 * Note, this method would ideally be added to <code>IVMInstallType</code>,
+	 * but it would have been a breaking API change between 2.0 and 3.4. Thus,
+	 * it has been added to the abstract base class that VM install types should
+	 * subclass.
+	 * </p>
+	 * @param installLocationOrDefinitionFile home location or definition file
+	 * @return default VM arguments or <code>null</code> if none
+	 * @since 3.4
+	 */
+	public String getDefaultVMArguments(File installLocationOrDefinitionFile) {
+		return null;
 	}
 }

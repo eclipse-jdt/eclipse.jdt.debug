@@ -79,6 +79,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * <code>null</code>.
 	 */
 	public static File findJavaExecutable(File vmInstallLocation) {
+		if (EEVMType.isEEInstall(vmInstallLocation)) {
+			return EEVMType.getExecutable(vmInstallLocation);
+		}
 		// Try each candidate in order.  The first one found wins.  Thus, the order
 		// of fgCandidateJavaLocations and fgCandidateJavaFiles is significant.
 		for (int i = 0; i < fgCandidateJavaFiles.length; i++) {
@@ -108,12 +111,12 @@ public class StandardVMType extends AbstractVMInstallType {
 	
 	/**
 	 * Return library information corresponding to the specified install
-	 * location. If the info does not exist, create it using the given Java
+	 * location. If the information does not exist, create it using the given Java
 	 * executable.
 	 */
 	protected synchronized LibraryInfo getLibraryInfo(File javaHome, File javaExecutable) {
 		
-		// See if we already know the info for the requested VM.  If not, generate it.
+		// See if we already know the information for the requested VM.  If not, generate it.
 		String installPath = javaHome.getAbsolutePath();
 		LibraryInfo info = LaunchingPlugin.getLibraryInfo(installPath);
 		if (info == null) {
@@ -124,7 +127,7 @@ public class StandardVMType extends AbstractVMInstallType {
 					info = getDefaultLibraryInfo(javaHome);
 					fgFailedInstallPath.put(installPath, info);
 				} else {
-				    // only persist if we were able to generate info - see bug 70011
+				    // only persist if we were able to generate information - see bug 70011
 				    LaunchingPlugin.setLibraryInfo(installPath, info);
 				}
 			}
@@ -279,9 +282,12 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
+		if (EEVMType.isEEInstall(installLocation)) {
+			return EEVMType.getDefaultLibraryLocations(installLocation);
+		}
 
 		// Determine the java executable that corresponds to the specified install location
-		// and use this to generate library info.  If no java executable was found, 
+		// and use this to generate library information.  If no java executable was found, 
 		// the 'standard' libraries will be returned.
 		File javaExecutable = findJavaExecutable(installLocation);
 		LibraryInfo libInfo;
@@ -334,7 +340,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 	
 	/**
-	 * Returns default library info for the given install location.
+	 * Returns default library information for the given install location.
 	 * 
 	 * @param installLocation
 	 * @return LibraryInfo
@@ -359,12 +365,12 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 	
 	/**
-	 * Returns a list of all zips and jars contained in the given directories.
+	 * Returns a list of all zip's and jars contained in the given directories.
 	 * 
 	 * @param dirPaths a list of absolute paths of directories to search
-	 * @return List of all zips and jars
+	 * @return List of all zip's and jars
 	 */
-	protected List gatherAllLibraries(String[] dirPaths) {
+	protected static List gatherAllLibraries(String[] dirPaths) {
 		List libraries = new ArrayList();
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
@@ -440,6 +446,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
+		if (EEVMType.isEEInstall(javaHome)) {
+			return EEVMType.validateInstallLocation(javaHome);
+		}
 		IStatus status = null;
 		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
 			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Standard_VM_not_supported_on_MacOS__1, null); 
@@ -518,7 +527,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 		}
 		if (info == null) {
-		    // log error that we were unable to generate library info - see bug 70011
+		    // log error that we were unable to generate library information - see bug 70011
 		    LaunchingPlugin.log(MessageFormat.format("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
 		}
 		return info;
@@ -593,28 +602,51 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {
-		File javaExecutable = findJavaExecutable(installLocation);
-		if (javaExecutable != null) {
-			LibraryInfo libInfo = getLibraryInfo(installLocation, javaExecutable);
-			if (libInfo != null) {
-				String version = libInfo.getVersion();
-				if (version != null) {
-					try {
-						if (version.startsWith("1.6")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$
-						} else if (version.startsWith("1.5")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.5.0/docs/api/"); //$NON-NLS-1$
-						} else if (version.startsWith("1.4")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.4.2/docs/api/"); //$NON-NLS-1$
-						} else if (version.startsWith("1.3")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.3/docs/api/"); //$NON-NLS-1$
-						} else if (version.startsWith("1.2")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
-						}
-					} catch (MalformedURLException e) {
-					}
+		if (EEVMType.isEEInstall(installLocation)) {
+			return EEVMType.getDefaultJavadocLocation(installLocation);
+		} else {
+			File javaExecutable = findJavaExecutable(installLocation);
+			if (javaExecutable != null) {
+				LibraryInfo libInfo = getLibraryInfo(installLocation, javaExecutable);
+				if (libInfo != null) {
+					String version = libInfo.getVersion();
+					return getDefaultJavadocLocation(version);
 				}
 			}
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultVMArguments(java.io.File)
+	 */
+	public String getDefaultVMArguments(File installLocation) {
+		if (EEVMType.isEEInstall(installLocation)) {
+			return EEVMType.getDefaultVMArguments(installLocation);
+		}
+		return super.getDefaultVMArguments(installLocation);
+	}
+
+	/**
+	 * Returns a default Javadoc location for a language version, or <code>null</code>.
+	 * 
+	 * @param version language version such as "1.4"
+	 * @return URL to default Javadoc location, or <code>null</code>
+	 */
+	protected static URL getDefaultJavadocLocation(String version) {
+		try {
+			if (version.startsWith("1.6")) { //$NON-NLS-1$
+				return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith("1.5")) { //$NON-NLS-1$
+				return new URL("http://java.sun.com/j2se/1.5.0/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith("1.4")) { //$NON-NLS-1$
+				return new URL("http://java.sun.com/j2se/1.4.2/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith("1.3")) { //$NON-NLS-1$
+				return new URL("http://java.sun.com/j2se/1.3/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith("1.2")) { //$NON-NLS-1$
+				return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
+			}
+		} catch (MalformedURLException e) {
 		}
 		return null;
 	}

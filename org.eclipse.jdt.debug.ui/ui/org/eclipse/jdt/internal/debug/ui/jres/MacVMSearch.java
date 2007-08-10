@@ -69,8 +69,13 @@ public class MacVMSearch {
 							vm.setName(MessageFormat.format(format, new Object[] { version } ));
 							vm.setLibraryLocations(macVMType.getDefaultLibraryLocations(home));
 							URL doc= ((AbstractVMInstallType)macVMType).getDefaultJavadocLocation(home);
-							if (doc != null)
-								vm.setJavadocLocation(doc);	
+							if (doc != null) {
+								vm.setJavadocLocation(doc);
+							}
+							String arguments = ((AbstractVMInstallType)macVMType).getDefaultVMArguments(home);
+							if (arguments != null) {
+								vm.setVMArgs(arguments);
+							}
 							vms.add(vm);
 						}
 					}

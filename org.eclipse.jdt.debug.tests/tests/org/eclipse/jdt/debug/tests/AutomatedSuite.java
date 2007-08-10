@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.core.ConsoleInputTests;
 import org.eclipse.jdt.debug.tests.core.ConsoleTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
+import org.eclipse.jdt.debug.tests.core.EEDefinitionTests;
 import org.eclipse.jdt.debug.tests.core.EnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExecutionEnvironmentTests;
@@ -191,6 +192,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
 		addTest(new TestSuite(ClasspathProviderTests.class));
 		addTest(new TestSuite(BootpathTests.class));
+		addTest(new TestSuite(EEDefinitionTests.class));
 		
 	//VM Install/Environment tests
 		addTest(new TestSuite(VMInstallTests.class));

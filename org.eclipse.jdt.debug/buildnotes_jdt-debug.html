@@ -11,7 +11,40 @@
 <h1>Eclipse 3.4 Java Debug Build Notes</h1>
 
 <h2>Summary of API changes in 3.4</h2>
-
+<h3>Support for Execution Environment Descriptions</h3>
+<p>An installed JRE can be defined by an <a href="http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions">execution 
+  environment description file</a>. The API for <code>IVMInstallType</code> and 
+  <code>IVMInstall</code> have been augmented to allow for a file to be specified 
+  for an install location in addition to a home directory. The 'Standard VM Install 
+  Type' shipped with the Eclipse SDK supports standard &quot;.ee&quot; files.</p>
+<p>This change effects the following methods in <code>IVMInstallType</code>, which 
+  now accept the location of a description file as well as a home directory.</p>
+<ul>
+  <li><code>public IStatus validateInstallLocation(File installLocation)</code></li>
+  <li><code>public LibraryLocation[] getDefaultLibraryLocations(File installLocation)</code></li>
+</ul>
+<p>This change effects the following methods in <code>IVMInstall</code>, which 
+  can now accept/return a file as well as home directory.</p>
+<ul>
+  <li><code>public File getInstallLocation()</code></li>
+  <li><code>public void setInstallLocation(File installLocation)</code></li>
+</ul>
+<p>A new method has been added to <code>AbstractVMInstallType</code> to allow 
+  default arguments to be provided for newly created VM installs. Ideally, this 
+  method would be added to <code>IVMInstallType</code>, but to support binary 
+  compatibility, the method has only been added to <code>AbstractVMInstallType</code>. 
+  Existing subclasses may override as required. The method is consulted to initialize 
+  VM arguments when a new Installed JRE is created by the user. This new method 
+  accepts a home directory or definition file as an argument.</p>
+<ul>
+  <li><code>public String getDefaultVMArguments(File installLocation)</code></li>
+</ul>
+<p>As well, the specification of the following method in <code>AbstractVMInstallType</code> 
+  has been changed to allow a file to be supplied as an argument.</p>
+<ul>
+  <li><code>public URL getDefaultJavadocLocation(File installLocation)</code></li>
+</ul>
+<p>&nbsp;</p>
 <h2>3.4 M1 - August 10, 2007</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=94134">Bug 94134</a>: API spec reference to org.eclipse.jdt.launching.vmType extension point<br>

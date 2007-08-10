@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstall3;
@@ -70,34 +71,41 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		if (!(vm instanceof IVMInstall2))
 			return new CompatibleEnvironment[0];
 		IVMInstall2 vm2 = (IVMInstall2) vm;
-		
 		List types = null;
-		String javaVersion = vm2.getJavaVersion();
-		if (javaVersion == null) {
-			// We have a contributed VM type. Check to see if its a foundation VM, if we can.
-			if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
-				types = getTypes(CDC_FOUNDATION_1_0);
-			else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
-				types = getTypes(CDC_FOUNDATION_1_1);
-		} else {
-			if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
-				types = getTypes(JavaSE_1_6);
-			else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
-				types = getTypes(J2SE_1_5);
-			else if (javaVersion.startsWith("1.4")) //$NON-NLS-1$
-				types = getTypes(J2SE_1_4);
-			else if (javaVersion.startsWith("1.3")) //$NON-NLS-1$
-				types = getTypes(J2SE_1_3);
-			else if (javaVersion.startsWith("1.2")) //$NON-NLS-1$
-				types = getTypes(J2SE_1_2);
-			else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
-				if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm))
-					types = getTypes(CDC_FOUNDATION_1_1);
-				else
-					types = getTypes(JRE_1_1);
-			} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
+		if (EEVMType.isEEInstall(vm.getInstallLocation())) {
+			String eeId = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, vm.getInstallLocation());
+			if (eeId != null) {
+				types = getTypes(eeId);
+			}
+		}
+		if (types == null) {
+			String javaVersion = vm2.getJavaVersion();
+			if (javaVersion == null) {
+				// We have a contributed VM type. Check to see if its a foundation VM, if we can.
 				if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
 					types = getTypes(CDC_FOUNDATION_1_0);
+				else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
+					types = getTypes(CDC_FOUNDATION_1_1);
+			} else {
+				if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+					types = getTypes(JavaSE_1_6);
+				else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
+					types = getTypes(J2SE_1_5);
+				else if (javaVersion.startsWith("1.4")) //$NON-NLS-1$
+					types = getTypes(J2SE_1_4);
+				else if (javaVersion.startsWith("1.3")) //$NON-NLS-1$
+					types = getTypes(J2SE_1_3);
+				else if (javaVersion.startsWith("1.2")) //$NON-NLS-1$
+					types = getTypes(J2SE_1_2);
+				else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
+					if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm))
+						types = getTypes(CDC_FOUNDATION_1_1);
+					else
+						types = getTypes(JRE_1_1);
+				} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
+					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
+						types = getTypes(CDC_FOUNDATION_1_0);
+				}
 			}
 		}
 
