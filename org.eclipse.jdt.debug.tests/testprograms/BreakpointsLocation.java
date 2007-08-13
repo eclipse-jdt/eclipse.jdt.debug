@@ -72,5 +72,13 @@ public class BreakpointsLocation {
 			12
 			;
 	}
+	
+	public static void testMethodWithInnerClass(Object type){
+		class StaticInnerClass{
+			protected StaticInnerClass(Object t){
+				System.out.println("test");
+			}
+		}
+	}
 
 }

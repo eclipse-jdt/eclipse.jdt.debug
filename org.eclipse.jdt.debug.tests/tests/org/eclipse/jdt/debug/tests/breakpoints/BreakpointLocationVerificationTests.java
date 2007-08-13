@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,19 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws JavaModelException
 	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
-		IType type= getJavaProject().findType(expectedTypeName);
+		testLocation(lineToTry, expectedLineNumber, expectedTypeName, expectedTypeName);
+	}
+	
+	/**
+	 * Tests that the predefined location is locatable in the specified type
+	 * @param lineToTry
+	 * @param expectedLineNumber
+	 * @param baseTypeName
+	 * @param expectedTypeName
+	 * @throws JavaModelException
+	 */
+	private void testLocation(int lineToTry, int expectedLineNumber, String baseTypeName, String expectedTypeName) throws JavaModelException {
+		IType type= getJavaProject().findType(baseTypeName);
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, false);
@@ -114,7 +126,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 */
 	public void testLineAfterAllCode() throws Exception {
 		// ********* this test need to be updated every time BreakpointsLocation.java is modified *************
-		testLocation(74, -1, "BreakpointsLocation");
+		testLocation(82, -1, "BreakpointsLocation");
 		// ******************************
 	}
 	
@@ -204,6 +216,14 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 */
 	public void testLineLitteral2() throws Exception {
 		testLocation(55, 55, "BreakpointsLocation");
+	}
+	
+	/**
+	 * Tests a specific breakpoint location
+	 * @throws Exception
+	 */
+	public void testInnerStaticClass() throws Exception {
+		testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.StaticInnerClass");
 	}
 
 	/**
