@@ -203,8 +203,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				} else {
 					typeName= identifier + "$" + typeName; //$NON-NLS-1$
 				}
-			} else {
-				typeName= null;
 			}
 			node= node.getParent();
 		}
