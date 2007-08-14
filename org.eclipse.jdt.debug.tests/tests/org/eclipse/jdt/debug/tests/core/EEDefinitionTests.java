@@ -69,7 +69,17 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
-			assertEquals("Wrong library", expected[i], libs[i].getSystemLibraryPath().lastSegment());
+			if (i == 3) {
+				// ext1 and ext2 can be in either order due to file system ordering
+				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
+						expected[i].equals(libs[i+1].getSystemLibraryPath().lastSegment()));
+			} else if (i == 4) {
+				// ext1 and ext2 can be in either order due to file system ordering
+				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
+						expected[i].equals(libs[i-1].getSystemLibraryPath().lastSegment()));
+			} else {
+				assertEquals("Wrong library", expected[i], libs[i].getSystemLibraryPath().lastSegment());
+			}
 			if ("classes.txt".equals(expected[i])) {
 				assertEquals("source.txt", libs[i].getSystemLibrarySourcePath().lastSegment());
 			}
