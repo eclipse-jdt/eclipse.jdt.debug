@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.StandardVMType;
@@ -31,7 +32,14 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
  */
 public class EEDefinitionTests extends AbstractDebugTest {
 	
-	public IPath TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11.ee"); 
+	public static IPath TEST_EE_FILE = null;
+	{
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11-win32.ee"); 
+		} else {
+			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11.ee");
+		}
+	}
 		
 	public EEDefinitionTests(String name) {
 		super(name);

@@ -14,10 +14,10 @@
 -Dee.executable=jrew.txt
 -Dee.executable.console=jre.txt
 
--Dee.bootclasspath= ../lib/classes.txt:../lib/others.txt
--Dee.src=../source.txt
--Dee.ext.dirs=../lib/ext:../lib/opt-ext
--Dee.endorsed.dirs=../lib/endorsed
+-Dee.bootclasspath= ..\lib\classes.txt;..\lib\others.txt
+-Dee.src=..\source.txt
+-Dee.ext.dirs=..\lib\ext;..\lib\opt-ext
+-Dee.endorsed.dirs=..\lib\endorsed
 
 -Dee.language.level=1.4
 -Dee.class.library.level=CDC-1.1/Foundation-1.1
