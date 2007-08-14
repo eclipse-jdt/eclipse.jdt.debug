@@ -44,6 +44,17 @@
 <ul>
   <li><code>public URL getDefaultJavadocLocation(File installLocation)</code></li>
 </ul>
+<h3>Support for setting a range of values in array objects</h3>
+<p>API has been added to <code>IJavaArray</code> to support setting ranges of 
+  values in the arrays. It is more efficient to set a range of values at once 
+  than setting each value in an array individually as it uses fewer communications 
+  with the virtual machine being debugger. The following methods have been added 
+  to <code>IJavaArray</code>.</p>
+<ul>
+  <li><code>public void setValues(IJavaValue[] values)</code></li>
+  <li><code>public void setValues(int offset, int length, IJavaValue[] values, 
+    int startOffset)</code></li>
+</ul>
 <p>&nbsp;</p>
 <h2>3.4 M1 - August 10, 2007</h2>
 <h3>Problem Reports Fixed</h3>

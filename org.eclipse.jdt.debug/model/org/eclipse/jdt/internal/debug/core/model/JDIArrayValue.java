@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
  
-import com.ibm.icu.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +21,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
@@ -201,6 +202,36 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	 */
 	public boolean hasVariables() throws DebugException {
 		return getLength() > 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValues(int, int, org.eclipse.jdt.debug.core.IJavaValue[], int)
+	 */
+	public void setValues(int offset, int length, IJavaValue[] values, int startOffset) throws DebugException {
+		try {
+			List list = new ArrayList(values.length);
+			for (int i = 0; i < values.length; i++) {
+				list.add(((JDIValue)values[i]).getUnderlyingValue());
+			}
+			getArrayReference().setValues(offset, list, startOffset, length);
+		} catch (IndexOutOfBoundsException e) {
+			throw e;
+		} catch (InvalidTypeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
+		} catch (ClassNotLoadedException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayValue_exception_while_setting_value_in_array, new String[] {e.toString()}), e); 
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValues(org.eclipse.jdt.debug.core.IJavaValue[])
+	 */
+	public void setValues(IJavaValue[] values) throws DebugException {
+		int length = Math.min(values.length, getSize());
+		setValues(0, length, values, 0);
 	}
 
 }
