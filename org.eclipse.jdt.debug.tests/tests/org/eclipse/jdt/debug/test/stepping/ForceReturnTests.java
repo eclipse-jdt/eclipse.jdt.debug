@@ -62,12 +62,12 @@ public class ForceReturnTests extends AbstractDebugTest {
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
-				if (stackFrame.getLineNumber() == 21) {
+				if (stackFrame.getLineNumber() < 22) {
 					// @see bug 197282. Some VMs optimize the variable assignment and may
 					// already have performed the assignment
 					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 				}
-				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 				IJavaVariable var = stackFrame.findVariable("x");
 				assertNotNull("Missing variable 'x'", var);
 				assertEquals("Return value incorrect", target.newValue(42), var.getValue());
@@ -102,8 +102,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
-				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				if (stackFrame.getLineNumber() < 23) {
+					// @see bug 197282. Some VMs optimize the variable assignment and may
+					// already have performed the assignment
+					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				}
 				IJavaVariable var = stackFrame.findVariable("x");
 				assertNotNull("Missing variable 'x'", var);
 				assertEquals("Return value incorrect", retValue, var.getValue());
@@ -137,8 +142,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
-				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				if (stackFrame.getLineNumber() < 24) {
+					// @see bug 197282. Some VMs optimize the variable assignment and may
+					// already have performed the assignment
+					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				}
 				IJavaVariable var = stackFrame.findVariable("s");
 				assertNotNull("Missing variable 's'", var);
 				assertEquals("Return value incorrect", stringValue, var.getValue());
@@ -173,8 +183,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
-				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				if (stackFrame.getLineNumber() < 25) {
+					// @see bug 197282. Some VMs optimize the variable assignment and may
+					// already have performed the assignment
+					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				}
 				IJavaVariable var = stackFrame.findVariable("s");
 				assertNotNull("Missing variable 's'", var);
 				assertEquals("Return value incorrect", stringValue, var.getValue());
@@ -208,8 +223,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
-				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				if (stackFrame.getLineNumber() < 26) {
+					// @see bug 197282. Some VMs optimize the variable assignment and may
+					// already have performed the assignment
+					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				}
 				IJavaVariable var = stackFrame.findVariable("v");
 				assertNotNull("Missing variable 'v'", var);
 				assertEquals("Return value incorrect", objectValue, var.getValue());
@@ -244,8 +264,13 @@ public class ForceReturnTests extends AbstractDebugTest {
 				Object source = waiter.waitForEvent();
 				assertTrue("Suspend should be from thread", source instanceof IJavaThread);
 				thread = (IJavaThread) source;
-				thread = resumeToLineBreakpoint(thread, bp2);
 				stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				if (stackFrame.getLineNumber() < 27) {
+					// @see bug 197282. Some VMs optimize the variable assignment and may
+					// already have performed the assignment
+					thread = resumeToLineBreakpoint(thread, bp2);
+					stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+				}
 				IJavaVariable var = stackFrame.findVariable("v");
 				assertNotNull("Missing variable 'v'", var);
 				assertEquals("Return value incorrect", objectValue, var.getValue());
