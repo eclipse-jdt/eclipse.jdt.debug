@@ -408,4 +408,24 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @since 3.4
 	 */
 	public boolean supportsSelectiveGarbageCollection();
+	
+	/**
+	 * Returns the name of the underlying virtual machine as defined by the system
+	 * property <code>java.vm.name</code>.
+	 * 
+	 * @return virtual machine name
+	 * @exception DebugException if retrieving the name fails
+	 * @since 3.4
+	 */
+	public String getVMName() throws DebugException;
+	
+	/**
+	 * Returns the version of the underlying virtual machine as defined by the system
+	 * property <code>java.version</code>.
+	 * 
+	 * @return <code>java.version</code> system property
+	 * @exception DebugException if retrieving the version property fails
+	 * @since 3.4
+	 */
+	public String getVersion() throws DebugException;	
 }

@@ -41,17 +41,19 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIClassType_Type_is_not_a_class_type;
 
 	public static String JDIDebugElement_unknown;
+
+	public static String JDIDebugTarget_2;
+
+	public static String JDIDebugTarget_4;
 	public static String JDIDebugTarget_does_not_support_disconnect;
 	public static String JDIDebugTarget_does_not_support_storage_retrieval;
 	public static String JDIDebugTarget_does_not_support_termination;
 	public static String JDIDebugTarget_exception_disconnecting;
 	public static String JDIDebugTarget_exception_resume;
-	public static String JDIDebugTarget_exception_retrieving_name;
 	public static String JDIDebugTarget_exception_retrieving_version_information;
 	public static String JDIDebugTarget_exception_suspend;
 	public static String JDIDebugTarget_exception_terminating;
 	public static String JDIDebugTarget_JDI_Event_Dispatcher;
-	public static String JDIDebugTarget_Unable_to_retrieve_name___VM_disconnected__1;
 	public static String JDIDebugTarget_Unable_to_create_class_prepare_request___VM_disconnected__2;
 	public static String JDIDebugTarget_Unable_to_create_class_prepare_request__3;
 	public static String JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4;

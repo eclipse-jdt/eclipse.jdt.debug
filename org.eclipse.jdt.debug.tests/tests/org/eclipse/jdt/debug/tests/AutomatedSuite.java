@@ -53,6 +53,7 @@ import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.InstructionPointerTests;
 import org.eclipse.jdt.debug.tests.core.JDWPTests;
+import org.eclipse.jdt.debug.tests.core.JavaDebugTargetTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
@@ -214,6 +215,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TypeTests.class));
 		addTest(new TestSuite(WatchExpressionTests.class));
 		addTest(new TestSuite(StratumTests.class));
+		addTest(new TestSuite(JavaDebugTargetTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 
 	//Memory view tests

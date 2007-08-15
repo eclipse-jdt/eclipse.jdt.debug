@@ -879,18 +879,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public String getName() throws DebugException {
 		if (fName == null) {
-			VirtualMachine vm = getVM();
-			if (vm == null) {
-				requestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_name___VM_disconnected__1, null); 
-			}
-			try {
-				setName(vm.name());
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_retrieving_name, new String[] {e.toString()}), e); 
-				// execution will not reach this line, as 
-				// #targetRequestFailed will throw an exception				
-				return null;
-			}
+			setName(getVMName());
 		}
 		return fName;
 	}
@@ -2471,4 +2460,40 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public boolean supportsSelectiveGarbageCollection() {
 		return fSupportsDisableGC;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
+	 */
+	public String getVMName() throws DebugException {
+		VirtualMachine vm = getVM();
+		if (vm == null) {
+			requestFailed(JDIDebugModelMessages.JDIDebugTarget_2, new VMDisconnectedException()); 
+		}
+		try {
+			return vm.name();
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIDebugTarget_2, e); 
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception				
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVersion()
+	 */
+	public String getVersion() throws DebugException {
+		VirtualMachine vm = getVM();
+		if (vm == null) {
+			requestFailed(JDIDebugModelMessages.JDIDebugTarget_4, new VMDisconnectedException()); 
+		}
+		try {
+			return vm.version();
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.JDIDebugTarget_4, e); 
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception				
+			return null;
+		}
+	}	
 }
