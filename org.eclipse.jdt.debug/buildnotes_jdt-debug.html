@@ -55,8 +55,13 @@
   <li><code>public void setValues(int offset, int length, IJavaValue[] values, 
     int startOffset)</code></li>
 </ul>
-<p>&nbsp;</p>
-
+<h3>New API methods on IJavaDebugTarget</h3>
+<p>The following API methods have been added to IJavaDebugTarget.</p>
+<ul>
+  <li><code>public boolean supportsSelectiveGarbageCollection()</code></li>
+  <li><code>public String getVMName()</code></li>
+  <li><code>public String getVersion()</code></li>
+</ul>
 <h2>Aug 21, 2007</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=197282">Bug 197282</a>: org.eclipse.jdt.debug.test.stepping.ForceReturnTests depend on VM-specific behaviour.<br>
