@@ -1491,6 +1491,13 @@ public final class JavaRuntime {
 										new String[]{id, element.getContributor().getName()}), e);
 							}
 						}
+						// allow default arguments to be specified by vm install type if no explicit arguments
+						if (vmArgs == null) {
+							if (installType instanceof AbstractVMInstallType) {
+								AbstractVMInstallType type = (AbstractVMInstallType) installType;
+								vmArgs = type.getDefaultVMArguments(homeDir);
+							}
+						}
 						if (vmArgs != null) {
 							standin.setVMArgs(vmArgs);
 						}
