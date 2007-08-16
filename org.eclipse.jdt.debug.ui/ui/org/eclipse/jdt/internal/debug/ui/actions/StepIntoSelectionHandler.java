@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -26,6 +24,8 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Handles stepping into a selected method, for a specific thread.
@@ -89,7 +89,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			if (method.isBinary()) {
 				fResolvedSignature = method.getSignature();
 			} else {
-				fResolvedSignature = ToggleBreakpointAdapter.resolveMethodSignature(method.getDeclaringType(), method.getSignature());
+				fResolvedSignature = ToggleBreakpointAdapter.resolveMethodSignature(method);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);

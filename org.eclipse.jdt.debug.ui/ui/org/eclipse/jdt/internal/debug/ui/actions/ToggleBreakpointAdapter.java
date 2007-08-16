@@ -311,7 +311,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     }
                                 }
                                 if (!type.isBinary()) {
-                                	signature = resolveMethodSignature(type, signature);
+                                	signature = resolveMethodSignature(members[i]);
                                     if (signature == null) {
                                     	report(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, part); 
                                         return Status.OK_STATUS;
@@ -807,39 +807,42 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return null;
     }
-
+    
     /**
-     * Returns the resolved method signature for the specified type
-     * @param type the declaring type the method is contained in
-     * @param methodSignature the method signature to resolve
-     * @return the resolved method signature
+     * Returns the resolved signature of the given method
+     * @param method method to resolve
+     * @return the resolved method signature or <code>null</code> if none
      * @throws JavaModelException
+     * @since 3.4
      */
-    public static String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
-        String[] parameterTypes = Signature.getParameterTypes(methodSignature);
+    public static String resolveMethodSignature(IMethod method) throws JavaModelException {
+    	String signature = method.getSignature();
+        String[] parameterTypes = Signature.getParameterTypes(signature);
         int length = parameterTypes.length;
         String[] resolvedParameterTypes = new String[length];
         for (int i = 0; i < length; i++) {
-            resolvedParameterTypes[i] = resolveType(type, parameterTypes[i]);
+            resolvedParameterTypes[i] = resolveTypeSignature(method, parameterTypes[i]);
             if (resolvedParameterTypes[i] == null) {
                 return null;
             }
         }
-        String resolvedReturnType = resolveType(type, Signature.getReturnType(methodSignature));
+        String resolvedReturnType = resolveTypeSignature(method, Signature.getReturnType(signature));
         if (resolvedReturnType == null) {
             return null;
         }
         return Signature.createMethodSignature(resolvedParameterTypes, resolvedReturnType);
-    }
+    }    
 
     /**
-     * Resolves the the type for its given signature
-     * @param type the type
-     * @param typeSignature the types signature
-     * @return the resolved type name
+     * Returns the resolved type signature for the given signature in the given
+     * method, or <code>null</code> if unable to resolve.
+     * 
+     * @param method method containing the type signature
+     * @param typeSignature the type signature to resolve
+     * @return the resolved type signature
      * @throws JavaModelException
      */
-    private static String resolveType(IType type, String typeSignature) throws JavaModelException {
+    private static String resolveTypeSignature(IMethod method, String typeSignature) throws JavaModelException {
         int count = Signature.getArrayCount(typeSignature);
         String elementTypeSignature = Signature.getElementType(typeSignature);
         if (elementTypeSignature.length() == 1) {
@@ -847,21 +850,22 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             return typeSignature;
         }
         String elementTypeName = Signature.toString(elementTypeSignature);
+        IType type = method.getDeclaringType();
         String[][] resolvedElementTypeNames = type.resolveType(elementTypeName);
         if (resolvedElementTypeNames == null || resolvedElementTypeNames.length != 1) {
         	// check if type parameter
-            ITypeParameter[] typeParameters = type.getTypeParameters();
-            for (int i = 0; i < typeParameters.length; i++) {
-    			ITypeParameter parameter = typeParameters[i];
-    			if (parameter.getElementName().equals(elementTypeName)) {
-    				String[] bounds = parameter.getBounds();
-    				if (bounds.length == 0) {
-    					return "Ljava/lang/Object;"; //$NON-NLS-1$
-    				} else {
-						String bound = Signature.createTypeSignature(bounds[0], false);
-						return resolveType(type, bound);
-    				}
-    			}
+        	ITypeParameter typeParameter = method.getTypeParameter(elementTypeName);
+        	if (!typeParameter.exists()) {
+        		typeParameter = type.getTypeParameter(elementTypeName);
+        	}
+        	if (typeParameter.exists()) {
+				String[] bounds = typeParameter.getBounds();
+				if (bounds.length == 0) {
+					return "Ljava/lang/Object;"; //$NON-NLS-1$
+				} else {
+					String bound = Signature.createTypeSignature(bounds[0], false);
+					return resolveTypeSignature(method, bound);
+				}
     		}
             // the type name cannot be resolved
             return null;
@@ -953,7 +957,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                         try {
                             if (method.getDeclaringType().getFullyQualifiedName().equals(methodBreakpoint.getTypeName()) && 
                             		method.getElementName().equals(methodBreakpoint.getMethodName()) && 
-                            		methodBreakpoint.getMethodSignature().equals(resolveMethodSignature(method.getDeclaringType(), method.getSignature()))) {
+                            		methodBreakpoint.getMethodSignature().equals(resolveMethodSignature(method))) {
                                 return methodBreakpoint;
                             }
                         } catch (CoreException e) {
