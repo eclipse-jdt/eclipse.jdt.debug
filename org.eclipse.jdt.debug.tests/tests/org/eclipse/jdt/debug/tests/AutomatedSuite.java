@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
+import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests;
@@ -160,6 +161,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
+		if (isJ2SE15Compatible()) {
+			addTest(new TestSuite(MethodBreakpointTests15.class));
+		}
 		
 	//Sourcelookup tests
 		addTest(new TestSuite(SourceLookupTests.class));
@@ -184,7 +188,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StepFilterTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(InstanceFilterTests.class));
-		addTest(new TestSuite(ForceReturnTests.class));
+		if (isJ2SE16Compatible()) {
+			addTest(new TestSuite(ForceReturnTests.class));
+		}
 		
 	//Classpath tests
 		addTest(new TestSuite(JavaLibraryPathTests.class));
@@ -268,5 +274,14 @@ public class AutomatedSuite extends DebugSuite {
 	// Variables View Detail Pane tests
 		addTest(new TestSuite(DetailPaneManagerTests.class));
 	}
+	
+	protected static boolean isJ2SE15Compatible() {
+		return ProjectCreationDecorator.isJ2SE15Compatible();
+	}
+	
+	protected static boolean isJ2SE16Compatible() {
+		return ProjectCreationDecorator.isJ2SE16Compatible();
+	}
+	
 }
 

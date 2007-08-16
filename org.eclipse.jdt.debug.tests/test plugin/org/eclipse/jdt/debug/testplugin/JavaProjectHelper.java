@@ -53,6 +53,12 @@ public class JavaProjectHelper {
 	 * path to the test src for 'testprograms'
 	 */
 	public static final IPath TEST_SRC_DIR= new Path("testprograms");
+	
+	/**
+	 * path to the 1.5 test source
+	 */
+	public static final IPath TEST_1_5_SRC_DIR= new Path("testsource-j2se-1.5");
+	
 	/**
 	 * path to the compiler error java file
 	 */

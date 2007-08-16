@@ -154,11 +154,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		// set error dialog to non-blocking to avoid hanging the UI during test
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
-		if (!(this.getClass() == ProjectCreationDecorator.class) && !getJavaProject().exists()) {
+	}
+	
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		if (!ProjectCreationDecorator.isReady()) {
 			new TestSuite(ProjectCreationDecorator.class).run(new TestResult());
 		}
 	}
-	
+
 	/**
 	 * Sets the last relevant event set
 	 *
@@ -211,7 +216,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return the test project
 	 */
 	protected IJavaProject getJavaProject() {
-		return getJavaProject("DebugTests"); //$NON-NLS-1$
+		return getJavaProject("DebugTests");
+	}
+	
+	protected IJavaProject get15Project() {
+		return getJavaProject("OneFive");
 	}
 	
 	/**
@@ -420,8 +429,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName) throws Exception {
-		return launchToBreakpoint(mainTypeName, true);
+		return launchToBreakpoint(getJavaProject(), mainTypeName);
 	}
+	
+	/**
+	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param project the project the type is in
+	 * @param mainTypeName the program to launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName) throws Exception {
+		return launchToBreakpoint(project, mainTypeName, true);
+	}	
 	
 	/**
 	 * Launches the type with the given name, and waits for a breakpoint-caused 
@@ -433,7 +455,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName, boolean register) throws Exception {
-		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
+		return launchToBreakpoint(getJavaProject(), mainTypeName, register);
+	}
+	
+	/**
+	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @param register whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName, boolean register) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(project, mainTypeName);
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToBreakpoint(config, register);
 	}	
@@ -705,11 +740,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @see ProjectCreationDecorator
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration(String mainTypeName) {
-		IFile file = getJavaProject().getProject().getFolder(LAUNCHCONFIGURATIONS).getFile(mainTypeName + LAUNCH_EXTENSION);
+		return getLaunchConfiguration(getJavaProject(), mainTypeName);
+	}
+	
+	/**
+	 * Returns the launch configuration for the given main type
+	 * 
+	 * @param mainTypeName program to launch
+	 * @see ProjectCreationDecorator
+	 */
+	protected ILaunchConfiguration getLaunchConfiguration(IJavaProject project, String mainTypeName) {
+		IFile file = project.getProject().getFolder(LAUNCHCONFIGURATIONS).getFile(mainTypeName + LAUNCH_EXTENSION);
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
 		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
-	}
+	}	
 	
 	/**
 	 * Returns the launch configuration in the specified folder in the given project, for the given main type
@@ -756,7 +801,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		IResource resource = type.getResource();
 		if (resource == null) {
-			resource = getJavaProject().getProject();
+			resource = type.getJavaProject().getProject();
 		}		
 		return resource;
 	}	
@@ -963,10 +1008,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param exit whether to break on exit
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
+		return createMethodBreakpoint(getJavaProject(), typeNamePattern, methodName, methodSignature, entry, exit);
+	}	
+	
+	/**
+	 * Creates and returns a method breakpoint
+	 * 
+	 * @param project java project
+	 * @param typeNamePattern type name pattern
+	 * @param methodName method name
+	 * @param methodSignature method signature or <code>null</code>
+	 * @param entry whether to break on entry
+	 * @param exit whether to break on exit
+	 */
+	protected IJavaMethodBreakpoint createMethodBreakpoint(IJavaProject project, String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		IMethod method= null;
-		IResource resource = getJavaProject().getProject();
+		IResource resource = project.getProject();
 		if (methodSignature != null && methodName != null) {
-			IType type = getType(typeNamePattern);
+			IType type = project.findType(typeNamePattern);
 			if (type != null ) {
 				resource = getBreakpointResource(type);
 				method = type.getMethod(methodName, Signature.getParameterTypes(methodSignature));
@@ -1572,17 +1631,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
      * Creates a shared launch configuration for the type with the given name.
      */
     protected void createLaunchConfiguration(String mainTypeName) throws Exception {
+        createLaunchConfiguration(getJavaProject(), mainTypeName);
+    }
+    
+    /**
+     * Creates a shared launch configuration for the type with the given name.
+     */
+    protected void createLaunchConfiguration(IJavaProject project, String mainTypeName) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-        ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
+        ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
-        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
+        config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
         Map map = new HashMap(1);
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         config.doSave();
-    }
+    }    
 
     /**
      * Creates a shared launch configuration for the type with the given name.

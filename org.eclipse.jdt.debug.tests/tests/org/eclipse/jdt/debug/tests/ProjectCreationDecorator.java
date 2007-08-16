@@ -57,12 +57,43 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class ProjectCreationDecorator extends AbstractDebugTest {
 
+	public static boolean fgReady = false;
+	private static boolean fgIsJ2SE15Compatible = false;
+	private static boolean fgIsJ2SE16Compatible = false;
+	
+	{
+		String version = System.getProperty("java.specification.version");
+		if (version != null) {
+			String[] nums = version.split("\\.");
+			if (nums.length == 2) {
+				try {
+					int major = Integer.parseInt(nums[0]);
+					int minor = Integer.parseInt(nums[1]);
+					if (major >= 1) {
+						if (minor >= 5) {
+							fgIsJ2SE15Compatible = true;
+						}
+						if (minor >= 6) {
+							fgIsJ2SE16Compatible = true;
+						}
+					}
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+	}	
+	
     /**
      * Constructor
      * @param name
      */
     public ProjectCreationDecorator(String name) {
         super(name);
+        fgReady = true;
+    }
+    
+    public static boolean isReady() {
+    	return fgReady;
     }
 
     /**
@@ -204,6 +235,39 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
         JavaProjectHelper.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
+    }
+    
+    public void testJ2SE15ProjectCreation() throws Exception {
+    	// create 1.5 project if there is a 1.5 runtime to compile against
+    	if (isJ2SE15Compatible()) {
+            IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("OneFive");
+            if (pro.exists()) {
+                pro.delete(true, true, null);
+            }
+            // create project and import source
+            IJavaProject jp = JavaProjectHelper.createJavaProject("OneFive", "bin");
+            IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(jp, "src");
+            File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_1_5_SRC_DIR);
+            JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+
+            // add J2SE-1.5 library
+            IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+            assertNotNull("No default JRE", vm);
+            IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.5");
+            assertNotNull(environment);
+			IPath containerPath = JavaRuntime.newJREContainerPath(environment);
+            JavaProjectHelper.addContainerEntry(jp, containerPath);
+            pro = jp.getProject();  
+            
+            // create launch configuration folder
+            IFolder folder = pro.getFolder("launchConfigurations");
+            if (folder.exists()) {
+                folder.delete(true, null);
+            }
+            folder.create(true, true, null);
+            
+            createLaunchConfiguration(jp, "a.b.c.MethodBreakpoints");
+    	}
     }
     
     /**
@@ -363,4 +427,12 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         }
         assertTrue("No class files exist", (classFiles > 0));
     }
+    
+	protected static boolean isJ2SE15Compatible() {
+		return fgIsJ2SE15Compatible;
+	}
+	
+	protected static boolean isJ2SE16Compatible() {
+		return fgIsJ2SE16Compatible;
+	}
 }

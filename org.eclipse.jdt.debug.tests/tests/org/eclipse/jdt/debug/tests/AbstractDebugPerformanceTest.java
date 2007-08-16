@@ -34,6 +34,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	protected void setUp() throws Exception {
+		super.setUp();
 		Performance performance= Performance.getDefault();
 		fPerformanceMeter= performance.createPerformanceMeter(performance.getDefaultScenarioId(this));
 	}
@@ -43,6 +44,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	protected void tearDown() throws Exception {
+		super.tearDown();
 		fPerformanceMeter.dispose();
 	}
 

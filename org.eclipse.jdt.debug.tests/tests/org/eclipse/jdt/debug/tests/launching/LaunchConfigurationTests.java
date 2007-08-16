@@ -574,11 +574,11 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		ILaunchConfiguration[] during = getLaunchManager().getLaunchConfigurations();
 		boolean local = true;
 		for (int i = 0; i < during.length; i++) {
-			local = local && during[i].isLocal();
-		}
-		assertTrue("Should only be local configs when closed", local); //$NON-NLS-1$
-		
+			local = local && (during[i].isLocal() ||
+					!project.getName().equals(during[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null))) ;
+		}		
 		project.open(null);
+		assertTrue("Should only be local configs when closed", local); //$NON-NLS-1$
 		ILaunchConfiguration[] after = getLaunchManager().getLaunchConfigurations();
 		assertTrue("Should be same number of configs after openning", after.length == before.length); //$NON-NLS-1$
 		for (int i = 0; i < before.length; i++) {
