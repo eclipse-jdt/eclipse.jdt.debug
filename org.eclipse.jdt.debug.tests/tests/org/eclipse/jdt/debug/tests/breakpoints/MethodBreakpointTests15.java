@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Tests method breakpoints for 1.5 source code.
@@ -25,24 +29,39 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 	}
 
 	public void testStaticTypeParameter() throws Exception {
-		String typeName = "a.b.c.MethodBreakpoints";
-		IJavaMethodBreakpoint mbp = createMethodBreakpoint(get15Project(), typeName, "staticTypeParameter", "(Ljava/util/List;)V", true, false);
-		runToBreakpoint(typeName, mbp);		
+		IJavaMethodBreakpoint breakpoint  = createBreakpoint(25);
+		assertEquals("Wrong method", "staticTypeParameter", breakpoint.getMethodName());
+		runToBreakpoint(getTypeName(), breakpoint);		
 	}
 	
 	public void testTypeParameter() throws Exception {
-		String typeName = "a.b.c.MethodBreakpoints";
-		IJavaMethodBreakpoint mbp = createMethodBreakpoint(get15Project(), typeName, "typeParameter", "(Ljava/lang/Object;)Ljava/lang/Object;", true, false);
-		runToBreakpoint(typeName, mbp);		
+		IJavaMethodBreakpoint breakpoint  = createBreakpoint(29);
+		assertEquals("Wrong method", "typeParameter", breakpoint.getMethodName());
+		runToBreakpoint(getTypeName(), breakpoint);
 	}
 	
 	public void testMethodTypeParameter() throws Exception {
-		String typeName = "a.b.c.MethodBreakpoints";
-		IJavaMethodBreakpoint mbp = createMethodBreakpoint(get15Project(), typeName, "methodTypeParameter", "(Ljava/lang/Object;)V", true, false);
-		runToBreakpoint(typeName, mbp);		
+		IJavaMethodBreakpoint breakpoint  = createBreakpoint(34);
+		assertEquals("Wrong method", "methodTypeParameter", breakpoint.getMethodName());
+		runToBreakpoint(getTypeName(), breakpoint);	
 	}	
+	
+	private String getTypeName() {
+		return "a.b.c.MethodBreakpoints";
+	}
+	
+	private IJavaMethodBreakpoint createBreakpoint(int line) throws Exception {
+		IType type = get15Project().findType(getTypeName());
+		assertNotNull("Missing file", type);
+		IResource resource = type.getResource();
+		assertTrue("Missing file", resource instanceof IFile);
+		IEditorPart editor = openEditor((IFile) resource);
+		IBreakpoint breakpoint = toggleBreakpoint(editor, line);
+		assertTrue("Wrong breakpoint", breakpoint instanceof IJavaMethodBreakpoint);
+		return (IJavaMethodBreakpoint) breakpoint;
+	}
 
-	private void runToBreakpoint(String typeName, IJavaMethodBreakpoint mbp) throws Exception {
+	private void runToBreakpoint(String typeName, IBreakpoint mbp) throws Exception {
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(get15Project(), typeName);

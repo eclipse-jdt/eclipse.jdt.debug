@@ -21,10 +21,12 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -34,6 +36,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -57,6 +60,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -104,11 +108,19 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Tests for launch configurations
@@ -1688,6 +1700,78 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 	}
     
+	/**
+	 * Opens and returns an editor on the given file or <code>null</code>
+	 * if none. The editor will be activated.
+	 * 
+	 * @param file
+	 * @return editor or <code>null</code>
+	 */
+	protected IEditorPart openEditor(final IFile file) throws PartInitException, InterruptedException {
+		Display display = DebugUIPlugin.getStandardDisplay();
+		if (Thread.currentThread().equals(display.getThread())) {
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			return IDE.openEditor(page, file, true);
+		} else {
+			final IEditorPart[] parts = new IEditorPart[1];
+			WorkbenchJob job = new WorkbenchJob(display, "open editor") {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					try {
+						parts[0] = IDE.openEditor(page, file, true);
+					} catch (PartInitException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+			job.join();
+			return parts[0];
+		}
+	}
+	
+	/**
+	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint
+	 * or <code>null</code> if none.
+	 * 
+	 * @param editor
+	 * @param lineNumber
+	 * @return returns the created breakpoint or <code>null</code> if none.
+	 * @throws InterruptedException
+	 */
+	protected IBreakpoint toggleBreakpoint(final IEditorPart editor, int lineNumber) throws InterruptedException {
+		final IVerticalRulerInfo info = new VerticalRulerInfoStub(lineNumber-1); // sub 1, as the doc lines start at 0
+		WorkbenchJob job = new WorkbenchJob(DebugUIPlugin.getStandardDisplay(), "toggle breakpoint") {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				ToggleBreakpointAction action = new ToggleBreakpointAction(editor, null, info);
+				action.run();
+				return Status.OK_STATUS;
+			}
+		};
+		final Object lock = new Object();
+		final IBreakpoint[] breakpoints = new IBreakpoint[1];
+		IBreakpointListener listener = new IBreakpointListener() {
+			public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+			}
+			public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+			}
+			public void breakpointAdded(IBreakpoint breakpoint) {
+				synchronized (lock) {
+					breakpoints[0] = breakpoint;
+					lock.notifyAll();
+				}
+			}
+		};
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		manager.addBreakpointListener(listener);
+		synchronized (lock) {
+			job.schedule();
+			lock.wait(DEFAULT_TIMEOUT);
+		}
+		manager.removeBreakpointListener(listener);
+		return breakpoints[0];
+	}
     
 }
 
