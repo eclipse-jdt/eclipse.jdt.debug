@@ -13,11 +13,16 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Tests deferred breakpoints.
@@ -39,45 +44,28 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 	public void testDeferredBreakpoints() throws Exception {
 		String typeName = "Breakpoints";
 		List bps = new ArrayList();
-		// anonymous class
-		bps.add(createLineBreakpoint(43, typeName));
-		// blocks
-		bps.add(createLineBreakpoint(102, typeName));
-		// constructor
-		bps.add(createLineBreakpoint(77, typeName));
-		// else
-		bps.add(createLineBreakpoint(88, typeName));
-		//finally after catch
-		bps.add(createLineBreakpoint(120, typeName));
-		//finally after try
-		bps.add(createLineBreakpoint(128, typeName));
-		// for loop
-		bps.add(createLineBreakpoint(93, typeName));
-		// if
-		bps.add(createLineBreakpoint(81, typeName));
-		// initializer
-		bps.add(createLineBreakpoint(17, typeName));
-		// inner class
-		bps.add(createLineBreakpoint(22, typeName));
-		// return true
-		bps.add(createLineBreakpoint(72, typeName));
-		// instance method
-		bps.add(createLineBreakpoint(107, typeName));
-		// static method 
-		bps.add(createLineBreakpoint(53, typeName));
-		// case statement
-		bps.add(createLineBreakpoint(133, typeName));
-		// default statement
-		bps.add(createLineBreakpoint(140, typeName));
-		// synchronized blocks
-		bps.add(createLineBreakpoint(146, typeName));
-		// try
-		bps.add(createLineBreakpoint(125, typeName));
-		//catch
-		bps.add(createLineBreakpoint(118, typeName));
-		// while
-		bps.add(createLineBreakpoint(97, typeName));
-		
+		int[] lines = new int[]{
+				43,		// anonymous class
+				102,	// blocks
+				77,		// constructor
+				88,		// else
+				120,	// finally after catch
+				128,	// finally after try
+				93,		// for loop
+				81,		// if
+				17,		// initializer
+				22,		// inner class
+				72,		// return true
+				107,	// instance method
+				53,		// static method 
+				133,	// case statement
+				140,	// default statement
+				146,	// synchronized blocks
+				125,	// try
+				118,	// catch
+				97		// while
+		};
+		createBreakpoints(typeName, bps, lines);
 		
 		IJavaThread thread= null;
 		try {
@@ -103,6 +91,19 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
+	}
+	
+	private void createBreakpoints(String typeName, List breakpoints, int[] lineNumbers) throws Exception {
+		IType type = getJavaProject().findType(typeName);
+		assertNotNull(type);
+		IResource resource = type.getResource();
+		assertTrue(resource instanceof IFile);
+		IEditorPart editor = openEditor((IFile) resource);
+		for (int i = 0; i < lineNumbers.length; i++) {
+			IBreakpoint breakpoint = toggleBreakpoint(editor, lineNumbers[i]);
+			assertTrue("Wrong kind of breakpoint", breakpoint instanceof IJavaLineBreakpoint);
+			breakpoints.add(breakpoint);
+		}
 	}
 
 	/**
