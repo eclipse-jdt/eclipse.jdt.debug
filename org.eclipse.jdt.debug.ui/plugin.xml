@@ -3083,6 +3083,13 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.debug.core.IJavaFieldVariable">
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>
+         <factory
+               adaptableType="org.eclipse.jdt.debug.core.IJavaStackFrame"
+               class="org.eclipse.jdt.internal.debug.ui.variables.JavaDebugElementAdapterFactory">
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+            </adapter>
          </factory>                            
       </extension>     	   
    
