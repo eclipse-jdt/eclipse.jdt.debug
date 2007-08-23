@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -422,7 +422,7 @@ public class MemberParser{
 			}
 			
 		}
-		return IInternalDebugUIConstants.EMPTY_STRING;//entire thing is a number //$NON-NLS-1$
+		return IInternalDebugCoreConstants.EMPTY_STRING;//entire thing is a number //$NON-NLS-1$
 	}
 	
 	/**

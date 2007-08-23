@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -107,7 +107,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints"));
@@ -120,7 +120,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints$InnerRunnable"));
@@ -133,7 +133,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 	public void testDefAnonInnerType() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(43, typeName);
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 		
 		IJavaThread thread= null;
@@ -159,7 +159,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 	public void testDefLocalType() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(30, typeName);
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 		
 		IJavaThread thread= null;

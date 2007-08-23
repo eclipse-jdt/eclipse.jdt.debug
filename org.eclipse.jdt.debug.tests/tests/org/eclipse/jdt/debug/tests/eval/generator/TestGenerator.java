@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 public class TestGenerator {
 	
@@ -131,7 +131,7 @@ public class TestGenerator {
 	
 	static final String[] field = new String[] {"xField", "yField", "xStaticField", "yStaticField"};
 
-	static final String[] prefixList = new String[] {"foo.", "EvalTypeTests.", IInternalDebugUIConstants.EMPTY_STRING};
+	static final String[] prefixList = new String[] {"foo.", "EvalTypeTests.", IInternalDebugCoreConstants.EMPTY_STRING};
 
 	/**
 	 * Set the working directory of the launch configuration to generate the files
@@ -1140,9 +1140,9 @@ public class TestGenerator {
 		genCodeEval("\"(" + t1Name + ")\" + " + iName + t2UName, first, code);
 		genCodeReturnTypeCheck("(" + t1Name + ") " + t2Name, t1Name, first, code);
 		if (type1 == T_float || type1 == T_double) {
-			genCodeReturnValueCheckFloatDoubleType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : IInternalDebugUIConstants.EMPTY_STRING) + iName + t2UName + "Value", first, code);
+			genCodeReturnValueCheckFloatDoubleType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : IInternalDebugCoreConstants.EMPTY_STRING) + iName + t2UName + "Value", first, code);
 		} else {
-			genCodeReturnValueCheckPrimitiveType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : IInternalDebugUIConstants.EMPTY_STRING) + iName + t2UName + "Value", first, code);
+			genCodeReturnValueCheckPrimitiveType("(" + t1Name + ") " + t2Name, t1Name, t1UName, (needCast(type1, type2) ? "( " + t1Name + ") " : IInternalDebugCoreConstants.EMPTY_STRING) + iName + t2UName + "Value", first, code);
 		}
 	}
 	
@@ -1310,7 +1310,7 @@ public class TestGenerator {
 		String oName = opName[Op_equal];
 		String i1Name = immediate[(var + 1) % 2];
 		
-		String value = IInternalDebugUIConstants.EMPTY_STRING;
+		String value = IInternalDebugCoreConstants.EMPTY_STRING;
 		boolean f = true;
 		for (int i = 0; i < var; i ++) {
 			if (f) {
@@ -1329,7 +1329,7 @@ public class TestGenerator {
 				genCodeSetTmp(((type == T_String)? "string" : tName) + "Value", type, Op_equal, i1Name + tUName + "Value", true, code);
 			}
 		}
-		genCodeArrayLength(type, var, IInternalDebugUIConstants.EMPTY_STRING + var, false, code);
+		genCodeArrayLength(type, var, IInternalDebugCoreConstants.EMPTY_STRING + var, false, code);
 		for (int i = 0; i < var; i++) {
 			genCodeArrayValue(type, var, i, immediate[i % 2] + tUName + "Value", false, code);
 		}
@@ -1338,26 +1338,26 @@ public class TestGenerator {
 	//----------------------------
 	
 	public static void genCodeEval(String expression, boolean first, StringBuffer code) {
-		code.append("\t\t" + ((first)? "IValue " : IInternalDebugUIConstants.EMPTY_STRING) + "value = eval(" + expression + ");\n");
+		code.append("\t\t" + ((first)? "IValue " : IInternalDebugCoreConstants.EMPTY_STRING) + "value = eval(" + expression + ");\n");
 	}
 	
 	public static void genCodeReturnTypeCheck(String test, String typeName, boolean first, StringBuffer code) {
-		code.append("\t\t" + ((first)? "String " : IInternalDebugUIConstants.EMPTY_STRING) + "typeName = value.getReferenceTypeName();\n" +
+		code.append("\t\t" + ((first)? "String " : IInternalDebugCoreConstants.EMPTY_STRING) + "typeName = value.getReferenceTypeName();\n" +
 					"\t\tassertEquals(\"" + test + " : wrong type : \", \"" + typeName + "\", typeName);\n");
 	}
 	
 	public static void genCodeReturnValueCheckPrimitiveType(String test, String resType, String uResType, String referenceExpression, boolean first, StringBuffer code) {
-		code.append("\t\t" + ((first)? resType + " " : IInternalDebugUIConstants.EMPTY_STRING) + resType + "Value = ((IJavaPrimitiveValue)value).get" + uResType + "Value();\n" +
+		code.append("\t\t" + ((first)? resType + " " : IInternalDebugCoreConstants.EMPTY_STRING) + resType + "Value = ((IJavaPrimitiveValue)value).get" + uResType + "Value();\n" +
 					"\t\tassertEquals(\"" + test + " : wrong result : \", " + referenceExpression + ", " + resType+ "Value);\n");
 	}
 
 	public static void genCodeReturnValueCheckFloatDoubleType(String test, String resType, String uResType, String referenceExpression, boolean first, StringBuffer code) {
-		code.append("\t\t" + ((first)? resType + " " : IInternalDebugUIConstants.EMPTY_STRING) + resType + "Value = ((IJavaPrimitiveValue)value).get" + uResType + "Value();\n" +
+		code.append("\t\t" + ((first)? resType + " " : IInternalDebugCoreConstants.EMPTY_STRING) + resType + "Value = ((IJavaPrimitiveValue)value).get" + uResType + "Value();\n" +
 					"\t\tassertEquals(\"" + test + " : wrong result : \", " + referenceExpression + ", " + resType+ "Value, 0);\n");
 	}
 
 	public static void genCodeReturnValueCheckStringType(String test, String referenceExpression, boolean first, StringBuffer code) {
-		code.append("\t\t" + ((first)? "String " : IInternalDebugUIConstants.EMPTY_STRING) + "stringValue = ((JDIObjectValue)value).getValueString();\n" +
+		code.append("\t\t" + ((first)? "String " : IInternalDebugCoreConstants.EMPTY_STRING) + "stringValue = ((JDIObjectValue)value).getValueString();\n" +
 					"\t\tassertEquals(\"" + test + " : wrong result : \", " + referenceExpression + ", " + "stringValue);\n");
 	}
 
@@ -1367,7 +1367,7 @@ public class TestGenerator {
 	}*/
 
 	public static void genCodeSetTmp(String varName, int type, int op, String value, boolean init , StringBuffer code) {
-		code.append("\t\t" + ((init)? fTypeName[type] + " " : IInternalDebugUIConstants.EMPTY_STRING) + varName + " " + opSymbol[op] + " " + value + ";\n");
+		code.append("\t\t" + ((init)? fTypeName[type] + " " : IInternalDebugCoreConstants.EMPTY_STRING) + varName + " " + opSymbol[op] + " " + value + ";\n");
 	}
 	
 	

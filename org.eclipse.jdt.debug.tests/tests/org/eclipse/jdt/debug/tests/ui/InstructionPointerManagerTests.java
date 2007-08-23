@@ -18,8 +18,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerAnnotation;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
@@ -477,8 +477,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	
 	class MyPerspectiveListener implements IPerspectiveListener2 {
 
-		private String fTypeName = IInternalDebugUIConstants.EMPTY_STRING;
-		private String fTitle = IInternalDebugUIConstants.EMPTY_STRING;
+		private String fTypeName = IInternalDebugCoreConstants.EMPTY_STRING;
+		private String fTitle = IInternalDebugCoreConstants.EMPTY_STRING;
 		
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {}
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}

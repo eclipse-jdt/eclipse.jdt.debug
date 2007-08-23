@@ -12,7 +12,7 @@ package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import java.io.File;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -37,7 +37,7 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
 		
-		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
 				
@@ -52,7 +52,7 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
 		
-		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugUIConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
 				

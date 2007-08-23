@@ -11,7 +11,7 @@
 package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -32,13 +32,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testByteStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldByte);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldByte);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("byte field value : wrong type : ", "byte", typeName);
 		byte byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte field value : wrong result : ", xStaticFieldByteValue, byteValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldByte);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldByte);
 		typeName = value.getReferenceTypeName();
 		assertEquals("byte field value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
@@ -51,13 +51,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testCharStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldChar);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldChar);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("char field value : wrong type : ", "char", typeName);
 		char charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char field value : wrong result : ", xStaticFieldCharValue, charValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldChar);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldChar);
 		typeName = value.getReferenceTypeName();
 		assertEquals("char field value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
@@ -70,13 +70,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testShortStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldShort);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldShort);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("short field value : wrong type : ", "short", typeName);
 		short shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short field value : wrong result : ", xStaticFieldShortValue, shortValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldShort);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldShort);
 		typeName = value.getReferenceTypeName();
 		assertEquals("short field value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
@@ -89,13 +89,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testIntStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldInt);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldInt);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("int field value : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int field value : wrong result : ", xStaticFieldIntValue, intValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldInt);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldInt);
 		typeName = value.getReferenceTypeName();
 		assertEquals("int field value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
@@ -108,13 +108,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testLongStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldLong);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldLong);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("long field value : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long field value : wrong result : ", xStaticFieldLongValue, longValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldLong);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldLong);
 		typeName = value.getReferenceTypeName();
 		assertEquals("long field value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
@@ -127,13 +127,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testFloatStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldFloat);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldFloat);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("float field value : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float field value : wrong result : ", xStaticFieldFloatValue, floatValue, 0);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldFloat);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldFloat);
 		typeName = value.getReferenceTypeName();
 		assertEquals("float field value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
@@ -146,13 +146,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testDoubleStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldDouble);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldDouble);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("double field value : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double field value : wrong result : ", xStaticFieldDoubleValue, doubleValue, 0);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldDouble);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldDouble);
 		typeName = value.getReferenceTypeName();
 		assertEquals("double field value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
@@ -165,13 +165,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testStringStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldString);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldString);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("java.lang.String field value : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String field value : wrong result : ", xStaticFieldStringValue, stringValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldString);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldString);
 		typeName = value.getReferenceTypeName();
 		assertEquals("java.lang.String field value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
@@ -184,13 +184,13 @@ public class StaticFieldValueTests extends Tests {
 	public void testBooleanStaticFieldValue() throws Throwable {
 		try {
 		init();
-		IValue value = eval(IInternalDebugUIConstants.EMPTY_STRING + xStaticFieldBoolean);
+		IValue value = eval(IInternalDebugCoreConstants.EMPTY_STRING + xStaticFieldBoolean);
 		String typeName = value.getReferenceTypeName();
 		assertEquals("boolean field value : wrong type : ", "boolean", typeName);
 		boolean booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean field value : wrong result : ", xStaticFieldBooleanValue, booleanValue);
 
-		value = eval(IInternalDebugUIConstants.EMPTY_STRING + yStaticFieldBoolean);
+		value = eval(IInternalDebugCoreConstants.EMPTY_STRING + yStaticFieldBoolean);
 		typeName = value.getReferenceTypeName();
 		assertEquals("boolean field value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();

@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 public class TypeHierarchyTestsGenerator extends TestGenerator {
 
@@ -273,7 +273,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		
 		genCodeEval("\"" + strMethod + "()\"", true, code);
 		genCodeReturnTypeCheck(strMethod, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType(strMethod, "int", "Int", IInternalDebugUIConstants.EMPTY_STRING + values[level][method], true, code);
+		genCodeReturnValueCheckPrimitiveType(strMethod, "int", "Int", IInternalDebugCoreConstants.EMPTY_STRING + values[level][method], true, code);
 
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
@@ -290,7 +290,7 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		
 		genCodeEval("\"" + strQualifier + "." + strMethod + "()\"", true, code);
 		genCodeReturnTypeCheck(strQualifier + "." + strMethod, "int", true, code);
-		genCodeReturnValueCheckPrimitiveType(strQualifier + "." + strMethod, "int", "Int", IInternalDebugUIConstants.EMPTY_STRING + values[level[qualifier]][method], true, code);
+		genCodeReturnValueCheckPrimitiveType(strQualifier + "." + strMethod, "int", "Int", IInternalDebugCoreConstants.EMPTY_STRING + values[level[qualifier]][method], true, code);
 
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
