@@ -90,6 +90,16 @@ public class LaunchingMessages extends NLS {
 	public static String SocketAttachConnector_Configuring_connection____1;
 	public static String SocketAttachConnector_Establishing_connection____2;
 
+	public static String SocketListenConnector_0;
+	public static String SocketListenConnector_1;
+	public static String SocketListenConnector_2;
+	public static String SocketListenConnector_3;
+	public static String SocketListenConnector_4;
+	public static String SocketListenConnectorProcess_0;
+	public static String SocketListenConnectorProcess_1;
+	public static String SocketListenConnectorProcess_4;
+	public static String SocketListenConnectorProcess_5;
+
 	public static String StandardVMDebugger_Could_not_find_a_free_socket_for_the_debugger_1;
 	public static String StandardVMDebugger_Couldn__t_connect_to_VM_4;
 	public static String StandardVMDebugger_Couldn__t_connect_to_VM_5;

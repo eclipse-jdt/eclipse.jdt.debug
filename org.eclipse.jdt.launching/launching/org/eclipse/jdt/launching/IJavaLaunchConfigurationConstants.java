@@ -47,6 +47,12 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
 	
 	/**
+	 * Identifier for the standard Socket Listening VM connector
+	 * (value <code>"org.eclipse.jdt.launching.socketListenConnector"</code>).
+	 */
+	public static final String ID_SOCKET_LISTEN_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketListenConnector"; //$NON-NLS-1$
+	
+	/**
 	 * Identifier for the java process type, which is annotated on processes created
 	 * by the local java application launch delegate.
 	 * 
@@ -386,13 +392,14 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Status code indicating an attempt to connect to a remote VM
+	 * has failed or an attempt to listen for a remote VM connecting
 	 * has failed.
 	 */
 	public static final int ERR_REMOTE_VM_CONNECTION_FAILED = 113;
 
 	/**
-	 * Status code indicating that the shared memory attach connector
-	 * could not be found.
+	 * Status code indicating that the shared memory attach or listen
+	 * connector could not be found.
 	 */
 	public static final int ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE = 114;
 	

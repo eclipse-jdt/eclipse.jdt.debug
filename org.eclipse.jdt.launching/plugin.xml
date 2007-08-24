@@ -74,6 +74,10 @@
             class="org.eclipse.jdt.internal.launching.SocketAttachConnector"
             id="org.eclipse.jdt.launching.socketAttachConnector">
       </vmConnector>
+      <vmConnector
+            class="org.eclipse.jdt.internal.launching.SocketListenConnector"
+            id="org.eclipse.jdt.launching.socketListenConnector">
+      </vmConnector>
    </extension>
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
