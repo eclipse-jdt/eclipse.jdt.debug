@@ -22,11 +22,11 @@ import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
-import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests;
+import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.PreLaunchBreakpointTest;
@@ -73,6 +73,7 @@ import org.eclipse.jdt.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
+import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationManagerTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchHistoryTests;
@@ -127,6 +128,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 			
 	//Launching tests
+		
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
 		addTest(new TestSuite(LaunchShortcutTests.class));
@@ -141,6 +143,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 		addTest(new TestSuite(ConfigurationResourceMappingTests.class));
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
+		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));

@@ -254,7 +254,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	}	
 		
 	/**
-	 * Perfrom substitutions on the given expression.
+	 * Perform substitutions on the given expression.
 	 * 
 	 * @param expression source expression
 	 * @return the result after performing substitutions
