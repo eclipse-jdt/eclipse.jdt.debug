@@ -16,7 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.eclipse.jdt.debug.tests.core.RemoteAttachTests;
+import org.eclipse.jdt.debug.tests.core.RemoteJavaApplicationTests;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -45,7 +45,7 @@ public class ManualSuite extends TestSuite {
 	public ManualSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
-		addTest(new TestSuite(RemoteAttachTests.class));
+		addTest(new TestSuite(RemoteJavaApplicationTests.class));
 
 	}
 	

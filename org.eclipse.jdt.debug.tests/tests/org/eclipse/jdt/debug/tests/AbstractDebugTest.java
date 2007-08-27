@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,9 +355,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
-	 * Launches the given configuration and waits for an event. Returns the
-	 * source of the event. If the event is not received, the launch is
-	 * terminated and an exception is thrown.
+	 * Launches the given configuration in debug mode and waits for an event. 
+	 * Returns the source of the event. If the event is not received, the 
+	 * launch is terminated and an exception is thrown.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param waiter the event waiter to use
@@ -366,7 +366,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @exception Exception if the event is never received.
 	 */
 	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter, boolean register) throws CoreException {
-		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null, false, register);
+		return launchAndWait(configuration, ILaunchManager.DEBUG_MODE, waiter, register);
+	}
+	
+	/**
+	 * Launches the given configuration and waits for an event. Returns the
+	 * source of the event. If the event is not received, the launch is
+	 * terminated and an exception is thrown.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode the mode to launch the configuration in
+	 * @param waiter the event waiter to use
+	 * @param register whether to register the launch
+	 * @return Object the source of the event
+	 * @exception Exception if the event is never received.
+	 */
+	protected Object launchAndWait(ILaunchConfiguration configuration, String mode, DebugEventWaiter waiter, boolean register) throws CoreException {
+		ILaunch launch = configuration.launch(mode, null, false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
 			StringBuffer buf = new StringBuffer();
@@ -401,7 +417,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
 		return suspendee;		
-	}	
+	}
+	
+	
 	
 	/**
 	 * Launches the type with the given name, and waits for a
