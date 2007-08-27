@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -95,6 +97,11 @@ public class SocketListenConnectorProcess implements IProcess {
 		fWaitForConnectionJob = new WaitForConnectionJob(this,connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);
 		fWaitForConnectionJob.setSystem(true);
+		fWaitForConnectionJob.addJobChangeListener(new JobChangeAdapter(){
+			public void running(IJobChangeEvent event) {
+				fireReadyToAcceptEvent();
+			}
+		});
 		fWaitForConnectionJob.schedule();
 	}
 
@@ -165,6 +172,17 @@ public class SocketListenConnectorProcess implements IProcess {
 		DebugPlugin manager= DebugPlugin.getDefault();
 		if (manager != null) {
 			manager.fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.TERMINATE)});
+		}
+	}
+	
+	/**
+	 * Fires a custom model specific event when this connector is ready to accept incoming
+	 * connections from a remote VM.
+	 */
+	protected void fireReadyToAcceptEvent(){
+		DebugPlugin manager= DebugPlugin.getDefault();
+		if (manager != null) {
+			manager.fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC, IJavaLaunchConfigurationConstants.DETAIL_CONFIG_READY_TO_ACCEPT_REMOTE_VM_CONNECTION)});
 		}
 	}
 

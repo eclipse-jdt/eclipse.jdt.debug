@@ -49,6 +49,7 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Identifier for the standard Socket Listening VM connector
 	 * (value <code>"org.eclipse.jdt.launching.socketListenConnector"</code>).
+	 * @since 3.4
 	 */
 	public static final String ID_SOCKET_LISTEN_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketListenConnector"; //$NON-NLS-1$
 	
@@ -494,4 +495,15 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 2.1
 	 */	
 	public static final String DEFAULT_APPLETVIEWER_CLASS = "sun.applet.AppletViewer";	 //$NON-NLS-1$
+	
+	
+	/**
+	 * Detail code for a custom debug event that is fired when a remote debug configuration with
+	 * a standard socket listen connector is ready to accept connections from a remote VM.
+	 * 
+	 * @since 3.4
+	 * @see org.eclipse.jdt.internal.launching.SocketListenConnector
+	 * @see org.eclipse.jdt.internal.launching.SocketListenConnectorProcess
+	 */
+	public static final int DETAIL_CONFIG_READY_TO_ACCEPT_REMOTE_VM_CONNECTION = 1001;
 }
