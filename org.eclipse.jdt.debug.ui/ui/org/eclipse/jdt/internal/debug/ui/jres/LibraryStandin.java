@@ -178,7 +178,7 @@ public final class LibraryStandin {
 			if (!path.toFile().exists()) {
 				// check for workspace resource
 				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-				if (resource == null && resource.exists()) {
+				if (resource == null || !resource.exists()) {
 					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "Source attachment does not exist: " + path.toOSString(), null); //$NON-NLS-1$
 				}
 			}
