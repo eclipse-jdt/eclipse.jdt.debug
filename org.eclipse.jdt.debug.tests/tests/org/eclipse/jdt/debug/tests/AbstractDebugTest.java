@@ -782,6 +782,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected ILaunchConfiguration getLaunchConfiguration(IJavaProject project, String mainTypeName) {
 		IFile file = project.getProject().getFolder(LAUNCHCONFIGURATIONS).getFile(mainTypeName + LAUNCH_EXTENSION);
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
+		assertNotNull("the configuration cannot be null", config);
 		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
 	}	
@@ -797,6 +798,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected ILaunchConfiguration getLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) {
 		IFile file = project.getProject().getFolder(containername).getFile(mainTypeName + LAUNCH_EXTENSION);
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
+		assertNotNull("the configuration cannot be null", config);
 		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
 	}
