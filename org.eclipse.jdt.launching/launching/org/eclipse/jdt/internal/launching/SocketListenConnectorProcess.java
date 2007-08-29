@@ -38,6 +38,7 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
+import com.sun.jdi.connect.TransportTimeoutException;
 
 /**
  * A process that represents a VM listening connector that is waiting
@@ -96,10 +97,16 @@ public class SocketListenConnectorProcess implements IProcess {
 		}
 		fWaitForConnectionJob = new WaitForConnectionJob(this,connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);
-		fWaitForConnectionJob.setSystem(true);
 		fWaitForConnectionJob.addJobChangeListener(new JobChangeAdapter(){
 			public void running(IJobChangeEvent event) {
 				fireReadyToAcceptEvent();
+			}
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().equals(Status.CANCEL_STATUS)){
+					try{
+						terminate();
+					} catch (DebugException e){}
+				}
 			}
 		});
 		fWaitForConnectionJob.schedule();
@@ -156,13 +163,15 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		fTerminated = true;
-		if (fWaitForConnectionJob != null){
-			fWaitForConnectionJob.stopListening();
-			fWaitForConnectionJob.cancel();
-			fWaitForConnectionJob = null;
+		if (!fTerminated){
+			fTerminated = true;
+			if (fWaitForConnectionJob != null){
+				fWaitForConnectionJob.cancel();
+				fWaitForConnectionJob.stopListening();
+				fWaitForConnectionJob = null;
+			}
+			fireTerminateEvent();
 		}
-		fireTerminateEvent();
 	}
 	
 	/**
@@ -229,7 +238,7 @@ public class SocketListenConnectorProcess implements IProcess {
 		 * IOExceptions will be ignored, allowing other threads
 		 * to close the socket without generating an error.
 		 */
-		private boolean fStopListening = false;
+		private boolean fListeningStopped = false;
 		
 		public WaitForConnectionJob(IProcess waitProcess, ListeningConnector connector, Map arguments) {
 			super(getLabel());
@@ -240,24 +249,26 @@ public class SocketListenConnectorProcess implements IProcess {
 		
 		protected IStatus run(IProgressMonitor monitor) {
 			try{
-				if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+				// The following code sets a timeout (not officially supported in Sun's spec).
+				// Allows polling for job cancellation. If the implementation does not support timeout
+				// the job cannot be cancelled (but the launch can still be terminated).
+				Connector.Argument timeout = (Connector.Argument) fArguments.get("timeout"); //$NON-NLS-1$
+				if (timeout != null){
+					timeout.setValue("3000"); //$NON-NLS-1$
+				}
 				
-				// This is a blocking call
-				VirtualMachine vm = fConnector.accept(fArguments);
+				VirtualMachine vm = null;
+				while (vm == null && !monitor.isCanceled()){
+					try {
+						vm = fConnector.accept(fArguments);
+					} catch (TransportTimeoutException e){
+					}
+				}
 				
-				// The following code sets a timeout (not officially supported by Sun), 
-				// that allows polling for job cancellation, not currently needed
-//				Connector.Argument timeout = (Connector.Argument) fArguments.get("timeout");
-//				if (timeout != null){
-//					timeout.setValue("3000");
-//				VirtualMachine vm = null;
-//				while (vm == null && !monitor.isCanceled()){
-//					try {
-//						vm = fConnector.accept(fArguments);
-//					} catch (TransportTimeoutException e){
-//					}
-//				}
-//				if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+				if (monitor.isCanceled()){
+					fConnector.stopListening(fArguments);
+					return Status.CANCEL_STATUS;
+				}
 				
 				ILaunchConfiguration configuration = fLaunch.getLaunchConfiguration();
 				boolean allowTerminate = false;
@@ -273,31 +284,28 @@ public class SocketListenConnectorProcess implements IProcess {
 				IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(fLaunch, vm, vmLabel, null, allowTerminate, true);
 				fLaunch.addDebugTarget(debugTarget);
 				fLaunch.removeProcess(fWaitProcess);
-				fConnector.stopListening(fArguments);
 				return Status.OK_STATUS;
-				
 			} catch (IOException e) {
-				if (fStopListening){
+				if (fListeningStopped){
 					return Status.CANCEL_STATUS;
 				} else {
 					return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 				}
 			} catch (IllegalConnectorArgumentsException e) {
 				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			} finally {
+				// Always try to close the socket
+				stopListening();
 			}
-				
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 		 */
 		protected void canceling() {
-			// If we haven't already closed the connector's socket, do so now.
-			if (!fStopListening){
-				stopListening();
-			}
+			stopListening();
 		}
-		
+			
 		/**
 		 * Tells the listening connector to stop listening.  Ensures
 		 * that the socket is closed and the port released.  Sets a flag
@@ -305,13 +313,15 @@ public class SocketListenConnectorProcess implements IProcess {
 		 * will be ignored.
 		 */
 		protected void stopListening() {
-			try{
-				fStopListening = true;
-				fConnector.stopListening(fArguments);
-			} catch (IOException e) {
-				done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
-			} catch (IllegalConnectorArgumentsException e) {
-				done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
+			if (!fListeningStopped){
+				try{
+					fListeningStopped = true;
+					fConnector.stopListening(fArguments);
+				} catch (IOException e) {
+					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
+				} catch (IllegalConnectorArgumentsException e) {
+					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
+				}
 			}
 		}
 		
