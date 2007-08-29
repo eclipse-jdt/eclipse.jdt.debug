@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,10 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
-import org.eclipse.jdt.debug.testplugin.ContributedTestTab1;
-import org.eclipse.jdt.debug.testplugin.ContributedTestTab2;
-import org.eclipse.jdt.debug.testplugin.ContributedTestTab3;
 import org.eclipse.jdt.debug.testplugin.JavaAlernateModeTab;
+import org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab1;
+import org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab2;
+import org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab3;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**

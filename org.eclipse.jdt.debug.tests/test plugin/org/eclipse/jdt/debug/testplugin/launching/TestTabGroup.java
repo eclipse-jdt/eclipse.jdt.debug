@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,32 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.debug.testplugin;
+package org.eclipse.jdt.debug.testplugin.launching;
 
- 
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 
 /**
- * A tab group for out test mode - to test mode specific tab groups.
+ * Test tab group implementation
+ * @since 3.4
  */
-public class TestJavaApplicationTabGroup extends AbstractLaunchConfigurationTabGroup {
+public class TestTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new JavaMainTab(),
-			new JavaArgumentsTab(),
-			new JavaJRETab(),
-			new JavaClasspathTab()
+		ILaunchConfigurationTab[] tabs = {
+				new CommonTab()
 		};
 		setTabs(tabs);
 	}
+
 }

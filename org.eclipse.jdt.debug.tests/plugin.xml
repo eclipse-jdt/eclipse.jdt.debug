@@ -78,14 +78,14 @@
    <extension
          point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
-            delegate="org.eclipse.jdt.debug.testplugin.TestModeLaunchDelegate"
+            delegate="org.eclipse.jdt.debug.testplugin.launching.TestModeLaunchDelegate"
             type="org.eclipse.jdt.launching.localJavaApplication"
             modes="TEST_MODE"
             id="org.eclipse.jdt.debug.tests.testModeLaunchDelegate">
       </launchDelegate>
       <launchDelegate
             sourceLocatorId="org.eclipse.jdt.debug.tests.testSourceLocator"
-            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate"
+            delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate"
             type="org.eclipse.jdt.debug.tests.testConfigType"
             sourcePathComputerId="org.eclipse.jdt.debug.tests.testSourcePathComputer"
             modes="debug"
@@ -108,14 +108,14 @@
          </modeCombination>
       </launchDelegate>
       <launchDelegate
-            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate1"
+            delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate1"
             id="org.eclipse.jdt.debug.tests.testDelegate1"
             modes="alternate2"
             name="Testing Multiple Launch Delegate"
             type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
       <launchDelegate
-            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate2"
+            delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate2"
             id="org.eclipse.jdt.debug.tests.testtDelegate2"
             modes="alternate2"
             name="Testing Multiple Launch Delegate 2"
@@ -126,7 +126,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.jdt.launching.localJavaApplication"
-            class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup"
+            class="org.eclipse.jdt.debug.testplugin.launching.TestJavaApplicationTabGroup"
             id="org.eclipse.jdt.debug.tests.launchConfigurationTabGroup.testJavaApplication">
          <launchMode
                perspective="org.eclipse.jdt.ui.JavaPerspective"
@@ -237,7 +237,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="Test Config Type"
-            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate"
+            delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate"
             modes="run"
             id="org.eclipse.jdt.debug.tests.testConfigType">
       </launchConfigurationType>
@@ -303,7 +303,7 @@
    <extension
          point="org.eclipse.debug.core.sourcePathComputers">
       <sourcePathComputer
-            class="org.eclipse.jdt.debug.tests.SourcePathComputerDelegate1"
+            class="org.eclipse.jdt.debug.testplugin.launching.SourcePathComputerDelegate1"
             id="org.eclipse.jdt.debug.tests.testSourcePathComputer"/>
    </extension>
    <extension
@@ -377,7 +377,7 @@
         </placement>
      </tab>
      <tab
-           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab1"
+           class="org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab1"
            group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
            id="org.eclipse.jdt.debug.tests.testTab1"
            name="Test Tab 1">
@@ -386,7 +386,7 @@
         </placement>
      </tab>
      <tab
-           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab2"
+           class="org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab2"
            group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
            id="org.eclipse.jdt.debug.tests.TestTab2"
            name="Test Tab 2">
@@ -395,7 +395,7 @@
         </placement>
      </tab>
      <tab
-           class="org.eclipse.jdt.debug.testplugin.ContributedTestTab3"
+           class="org.eclipse.jdt.debug.testplugin.launching.ContributedTestTab3"
            group="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
            id="org.eclipse.jdt.debug.tests.TestTab3"
            name="Test Tab 3">
@@ -408,7 +408,7 @@
         point="org.eclipse.debug.ui.launchShortcuts">
      <shortcut
            category="testing"
-           class="org.eclipse.jdt.debug.testplugin.TestLaunchShortcut"
+           class="org.eclipse.jdt.debug.testplugin.launching.TestLaunchShortcut"
            description="General Description"
            helpContextId="testing.help.id"
            id="org.eclipse.jdt.debug.tests.testShortCut"
@@ -425,6 +425,48 @@
               description="Run Description"
               mode="run">
         </description>
+     </shortcut>
+     <shortcut
+           class="org.eclipse.jdt.debug.testplugin.launching.ParticipantLaunchShortcut"
+           description="This shortcut participates in luanching where there is no IResource"
+           id="org.eclipse.jdt.debug.tests.participantShortcut"
+           label="Participant Launch Shortcut"
+           modes="run, debug, profile">
+        <configurationType
+              id="org.eclipse.jdt.debug.tests.testConfigType">
+        </configurationType>
+        <contextualLaunch>
+           <contextLabel
+                 label="Run FOOX file"
+                 mode="run">
+           </contextLabel>
+           <contextLabel
+                 label="Debug FOOX file"
+                 mode="debug">
+           </contextLabel>
+           <contextLabel
+                 label="Profile FOOX file"
+                 mode="profile">
+           </contextLabel>
+           <enablement>
+              <with
+                    variable="selection">
+                 <iterate>
+                    <or>
+                       <test
+                             property="org.eclipse.debug.ui.matchesPattern"
+                             value="*.foox">
+                       </test>
+                       <not>
+                          <adapt
+                                type="org.eclipse.core.resources.IResource">
+                          </adapt>
+                       </not>
+                    </or>
+                 </iterate>
+              </with>
+           </enablement>
+        </contextualLaunch>
      </shortcut>
   </extension>   
   <extension
@@ -457,6 +499,24 @@
             </or>
          </enablement>
      </detailFactories>
-  </extension>   
+  </extension>
+  <extension
+        point="org.eclipse.core.runtime.adapters">
+     <factory
+           adaptableType="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
+        <adapter
+              type="org.eclipse.debug.ui.actions.ILaunchable">
+        </adapter>
+     </factory>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+     <launchConfigurationTabGroup
+           class="org.eclipse.jdt.debug.testplugin.launching.TestTabGroup"
+           description="Test Tab Group"
+           id="org.eclipse.jdt.debug.tests.testTabGroup"
+           type="org.eclipse.jdt.debug.tests.testConfigType">
+     </launchConfigurationTabGroup>
+  </extension>
 
 </plugin>

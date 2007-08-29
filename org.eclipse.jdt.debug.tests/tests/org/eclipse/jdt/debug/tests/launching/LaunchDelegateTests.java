@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.jdt.debug.testplugin.AlternateDelegate;
-import org.eclipse.jdt.debug.testplugin.TestLaunchDelegate1;
-import org.eclipse.jdt.debug.testplugin.TestLaunchDelegate2;
+import org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate1;
+import org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate2;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 

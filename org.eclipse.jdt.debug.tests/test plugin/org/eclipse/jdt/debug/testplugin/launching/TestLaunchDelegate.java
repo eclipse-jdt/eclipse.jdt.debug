@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.debug.testplugin;
+package org.eclipse.jdt.debug.testplugin.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +19,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 /**
  * Tests delegation to create a launch object.
@@ -43,6 +47,16 @@ public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (!launch.equals(fLaunch)) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Received wrong launch object", null));
+		}
+		else {
+			VMRunnerConfiguration runConfig = new VMRunnerConfiguration("-version", new String[0]);
+			IVMInstall install = JavaRuntime.getDefaultVMInstall();
+			if(install != null) {
+				IVMRunner runner = install.getVMRunner(mode);
+				if(runner != null) {
+					runner.run(runConfig, launch, monitor);
+				}
+			}
 		}
 	}
 

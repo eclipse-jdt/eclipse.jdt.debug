@@ -43,15 +43,6 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests getting a specific launch shortcut by its id
-	 */
-	public void testGetSpecificLaunchShortcut() {
-		assertNotNull("The launch configuration manager cannot be null", fLCM);
-		LaunchShortcutExtension ext = fLCM.getLaunchShortcut("org.eclipse.jdt.debug.tests.testShortCut");
-		assertNotNull("the test launch shortcut must exist", ext);
-	}
-	
-	/**
 	 * tests that shortcut extensions are loaded properly by the manager
 	 */
 	public void testGetLaunchShortcuts() {
