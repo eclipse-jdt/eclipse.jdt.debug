@@ -95,7 +95,6 @@
             id="org.eclipse.jdt.debug.tests.alternateDelegate"
             modes="alternate"
             name="Alternate Java Debugger"
-            options="debug"
             type="org.eclipse.jdt.launching.localJavaApplication">
          <modeCombination
                modes="alternate, debug">
