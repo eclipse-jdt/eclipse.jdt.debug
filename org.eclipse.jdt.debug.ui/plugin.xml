@@ -276,7 +276,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Watch"
                disabledIcon="$nl$/icons/full/dtool16/watch_exp.gif"
-               enablesFor="+"
                helpContextId="watch_action_context"
                hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
                icon="$nl$/icons/full/etool16/watch_exp.gif"
