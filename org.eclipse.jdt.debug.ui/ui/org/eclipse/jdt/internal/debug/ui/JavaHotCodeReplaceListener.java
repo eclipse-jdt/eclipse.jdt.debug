@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
@@ -68,7 +69,8 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		final IStatus status;
 		final String preference;
 		final String alertMessage;
-		final String launchName = target.getLaunch().getLaunchConfiguration().getName();
+		ILaunchConfiguration config = target.getLaunch().getLaunchConfiguration();
+		final String launchName = (config != null ? config.getName() : DebugUIMessages.JavaHotCodeReplaceListener_0);
 		if (exception == null) {
 			status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1, null);
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
