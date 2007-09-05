@@ -659,15 +659,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 					displayResult(value);
 					break;
 				case RESULT_INSPECT:
-					String snippet= result.getSnippet().trim();
-					int snippetLength= snippet.length();
-					if (snippetLength > 30) {
-						snippet = snippet.substring(0, 15) + SnippetMessages.getString("SnippetEditor.ellipsis") + snippet.substring(snippetLength - 15, snippetLength);  //$NON-NLS-1$
-					}
-					snippet= snippet.replace('\n', ' ');
-					snippet= snippet.replace('\r', ' ');
-					snippet= snippet.replace('\t', ' ');
-					JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
+					JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
 					showExpression(exp);
 					break;
 				case RESULT_RUN:

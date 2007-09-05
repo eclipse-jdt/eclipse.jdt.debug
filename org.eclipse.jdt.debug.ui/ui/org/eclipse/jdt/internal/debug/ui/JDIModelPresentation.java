@@ -74,6 +74,7 @@ import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.NoMonitorInformationElement;
 import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetMessages;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
@@ -1326,8 +1327,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		}
-		buff.append('"' + expression.getExpressionText() + '"');
-
+		// Edit the snippet to make it easily viewable in one line
+		StringBuffer snippetBuffer = new StringBuffer();
+		String snippet = expression.getExpressionText().trim();
+		snippetBuffer.append('"');
+		if (snippet.length() > 30){
+			snippetBuffer.append(snippet.substring(0, 15));
+			snippetBuffer.append(SnippetMessages.getString("SnippetEditor.ellipsis")); //$NON-NLS-1$
+			snippetBuffer.append(snippet.substring(snippet.length() - 15));
+		} else {
+			snippetBuffer.append(snippet);
+		}
+		snippetBuffer.append('"');
+		snippet = snippetBuffer.toString().replaceAll("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
+		buff.append(snippet);
+		
 		if (javaValue != null) {
 			String valueString= getValueText(javaValue);
 			if (valueString.length() > 0) {
