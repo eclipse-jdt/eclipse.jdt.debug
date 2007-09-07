@@ -19,6 +19,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -119,7 +120,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchConfiguration configuration = getLaunchConfiguration("ThrowsNPE");
 		assertNotNull("the ThrowsNPE configuration should exist", configuration);
-		ILaunchGroup group = fLCM.getLaunchGroup(configuration, "debug");
+		ILaunchGroup group = DebugUITools.getLaunchGroup(configuration, "debug");
 		assertNotNull("the launch group for a java app config in debug mode should exist", group);
 	}
 	
