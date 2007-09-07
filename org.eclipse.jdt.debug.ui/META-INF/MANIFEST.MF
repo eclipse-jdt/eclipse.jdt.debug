@@ -9,7 +9,6 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.jdt.debug.ui,
  org.eclipse.jdt.debug.ui.actions,
  org.eclipse.jdt.debug.ui.launchConfigurations,
- org.eclipse.jdt.debug.ui.launcher,
  org.eclipse.jdt.internal.debug.core.refactoring;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui;x-internal:=true,
  org.eclipse.jdt.internal.debug.ui.actions;x-internal:=true,

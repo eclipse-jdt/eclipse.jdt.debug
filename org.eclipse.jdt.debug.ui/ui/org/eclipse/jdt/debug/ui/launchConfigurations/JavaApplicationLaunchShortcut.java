@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launchConfigurations;
 
  
 import java.lang.reflect.InvocationTargetException;
@@ -38,8 +38,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 
 /**
- * Performs single click launching for local Java applications.
- * 
+ * Launch shortcut for local Java applications.
+ * <p>
+ * This class may be instantiated or subclassed.
+ * </p>
  * @since 3.4
  */
 public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
@@ -72,7 +74,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
@@ -91,21 +93,23 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getConfigurationType()
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
 	 */
 	protected ILaunchConfigurationType getConfigurationType() {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
 	}
 
 	/**
-	 * @return the instance of the <code>ILaunchManager</code>
+	 * Returns the singleton launch manager.
+	 * 
+	 * @return launch manager
 	 */
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
 	 */
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
@@ -149,21 +153,21 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getTypeSelectionTitle()
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */
 	protected String getTypeSelectionTitle() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_0;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getEditorEmptyMessage()
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getEditorEmptyMessage()
 	 */
 	protected String getEditorEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_1;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getSelectionEmptyMessage()
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getSelectionEmptyMessage()
 	 */
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
