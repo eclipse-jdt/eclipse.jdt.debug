@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui.launcher;
 
  
 import java.lang.reflect.InvocationTargetException;
@@ -18,9 +18,11 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
@@ -29,11 +31,16 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 
 /**
  * Performs single click launching for local Java applications.
+ * 
+ * @since 3.4
  */
 public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	
@@ -65,7 +72,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
@@ -75,24 +82,30 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(type.getElementName()));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-			//CONTEXTLAUNCHING
 			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});
 			config = wc.doSave();
 		} catch (CoreException exception) {
-			reportErorr(exception);		
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.JavaLaunchShortcut_3, exception.getStatus().getMessage());	
 		} 
 		return config;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#getConfigurationType()
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getConfigurationType()
 	 */
 	protected ILaunchConfigurationType getConfigurationType() {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
+	 * @return the instance of the <code>ILaunchManager</code>
+	 */
+	private ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
 	 */
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
@@ -117,9 +130,8 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	 * Returns the smallest enclosing <code>IType</code> if the specified object is a main method, or <code>null</code>
 	 * @param o the object to inspect
 	 * @return the smallest enclosing <code>IType</code> of the specified object if it is a main method or <code>null</code> if it is not
-	 * @since 3.3
 	 */
-	protected IType isMainMethod(Object o) {
+	private IType isMainMethod(Object o) {
 		if(o instanceof IAdaptable) {
 			IAdaptable adapt = (IAdaptable) o;
 			IJavaElement element = (IJavaElement) adapt.getAdapter(IJavaElement.class);
@@ -137,24 +149,23 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#getTypeSelectionTitle()
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */
 	protected String getTypeSelectionTitle() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_0;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#getEditorEmptyMessage()
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getEditorEmptyMessage()
 	 */
 	protected String getEditorEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_1;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchShortcut#getSelectionEmptyMessage()
+	 * @see org.eclipse.jdt.debug.ui.launcher.JavaLaunchShortcut#getSelectionEmptyMessage()
 	 */
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
 	}
-	
 }

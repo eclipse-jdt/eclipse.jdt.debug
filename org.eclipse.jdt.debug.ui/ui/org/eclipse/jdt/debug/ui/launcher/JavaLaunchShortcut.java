@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
-
+package org.eclipse.jdt.debug.ui.launcher;
  
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,13 +18,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -41,16 +41,60 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Common behavior for Java launch shortcuts
  * 
- * @since 3.2
+ * @since 3.4
  */
 public abstract class JavaLaunchShortcut implements ILaunchShortcut {
+	
+	/**
+	 * Returns the type of configuration this shortcut is applicable to.
+	 * 
+	 * @return the type of configuration this shortcut is applicable to
+	 */
+	protected abstract ILaunchConfigurationType getConfigurationType();
+	
+	/**
+	 * Create and returns a new configuration based on the specified <code>IType</code>.
+	 */
+	protected abstract ILaunchConfiguration createConfiguration(IType type);
+	
+	/**
+	 * Finds and returns the launchable types in the given selection of elements.
+	 * 
+	 * @param elements scope to search for launchable types
+	 * @param context progress reporting context
+	 * @return launchable types, possibly empty
+	 * @exception InterruptedException if the search is canceled
+	 * @exception org.eclipse.core.runtime.CoreException if the search fails
+	 */
+	protected abstract IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException;
+	
+	/**
+	 * Returns the title for type selection dialog for this launch shortcut.
+	 * 
+	 * @return type selection dialog title
+	 */
+	protected abstract String getTypeSelectionTitle();
+	
+	/**
+	 * Returns an error message to use when the editor does not contain a launchable type.
+	 * 
+	 * @return error message
+	 */
+	protected abstract String getEditorEmptyMessage();	
+	
+	/**
+	 * Returns an error message to use when the selection does not contain a launchable type.
+	 * 
+	 * @return error message
+	 */
+	protected abstract String getSelectionEmptyMessage();	
 	
 	/**
 	 * @param search the java elements to search for a main type
 	 * @param mode the mode to launch in
 	 * @param editor activated on an editor (or from a selection in a viewer)
 	 */
-	public void searchAndLaunch(Object[] search, String mode, String selectMessage, String emptyMessage) {
+	private void searchAndLaunch(Object[] search, String mode, String selectMessage, String emptyMessage) {
 		IType[] types = null;
 		try {
 			types = findTypes(search, PlatformUI.getWorkbench().getProgressService());
@@ -74,17 +118,6 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 			launch(type, mode);
 		}
 	}	
-	
-	/**
-	 * Finds and returns the launchable types in the given selection of elements.
-	 * 
-	 * @param elements scope to search for launchable types
-	 * @param context progress reporting context
-	 * @return launchable types, possibly empty
-	 * @exception InterruptedException if the search is canceled
-	 * @exception org.eclipse.core.runtime.CoreException if the search fails
-	 */
-	protected abstract IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException;
 
 	/**
 	 * Prompts the user to select a type from the given types.
@@ -105,7 +138,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Launches a configuration for the given type
 	 */
-	protected void launch(IType type, String mode) {
+	private void launch(IType type, String mode) {
 		ILaunchConfiguration config = findLaunchConfiguration(type, getConfigurationType());
 		if (config != null) {
 			DebugUITools.launch(config, mode);
@@ -113,14 +146,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Returns the type of configuration this shortcut is applicable to.
-	 * 
-	 * @return the type of configuration this shortcut is applicable to
-	 */
-	protected abstract ILaunchConfigurationType getConfigurationType();
-	
-	/**
-	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
+	 * Locate a configuration to re-launch for the given type.  If one cannot be found, create one.
 	 * 
 	 * @return a re-usable config or <code>null</code> if none
 	 */
@@ -140,26 +166,17 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-		
-		// If there are no existing configs associated with the IType, create one.
-		// If there is exactly one config associated with the IType, return it.
-		// Otherwise, if there is more than one config associated with the IType, prompt the
-		// user to choose one.
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
 			return createConfiguration(type);
 		} else if (candidateCount == 1) {
 			return (ILaunchConfiguration) candidateConfigs.get(0);
 		} else {
-			// Prompt the user to choose a config.  A null result means the user
-			// canceled the dialog, in which case this method returns null,
-			// since canceling the dialog should also cancel launching anything.
 			ILaunchConfiguration config = chooseConfiguration(candidateConfigs);
 			if (config != null) {
 				return config;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -184,32 +201,14 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Create and returns a new configuration based on the specified <code>IType</code>.
-	 */
-	protected abstract ILaunchConfiguration createConfiguration(IType type);
-	
-	/**
-	 * Opens an error dialog on the given exception.
-	 * 
-	 * @param exception
-	 */
-	protected void reportErorr(CoreException exception) {
-		MessageDialog.openError(getShell(), LauncherMessages.JavaLaunchShortcut_3, exception.getStatus().getMessage());  
-	}
-	
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	
-	/**
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
 		return JDIDebugUIPlugin.getActiveWorkbenchShell();
 	}
 	
-	/**
-	 * @see ILaunchShortcut#launch(IEditorPart, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
@@ -219,33 +218,12 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 		}
 	}
 
-	/**
-	 * @see ILaunchShortcut#launch(ISelection, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, getTypeSelectionTitle(), getSelectionEmptyMessage());
 		}
-	}
-
-	/**
-	 * Returns the title for type selection dialog for this launch shortcut.
-	 * 
-	 * @return type selection dialog title
-	 */
-	protected abstract String getTypeSelectionTitle();
-	
-	/**
-	 * Returns an error message to use when the editor does not contain a launchable type.
-	 * 
-	 * @return error message
-	 */
-	protected abstract String getEditorEmptyMessage();	
-	
-	/**
-	 * Returns an error message to use when the selection does not contain a launchable type.
-	 * 
-	 * @return error message
-	 */
-	protected abstract String getSelectionEmptyMessage();		
+	}	
 }

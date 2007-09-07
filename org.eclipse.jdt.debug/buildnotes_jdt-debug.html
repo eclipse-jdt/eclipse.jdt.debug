@@ -11,6 +11,35 @@
 <h1>Eclipse 3.4 Java Debug Build Notes</h1>
 
 <h2>Summary of API changes in 3.4</h2>
+<h3>Java Launch Shortcuts</h3>
+<p>
+	The core Java launch shortcuts are available to be extended/reused. 
+</p>
+<p>
+	The following classes are provided as API in the package <code>org.eclipse.jdt.debug.ui.launcher</code>:
+	<ul>
+		<li><code>JavaAppletLaunchShortcut</code> - the standard implementation for Java applets, used in the platform</li>
+		<li><code>JavaApplicationLaunchShortcut</code> - the standard implementation for Java application, used in the platform</li>
+		<li><code>JavaLaunchShortcut</code> - an abstract implementation of a shortcut to launch Java artifacts, used as the parent class to the two aforementioned classes</li>
+	</ul>
+</p>
+<p>
+	The methods exposed to consumers from the parent class <code>JavaLaunchShortcut</code> and through the 
+	two subclasses are:
+	<ul>
+		<li> <code>getConfigurationType()</code> - returns the type of configuration this shortcut creates</li>
+		<li> <code>createConfiguration(IType type)</code> - creates a launch configuration for the specified <code>IType</code></li>
+		<li> <code>chooseType(IType[] types, String title)</code> - allows an <code>IType</code> to be selected from the given list</li>
+		<li> <code>findTypes(Object[] elements, IRunnableContext context)</code> - searches for specific <code>IType</code>s from the given list of elements</li>
+		<li> <code>getTypeSelectionTitle()</code> - returns the title for the type selection dialog used by the shortcuts for user input</li>
+		<li> <code>getEditorEmptyMessage()</code> - returns the error message displayed to users who try to use one of the shortcuts on an empty editor</li>
+		<li> <code>getSelectionEmptyMessage()</code> - returns the error message displayed to users who try to use the shortcut on an empty selection</li>
+		<li> <code>findLaunchConfiguration(IType type, ILaunchConfigurationType configType)</code> - searches for a launch configuration associated with the specified <code>IType</code> and configuration type</li>
+		<li> <code>chooseConfiguration(List configList)</code> - selects a specific configuration from the specified listing</li>
+		<li> <code>getShell()</code> - returns the shell used for the Java launch shortcuts</li>
+	</ul>
+</p>
+
 <h3>Support for Execution Environment Descriptions</h3>
 <p>An installed JRE can be defined by an <a href="http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions">execution 
   environment description file</a>. The API for <code>IVMInstallType</code> and 

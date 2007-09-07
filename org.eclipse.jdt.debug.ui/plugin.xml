@@ -2332,7 +2332,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
+            class="org.eclipse.jdt.debug.ui.launcher.JavaApplicationLaunchShortcut"
             description="%JavaLaunchShortcut.description"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
             icon="$nl$/icons/full/etool16/java_app.gif"
@@ -2372,7 +2372,7 @@
          </description>
       </shortcut>
       <shortcut
-            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
+            class="org.eclipse.jdt.debug.ui.launcher.JavaAppletLaunchShortcut"
             description="%AppletLaunchShortcut.description"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
             icon="$nl$/icons/full/etool16/java_applet.gif"
