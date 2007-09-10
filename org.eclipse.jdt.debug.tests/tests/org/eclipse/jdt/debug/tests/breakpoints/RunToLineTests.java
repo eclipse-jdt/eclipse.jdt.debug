@@ -197,7 +197,7 @@ public class RunToLineTests extends AbstractDebugTest {
                 }
             };
             Display display = DebugUIPlugin.getStandardDisplay();
-            display.asyncExec(cleanup);			
+            display.syncExec(cleanup);			
 		}		
 	}
 }
