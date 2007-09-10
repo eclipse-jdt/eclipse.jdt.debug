@@ -1587,6 +1587,34 @@
                   </objectClass>
                </and>
             </enablement>
+         </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.Watch"
+               enablesFor="+"
+               helpContextId="watch_action_context"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               id="org.eclipse.jdt.debug.ui.displayView.Watch"
+               label="%Watch.label"
+               menubarPath="evaluationGroup"
+               tooltip="%Watch.tooltip">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
          </action>         
          <action
                label="%Execute.label"
@@ -1951,6 +1979,35 @@
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"
             id="org.eclipse.jdt.debug.ui.DisplayViewActions">
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               disabledIcon="$nl$/icons/full/dtool16/watch_exp.gif"
+               enablesFor="+"
+               helpContextId="watch_action_context"
+               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               id="org.eclipse.jdt.debug.ui.displayViewToolbar.Watch"
+               label="%Watch.label"
+               toolbarPath="evaluationGroup"
+               tooltip="%Watch.tooltip">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
          <action
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Execute"

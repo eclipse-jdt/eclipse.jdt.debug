@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
@@ -187,6 +192,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		getSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IJavaDebugHelpContextIds.DISPLAY_VIEW);
 		getSite().getWorkbenchWindow().addPerspectiveListener(this);
+		
+		initDragAndDrop();
 	}
 
 	protected IDocument getRestoredDocument() {
@@ -429,6 +436,22 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fRestoredContents= memento.getTextData();
 		}
 	}
+	
+    /**
+     * Initializes the drag and/or drop adapters for this view.
+     * 
+     * @since 3.4
+     */
+    protected void initDragAndDrop() {
+        // Drag only
+    	DragSource ds = new DragSource(fSourceViewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
+    	ds.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+    	ds.addDragListener(new DragSourceAdapter() {
+        	public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
+        		event.data = fSourceViewer.getTextWidget().getSelectionText();
+        	}
+        });
+    }    
 	
 	/**
 	 * Returns the entire trimmed contents of the current document.
