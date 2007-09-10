@@ -253,7 +253,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         createTable(comp);
 		createTableButtons(comp);
         createSourceViewer(comp);
-        noDefaultAndApplyButton();;
+        noDefaultAndApplyButton();
 		return comp;
 	}
     
