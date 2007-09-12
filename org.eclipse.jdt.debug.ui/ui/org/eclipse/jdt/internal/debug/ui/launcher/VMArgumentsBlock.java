@@ -22,8 +22,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -72,7 +72,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		fPgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null);
 		fPgrmArgVariableButton.setFont(font);
 		fPgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		fPgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+		fPgrmArgVariableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -81,9 +81,6 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 					fVMArgumentsText.insert(variable);
 				}
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-			
 		});
 	}
 
