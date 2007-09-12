@@ -80,8 +80,8 @@ public class PacketReceiveManager extends PacketManager {
             while (!VMIsDisconnected()) {
                 // Read a packet from the input stream.
                 readAvailablePacket();
-            }//end while
-        }//end try 
+            }
+        }
         //if the remote VM is interrupted, drop the connection and clean up, don't wait for it to happen on its own
         catch (InterruptedIOException e) {disconnectVM(e);}
         catch (IOException e) {disconnectVM(e);}
@@ -103,29 +103,29 @@ public class PacketReceiveManager extends PacketManager {
                 waitForPacketAvailable(remainingTime, fCommandPackets);
                 waitedTime = System.currentTimeMillis() - timeBeforeWait;
                 remainingTime -= waitedTime;
-            }//end while
-        }//end sync
+            }
+        }
         // Check for an IO Exception.
         if (VMIsDisconnected()) {
             String message;
             if (getDisconnectException() == null) {
                 message = ConnectMessages.PacketReceiveManager_Got_IOException_from_Virtual_Machine_1; 
-            }//end if 
+            }
             else {
                 String exMessage = getDisconnectException().getMessage();
                 if (exMessage == null) {
                     message = MessageFormat.format(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine_1, new String[] { getDisconnectException().getClass().getName() }); 
-                }//end if 
+                }
                 else {
                     message = MessageFormat.format(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine___1__1, new String[] { getDisconnectException().getClass().getName(), exMessage }); 
-                }//end else
-            }//end else
+                }
+            }
             throw new VMDisconnectedException(message);
         }
         // Check for a timeout.
         if (packet == null) {
             throw new TimeoutException();
-        }//end if
+        }
         return packet;
     }
 
@@ -142,10 +142,10 @@ public class PacketReceiveManager extends PacketManager {
                 packet = removeReplyPacket(id);
                 if (packet != null) {
                     break;
-                }//end if
+                }
                 try {
                     waitForPacketAvailable(remainingTime, fReplyPackets);
-                }//end try 
+                }
                 // if the remote VM is interrupted DO NOT drop the connection - see bug 171075
                 // just stop waiting for the reply and treat it as a timeout
                 catch (InterruptedException e) {
@@ -153,13 +153,13 @@ public class PacketReceiveManager extends PacketManager {
                 }
                 long waitedTime = System.currentTimeMillis() - timeBeforeWait;
                 remainingTime = timeToWait - waitedTime;
-            }//end while
-        }//end sync
+            }
+        }
         if (packet == null) {
             synchronized (fReplyPackets) {
                 packet = removeReplyPacket(id);
-            }//end sync
-        }//end if
+            }
+        }
         // Check for an IO Exception.
         if (VMIsDisconnected())
             throw new VMDisconnectedException(ConnectMessages.PacketReceiveManager_Got_IOException_from_Virtual_Machine_2); 
@@ -167,9 +167,9 @@ public class PacketReceiveManager extends PacketManager {
         if (packet == null) {
             synchronized (fTimedOutPackets) {
                 fTimedOutPackets.add(new Integer(id));
-            }//end sync
+            }
             throw new TimeoutException(MessageFormat.format(ConnectMessages.PacketReceiveManager_0, new String[] {id+""})); //$NON-NLS-1$
-        }//end if
+        }
         return packet;
     }
 

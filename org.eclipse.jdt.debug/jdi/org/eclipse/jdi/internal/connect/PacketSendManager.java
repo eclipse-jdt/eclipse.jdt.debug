@@ -51,7 +51,7 @@ public class PacketSendManager extends PacketManager {
 		while (!VMIsDisconnected()) {
 			try {
 				sendAvailablePackets();
-			}//end try
+			}
 			//in each case if the remote VM fails, or has been interrupted, disconnect and force a clean up, don't wait for it to happen
 			catch (InterruptedException e) {disconnectVM();} 
 			catch (InterruptedIOException e) {disconnectVM(e);} 
@@ -67,16 +67,16 @@ public class PacketSendManager extends PacketManager {
 			String message;
 			if (getDisconnectException() == null) {
 				message= ConnectMessages.PacketSendManager_Got_IOException_from_Virtual_Machine_1; 
-			}//end if 
+			}
 			else {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
 					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1, new String[] {getDisconnectException().getClass().getName()}); 
-				}//end if 
+				}
 				else {
 					message= MessageFormat.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1, new String[] {getDisconnectException().getClass().getName(), exMessage}); 
-				}//end else
-			}//end else
+				}
+			}
 			throw new VMDisconnectedException(message);
 		}
 		
@@ -96,10 +96,10 @@ public class PacketSendManager extends PacketManager {
 	    synchronized (fOutgoingPackets) {
 			while (fOutgoingPackets.size() == 0) {
 				fOutgoingPackets.wait();
-			}//end while
+			}
 			packetsToSend.addAll(fOutgoingPackets);
 			fOutgoingPackets.clear();
-        }//end sync
+        }
 
 		// Put available packets on Output Stream.
 		while (packetsToSend.size() > 0) {
