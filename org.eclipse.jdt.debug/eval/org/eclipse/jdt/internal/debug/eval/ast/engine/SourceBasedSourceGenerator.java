@@ -1239,6 +1239,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 */
 	public boolean visit(EnumDeclaration node) {
 		if (rightTypeFound()) {
+			fEvaluateNextEndTypeDeclaration = false;
 			return false;
 		}
 		return true;
