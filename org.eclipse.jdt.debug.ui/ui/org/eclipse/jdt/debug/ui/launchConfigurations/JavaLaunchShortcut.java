@@ -14,13 +14,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -45,7 +47,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * </p>
  * @since 3.4
  */
-public abstract class JavaLaunchShortcut implements ILaunchShortcut {
+public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	
 	/**
 	 * Returns the type of configuration this shortcut is applicable to.
@@ -243,5 +245,59 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, getTypeSelectionTitle(), getSelectionEmptyMessage());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
+	 */
+	public IResource getLaunchableResource(IEditorPart editorpart) {
+		return getLaunchableResource(editorpart.getEditorInput());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
+	 */
+	public IResource getLaunchableResource(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			if (ss.size() == 1) {
+				Object element = ss.getFirstElement();
+				if (element instanceof IAdaptable) {
+					return getLaunchableResource((IAdaptable)element);
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the resource containing the Java element associated with the
+	 * given adaptable, or <code>null</code>.
+	 * 
+	 * @param adaptable adaptable object
+	 * @return containing resource or <code>null</code>
+	 */
+	private IResource getLaunchableResource(IAdaptable adaptable) {
+		IJavaElement je = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+		if (je != null) {
+			return je.getResource();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
+		return new ILaunchConfiguration[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
+		return new ILaunchConfiguration[0];
 	}	
+	
+	
 }
