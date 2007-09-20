@@ -113,6 +113,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsole;
@@ -1791,6 +1792,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		manager.removeBreakpointListener(listener);
 		return breakpoints[0];
+	}
+	
+	/**
+	 * Closes all editors in the active workbench page.
+	 */
+	protected void closeAllEditors() {
+	    Runnable closeAll = new Runnable() {
+            public void run() {
+                IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                activeWorkbenchWindow.getActivePage().closeAllEditors(false);
+            }
+        };
+        Display display = DebugUIPlugin.getStandardDisplay();
+        display.syncExec(closeAll);
 	}
     
 }

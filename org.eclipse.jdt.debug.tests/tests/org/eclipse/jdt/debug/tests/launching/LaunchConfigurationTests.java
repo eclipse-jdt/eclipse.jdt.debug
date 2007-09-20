@@ -560,6 +560,9 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 * @throws CoreException
 	 */
 	public void testPersistIndex() throws CoreException {
+		// close all editors before closing project: @see bug 204023
+		closeAllEditors();
+		
 		ILaunchConfigurationWorkingCopy wc1 = newConfiguration(null, "persist1local"); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc2 = newConfiguration(getJavaProject().getProject(), "persist2shared"); //$NON-NLS-1$
 		ILaunchConfiguration lc1 = wc1.doSave();
