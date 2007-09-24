@@ -303,6 +303,26 @@ public class SWTFactory {
 	}
 	
 	/**
+	 * Creates a composite that uses the parent's font and has a grid layout
+	 * @param parent the parent to add the composite to
+	 * @param columns the number of columns the composite should have
+	 * @param hspan the horizontal span the new composite should take up in the parent
+	 * @param fill the fill style of the composite {@link GridData}
+	 * @return a new composite with a grid layout
+	 * 
+	 * @since 3.3
+	 */
+	public static Composite createComposite(Composite parent, int columns, int hspan, int fill) {
+		Composite g = new Composite(parent, SWT.NONE);
+    	g.setLayout(new GridLayout(columns, false));
+    	g.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+	}
+	
+	/**
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
 	 * @param columns the number of columns within the composite
@@ -385,7 +405,9 @@ public class SWTFactory {
 		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
 		c.setLayoutData(gd);
-		c.setItems(items);
+		if (items != null){
+			c.setItems(items);			
+		}
 		c.select(0);
 		return c;
 	}
@@ -404,7 +426,9 @@ public class SWTFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
 		c.setLayoutData(gd);
-		c.setItems(items);
+		if (items != null){
+			c.setItems(items);
+		}
 		c.select(0);
 		return c;
 	}

@@ -36,7 +36,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -157,13 +156,12 @@ public class JREsComboBlock {
 	 * @param anscestor containing control
 	 */
 	public void createControl(Composite ancestor) {
-		Font font = ancestor.getFont();
-		fControl = SWTFactory.createComposite(ancestor, font, 1, 1, GridData.FILL_BOTH);		
+		fControl = SWTFactory.createComposite(ancestor, 1, 1, GridData.FILL_BOTH);		
 		if (fTitle == null) {
 			fTitle = JREMessages.JREsComboBlock_3; 
 		}
 		Group group = SWTFactory.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
-		Composite comp = SWTFactory.createComposite(group, font, 3, 1, GridData.FILL_BOTH, 0, 0);
+		Composite comp = SWTFactory.createComposite(group, group.getFont(), 3, 1, GridData.FILL_BOTH, 0, 0);
 	// display a 'use default JRE' check box
 		if (fDefaultDescriptor != null) {
 			fDefaultButton = SWTFactory.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
@@ -201,13 +199,8 @@ public class JREsComboBlock {
 				}
 			}
 		});
-		fCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fCombo.setFont(font);
-		GridData data= new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 1;
-		fCombo.setLayoutData(data);
+		fCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		ControlAccessibleListener.addListener(fCombo, fSpecificButton.getText());
-		
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setStatus(OK_STATUS);
@@ -215,7 +208,7 @@ public class JREsComboBlock {
 			}
 		});
 				
-		fManageButton = createPushButton(comp, JREMessages.JREsComboBlock_2); 
+		fManageButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_2, null); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"); //$NON-NLS-1$
@@ -243,13 +236,7 @@ public class JREsComboBlock {
 			}
 		});		
 		
-		
-		fEnvironmentsCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fEnvironmentsCombo.setFont(font);
-		data= new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 1;
-		fEnvironmentsCombo.setLayoutData(data);
-		
+		fEnvironmentsCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
@@ -257,7 +244,7 @@ public class JREsComboBlock {
 			}
 		});		
 		
-		fManageEnvironmentsButton = createPushButton(comp, JREMessages.JREsComboBlock_14);
+		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
@@ -302,11 +289,7 @@ public class JREsComboBlock {
 			combo.select(0);
 		}
 	}
-	
-	protected Button createPushButton(Composite parent, String label) {
-		return SWTFactory.createPushButton(parent, label, null);
-	}
-	
+		
 	/**
 	 * Returns this block's control
 	 * 

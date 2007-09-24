@@ -16,15 +16,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -74,7 +73,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	}
 
 	/**
-	 * Initlaizes the JRE selection
+	 * Initializes the JRE selection
 	 */
 	protected void initializeFromSelection() {
 		if (getControl() != null) {
@@ -94,17 +93,12 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(gd);
-		composite.setFont(parent.getFont());
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3); 
 		fJREBlock.createControl(composite);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJREBlock.getControl().setLayoutData(gd);
 		setControl(composite);
 		fJREBlock.addPropertyChangeListener(new IPropertyChangeListener() {
