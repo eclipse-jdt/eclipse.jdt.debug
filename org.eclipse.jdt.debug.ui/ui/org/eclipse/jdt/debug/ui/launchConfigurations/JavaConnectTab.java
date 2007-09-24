@@ -181,6 +181,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		}
 		fArgumentComposite.getParent().getParent().layout();
 		fArgumentComposite.layout(true);
+		updateLaunchConfigurationDialog();		
 	}
 	
 	/**
