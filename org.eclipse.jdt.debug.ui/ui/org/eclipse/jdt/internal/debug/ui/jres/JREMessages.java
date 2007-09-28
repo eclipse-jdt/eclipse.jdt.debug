@@ -54,8 +54,9 @@ public class JREMessages extends NLS {
 	public static String JREsComboBlock_16;
 
 	public static String JREContainerWizardPage_JRE_System_Library_1;
-	public static String JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4;
 	public static String JREContainerWizardPage_3;
+
+	public static String JREContainerWizardPage_4;
 
 	public static String JREsPreferencePage_0;
 

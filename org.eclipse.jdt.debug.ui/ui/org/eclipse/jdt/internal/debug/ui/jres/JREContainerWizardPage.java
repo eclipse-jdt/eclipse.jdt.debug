@@ -113,7 +113,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		});
 		
 		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
-		setMessage(JREMessages.JREContainerWizardPage_Select_the_JRE_used_to_build_this_project__4); 
+		setMessage(JREMessages.JREContainerWizardPage_4); 
 				
 		initializeFromSelection();
 	}
