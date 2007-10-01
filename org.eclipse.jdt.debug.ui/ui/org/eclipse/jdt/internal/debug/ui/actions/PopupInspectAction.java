@@ -15,8 +15,10 @@ import org.eclipse.debug.ui.InspectPopupDialog;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class PopupInspectAction extends InspectAction {
 
@@ -24,6 +26,9 @@ public class PopupInspectAction extends InspectAction {
 
     JavaInspectExpression expression;
 
+    private ITextEditor fTextEditor;
+    private ISelection fSelectionBeforeEvaluation;
+    
     /**
      * @see EvaluateAction#displayResult(IEvaluationResult)
      */
@@ -40,13 +45,26 @@ public class PopupInspectAction extends InspectAction {
                 }
             });
         }
-
         evaluationCleanup();
     }
 
     protected void showPopup(StyledText textWidget) {
-        DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(textWidget), ACTION_DEFININITION_ID, expression);
+    	IWorkbenchPart part = getTargetPart();
+        if (part instanceof ITextEditor) {
+        	fTextEditor = (ITextEditor) part;
+        	fSelectionBeforeEvaluation = getTargetSelection();
+        }
+        DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(textWidget), ACTION_DEFININITION_ID, expression){
+        	public boolean close() {
+        		boolean returnValue = super.close();
+        		if (fTextEditor != null && fSelectionBeforeEvaluation != null){
+        			fTextEditor.getSelectionProvider().setSelection(fSelectionBeforeEvaluation);
+        			fTextEditor = null;
+        			fSelectionBeforeEvaluation = null;
+        		}
+        		return returnValue;
+        	}
+        };
         displayPopup.open();
     }
-
 }

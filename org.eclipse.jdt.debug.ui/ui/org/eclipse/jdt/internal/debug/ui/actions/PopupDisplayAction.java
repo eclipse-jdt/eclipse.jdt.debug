@@ -14,6 +14,7 @@ import org.eclipse.debug.ui.DebugPopup;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayView;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
@@ -22,22 +23,30 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class PopupDisplayAction extends DisplayAction {
 
     public static final String ACTION_DEFINITION_ID = "org.eclipse.jdt.debug.ui.commands.Display"; //$NON-NLS-1$
 
     private String snippet;
-
     private String resultString;
+    private ITextEditor fTextEditor;
+    private ISelection fSelectionBeforeEvaluation;
 
     public PopupDisplayAction() {
         super();
     }
 
     private void showPopup(StyledText textWidget) {
+        IWorkbenchPart part = getTargetPart();
+        if (part instanceof ITextEditor) {
+        	fTextEditor = (ITextEditor) part;
+        	fSelectionBeforeEvaluation = getTargetSelection();
+        }
         DebugPopup displayPopup = new DisplayPopup(getShell(), textWidget);
         displayPopup.open();
+        
     }
 
     private class DisplayPopup extends DebugPopup {
@@ -75,11 +84,20 @@ public class PopupDisplayAction extends DisplayAction {
             text.setText(resultString);
             return text;
         }
+        
+        public boolean close() {
+        	boolean returnValue = super.close();
+        	if (fTextEditor != null && fSelectionBeforeEvaluation != null) {
+    			fTextEditor.getSelectionProvider().setSelection(fSelectionBeforeEvaluation);
+    			fTextEditor = null;
+    			fSelectionBeforeEvaluation = null;
+    		}
+        	return returnValue;
+        }
     }
 
     protected void displayStringResult(String currentSnippet, String currentResultString) {
         IWorkbenchPart part = getTargetPart();
-
         if (part instanceof DisplayView) {
             super.displayStringResult(currentSnippet, currentResultString);
             return;
