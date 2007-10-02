@@ -210,7 +210,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 	/**
 	 * Returns the contents of the given file as a byte array.
-	 * @throws IOException if a problem occured reading the file.
+	 * @throws IOException if a problem occurred reading the file.
 	 */
 	protected static byte[] getFileByteContent(File file) throws IOException {
 		InputStream stream = null;
@@ -232,7 +232,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * If a length is specified (ie. if length != -1), only length bytes
 	 * are returned. Otherwise all bytes in the stream are returned.
 	 * Note this doesn't close the stream.
-	 * @throws IOException if a problem occured reading the stream.
+	 * @throws IOException if a problem occurred reading the stream.
 	 */
 	protected static byte[] getInputStreamAsByteArray(InputStream stream, int length)
 		throws IOException {
