@@ -756,14 +756,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        	int start = -1;
 	                            int end = -1;
 	                            attributes = new HashMap(10);
-                                IType type = javaField.getDeclaringType();
-                                ISourceRange range = javaField.getNameRange();
-                                if (range != null) {
-                                    start = range.getOffset();
-                                    end = start + range.getLength();
-                                }
-                                BreakpointUtils.addJavaBreakpointAttributes(attributes, javaField);
-                                resource = BreakpointUtils.getBreakpointResource(type);
+	                            if (javaField == null) {
+	                            	resource = ResourcesPlugin.getWorkspace().getRoot();
+	                            } else {
+	                                IType type = javaField.getDeclaringType();
+	                                ISourceRange range = javaField.getNameRange();
+	                                if (range != null) {
+	                                    start = range.getOffset();
+	                                    end = start + range.getLength();
+	                                }
+	                                BreakpointUtils.addJavaBreakpointAttributes(attributes, javaField);
+	                                resource = BreakpointUtils.getBreakpointResource(type);
+	                            }
 	                        	JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, start, end, 0, true, attributes);
 	                        } else {
 	                            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
