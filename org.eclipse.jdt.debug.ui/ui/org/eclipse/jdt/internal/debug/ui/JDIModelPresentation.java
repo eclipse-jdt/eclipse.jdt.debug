@@ -1084,38 +1084,33 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see IDebugModelPresentation#getEditorInput(Object)
 	 */
 	public IEditorInput getEditorInput(Object item) {
-		try {
-			if (item instanceof IMarker) {
-				item = getBreakpoint((IMarker)item);
-			}
-			if (item instanceof IJavaBreakpoint) {
-				IType type = BreakpointUtils.getType((IJavaBreakpoint)item);
-				if (type == null) {
-					// if the breakpoint is not associated with a type, use its resource
-					item = ((IJavaBreakpoint)item).getMarker().getResource();
-				} else {
-					item = type;
-				}
-			}
-			if (item instanceof LocalFileStorage) {
-				return new LocalFileStorageEditorInput((LocalFileStorage)item);
-			}
-			if (item instanceof ZipEntryStorage) {
-				return new ZipEntryStorageEditorInput((ZipEntryStorage)item);
-			}
-			// for types that correspond to external files, return null so we do not
-			// attempt to open a non-existing workspace file on the breakpoint (bug 184934)
-			if (item instanceof IType) {
-				IType type = (IType) item;
-				if (!type.exists()) {
-					return null;
-				}
-			}
-			return EditorUtility.getEditorInput(item);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-			return null;
+		if (item instanceof IMarker) {
+			item = getBreakpoint((IMarker)item);
 		}
+		if (item instanceof IJavaBreakpoint) {
+			IType type = BreakpointUtils.getType((IJavaBreakpoint)item);
+			if (type == null) {
+				// if the breakpoint is not associated with a type, use its resource
+				item = ((IJavaBreakpoint)item).getMarker().getResource();
+			} else {
+				item = type;
+			}
+		}
+		if (item instanceof LocalFileStorage) {
+			return new LocalFileStorageEditorInput((LocalFileStorage)item);
+		}
+		if (item instanceof ZipEntryStorage) {
+			return new ZipEntryStorageEditorInput((ZipEntryStorage)item);
+		}
+		// for types that correspond to external files, return null so we do not
+		// attempt to open a non-existing workspace file on the breakpoint (bug 184934)
+		if (item instanceof IType) {
+			IType type = (IType) item;
+			if (!type.exists()) {
+				return null;
+			}
+		}
+		return EditorUtility.getEditorInput(item);
 	}
 
 	/**
