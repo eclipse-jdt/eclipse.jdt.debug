@@ -51,7 +51,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/**
 	 * Map of {EE File -> {Map of {PropertyName -> PropertyValue}}
 	 */
-	private static Map fgProperites = new HashMap();
+	private static Map fgProperties = new HashMap();
 	
 	/**
 	 * Map of {EE File -> Ordered list of vm arguments}
@@ -267,7 +267,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return properties or <code>null</code> if none
 	 */
 	private static synchronized Map getProperties(File eeFile) {
-		Map properties = (Map) fgProperites.get(eeFile);
+		Map properties = (Map) fgProperties.get(eeFile);
 		if (properties == null) {
 			BufferedReader bufferedReader = null;
 			try {
@@ -290,7 +290,7 @@ public class EEVMType extends AbstractVMInstallType {
 					}
 					line = bufferedReader.readLine();
 				}
-				fgProperites.put(eeFile, properties);
+				fgProperties.put(eeFile, properties);
 				fgArguments.put(eeFile, arguments);
 			} catch (FileNotFoundException e) {
 				properties = null;
@@ -387,6 +387,6 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @param eeFile
 	 */
 	public synchronized static void clearProperties(File eeFile) {
-		fgProperites.remove(eeFile);
+		fgProperties.remove(eeFile);
 	}
 }
