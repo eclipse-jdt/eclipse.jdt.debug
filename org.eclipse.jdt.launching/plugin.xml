@@ -23,6 +23,10 @@
             class="org.eclipse.jdt.internal.launching.Standard11xVMType"
             id="org.eclipse.jdt.launching.Standard11xVMType">
       </vmInstallType>
+      <vmInstallType
+            class="org.eclipse.jdt.internal.launching.EEVMType"
+            id="org.eclipse.jdt.launching.EEVMType">
+      </vmInstallType>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

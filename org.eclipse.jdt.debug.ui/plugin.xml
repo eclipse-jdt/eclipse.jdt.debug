@@ -5,6 +5,7 @@
     
 <!-- Extensions Points -->
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
+   <extension-point id="vmInstallPages" name="VM Install Page" schema="schema/vmInstallPages.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -3368,5 +3369,12 @@ M4 = Platform-specific fourth key
           name="%stepIntoSelectionHyperlinkDetector.label"
           targetId="org.eclipse.jdt.ui.javaCode">
     </hyperlinkDetector>
+ </extension>
+ <extension
+       point="org.eclipse.jdt.debug.ui.vmInstallPages">
+    <vmInstallPage
+          class="org.eclipse.jdt.internal.debug.ui.jres.EEVMPage"
+          vmInstallType="org.eclipse.jdt.launching.EEVMType">
+    </vmInstallPage>
  </extension>
 </plugin>

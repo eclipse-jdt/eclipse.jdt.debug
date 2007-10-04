@@ -171,11 +171,17 @@ public class StandardVMRunner extends AbstractVMRunner {
 		
 		// If no java command was specified, use default executable
 		if (command == null) {
-			File exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
+			File exe = null;
+			if (fVMInstance instanceof StandardVM) {
+				exe = ((StandardVM)fVMInstance).getJavaExecutable();
+			} else {
+				exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
+			}
 			if (exe == null) {
 				abort(MessageFormat.format(LaunchingMessages.StandardVMRunner_Unable_to_locate_executable_for__0__1, new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
+			} else {
+				return exe.getAbsolutePath();
 			}
-			return exe.getAbsolutePath();
 		}
 				
 		// Build the path to the java executable.  First try 'bin', and if that

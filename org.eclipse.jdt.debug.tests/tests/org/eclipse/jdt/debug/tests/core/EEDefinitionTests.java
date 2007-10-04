@@ -12,13 +12,14 @@ package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.launching.StandardVMType;
+import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -46,26 +47,34 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests that the EE file is a valid install location
+	 * Tests that the EE file is a valid file
 	 */
-	public void testValidateInstallLocation() {
+	public void testValidateDefinitionFile() {
 		File file = getEEFile();
-		IVMInstallType vmType = getStandardVMInstallType();
 		assertNotNull("Missing EE file", file);
-		assertNotNull("Missing standard VM type", vmType);
-		IStatus status = vmType.validateInstallLocation(file);
+		IStatus status = EEVMType.validateDefinitionFile(file);
 		assertTrue("Invalid install location", status.isOK());
 	}
 	
 	/**
-	 * Tests default libraries for the EE file
+	 * Tests that the EE install location validation returns an INFO status.
 	 */
-	public void testDefaultLibraries() {
+	public void testValidateInstallLocation() {
 		File file = getEEFile();
-		IVMInstallType vmType = getStandardVMInstallType();
+		IVMInstallType vmType = getVMInstallType();
 		assertNotNull("Missing EE file", file);
-		assertNotNull("Missing standard VM type", vmType);
-		LibraryLocation[] libs = vmType.getDefaultLibraryLocations(file);
+		assertNotNull("Missing EE VM type", vmType);
+		IStatus status = vmType.validateInstallLocation(file);
+		assertTrue("Invalid install location", status.getSeverity() == IStatus.INFO);
+	}	
+	
+	/**
+	 * Tests libraries for the EE file
+	 */
+	public void testLibraries() {
+		File file = getEEFile();
+		assertNotNull("Missing EE file", file);
+		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
 		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
@@ -87,15 +96,25 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Tests default libraries for an EE VM type are empty.
+	 */
+	public void testDefaultLibraries() {
+		File file = getEEFile();
+		IVMInstallType vmType = getVMInstallType();
+		assertNotNull("Missing EE file", file);
+		assertNotNull("Missing EE VM type", vmType);
+		LibraryLocation[] libs = vmType.getDefaultLibraryLocations(file);
+		assertEquals("Wrong number of libraries", 0, libs.length);
+	}	
+	
+	/**
 	 * Tests default VM arguments. All arguments from the EE file should get passed through in the
 	 * same order to the command line.
 	 */
-	public void testDefaultVMArguments() {
+	public void testVMArguments() {
 		File file = getEEFile();
-		StandardVMType vmType = (StandardVMType) getStandardVMInstallType();
 		assertNotNull("Missing EE file", file);
-		assertNotNull("Missing standard VM type", vmType);
-		String defaultVMArguments = vmType.getDefaultVMArguments(file);
+		String defaultVMArguments = EEVMType.getVMArguments(file);
 		String[] expected = new String[] {
 				"-Dee.executable",
 				"-Dee.executable.console",
@@ -123,18 +142,15 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Test compatible environments
 	 */
-	public void testCompatibleEEs() {
+	public void testCompatibleEEs() throws CoreException {
 		IVMInstall install = null;
-		StandardVMType vmType = (StandardVMType) getStandardVMInstallType();
+		EEVMType vmType = (EEVMType) getVMInstallType();
 		try {
 			File file = getEEFile();
 			assertNotNull("Missing EE file", file);
-			assertNotNull("Missing standard VM type", vmType);
-			VMStandin vm = new VMStandin(vmType, "test-ee-file-id");
-			vm.setInstallLocation(file);
-			vm.setName("test-ee-file");
-			vm.setVMArgs(vmType.getDefaultVMArguments(file));
-			install = vm.convertToRealVM();
+			assertNotNull("Missing EE VM type", vmType);
+			VMStandin standin = JavaRuntime.createVMFromDefinitionFile(file, "test-ee-file", "test-ee-file-id");
+			install = standin.convertToRealVM();
 			
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
@@ -143,9 +159,9 @@ public class EEDefinitionTests extends AbstractDebugTest {
 				IExecutionEnvironment env = envs[i];
 				if (env.getId().equals("CDC-1.1/Foundation-1.1")) {
 					found11 = true;
-					assertTrue("Should be strictly compatible with " + env.getId(), env.isStrictlyCompatible(vm));
+					assertTrue("Should be strictly compatible with " + env.getId(), env.isStrictlyCompatible(install));
 				} else if (env.getId().indexOf("jdt.debug.tests") < 0) {
-					assertFalse("Should *not* be strictly compatible with " + env.getId(), env.isStrictlyCompatible(vm));
+					assertFalse("Should *not* be strictly compatible with " + env.getId(), env.isStrictlyCompatible(install));
 				}
 			}
 			assertTrue("Did not find foundation 1.1 environment", found11);
@@ -160,7 +176,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		return JavaTestPlugin.getDefault().getFileInPlugin(TEST_EE_FILE);
 	}
 	
-	protected IVMInstallType getStandardVMInstallType() {
-		return JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE);
+	protected IVMInstallType getVMInstallType() {
+		return JavaRuntime.getVMInstallType(EEVMType.ID_EE_VM_TYPE);
 	}
 }

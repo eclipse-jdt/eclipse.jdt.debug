@@ -55,6 +55,12 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private LibraryLocation[] fSystemLibraryDescriptions;
 	private URL fJavadocLocation;
 	private String fVMArgs;
+	/**
+	 * Map VM specific attributes that are persisted restored with a VM install.
+	 * @since 3.4
+	 */
+	private Map fAttributeMap = new HashMap();
+	
 	// system properties are cached in user preferences prefixed with this key, followed
 	// by vm type, vm id, and system property name
 	private static final String PREF_VM_INSTALL_SYSTEM_PROPERTY = "PREF_VM_INSTALL_SYSTEM_PROPERTY"; //$NON-NLS-1$
@@ -484,5 +490,56 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin
 				.getUniqueIdentifier(), code, message, exception));
 	}	
+	
+	/**
+	 * Sets a VM specific attribute. Attributes are persisted and restored with VM installs.
+	 * Specifying a value of <code>null</code> as a value removes the attribute. Change
+	 * notification is provided to {@link IVMInstallChangedListener} for VM attributes.
+	 * 
+	 * @param key attribute key, cannot be <code>null</code>
+	 * @param value attribute value or <code>null</code> to remove the attribute
+	 * @since 3.4
+	 */
+	public void setAttribute(String key, String value) {
+		String prevValue = (String) fAttributeMap.remove(key);
+		boolean notify = false;
+		if (value == null) {
+			if (prevValue != null && fNotify) {
+				notify = true;
+			}
+		} else {
+			fAttributeMap.put(key, value);
+			if (fNotify && (prevValue == null || !prevValue.equals(value))) {
+				notify = true;
+			}
+		}
+		if (notify) {
+			PropertyChangeEvent event = new PropertyChangeEvent(this, key, prevValue, value);
+			JavaRuntime.fireVMChanged(event);
+		}
+	}
     
+	/**
+	 * Returns a VM specific attribute associated with the given key or <code>null</code> 
+	 * if none.
+	 * 
+	 * @param key attribute key, cannot be <code>null</code>
+	 * @return attribute value, or <code>null</code> if none
+	 * @since 3.4
+	 */
+	public String getAttribute(String key) {
+		return (String) fAttributeMap.get(key);
+	}
+	
+	/**
+	 * Returns a map of VM specific attributes stored with this VM install. Keys
+	 * and values are strings. Modifying the map does not modify the attributes
+	 * associated with this VM install.
+	 * 
+	 * @return map of VM attributes
+	 * @since 3.4
+	 */
+	public Map getAttributes() {
+		return new HashMap(fAttributeMap);
+	}
 }

@@ -79,9 +79,6 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * <code>null</code>.
 	 */
 	public static File findJavaExecutable(File vmInstallLocation) {
-		if (EEVMType.isEEInstall(vmInstallLocation)) {
-			return EEVMType.getExecutable(vmInstallLocation);
-		}
 		// Try each candidate in order.  The first one found wins.  Thus, the order
 		// of fgCandidateJavaLocations and fgCandidateJavaFiles is significant.
 		for (int i = 0; i < fgCandidateJavaFiles.length; i++) {
@@ -282,10 +279,6 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
-		if (EEVMType.isEEInstall(installLocation)) {
-			return EEVMType.getDefaultLibraryLocations(installLocation);
-		}
-
 		// Determine the java executable that corresponds to the specified install location
 		// and use this to generate library information.  If no java executable was found, 
 		// the 'standard' libraries will be returned.
@@ -446,9 +439,6 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
-		if (EEVMType.isEEInstall(javaHome)) {
-			return EEVMType.validateInstallLocation(javaHome);
-		}
 		IStatus status = null;
 		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
 			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Standard_VM_not_supported_on_MacOS__1, null); 
@@ -602,29 +592,15 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {
-		if (EEVMType.isEEInstall(installLocation)) {
-			return EEVMType.getDefaultJavadocLocation(installLocation);
-		} else {
-			File javaExecutable = findJavaExecutable(installLocation);
-			if (javaExecutable != null) {
-				LibraryInfo libInfo = getLibraryInfo(installLocation, javaExecutable);
-				if (libInfo != null) {
-					String version = libInfo.getVersion();
-					return getDefaultJavadocLocation(version);
-				}
+		File javaExecutable = findJavaExecutable(installLocation);
+		if (javaExecutable != null) {
+			LibraryInfo libInfo = getLibraryInfo(installLocation, javaExecutable);
+			if (libInfo != null) {
+				String version = libInfo.getVersion();
+				return getDefaultJavadocLocation(version);
 			}
-			return null;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultVMArguments(java.io.File)
-	 */
-	public String getDefaultVMArguments(File installLocation) {
-		if (EEVMType.isEEInstall(installLocation)) {
-			return EEVMType.getDefaultVMArguments(installLocation);
-		}
-		return super.getDefaultVMArguments(installLocation);
+		return null;
 	}
 
 	/**

@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -128,6 +129,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
 	private static String fgLastUsedID;	
+	
+	/**
+	 * VM install type id for OSX VMs
+	 */
+	public static final String MACOSX_VM_TYPE_ID = "org.eclipse.jdt.internal.launching.macosx.MacOSXType"; //$NON-NLS-1$
 	
 	/** 
 	 * Content provider to show a list of JREs
@@ -357,17 +363,20 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
         ArrayList newEntries = new ArrayList();
         while (it.hasNext()) {
             IVMInstall selectedVM = (IVMInstall) it.next();
-
             // duplicate & add vm
             VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
             standin.setName(generateName(selectedVM.getName()));
-            AddVMDialog dialog = new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), standin);
-            dialog.setTitle(JREMessages.InstalledJREsBlock_18);
-            if (dialog.open() != Window.OK) {
-                return;
-            }
-            newEntries.add(standin);
-            fVMs.add(standin);
+			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			if (dialog.open() == Window.OK) {
+				VMStandin result = wizard.getResult();
+				if (result != null) {
+					// add the new VM
+					fVMs.add(result);
+					fVMList.refresh();
+					fVMList.setSelection(new StructuredSelection(result));
+				}
+			}
         }
         fVMList.refresh();
         fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
@@ -543,15 +552,19 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 	
 	/**
-	 * Bring up a dialog that lets the user create a new VM definition.
+	 * Bring up a wizard that lets the user create a new VM definition.
 	 */
 	private void addVM() {
-		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), null);
-		dialog.setTitle(JREMessages.InstalledJREsBlock_7); 
-		if (dialog.open() != Window.OK) {
-			return;
+		AddVMInstallWizard wizard = new AddVMInstallWizard((IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		if (dialog.open() == Window.OK) {
+			VMStandin result = wizard.getResult();
+			if (result != null) {
+				fVMs.add(result);
+				fVMList.refresh();
+				fVMList.setSelection(new StructuredSelection(result));
+			}
 		}
-		fVMList.refresh();
 	}
 	
 	/**
@@ -580,7 +593,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void editVM() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
-		IVMInstall vm= (IVMInstall)selection.getFirstElement();
+		VMStandin vm= (VMStandin)selection.getFirstElement();
 		if (vm == null) {
 			return;
 		}
@@ -588,13 +601,22 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
 			dialog.open();
 		} else {
-			AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
-			dialog.setTitle(JREMessages.InstalledJREsBlock_8); 
-			if (dialog.open() != Window.OK) {
-				return;
+			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			WizardDialog dialog = new WizardDialog(getShell(), wizard);
+			if (dialog.open() == Window.OK) {
+				VMStandin result = wizard.getResult();
+				if (result != null) {
+					// replace with the edited VM
+					int index = fVMs.indexOf(vm);
+					fVMs.remove(index);
+					fVMs.add(index, result);
+					fVMList.refresh();
+					fVMList.setSelection(new StructuredSelection(result));
+				}
 			}
-			fVMList.refresh(vm);
 		}
+		
+		
 	}
 	
 	/**

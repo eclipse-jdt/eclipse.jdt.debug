@@ -91,7 +91,7 @@ public class MacVMSearch {
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType installType = types[i];
-			if (installType.getId().equals(AddVMDialog.MACOSX_VM_TYPE_ID)) {
+			if (installType.getId().equals(InstalledJREsBlock.MACOSX_VM_TYPE_ID)) {
 				return installType;
 			}
 		}

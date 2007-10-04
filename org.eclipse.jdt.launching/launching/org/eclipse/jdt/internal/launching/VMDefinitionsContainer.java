@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -130,7 +132,7 @@ public class VMDefinitionsContainer {
 			}
 			vmList.add(vm);
 			File installLocation = vm.getInstallLocation();
-			if (installLocation == null || !vmInstallType.validateInstallLocation(installLocation).isOK()) {
+			if (installLocation == null || vmInstallType.validateInstallLocation(installLocation).getSeverity() == IStatus.ERROR) {
 				fInvalidVMList.add(vm);
 			}
 			fVMList.add(vm);
@@ -344,6 +346,23 @@ public class VMDefinitionsContainer {
 			}
 		}
 		
+		// vm attributes
+		if (vm instanceof AbstractVMInstall) {
+			Map attributes = ((AbstractVMInstall)vm).getAttributes();
+			if (!attributes.isEmpty()) {
+				Element attrElement = doc.createElement("attributeMap"); //$NON-NLS-1$
+				Iterator iterator = attributes.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry entry = (Entry) iterator.next();
+					Element entryElement = doc.createElement("entry"); //$NON-NLS-1$
+					entryElement.setAttribute("key", (String)entry.getKey()); //$NON-NLS-1$
+					entryElement.setAttribute("value", (String)entry.getValue()); //$NON-NLS-1$
+					attrElement.appendChild(entryElement);
+				}
+				element.appendChild(attrElement);
+			}
+		}
+		
 		return element;
 	}
 	
@@ -534,10 +553,21 @@ public class VMDefinitionsContainer {
 					if (subElementName.equals("libraryLocation")) { //$NON-NLS-1$
 						LibraryLocation loc = getLibraryLocation(subElement);
 						vmStandin.setLibraryLocations(new LibraryLocation[]{loc});
-						break;
 					} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
 						setLibraryLocations(vmStandin, subElement);
-						break;
+					} else if (subElementName.equals("attributeMap")) { //$NON-NLS-1$
+						NodeList entries = subElement.getElementsByTagName("entry"); //$NON-NLS-1$
+						for (int j = 0; j < entries.getLength(); j++) {
+							Node entryNode = entries.item(j);
+							if (entryNode instanceof Element) {
+								Element entryElement = (Element) entryNode;
+								String key = entryElement.getAttribute("key"); //$NON-NLS-1$
+								String value = entryElement.getAttribute("value"); //$NON-NLS-1$
+								if (key != null && value != null) {
+									vmStandin.setAttribute(key, value);
+								}
+							}
+						}
 					}
 				}
 			}

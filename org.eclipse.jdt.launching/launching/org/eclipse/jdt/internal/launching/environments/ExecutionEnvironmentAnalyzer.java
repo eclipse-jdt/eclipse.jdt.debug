@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -72,8 +73,8 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			return new CompatibleEnvironment[0];
 		IVMInstall2 vm2 = (IVMInstall2) vm;
 		List types = null;
-		if (EEVMType.isEEInstall(vm.getInstallLocation())) {
-			String eeId = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, vm.getInstallLocation());
+		if (EEVMType.ID_EE_VM_TYPE.equals(vm.getVMInstallType().getId())) {
+			String eeId = ((EEVMInstall)vm).getAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID);
 			if (eeId != null) {
 				types = getTypes(eeId);
 			}

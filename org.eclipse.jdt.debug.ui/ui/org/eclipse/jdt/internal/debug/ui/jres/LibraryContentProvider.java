@@ -142,7 +142,9 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		for (int i = 0; i < libs.length; i++) {
 			fLibraries[i] = new LibraryStandin(libs[i]);
 		}
-		fViewer.refresh();
+		if (fViewer != null) {
+			fViewer.refresh();
+		}
 	}
 
 	/**

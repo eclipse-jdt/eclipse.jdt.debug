@@ -25,6 +25,8 @@ public class JREMessages extends NLS {
 
 	public static String AddVMDialog_22;
 
+	public static String AddVMInstallWizard_0;
+
 	public static String BuildJREDescriptor_0;
 
 	public static String InstalledJREsBlock_0;
@@ -70,6 +72,8 @@ public class JREMessages extends NLS {
 	public static String addVMDialog_duplicateName;
 	public static String addVMDialog_enterLocation;
 	public static String addVMDialog_enterName;
+
+	public static String EditVMInstallWizard_0;
 	public static String addVMDialog_jreHome;
 	public static String addVMDialog_jreName;
 	public static String addVMDialog_jreType;
@@ -100,8 +104,31 @@ public class JREMessages extends NLS {
 	public static String VMLibraryBlock_18;
 
 	public static String JREsUpdater_0;
+
+	public static String EEVMPage_0;
+
+	public static String EEVMPage_1;
+
+	public static String EEVMPage_2;
+
+	public static String EEVMPage_4;
+
+	public static String EEVMPage_5;
+
+	public static String EEVMPage_6;
+
+	public static String EEVMPage_7;
+
+	public static String VMTypePage_0;
+
+	public static String VMTypePage_1;
+
+	public static String VMTypePage_2;
+
+	public static String VMTypePage_3;
 	public static String VMLibraryBlock_0;
 	public static String VMLibraryBlock_1;
+
 	public static String VMLibraryBlock_2;
 	public static String VMLibraryBlock_3;
 	public static String VMLibraryBlock_4;
@@ -122,6 +149,12 @@ public class JREMessages extends NLS {
 	public static String JREsComboBlock_4;
 
 	public static String JREsComboBlock_5;
+
+	public static String StandardVMPage_0;
+
+	public static String StandardVMPage_1;
+
+	public static String StandardVMPage_2;
 
 	public static String JREProfilesPreferencePage_0;
 

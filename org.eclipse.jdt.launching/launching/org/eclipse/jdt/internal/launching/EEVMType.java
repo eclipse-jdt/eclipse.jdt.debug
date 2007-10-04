@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.launching.AbstractVMInstall;
+import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 import com.ibm.icu.text.MessageFormat;
@@ -38,7 +41,12 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.4
  */
-public class EEVMType {
+public class EEVMType extends AbstractVMInstallType {
+	
+	/**
+	 * VM Type id
+	 */
+	public static final String ID_EE_VM_TYPE = "org.eclipse.jdt.launching.EEVMType"; //$NON-NLS-1$
 	
 	/**
 	 * Map of {EE File -> {Map of {PropertyName -> PropertyValue}}
@@ -58,55 +66,43 @@ public class EEVMType {
 	public static final String PROP_CLASS_LIB_LEVEL = "-Dee.class.library.level";  //$NON-NLS-1$
 	public static final String PROP_EXECUTABLE = "-Dee.executable";  //$NON-NLS-1$
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
+	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	
-	private static final String[] REQUIRED_PROPERTIES = new String[]{PROP_EXECUTABLE, PROP_BOOT_CLASS_PATH, PROP_LANGUAGE_LEVEL};
-	
-	/**
-	 * Returns whether the given install location corresponds to an .ee file.
-	 * 
-	 * @param installLocation
-	 * @return whether the given install location corresponds to an .ee file.
-	 */
-	public static boolean isEEInstall(File installLocation) {
-		if (installLocation.isFile()) {
-			String name = installLocation.getName();
-			if (name.endsWith(".ee")) { //$NON-NLS-1$
-				return true;
-			}
-		}
-		return false;
-	}
+	private static final String[] REQUIRED_PROPERTIES = new String[]{PROP_EXECUTABLE, PROP_BOOT_CLASS_PATH, PROP_LANGUAGE_LEVEL, PROP_JAVA_HOME};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
+	/**
+	 * Returns the library locations defined in the given definition file.
+	 * 
+	 * @param eeFile definition file
+	 * @return library locations defined in the file or an empty collection if none
 	 */
-	public static LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
+	public static LibraryLocation[] getLibraryLocations(File eeFile) {
 		
-		Map properties = getProperties(installLocation);
+		Map properties = getProperties(eeFile);
 		if (properties == null) {
 			return new LibraryLocation[]{};
 		}
 		
 		List allLibs = new ArrayList(); 
 		
-		String dirs = getProperty(PROP_ENDORSED_DIRS, installLocation);
+		String dirs = getProperty(PROP_ENDORSED_DIRS, eeFile);
 		if (dirs != null) {
 			// Add all endorsed libraries - they are first, as they replace
-			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, installLocation)));
+			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, eeFile)));
 		}
 		
 		// next is the bootpath libraries
-		dirs = getProperty(PROP_BOOT_CLASS_PATH, installLocation);
+		dirs = getProperty(PROP_BOOT_CLASS_PATH, eeFile);
 		if (dirs != null) {
-			String[] bootpath = resolvePaths(dirs, installLocation);
+			String[] bootpath = resolvePaths(dirs, eeFile);
 			List boot = new ArrayList(bootpath.length);
-			URL url = getDefaultJavadocLocation(installLocation);
+			URL url = getJavadocLocation(eeFile);
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
 				File lib = path.toFile(); 
 				if (lib.exists() && lib.isFile()) {
 					LibraryLocation libraryLocation = new LibraryLocation(path,
-									getDefaultSourceLocation(installLocation),
+									getDefaultSourceLocation(eeFile),
 									Path.EMPTY,
 									url);
 					boot.add(libraryLocation);
@@ -116,9 +112,9 @@ public class EEVMType {
 		}
 				
 		// Add all extension libraries
-		dirs = getProperty(PROP_EXTENSION_DIRS, installLocation);
+		dirs = getProperty(PROP_EXTENSION_DIRS, eeFile);
 		if (dirs != null) {
-			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, installLocation)));
+			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, eeFile)));
 		}
 		
 		
@@ -135,24 +131,50 @@ public class EEVMType {
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
+
+	/**
+	 * Returns the javadoc location specified in the definition file or <code>null</code>
+	 * if none.
+	 * 
+	 * @param eeFile definition file
+	 * @return javadoc location specified in the definition file or <code>null</code> if none
 	 */
-	public static URL getDefaultJavadocLocation(File installLocation) {
-		String version = getProperty(PROP_LANGUAGE_LEVEL, installLocation);
+	public static URL getJavadocLocation(File eeFile) {
+		String version = getProperty(PROP_LANGUAGE_LEVEL, eeFile);
 		if (version != null) {
 			return StandardVMType.getDefaultJavadocLocation(version);
 		}
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultVMArguments(java.io.File)
+	/**
+	 * Returns the definition file associated with the given VM or <code>null</code>
+	 * if none.
+	 * 
+	 * @param vm VM install
+	 * @return definition file or <code>null</code> if none. The file may/may not exist.
 	 */
-	public static String getDefaultVMArguments(File installLocation) {
-		Map properties = getProperties(installLocation);
+	public static File getDefinitionFile(IVMInstall vm) {
+		if (vm instanceof AbstractVMInstall) {
+			AbstractVMInstall avm = (AbstractVMInstall) vm;
+			String path = avm.getAttribute(EEVMInstall.ATTR_DEFINITION_FILE);
+			if (path != null) {
+				return new File(path);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns VM arguments defined in the given definition file or <code>null</code> if none.
+	 * 
+	 * @param eeFile definition file
+	 * @return VM arguments or <code>null</code> if none
+	 */
+	public static String getVMArguments(File eeFile) {
+		Map properties = getProperties(eeFile);
 		if (properties != null) {
-			List args = (List) fgArguments.get(installLocation);
+			List args = (List) fgArguments.get(eeFile);
 			StringBuffer buf = new StringBuffer();
 			Iterator iterator = args.iterator();
 			while (iterator.hasNext()) {
@@ -185,20 +207,23 @@ public class EEVMType {
 		return Path.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
+	/**
+	 * Returns a status indicating if the given definition file is valid.
+	 * 
+	 * @param eeFile definition file
+	 * @return status indicating if the given definition file is valid
 	 */
-	public static IStatus validateInstallLocation(File installLocation) {
-		Map properties = getProperties(installLocation);
+	public static IStatus validateDefinitionFile(File eeFile) {
+		Map properties = getProperties(eeFile);
 		if (properties == null) {
-			return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), MessageFormat.format(LaunchingMessages.EEVMType_0, new String[]{installLocation.getName()} ));
+			return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), MessageFormat.format(LaunchingMessages.EEVMType_0, new String[]{eeFile.getName()} ));
 		}
 		// validate required properties
 		for (int i = 0; i < REQUIRED_PROPERTIES.length; i++) {
 			String key = REQUIRED_PROPERTIES[i];
 			String property = (String) properties.get(key);
 			if (property == null) {
-				return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), MessageFormat.format(LaunchingMessages.EEVMType_1, new String[]{installLocation.getName(), key} ));
+				return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), MessageFormat.format(LaunchingMessages.EEVMType_1, new String[]{eeFile.getName(), key} ));
 			}
 		}
 		return Status.OK_STATUS;
@@ -209,7 +234,7 @@ public class EEVMType {
 	 * is considered first.
 	 * 
 	 * @param installLocation ee file
-	 * @return standard executable
+	 * @return standard executable or <code>null</code> if none
 	 */
 	public static File getExecutable(File installLocation) { 
 		String property = getProperty(PROP_EXECUTABLE, installLocation);
@@ -319,5 +344,49 @@ public class EEVMType {
 			return (String) properties.get(propertyName);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
+	 */
+	protected IVMInstall doCreateVMInstall(String id) {
+		return new EEVMInstall(this, id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
+	 */
+	public File detectInstallLocation() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
+	 */
+	public LibraryLocation[] getDefaultLibraryLocations(File installLocationOrDefinitionFile) {
+		return new LibraryLocation[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
+	 */
+	public String getName() {
+		return LaunchingMessages.EEVMType_2;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
+	 */
+	public IStatus validateInstallLocation(File installLocationOrDefinitionFile) {
+		return new Status(IStatus.INFO, LaunchingPlugin.getUniqueIdentifier(), LaunchingMessages.EEVMType_3);
+	}
+	
+	/**
+	 * Clears any cached properties for the given file.
+	 * 
+	 * @param eeFile
+	 */
+	public synchronized static void clearProperties(File eeFile) {
+		fgProperites.remove(eeFile);
 	}
 }

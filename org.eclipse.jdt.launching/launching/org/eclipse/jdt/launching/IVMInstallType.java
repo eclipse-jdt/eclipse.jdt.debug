@@ -88,20 +88,15 @@ public interface IVMInstallType {
 	/**
 	 * Validates the given location of a VM installation.
 	 * <p>
-	 * Since 3.4, the given installLocation may be a file (rather than a home
-	 * directory). For example, the standard VM install type accepts execution
-	 * environment description files, as described by
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
-	 * </p> 
-	 * <p>
 	 * For example, an implementation might check whether the VM executable 
 	 * is present.
 	 * </p>
-	 * @param installLocationOrDefinitionFile the root directory of a potential installation for
-	 *   this type of VM or since 3.4, a file describing an installation
+	 * 
+	 * @param installLocation the root directory of a potential installation for
+	 *   this type of VM
 	 * @return a status object describing whether the install location is valid
 	 */
-	IStatus validateInstallLocation(File installLocationOrDefinitionFile);
+	IStatus validateInstallLocation(File installLocation);
 	
 	/**
 	 * Tries to detect an installed VM that matches this VM install type.
@@ -120,19 +115,13 @@ public interface IVMInstallType {
 	 * at the given <code>installLocation</code>.
 	 * The returned <code>LibraryLocation</code>s may not exist if the
 	 * <code>installLocation</code> is not a valid install location.
-	 * <p>
-	 * Since 3.4, the given installLocation may be a file (rather than a home
-	 * directory). For example, the standard VM install type accepts execution
-	 * environment description files, as described by
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
-	 * </p> 
-	 * @param installLocationOrDefinitionFile home directory or since 3.4, a file
-	 * 	describing an installation
+	 * 
+	 * @param installLocation home location
 	 * @see LibraryLocation
 	 * @see IVMInstallType#validateInstallLocation(File)
 	 * 
 	 * @return default library locations based on the given <code>installLocation</code>.
 	 * @since 2.0
 	 */
-	LibraryLocation[] getDefaultLibraryLocations(File installLocationOrDefinitionFile);	
+	LibraryLocation[] getDefaultLibraryLocations(File installLocation);	
 }

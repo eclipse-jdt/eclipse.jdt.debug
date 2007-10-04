@@ -32,6 +32,14 @@ public interface IJavaDebugUIConstants {
 	public static final String EXTENSION_POINT_VM_INSTALL_TYPE_PAGE = "vmInstallTypePage"; //$NON-NLS-1$
 
 	/**
+	 * Extension point identifier for contributions of a wizard page that for a VMInstallType
+	 * (value <code>"vmInstallPages"</code>).
+	 * 
+	 * @since 3.4
+	 */
+	public static final String EXTENSION_POINT_VM_INSTALL_PAGES = "vmInstallPages"; //$NON-NLS-1$
+	
+	/**
 	 * Display view identifier (value <code>"org.eclipse.jdt.debug.ui.DisplayView"</code>).
 	 */
 	public static final String ID_DISPLAY_VIEW= PLUGIN_ID + ".DisplayView"; //$NON-NLS-1$

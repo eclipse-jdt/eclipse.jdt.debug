@@ -59,6 +59,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.EEVMInstall;
+import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -1465,8 +1467,7 @@ public final class JavaRuntime {
 						}		
 						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
 						String vmArgs = element.getAttribute("vmArgs"); //$NON-NLS-1$
-						VMStandin standin = new VMStandin(installType, id);
-						standin.setName(name);
+						VMStandin standin = null;
 						home = substitute(home);
 						File homeDir = new File(home);
                         if (homeDir.exists()) {
@@ -1477,67 +1478,73 @@ public final class JavaRuntime {
                             } catch (IOException e) {
                             }
                         }
-                        IStatus status = installType.validateInstallLocation(homeDir);
-                        if (!status.isOK()) {
-                        	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}", //$NON-NLS-1$
-                        			new String[]{home, id, element.getContributor().getName(), status.getMessage()}), null);
-                        }
-                        standin.setInstallLocation(homeDir);
-						if (javadoc != null) {
-							try {
-								standin.setJavadocLocation(new URL(javadoc));
-							} catch (MalformedURLException e) {
-								abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}", //$NON-NLS-1$
-										new String[]{id, element.getContributor().getName()}), e);
+						if (EEVMType.ID_EE_VM_TYPE.equals(installType.getId())) {
+							standin = createVMFromDefinitionFile(homeDir, name, id);
+						} else {
+							standin = new VMStandin(installType, id);
+							standin.setName(name);
+	                        IStatus status = installType.validateInstallLocation(homeDir);
+	                        if (!status.isOK()) {
+	                        	abort(MessageFormat.format("Illegal install location {0} for vmInstall {1} contributed by {2}: {3}", //$NON-NLS-1$
+	                        			new String[]{home, id, element.getContributor().getName(), status.getMessage()}), null);
+	                        }
+	                        standin.setInstallLocation(homeDir);
+							if (javadoc != null) {
+								try {
+									standin.setJavadocLocation(new URL(javadoc));
+								} catch (MalformedURLException e) {
+									abort(MessageFormat.format("Illegal javadocURL attribute for vmInstall {0} contributed by {1}", //$NON-NLS-1$
+											new String[]{id, element.getContributor().getName()}), e);
+								}
 							}
-						}
-						// allow default arguments to be specified by vm install type if no explicit arguments
-						if (vmArgs == null) {
-							if (installType instanceof AbstractVMInstallType) {
-								AbstractVMInstallType type = (AbstractVMInstallType) installType;
-								vmArgs = type.getDefaultVMArguments(homeDir);
+							// allow default arguments to be specified by vm install type if no explicit arguments
+							if (vmArgs == null) {
+								if (installType instanceof AbstractVMInstallType) {
+									AbstractVMInstallType type = (AbstractVMInstallType) installType;
+									vmArgs = type.getDefaultVMArguments(homeDir);
+								}
 							}
+							if (vmArgs != null) {
+								standin.setVMArgs(vmArgs);
+							}
+	                        IConfigurationElement[] libraries = element.getChildren("library"); //$NON-NLS-1$
+	                        LibraryLocation[] locations = null;
+	                        if (libraries.length > 0) {
+	                            locations = new LibraryLocation[libraries.length];
+	                            for (int j = 0; j < libraries.length; j++) {
+	                                IConfigurationElement library = libraries[j];
+	                                String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
+	                                if (libPathStr == null) {
+	                                    abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath", //$NON-NLS-1$
+	                                            new String[]{id, element.getContributor().getName()}), null);
+	                                }
+	                                String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
+	                                String packageRootStr = library.getAttribute("packageRootPath"); //$NON-NLS-1$
+	                                String javadocOverride = library.getAttribute("javadocURL"); //$NON-NLS-1$
+	                                URL url = null;
+	                                if (javadocOverride != null) {
+	                                    try {
+	                                        url = new URL(javadocOverride);
+	                                    } catch (MalformedURLException e) {
+	                                        abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}" //$NON-NLS-1$
+	                                                ,new String[]{libPathStr, id, element.getContributor().getName()}), e);
+	                                    }
+	                                }
+	                                IPath homePath = new Path(home);
+	                                IPath libPath = homePath.append(substitute(libPathStr));
+	                                IPath sourcePath = Path.EMPTY;
+	                                if (sourcePathStr != null) {
+	                                    sourcePath = homePath.append(substitute(sourcePathStr));
+	                                }
+	                                IPath packageRootPath = Path.EMPTY;
+	                                if (packageRootStr != null) {
+	                                    packageRootPath = new Path(substitute(packageRootStr));
+	                                }
+	                                locations[j] = new LibraryLocation(libPath, sourcePath, packageRootPath, url);
+	                            }
+	                        }
+	                        standin.setLibraryLocations(locations);
 						}
-						if (vmArgs != null) {
-							standin.setVMArgs(vmArgs);
-						}
-                        IConfigurationElement[] libraries = element.getChildren("library"); //$NON-NLS-1$
-                        LibraryLocation[] locations = null;
-                        if (libraries.length > 0) {
-                            locations = new LibraryLocation[libraries.length];
-                            for (int j = 0; j < libraries.length; j++) {
-                                IConfigurationElement library = libraries[j];
-                                String libPathStr = library.getAttribute("path"); //$NON-NLS-1$
-                                if (libPathStr == null) {
-                                    abort(MessageFormat.format("library for vmInstall {0} contributed by {1} missing required attribute libPath", //$NON-NLS-1$
-                                            new String[]{id, element.getContributor().getName()}), null);
-                                }
-                                String sourcePathStr = library.getAttribute("sourcePath"); //$NON-NLS-1$
-                                String packageRootStr = library.getAttribute("packageRootPath"); //$NON-NLS-1$
-                                String javadocOverride = library.getAttribute("javadocURL"); //$NON-NLS-1$
-                                URL url = null;
-                                if (javadocOverride != null) {
-                                    try {
-                                        url = new URL(javadocOverride);
-                                    } catch (MalformedURLException e) {
-                                        abort(MessageFormat.format("Illegal javadocURL attribute specified for library {0} for vmInstall {1} contributed by {2}" //$NON-NLS-1$
-                                                ,new String[]{libPathStr, id, element.getContributor().getName()}), e);
-                                    }
-                                }
-                                IPath homePath = new Path(home);
-                                IPath libPath = homePath.append(substitute(libPathStr));
-                                IPath sourcePath = Path.EMPTY;
-                                if (sourcePathStr != null) {
-                                    sourcePath = homePath.append(substitute(sourcePathStr));
-                                }
-                                IPath packageRootPath = Path.EMPTY;
-                                if (packageRootStr != null) {
-                                    packageRootPath = new Path(substitute(packageRootStr));
-                                }
-                                locations[j] = new LibraryLocation(libPath, sourcePath, packageRootPath, url);
-                            }
-                        }
-                        standin.setLibraryLocations(locations);
                         // in case the contributed JRE attributes changed, remove it first, then add
                         vmDefs.removeVM(standin);
                         vmDefs.addVM(standin);
@@ -1592,7 +1599,11 @@ public final class JavaRuntime {
 		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
             URL defJavaDocLocation = vm.getJavadocLocation(); 
-			LibraryLocation[] dflts= vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
+			File installLocation = vm.getInstallLocation();
+			if (installLocation == null) {
+				return new LibraryLocation[0];
+			}
+			LibraryLocation[] dflts= vm.getVMInstallType().getDefaultLibraryLocations(installLocation);
 			libraryPaths = new IPath[dflts.length];
 			sourcePaths = new IPath[dflts.length];
 			sourceRootPaths = new IPath[dflts.length];
@@ -2653,6 +2664,46 @@ public final class JavaRuntime {
             	}
             }
         }		
+	}
+	
+	/**
+	 * Creates a new VM based on the attributes specified in the given execution 
+	 * environment description file. The format of the file is defined by
+	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * 
+	 * @param eeFile VM definition file
+	 * @param name name for the VM
+	 * @param id id to assign to the new VM
+	 * @return VM standin 
+	 * @exception CoreException if unable to create a VM from the given definition file
+	 * @since 3.4
+	 */
+	public static VMStandin createVMFromDefinitionFile(File eeFile, String name, String id) throws CoreException {
+		IStatus status = EEVMType.validateDefinitionFile(eeFile);
+		if (status.isOK()) {
+			VMStandin standin = new VMStandin(getVMInstallType(EEVMType.ID_EE_VM_TYPE), id);
+			standin.setName(name);
+			String home = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, eeFile);
+			standin.setInstallLocation(new File(home));
+			standin.setLibraryLocations(EEVMType.getLibraryLocations(eeFile));
+			standin.setVMArgs(EEVMType.getVMArguments(eeFile));
+			standin.setJavadocLocation(EEVMType.getJavadocLocation(eeFile));
+			standin.setAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID, EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFile));
+			File exe = EEVMType.getExecutable(eeFile);
+			if (exe != null) {
+				try {
+					standin.setAttribute(EEVMInstall.ATTR_JAVA_EXE, exe.getCanonicalPath());
+				} catch (IOException e) {
+					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(),
+							LaunchingMessages.JavaRuntime_24, e));
+				}
+			}
+			standin.setAttribute(EEVMInstall.ATTR_JAVA_VERSION, EEVMType.getJavaVersion(eeFile));
+			standin.setAttribute(EEVMInstall.ATTR_DEFINITION_FILE, eeFile.getPath());
+			return standin;
+		} else {
+			throw new CoreException(status);
+		}
 	}
 
 }

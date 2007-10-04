@@ -71,7 +71,7 @@
          <attribute name="home" type="string" use="required">
             <annotation>
                <documentation>
-                  Path to the home installation directory for this VM install. Paths must be absolute and may use string substitution variables such as ${eclipse_home}. Since 3.4, this attribute may reference a VM definition file in addition to a home directory. The standard VM type included with the SDK supports &lt;a href=&quot; http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions&quot;&gt;execution environment descriptions&lt;/a&gt;.
+                  Path to the home installation directory for this VM install. Paths must be absolute and may use string substitution variables such as ${eclipse_home}. Since 3.4, this attribute may reference a VM definition file in addition to a home directory. The Execution Environment VM type included with the SDK supports &lt;a href=&quot; http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions&quot;&gt;execution environment descriptions&lt;/a&gt;. When an execution environment description file is specified, any library elements are ignored. In this case, libraries are defined by the execution environment description file.
                </documentation>
             </annotation>
          </attribute>
@@ -148,6 +148,20 @@
   id=&quot;com.example.vm.id&quot;
   name=&quot;JRE-1.4&quot;
   vmInstallType=&quot;com.example.vm.type&quot;/&gt;
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;
+The following example will create a JRE definition based on the contents of the specified execution environment description file. When an execution environment description file is provided as the home location the &quot;Execution Environment Description&quot; VM type must be specified for the &lt;code&gt;vmInstallType&lt;/code&gt; attribute.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.jdt.launching.vmInstalls&quot;&gt;
+ &lt;vmInstall
+  home=&quot;${eclipse_home}/jre-def.ee&quot;
+  id=&quot;com.example.ee.id&quot;
+  name=&quot;Default JRE&quot;
+  vmInstallType=&quot;org.eclipse.jdt.launching.EEVMType&quot;/&gt;
 &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;

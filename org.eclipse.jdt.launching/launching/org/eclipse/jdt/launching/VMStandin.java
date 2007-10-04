@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 
 
 /**
@@ -93,6 +97,15 @@ public class VMStandin extends AbstractVMInstall {
 			setVMArguments(realVM.getVMArguments());
 			fJavaVersion = null;
 		}
+		if (realVM instanceof AbstractVMInstall) {
+			AbstractVMInstall vm2 = (AbstractVMInstall) realVM;
+			Map attributes = vm2.getAttributes();
+			Iterator iterator = attributes.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				setAttribute((String)entry.getKey(), (String)entry.getValue());
+			}
+		}
 	}
 	
 	/**
@@ -126,7 +139,13 @@ public class VMStandin extends AbstractVMInstall {
 		}
 		
 		if (realVM instanceof AbstractVMInstall) {
-			 ((AbstractVMInstall)realVM).setNotify(true);
+			AbstractVMInstall avm = (AbstractVMInstall) realVM;
+			Iterator iterator = getAttributes().entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				avm.setAttribute((String)entry.getKey(), (String)entry.getValue());
+			}
+			avm.setNotify(true);
 		}		
 		if (!notify) {
 			JavaRuntime.fireVMAdded(realVM);

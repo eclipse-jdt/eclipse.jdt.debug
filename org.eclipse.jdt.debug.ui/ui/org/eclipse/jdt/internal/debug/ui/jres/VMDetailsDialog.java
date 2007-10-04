@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -27,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -56,6 +58,7 @@ public class VMDetailsDialog extends Dialog {
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		GridLayout layout = new GridLayout(2, false);
+		layout.makeColumnsEqualWidth = false;
 		parent.setLayout(layout);
 		
 		// type
@@ -71,7 +74,7 @@ public class VMDetailsDialog extends Dialog {
 		createLabel(parent, fVM.getInstallLocation().getAbsolutePath());
 		
 		// vm args
-		createLabel(parent, JREMessages.AddVMDialog_23);
+		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_23, 2);
 		String text = null;
 		if (fVM instanceof IVMInstall2) {
 			text = ((IVMInstall2)fVM).getVMArgs();
@@ -91,15 +94,17 @@ public class VMDetailsDialog extends Dialog {
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}
-		createLabel(parent, text);
+		Text argText = SWTFactory.createText(parent, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL, 2, text);
+		GridData gd = (GridData) argText.getLayoutData();
+		gd.heightHint = 75;
+		gd.widthHint = 300;
 		
 		// libraries
-		Label label = createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1);
-		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING);
-		label.setLayoutData(gd);
+		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1, 2);
 		TreeViewer libraryViewer= new TreeViewer(parent);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 6;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		gd.heightHint = 100;
 		libraryViewer.getControl().setLayoutData(gd);
 		LibraryContentProvider provider = new LibraryContentProvider();
 		libraryViewer.setContentProvider(provider);

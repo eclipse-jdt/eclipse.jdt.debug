@@ -25,6 +25,7 @@
 -Dee.name=Eclipse JDT Test JRE Definition
 -Dee.description=Foundation Specification v1.1
 -Dee.copyright=(c) Copyright IBM Corp. 2007  All Rights Reserved
+-Djava.home=..
 
 # all args should get passed through to command line
 -XspecialArg:123

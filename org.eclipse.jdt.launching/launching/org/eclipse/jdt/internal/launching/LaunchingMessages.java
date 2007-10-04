@@ -40,6 +40,10 @@ public class LaunchingMessages extends NLS {
 
 	public static String EEVMType_1;
 
+	public static String EEVMType_2;
+
+	public static String EEVMType_3;
+
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_0;
@@ -52,6 +56,8 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1;
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
+
+	public static String JavaRuntime_24;
 
 	public static String JavaRuntime_25;
 

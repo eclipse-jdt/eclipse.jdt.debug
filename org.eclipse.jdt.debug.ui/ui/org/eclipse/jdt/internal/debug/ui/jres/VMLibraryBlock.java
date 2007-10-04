@@ -21,14 +21,16 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
+import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -44,14 +46,13 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
  
 /**
  * Control used to edit the libraries associated with a VM install
  */
-public class VMLibraryBlock implements SelectionListener, ISelectionChangedListener {
-	
+public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionListener, ISelectionChangedListener {
+
 	/**
 	 * Attribute name for the last path used to open a file/directory chooser
 	 * dialog.
@@ -64,13 +65,10 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	protected static final String DIALOG_SETTINGS_PREFIX = "VMLibraryBlock"; //$NON-NLS-1$
 	
 	protected boolean fInCallback = false;
-	protected IVMInstall fVmInstall;
-	protected IVMInstallType fVmInstallType;
-	protected File fHome;
+	protected VMStandin fVmInstall;
 	
 	//widgets
 	protected LibraryContentProvider fLibraryContentProvider;
-	protected AddVMDialog fDialog = null;
 	protected TreeViewer fLibraryViewer;
 	private Button fUpButton;
 	private Button fDownButton;
@@ -80,19 +78,22 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 	private Button fSourceButton;
 	protected Button fDefaultButton;
 	
+	private IStatus[] fLibStatus;
+	
 	/**
-	 * Constructor for VMLibraryBlock.
-	 */
-	public VMLibraryBlock(AddVMDialog dialog) {
-		fDialog = dialog;
-	}
-
-	/**
-	 * Creates and returns the source lookup control.
+	 * Constructs a new wizard page with the given name.
 	 * 
-	 * @param parent the parent widget of this control
+	 * @param pageName page name
 	 */
-	public Control createControl(Composite parent) {
+	VMLibraryBlock() {
+		super(JREMessages.VMLibraryBlock_2);
+		fLibStatus = new IStatus[]{Status.OK_STATUS};
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		
 		Composite comp = SWTFactory.createComposite(parent, font, 2, 1, GridData.FILL_BOTH, 0, 0);
@@ -132,62 +133,43 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		fDefaultButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_9, JREMessages.VMLibraryBlock_15, null);
 		fDefaultButton.addSelectionListener(this);
 		
-		return comp;
+		setControl(comp);
 	}
 
 	/**
 	 * The "default" button has been toggled
 	 */
-	public void restoreDefaultLibraries() {
+	private void restoreDefaultLibraries() {
 		LibraryLocation[] libs = null;
-		File installLocation = getHomeDirectory();
-		if (installLocation == null) {
-			libs = new LibraryLocation[0];
-		} else {
-			libs = getVMInstallType().getDefaultLibraryLocations(installLocation);
+		File installLocation = null;
+		if (fVmInstall != null) {
+			if (EEVMType.ID_EE_VM_TYPE.equals(fVmInstall.getVMInstallType().getId())) {
+				File definitionFile = EEVMType.getDefinitionFile(fVmInstall);
+				if (definitionFile != null) {
+					libs = EEVMType.getLibraryLocations(definitionFile);
+				} else {
+					libs = new LibraryLocation[0];
+				}
+			} else {
+				installLocation = fVmInstall.getInstallLocation();
+				if (installLocation == null) {
+					libs = new LibraryLocation[0];
+				} else {
+					libs = fVmInstall.getVMInstallType().getDefaultLibraryLocations(installLocation);
+				}
+			}
 		}
 		fLibraryContentProvider.setLibraries(libs);
 		update();
 	}
 	
 	/**
-	 * Initializes this control based on the settings in the given
-	 * vm install and type.
-	 * 
-	 * @param vm vm or <code>null</code> if none
-	 * @param type type of vm install
-	 */
-	public void initializeFrom(IVMInstall vm, IVMInstallType type) {
-		fVmInstall = vm;
-		fVmInstallType = type;
-		if (vm != null) {
-			setHomeDirectory(vm.getInstallLocation());
-			fLibraryContentProvider.setLibraries(JavaRuntime.getLibraryLocations(getVMInstall()));
-		}
-		update();
-	}
-	
-	/**
-	 * Sets the home directory of the VM Install the user has chosen
-	 */
-	public void setHomeDirectory(File file) {
-		fHome = file;
-	}
-	
-	/**
-	 * Returns the home directory
-	 */
-	protected File getHomeDirectory() {
-		return fHome;
-	}
-	
-	/**
 	 * Updates buttons and status based on current libraries
 	 */
-	public void update() {
+	private void update() {
 		updateButtons();
 		IStatus status = Status.OK_STATUS;
-		if (fLibraryContentProvider.getLibraries().length == 0) { // && !isDefaultSystemLibrary()) {
+		if (fLibraryContentProvider.getLibraries().length == 0) {
 			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Libraries cannot be empty.", null); //$NON-NLS-1$
 		}
 		LibraryStandin[] standins = fLibraryContentProvider.getStandins();
@@ -198,21 +180,20 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 				break;
 			}
 		}
-		fDialog.setSystemLibraryStatus(status);
-		fDialog.updateStatusLine();
-	}
-	
-	/**
-	 * Saves settings in the given working copy
-	 */
-	public void performApply(IVMInstall vm) {
-		if (isDefaultLocations(vm)) {
-			vm.setLibraryLocations(null);
+		fLibStatus[0] = status;
+		if (status.isOK()) {
+			setErrorMessage(null);
+			setPageComplete(true);
 		} else {
-			LibraryLocation[] libs = fLibraryContentProvider.getLibraries();
-			vm.setLibraryLocations(libs);
-		}		
-	}	
+			setErrorMessage(status.getMessage());
+			setPageComplete(false);
+		}
+		// must force since this page is a 'sub-page' and may not be considered the current page
+		if (getContainer().getCurrentPage() != this) {
+			getContainer().updateMessage();
+			getContainer().updateButtons();
+		}
+	}
 	
 	/**
 	 * Determines if the current libraries displayed to the user are the default location
@@ -228,7 +209,7 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		}
 		File installLocation = vm.getInstallLocation();
 		if (installLocation != null) {
-			LibraryLocation[] def = getVMInstallType().getDefaultLibraryLocations(installLocation);
+			LibraryLocation[] def = vm.getVMInstallType().getDefaultLibraryLocations(installLocation);
 			if (def.length == libraryLocations.length) {
 				for (int i = 0; i < def.length; i++) {
 					if (!def[i].equals(libraryLocations[i])) {
@@ -239,24 +220,6 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns the vm install associated with this library block.
-	 * 
-	 * @return vm install
-	 */
-	protected IVMInstall getVMInstall() {
-		return fVmInstall;
-	}	
-	
-	/**
-	 * Returns the vm install type associated with this library block.
-	 * 
-	 * @return vm install
-	 */
-	protected IVMInstallType getVMInstallType() {
-		return fVmInstallType;
 	}
 
 	/* (non-Javadoc)
@@ -409,4 +372,49 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		fJavadocButton.setEnabled(!selection.isEmpty() && (allJavadoc || allRoots));
 		fSourceButton.setEnabled(!selection.isEmpty() && (allSource || allRoots));
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#finish()
+	 */
+	public boolean finish() {
+		if (fVmInstall != null) {
+			if (isDefaultLocations(fVmInstall)) {
+				fVmInstall.setLibraryLocations(null);
+			} else {
+				LibraryLocation[] libs = fLibraryContentProvider.getLibraries();
+				fVmInstall.setLibraryLocations(libs);
+			}
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getSelection()
+	 */
+	public VMStandin getSelection() {
+		return fVmInstall;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#setSelection(org.eclipse.jdt.launching.VMStandin)
+	 */
+	public void setSelection(VMStandin vm) {
+		super.setSelection(vm);
+		LibraryLocation[] libraryLocations = null;
+		if (vm == null) {
+			libraryLocations = new LibraryLocation[0];
+		} else {
+			libraryLocations = JavaRuntime.getLibraryLocations(vm);
+		}
+		fVmInstall = vm;
+		fLibraryContentProvider.setLibraries(libraryLocations);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getVMStatus()
+	 */
+	protected IStatus[] getVMStatus() {
+		return fLibStatus;
+	}	
+		
 }
