@@ -163,7 +163,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * subclass.
 	 * </p>
 	 * 
-	 * @param installLocationOrDefinitionFile home location
+	 * @param installLocation home location
 	 * @return default javadoc location or <code>null</code>
 	 * @since 2.1
 	 */
