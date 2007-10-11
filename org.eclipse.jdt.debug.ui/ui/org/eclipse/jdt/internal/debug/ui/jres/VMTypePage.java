@@ -24,7 +24,10 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -112,6 +115,14 @@ public class VMTypePage extends WizardPage {
         fTypesViewer.setContentProvider(new ArrayContentProvider());
         fTypesViewer.setLabelProvider(new TypeLabelProvider());
 		fTypesViewer.setComparator(new ViewerComparator());
+		fTypesViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				fTypesViewer.setCheckedElements(new Object[] {((IStructuredSelection)event.getSelection()).getFirstElement()});
+				setPageComplete(true);
+				updateNextPage();
+				getWizard().getContainer().showPage(getNextPage());
+			}
+		});
 		fTypesViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked()) {
