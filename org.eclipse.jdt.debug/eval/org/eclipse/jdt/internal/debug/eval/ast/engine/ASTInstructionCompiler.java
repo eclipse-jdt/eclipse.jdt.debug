@@ -2179,28 +2179,31 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		SimpleName fieldName= node.getName();
 		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
-		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
-		Expression expression = node.getExpression();
-		String fieldId = fieldName.getIdentifier();
-
-		if (Modifier.isStatic(fieldBinding.getModifiers())) {
-			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
-			expression.accept(this);
-			addPopInstruction();
-		} else {
-			if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
-				push(new PushArrayLength(fCounter));
-			} else {
-				if (isALocalType(declaringTypeBinding)) {
-					setHasError(true);
-					addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31); 
-					return false;
+		if(fieldBinding != null) {
+			ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
+			if(declaringTypeBinding != null) {
+				Expression expression = node.getExpression();
+				String fieldId = fieldName.getIdentifier();
+		
+				if (Modifier.isStatic(fieldBinding.getModifiers())) {
+					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+					expression.accept(this);
+					addPopInstruction();
+				} else {
+					if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
+						push(new PushArrayLength(fCounter));
+					} else {
+						if (isALocalType(declaringTypeBinding)) {
+							setHasError(true);
+							addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31); 
+							return false;
+						}
+						push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+					}
+					expression.accept(this);
 				}
-				push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
 			}
-			expression.accept(this);
 		}
-
 		return false;
 	}
 
@@ -3276,21 +3279,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-
-		Expression initializer= node.getInitializer();
-		boolean hasInitializer= initializer != null;
-
 		ITypeBinding typeBinding= node.getType().resolveBinding();
 		int typeDimension= typeBinding.getDimensions();
 		if (typeDimension != 0) {
 			typeBinding= typeBinding.getElementType();
 		}
-
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), hasInitializer, fCounter));
-		if (hasInitializer) {
+		Expression initializer= node.getInitializer();
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), initializer != null, fCounter));
+		if (initializer != null) {
 			initializer.accept(this);
 		}
-
 		return false;
 	}
 
@@ -3710,11 +3708,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		Expression initializer= node.getInitializer();
-		boolean hasInitializer= initializer != null;
-
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(elementBinding), typeDimension, elementBinding.isPrimitive(), hasInitializer, fCounter));
-
-		if (hasInitializer) {
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(elementBinding), typeDimension, elementBinding.isPrimitive(), initializer != null, fCounter));
+		if (initializer != null) {
 			initializer.accept(this);
 			ITypeBinding expBindnig = initializer.resolveTypeBinding();
 			if (expBindnig != null) {
