@@ -68,6 +68,12 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	
+	/**
+	 * Substitution in EE file - replaced with directory of EE file,
+	 * to support absolute path names where needed.
+	 */
+	public static final String VAR_EE_HOME = "${ee.home}"; //$NON-NLS-1$
+	
 	private static final String[] REQUIRED_PROPERTIES = new String[]{PROP_EXECUTABLE, PROP_BOOT_CLASS_PATH, PROP_LANGUAGE_LEVEL, PROP_JAVA_HOME};
 
 	/**
@@ -268,6 +274,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 */
 	private static synchronized Map getProperties(File eeFile) {
 		Map properties = (Map) fgProperties.get(eeFile);
+		String eeHome = eeFile.getParentFile().getAbsolutePath();
 		if (properties == null) {
 			BufferedReader bufferedReader = null;
 			try {
@@ -278,6 +285,7 @@ public class EEVMType extends AbstractVMInstallType {
 				String line = bufferedReader.readLine();
 				while (line != null) {
 					if (!line.startsWith("#")) { //$NON-NLS-1$
+						line = resolve(line, eeHome);
 						int eq = line.indexOf('=');
 						if (eq > 0) {
 							String key = line.substring(0, eq);
@@ -306,6 +314,34 @@ public class EEVMType extends AbstractVMInstallType {
 			}
 		}
 		return properties;
+	}
+	
+	/**
+	 * Replaces and returns a string with all occurrences of
+	 * "${ee.home} replaced with 'eeHome'.
+	 * 
+	 * @param value string to process
+	 * @param eeHome replacement string
+	 * @return resolved paths
+	 */
+	private static String resolve(String value, String eeHome) {
+		int start = 0;
+		int index = value.indexOf(VAR_EE_HOME, start);
+		StringBuffer replaced = null;
+		while (index >= 0) {
+			if (replaced == null) {
+				replaced = new StringBuffer();
+			}
+			replaced.append(value.substring(start, index));
+			replaced.append(eeHome);
+			start = index + VAR_EE_HOME.length();
+			index = value.indexOf(VAR_EE_HOME, start);
+		}
+		if (replaced != null) {
+			replaced.append(value.substring(start));
+			return replaced.toString();
+		}
+		return value;
 	}
 	
 	/**
