@@ -3377,4 +3377,13 @@ M4 = Platform-specific fourth key
           vmInstallType="org.eclipse.jdt.launching.EEVMType">
     </vmInstallPage>
  </extension>
+ <extension
+       point="org.eclipse.jdt.ui.queryParticipants">
+    <queryParticipant
+          class="org.eclipse.jdt.internal.debug.ui.search.LaunchConfigurationQueryParticipant"
+          id="org.eclipse.jdt.internal.debug.ui.search.LaunchConfigurationQueryParticipant"
+          name="%LaunchConfigurationQueryParticipant.name"
+          nature="org.eclipse.jdt.core.javanature">
+    </queryParticipant>
+ </extension>
 </plugin>
