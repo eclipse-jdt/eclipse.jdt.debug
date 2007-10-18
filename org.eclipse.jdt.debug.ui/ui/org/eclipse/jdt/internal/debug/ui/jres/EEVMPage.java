@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -277,6 +278,10 @@ public class EEVMPage extends AbstractVMInstallPage {
 			String homePath = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, eeFile);
 			if (homePath != null) {
 				home = new File(homePath);
+				try {
+					home = home.getCanonicalFile();
+				} catch (IOException e) {
+				}
 			}
 		}
 		vm.setInstallLocation(home);
