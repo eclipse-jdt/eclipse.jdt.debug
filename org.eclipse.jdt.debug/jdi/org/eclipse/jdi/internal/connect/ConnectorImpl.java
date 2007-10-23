@@ -105,6 +105,11 @@ public abstract class ConnectorImpl implements Connector {
 	 * Argument class for arguments that are used to establish a connection.
 	 */
 	public abstract class ArgumentImpl implements com.sun.jdi.connect.Connector.Argument {
+		/**
+		 * Serial version id. 
+		 */
+		private static final long serialVersionUID = 8850533280769854833L;
+		
 		private String fName;
 		private String fDescription;
 		private String fLabel;
