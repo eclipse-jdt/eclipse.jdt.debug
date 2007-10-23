@@ -28,6 +28,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -92,8 +93,21 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 			Pattern pattern = null;
 			if (query instanceof ElementQuerySpecification) {
 				ElementQuerySpecification elementQuery = (ElementQuerySpecification) query;
-				IType type = (IType) elementQuery.getElement();
-				pattern = Pattern.compile(quotePattern(type.getFullyQualifiedName('$')));
+				IJavaElement element = elementQuery.getElement();
+				if(element instanceof IMember) {
+					IMember member = (IMember) element;
+					IType type = null;
+					if(member.getElementType() == IJavaElement.TYPE) {
+						type = (IType) member;
+					}
+					else {
+						type = member.getDeclaringType();
+					}
+					pattern = Pattern.compile(quotePattern(type.getFullyQualifiedName('$')));
+				}
+				else {
+					return;
+				}
 			}
 			if (query instanceof PatternQuerySpecification) {
 				PatternQuerySpecification patternQuery = (PatternQuerySpecification) query;
