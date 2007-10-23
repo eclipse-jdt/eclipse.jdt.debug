@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,8 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.ibm.icu.text.MessageFormat;
@@ -61,9 +63,13 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 		IResource resource = entry.getResource();
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.PROJECT:
-				//TODO what if project not loaded?
 				IJavaElement proj = JavaCore.create(resource);
-				return lp.getImage(proj);
+				if(proj == null) {
+					return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT_CLOSED);
+				}
+				else {
+					return lp.getImage(proj);
+				}
 			case IRuntimeClasspathEntry.ARCHIVE:
 				if (resource instanceof IContainer) {
 					return lp.getImage(resource);
@@ -124,7 +130,12 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.PROJECT:
 				IResource res = entry.getResource();
 				IJavaElement proj = JavaCore.create(res);
-				return lp.getText(proj);
+				if(proj == null) {
+					return entry.getPath().lastSegment();
+				}
+				else {
+					return lp.getText(proj);
+				}
 			case IRuntimeClasspathEntry.ARCHIVE:
 				IPath path = entry.getPath();
 				if (path == null) {
