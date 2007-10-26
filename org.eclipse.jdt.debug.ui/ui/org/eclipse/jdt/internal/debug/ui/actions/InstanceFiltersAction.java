@@ -127,6 +127,13 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					final IJavaObject object = (IJavaObject)value;
 					final List breakpoints = getApplicableBreakpoints(var, object);
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
+					
+					if (breakpoints.isEmpty())
+					{
+						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.InstanceFiltersAction_0, ActionMessages.InstanceFiltersAction_4);
+						return;
+					}
+					
 					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.

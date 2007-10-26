@@ -88,9 +88,13 @@ public class ActionMessages extends NLS {
 	public static String TerminateEvaluationActionTerminate_Evaluation_1;
 	public static String TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2;
 
+	public static String InstanceFiltersAction_0;
+
 	public static String InstanceFiltersAction_1;
 	public static String InstanceFiltersAction_2;
 	public static String InstanceFiltersAction_3;
+
+	public static String InstanceFiltersAction_4;
 	public static String InstanceFiltersAction_Yes_2;
 	public static String InstanceFiltersAction_Cancel_3;
 
