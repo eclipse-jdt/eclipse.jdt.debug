@@ -308,7 +308,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});	
 		
-		Composite buttons = SWTFactory.createComposite(parent, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING);
+		Composite buttons = SWTFactory.createComposite(parent, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		
 		fAddButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_3, null); 
 		fAddButton.addListener(SWT.Selection, new Listener() {
