@@ -175,7 +175,10 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		switch(query.getLimitTo()) {
 			case IJavaSearchConstants.REFERENCES:
 			case IJavaSearchConstants.ALL_OCCURRENCES: {
-				return true;
+				break;
+			}
+			default: {
+				return false;
 			}
 		}
 		if (query instanceof ElementQuerySpecification) {
