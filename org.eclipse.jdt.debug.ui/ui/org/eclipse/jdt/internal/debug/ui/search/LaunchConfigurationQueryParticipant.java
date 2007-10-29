@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -100,10 +101,17 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 					if(member.getElementType() == IJavaElement.TYPE) {
 						type = (IType) member;
 					}
-					else {
-						type = member.getDeclaringType();
+					else if(member.getElementType() == IJavaElement.METHOD) {
+						if(((IMethod)member).isMainMethod()) {
+							type = member.getDeclaringType();
+						}
 					}
-					pattern = Pattern.compile(quotePattern(type.getFullyQualifiedName('$')));
+					if(type != null) {
+						pattern = Pattern.compile(quotePattern(type.getFullyQualifiedName('$')));
+					}
+					else {
+						return;
+					}
 				}
 				else {
 					return;
