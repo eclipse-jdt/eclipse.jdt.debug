@@ -182,7 +182,8 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 			}
 		}
 		if (query instanceof ElementQuerySpecification) {
-			return ((ElementQuerySpecification) query).getElement().getElementType() == IJavaElement.TYPE;
+			IJavaElement element = ((ElementQuerySpecification) query).getElement();
+			return element.getElementType() == IJavaElement.TYPE || element.getElementType() == IJavaElement.METHOD;
 		}
 		if (query instanceof PatternQuerySpecification) {
 			PatternQuerySpecification patternQuery = (PatternQuerySpecification) query;
