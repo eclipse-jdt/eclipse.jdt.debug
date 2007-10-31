@@ -145,8 +145,6 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		if (fNewProjectName != null) {
 			oldProjectName = fOldProjectName;
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
-			//CONTEXTLAUNCHING
-			JavaMigrationDelegate.updateResourceMapping(wc);
 		} 
 		else {
 			oldProjectName = null;
