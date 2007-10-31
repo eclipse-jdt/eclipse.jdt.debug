@@ -154,6 +154,8 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		if (fNewLaunchConfigurationName != null) {
 			wc.rename(fNewLaunchConfigurationName);
 		}
+		// update resource mapping
+		JavaMigrationDelegate.updateResourceMapping(wc);
 		if (wc.isDirty()) {
 			fLaunchConfiguration = wc.doSave();
 		}
