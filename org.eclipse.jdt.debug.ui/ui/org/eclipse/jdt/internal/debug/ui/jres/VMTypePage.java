@@ -22,13 +22,13 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class VMTypePage extends WizardPage {
 	
-	private CheckboxTableViewer fTypesViewer;
+	private ListViewer fTypesViewer;
 	
 	private AbstractVMInstallPage fNextPage;
 	
@@ -107,38 +107,34 @@ public class VMTypePage extends WizardPage {
 		
 		SWTFactory.createLabel(composite, JREMessages.VMTypePage_3, 1);
 		
-		fTypesViewer = CheckboxTableViewer.newCheckList(composite, SWT.SINGLE | SWT.BORDER);
+		fTypesViewer = new ListViewer(composite, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 250;
         data.widthHint = 300;
-        fTypesViewer.getTable().setLayoutData(data);
+        fTypesViewer.getControl().setLayoutData(data);
         fTypesViewer.setContentProvider(new ArrayContentProvider());
         fTypesViewer.setLabelProvider(new TypeLabelProvider());
 		fTypesViewer.setComparator(new ViewerComparator());
 		fTypesViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				fTypesViewer.setCheckedElements(new Object[] {((IStructuredSelection)event.getSelection()).getFirstElement()});
 				setPageComplete(true);
 				updateNextPage();
 				getWizard().getContainer().showPage(getNextPage());
 			}
 		});
-		fTypesViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					// only check one element
-					fTypesViewer.setCheckedElements(new Object[]{event.getElement()});
+		fTypesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent event) {
+				if (event.getSelection().isEmpty()){
+					setPageComplete(false);
+				} else{
 					setPageComplete(true);
 					updateNextPage();
-				} else {
-					setPageComplete(false);
 				}
 			}
 		});
 		fTypesViewer.setInput(JavaRuntime.getVMInstallTypes());
 		setControl(composite);
-		
-		fTypesViewer.setChecked(JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE), true);
+		fTypesViewer.setSelection(new StructuredSelection(JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE)));
 		updateNextPage();
 	}
 	
@@ -158,9 +154,9 @@ public class VMTypePage extends WizardPage {
 	
 	private void updateNextPage() {
 		if (isPageComplete()) {
-			Object[] checkedElements = fTypesViewer.getCheckedElements();
-			if (checkedElements.length == 1) {
-				IVMInstallType installType = (IVMInstallType)checkedElements[0];
+			IStructuredSelection selection = (IStructuredSelection)fTypesViewer.getSelection();
+			if (!selection.isEmpty()){
+				IVMInstallType installType = (IVMInstallType)selection.getFirstElement();
 				AbstractVMInstallPage page = ((VMInstallWizard)getWizard()).getPage(installType);
 				page.setWizard(getWizard());
 				VMStandin standin = new VMStandin(installType, StandardVMPage.createUniqueId(installType));
