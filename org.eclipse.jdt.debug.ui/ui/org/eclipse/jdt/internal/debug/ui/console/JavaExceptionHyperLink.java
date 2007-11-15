@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
@@ -92,6 +93,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	 */
 	protected void processSearchResult(Object source, String typeName, int lineNumber) {
 		try {
+			source = JavaDebugUtils.getJavaElement(source);
 			IResource res = ResourcesPlugin.getWorkspace().getRoot();
 			IType type = null;
 			if (source instanceof ICompilationUnit) {
@@ -101,11 +103,11 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 			} else if (source instanceof IType) {
 				type = (IType) source;
 			}
+			Map map = new HashMap();
 			if (type != null) {
 				res = BreakpointUtils.getBreakpointResource(type);
+				BreakpointUtils.addJavaBreakpointAttributes(map, type);
 			}
-			Map map = new HashMap();
-			BreakpointUtils.addJavaBreakpointAttributes(map, type);
 			map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL, JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
 			IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, AddExceptionAction.isChecked(type), false, map);
 			showProperties(breakpoint);

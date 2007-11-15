@@ -225,9 +225,20 @@ public class JavaDebugUtils {
      * @return corresponding Java element or <code>null</code>
      * @throws CoreException
      */
-    private static IJavaElement resolveJavaElement(Object object, ILaunch launch) throws CoreException {
+    public static IJavaElement resolveJavaElement(Object object, ILaunch launch) throws CoreException {
     	Object sourceElement = resolveSourceElement(object, launch);
-        IJavaElement javaElement = null;
+        return getJavaElement(sourceElement);
+    }
+
+	/**
+	 * Returns the {@link IJavaElement} associated with the given source element or <code>null</code>
+	 * if none.
+	 * 
+	 * @param sourceElement a java element, object that adapts to a java element, or a resource
+	 * @return corresponding {@link IJavaElement} or <code>null</code>
+	 */
+	public static IJavaElement getJavaElement(Object sourceElement) {
+		IJavaElement javaElement = null;
         if (sourceElement instanceof IJavaElement) {
             javaElement = (IJavaElement) sourceElement;
         } else if (sourceElement instanceof IAdaptable) {
@@ -243,7 +254,7 @@ public class JavaDebugUtils {
             return null;
         }
         return javaElement;
-    }  
+	}  
     
     /**
      * Returns the source element corresponding to the given object or <code>null</code>
