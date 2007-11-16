@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -32,6 +33,7 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
@@ -128,7 +130,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 				return;
 			}
 			monitor.worked(1);
-			searchLaunchConfigurations(requestor, pattern, new SubProgressMonitor(monitor, 7));
+			searchLaunchConfigurations(query.getScope(), requestor, pattern, new SubProgressMonitor(monitor, 7));
 		} finally {
 			monitor.done();
 		}
@@ -209,7 +211,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	 * @return true if there were matching elements for the pattern, false otherwise
 	 * @throws CoreException
 	 */
-	private boolean matches(ILaunchConfiguration config, Pattern pattern) throws CoreException {
+	private boolean matches(IJavaSearchScope scope, ILaunchConfiguration config, Pattern pattern) throws CoreException {
 		if(!config.exists() || !config.getType().isPublic() || !DebugUIPlugin.doLaunchConfigurationFiltering(config)) {
 			return false;
 		}
@@ -218,18 +220,29 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 			return false;
 		}
 		mainTypeName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainTypeName);
-		return pattern.matcher(mainTypeName).matches();
+		if (! pattern.matcher(mainTypeName).matches()) {
+			return false;
+		}
+		IResource[] resources = config.getMappedResources();
+		if (resources != null) {
+			for (int i = 0; i < resources.length; i++) {
+				if (scope.encloses(resources[i].getFullPath().toString())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Searches for configurations matching the specified pattern
-	 * @param requestor
 	 * @param scope
+	 * @param requestor
 	 * @param pattern
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void searchLaunchConfigurations(ISearchRequestor requestor, Pattern pattern, IProgressMonitor monitor) throws CoreException {
+	private void searchLaunchConfigurations(IJavaSearchScope scope, ISearchRequestor requestor, Pattern pattern, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 		monitor.beginTask("Searching for launch configurations", configs.length); //$NON-NLS-1$
 		try {
@@ -238,7 +251,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 					return;
 				}
 				monitor.worked(1);
-				if (matches(configs[i], pattern)) {
+				if (matches(scope, configs[i], pattern)) {
 					requestor.reportMatch(new Match(configs[i], 0, 0));
 				}
 			}
