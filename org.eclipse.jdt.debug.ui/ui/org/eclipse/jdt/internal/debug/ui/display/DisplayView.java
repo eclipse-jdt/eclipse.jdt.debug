@@ -163,9 +163,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
 	public void createPartControl(Composite parent) {
-		
-		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION;
-		fSourceViewer= new JDISourceViewer(parent, null, styles);
+		fSourceViewer= new JDISourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.LEFT_TO_RIGHT);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		IDocument doc= getRestoredDocument();

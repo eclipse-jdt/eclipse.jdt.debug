@@ -25,6 +25,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -55,8 +56,24 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	private IPreferenceStore fStore;
 	private DisplayViewerConfiguration fConfiguration;
 
+
 	public JDISourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super(parent, ruler, styles);
+		StyledText text= this.getTextWidget();
+		text.addBidiSegmentListener(new  BidiSegmentListener() {
+			public void lineGetSegments(BidiSegmentEvent event) {
+				try {
+					event.segments= getBidiLineSegments(event.lineOffset);
+				} catch (BadLocationException x) {
+					// ignore
+				}
+			}
+		});
+	}
+
+
+	public JDISourceViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean isOverviewRulerVisible, int styles) {
+		super(parent, ruler, overviewRuler, isOverviewRulerVisible, styles);
 		StyledText text= this.getTextWidget();
 		text.addBidiSegmentListener(new  BidiSegmentListener() {
 			public void lineGetSegments(BidiSegmentEvent event) {

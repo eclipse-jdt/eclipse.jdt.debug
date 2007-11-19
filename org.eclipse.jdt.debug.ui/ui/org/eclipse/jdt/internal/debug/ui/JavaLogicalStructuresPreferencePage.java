@@ -264,7 +264,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     public void createSourceViewer(Composite parent) {
     	SWTFactory.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_12, 2, 300);
         
-        fCodeViewer = new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fCodeViewer = new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 
         JavaTextTools tools = JDIDebugUIPlugin.getDefault().getJavaTextTools();
         IDocument document= new Document();

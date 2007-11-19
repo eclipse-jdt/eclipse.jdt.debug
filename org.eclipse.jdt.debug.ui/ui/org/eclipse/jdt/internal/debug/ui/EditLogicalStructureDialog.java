@@ -296,7 +296,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 		
 		// snippet viewer
-		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
 	
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();

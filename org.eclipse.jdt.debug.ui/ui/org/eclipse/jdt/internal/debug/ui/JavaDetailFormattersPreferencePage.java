@@ -260,7 +260,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	}
 	
 	public void createSourceViewer(Composite container) {
-		fCodeViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fCodeViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();

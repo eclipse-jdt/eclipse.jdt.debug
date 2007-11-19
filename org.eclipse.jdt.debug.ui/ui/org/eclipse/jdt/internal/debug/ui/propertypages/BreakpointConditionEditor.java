@@ -74,7 +74,7 @@ public class BreakpointConditionEditor {
 			fErrorMessage  = PropertyPageMessages.BreakpointConditionEditor_1; 
 			fOldValue = ""; //$NON-NLS-1$
 			
-			fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 			fViewer.setInput(parent);
 			IDocument document = new Document();
 			JDIDebugUIPlugin.getDefault().getJavaTextTools().setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);

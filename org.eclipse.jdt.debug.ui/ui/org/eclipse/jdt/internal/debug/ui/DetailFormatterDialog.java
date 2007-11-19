@@ -233,7 +233,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * @param parent parent composite
 	 */
 	private void createSnippetViewer(Composite parent) {
-		fSnippetViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+		fSnippetViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
 	
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
