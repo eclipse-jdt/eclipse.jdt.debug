@@ -236,6 +236,7 @@ public class JavaDebugUtils {
 	 * 
 	 * @param sourceElement a java element, object that adapts to a java element, or a resource
 	 * @return corresponding {@link IJavaElement} or <code>null</code>
+	 * @since 3.4.0
 	 */
 	public static IJavaElement getJavaElement(Object sourceElement) {
 		IJavaElement javaElement = null;
