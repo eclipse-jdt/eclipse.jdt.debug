@@ -79,6 +79,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				types = getTypes(eeId);
 			}
 		}
+		boolean strictMatch = true;
 		if (types == null) {
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion == null) {
@@ -88,7 +89,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
 					types = getTypes(CDC_FOUNDATION_1_1);
 			} else {
-				if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+				if (javaVersion.startsWith("1.7")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_1_6); // there is no 1.7 EE defined yet
+					strictMatch = false; // 1.7 is not a strict match for 1.6
+				} else if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
 					types = getTypes(JavaSE_1_6);
 				else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
 					types = getTypes(J2SE_1_5);
@@ -112,7 +116,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 		if (types != null) {
 			for (int i=0; i < types.size(); i++)
-				addEnvironment(result, (String) types.get(i), i ==0);
+				addEnvironment(result, (String) types.get(i), strictMatch && i ==0);
 		}
 		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
 	}
