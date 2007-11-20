@@ -2623,7 +2623,8 @@ public final class JavaRuntime {
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_6)) {
             		compliance = JavaCore.VERSION_1_6;
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
-            		compliance = JavaCore.VERSION_1_7;
+            		// set compliance to 1.6 when 1.7 is detected - @see bug 209833
+            		compliance = JavaCore.VERSION_1_6;
             	}
             	if (compliance != null) {
 	                Hashtable defaultOptions = JavaCore.getDefaultOptions();

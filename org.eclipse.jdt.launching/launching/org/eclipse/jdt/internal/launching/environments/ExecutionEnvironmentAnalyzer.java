@@ -72,6 +72,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		IVMInstall2 vm2 = (IVMInstall2) vm;
 		
 		List types = null;
+		boolean strictMatch = true;
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion == null) {
 			// We have a contributed VM type. Check to see if its a foundation VM, if we can.
@@ -80,7 +81,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
 				types = getTypes(CDC_FOUNDATION_1_1);
 		} else {
-			if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+			if (javaVersion.startsWith("1.7")) {//$NON-NLS-1$
+				types = getTypes(JavaSE_1_6);
+				strictMatch = false;
+			} else if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
 				types = getTypes(JavaSE_1_6);
 			else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
 				types = getTypes(J2SE_1_5);
@@ -103,7 +107,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 		if (types != null) {
 			for (int i=0; i < types.size(); i++)
-				addEnvironment(result, (String) types.get(i), i ==0);
+				addEnvironment(result, (String) types.get(i), strictMatch && i ==0);
 		}
 		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
 	}
