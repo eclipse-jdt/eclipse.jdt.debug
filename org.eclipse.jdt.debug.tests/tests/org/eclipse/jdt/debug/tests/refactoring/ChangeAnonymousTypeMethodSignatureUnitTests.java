@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.internal.corext.refactoring.structure.ChangeSignatureRefactoring;
+import org.eclipse.jdt.internal.corext.refactoring.structure.ChangeSignatureProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 
 public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefactoringDebugTest {
 
@@ -68,11 +69,13 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefacto
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMethod method = (IMethod)(getMember(cunit,fullTargetName));
 		
-        ChangeSignatureRefactoring ref = new ChangeSignatureRefactoring(method);
-		//configure the ref a little more here!
-		ref.setNewMethodName("changedMethod");
-		ref.setNewReturnTypeName("Object");
-		ref.setVisibility(Modifier.PUBLIC);
+        ChangeSignatureProcessor processor = new ChangeSignatureProcessor(method);
+        ProcessorBasedRefactoring ref= new ProcessorBasedRefactoring(processor);
+        
+        //configure the processor a little more here!
+        processor.setNewMethodName("changedMethod");
+        processor.setNewReturnTypeName("Object");
+        processor.setVisibility(Modifier.PUBLIC);
 
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())

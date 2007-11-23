@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoring;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 
 public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 
@@ -88,7 +88,7 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 		IMethod clas= parentClas.getMethod(className, Signature.getParameterTypes("()V"));
 		
         PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IMethod[] {clas});
-		PushDownRefactoring ref= new PushDownRefactoring(processor);
+        ProcessorBasedRefactoring ref= new ProcessorBasedRefactoring(processor);
 		ref.checkInitialConditions(new NullProgressMonitor());
 
 		return ref;
