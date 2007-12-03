@@ -55,7 +55,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 			return lm.getLaunchConfigurations(type);
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
-		return new ILaunchConfiguration[0];
+		return null;
 	}
 	
 	/* (non-Javadoc)

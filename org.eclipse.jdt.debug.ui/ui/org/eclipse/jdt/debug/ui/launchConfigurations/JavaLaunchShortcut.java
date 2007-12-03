@@ -289,14 +289,16 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
-		return new ILaunchConfiguration[0];
+		// let the framework resolve configurations based on resource mapping
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
-		return new ILaunchConfiguration[0];
+		// let the framework resolve configurations based on resource mapping
+		return null;
 	}	
 	
 	
