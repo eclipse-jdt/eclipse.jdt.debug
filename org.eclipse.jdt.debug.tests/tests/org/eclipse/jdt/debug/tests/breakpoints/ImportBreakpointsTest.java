@@ -68,11 +68,11 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
-		} //end try
+		} 
 		finally {
 			removeAllBreakpoints();
-		}//end finally		
-	}//end testBreakpointImportNormal
+		}	
+	}
 	
 	/**
 	 * tests and overwrote without remove all
@@ -100,10 +100,10 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
-		}//end try 
+		} 
 		finally {
 			removeAllBreakpoints();
-		}//end finally
+		}
 	}
 	
 	/**
@@ -121,11 +121,11 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 				return;
 			}
 			assertTrue("Import should have failed with exception", false);
-		}//end try
+		}
 		finally {
 			removeAllBreakpoints();
-		}//end finally
-	}//end testBreakpointImportBadFilename
+		}
+	}
 	
 	/**
 	 * tests importing breakpoints with working sets
@@ -173,11 +173,11 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("workingset does not contain 6 breakpoints", 6, set.getElements().length);
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
-		}//end try
+		}
 		finally {
 			removeAllBreakpoints();
-		}//end finally
-	}//end testBreakpointImportWithWorkingsets
+		}
+	}
 	
 	/**
 	 * Tests importing breakpoints to resources that do not exist
@@ -191,10 +191,10 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportBreakpointsOperation op = new ImportBreakpointsOperation(file.getCanonicalPath(), true, true);
 			op.run(new NullProgressMonitor());
 			assertEquals("should be no breakpoints imported", 0, getBreakpointManager().getBreakpoints().length);
-		}//end try 
+		} 
 		finally {
 			removeAllBreakpoints();
-		}//end finally
-	}//end testBreakpointImportMissingResources
+		}
+	}
 	
-}//end class
+}
