@@ -114,7 +114,7 @@ public interface IJDIPreferencesConstants {
 	 * 
 	 * @since 2.1
 	 */
-	public static final String PREF_SHOW_STATIC_VARIALBES= IJavaDebugUIConstants.PLUGIN_ID + ".show_static_variables"; //$NON-NLS-1$
+	public static final String PREF_SHOW_STATIC_VARIABLES= IJavaDebugUIConstants.PLUGIN_ID + ".show_static_variables"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference indicating whether constant (final static) varibles should be shown

@@ -45,7 +45,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
 		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIALBES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIABLES, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, false);

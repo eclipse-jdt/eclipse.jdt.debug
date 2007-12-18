@@ -106,4 +106,11 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
+	 */
+	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
+		Object[] children = super.getAllChildren(parent, context);
+		return JavaContentProviderFilter.filterVariables(children, context);
+	}
 }

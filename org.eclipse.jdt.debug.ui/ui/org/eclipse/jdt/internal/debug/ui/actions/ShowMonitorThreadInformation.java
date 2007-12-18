@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,4 +23,11 @@ public class ShowMonitorThreadInformation extends ToggleBooleanPreferenceAction 
 	protected String getPreferenceKey() {
 		return IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getCompositeKey()
+	 */
+	protected String getCompositeKey() {
+		return getPreferenceKey();
+	}	
 }

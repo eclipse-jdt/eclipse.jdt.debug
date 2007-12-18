@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,13 +40,19 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 			public void run() {
 				// note, this uses the pref key, not the composite key - the prefs are global, not view specific.
 				IPreferenceStore store = getPreferenceStore();
-				store.setValue(getPreferenceKey(), getValue());			
+				store.setValue(getViewKey(), getValue());			
 				viewer.refresh();
 			}
 		});
 	}
-
-	protected String getCompositeKey() {
+	
+	/**
+	 * Returns a key to use in the preference store for this option.
+	 * By default the preference key is used, but actions may override.
+	 * 
+	 * @return
+	 */
+	protected String getViewKey() {
 		return getPreferenceKey();
 	}
 

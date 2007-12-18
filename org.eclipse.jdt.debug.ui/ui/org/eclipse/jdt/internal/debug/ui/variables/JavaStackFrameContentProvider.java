@@ -29,7 +29,8 @@ public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 	 */
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
-			return super.getAllChildren(parent, context, monitor);
+			Object[] children = super.getAllChildren(parent, context, monitor);
+			return JavaContentProviderFilter.filterVariables(children, context);
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 				monitor.cancel();
@@ -38,5 +39,6 @@ public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 			throw e;
 		}
 	}
+	
 
 }

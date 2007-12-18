@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 20057 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,43 +11,29 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Shows static final variables (constants)
  */
-public class ShowConstantsAction extends ViewFilterAction {
+public class ShowConstantsAction extends ToggleBooleanPreferenceAction {
 
 	public ShowConstantsAction() {
 		super();
 	}
 
-	/**
-	 * @see ViewFilterAction#getPreferenceKey()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_CONSTANTS; 
 	}
 	
-	/**
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ToggleBooleanPreferenceAction#getViewKey()
 	 */
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof IJavaVariable) {
-			IJavaVariable variable = (IJavaVariable)element;
-			try {
-				if (!getValue()) {
-					// when not on, filter static finals
-					return !(variable.isStatic() && variable.isFinal());
-				}				
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e);
-			} 
-		}
-		return true;
-	}	
+	protected String getViewKey() {
+		return getCompositeKey();
+	}
+	
 }
