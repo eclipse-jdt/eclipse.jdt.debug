@@ -2670,7 +2670,7 @@ public final class JavaRuntime {
 	/**
 	 * Creates a new VM based on the attributes specified in the given execution 
 	 * environment description file. The format of the file is defined by
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
 	 * 
 	 * @param eeFile VM definition file
 	 * @param name name for the VM
