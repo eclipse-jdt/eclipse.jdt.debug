@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -42,29 +41,23 @@ public class JavaContentProviderFilter {
 	 * @throws DebugException
 	 */
 	public static Object[] filterVariables(Object[] variables, IPresentationContext context) throws DebugException {
-		int mask = Modifier.NONE;
-		boolean includeStatic = includeStatic(context);
-		boolean includeConstants = includeConstants(context);
-		if (includeStatic) {
-			mask = Modifier.STATIC;
-		}
-		if (includeConstants) {
-			mask = Modifier.STATIC | Modifier.FINAL;
-		}
-		if (!includeStatic || !includeConstants) {
+		boolean filterStatics = !includeStatic(context);
+		boolean filterConstants = !includeConstants(context);
+
+		if (filterStatics || filterConstants) {
 			List keep = new ArrayList(variables.length);
 			for (int i = 0; i < variables.length; i++) {
-				int flags = Modifier.NONE;
+				boolean filter = false;
 				if (variables[i] instanceof IJavaVariable){
 					IJavaVariable var = (IJavaVariable)variables[i];
-					if (var.isStatic()) {
-						flags |= Modifier.STATIC;
+					if (var.isStatic() && var.isFinal() && filterConstants){
+						filter = true;
 					}
-					if (var.isFinal()) {
-						flags |= Modifier.FINAL;
+					if (var.isStatic() && filterStatics){
+						filter = true;
 					}
 				}
-				if (flags == Modifier.NONE || mask == flags) {
+				if (!filter){
 					keep.add(variables[i]);
 				}
 			}
@@ -83,7 +76,7 @@ public class JavaContentProviderFilter {
 	 */
 	private static boolean includeStatic(IPresentationContext context){
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		String statics = context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIABLES;
+		String statics = context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIABLES; //$NON-NLS-1$
 		return store.getBoolean(statics);
 	}
 
@@ -97,7 +90,7 @@ public class JavaContentProviderFilter {
 	 */
 	private static boolean includeConstants(IPresentationContext context){
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		String constants = context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS;
+		String constants = context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS; //$NON-NLS-1$
 		return store.getBoolean(constants); 
 	}
 }
