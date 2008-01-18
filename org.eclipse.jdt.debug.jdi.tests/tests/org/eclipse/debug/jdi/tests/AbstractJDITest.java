@@ -92,6 +92,7 @@ public abstract class AbstractJDITest extends TestCase {
 	protected static String fProxyoutFile;
 	protected static String fProxyerrFile;
 	protected static String fVmCmd;
+	protected static String fVmArgs;
 	protected static String fProxyCmd;
 
 	// Stack offset to the MainClass.run() method
@@ -434,7 +435,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Returns the class org.eclipse.debug.jdi.tests.program.MainClass.
 	 */
 	protected ClassType getMainClass() {
-		return getClass("org.eclipse.debug.jdi.tests.program.MainClass");
+		return getClass( getMainClassName() );
 	}
 	/**
 	 * Returns the method "print(Ljava/io/OutputStream;)V" 
@@ -449,7 +450,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected Method getMethod(String name, String signature) {
 		return getMethod(
-			"org.eclipse.debug.jdi.tests.program.MainClass",
+			getMainClassName(),
 			name,
 			signature);
 	}
@@ -588,7 +589,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Returns the VM info for this test.
 	 */
-	VMInformation getVMInfo() {
+	public VMInformation getVMInfo() {
 		return new VMInformation(
 			fVM,
 			fVMType,
@@ -666,30 +667,30 @@ public abstract class AbstractJDITest extends TestCase {
 					+ System.getProperty("file.separator")
 					+ "bin"
 					+ System.getProperty("file.separator");
+			
 			proxyString[index++] = binDirectory + "j9proxy";
 			proxyString[index++] = "localhost:" + (fBackEndPort - 1);
 			proxyString[index++] = "" + fBackEndPort;
 			fLaunchedProxy = Runtime.getRuntime().exec(proxyString);
 
 			// Launch target VM
-			String[] vmString;
-			if (fBootPath.length() > 0)
-				vmString = new String[5];
-			else
-				vmString = new String[4];
-
-			index = 0;
-			vmString[index++] = binDirectory + "j9w";
-			File vm= new File(vmString[index - 1] + ".exe");
+			Vector commandLine = new Vector();
+			
+			String launcher = binDirectory + "j9w.exe";
+			File vm= new File(launcher);
 			if (!vm.exists()) {
-				vmString[index - 1] = binDirectory + "j9";
+				launcher = binDirectory + "j9";
 			}
+			commandLine.add(launcher);
+			
 			if (fBootPath.length() > 0)
-				vmString[index++] = "-bp:" + fBootPath;
-			vmString[index++] = "-cp:" + fClassPath;
-			vmString[index++] = "-debug:" + (fBackEndPort - 1);
-			vmString[index++] = "org.eclipse.debug.jdi.tests.program.MainClass";
-			fLaunchedVM = Runtime.getRuntime().exec(vmString);
+				commandLine.add("-bp:" + fBootPath);
+			commandLine.add("-cp:" + fClassPath);
+			commandLine.add("-debug:" + (fBackEndPort - 1));
+			injectVMArgs(commandLine);
+			commandLine.add(getMainClassName());
+
+			fLaunchedVM = exec(commandLine);
 
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
@@ -710,31 +711,29 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 			binDirectory.append(System.getProperty("file.separator"));
 			binDirectory.append("bin").append(System.getProperty("file.separator"));
-			String[] vmString;
-			if (fBootPath.length() > 0)
-				vmString = new String[10];
-			else
-				vmString = new String[8];
 
-			int index = 0;
-			vmString[index++] = binDirectory.toString() + "javaw";
-			File vm= new File(vmString[index - 1] + ".exe");
+			Vector commandLine = new Vector();
+
+			String launcher = binDirectory.toString() + "javaw.exe";
+			File vm= new File(launcher);
 			if (!vm.exists()) {
-				vmString[index - 1] = binDirectory + "java";
+				launcher = binDirectory + "java";
 			}
+
 			if (fBootPath.length() > 0) {
-				vmString[index++] = "-bootpath";
-				vmString[index++] = fBootPath;
+				commandLine.add("-bootpath");
+				commandLine.add(fBootPath);
 			}
-			vmString[index++] = "-classpath";
-			vmString[index++] = fClassPath;
-			vmString[index++] = "-Xdebug";
-			vmString[index++] = "-Xnoagent";
-			vmString[index++] = "-Djava.compiler=NONE";
-			vmString[index++] =
-				"-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y";
-			vmString[index++] = "org.eclipse.debug.jdi.tests.program.MainClass";
-			fLaunchedVM = Runtime.getRuntime().exec(vmString);
+			commandLine.add("-classpath");
+			commandLine.add(fClassPath);
+			commandLine.add("-Xdebug");
+			commandLine.add("-Xnoagent");
+			commandLine.add("-Djava.compiler=NONE");
+			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
+			injectVMArgs(commandLine);
+			commandLine.add(getMainClassName());
+
+			fLaunchedVM = exec(commandLine);
 
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
@@ -751,33 +750,66 @@ public abstract class AbstractJDITest extends TestCase {
 					+ System.getProperty("file.separator")
 					+ "bin"
 					+ System.getProperty("file.separator");
-			String[] vmString;
-			if (fBootPath.length() > 0)
-				vmString = new String[10];
-			else
-				vmString = new String[8];
 
-			int index = 0;
-			vmString[index++] = binDirectory + "javaw";
+			Vector commandLine = new Vector();
+
+			commandLine.add(binDirectory + "javaw");
 			if (fBootPath.length() > 0) {
-				vmString[index++] = "-bootpath";
-				vmString[index++] = fBootPath;
+				commandLine.add("-bootpath");
+				commandLine.add(fBootPath);
 			}
-			vmString[index++] = "-classpath";
-			vmString[index++] = fClassPath;
-			vmString[index++] = "-Xdebug";
-			vmString[index++] = "-Xnoagent";
-			vmString[index++] = "-Djava.compiler=NONE";
-			vmString[index++] =
-				"-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y";
-			vmString[index++] = "org.eclipse.debug.jdi.tests.program.MainClass";
-			fLaunchedVM = Runtime.getRuntime().exec(vmString);
+			
+			commandLine.add("-classpath");
+			commandLine.add(fClassPath);
+			commandLine.add("-Xdebug");
+			commandLine.add("-Xnoagent");
+			commandLine.add("-Djava.compiler=NONE");
+			commandLine.add("-Xrunjdwp:transport=dt_socket,address=" + fBackEndPort + ",suspend=y,server=y");
+			injectVMArgs(commandLine);
+			commandLine.add(getMainClassName());
+
+			fLaunchedVM = exec(commandLine);
 
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
 		}
 	}
 
+	protected String getMainClassName() {
+		return "org.eclipse.debug.jdi.tests.program.MainClass";
+	}
+	
+	protected String getTestPrefix() {
+		return "testJDI";
+	}
+
+	/**
+	 * Injects arguments specified using -vmargs command line option into
+	 * the provided commandLine.
+	 * @param commandLine A vector of command line argument strings.
+	 */
+	private void injectVMArgs(Vector commandLine) {
+		if (fVmArgs != null) {
+			String[] args = fVmArgs.split(",");
+			for (int i=0; i < args.length; i++) {
+				commandLine.add(args[i]);
+			}				
+		}		
+	}
+	
+	/**
+	 * Flattens the variable size command line and calls Runtime.exec().
+	 * @param commandLine A vector of command line argument strings.
+	 * @return The Process created by Runtime.exec()
+	 * @throws IOException
+	 */
+	private Process exec(Vector commandLine) throws IOException {
+		String[] vmString = new String[commandLine.size()];
+		commandLine.toArray(vmString);			
+		return Runtime.getRuntime().exec(vmString);		
+	}
+
+	
 	/**
 	 * Conects to the target vm.
 	 */
@@ -905,6 +937,8 @@ public abstract class AbstractJDITest extends TestCase {
 						fProxyerrFile = next;
 					} else if (arg.equals("-vmcmd")) {
 						fVmCmd = next;
+					} else if (arg.equals("-vmargs")) {
+						fVmArgs = next;
 					} else if (arg.equals("-proxycmd")) {
 						fProxyCmd = next;
 					} else if (arg.equals("-trace")) {
@@ -946,6 +980,7 @@ public abstract class AbstractJDITest extends TestCase {
 		System.out.println("-proxyout <file where proxy output is written to>");
 		System.out.println("-proxyerr <file where proxy error output is written to>");
 		System.out.println("-vmcmd <exec string to start VM>");
+		System.out.println("-vmargs <comma-separated list of VM arguments>");
 		System.out.println("-proxycmd <exec string to start proxy>");
 	}
 	/**
@@ -995,7 +1030,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Sets the 'in control of the VM' flag for this test.
 	 */
-	void setInControl(boolean inControl) {
+	public void setInControl(boolean inControl) {
 		fInControl = inControl;
 	}
 	/**
@@ -1026,7 +1061,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Sets the VM info for this test.
 	 */
-	void setVMInfo(VMInformation info) {
+	public void setVMInfo(VMInformation info) {
 		if (info != null) {
 			fVM = info.fVM;
 			fLaunchedVM = info.fLaunchedVM;
@@ -1044,7 +1079,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Shut down the target.
 	 */
-	protected void shutDownTarget() {
+	public void shutDownTarget() {
 		stopReaders();
 		if (fVM != null) {
 			try {
@@ -1170,7 +1205,7 @@ public abstract class AbstractJDITest extends TestCase {
 			new ClassPrepareEventWaiter(
 				classPrepareRequest,
 				true,
-				"org.eclipse.debug.jdi.tests.program.MainClass");
+				getMainClassName());
 		fEventReader.addEventListener(waiter);
 
 		// Start the event reader (this will start the VM when the VMStartEvent is picked up)
@@ -1205,7 +1240,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected Test suite() {
 		JDITestSuite suite = new JDITestSuite(this);
-		Vector testNames = getAllMatchingTests("testJDI");
+		Vector testNames = getAllMatchingTests( getTestPrefix() );
 		Iterator iterator = testNames.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();

@@ -20,7 +20,7 @@ import junit.framework.TestResult;
 /**
  * Tests a <code>TestResult</code>
  */
-class TextTestResult extends TestResult {
+public class TextTestResult extends TestResult {
 
 	/**
 	 * @see junit.framework.TestResult#addError(junit.framework.Test, java.lang.Throwable)
