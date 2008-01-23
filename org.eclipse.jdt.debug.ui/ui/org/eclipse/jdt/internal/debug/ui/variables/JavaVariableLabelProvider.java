@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,13 +136,6 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
 			fQualifiedNameSettings.clear();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
-	 */
-	protected boolean requiresUIJob(ILabelUpdate[] updates) {
-		return !JDIModelPresentation.isInitialized();
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
@@ -102,7 +103,7 @@ import com.sun.jdi.ObjectCollectedException;
  * Determines how to display java elements, including labels, images and editors.
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IColorProvider {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IColorProvider, IDebugModelPresentationExtension {
 
 	/**
 	 * Qualified names presentation property (value <code>"DISPLAY_QUALIFIED_NAMES"</code>).
@@ -2010,5 +2011,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	private ImageDescriptor getImageDescriptor(String key) {
 		return JavaDebugImages.getImageDescriptor(key);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
+	 */
+	public synchronized boolean requiresUIThread(Object element) {
+		return !isInitialized();
 	}
 }
