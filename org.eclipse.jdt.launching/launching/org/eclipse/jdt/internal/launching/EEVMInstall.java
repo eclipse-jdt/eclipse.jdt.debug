@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,11 @@ public class EEVMInstall extends StandardVM {
 	 * Attribute key for Java executable used by this VM
 	 */
 	public static final String ATTR_JAVA_EXE = "ATTR_JAVA_EXE"; //$NON-NLS-1$
+	
+	/**
+	 * Attribute key for VM debug arguments
+	 */
+	public static final String ATTR_DEBUG_ARGS = "ATTR_DEBUG_ARGS"; //$NON-NLS-1$
 
 	/**
 	 * Path to file used to define the JRE
@@ -69,6 +74,15 @@ public class EEVMInstall extends StandardVM {
 		return null;
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.launching.StandardVM#getDebugArgs()
+	 */
+	public String getDebugArgs() {
+		String args = getAttribute(ATTR_DEBUG_ARGS);
+		if (args.charAt(0) == '\"' && args.charAt(args.length()-1) == '\"'){
+			args=args.substring(1,args.length()-1);
+		}
+		return args;
+	}
 
 }

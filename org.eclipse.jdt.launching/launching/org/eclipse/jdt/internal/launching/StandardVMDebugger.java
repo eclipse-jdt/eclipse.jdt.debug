@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,27 +166,36 @@ public class StandardVMDebugger extends StandardVMRunner {
 		subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Constructing_command_line____3); 
 				
 		String program= constructProgramString(config);
-
+		
 		List arguments= new ArrayList(12);
 
 		arguments.add(program);
-
-		// VM arguments are the first thing after the java program so that users can specify
-		// options like '-client' & '-server' which are required to be the first options
-		double version = getJavaVersion();
-		if (version < 1.5) {
-			arguments.add("-Xdebug"); //$NON-NLS-1$
-			arguments.add("-Xnoagent"); //$NON-NLS-1$
-		}
 		
-		//check if java 1.4 or greater
-		if (version < 1.4) {
-			arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
-		}
-		if (version < 1.5) { 
-			arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+		if (fVMInstance instanceof StandardVM && ((StandardVM)fVMInstance).getDebugArgs() != null){
+			String debugArgString = ((StandardVM)fVMInstance).getDebugArgs().replaceAll("\\Q" + StandardVM.VAR_PORT + "\\E", Integer.toString(port));  //$NON-NLS-1$ //$NON-NLS-2$
+			String[] debugArgs = DebugPlugin.parseArguments(debugArgString);
+			for (int i = 0; i < debugArgs.length; i++) {
+				arguments.add(debugArgs[i]);
+			}
 		} else {
-			arguments.add("-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+			// VM arguments are the first thing after the java program so that users can specify
+			// options like '-client' & '-server' which are required to be the first options
+			double version = getJavaVersion();
+			if (version < 1.5) {
+				arguments.add("-Xdebug"); //$NON-NLS-1$
+				arguments.add("-Xnoagent"); //$NON-NLS-1$
+			}
+			
+			//check if java 1.4 or greater
+			if (version < 1.4) {
+				arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
+			}
+			if (version < 1.5) { 
+				arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+			} else {
+				arguments.add("-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
+			}
+		
 		}
 		
 		String[] allVMArgs = combineVmArgs(config, fVMInstance);
@@ -198,6 +207,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
+		
+		
 		
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);

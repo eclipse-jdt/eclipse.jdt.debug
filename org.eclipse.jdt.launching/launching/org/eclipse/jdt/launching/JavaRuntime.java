@@ -2701,6 +2701,7 @@ public final class JavaRuntime {
 			}
 			standin.setAttribute(EEVMInstall.ATTR_JAVA_VERSION, EEVMType.getJavaVersion(eeFile));
 			standin.setAttribute(EEVMInstall.ATTR_DEFINITION_FILE, eeFile.getPath());
+			standin.setAttribute(EEVMInstall.ATTR_DEBUG_ARGS, EEVMType.getDebugArgs(eeFile));
 			return standin;
 		} else {
 			throw new CoreException(status);

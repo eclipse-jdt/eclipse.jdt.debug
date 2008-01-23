@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_EXECUTABLE = "-Dee.executable";  //$NON-NLS-1$
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
+	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
 	
 	/**
 	 * Substitution in EE file - replaced with directory of EE file,
@@ -151,6 +152,17 @@ public class EEVMType extends AbstractVMInstallType {
 			return StandardVMType.getDefaultJavadocLocation(version);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns arguments used to start this VM in debug mode or
+	 * <code>null</code> if none.
+	 * 
+	 * @param eeFile description file
+	 * @return debug VM arguments or <code>null</code> if default
+	 */
+	public static String getDebugArgs(File eeFile) {
+		return getProperty(PROP_DEBUG_ARGS, eeFile);
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,14 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
 
 public class StandardVM extends AbstractVMInstall {
+
+	/**
+	 * If a StandardVM returns a string for #getDebugArgs(), the string may contain
+	 * the variable ${port}.  This will be replaced with the port that the vm is 
+	 * using when launching.
+	 */
+	public static final String VAR_PORT = "${port}"; //$NON-NLS-1$
+
 	StandardVM(IVMInstallType type, String id) {
 		super(type, id);
 	}
@@ -73,7 +81,17 @@ public class StandardVM extends AbstractVMInstall {
             return StandardVMType.findJavaExecutable(installLocation);
         }
         return null;
-    }
+    }    
     
+    /**
+     * Returns arguments used to start this VM in debug mode or 
+     * <code>null</code> if default arguments should be used.
+     * 
+     * @return arguments used to start this VM in debug mode
+     * or <code>null</code> if default arguments should be used
+     */
+    public String getDebugArgs() {
+    	return null;
+    }
     
 }
