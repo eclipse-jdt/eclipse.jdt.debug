@@ -79,7 +79,7 @@ public class EEVMInstall extends StandardVM {
 	 */
 	public String getDebugArgs() {
 		String args = getAttribute(ATTR_DEBUG_ARGS);
-		if (args.charAt(0) == '\"' && args.charAt(args.length()-1) == '\"'){
+		if (args != null && args.charAt(0) == '\"' && args.charAt(args.length()-1) == '\"'){
 			args=args.substring(1,args.length()-1);
 		}
 		return args;
