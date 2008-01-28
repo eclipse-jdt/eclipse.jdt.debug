@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
@@ -81,6 +84,13 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
 		if(editor != null && !canShowMultipleHyperlinks && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {
+			
+			// should only enable step into selection when the current debug context
+			// is an instance of IJavaStackFrame
+			IAdaptable debugContext = DebugUITools.getDebugContext();
+			if (!(debugContext instanceof IJavaStackFrame)) {
+				return null;
+			}
 			IEditorInput input = editor.getEditorInput();
 			IJavaElement element = StepIntoSelectionUtils.getJavaElement(input);
 			int offset = region.getOffset();
