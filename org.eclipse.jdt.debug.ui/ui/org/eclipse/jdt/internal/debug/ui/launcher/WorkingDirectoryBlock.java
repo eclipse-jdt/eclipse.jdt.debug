@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214696 Expose WorkingDirectoryBlock as API
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.io.File;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,14 +25,10 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
-import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,7 +48,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * A control for setting the working directory associated with a launch
  * configuration.
  */
-public class WorkingDirectoryBlock extends JavaLaunchTab {
+public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			
 	// Local directory
 	private Button fWorkspaceButton;
@@ -103,6 +101,40 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	
 	private WidgetListener fListener = new WidgetListener();
 	
+	/**
+	 * The name of the launch configuration attribute that will be used to save
+	 * the location of the working directory.
+	 */
+	private final String workingDirectoryAttribteName;
+	
+	/**
+	 * The help context id to use to connect this working directory block
+	 * to the help system.
+	 */
+	private final String helpContextId;
+	
+	/**
+	 * Creates a new WorkingDirectoryBlock for setting a working directory.
+	 * 
+	 * @param workingDirectoryAttribteName the name of the launch configuration attribute to set the working directory's location, cannot be <tt>null</tt>
+	 */
+	public WorkingDirectoryBlock(String workingDirectoryAttribteName) {
+		this(workingDirectoryAttribteName, null);
+	}
+	
+	/**
+	 * Creates a new WorkingDirectoryBlock for setting a working directory.
+	 * 
+	 * @param workingDirectoryAttribteName the name of the launch configuration attribute to set the working directory's location, cannot be <tt>null</tt>
+	 * @param helpContextId the help context id to use to hook onto the help system
+	 */
+	public WorkingDirectoryBlock(String workingDirectoryAttribteName,
+			String helpContextId) {
+		Assert.isNotNull(workingDirectoryAttribteName);
+		this.workingDirectoryAttribteName = workingDirectoryAttribteName;
+		this.helpContextId = helpContextId;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -110,7 +142,11 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 		Font font = parent.getFont();	
 		Group group = SWTFactory.createGroup(parent, LauncherMessages.WorkingDirectoryBlock_12, 2, 1, GridData.FILL_HORIZONTAL);
 		setControl(group);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(group, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);
+		
+		if (helpContextId != null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(group, helpContextId);	
+		}
+		
 	//default choice
 		Composite comp = SWTFactory.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
 		fUseDefaultDirButton = SWTFactory.createRadioButton(comp, LauncherMessages.WorkingDirectoryBlock_18);
@@ -192,7 +228,9 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
                         res = containers[0];
                     }
                 } 
-			    catch (CoreException e) {}
+			    catch (CoreException e) {
+			    	log(e);
+			    }
 			} 
 		    else {	    
 				res = root.findMember(path);
@@ -247,16 +285,28 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 		try {
 			ILaunchConfiguration config = getLaunchConfiguration();
 			if (config != null) {
-				IJavaProject javaProject = JavaRuntime.getJavaProject(config);
-				if (javaProject != null) {
-					setDefaultWorkingDirectoryText("${workspace_loc:" + javaProject.getPath().makeRelative().toOSString() + "}");  //$NON-NLS-1$//$NON-NLS-2$
+				IProject project = getProject(config);
+				if (project != null) {
+					setDefaultWorkingDirectoryText("${workspace_loc:" + project.getFullPath().makeRelative().toOSString() + "}");  //$NON-NLS-1$//$NON-NLS-2$
 					return;
 				}
 			}
 		} 
-		catch (CoreException ce) {}
+		catch (CoreException ce) {
+			log(ce);
+		}
 		setDefaultWorkingDirectoryText(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Returns the project associated with the specified launch configuration or
+	 * <code>null</code> if none.
+	 * 
+	 * @param configuration the launch configuration that has been set to this working directory block
+	 * @return the project specified by the launch configuration, or <tt>null</tt> if nothing has been set
+	 * @throws CoreException if an error occurred while retrieving the project from the launch configuration
+	 */
+	protected abstract IProject getProject(ILaunchConfiguration configuration) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
@@ -299,7 +349,7 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		config.setAttribute(workingDirectoryAttribteName, (String)null);
 	}
 
 	/* (non-Javadoc)
@@ -308,15 +358,14 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {			
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			String wd = configuration.getAttribute(workingDirectoryAttribteName, (String)null);
 			setDefaultWorkingDir();
 			if (wd != null) {
 				setOtherWorkingDirectoryText(wd);
 			}
 		} 
 		catch (CoreException e) {
-			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
-			JDIDebugUIPlugin.log(e);
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage());
 		}
 	}
 
@@ -325,10 +374,10 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if(fUseDefaultDirButton.getSelection()) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			configuration.setAttribute(workingDirectoryAttribteName, (String)null);
 		}
 		else {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getWorkingDirectoryText());
+			configuration.setAttribute(workingDirectoryAttribteName, getWorkingDirectoryText());
 		}
 	}
 	
@@ -337,6 +386,16 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 */
 	public String getName() {
 		return LauncherMessages.WorkingDirectoryBlock_Working_Directory_8; 
+	}
+	
+	/**
+	 * Logs exceptions that have been caught by this working directory block.
+	 * Subclasses should reimplement if they wish to monitor such exceptions.
+	 * Default implementation does nothing.
+	 * @param e the exception to log
+	 */
+	protected void log(CoreException e) {
+		// nothing
 	}
 	
 	/**
@@ -397,7 +456,7 @@ public class WorkingDirectoryBlock extends JavaLaunchTab {
 	 * Allows this entire block to be enabled/disabled
 	 * @param enabled whether to enable it or not
 	 */
-	protected void setEnabled(boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		fUseDefaultDirButton.setEnabled(enabled);
 		fUseOtherDirButton.setEnabled(enabled);
 		if(fOtherWorkingText.isEnabled()) {
