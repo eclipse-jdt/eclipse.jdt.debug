@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,7 @@ import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.viewers.ChildrenUpdateTests;
 import org.eclipse.jdt.debug.tests.viewers.FilterTransformTests;
+import org.eclipse.jdt.debug.tests.viewers.PresentationContextTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -233,6 +234,7 @@ public class AutomatedSuite extends DebugSuite {
 	// Viewer tests
 		addTest(new TestSuite(FilterTransformTests.class));
 		addTest(new TestSuite(ChildrenUpdateTests.class));
+		addTest(new TestSuite(PresentationContextTests.class));
 
 	// Refactoring tests
 		//TODO: project rename
