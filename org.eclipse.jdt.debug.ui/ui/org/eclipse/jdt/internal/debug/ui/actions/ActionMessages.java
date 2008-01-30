@@ -131,6 +131,8 @@ public class ActionMessages extends NLS {
 	public static String ShowStratumAction_0;
 	public static String JavaVariableValueEditor_0;
 	public static String JavaVariableValueEditor_1;
+	public static String JavaObjectValueEditor_0;
+
 	public static String JavaObjectValueEditor_3;
 	public static String JavaPrimitiveValueEditor_0;
 	public static String JavaPrimitiveValueEditor_1;

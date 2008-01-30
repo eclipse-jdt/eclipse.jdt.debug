@@ -120,6 +120,8 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 IValue newValue = evaluate(expression);
                 if (newValue != null) {
                     variable.setValue(newValue);
+                } else {
+                	variable.setValue(expression);
                 }
                 } catch (DebugException de) {
                     throw new InvocationTargetException(de);
@@ -177,6 +179,10 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     				try {
     					this.wait();
     				} catch (InterruptedException e) {
+    					if (results[0] == null){
+	    					IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.JavaObjectValueEditor_0, e);
+	        			    throw new DebugException(status);
+    					}
     				}
     			}
     			IEvaluationResult result= results[0];
