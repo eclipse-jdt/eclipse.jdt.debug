@@ -302,7 +302,7 @@ public class EEVMType extends AbstractVMInstallType {
 						if (eq > 0) {
 							String key = line.substring(0, eq);
 							if (line.length() > eq + 1) {
-								String value = line.substring(eq + 1);
+								String value = line.substring(eq + 1).trim();
 								properties.put(key, value);
 							}
 						}
