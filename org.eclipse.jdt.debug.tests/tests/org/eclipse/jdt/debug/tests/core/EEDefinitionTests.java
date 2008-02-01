@@ -96,6 +96,24 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Tests source attachments
+	 */
+	public void testSourceAttachments() {
+		File file = getEEFile();
+		assertNotNull("Missing EE file", file);
+		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
+		String[] expected = new String[]{"", "source.txt", "", "", "", ""};
+		assertEquals("Wrong number of libraries", expected.length, libs.length);
+		for (int i = 0; i < expected.length; i++) {
+			if (i == 1) {
+				assertEquals("Wrong attachment", expected[i], libs[i].getSystemLibrarySourcePath().lastSegment());
+			} else {
+				assertEquals("Wrong attachment", Path.EMPTY, libs[i].getSystemLibrarySourcePath());
+			}
+		}
+	}	
+	
+	/**
 	 * Tests default libraries for an EE VM type are empty.
 	 */
 	public void testDefaultLibraries() {

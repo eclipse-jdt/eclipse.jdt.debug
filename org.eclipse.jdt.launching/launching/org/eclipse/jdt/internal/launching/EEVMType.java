@@ -373,7 +373,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return array of individual paths
 	 */
 	private static String[] resolvePaths(String paths, File eeFile) {
-		String[] strings = paths.split(File.pathSeparator);
+		String[] strings = paths.split(File.pathSeparator, -1);
 		IPath root = new Path(eeFile.getParentFile().getAbsolutePath());
 		for (int i = 0; i < strings.length; i++) {
 			String string = strings[i].trim();
