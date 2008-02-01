@@ -65,7 +65,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		assertNotNull("Missing EE VM type", vmType);
 		IStatus status = vmType.validateInstallLocation(file);
-		assertTrue("Invalid install location", status.getSeverity() == IStatus.INFO);
+		assertTrue("Invalid install location", status.getSeverity() == IStatus.OK);
 	}	
 	
 	/**
