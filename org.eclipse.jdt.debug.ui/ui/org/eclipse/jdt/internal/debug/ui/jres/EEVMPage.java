@@ -175,7 +175,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 					public void run() {
 						try {
 							vm[0] = JavaRuntime.createVMFromDefinitionFile(tempFile, fVM.getName(), fVM.getId());
-							temp[0] = Status.OK_STATUS;
+							temp[0] = vm[0].getVMInstallType().validateInstallLocation(vm[0].getInstallLocation());
 						} catch (CoreException e) {
 							temp[0] = e.getStatus();
 						}

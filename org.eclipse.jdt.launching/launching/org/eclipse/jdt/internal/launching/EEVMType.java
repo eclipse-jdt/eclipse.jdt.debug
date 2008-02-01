@@ -425,8 +425,11 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
-	public IStatus validateInstallLocation(File installLocationOrDefinitionFile) {
-		return new Status(IStatus.INFO, LaunchingPlugin.getUniqueIdentifier(), LaunchingMessages.EEVMType_3);
+	public IStatus validateInstallLocation(File installLocation) {
+		if (installLocation.exists()) {
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(LaunchingMessages.EEVMType_3, new String[]{installLocation.getPath()}));
 	}
 	
 	/**

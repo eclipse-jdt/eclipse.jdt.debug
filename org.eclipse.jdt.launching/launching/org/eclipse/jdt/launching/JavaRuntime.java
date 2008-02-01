@@ -443,8 +443,13 @@ public final class JavaRuntime {
 	 */
 	public static IVMInstall getDefaultVMInstall() {
 		IVMInstall install= getVMFromCompositeId(getDefaultVMId());
-		if (install != null && install.getInstallLocation().exists()) {
-			return install;
+		if (install != null) {
+			File location = install.getInstallLocation();
+			if (location != null) {
+				if (location.exists()) {
+					return install;
+				}
+			}
 		}
 		// if the default JRE goes missing, re-detect
 		if (install != null) {
