@@ -378,7 +378,7 @@ public class EEVMType extends AbstractVMInstallType {
 		for (int i = 0; i < strings.length; i++) {
 			String string = strings[i].trim();
 			IPath path = new Path(string);
-			if (!path.isAbsolute()) {
+			if (!path.isEmpty() && !path.isAbsolute()) {
 				IPath filePath = root.append(path);
 				strings[i] = filePath.toOSString();
 			}
