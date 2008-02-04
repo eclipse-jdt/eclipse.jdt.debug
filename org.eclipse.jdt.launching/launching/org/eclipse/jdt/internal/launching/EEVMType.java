@@ -138,7 +138,7 @@ public class EEVMType extends AbstractVMInstallType {
 			lib = (LibraryLocation) liter.next();
 			if(!set.add(lib.getSystemLibraryPath().toOSString())) {
 				//did not add it, duplicate
-				allLibs.remove(lib);
+				liter.remove();
 			}
 		}
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
