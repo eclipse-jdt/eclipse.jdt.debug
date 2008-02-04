@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.jdt.launching">
+<schema targetNamespace="org.eclipse.jdt.launching" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.jdt.launching" id="classpathProviders" name="Java Runtime Classpath Providers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations. A Java launch configuration is can be associated with a custom classpath provider via the launch configuration attriubte ATTR_CLASSPATH_PROVIDER and a custom source path provider via the attribute ATTR_SOURCE_PATH_PROVIDER. When specified, the launch configuration attributes correspond to the id of a classpath provider extension.
       </documentation>
@@ -53,27 +53,27 @@
                <documentation>
                   the class that implements this classpath provider. The class must implement &lt;code&gt;IRuntimeClasspathProvider&lt;/code&gt;
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.AbstractVMInstallType"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.jdt.launching.IRuntimeClasspathProvider"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          2.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a classpath provider: 
 
@@ -90,19 +90,20 @@
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          A default implementation is provided for all launch configurations that do not specify a custom classpath provider.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
