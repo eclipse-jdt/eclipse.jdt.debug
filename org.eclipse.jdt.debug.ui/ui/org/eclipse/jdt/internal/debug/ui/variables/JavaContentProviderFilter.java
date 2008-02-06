@@ -50,11 +50,12 @@ public class JavaContentProviderFilter {
 				boolean filter = false;
 				if (variables[i] instanceof IJavaVariable){
 					IJavaVariable var = (IJavaVariable)variables[i];
-					if (var.isStatic() && var.isFinal() && filterConstants){
-						filter = true;
-					}
-					if (var.isStatic() && filterStatics){
-						filter = true;
+					if (var.isStatic()){
+						if (var.isFinal()){
+							filter = filterConstants;
+						} else {
+							filter = filterStatics;
+						}
 					}
 				}
 				if (!filter){
