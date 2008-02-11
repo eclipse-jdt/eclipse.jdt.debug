@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,8 +112,10 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fAddButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7, JREMessages.VMLibraryBlock_16, null);
 		fAddButton.addSelectionListener(this);
 		fJavadocButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3, JREMessages.VMLibraryBlock_17, null); 
+		fJavadocButton.setEnabled(false);
 		fJavadocButton.addSelectionListener(this);
-		fSourceButton =  SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_11, JREMessages.VMLibraryBlock_18, null);	
+		fSourceButton =  SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_11, JREMessages.VMLibraryBlock_18, null);
+		fSourceButton.setEnabled(false);
 		fSourceButton.addSelectionListener(this);
 		fLibraryViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -125,10 +127,13 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 			}
 		});
 		fRemoveButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6, JREMessages.VMLibraryBlock_12, null);		
+		fRemoveButton.setEnabled(false);
 		fRemoveButton.addSelectionListener(this);
 		fUpButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4, JREMessages.VMLibraryBlock_13, null);
+		fUpButton.setEnabled(false);
 		fUpButton.addSelectionListener(this);
 		fDownButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_5, JREMessages.VMLibraryBlock_14, null);
+		fDownButton.setEnabled(false);
 		fDownButton.addSelectionListener(this);
 		fDefaultButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_9, JREMessages.VMLibraryBlock_15, null);
 		fDefaultButton.addSelectionListener(this);
