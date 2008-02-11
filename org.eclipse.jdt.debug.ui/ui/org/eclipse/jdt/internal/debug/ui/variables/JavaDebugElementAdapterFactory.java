@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaWatchExpressionFilter;
@@ -59,6 +60,9 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 				return fgCPVariable;
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
+				return fgCPExpression;
+			}
+			if (adaptableObject instanceof IJavaValue) {
 				return fgCPExpression;
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -384,6 +385,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         
         IAdapterFactory variableFactory = new JavaDebugElementAdapterFactory();
         manager.registerAdapters(variableFactory, IJavaVariable.class);
+        manager.registerAdapters(variableFactory, IJavaValue.class);
         manager.registerAdapters(variableFactory, JavaInspectExpression.class);
         
 		fHCRListener= new JavaHotCodeReplaceListener();
