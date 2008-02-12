@@ -69,7 +69,7 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
-	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc.loc";  //$NON-NLS-1$
+	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
 	
 	/**
 	 * Substitution in EE file - replaced with directory of EE file,
