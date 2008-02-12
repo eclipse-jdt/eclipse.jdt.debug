@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +69,7 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
+	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc.loc";  //$NON-NLS-1$
 	
 	/**
 	 * Substitution in EE file - replaced with directory of EE file,
@@ -153,6 +155,23 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return javadoc location specified in the definition file or <code>null</code> if none
 	 */
 	public static URL getJavadocLocation(File eeFile) {
+		String javadoc = getProperty(PROP_JAVADOC_LOC, eeFile);
+		if (javadoc != null){
+			try{
+				URL url = new URL(javadoc);
+				if ("file".equalsIgnoreCase(url.getProtocol())){ //$NON-NLS-1$
+					File file = new File(url.getFile());
+					url = file.getCanonicalFile().toURL();
+				}
+				return url;
+			} catch (MalformedURLException e){
+				LaunchingPlugin.log(e);
+				return null;
+			} catch (IOException e){
+				LaunchingPlugin.log(e);
+				return null;
+			}
+		}
 		String version = getProperty(PROP_LANGUAGE_LEVEL, eeFile);
 		if (version != null) {
 			return StandardVMType.getDefaultJavadocLocation(version);
