@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class EEVMType extends AbstractVMInstallType {
 	private static Map fgProperties = new HashMap();
 	
 	/**
-	 * Map of {EE File -> Ordered list of vm arguments}
+	 * Map of {EE File -> String containing vm arguments}
 	 */
 	private static Map fgArguments = new HashMap();
 	
@@ -70,6 +69,7 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
 	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
+	public static final String PROP_NAME = "-Dee.name";  //$NON-NLS-1$
 	
 	/**
 	 * Substitution in EE file - replaced with directory of EE file,
@@ -79,6 +79,22 @@ public class EEVMType extends AbstractVMInstallType {
 	
 	private static final String[] REQUIRED_PROPERTIES = new String[]{PROP_EXECUTABLE, PROP_BOOT_CLASS_PATH, PROP_LANGUAGE_LEVEL, PROP_JAVA_HOME};
 
+	/**
+	 * Returns the javadoc location specified in the definition file or <code>null</code>
+	 * if none.
+	 * 
+	 * @param eeFile definition file
+	 * @return vm name specified in the definition file or <code>null</code> if none
+	 */
+	public static String getVMName(File eeFile) {
+		String name = getProperty(PROP_NAME, eeFile);
+		if (name == null){
+			name = eeFile.getName();
+		}
+		return name;
+	}
+
+	
 	/**
 	 * Returns the library locations defined in the given definition file.
 	 * 
@@ -215,21 +231,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return VM arguments or <code>null</code> if none
 	 */
 	public static String getVMArguments(File eeFile) {
-		Map properties = getProperties(eeFile);
-		if (properties != null) {
-			List args = (List) fgArguments.get(eeFile);
-			StringBuffer buf = new StringBuffer();
-			Iterator iterator = args.iterator();
-			while (iterator.hasNext()) {
-				String arg = (String) iterator.next();
-				buf.append(arg);
-				if (iterator.hasNext()) {
-					buf.append(" "); //$NON-NLS-1$
-				}
-			}
-			return buf.toString();
-		}
-		return null;
+		return (String)fgArguments.get(eeFile);
 	}	
 	
 	/**
@@ -319,7 +321,7 @@ public class EEVMType extends AbstractVMInstallType {
 			try {
 				FileReader reader = new FileReader(eeFile);
 				properties = new HashMap();
-				List arguments = new ArrayList();
+				StringBuffer arguments = new StringBuffer();
 				bufferedReader = new BufferedReader(reader);
 				String line = bufferedReader.readLine();
 				while (line != null) {
@@ -328,17 +330,26 @@ public class EEVMType extends AbstractVMInstallType {
 						int eq = line.indexOf('=');
 						if (eq > 0) {
 							String key = line.substring(0, eq);
+							arguments.append(key).append('=');
 							if (line.length() > eq + 1) {
 								String value = line.substring(eq + 1).trim();
 								properties.put(key, value);
+								if (value.indexOf(' ') > -1){
+									arguments.append('"').append(value).append('"');
+								} else {
+									arguments.append(value);
+								}
 							}
+							arguments.append(' ');
 						}
-						arguments.add(line);
 					}
 					line = bufferedReader.readLine();
 				}
+				if (arguments.charAt(arguments.length()-1) == ' '){
+					arguments.deleteCharAt(arguments.length()-1);
+				}
 				fgProperties.put(eeFile, properties);
-				fgArguments.put(eeFile, arguments);
+				fgArguments.put(eeFile, arguments.toString());
 			} catch (FileNotFoundException e) {
 				properties = null;
 			} catch (IOException e) {
@@ -466,5 +477,6 @@ public class EEVMType extends AbstractVMInstallType {
 	 */
 	public synchronized static void clearProperties(File eeFile) {
 		fgProperties.remove(eeFile);
+		fgArguments.remove(eeFile);
 	}
 }

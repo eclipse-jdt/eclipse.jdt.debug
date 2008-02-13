@@ -78,11 +78,7 @@ public class EEVMInstall extends StandardVM {
 	 * @see org.eclipse.jdt.internal.launching.StandardVM#getDebugArgs()
 	 */
 	public String getDebugArgs() {
-		String args = getAttribute(ATTR_DEBUG_ARGS);
-		if (args != null && args.charAt(0) == '\"' && args.charAt(args.length()-1) == '\"'){
-			args=args.substring(1,args.length()-1);
-		}
-		return args;
+		return getAttribute(ATTR_DEBUG_ARGS);
 	}
 
 }

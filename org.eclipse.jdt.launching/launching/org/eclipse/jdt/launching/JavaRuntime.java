@@ -2688,7 +2688,11 @@ public final class JavaRuntime {
 		IStatus status = EEVMType.validateDefinitionFile(eeFile);
 		if (status.isOK()) {
 			VMStandin standin = new VMStandin(getVMInstallType(EEVMType.ID_EE_VM_TYPE), id);
-			standin.setName(name);
+			if (name != null && name.length() > 0){
+				standin.setName(name);
+			} else {
+				standin.setName(EEVMType.getVMName(eeFile));
+			}
 			String home = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, eeFile);
 			standin.setInstallLocation(new File(home));
 			standin.setLibraryLocations(EEVMType.getLibraryLocations(eeFile));

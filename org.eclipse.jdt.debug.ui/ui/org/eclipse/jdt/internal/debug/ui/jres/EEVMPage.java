@@ -222,16 +222,6 @@ public class EEVMPage extends AbstractVMInstallPage {
 			}
 		}
 		if (s.isOK() && file != null) {
-			String name = fVMName.getText();
-			if (name == null || name.trim().length() == 0) {
-				// auto-generate VM name
-				String fileName = file.getName();
-				int index = fileName.lastIndexOf("."); //$NON-NLS-1$
-				if (index > 0) {
-					fileName = fileName.substring(0, index);
-				}
-				fVM.setName(fileName);
-			}
 			initializeFields();
 		}
 		setDefinitionFileStatus(s);
