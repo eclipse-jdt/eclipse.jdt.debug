@@ -231,6 +231,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return VM arguments or <code>null</code> if none
 	 */
 	public static String getVMArguments(File eeFile) {
+		getProperties(eeFile);  // Make sure the arguments have been loaded from the file.
 		return (String)fgArguments.get(eeFile);
 	}	
 	
@@ -326,21 +327,25 @@ public class EEVMType extends AbstractVMInstallType {
 				String line = bufferedReader.readLine();
 				while (line != null) {
 					if (!line.startsWith("#")) { //$NON-NLS-1$
-						line = resolve(line, eeHome);
-						int eq = line.indexOf('=');
-						if (eq > 0) {
-							String key = line.substring(0, eq);
-							arguments.append(key).append('=');
-							if (line.length() > eq + 1) {
-								String value = line.substring(eq + 1).trim();
-								properties.put(key, value);
-								if (value.indexOf(' ') > -1){
-									arguments.append('"').append(value).append('"');
-								} else {
-									arguments.append(value);
+						if (line.trim().length() > 0){
+							line = resolve(line, eeHome);
+							int eq = line.indexOf('=');
+							if (eq > 0) {
+								String key = line.substring(0, eq);
+								arguments.append(key).append('=');
+								if (line.length() > eq + 1) {
+									String value = line.substring(eq + 1).trim();
+									properties.put(key, value);
+									if (value.indexOf(' ') > -1){
+										arguments.append('"').append(value).append('"');
+									} else {
+										arguments.append(value);
+									}
 								}
+								arguments.append(' ');
+							} else {
+								arguments.append(line).append(' ');
 							}
-							arguments.append(' ');
 						}
 					}
 					line = bufferedReader.readLine();
