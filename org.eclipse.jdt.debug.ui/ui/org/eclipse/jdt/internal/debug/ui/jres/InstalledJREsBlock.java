@@ -303,7 +303,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fTable.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
-					removeVMs();
+					if (fRemoveButton.isEnabled()){
+						removeVMs();
+					}
 				}
 			}
 		});	
