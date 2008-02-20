@@ -73,6 +73,11 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_NAME = "-Dee.name";  //$NON-NLS-1$
 	
 	/**
+	 * Any line found in the ee file starting with this string will not be added to the vm argument list
+	 */
+	private static final String EE_ARG_FILTER = "-Dee."; //$NON-NLS-1$
+	
+	/**
 	 * Substitution in EE file - replaced with directory of EE file,
 	 * to support absolute path names where needed.
 	 */
@@ -335,23 +340,32 @@ public class EEVMType extends AbstractVMInstallType {
 				while (line != null) {
 					if (!line.startsWith("#")) { //$NON-NLS-1$
 						if (line.trim().length() > 0){
+							boolean appendArgument = !line.startsWith(EE_ARG_FILTER);
 							line = resolve(line, eeHome);
 							int eq = line.indexOf('=');
 							if (eq > 0) {
 								String key = line.substring(0, eq);
-								arguments.append(key).append('=');
+								if (appendArgument){
+									arguments.append(key).append('=');
+								}
 								if (line.length() > eq + 1) {
 									String value = line.substring(eq + 1).trim();
 									properties.put(key, value);
-									if (value.indexOf(' ') > -1){
-										arguments.append('"').append(value).append('"');
-									} else {
-										arguments.append(value);
+									if (appendArgument){
+										if (value.indexOf(' ') > -1){
+											arguments.append('"').append(value).append('"');
+										} else {
+											arguments.append(value);
+										}
 									}
 								}
-								arguments.append(' ');
+								if (appendArgument){
+									arguments.append(' ');	
+								}
 							} else {
-								arguments.append(line).append(' ');
+								if (appendArgument){
+									arguments.append(line).append(' ');
+								}
 							}
 						}
 					}

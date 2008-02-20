@@ -160,21 +160,8 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		String defaultVMArguments = EEVMType.getVMArguments(file);
 		String[] expected = new String[] {
-				"-Dee.executable",
-				"-Dee.executable.console",
-				"-Dee.bootclasspath",
-				"-Dee.src",
-				"-Dee.javadoc",
-				"-Dee.additional.dirs",
-				"-Dee.ext.dirs",
-				"-Dee.endorsed.dirs",
-				"-Dee.language.level",
-				"-Dee.class.library.level",
-				"-Dee.id",
-				"-Dee.name",
-				"-Dee.description",
-				"-Dee.copyright",
-				"-XspecialArg:123"				
+				"-XspecialArg:123",
+				"-XspecialArg2=456"
 		};
 		int prev = -1;
 		for (int i = 0; i < expected.length; i++) {

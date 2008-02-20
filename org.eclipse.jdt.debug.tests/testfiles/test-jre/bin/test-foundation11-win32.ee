@@ -1,5 +1,5 @@
 ##################################################################################
-# Copyright (c) 2007 IBM Corporation and others.
+# Copyright (c) 2007, 2008 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -21,6 +21,9 @@
 -Dee.ext.dirs=..\lib\ext;..\lib\opt-ext
 -Dee.endorsed.dirs=..\lib\endorsed
 
+# all args should get passed through to command line
+-XspecialArg:123
+
 -Dee.language.level=1.4
 -Dee.class.library.level=CDC-1.1/Foundation-1.1
 -Dee.id=CDC-1.1/Foundation-1.1
@@ -30,4 +33,4 @@
 -Djava.home=..
 
 # all args should get passed through to command line
--XspecialArg:123
+-XspecialArg2=456
