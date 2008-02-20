@@ -11,6 +11,8 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -75,7 +77,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
-		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "ext1.jar", "ext2.jar", "opt-ext.jar"};
+		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "add.jar", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
 			if (i == 3) {
@@ -102,7 +104,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
-		String[] expected = new String[]{"", "source.txt", "", "", "", ""};
+		String[] expected = new String[]{"", "source.txt", "", "", "", "", ""};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
 			if (i == 1) {
@@ -123,6 +125,30 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE VM type", vmType);
 		LibraryLocation[] libs = vmType.getDefaultLibraryLocations(file);
 		assertEquals("Wrong number of libraries", 0, libs.length);
+	}
+	
+	/**
+	 * Tests that a javadoc location can be specified.
+	 */
+	public void testJavadocLocation() {
+		File file = getEEFile();
+		URL location = EEVMType.getJavadocLocation(file);
+		URL expectedLocation = null;
+		try {
+			expectedLocation = new URL("http://a.javadoc.location");
+		} catch (MalformedURLException e) {
+			fail();
+		}
+		assertEquals("Incorrect javadoc location", expectedLocation, location);
+	}
+	
+	/**
+	 * Tests that a name with spaces can be specified.
+	 */
+	public void testVMName() {
+		File file = getEEFile();
+		String name = EEVMType.getVMName(file);
+		assertEquals("Incorrect vm name", "Eclipse JDT Test JRE Definition", name);
 	}	
 	
 	/**
@@ -138,6 +164,8 @@ public class EEDefinitionTests extends AbstractDebugTest {
 				"-Dee.executable.console",
 				"-Dee.bootclasspath",
 				"-Dee.src",
+				"-Dee.javadoc",
+				"-Dee.additional.dirs",
 				"-Dee.ext.dirs",
 				"-Dee.endorsed.dirs",
 				"-Dee.language.level",

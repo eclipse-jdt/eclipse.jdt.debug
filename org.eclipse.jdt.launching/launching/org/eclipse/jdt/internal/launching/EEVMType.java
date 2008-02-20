@@ -61,6 +61,8 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_ENDORSED_DIRS = "-Dee.endorsed.dirs";  //$NON-NLS-1$
 	public static final String PROP_BOOT_CLASS_PATH = "-Dee.bootclasspath";  //$NON-NLS-1$
 	public static final String PROP_SOURCE_ARCHIVE = "-Dee.src";  //$NON-NLS-1$
+	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
+	public static final String PROP_ADDITIONAL_DIRS = "-Dee.additional.dirs";  //$NON-NLS-1$
 	public static final String PROP_EXTENSION_DIRS = "-Dee.ext.dirs";  //$NON-NLS-1$
 	public static final String PROP_LANGUAGE_LEVEL = "-Dee.language.level";  //$NON-NLS-1$
 	public static final String PROP_CLASS_LIB_LEVEL = "-Dee.class.library.level";  //$NON-NLS-1$
@@ -68,7 +70,6 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_EXECUTABLE_CONSOLE = "-Dee.executable.console";  //$NON-NLS-1$
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
-	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
 	public static final String PROP_NAME = "-Dee.name";  //$NON-NLS-1$
 	
 	/**
@@ -140,6 +141,12 @@ public class EEVMType extends AbstractVMInstallType {
 				}
 			}
 			allLibs.addAll(boot);
+		}
+		
+		// Add all additional libraries
+		dirs = getProperty(PROP_ADDITIONAL_DIRS, eeFile);
+		if (dirs != null) {
+			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, eeFile)));
 		}
 				
 		// Add all extension libraries

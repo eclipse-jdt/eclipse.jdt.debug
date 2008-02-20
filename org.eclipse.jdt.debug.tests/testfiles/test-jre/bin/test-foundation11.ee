@@ -16,6 +16,8 @@
 
 -Dee.bootclasspath= ../lib/classes.txt:../lib/others.txt
 -Dee.src=../source.txt::
+-Dee.javadoc=http://a.javadoc.location
+-Dee.additional.dirs=../lib/additional
 -Dee.ext.dirs=../lib/ext:../lib/opt-ext
 -Dee.endorsed.dirs=../lib/endorsed
 
