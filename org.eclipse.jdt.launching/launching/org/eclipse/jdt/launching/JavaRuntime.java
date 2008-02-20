@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1658,13 +1658,40 @@ public final class JavaRuntime {
 	 * <code>null</code> if unable to detect the runtime VM
 	 */
 	private static VMStandin detectEclipseRuntime() {
-		VMStandin detectedVMStandin = null;
 		// Try to detect a VM for each declared VM type
 		IVMInstallType[] vmTypes= getVMInstallTypes();
+		// If we are running from an EE file, setup the vm from it
 		for (int i = 0; i < vmTypes.length; i++) {
-			
+			if (vmTypes[i] instanceof EEVMType){
+				String eclipseVM = System.getProperty("eclipse.vm"); //$NON-NLS-1$
+				if (eclipseVM != null){
+					File vmFile = new File(eclipseVM);
+					if (vmFile.isDirectory()){
+						vmFile = new File(vmFile, "default.ee"); //$NON-NLS-1$
+					}
+					if (vmFile.isFile()){
+						// Make sure the VM id is unique
+						long unique = System.currentTimeMillis();	
+						while (vmTypes[i].findVMInstall(String.valueOf(unique)) != null) {
+							unique++;
+						}
+
+						// Create a standin for the detected VM and add it to the result collector
+						String vmID = String.valueOf(unique);
+						try{ 
+							return createVMFromDefinitionFile(vmFile, "", vmID); //$NON-NLS-1$
+						} catch (CoreException e){
+							// The file was not a valid ee file, continue the detection process
+						}
+					}
+				}
+			}
+		}
+
+		// Try to create a vm install using the install location
+		for (int i = 0; i < vmTypes.length; i++) {
 			File detectedLocation= vmTypes[i].detectInstallLocation();
-			if (detectedLocation != null && detectedVMStandin == null) {
+			if (detectedLocation != null) {
 				
 				// Make sure the VM id is unique
 				long unique = System.currentTimeMillis();	
@@ -1675,7 +1702,7 @@ public final class JavaRuntime {
 
 				// Create a standin for the detected VM and add it to the result collector
 				String vmID = String.valueOf(unique);
-				detectedVMStandin = new VMStandin(vmType, vmID);
+				VMStandin detectedVMStandin = new VMStandin(vmType, vmID);
 				detectedVMStandin.setInstallLocation(detectedLocation);
 				detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
 				if (vmType instanceof AbstractVMInstallType) {
@@ -1687,9 +1714,10 @@ public final class JavaRuntime {
 						detectedVMStandin.setVMArgs(arguments);
 					}
 				}
-			}				
+				return detectedVMStandin;
+			}
 		}
-		return detectedVMStandin;
+		return null;
 	}
 	
 	/**
