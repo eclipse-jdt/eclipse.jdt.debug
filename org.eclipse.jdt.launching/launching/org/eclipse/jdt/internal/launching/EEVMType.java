@@ -183,22 +183,25 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @return javadoc location specified in the definition file or <code>null</code> if none
 	 */
 	public static URL getJavadocLocation(File eeFile) {
-		String javadoc = getProperty(PROP_JAVADOC_LOC, eeFile);
-		if (javadoc != null){
-			try{
-				URL url = new URL(javadoc);
-				if ("file".equalsIgnoreCase(url.getProtocol())){ //$NON-NLS-1$
-					File file = new File(url.getFile());
-					url = file.getCanonicalFile().toURL();
+		if (hasProperty(PROP_JAVADOC_LOC, eeFile)){
+			String javadoc = getProperty(PROP_JAVADOC_LOC, eeFile);
+			if (javadoc != null){
+				try{
+					URL url = new URL(javadoc);
+					if ("file".equalsIgnoreCase(url.getProtocol())){ //$NON-NLS-1$
+						File file = new File(url.getFile());
+						url = file.getCanonicalFile().toURL();
+					}
+					return url;
+				} catch (MalformedURLException e){
+					LaunchingPlugin.log(e);
+					return null;
+				} catch (IOException e){
+					LaunchingPlugin.log(e);
+					return null;
 				}
-				return url;
-			} catch (MalformedURLException e){
-				LaunchingPlugin.log(e);
-				return null;
-			} catch (IOException e){
-				LaunchingPlugin.log(e);
-				return null;
 			}
+			return null;
 		}
 		String version = getProperty(PROP_LANGUAGE_LEVEL, eeFile);
 		if (version != null) {
@@ -341,16 +344,16 @@ public class EEVMType extends AbstractVMInstallType {
 					if (!line.startsWith("#")) { //$NON-NLS-1$
 						if (line.trim().length() > 0){
 							boolean appendArgument = !line.startsWith(EE_ARG_FILTER);
-							line = resolve(line, eeHome);
 							int eq = line.indexOf('=');
 							if (eq > 0) {
 								String key = line.substring(0, eq);
 								if (appendArgument){
 									arguments.append(key).append('=');
 								}
+								String value = null;
 								if (line.length() > eq + 1) {
-									String value = line.substring(eq + 1).trim();
-									properties.put(key, value);
+									value = line.substring(eq + 1).trim();
+									value = resolve(value, eeHome);
 									if (appendArgument){
 										if (value.indexOf(' ') > -1){
 											arguments.append('"').append(value).append('"');
@@ -359,6 +362,7 @@ public class EEVMType extends AbstractVMInstallType {
 										}
 									}
 								}
+								properties.put(key, value);
 								if (appendArgument){
 									arguments.append(' ');	
 								}
@@ -444,7 +448,8 @@ public class EEVMType extends AbstractVMInstallType {
 	
 	/**
 	 * Returns the specified property from the given ee property file, or <code>null</code>
-	 * if none.
+	 * if none.  Will also return <code>null</code> if the property exists but has an empty
+	 * value in the property file.
 	 * 
 	 * @param propertyName key
 	 * @param eeFile property file
@@ -456,6 +461,21 @@ public class EEVMType extends AbstractVMInstallType {
 			return (String) properties.get(propertyName);
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns whether the specified property from the given ee property file exists.
+	 * 
+	 * @param propertyName key
+	 * @param eeFile property file
+	 * @return whether the property exists
+	 */
+	public static boolean hasProperty(String propertyName, File eeFile) {
+		Map properties = getProperties(eeFile);
+		if (properties != null) {
+			return properties.containsKey(propertyName);
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
