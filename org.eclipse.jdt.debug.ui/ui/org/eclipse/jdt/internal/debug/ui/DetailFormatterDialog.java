@@ -112,15 +112,6 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
      * Activation handler for content assist, must be deactivated on disposal.
      */
     private IHandlerActivation fHandlerActivation;
-	
-	/**
-	 * DetailFormatterDialog constructor.
-	 * 
-	 * @param detailFormatter the detail formatter to edit/add.
-	 * @param editDialog flag which indicates if the dialog is used for
-	 * edit an existing formatter, or for enter the info of a new one.
-	 */
-    
     
 	/**
 	 * DetailFormatterDialog constructor.  Creates a new dialog to create/edit a detail formatter.
