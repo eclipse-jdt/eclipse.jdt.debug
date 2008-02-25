@@ -53,7 +53,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/**
 	 * The root path for the attached source
 	 */
-	private String fDefaultRootPath;
+	private String fDefaultRootPath = ""; //$NON-NLS-1$
 	
 	/**
 	 * Map of the install path for which we were unable to generate
