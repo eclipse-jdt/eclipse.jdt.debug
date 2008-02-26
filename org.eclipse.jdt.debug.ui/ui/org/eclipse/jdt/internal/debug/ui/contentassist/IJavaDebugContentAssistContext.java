@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.IType;
 public interface IJavaDebugContentAssistContext {
 	
 	/**
-	 * Returns the type in which to perfrom completions.
+	 * Returns the type in which to perform completions.
 	 * 
 	 * @return type in which to perform completions
 	 * @throws CoreException if a type cannot be resolved
@@ -34,7 +34,7 @@ public interface IJavaDebugContentAssistContext {
 	 * be in comments. Returns -1, if the position is not known.
 	 * 
 	 * @return position within source where completions are performed or -1
-	 * @throws CoreException if an exception occurrs determining the position
+	 * @throws CoreException if an exception occurs determining the position
 	 */
 	public int getInsertionPosition() throws CoreException;
 	
@@ -51,7 +51,7 @@ public interface IJavaDebugContentAssistContext {
 	 * 
 	 * @return arrays of variable names and fully qualified type names of local variables
 	 *   visible at the current scope
-	 * @throws CoreException if an exception occurrs determining local variable
+	 * @throws CoreException if an exception occurs determining local variable
 	 *  information
 	 */
 	public String[][] getLocalVariables() throws CoreException;
@@ -60,14 +60,14 @@ public interface IJavaDebugContentAssistContext {
 	 * Returns whether the current scope is in a static context.
 	 * 
 	 * @return whether the current scope is in a static context
-	 * @throws CoreException if an exception occurrs while determining scope
+	 * @throws CoreException if an exception occurs while determining scope
 	 */
 	public boolean isStatic() throws CoreException;
 	
 	/**
 	 * Returns the snippet on which code completion is should be performed, given the
 	 * snippet that is currently being edited. Allows implementations to perform any
-	 * special preprocessing on the snippet.
+	 * special pre-processing on the snippet.
 	 * 
 	 * @param snippet the snippet in source viewer on which completion is being performed
 	 * @return the snippet on which to perform code completion
