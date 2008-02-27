@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.jdt.core.IJavaModelStatusConstants;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -54,6 +52,7 @@ import com.ibm.icu.text.MessageFormat;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by
  *  <code>org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer</code>.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DirectorySourceLocation extends PlatformObject implements IJavaSourceLocation {
 
@@ -108,7 +107,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 				}						
 			} while (possibleInnerType);			
 		} catch (IOException e) {
-			throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), e.getMessage(), e));
 		}
 		return null;
 	}

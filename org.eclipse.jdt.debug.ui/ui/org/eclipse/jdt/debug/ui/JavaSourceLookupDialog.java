@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by a dialog in the debug platform - 
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupDialog</code>.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JavaSourceLookupDialog extends Dialog {
 		

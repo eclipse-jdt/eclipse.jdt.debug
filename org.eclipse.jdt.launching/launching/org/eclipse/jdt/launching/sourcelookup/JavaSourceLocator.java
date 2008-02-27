@@ -91,6 +91,7 @@ import com.ibm.icu.text.MessageFormat;
  *  runtime classpath. This class has been replaced by the Java source lookup
  *  director which is an internal class, but can be used via the
  *  <code>sourceLocatorId</code> attribute on a launch configuration type extension.  
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JavaSourceLocator implements IPersistableSourceLocator {
 	
@@ -121,7 +122,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param includeRequired whether to look in required projects
 	 * 	as well
 	 */
-	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws JavaModelException {
+	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws CoreException {
 		ArrayList requiredProjects = new ArrayList();
 		for (int i= 0; i < projects.length; i++) {
 			if (includeRequired) {
@@ -140,24 +141,17 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		Iterator iter = requiredProjects.iterator();
 		while (iter.hasNext()) {
 			IJavaProject p = (IJavaProject)iter.next();
-			try {
-				IPackageFragmentRoot[] roots = p.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].isExternal()) {
-						IPath location = roots[i].getPath();
-						if (external.get(location) == null) {
-							external.put(location, location);
-							list.add(new PackageFragmentRootSourceLocation(roots[i]));
-						}
-					} else {
+			IPackageFragmentRoot[] roots = p.getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].isExternal()) {
+					IPath location = roots[i].getPath();
+					if (external.get(location) == null) {
+						external.put(location, location);
 						list.add(new PackageFragmentRootSourceLocation(roots[i]));
 					}
+				} else {
+					list.add(new PackageFragmentRootSourceLocation(roots[i]));
 				}
-			} catch (CoreException e) {
-				if (e instanceof JavaModelException) {
-					throw (JavaModelException)e;
-				} 
-				throw new JavaModelException(e);
 			}
 		}
 		IJavaSourceLocation[] locations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);

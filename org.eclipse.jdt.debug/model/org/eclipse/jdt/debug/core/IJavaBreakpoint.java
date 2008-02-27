@@ -30,6 +30,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * Clients are not intended to implement this interface
  * </p>
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaBreakpoint extends IBreakpoint {
 	

@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * {@link org.eclipse.debug.core.model.IDropToFrame}.
  * </p>
  * @see org.eclipse.debug.core.model.IStackFrame
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredStep, IDropToFrame {

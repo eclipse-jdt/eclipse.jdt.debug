@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IDebugElement;
  * Represents a thread group in the target VM.
  * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaThreadGroup extends IDebugElement {
 

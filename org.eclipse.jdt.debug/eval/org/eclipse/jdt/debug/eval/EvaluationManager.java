@@ -31,6 +31,8 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
  * @see org.eclipse.jdt.debug.eval.IEvaluationResult
  * @see org.eclipse.jdt.debug.eval.IEvaluationListener
  * @since 2.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class EvaluationManager {
 		

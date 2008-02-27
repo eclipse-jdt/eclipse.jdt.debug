@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaStratumLineBreakpoint extends IJavaLineBreakpoint {
 

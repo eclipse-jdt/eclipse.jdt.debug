@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IThread;
  * Clients are not intended to implement this interface.
  * </p>
  * @see org.eclipse.debug.core.model.IThread
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaThread extends IThread, IFilteredStep {
 	

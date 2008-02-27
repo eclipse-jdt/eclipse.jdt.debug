@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * Constant definitions only; not to be implemented.
  * </p>
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaLaunchConfigurationConstants {
 

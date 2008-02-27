@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IDebugElement;
  * Since 3.2, an <code>IJavaType</code> is also a debug element
  * </p>
  * @see IJavaValue
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaType extends IDebugElement {
 	/**

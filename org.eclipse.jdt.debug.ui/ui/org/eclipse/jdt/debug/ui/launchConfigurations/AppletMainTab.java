@@ -53,6 +53,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated. This class is not intended to be sub-classed.
  * </p>
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AppletMainTab extends SharedJavaMainTab {
 	

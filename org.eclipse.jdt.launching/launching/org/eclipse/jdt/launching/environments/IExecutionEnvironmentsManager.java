@@ -18,6 +18,7 @@ package org.eclipse.jdt.launching.environments;
  * Clients are not intended to implement this interface.
  * </p>
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExecutionEnvironmentsManager {
 

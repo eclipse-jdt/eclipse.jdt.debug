@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaTargetPatternBreakpoint extends IJavaLineBreakpoint {
 

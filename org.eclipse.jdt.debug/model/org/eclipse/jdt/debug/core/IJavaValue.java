@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IValue;
  * Clients are not intended to implement this interface.
  * </p>
  * @see org.eclipse.debug.core.model.IValue
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaValue extends IValue {
 	/**

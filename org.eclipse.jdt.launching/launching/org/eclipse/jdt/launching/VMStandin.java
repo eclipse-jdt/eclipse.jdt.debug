@@ -36,6 +36,7 @@ import java.util.Map.Entry;
  * </p>
  * 
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class VMStandin extends AbstractVMInstall {
     

@@ -21,6 +21,7 @@ import java.util.EventObject;
  * Clients may instantiate this class; not intended to be subclassed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PropertyChangeEvent extends EventObject {
     

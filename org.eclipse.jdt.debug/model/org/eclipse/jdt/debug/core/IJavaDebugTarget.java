@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IStepFilters;
  * </p>
  * @see IDebugTarget
  * @see org.eclipse.core.runtime.IAdaptable 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {

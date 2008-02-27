@@ -24,6 +24,7 @@ import java.io.File;
  * @deprecated In 3.0 this class is now provided by the debug platform. Clients
  *  should use the replacement class
  *  <code>org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage</code>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LocalFileStorage extends org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage {
 	

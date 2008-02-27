@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * </p>
  * @since 2.0
  * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRuntimeClasspathEntry {
 	

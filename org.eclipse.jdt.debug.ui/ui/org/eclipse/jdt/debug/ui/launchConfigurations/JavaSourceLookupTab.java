@@ -43,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by a source lookup tab in the debug platform - 
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupTab</code>.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class JavaSourceLookupTab extends JavaLaunchTab {

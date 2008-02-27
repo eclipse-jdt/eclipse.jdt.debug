@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.Message;
  * </p>
  * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 

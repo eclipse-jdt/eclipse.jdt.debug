@@ -64,6 +64,7 @@ import com.sun.jdi.connect.Connector;
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChangeListener {
 	

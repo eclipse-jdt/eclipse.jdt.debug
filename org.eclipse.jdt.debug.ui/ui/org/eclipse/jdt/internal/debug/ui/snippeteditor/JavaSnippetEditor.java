@@ -538,7 +538,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		if (fJavaProject == null) {
 			try {
 				fJavaProject = findJavaProject();
-			} catch (JavaModelException e) {
+			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 				showError(e.getStatus());
 			}
@@ -884,16 +884,12 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 	}
 	
-	protected IJavaProject findJavaProject() throws JavaModelException {
+	protected IJavaProject findJavaProject() throws CoreException {
 		IFile file = getFile();
 		if (file != null) {
 			IProject p= file.getProject();
-			try {
-				if (p.getNature(JavaCore.NATURE_ID) != null) {
-					return JavaCore.create(p);
-				}
-			} catch (CoreException ce) {
-				throw new JavaModelException(ce);
+			if (p.getNature(JavaCore.NATURE_ID) != null) {
+				return JavaCore.create(p);
 			}
 		}
 		return null;
@@ -1190,7 +1186,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
  	 */
 	protected void setTitle(String title) {
 		cleanupOnRenameOrMove();
-		super.setTitle(title);
+		setPartName(title);
 	}
 	
 	/**
@@ -1220,8 +1216,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	protected boolean isInJavaProject() {
 		try {
 			return findJavaProject() != null;
-		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme);
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
 		}
 		return false;
 	}

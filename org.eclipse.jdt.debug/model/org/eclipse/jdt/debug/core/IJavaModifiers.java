@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaModifiers {		
 

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +20,6 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -35,6 +33,8 @@ import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A source locator that prompts the user to find source when source cannot
@@ -66,6 +66,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  *  runtime classpath. This class has been replaced by the Java source lookup
  *  director which is an internal class, but can be used via the
  *  <code>sourceLocatorId</code> attribute on a launch configuration type extension.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class JavaUISourceLocator implements IPersistableSourceLocator {
@@ -131,10 +132,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * @param includeRequired whether to look in required projects
 	 * 	as well
 	 */
-	public JavaUISourceLocator(
-		IJavaProject[] projects,
-		boolean includeRequired)
-		throws JavaModelException {
+	public JavaUISourceLocator(IJavaProject[] projects,	boolean includeRequired) throws CoreException {
 		fSourceLocator = new JavaSourceLocator(projects, includeRequired);
 		fAllowedToAsk = true;
 	}

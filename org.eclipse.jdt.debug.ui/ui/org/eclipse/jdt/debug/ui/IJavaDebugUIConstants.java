@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
  * Clients are not intended to implement this interface; constant definitions only.
  * </p>
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaDebugUIConstants {
 	/**
@@ -35,7 +36,7 @@ public interface IJavaDebugUIConstants {
 	 * Extension point identifier for contributions of a wizard page that for a VMInstallType
 	 * (value <code>"vmInstallPages"</code>).
 	 * 
-	 * @since 3.4
+	 * @since 3.3
 	 */
 	public static final String EXTENSION_POINT_VM_INSTALL_PAGES = "vmInstallPages"; //$NON-NLS-1$
 	

@@ -22,6 +22,8 @@ import java.util.Random;
  * <p>
  * Clients are not intended to subclass or instantiate this class.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SocketUtil {
 	private static final Random fgRandom= new Random(System.currentTimeMillis());

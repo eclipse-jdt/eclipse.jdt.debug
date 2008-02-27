@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * @since 2.0
  * @deprecated use <code>IJavaStratumLineBreakpoint</code> instead
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaPatternBreakpoint extends IJavaLineBreakpoint {
 

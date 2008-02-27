@@ -49,6 +49,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JavaArgumentsTab extends JavaLaunchTab {
 		

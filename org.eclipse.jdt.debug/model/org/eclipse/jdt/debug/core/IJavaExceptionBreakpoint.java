@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * Clients are not intended to implement this interface.
  * </p>
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**

@@ -58,6 +58,7 @@ import com.ibm.icu.text.MessageFormat;
  *  has been replaced by the following classes:
  *  <code>org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer</code>
  *  and <code>org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer</code>.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	

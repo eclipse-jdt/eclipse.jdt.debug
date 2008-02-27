@@ -56,6 +56,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by
  *  <code>org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer</code>. 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JavaProjectSourceLocation extends PlatformObject implements IJavaSourceLocation {
 

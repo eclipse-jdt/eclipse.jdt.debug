@@ -26,6 +26,7 @@ package org.eclipse.jdt.launching.environments;
  * Clients may instantiate this class; not intended to be subclassed.
  * </p>
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CompatibleEnvironment {
 

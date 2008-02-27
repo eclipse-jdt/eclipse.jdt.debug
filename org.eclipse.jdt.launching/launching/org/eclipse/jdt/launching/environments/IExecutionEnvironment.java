@@ -30,6 +30,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * </p>
  * @since 3.2
  * @see IExecutionEnvironmentAnalyzerDelegate
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExecutionEnvironment {
 	
