@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jdt.launching">
+    <resource path="launching/org/eclipse/jdt/launching/sourcelookup/ZipEntryStorage.java">
+        <filter category="33554432" flags="0" kind="1" message="Illegally extends org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage" severity="2"/>
+    </resource>
+    <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java">
+        <filter category="33554432" flags="0" kind="1" message="Illegally extends org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage" severity="2"/>
+    </resource>
+</component>
