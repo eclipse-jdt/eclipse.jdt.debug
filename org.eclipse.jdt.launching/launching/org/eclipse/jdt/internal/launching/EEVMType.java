@@ -131,18 +131,22 @@ public class EEVMType extends AbstractVMInstallType {
 			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs, eeFile)));
 		}
 		
-		// next is the bootpath libraries
 		dirs = getProperty(PROP_BOOT_CLASS_PATH, eeFile);
 		if (dirs != null) {
 			String[] bootpath = resolvePaths(dirs, eeFile);
+			IPath[] srcPaths = getSourceLocations(eeFile);
+			int srcIndex = 0;
 			List boot = new ArrayList(bootpath.length);
-			IPath src = getSourceLocation(eeFile);
 			URL url = getJavadocLocation(eeFile);
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
+				IPath srcPath = srcPaths[srcIndex];
+				if (srcIndex < (srcPaths.length - 1)) {
+					srcIndex++;
+				}
 				File lib = path.toFile(); 
 				if (lib.exists() && lib.isFile()) {
-					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url);
+					LibraryLocation libraryLocation = new LibraryLocation(path,	srcPath, Path.EMPTY, url);
 					boot.add(libraryLocation);
 				}
 			}
@@ -194,6 +198,27 @@ public class EEVMType extends AbstractVMInstallType {
 			return new Path(src);
 		}
 		return Path.EMPTY;
+	}
+	
+	
+	/**
+	 * Returns the location of the source archive for the given ee file or the empty
+	 * path if none.
+	 * 
+	 * @param eeFile property file
+	 * @return source archive location or Path.EMPTY if none
+	 */
+	protected static IPath[] getSourceLocations(File eeFile) {
+		String src = getProperty(PROP_SOURCE_DEFAULT, eeFile);
+		if (src != null) {
+			String[] strings = resolvePaths(src, eeFile);
+			IPath[] paths = new IPath[strings.length];
+			for (int i = 0; i < paths.length; i++) {
+				paths[i] = new Path(makePathAbsolute(strings[i], new Path(eeFile.getParentFile().getAbsolutePath())));
+			}
+			return paths;
+		}
+		return new IPath[]{Path.EMPTY};
 	}
 	
 	
