@@ -14,8 +14,9 @@
 -Dee.executable=jrew.txt
 -Dee.executable.console=jre.txt
 
--Dee.bootclasspath= ..\lib\classes.txt;..\lib\others.txt
--Dee.src=..\source.txt;;
+-Dee.bootclasspath=..\lib\classes.txt;..\lib\others.txt
+-Dee.src=..\lib\source\source.txt
+-Dee.src.map=..\lib\endorsed\*.jar=..\lib\source\*.txt;..\lib\ext\ext?*.jar=..\lib\source\extra?-src.txt;..\lib\additional\*.???=..\lib\source\source*source.???
 -Dee.javadoc=http://a.javadoc.location
 -Dee.additional.dirs=..\lib\additional
 -Dee.ext.dirs=..\lib\ext;..\lib\opt-ext

@@ -20,9 +20,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -60,7 +63,8 @@ public class EEVMType extends AbstractVMInstallType {
 	
 	public static final String PROP_ENDORSED_DIRS = "-Dee.endorsed.dirs";  //$NON-NLS-1$
 	public static final String PROP_BOOT_CLASS_PATH = "-Dee.bootclasspath";  //$NON-NLS-1$
-	public static final String PROP_SOURCE_ARCHIVE = "-Dee.src";  //$NON-NLS-1$
+	public static final String PROP_SOURCE_DEFAULT = "-Dee.src";  //$NON-NLS-1$
+	public static final String PROP_SOURCE_MAP = "-Dee.src.map";  //$NON-NLS-1$
 	public static final String PROP_JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
 	public static final String PROP_ADDITIONAL_DIRS = "-Dee.additional.dirs";  //$NON-NLS-1$
 	public static final String PROP_EXTENSION_DIRS = "-Dee.ext.dirs";  //$NON-NLS-1$
@@ -71,6 +75,11 @@ public class EEVMType extends AbstractVMInstallType {
 	public static final String PROP_JAVA_HOME = "-Djava.home";  //$NON-NLS-1$
 	public static final String PROP_DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
 	public static final String PROP_NAME = "-Dee.name";  //$NON-NLS-1$
+	
+	// Regex constants for handling the source mapping
+	public static final Character WILDCARD_SINGLE_CHAR = new Character('?');
+	public static final Character WILDCARD_MULTI_CHAR = new Character('*');
+	public static final String REGEX_SPECIAL_CHARS = "+()^$.{}[]|\\"; //$NON-NLS-1$
 	
 	/**
 	 * Any line found in the ee file starting with this string will not be added to the vm argument list
@@ -126,22 +135,14 @@ public class EEVMType extends AbstractVMInstallType {
 		dirs = getProperty(PROP_BOOT_CLASS_PATH, eeFile);
 		if (dirs != null) {
 			String[] bootpath = resolvePaths(dirs, eeFile);
-			IPath[] srcPaths = getSourceLocations(eeFile);
-			int srcIndex = 0;
 			List boot = new ArrayList(bootpath.length);
+			IPath src = getSourceLocation(eeFile);
 			URL url = getJavadocLocation(eeFile);
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
-				IPath srcPath = srcPaths[srcIndex];
-				if (srcIndex < (srcPaths.length - 1)) {
-					srcIndex++;
-				}
 				File lib = path.toFile(); 
 				if (lib.exists() && lib.isFile()) {
-					LibraryLocation libraryLocation = new LibraryLocation(path,
-									srcPath,
-									Path.EMPTY,
-									url);
+					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url);
 					boot.add(libraryLocation);
 				}
 			}
@@ -171,10 +172,151 @@ public class EEVMType extends AbstractVMInstallType {
 				liter.remove();
 			}
 		}
+		
+		// If the ee.src.map property is specified, use it to associate source locations with the libraries
+		addSourceLocationsToLibraries(getSourceMap(eeFile), allLibs);
+		
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
 	
-
+	
+	/**
+	 * Returns the location of the source archive for the given ee file or the empty
+	 * path if none.
+	 * 
+	 * @param eeFile property file
+	 * @return source archive location or Path.EMPTY if none
+	 */
+	protected static IPath getSourceLocation(File eeFile) {
+		String src = getProperty(PROP_SOURCE_DEFAULT, eeFile);
+		if (src != null) {
+			src = makePathAbsolute(src, new Path(eeFile.getParentFile().getAbsolutePath()));
+			return new Path(src);
+		}
+		return Path.EMPTY;
+	}
+	
+	
+	/**
+	 * Uses the given src map to find source libraries that are associated with the
+	 * library locations in the list.  The library locations are updated with the
+	 * found source path.
+	 * 
+	 * @param srcMap mapping of library location regexs to source location regexs
+	 * @param libraries list of (@link LibraryLocation} objects to update with source locations
+	 * @see #getSourceMap(File)
+	 */
+	private static void addSourceLocationsToLibraries(Map srcMap, List libraries){
+		for (Iterator patternIterator = srcMap.keySet().iterator(); patternIterator.hasNext();) {
+			// Try each library regex pattern and see what libraries apply.
+			String currentKey = (String) patternIterator.next();
+			Pattern currentPattern = Pattern.compile(currentKey);
+			Matcher matcher = currentPattern.matcher(""); //$NON-NLS-1$
+			for (Iterator locationIterator = libraries.iterator(); locationIterator.hasNext();) {
+				LibraryLocation currentLibrary = (LibraryLocation) locationIterator.next();
+				matcher.reset(currentLibrary.getSystemLibraryPath().toOSString());
+				if (matcher.find()){
+					// Found a file that the pattern applies to, use the map to get the source location
+					String sourceLocation = matcher.replaceAll((String)srcMap.get(currentKey));
+					IPath sourcePath = new Path(sourceLocation);
+					// Only add the source archive if it exists
+					if (sourcePath.toFile().exists()){
+						currentLibrary.setSystemLibrarySource(sourcePath);
+					}
+					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Creates a map (regex string to regex string) mapping library locations to their
+	 * source locations.  This is done by taking the ee.src.map property from the ee file
+	 * which allows a list of mappings that can use the wildcards ? (any one char) and *
+	 * (any series of chars).  The property is converted to a map of regex strings used by 
+	 * {@link #addSourceLocationsToLibraries(Map, List)}.
+	 * <pre>
+	 * Example property, separated onto separate lines for easier reading
+	 * -Dee.src.map=${ee.home}\lib\charconv?.zip=lib\charconv?-src.zip;
+	 *              ${ee.home}\lib\jclDEE\classes.zip=lib\jclDEE\source\source.zip;
+	 *              ${ee.home}\lib\jclDEE\*.zip=lib\jclDEE\source\*-src.zip;
+	 *              ${ee.home}\lib\jclDEE\ext\*.???=lib\jclDEE\source\*-src.???;
+	 * </pre>
+	 * 
+	 * 
+	 * @param eeFile file to load the map property from
+	 * @return map containing regexs mapping library locations to their source locations
+	 */
+	private static Map getSourceMap(File eeFile){
+		String srcMapString = getProperty(PROP_SOURCE_MAP, eeFile);
+		Map srcMap = new HashMap();
+		if (srcMapString != null){
+			// Entries must be separated by the file separator and have an equals splitting the lib location from the src location
+			String[] entries = srcMapString.split(File.pathSeparator);
+			for (int i = 0; i < entries.length; i++) {
+				int index = entries[i].indexOf('=');
+				if (index > 0 && index < entries[i].length()-1){
+					IPath root = new Path(eeFile.getParentFile().getAbsolutePath());
+					String key = entries[i].substring(0,index);
+					String value = entries[i].substring(index+1);
+					key = makePathAbsolute(key, root);
+					value = makePathAbsolute(value, root);
+					
+					List wildcards = new ArrayList();
+					StringBuffer keyBuffer = new StringBuffer();
+				    char [] chars = key.toCharArray();
+				    // Convert lib location to a regex, replace wildcards with grouped equivalents, keep track of used wildcards, allow '\' and '/' to be used, escape special chars
+					for (int j = 0; j < chars.length; j++) {
+						if (chars[j] == WILDCARD_MULTI_CHAR.charValue()) {
+							wildcards.add(WILDCARD_MULTI_CHAR);
+							keyBuffer.append("(.*)"); //$NON-NLS-1$
+						} else if (chars[j] == WILDCARD_SINGLE_CHAR.charValue()) {
+							wildcards.add(WILDCARD_SINGLE_CHAR);
+							keyBuffer.append("(.)"); //$NON-NLS-1$
+						} else if (REGEX_SPECIAL_CHARS.indexOf(chars[j]) != -1) {
+							keyBuffer.append('\\').append(chars[j]);
+						} else {
+						    keyBuffer.append(chars[j]);
+						}
+					}
+					
+					int currentWild = 0;
+					StringBuffer valueBuffer = new StringBuffer();
+					chars = value.toCharArray();
+					// Convert src location to a regex, replace wildcards with their group number, allow '\' and '/' to be used, escape special chars
+					for (int j = 0; j < chars.length; j++) {
+						if (chars[j] == WILDCARD_MULTI_CHAR.charValue() || chars[j] == WILDCARD_SINGLE_CHAR.charValue()) {
+							if (currentWild < wildcards.size()){
+								Character wild = (Character)wildcards.get(currentWild);
+								if (chars[j] == wild.charValue()) {
+									valueBuffer.append('$').append(currentWild+1);
+									currentWild++;
+								} else {
+									LaunchingPlugin.log(MessageFormat.format(LaunchingMessages.EEVMType_5, new String[]{entries[i]}));
+									break;
+								}
+							} else {
+								LaunchingPlugin.log(MessageFormat.format(LaunchingMessages.EEVMType_5, new String[]{entries[i]}));
+								break;
+							}
+						} else if (REGEX_SPECIAL_CHARS.indexOf(chars[j]) != -1) {
+							valueBuffer.append('\\').append(chars[j]);
+						} else {
+							valueBuffer.append(chars[j]);
+						}
+					}
+					
+					srcMap.put(keyBuffer.toString(), valueBuffer.toString());
+					
+				} else {
+					LaunchingPlugin.log(MessageFormat.format(LaunchingMessages.EEVMType_6, new String[]{entries[i]}));
+				}
+			}
+		}
+		return srcMap;
+	}
+	
+	
 	/**
 	 * Returns the javadoc location specified in the definition file or <code>null</code>
 	 * if none.
@@ -249,26 +391,6 @@ public class EEVMType extends AbstractVMInstallType {
 		getProperties(eeFile);  // Make sure the arguments have been loaded from the file.
 		return (String)fgArguments.get(eeFile);
 	}	
-	
-	/**
-	 * Returns the location of the source archive for the given ee file or the empty
-	 * path if none.
-	 * 
-	 * @param eeFile property file
-	 * @return source archive location or Path.EMPTY if none
-	 */
-	protected static IPath[] getSourceLocations(File eeFile) {
-		String src = getProperty(PROP_SOURCE_ARCHIVE, eeFile);
-		if (src != null) {
-			String[] strings = resolvePaths(src, eeFile);
-			IPath[] paths = new IPath[strings.length];
-			for (int i = 0; i < paths.length; i++) {
-				paths[i] = new Path(strings[i]);
-			}
-			return paths;
-		}
-		return new IPath[]{Path.EMPTY};
-	}
 
 	/**
 	 * Returns a status indicating if the given definition file is valid.
@@ -436,14 +558,28 @@ public class EEVMType extends AbstractVMInstallType {
 		String[] strings = paths.split(File.pathSeparator, -1);
 		IPath root = new Path(eeFile.getParentFile().getAbsolutePath());
 		for (int i = 0; i < strings.length; i++) {
-			String string = strings[i].trim();
-			IPath path = new Path(string);
-			if (!path.isEmpty() && !path.isAbsolute()) {
-				IPath filePath = root.append(path);
-				strings[i] = filePath.toOSString();
-			}
+			strings[i] = makePathAbsolute(strings[i], root);
 		}
 		return strings;
+	}
+	
+	/**
+	 * Returns a string representing the absolute form of the given path.  If the
+	 * given path is not absolute, it is appended to the given root path.  The returned
+	 * path will always be the OS specific string form of the path.
+	 * 
+	 * @param pathString string representing the path to make absolute
+	 * @param root root to append non-absolute paths to
+	 * @return absolute, OS specific path
+	 */
+	private static String makePathAbsolute(String pathString, IPath root){
+		IPath path = new Path(pathString.trim());
+		if (!path.isEmpty() && !path.isAbsolute()) {
+			IPath filePath = root.append(path);
+			return filePath.toOSString();
+		} else {
+			return path.toOSString();
+		}
 	}
 	
 	/**

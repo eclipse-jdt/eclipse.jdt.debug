@@ -80,11 +80,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "add.jar", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
-			if (i == 3) {
+			if (i == 4) {
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
 						expected[i].equals(libs[i+1].getSystemLibraryPath().lastSegment()));
-			} else if (i == 4) {
+			} else if (i == 5) {
 				// ext1 and ext2 can be in either order due to file system ordering
 				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
 						expected[i].equals(libs[i-1].getSystemLibraryPath().lastSegment()));
@@ -104,13 +104,21 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
-		String[] expected = new String[]{"", "source.txt", "", "", "", "", ""};
+		String[] expected = new String[]{"end.txt", "source.txt", "source.txt", "sourceaddsource.jar", "extra1-src.txt", "extra2-src.txt", ""};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
-			if (i == 1) {
-				assertEquals("Wrong attachment", expected[i], libs[i].getSystemLibrarySourcePath().lastSegment());
-			} else {
+			if (i == 4) {
+				// ext1 and ext2 can be in either order due to file system ordering
+				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) || 
+						expected[i].equals(libs[i+1].getSystemLibrarySourcePath().lastSegment()));
+			} else if (i == 5) {
+				// ext1 and ext2 can be in either order due to file system ordering
+				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) || 
+						expected[i].equals(libs[i-1].getSystemLibrarySourcePath().lastSegment()));
+			} else if (i == 6){
 				assertEquals("Wrong attachment", Path.EMPTY, libs[i].getSystemLibrarySourcePath());
+			} else {
+				assertEquals("Wrong attachment", expected[i], libs[i].getSystemLibrarySourcePath().lastSegment());
 			}
 		}
 	}	

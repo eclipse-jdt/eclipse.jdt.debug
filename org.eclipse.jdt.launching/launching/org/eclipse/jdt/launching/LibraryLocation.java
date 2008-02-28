@@ -98,6 +98,18 @@ public final class LibraryLocation {
 	public IPath getPackageRootPath() {
 		return fPackageRootPath;
 	}
+	
+	/**
+	 * Returns the Javadoc location associated with this Library location.
+	 * 
+	 * @return a url pointing to the Javadoc location associated with
+	 * 	this Library location, or <code>null</code> if none
+	 * @since 3.1
+	 */
+	public URL getJavadocLocation() {
+		return fJavadocLocation;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -147,14 +159,13 @@ public final class LibraryLocation {
 	}
 
 	/**
-	 * Returns the Javadoc location associated with this Library location.
+	 * Sets the JRE library source zip location.
 	 * 
-	 * @return a url pointing to the Javadoc location associated with
-	 * 	this Library location, or <code>null</code> if none
-	 * @since 3.1
+	 * @param source the source to set
+	 * @since 3.4
 	 */
-	public URL getJavadocLocation() {
-		return fJavadocLocation;
+	public void setSystemLibrarySource(IPath source) {
+		fSystemLibrarySource = source;
 	}
-	
+
 }
