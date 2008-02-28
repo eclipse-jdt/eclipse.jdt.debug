@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,11 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -93,7 +91,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	protected IJavaStackFrame getFrame() {
 	    IAdaptable adaptable = DebugUITools.getDebugContext();
 		if (adaptable != null) {
-			return (IJavaStackFrame)adaptable.getAdapter(IJavaStackFrame.class); 
+			return (IJavaStackFrame)adaptable.getAdapter(IJavaStackFrame.class);
 		}
 		return null;
 	}
@@ -132,7 +130,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 				}
 				if (element instanceof ICodeAssist) {
 					codeAssist = ((ICodeAssist)element);
-				} 	        
+				}
 		    }
 		    if (codeAssist == null) {
 		        return getRemoteHoverInfo(frame, textViewer, hoverRegion);
@@ -153,7 +151,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    IJavaDebugTarget debugTarget = (IJavaDebugTarget)frame.getDebugTarget();
             		    if (Flags.isStatic(field.getFlags())) {
 							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
-            		    	if (javaTypes != null) { 
+            		    	if (javaTypes != null) {
 	            		    	for (int j = 0; j < javaTypes.length; j++) {
 									IJavaType type = javaTypes[j];
 									if (type instanceof IJavaReferenceType) {
@@ -203,7 +201,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		typeSignature = typeSignature.replace('.', '/');
             		    		variable = frame.getThis().getField(field.getElementName(), typeSignature);
             		    	}
-            		    }            		    
+            		    }
             		    if (variable != null) {
             		        return getVariableText(variable);
             		    }
@@ -260,7 +258,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 			}
 		}
 		return null;
-	}	
+	}
 	
 	private String generateHoverForLocal(IJavaStackFrame frame, String varName) {
 	    String variableText= null;
@@ -356,8 +354,8 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
         } else {
             value = store.getBoolean(preference);
         }
-        return value;       
-    }	
+        return value;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
@@ -365,9 +363,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE, 
-						new HTMLTextPresenter(true),
-						EditorsUI.getTooltipAffordanceString()); 
+				return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 			}
 		};
 	}
