@@ -1664,9 +1664,9 @@ public final class JavaRuntime {
 		// If we are running from an EE file, setup the vm from it
 		for (int i = 0; i < vmTypes.length; i++) {
 			if (vmTypes[i] instanceof EEVMType){
-				String eclipseVM = System.getProperty("eclipse.vm"); //$NON-NLS-1$
-				if (eclipseVM != null){
-					File vmFile = new File(eclipseVM);
+				String eeFileName = System.getProperty("ee.filename"); //$NON-NLS-1$
+				if (eeFileName != null){
+					File vmFile = new File(eeFileName);
 					if (vmFile.isDirectory()){
 						vmFile = new File(vmFile, "default.ee"); //$NON-NLS-1$
 					}
