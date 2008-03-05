@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.jdt.debug.ui">
-    <resource path="ui/org/eclipse/jdt/internal/debug/ui/snippeteditor/SnippetEditorPropertyPage.java">
-        <filter category="33554432" flags="0" kind="2" message="Illegally implements org.eclipse.debug.ui.ILaunchConfigurationDialog" severity="2"/>
-    </resource>
-    <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/ClasspathEntry.java">
-        <filter category="33554432" flags="0" kind="2" message="Illegally implements org.eclipse.jdt.launching.IRuntimeClasspathEntry" severity="2"/>
-    </resource>
-</component>
