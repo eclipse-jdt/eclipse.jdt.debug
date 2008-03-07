@@ -24,8 +24,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * A classpath variable source container contains a source container
  * that is the resolved value of the associated variable.
  * <p>
- * This class may be instantiated; this class is not intended to be
- * subclassed. 
+ * This class may be instantiated.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

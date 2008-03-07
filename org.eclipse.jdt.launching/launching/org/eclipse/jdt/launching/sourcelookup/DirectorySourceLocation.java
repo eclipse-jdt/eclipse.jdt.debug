@@ -40,7 +40,7 @@ import com.ibm.icu.text.MessageFormat;
  * Locates source elements in a directory in the local
  * file system. Returns instances of <code>LocalFileStorage</code>.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see IJavaSourceLocation
  * @since 2.0

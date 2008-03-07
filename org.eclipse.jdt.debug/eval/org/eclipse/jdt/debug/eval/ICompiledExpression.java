@@ -16,9 +16,6 @@ import org.eclipse.jdt.core.dom.Message;
 /**
  * A compiled expression can be compiled once and evaluated multiple times
  * in a runtime context.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

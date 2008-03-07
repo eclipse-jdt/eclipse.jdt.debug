@@ -53,7 +53,7 @@ import com.ibm.icu.text.MessageFormat;
  * A launch configuration tab that displays and edits project and
  * main type name launch configuration attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be sub-classed.
+ * This class may be instantiated.
  * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.

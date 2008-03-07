@@ -16,9 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A line breakpoint identified by its source file name and/or path, and
  * stratum that it is relative to.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

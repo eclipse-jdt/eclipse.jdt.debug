@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * instances of <code>ICompilationUnit</code> and
  * </code>IClassFile</code>.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see IJavaSourceLocation
  * @since 2.1

@@ -15,9 +15,6 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Represents the type of an object in a virtual machine - including classes,
  * interfaces and array types.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

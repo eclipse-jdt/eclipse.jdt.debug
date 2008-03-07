@@ -54,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
  * This tab appears for java applet launch configurations and allows the user to edit
  * applet-specific attributes such as width, height, name & applet parameters.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.

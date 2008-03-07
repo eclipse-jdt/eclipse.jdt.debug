@@ -16,7 +16,7 @@ import java.io.File;
  * Implementation of storage for a local file
  * (<code>java.io.File</code>).
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see DirectorySourceLocation
  * @see org.eclipse.core.resources.IStorage

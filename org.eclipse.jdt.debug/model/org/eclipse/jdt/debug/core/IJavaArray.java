@@ -16,9 +16,6 @@ import org.eclipse.debug.core.model.IIndexedValue;
 
 /**
  * A value referencing an array on a target VM.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

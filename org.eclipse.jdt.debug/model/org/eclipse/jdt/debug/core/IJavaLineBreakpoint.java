@@ -18,9 +18,6 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 /**
  * A breakpoint that suspends execution when a particular line of code
  * is reached.
- * <p>
- * Clients are not intended to implement this interface
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

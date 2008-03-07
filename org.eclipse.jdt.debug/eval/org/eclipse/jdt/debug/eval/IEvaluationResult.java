@@ -19,9 +19,6 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 /**
  * The result of an evaluation. An evaluation result may
  * contain problems and/or a result value.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

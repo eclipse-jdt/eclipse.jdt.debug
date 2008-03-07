@@ -61,7 +61,7 @@ import com.sun.jdi.connect.Connector;
  * with a remote connection and the connector used to connect to a remote
  * VM.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.

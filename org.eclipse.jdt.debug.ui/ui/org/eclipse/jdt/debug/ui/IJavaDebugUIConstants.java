@@ -16,7 +16,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 /**
  * Constant definitions for Java debug UI plug-in.
  * <p>
- * Clients are not intended to implement this interface; constant definitions only.
+ * Constant definitions only.
  * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

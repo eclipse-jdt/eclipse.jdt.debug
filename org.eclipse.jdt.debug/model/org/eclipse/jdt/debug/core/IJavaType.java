@@ -18,9 +18,6 @@ import org.eclipse.debug.core.model.IDebugElement;
  * The type of a value on a Java debug target - a primitive
  * data type, class, interface, or array.
  * <p>
- * Clients are not intended to implement this interface.
- * </p>
- * <p>
  * Since 3.2, an <code>IJavaType</code> is also a debug element
  * </p>
  * @see IJavaValue

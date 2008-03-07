@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  * if one did not previously exist, or the corresponding 'real' VM is updated.
  * </p>
  * <p>
- * Clients may instantiate this class; it is not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * 
  * @since 2.1

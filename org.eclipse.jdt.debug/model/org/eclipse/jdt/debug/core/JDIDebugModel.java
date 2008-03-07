@@ -54,8 +54,7 @@ import com.sun.jdi.VirtualMachine;
  * model.
  * </p>
  * <p>
- * Clients are not intended to instantiate or subclass this class;
- * this class provides static utility methods only.
+ * This class provides static utility methods only.
  * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.

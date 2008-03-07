@@ -26,8 +26,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * or folder in the Java model containing class files, with a possible
  * source attachment.
  * <p>
- * This class may be instantiated; this class is not intended to be
- * subclassed. 
+ * This class may be instantiated.
  * </p>
  * 
  * @since 3.0

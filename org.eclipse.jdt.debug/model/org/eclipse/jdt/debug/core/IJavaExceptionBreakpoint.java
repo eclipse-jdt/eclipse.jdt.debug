@@ -19,9 +19,6 @@ import org.eclipse.core.runtime.CoreException;
  * to suspend execution when the corresponding exception is thrown in
  * a caught or uncaught location. As well, the location can be filtered
  * inclusively or exclusively by type name patterns.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

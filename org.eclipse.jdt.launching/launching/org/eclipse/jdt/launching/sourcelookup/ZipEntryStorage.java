@@ -17,7 +17,7 @@ import java.util.zip.ZipFile;
 /**
  * Storage implementation for zip entries.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see ArchiveSourceLocation
  * @see org.eclipse.core.resources.IStorage

@@ -23,7 +23,7 @@ package org.eclipse.jdt.launching.environments;
  * to be compatible with  an environment).
  * </p>
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.

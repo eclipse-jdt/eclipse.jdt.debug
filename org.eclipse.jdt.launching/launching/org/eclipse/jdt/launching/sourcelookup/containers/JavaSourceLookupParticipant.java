@@ -32,8 +32,7 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 /**
  * A source lookup participant that searches for Java source code.
  * <p>
- * This class may be instantiated; this class is not intended to be
- * subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

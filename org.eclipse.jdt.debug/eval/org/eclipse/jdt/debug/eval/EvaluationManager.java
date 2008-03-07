@@ -21,10 +21,6 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 /**
  * The evaluation manager provides factory methods for
  * creating evaluation engines.
- * <p>
- * Clients are not intended subclass or instantiate this
- * class.
- * </p>
  * @see org.eclipse.jdt.debug.eval.IEvaluationEngine
  * @see org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine
  * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine

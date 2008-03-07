@@ -18,9 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Utilities for the Java debugger.
- * <p>
- * This class is not intended to be subclassed or instantiated.
- * </p>
  * @since 3.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.

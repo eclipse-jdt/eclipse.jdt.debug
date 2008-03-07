@@ -26,9 +26,6 @@ import org.eclipse.core.runtime.CoreException;
  * breakpoints and does not require method enter/exit tracing in the
  * target VM.
  * </p>
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

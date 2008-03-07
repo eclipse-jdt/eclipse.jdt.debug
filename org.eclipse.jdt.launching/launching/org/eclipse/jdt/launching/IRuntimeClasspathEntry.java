@@ -38,8 +38,8 @@ import org.eclipse.jdt.core.IJavaProject;
  * 		<code>IRuntimeClasspathEntry2</code>.
  * </ul>
  * <p>
- * Clients may implement this interface for contributed a classpath entry
- * types (i.e. type <code>OTHER</code>). Note, contributed classpath entries
+ * Clients may implement this interface for contributing a classpath entry
+ * type (i.e. type <code>OTHER</code>). Note, contributed classpath entries
  * are new in 3.0, and are only intended to be contributed by the Java debugger.
  * </p>
  * @since 2.0

@@ -21,9 +21,6 @@ import org.eclipse.debug.core.model.IWatchpoint;
  * is a modification watchpoint, it will suspend execution when its field
  * is modified.
  * <p>
- * Clients are not intended to implement this interface.
- * </p>
- * <p>
  * Since 3.1, <code>IJavaWatchpoint</code> also implements
  * {@link org.eclipse.debug.core.model.IWatchpoint}.
  * </p>

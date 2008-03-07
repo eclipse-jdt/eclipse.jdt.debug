@@ -21,9 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  * targets are transient. Clients that use this type of breakpoint are intended
  * to be breakpoint listeners that set a pattern per target as each breakpoint
  * is added to a target.
- * <p>
- * This interface is not intended to be implemented.
- * </p>
  * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

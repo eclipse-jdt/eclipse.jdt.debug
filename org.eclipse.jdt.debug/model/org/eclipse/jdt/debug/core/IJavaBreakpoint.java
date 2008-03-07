@@ -26,9 +26,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * <li>an installed property that indicates a breakpoint was successfully
  *  installed in a VM</li>
  * </ul>
- * <p>
- * Clients are not intended to implement this interface
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

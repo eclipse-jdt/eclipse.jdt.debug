@@ -24,8 +24,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * point.
  * </p>
  * <p>
- * This interface is not intended to be implemented. Clients contributing
- * execution environments may provide and implement execution environment
+ * Clients contributing execution environments may provide and implement execution environment
  * analyzer delegates.
  * </p>
  * @since 3.2

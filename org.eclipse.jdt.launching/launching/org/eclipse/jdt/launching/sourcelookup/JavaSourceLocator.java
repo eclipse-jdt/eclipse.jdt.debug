@@ -65,7 +65,7 @@ import com.ibm.icu.text.MessageFormat;
  * Locates source for a Java debug session by searching
  * a configurable set of source locations.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see org.eclipse.debug.core.model.ISourceLocator
  * @since 2.0

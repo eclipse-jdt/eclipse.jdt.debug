@@ -27,8 +27,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 /**
  * A source container for a classpath container.
  * <p>
- * This class may be instantiated; this class is not intended to be
- * subclassed. 
+ * This class may be instantiated.
  * </p>
  * 
  * @since 3.0

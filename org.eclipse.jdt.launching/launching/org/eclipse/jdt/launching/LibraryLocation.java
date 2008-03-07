@@ -19,8 +19,9 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
 /**
  * The location of a library (for example rt.jar).
  * <p>
- * Clients may instantiate this class; it is not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class LibraryLocation {
 	private IPath fSystemLibrary;

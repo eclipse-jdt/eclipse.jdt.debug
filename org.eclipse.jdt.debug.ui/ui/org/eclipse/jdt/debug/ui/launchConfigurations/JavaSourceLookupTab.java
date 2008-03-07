@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
  * A launch configuration tab that displays and edits source lookup
  * path launch configuration attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.0
  * @deprecated In 3.0, the debug platform provides source lookup facilities that

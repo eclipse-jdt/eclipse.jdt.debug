@@ -33,8 +33,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * Java project source container. Searches for source in a project's
  * source folders.
  * <p>
- * This class may be instantiated; this class is not intended to be
- * subclassed. 
+ * This class may be instantiated.
  * </p>
  * 
  * @since 3.0

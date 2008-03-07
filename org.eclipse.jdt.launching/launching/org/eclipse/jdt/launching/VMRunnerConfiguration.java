@@ -20,7 +20,7 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * Holder for various arguments passed to a VM runner.
  * Mandatory parameters are passed in the constructor; optional arguments, via setters.
  * <p>
- * Clients may instantiate this class; it is not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */

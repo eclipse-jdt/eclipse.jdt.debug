@@ -19,7 +19,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * main program. This class provides convenience methods for parsing a string
  * of arguments into separate components.
  * <p>
- * Clients may instantiate this class; it is not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */

@@ -40,8 +40,7 @@ import com.ibm.icu.text.MessageFormat;
  * A source locator that prompts the user to find source when source cannot
  * be found on the current source lookup path.
  * <p>
- * This class is intended to be instantiated. This class is not
- * intended to be subclassed.
+ * This class is intended to be instantiated.
  * </p>
  * @since 2.0
  * @deprecated In 3.0, the debug platform provides source lookup facilities that

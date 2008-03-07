@@ -50,7 +50,7 @@ import org.eclipse.ui.PlatformUI;
  * This tab appears for Java applet launch configurations and allows the user to edit
  * attributes such as the applet class to launch and its owning project, if any.
  * <p>
- * This class may be instantiated. This class is not intended to be sub-classed.
+ * This class may be instantiated.
  * </p>
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.

@@ -15,9 +15,6 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * A variable that contains the value of an instance or class variable.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see org.eclipse.debug.core.model.IVariable
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

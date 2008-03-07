@@ -22,9 +22,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * interpreting abstract syntax trees. An AST evaluation engine
  * is capable of creating compiled expressions that can be
  * evaluated multiple times in a given runtime context.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */ 

@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
  * A dialog to manipulate the source lookup path for a launch
  * configuration. 
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.0.2
  * @see org.eclipse.jface.dialogs.Dialog

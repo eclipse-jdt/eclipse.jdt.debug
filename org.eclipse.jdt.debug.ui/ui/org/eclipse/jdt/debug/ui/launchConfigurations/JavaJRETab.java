@@ -54,7 +54,7 @@ import com.ibm.icu.text.MessageFormat;
  * A launch configuration tab that displays and edits the VM install 
  * launch configuration attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.

@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
  * VM arguments, and working directory launch configuration attributes,
  * for an applet.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.

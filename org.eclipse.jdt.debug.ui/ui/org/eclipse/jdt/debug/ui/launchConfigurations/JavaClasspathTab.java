@@ -71,7 +71,7 @@ import com.ibm.icu.text.MessageFormat;
  * bootstrap classes comprising the classpath launch configuration
  * attribute.
  * <p>
- * This class may be instantiated. This class is not intended to be sub-classed.
+ * This class may be instantiated.
  * </p>
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.

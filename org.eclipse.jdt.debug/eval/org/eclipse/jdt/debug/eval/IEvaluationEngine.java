@@ -23,9 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * code snippet or expression in a specified thread of a debug target.
  * An evaluation engine is associated with a specific
  * debug target and Java project on creation.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see IEvaluationResult
  * @see IEvaluationListener
  * @since 2.0

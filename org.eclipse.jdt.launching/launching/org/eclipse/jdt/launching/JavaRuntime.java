@@ -93,10 +93,10 @@ import com.ibm.icu.text.MessageFormat;
  * and computes class paths and source lookup paths for launch
  * configurations.
  * <p>
- * This class provides static methods only; it is not intended to be
- * instantiated or sub-classed by clients.
+ * This class provides static methods only.
  * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class JavaRuntime {
 	

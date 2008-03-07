@@ -19,9 +19,6 @@ import java.util.Random;
 
 /**
  * Utility class to find a port to debug on.
- * <p>
- * Clients are not intended to subclass or instantiate this class.
- * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

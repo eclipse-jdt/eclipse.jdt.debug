@@ -18,7 +18,7 @@ import java.util.EventObject;
  * JavaRuntime provides change notification for properties of VM installs
  * </p>
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.

@@ -17,9 +17,6 @@ import org.eclipse.debug.core.DebugException;
  * Modifiers common to Java debug elements that have  associated Java
  * member declarations. For example, the method associated with a stack frame,
  * or the field associated with a variable.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJavaModifiers {		

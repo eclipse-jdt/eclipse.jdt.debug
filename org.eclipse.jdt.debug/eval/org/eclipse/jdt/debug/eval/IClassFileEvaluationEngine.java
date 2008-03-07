@@ -17,9 +17,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 /**
  * An evaluation engine that performs evaluations by
  * deploying and executing class files locally.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  */ 

@@ -17,9 +17,6 @@ import org.eclipse.debug.core.model.IStepFilters;
 
 /**
  * A Java virtual machine.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see IDebugTarget
  * @see org.eclipse.core.runtime.IAdaptable 
  * @noimplement This interface is not intended to be implemented by clients.
