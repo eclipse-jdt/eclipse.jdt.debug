@@ -280,7 +280,7 @@ public final class JavaRuntime {
 	/**
 	 * VM change listeners
 	 */
-	private static ListenerList fgVMListeners = new ListenerList(5);
+	private static ListenerList fgVMListeners = new ListenerList();
 	
 	/**
 	 * Cache of already resolved projects in container entries. Used to avoid
