@@ -3147,6 +3147,9 @@ M4 = Platform-specific fourth key
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
             </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+            </adapter>
          </factory>                            
       </extension>     	   
    

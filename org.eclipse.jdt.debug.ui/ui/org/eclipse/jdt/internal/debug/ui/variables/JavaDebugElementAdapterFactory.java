@@ -42,6 +42,7 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 	private static final IElementContentProvider fgCPExpression = new JavaExpressionContentProvider();
 	private static final IWatchExpressionFactoryAdapter fgWEVariable = new JavaWatchExpressionFilter();
 	private static final IElementMementoProvider fgMPStackFrame = new JavaStackFrameMementoProvider();
+	private static final IElementLabelProvider fgLPFrame = new JavaStackFrameLabelProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -50,6 +51,9 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 		if (IElementLabelProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
 				return fgLPVariable; 
+			}
+			if (adaptableObject instanceof IJavaStackFrame) {
+				return fgLPFrame;
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
 				return fgLPExpression;

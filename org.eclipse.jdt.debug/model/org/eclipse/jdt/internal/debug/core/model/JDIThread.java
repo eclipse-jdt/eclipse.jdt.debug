@@ -1305,9 +1305,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see IStep#stepInto()
 	 */
-	public synchronized void stepInto() throws DebugException {
-		if (!canStepInto()) {
-			return;
+	public void stepInto() throws DebugException {
+		synchronized (this) {
+			if (!canStepInto()) {
+				return;
+			}
 		}
 		StepHandler handler = new StepIntoHandler();
 		handler.step();
@@ -1319,9 +1321,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see IStep#stepOver()
 	 */
-	public synchronized void stepOver() throws DebugException {
-		if (!canStepOver()) {
-			return;
+	public void stepOver() throws DebugException {
+		synchronized (this) {
+			if (!canStepOver()) {
+				return;
+			}
 		}
 		StepHandler handler = new StepOverHandler();
 		handler.step();
@@ -1333,9 +1337,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see IStep#stepReturn()
 	 */
-	public synchronized void stepReturn() throws DebugException {
-		if (!canStepReturn()) {
-			return;
+	public void stepReturn() throws DebugException {
+		synchronized (this) {
+			if (!canStepReturn()) {
+				return;
+			}
 		}
 		StepHandler handler = new StepReturnHandler();
 		handler.step();
@@ -1806,21 +1812,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void step() throws DebugException {
-			JDIStackFrame top = (JDIStackFrame)getTopStackFrame();
-			if (top == null) {
-				return;
+			ISchedulingRule rule = getThreadRule();
+			try {
+				Job.getJobManager().beginRule(rule, null);
+				JDIStackFrame top = (JDIStackFrame)getTopStackFrame();
+				if (top == null) {
+					return;
+				}
+				setOriginalStepKind(getStepKind());
+				Location location = top.getUnderlyingStackFrame().location();
+				setOriginalStepLocation(location);
+				setOriginalStepStackDepth(computeStackFrames().size());
+				setStepRequest(createStepRequest());
+				setPendingStepHandler(this);
+				addJDIEventListener(this, getStepRequest());
+				setRunning(true);
+				preserveStackFrames();
+				fireResumeEvent(getStepDetail());
+				invokeThread();
+			} finally {
+				Job.getJobManager().endRule(rule);
 			}
-			setOriginalStepKind(getStepKind());
-			Location location = top.getUnderlyingStackFrame().location();
-			setOriginalStepLocation(location);
-			setOriginalStepStackDepth(computeStackFrames().size());
-			setStepRequest(createStepRequest());
-			setPendingStepHandler(this);
-			addJDIEventListener(this, getStepRequest());
-			setRunning(true);
-			preserveStackFrames();
-			fireResumeEvent(getStepDetail());
-			invokeThread();
 		}
 		
 		/**

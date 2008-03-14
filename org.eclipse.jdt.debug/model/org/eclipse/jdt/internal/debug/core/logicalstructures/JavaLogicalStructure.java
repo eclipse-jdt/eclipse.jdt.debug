@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -46,6 +44,8 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class JavaLogicalStructure implements ILogicalStructureType {
 
@@ -145,6 +145,9 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				if (exception != null) {
 					if (exception.getStatus().getException() instanceof UnsupportedOperationException) {
 						message = LogicalStructuresMessages.JavaLogicalStructure_0;
+					} else if (exception.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+						// throw this exception so the content provider can handle if (cancel the update)
+						throw exception;
 					} else {
 						message= MessageFormat.format(LogicalStructuresMessages.JavaLogicalStructure_2, new String[] { exception.getMessage() });
 					}
@@ -229,7 +232,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#getLogicalStructure(IValue)
 	 */
-	public IValue getLogicalStructure(IValue value) {
+	public IValue getLogicalStructure(IValue value) throws CoreException {
 		if (!(value instanceof IJavaObject)) {
 			return value;
 		}
@@ -290,6 +293,9 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			return evaluationBlock.evaluate(fValue);
 
 		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				throw e;
+			}
 			JDIDebugPlugin.log(e);
 		}
 		return value;

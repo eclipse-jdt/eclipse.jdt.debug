@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
@@ -41,36 +42,60 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		Object[] variables = getAllChildren(parent, context);
-        if (displayReferencesAsChild(parent)){
-        	Object[] moreVariables = new Object[variables.length+1];
-        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
-        	IValue value = ((IVariable)parent).getValue();
-       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
-        	return getElements(moreVariables, index, length);
-        }
-        return getElements(variables, index, length);
+		try {
+			Object[] variables = getAllChildren(parent, context);
+	        if (displayReferencesAsChild(parent)){
+	        	Object[] moreVariables = new Object[variables.length+1];
+	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
+	        	IValue value = ((IVariable)parent).getValue();
+	       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
+	        	return getElements(moreVariables, index, length);
+	        }
+	        return getElements(variables, index, length);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				monitor.cancel();
+				return EMPTY;
+			}
+			throw e;
+		}
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		int count = super.getChildCount(element, context, monitor);
-		if (displayReferencesAsChild(element)){
-			count++;
+		try {
+			int count = super.getChildCount(element, context, monitor);
+			if (displayReferencesAsChild(element)){
+				count++;
+			}
+			return count;
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				monitor.cancel();
+				return 0;
+			}
+			throw e;
 		}
-		return count;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
 	protected boolean hasChildren(Object element, IPresentationContext context,	IViewerUpdate monitor) throws CoreException {
-		if (displayReferencesAsChild(element)){
-			return true;
-		}
-		return super.hasChildren(element, context, monitor);
+		try {
+			if (displayReferencesAsChild(element)){
+				return true;
+			}
+			return super.hasChildren(element, context, monitor);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				monitor.cancel();
+				return false;
+			}
+			throw e;
+		}			
 	}
 	
 	/**
