@@ -182,7 +182,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public boolean equals(Object obj) {
 		if (obj instanceof JDIArrayEntryVariable) {
 			JDIArrayEntryVariable entry = (JDIArrayEntryVariable)obj;
-			return entry.getArrayReference().equals(getArrayReference()) &&
+			return entry.getArrayReference().type().equals(getArrayReference().type()) &&
 				entry.getIndex() == getIndex();
 		}
 		return false;
@@ -192,7 +192,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getArrayReference().hashCode() + getIndex();
+		return getArrayReference().type().hashCode() + getIndex();
 	}
 
 }
