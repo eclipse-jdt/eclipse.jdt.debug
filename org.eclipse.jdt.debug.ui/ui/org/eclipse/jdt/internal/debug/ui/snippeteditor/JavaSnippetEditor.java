@@ -308,8 +308,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public void dispose() {
 		shutDownVM();
 		fPresentation.dispose();
-		fSnippetStateListeners= null;
-		((JDISourceViewer) getSourceViewer()).dispose();
+		fSnippetStateListeners = null;
+		ISourceViewer viewer = getSourceViewer();
+		if(viewer != null) {
+			((JDISourceViewer)viewer).dispose();
+		}
 		getSite().getWorkbenchWindow().getPartService().removePartListener(fActivationListener);
 		super.dispose();
 	}
