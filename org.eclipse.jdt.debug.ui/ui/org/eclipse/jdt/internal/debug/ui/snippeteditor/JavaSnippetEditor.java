@@ -1187,9 +1187,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/**
      * Terminates existing VM on a rename of the editor
  	 */
-	protected void setTitle(String title) {
+	protected void setPartName(String title) {
 		cleanupOnRenameOrMove();
-		setPartName(title);
+		super.setPartName(title);
 	}
 	
 	/**
