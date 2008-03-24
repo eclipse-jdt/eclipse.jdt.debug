@@ -59,7 +59,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
 		 */
 		public String getHyperlinkText() {
-			return null;
+			return ActionMessages.StepIntoSelectionHyperlinkDetector_0;
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
@@ -83,7 +83,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	 */
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
-		if(editor != null && !canShowMultipleHyperlinks && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {
+		if(editor != null && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {
 			
 			// should only enable step into selection when the current debug context
 			// is an instance of IJavaStackFrame

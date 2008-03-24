@@ -127,6 +127,8 @@ public class ActionMessages extends NLS {
 	public static String ToggleBreakpointAdapter_10;
 	public static String StepIntoSelectionHandler_1;
 	public static String StepIntoSelectionHandler_2;
+
+	public static String StepIntoSelectionHyperlinkDetector_0;
 	public static String AddLibraryAction_0;
 	public static String ShowStratumAction_0;
 	public static String JavaVariableValueEditor_0;
