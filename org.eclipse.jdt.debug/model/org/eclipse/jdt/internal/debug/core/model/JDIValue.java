@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,15 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * A flag indicating if this value is still allocated (valid)
 	 */
 	private boolean fAllocated = true;
+	
+	/**
+	 * When created for a logical structure we hold onto the original
+	 * non-logical value for purposes of equality. This way a logical
+	 * structure's children remain more stable in the variables view.
+	 * 
+	 * This is <code>null</code> when not created for a logical structure.
+	 */
+	protected IJavaValue fLogicalParent;
 	
 	/**
 	 * Constructor
@@ -208,7 +217,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 					try {
 						int length= getArrayLength();
 						for (int i = 0; i < length; i++) {
-							fVariables.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
+							fVariables.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i, fLogicalParent));
 						}
 					} catch (DebugException e) {
 						if (e.getCause() instanceof ObjectCollectedException) {
@@ -232,7 +241,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 					Iterator list= fields.iterator();
 					while (list.hasNext()) {
 						Field field= (Field) list.next();
-						fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, object));
+						fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, object, fLogicalParent));
 					}
 					Collections.sort(fVariables, new Comparator() {
 						public int compare(Object a, Object b) {
@@ -409,6 +418,26 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 */
 	public boolean hasVariables() throws DebugException {
 		return getVariablesList().size() > 0;
+	}
+
+	/**
+	 * Sets the value that is the original non-logical value that this
+	 * child value was computed for.
+	 * 
+	 * @param logicalParent parent value 
+	 */
+	public void setLogicalParent(IJavaValue logicalParent) {
+		fLogicalParent = logicalParent;
+	}
+
+	/**
+	 * Returns the value that is the original non-logical value that this
+	 * child value was computed for or <code>null</code> if none
+	 * 
+	 * @param logicalParent parent value or <code>null</code>
+	 */
+	public IJavaValue getLogicalParent() {
+		return fLogicalParent;
 	}
 
 }

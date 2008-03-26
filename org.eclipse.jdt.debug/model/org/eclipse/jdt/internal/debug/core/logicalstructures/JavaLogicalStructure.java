@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -285,12 +286,14 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				// evaluate each variable
 				IJavaVariable[] variables= new IJavaVariable[fVariables.length];
 				for (int i= 0; i < fVariables.length; i++) {
-					variables[i]= new JDIPlaceholderVariable(fVariables[i][0], evaluationBlock.evaluate(fVariables[i][1]));
+					variables[i]= new JDIPlaceholderVariable(fVariables[i][0], evaluationBlock.evaluate(fVariables[i][1]), javaValue);
 				}
 				return new LogicalObjectStructureValue(javaValue, variables);
 			}
 			// evaluate the logical value
-			return evaluationBlock.evaluate(fValue);
+			IJavaValue logicalValue = evaluationBlock.evaluate(fValue); 
+			((JDIValue)logicalValue).setLogicalParent(javaValue);
+			return logicalValue;
 
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {

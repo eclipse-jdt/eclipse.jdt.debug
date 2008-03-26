@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,33 @@ public class JDIPlaceholderVariable extends PlatformObject implements IJavaVaria
 
 	private String fName;
 	private IJavaValue fValue;
+	
+	/**
+	 * When created for a logical structure we hold onto the original
+	 * non-logical value for purposes of equality. This way a logical
+	 * structure's children remain more stable in the variables view.
+	 * 
+	 * This is <code>null</code> when not created for a logical structure.
+	 */
+	private IJavaValue fLogicalParent;
 
 	public JDIPlaceholderVariable(String name, IJavaValue value) {
 		fName = name;
 		fValue = value;
+	}
+	
+	/**
+	 * Constructs a place holder with the given name and value originating from
+	 * the specified logical parent.
+	 * 
+	 * @param name variable name
+	 * @param value variable value
+	 * @param logicalParent original value this value is a logical child for or <code>null</code>
+	 * 	if none
+	 */
+	public JDIPlaceholderVariable(String name, IJavaValue value, IJavaValue logicalParent) {
+		this(name, value);
+		fLogicalParent = logicalParent;
 	}
 	
 	/* (non-Javadoc)
@@ -213,7 +236,11 @@ public class JDIPlaceholderVariable extends PlatformObject implements IJavaVaria
 	public boolean equals(Object obj) {
 		if (obj instanceof JDIPlaceholderVariable) {
 			JDIPlaceholderVariable var = (JDIPlaceholderVariable)obj;
-			return var.getName().equals(getName()) && var.getValue().equals(getValue());
+			if (fLogicalParent != null) {
+				return var.getName().equals(getName()) && fLogicalParent.equals(var.fLogicalParent);
+			} else {
+				return var.getName().equals(getName()) && var.getValue().equals(getValue());
+			}
 		}
 		return false;
 	}
@@ -222,6 +249,9 @@ public class JDIPlaceholderVariable extends PlatformObject implements IJavaVaria
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
+		if (fLogicalParent != null) {
+			return fLogicalParent.hashCode() + fName.hashCode();
+		}
 		return fName.hashCode() + fValue.hashCode();
 	}
 

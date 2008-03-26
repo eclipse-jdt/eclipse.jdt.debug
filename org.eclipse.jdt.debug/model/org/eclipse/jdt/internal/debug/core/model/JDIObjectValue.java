@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			Field field = ref.fieldByName(name);
 			if (field != null) {
-				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject(), fLogicalParent);
 			}
 			Field enclosingThis= null;
 			Iterator fields= ref.fields().iterator();
@@ -170,7 +170,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
             
             if (enclosingThis != null)
-                return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
+                return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject(), fLogicalParent)).getValue()).getField(name, false);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); 
 		}
@@ -195,7 +195,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				}
 			}
 			if (field != null) {
-				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject(), fLogicalParent);
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); 
@@ -227,7 +227,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			Field field = ref.fieldByName(name);
 			if (field != null) {
-				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject(), fLogicalParent);
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); 
@@ -275,7 +275,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				}
 				if (enclosingThis != null) {
 				    JDIDebugTarget debugTarget = (JDIDebugTarget)getDebugTarget();
-				    JDIFieldVariable fieldVariable = new JDIFieldVariable(debugTarget, enclosingThis, res.getUnderlyingObject());
+				    JDIFieldVariable fieldVariable = new JDIFieldVariable(debugTarget, enclosingThis, res.getUnderlyingObject(), fLogicalParent);
 				    res = (JDIObjectValue)fieldVariable.getValue();
 				} else {
 				    // it is possible to return null

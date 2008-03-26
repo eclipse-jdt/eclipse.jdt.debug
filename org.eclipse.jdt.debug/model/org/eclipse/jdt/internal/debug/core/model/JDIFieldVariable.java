@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
@@ -46,17 +47,27 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 * The type containing the field.
 	 */
 	private ReferenceType fType;
+
+	/**
+	 * When created for a logical structure we hold onto the original
+	 * non-logical value for purposes of equality. This way a logical
+	 * structure's children remain more stable in the variables view.
+	 * 
+	 * This is <code>null</code> when not created for a logical structure.
+	 */	
+	private IJavaValue fLogicalParent;
 	
 	/**
 	 * Constructs a field for the given field.
 	 */
-	public JDIFieldVariable(JDIDebugTarget target, Field field, ObjectReference objectRef) {
+	public JDIFieldVariable(JDIDebugTarget target, Field field, ObjectReference objectRef, IJavaValue logicalParent) {
 		super(target);
 		fField= field;
 		if (!field.isStatic()) {
 			fObject= objectRef;
 		}
 		fType= (ReferenceType)objectRef.type();
+		fLogicalParent = logicalParent;
 	}
 
 	/**
@@ -279,6 +290,9 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	public boolean equals(Object o) {
 		if (o instanceof JDIFieldVariable) {
 			JDIFieldVariable f = (JDIFieldVariable)o;
+			if (fLogicalParent != null) {
+				return fLogicalParent.equals(f.fLogicalParent) && f.fField.equals(fField);
+			}
 			if (fObject != null) {
 				return fObject.equals(f.fObject) && f.fField.equals(fField);
 			}
@@ -291,6 +305,9 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
+		if (fLogicalParent != null) {
+			return fLogicalParent.hashCode() + fField.hashCode();
+		}
 		if (fObject != null) {
 			return fField.hashCode() + fObject.hashCode();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ArrayReference;
@@ -45,12 +47,28 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	private String fReferenceTypeName= null;
 	
 	/**
-	 * Constructs an array entry at the given index in an array.
+	 * When created for a logical structure we hold onto the original
+	 * non-logical object for purposes of equality. This way a logical
+	 * structure's children remain more stable in the variables view.
+	 * 
+	 * This is <code>null</code> when not created for a logical structure.
 	 */
-	public JDIArrayEntryVariable(JDIDebugTarget target, ArrayReference array, int index) {
+	private IJavaValue fLogicalParent;
+	
+	/**
+	 * Constructs an array entry at the given index in an array.
+	 * 
+	 * @param target debug target containing the array entry
+	 * @param array array containing the entry
+	 * @param index index into the array
+	 * @param logicalParent original logical parent value, or <code>null</code> if not a child
+	 *  of a logical structure
+	 */
+	public JDIArrayEntryVariable(JDIDebugTarget target, ArrayReference array, int index, IJavaValue logicalParent) {
 		super(target);
 		fArray= array;
 		fIndex= index;
+		fLogicalParent = logicalParent;
 	}
 
 	/**
@@ -182,6 +200,13 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public boolean equals(Object obj) {
 		if (obj instanceof JDIArrayEntryVariable) {
 			JDIArrayEntryVariable entry = (JDIArrayEntryVariable)obj;
+			if (fLogicalParent != null) {
+				try {
+					return fLogicalParent.equals(entry.fLogicalParent) &&
+					getValue().equals(entry.getValue());
+				} catch (CoreException e) {
+				}
+			}
 			return entry.getArrayReference().equals(getArrayReference()) &&
 				entry.getIndex() == getIndex();
 		}
@@ -192,6 +217,9 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
+		if (fLogicalParent != null) {
+			return fLogicalParent.hashCode() + getIndex();
+		}
 		return getArrayReference().hashCode() + getIndex();
 	}
 
