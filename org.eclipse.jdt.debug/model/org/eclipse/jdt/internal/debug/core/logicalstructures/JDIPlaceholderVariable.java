@@ -213,7 +213,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements IJavaVaria
 	public boolean equals(Object obj) {
 		if (obj instanceof JDIPlaceholderVariable) {
 			JDIPlaceholderVariable var = (JDIPlaceholderVariable)obj;
-			return var.getName().equals(getName());
+			return var.getName().equals(getName()) && var.getValue().equals(getValue());
 		}
 		return false;
 	}
