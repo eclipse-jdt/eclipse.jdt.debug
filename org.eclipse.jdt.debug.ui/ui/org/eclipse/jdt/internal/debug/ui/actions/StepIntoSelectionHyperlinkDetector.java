@@ -71,7 +71,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
 		public void open() {
-			StepIntoSelectionActionDelegate delegate = new StepIntoSelectionActionDelegate();
+			StepIntoSelectionActionDelegate delegate = new StepIntoSelectionActionDelegate(fRegion);
 			delegate.init(JDIDebugUIPlugin.getActiveWorkbenchWindow());
 			delegate.run(null);
 		}

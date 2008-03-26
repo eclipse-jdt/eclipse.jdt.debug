@@ -31,7 +31,10 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
@@ -47,6 +50,21 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	
 	private IEditorPart fEditorPart = null;
 	private IWorkbenchWindow fWindow = null;
+	private IRegion fTextRegion = null;
+	
+	/**
+	 * Default constructor
+	 */
+	public StepIntoSelectionActionDelegate() {}
+	
+	/**
+	 * Constructor
+	 * @param region
+	 */
+	public StepIntoSelectionActionDelegate(IRegion region) {
+		fTextRegion = region;
+	}
+	
 	/**
 	 * The name of the type being "run to".
 	 * @see StepIntoSelectionActionDelegate#runToLineBeforeStepIn(ITextSelection, IJavaStackFrame, IMethod)
@@ -80,7 +98,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			if (method == null) {
 				method = StepIntoSelectionUtils.getFirstMethodOnLine(textSelection.getOffset(), activeEditor, javaElement);
 			}
-			IType callingType = getType();
+			IType callingType = getType(textSelection);
 			if (method == null || callingType == null) {
 				return;
 			}
@@ -132,7 +150,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the desired location, then perform a "step into selection."
 	 */
 	private void runToLineBeforeStepIn(ITextSelection textSelection, final IThread thread, final IMethod method) {
-		fRunToLineType = getType().getFullyQualifiedName();
+		fRunToLineType = getType(textSelection).getFullyQualifiedName();
 		fRunToLineLine = textSelection.getStartLine() + 1;
 		if (fRunToLineType == null || fRunToLineLine == -1) {
 			return;
@@ -242,7 +260,15 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		IEditorPart part = getActiveEditor();
 		if (part instanceof ITextEditor) { 
 			ITextEditor editor = (ITextEditor)part;
-			return (ITextSelection)editor.getSelectionProvider().getSelection();
+			if(fTextRegion != null) {
+				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+				if(document != null) {
+					return new TextSelection(document, fTextRegion.getOffset(), fTextRegion.getLength());
+				}
+			}
+			else {
+				return (ITextSelection)editor.getSelectionProvider().getSelection();
+			}
 		}
 		showErrorMessage(ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_Java_editor__4); 
 		return null;
@@ -252,8 +278,8 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * Return the type containing the selected text, or <code>null</code> if the
 	 * selection is not in a type.
 	 */
-	protected IType getType() {
-		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(getTextSelection());
+	protected IType getType(ITextSelection textSelection) {
+		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(textSelection);
 		IType type= null;
 		if (member instanceof IType) {
 			type = (IType)member;
