@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<component id="org.eclipse.jdt.launching" version="1">
-    <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java">
-        <filter id="571473929" messageargs="org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage"/>
-    </resource>
-</component>
