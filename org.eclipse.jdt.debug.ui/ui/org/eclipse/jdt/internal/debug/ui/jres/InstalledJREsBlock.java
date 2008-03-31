@@ -242,7 +242,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		SWTFactory.createLabel(parent, JREMessages.InstalledJREsBlock_15, 2);
 				
 		fTable= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 250;
+		fTable.setLayoutData(gd);
 		fTable.setFont(font);
 		fTable.setHeaderVisible(true);
 		fTable.setLinesVisible(true);	
