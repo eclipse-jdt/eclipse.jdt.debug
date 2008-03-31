@@ -296,16 +296,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} 
 		
 		try {
-			boolean suspended = fThread.isSuspended();
-			if (suspended) {
-				// Unless we're at a breakpoint, set status to running. The thread state
-				// will be properly updated to suspended in the case that a breakpoint
-				// is hit. Otherwise this is likely just a transient suspend state (for
-				// example, a breakpoint is handling a class prepare event quietly).
-				// See bug 120385
-				suspended = getBreakpoints().length > 0;
-			}
-			setRunning(!suspended);
+			// This may be a transient suspend state (for example, a thread is handling a
+			// class prepare event quietly). The class prepare event handler will notify
+			// this thread when it resumes
+			setRunning(!fThread.isSuspended());
 		} catch (VMDisconnectedException e) {
 			disconnected();
 			return;
@@ -2738,6 +2732,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @since 3.3.0
 	 */
 	public ISchedulingRule getThreadRule() {
-		   return new SerialPerObjectRule(this);
-   }
+		return new SerialPerObjectRule(this);
+	}
+
+	/**
+	 * A class prepare has resumed this thread - if the thread was suspended at startup
+	 * then fix up the state to running and fire an event to update UI.
+	 */
+	public synchronized void resumedFromClassPrepare() {
+		if (isSuspended()) {
+			setRunning(true);
+			setSuspendedQuiet(false);
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+		}
+	}
 }

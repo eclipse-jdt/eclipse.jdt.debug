@@ -297,6 +297,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			createRequest(target, event.referenceType());
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
+		} finally {
+			JDIThread thread = target.findThread(event.thread());
+			if (thread != null) {
+				thread.resumedFromClassPrepare();
+			}
 		}
 		return true;
 	}
