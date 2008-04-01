@@ -2586,23 +2586,19 @@ M4 = Platform-specific fourth key
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+M3+F"
-            contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
       <key
             platform="carbon"
             sequence="M2+M3+F"
-            contextId="org.eclipse.ui.globalScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
       <key
             platform="carbon"
             sequence="M1+M3+F"
-            contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
 	  <key
             sequence="M1+U"
-            contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.commands.Execute"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
@@ -2623,73 +2619,71 @@ M4 = Platform-specific fourth key
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+D J"
-            contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
        <key
             platform="carbon"
             sequence="M2+M3+D J"
-            contextId="org.eclipse.ui.globalScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M1+M3+M4+D J"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+X J"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M2+M3+X J"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M1+M3+X J"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+M3+D A"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
       <key
             platform="carbon"
             sequence="M2+M3+D A"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M1+M3+M4+D A"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             sequence="M2+M3+X A"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
             sequence="M2+M3+X A"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
             sequence="M1+M3+X A"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    <key
          commandId="org.eclipse.jdt.debug.ui.commands.AllInstances"
-         contextId="org.eclipse.ui.globalScope"
+         
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="M1+M2+N">
    </key>
