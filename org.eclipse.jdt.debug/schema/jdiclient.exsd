@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.jdt.debug">
+<schema targetNamespace="org.eclipse.jdt.debug" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.jdt.debug" id="jdiclient" name="JDI Client"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This is an internal extension point specifying the JDI implementation to use with the Java debugger. Clients are not intended to use this extension point.
       </documentation>
@@ -33,24 +33,27 @@
                <documentation>
                   The name of the extension point is the fully qualified name of a Java class implementing &lt;code&gt;com.sun.jdi.VirtualMachineManager&lt;/code&gt; used to bootstrap the JDI implementation.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":com.sun.jdi.VirtualMachineManager"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          2.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The JDI client used by the Java debugger, is by default the JDI implementation that is provided with the Eclipse SDK:
 &lt;pre&gt;
@@ -60,27 +63,28 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The name of the extension point is the fully qualified name of a Java class implementing &lt;code&gt;com.sun.jdi.VirtualMachineManager&lt;/code&gt;.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The Java debugger provides an implementation of &lt;code&gt;com.sun.jdi.VirtualMachineManager&lt;/code&gt;
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

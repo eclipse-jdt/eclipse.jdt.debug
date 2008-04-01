@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.jdt.debug.ui">
+<schema targetNamespace="org.eclipse.jdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.jdt.debug.ui" id="vmInstallTypePage" name="VM Install Type UI Page"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point provides a mechanism for contributing UI that will appear in the JRE tab of the launch configuration dialog.
 The UI is shown only when a VM of the specified install type is selected in the JRE tab.
@@ -54,6 +54,9 @@ The UI is shown only when a VM of the specified install type is selected in the 
                <documentation>
                   specifies VM install type that this UI page is applicable to (corresponds to the id of a VM install type).
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.jdt.launching.vmInstallTypes/vmInstallType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -61,18 +64,18 @@ The UI is shown only when a VM of the specified install type is selected in the 
                <documentation>
                   specifies a fully qualified name of a Java class that implements &lt;code&gt;ILaunchConfigurationTab&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTab"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a VM install type page extension point:
 
@@ -94,30 +97,24 @@ whenever the currently selected JRE has a VM Install type identifier of &lt;samp
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface
 &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTab&lt;/b&gt;.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
+
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
