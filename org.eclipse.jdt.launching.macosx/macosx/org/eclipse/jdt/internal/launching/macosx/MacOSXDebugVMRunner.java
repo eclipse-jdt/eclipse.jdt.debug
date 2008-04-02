@@ -19,7 +19,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 public class MacOSXDebugVMRunner extends StandardVMDebugger {
 	
 	public MacOSXDebugVMRunner(IVMInstall vmInstance) {
-		super(vmInstance);
+		super(vmInstance); 
 	}
 	
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
