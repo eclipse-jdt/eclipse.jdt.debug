@@ -189,7 +189,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			parent = parent.getParentFile();
 		}
 		setDefaultRootPath(""); //$NON-NLS-1$
-		return Path.EMPTY; //$NON-NLS-1$
+		return Path.EMPTY;
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			// we use the fall back from below
 		}
 		if (id != null) {
-			String s= JAVADOC_LOC + id + JAVADOC_SUBDIR;	//$NON-NLS-1$
+			String s= JAVADOC_LOC + id + JAVADOC_SUBDIR;
 			File docLocation= new File(s);
 			if (!docLocation.exists()) {
 				s= JAVADOC_LOC + id;
