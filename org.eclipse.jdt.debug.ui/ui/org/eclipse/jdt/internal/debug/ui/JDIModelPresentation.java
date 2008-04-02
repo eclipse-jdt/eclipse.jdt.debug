@@ -128,6 +128,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	private static boolean fInitialized = false;
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
+
+	/******
+	 * This constant is here for experimental purposes only and should not be used.
+	 * It is used to store a suffix for a breakpoint's label in its marker.
+	 * It is not officially supported and might be removed in the future.
+	 * */
+	private static final String BREAKPOINT_LABEL_SUFFIX = "JDT_BREAKPOINT_LABEL_SUFFIX"; //$NON-NLS-1$
 	
 	private JavaElementLabelProvider fJavaLabelProvider;
 	
@@ -1448,25 +1455,34 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getBreakpointText(IBreakpoint breakpoint) {
 	    try {
+	    	String label = null;
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
-				return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
+				label = getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaWatchpoint) {
-				return getWatchpointText((IJavaWatchpoint)breakpoint);
+				label = getWatchpointText((IJavaWatchpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaMethodBreakpoint) {
-				return getMethodBreakpointText((IJavaMethodBreakpoint)breakpoint);
+				label = getMethodBreakpointText((IJavaMethodBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-				return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
+				label = getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
-				return getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
+				label = getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaStratumLineBreakpoint) {
-				return getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
+				label = getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaLineBreakpoint) {
-				return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
+				label = getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
 			} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
-				return getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
+				label = getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
+			} else {
+				// Should never get here
+				return ""; //$NON-NLS-1$
 			}
-			// Should never get here
-			return ""; //$NON-NLS-1$
+			String suffix = breakpoint.getMarker().getAttribute(BREAKPOINT_LABEL_SUFFIX, null);
+			if (suffix == null) {
+				return label;
+			}
+			StringBuffer buffer = new StringBuffer(label);
+			buffer.append(suffix);
+			return buffer.toString();
 	    } catch (CoreException e) {
 	    	// if the breakpoint has been deleted, don't log exception
 	    	IMarker marker = breakpoint.getMarker();
