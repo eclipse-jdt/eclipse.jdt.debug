@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.jface.util.Assert;
 
 
 public class MacOSXLaunchingPlugin extends Plugin {
