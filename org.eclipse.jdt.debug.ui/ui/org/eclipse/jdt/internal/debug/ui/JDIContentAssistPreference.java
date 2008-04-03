@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,25 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.Hashtable;
 
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
-import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.text.IColorManager;
-import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
+
+import org.eclipse.jdt.core.JavaCore;
+
+import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.text.IColorManager;
+import org.eclipse.jdt.ui.text.JavaTextTools;
+
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
 
 
 public class JDIContentAssistPreference {
@@ -113,13 +118,7 @@ public class JDIContentAssistPreference {
 		int delay= store.getInt(PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
 		
-		Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
-		assistant.setProposalSelectorForeground(c);
-		
-		c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
-		assistant.setProposalSelectorBackground(c);
-		
-		c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, manager);
+		Color c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, manager);
 		assistant.setContextInformationPopupForeground(c);
 		assistant.setContextSelectorForeground(c);
 		
@@ -164,7 +163,7 @@ public class JDIContentAssistPreference {
 		} else if (PreferenceConstants.CODEASSIST_SORTER.equals(key)) {
 			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 			cp.orderProposalsAlphabetically(enable);
-		}	
+		}
 	}
 	
 	
@@ -183,12 +182,6 @@ public class JDIContentAssistPreference {
 		} else if (PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p)) {
 			int delay= store.getInt(PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);
-		} else if (PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p)) {
-			Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
-			assistant.setProposalSelectorForeground(c);
-		} else if (PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p)) {
-			Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);
-			assistant.setProposalSelectorBackground(c);
 		} else if (PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND.equals(p)) {
 			Color c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND);
 			assistant.setContextInformationPopupForeground(c);
