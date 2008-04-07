@@ -5,7 +5,7 @@
     
 <!-- Extensions Points -->
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
-   <extension-point id="vmInstallPages" name="VM Install Page" schema="schema/vmInstallPages.exsd"/>
+   <extension-point id="vmInstallPages" name="%vmInstallPage" schema="schema/vmInstallPages.exsd"/>
 
 <!-- Extensions -->
    <extension
