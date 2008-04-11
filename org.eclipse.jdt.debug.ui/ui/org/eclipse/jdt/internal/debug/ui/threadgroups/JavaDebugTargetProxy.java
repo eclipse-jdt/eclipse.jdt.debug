@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetEventHandler;
@@ -44,7 +48,19 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
 	public void installed(Viewer viewer) {
-		super.installed(viewer);
+		final Viewer finalViewer = viewer;
+		// Delay the auto-select-expand job to allow for transient suspend states to resolve. 
+		// See bug 225377
+		Job job = new Job("Initialize Java Debug Session") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				if (!isDisposed()) {
+					JavaDebugTargetProxy.super.installed(finalViewer);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule(500);
 		fThreadEventHandler.init(viewer);
 	}
 
