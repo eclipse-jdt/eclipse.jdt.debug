@@ -2521,12 +2521,6 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.commands.ForceReturn">
       </command>      
  <!-- views -->
-      <command
-            name="%ViewCommand.displayView.name"
-            description="%ViewCommand.displayView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.jdt.debug.ui.DisplayView">
-      </command>
 <!-- launch shortcuts -->
       <command
             name="%JavaApplicationShortcut.description.debug"
