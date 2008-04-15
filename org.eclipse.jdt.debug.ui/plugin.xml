@@ -3005,12 +3005,6 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.debugging"
             parentId="org.eclipse.debug.ui.debugging">
       </context>
-      <context
-            description="%ActionContext.breakpointsview.description"
-            id="org.eclipse.debug.ui.BreakpointView"
-            name="%ActionContext.breakpointsview.name"
-            parentId="org.eclipse.ui.contexts.window">
-      </context>
    </extension>
    <extension
          point="org.eclipse.debug.ui.debugModelContextBindings">
