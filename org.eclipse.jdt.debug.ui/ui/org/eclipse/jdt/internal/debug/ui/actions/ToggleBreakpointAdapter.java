@@ -42,6 +42,7 @@ import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeParameter;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
@@ -1001,18 +1002,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * Returns the compilation unit from the editor
      * @param editor the editor to get the compilation unit from
      * @return the compilation unit or <code>null</code>
-     * @throws CoreException
      */
-    protected CompilationUnit parseCompilationUnit(ITextEditor editor) throws CoreException {
-        IEditorInput editorInput = editor.getEditorInput();
-        IDocumentProvider documentProvider = editor.getDocumentProvider();
-        if (documentProvider == null) {
-            throw new CoreException(Status.CANCEL_STATUS);
+    protected CompilationUnit parseCompilationUnit(ITextEditor editor) {
+        ITypeRoot root = getTypeRoot(editor.getEditorInput());
+        if(root != null) {
+	        ASTParser parser = ASTParser.newParser(AST.JLS3);
+	        parser.setSource(root);
+	        return (CompilationUnit) parser.createAST(null);
         }
-        IDocument document = documentProvider.getDocument(editorInput);
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setSource(document.get().toCharArray());
-        return (CompilationUnit) parser.createAST(null);
+        return null;
     }
 
     /*
@@ -1064,33 +1062,17 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 } catch (BadLocationException e) {}
             }
             IMember m = null;
-            IClassFile classFile = (IClassFile) editorInput.getAdapter(IClassFile.class);
-            if (classFile != null) {
-                IJavaElement e = classFile.getElementAt(offset);
+            ITypeRoot root = getTypeRoot(editorInput);
+            if(root instanceof ICompilationUnit) {
+                ICompilationUnit unit = (ICompilationUnit) root;
+                synchronized (unit) {
+                    unit.reconcile(ICompilationUnit.NO_AST , false, null, null);
+                }
+            }
+            if(root != null){
+                IJavaElement e = root.getElementAt(offset);
                 if (e instanceof IMember) {
                     m = (IMember) e;
-                }
-            } else {
-                IWorkingCopyManager manager = JavaUI.getWorkingCopyManager();
-                ICompilationUnit unit = manager.getWorkingCopy(editorInput);
-                if (unit != null) {
-                    synchronized (unit) {
-                        unit.reconcile(ICompilationUnit.NO_AST , false, null, null);
-                    }
-                }
-                else {
-                	unit = DebugWorkingCopyManager.getWorkingCopy(editorInput, false);
-                	if(unit != null) {
-	                	synchronized (unit) {
-	                		unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
-	                	}
-                	}
-                }
-                if(unit != null){
-	                IJavaElement e = unit.getElementAt(offset);
-	                if (e instanceof IMember) {
-	                    m = (IMember) e;
-	                }
                 }
             }
             if (m != null) {
@@ -1100,6 +1082,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         return selection;
     }
 
+    /**
+     * Returns the {@link ITypeRoot} for the given {@link IEditorInput}
+     * @param input
+     * @return the type root or <code>null</code> if one cannot be derived
+	 * @since 3.4
+     */
+    private ITypeRoot getTypeRoot(IEditorInput input) {
+    	ITypeRoot root = (ITypeRoot) input.getAdapter(IClassFile.class);
+    	if(root == null) {
+    		 IWorkingCopyManager manager = JavaUI.getWorkingCopyManager();
+             root = manager.getWorkingCopy(input);
+    	}
+    	if(root == null) {
+    		root = DebugWorkingCopyManager.getWorkingCopy(input, false);
+    	}
+    	return root;
+    }
+    
     /**
      * Return the associated IField (Java model) for the given
      * IJavaFieldVariable (JDI model)
