@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -794,17 +794,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	private void configureAtStartup() throws CoreException {
 		List attributes= null;
-		List values= null;
+		List values = new ArrayList(3);
 		if (isInstalled()) {
 			attributes= new ArrayList(3);
-			values= new ArrayList(3);
 			attributes.add(INSTALL_COUNT);
 			values.add(new Integer(0));
 		}
 		if (isExpired()) {
 			if (attributes == null) {
 				attributes= new ArrayList(3);
-				values= new ArrayList(3);
 			}
 			// if breakpoint was auto-disabled, re-enable it
 			attributes.add(EXPIRED);

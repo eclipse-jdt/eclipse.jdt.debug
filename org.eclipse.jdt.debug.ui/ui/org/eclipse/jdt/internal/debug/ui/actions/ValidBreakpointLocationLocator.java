@@ -702,10 +702,12 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					
 				}
 			}
-			fLineLocation= lineNumber(firstConstant.getStartPosition());
-			fLocationFound= true;
-			fLocationType= LOCATION_LINE;
-			fTypeName= computeTypeName(firstConstant);
+			if(firstConstant != null){
+				fLineLocation= lineNumber(firstConstant.getStartPosition());
+				fLocationFound= true;
+				fLocationType= LOCATION_LINE;
+				fTypeName= computeTypeName(firstConstant);
+			}
 		}
 		return false;
 	}

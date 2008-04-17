@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,7 +423,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @since 3.3
      */
     private String createQualifiedTypeName(IType type) {
-    	String tname = type.getFullyQualifiedName();
+    	String tname = pruneAnonymous(type);
     	try {
 	    	if(!type.getJavaProject().exists()) {
 	    		String packName = null;
@@ -439,16 +439,37 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					tname =  packName+"."+tname; //$NON-NLS-1$
 				}
 			}
-	    	if(type.isAnonymous()) {
-				//prune the $# from the name
-				int idx = tname.indexOf('$');
-				if(idx > -1) {
-					tname = tname.substring(0, idx);
-				}
-	    	}
     	} 
     	catch (JavaModelException e) {}
     	return tname;
+    }
+    
+    /**
+     * Prunes out all naming occurrences of anonymous inner types, since these types have no names
+     * and cannot be derived visiting an AST (no positive type name matching while visiting ASTs)
+     * @param type
+     * @return the compiled type name from the given {@link IType} with all occurrences of anonymous inner types removed
+     * @since 3.4
+     */
+    private String pruneAnonymous(IType type) {
+    	StringBuffer buffer = new StringBuffer();
+    	IJavaElement parent = type;
+    	while(parent != null) {
+    		if(parent.getElementType() == IJavaElement.TYPE){
+    			IType atype = (IType) parent;
+    			try {
+	    			if(!atype.isAnonymous()) {
+	    				if(buffer.length() > 0) {
+	    					buffer.insert(0, '$');
+	    				}
+	    				buffer.insert(0, atype.getElementName());
+	    			}
+    			}
+    			catch(JavaModelException jme) {}
+    		}
+    		parent = parent.getParent();
+    	}
+    	return buffer.toString();
     }
     
     /**
@@ -1069,9 +1090,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                	}
                 	}
                 }
-                IJavaElement e = unit.getElementAt(offset);
-                if (e instanceof IMember) {
-                    m = (IMember) e;
+                if(unit != null){
+	                IJavaElement e = unit.getElementAt(offset);
+	                if (e instanceof IMember) {
+	                    m = (IMember) e;
+	                }
                 }
             }
             if (m != null) {
