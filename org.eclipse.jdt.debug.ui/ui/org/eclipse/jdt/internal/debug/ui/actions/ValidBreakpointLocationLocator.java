@@ -256,7 +256,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	private boolean isReplacedByConstantValue(Expression node) {
 		switch (node.getNodeType()) {
-			// litterals are constant
+			// literals are constant
 			case ASTNode.BOOLEAN_LITERAL:
 			case ASTNode.CHARACTER_LITERAL:
 			case ASTNode.NUMBER_LITERAL:

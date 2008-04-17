@@ -425,19 +425,17 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     private String createQualifiedTypeName(IType type) {
     	String tname = pruneAnonymous(type);
     	try {
-	    	if(!type.getJavaProject().exists()) {
-	    		String packName = null;
-	    		if (type.isBinary()) {
-	    			packName = type.getPackageFragment().getElementName();
-	    		} else {
-	    			IPackageDeclaration[] pd = type.getCompilationUnit().getPackageDeclarations();
-					if(pd.length > 0) {
-						packName = pd[0].getElementName();
-					}
-	    		}
-				if(packName != null && !packName.equals(EMPTY_STRING)) {
-					tname =  packName+"."+tname; //$NON-NLS-1$
+    		String packName = null;
+    		if (type.isBinary()) {
+    			packName = type.getPackageFragment().getElementName();
+    		} else {
+    			IPackageDeclaration[] pd = type.getCompilationUnit().getPackageDeclarations();
+				if(pd.length > 0) {
+					packName = pd[0].getElementName();
 				}
+    		}
+			if(packName != null && !packName.equals(EMPTY_STRING)) {
+				tname =  packName+"."+tname; //$NON-NLS-1$
 			}
     	} 
     	catch (JavaModelException e) {}
@@ -986,13 +984,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                         }
                     } else {
                         if (container instanceof IMethod) {
-                        	if(method.getDeclaringType().equals(container.getDeclaringType())) {
-	                            if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
-	                                if (method.isSimilar((IMethod) container)) {
-	                                    return methodBreakpoint;
-	                                }
-	                            }
-                        	}
+                            if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
+                                if (method.isSimilar((IMethod) container)) {
+                                    return methodBreakpoint;
+                                }
+                            }
                         }
                     }
                 }
