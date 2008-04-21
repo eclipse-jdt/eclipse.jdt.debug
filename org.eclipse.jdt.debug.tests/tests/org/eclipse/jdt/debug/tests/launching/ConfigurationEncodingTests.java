@@ -162,6 +162,10 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	 */
 	public void testGetSpecificResourcesEncoding() throws CoreException {
 		String oldencoding = ResourcesPlugin.getEncoding();
+		IFile res = (IFile) getResource("MigrationTests.java"),
+		res2 = (IFile) getResource("MigrationTests2.java");
+		String resCharset = res.getCharset();
+		String res2Charset = res2.getCharset();
 		ILaunchConfiguration config = getLaunchConfiguration("LaunchHistoryTest");
 		assertTrue("the configuration could not be found", config != null);
 		assertTrue("there should be no encoding set on the configuration", config.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null) == null);
@@ -169,8 +173,6 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
 		try {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, "UTF-16LE");
-			IFile res = (IFile) getResource("MigrationTests.java"),
-				res2 = (IFile) getResource("MigrationTests2.java");
 			assertTrue("the resource MigrationTests.java should not be null", res != null);
 			assertTrue("the resource MigrationTests2.java should not be null", res2 != null);
 			copy.setMappedResources(new IResource[] {res, res2});
@@ -186,6 +188,8 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 		finally {
 			//ensure old encoding is restored
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, (oldencoding == null ? getDefaultEncoding() : oldencoding));
+			res.setCharset(resCharset, null);
+			res2.setCharset(res2Charset, null);
 			//ensure old mapping is restored
 			copy.setMappedResources(oldmapped);
 			copy.doSave();
