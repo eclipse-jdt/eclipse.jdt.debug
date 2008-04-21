@@ -719,6 +719,7 @@ public abstract class AbstractJDITest extends TestCase {
 			if (!vm.exists()) {
 				launcher = binDirectory + "java";
 			}
+			commandLine.add(launcher);
 
 			if (fBootPath.length() > 0) {
 				commandLine.add("-bootpath");
@@ -811,7 +812,7 @@ public abstract class AbstractJDITest extends TestCase {
 
 	
 	/**
-	 * Conects to the target vm.
+	 * Connects to the target vm.
 	 */
 	protected void connectToVM() {
 		// Start the console reader if possible so that the VM doesn't block when the stdout is full
