@@ -54,7 +54,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * 
- * @since 3.4
+ * @since 3.3
  */
 public class ExpressionInformationControlCreator implements IInformationControlCreator {
 
