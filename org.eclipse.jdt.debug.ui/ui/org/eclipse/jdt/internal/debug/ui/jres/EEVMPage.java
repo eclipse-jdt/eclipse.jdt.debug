@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Page used to edit an 'EE' VM.
  * 
- * @since 3.4
+ * @since 3.3
  */
 public class EEVMPage extends AbstractVMInstallPage {
 	
