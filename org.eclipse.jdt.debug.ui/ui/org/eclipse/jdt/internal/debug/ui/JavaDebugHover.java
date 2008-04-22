@@ -11,33 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHoverExtension;
-import org.eclipse.jface.text.ITextViewer;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
@@ -47,7 +26,6 @@ import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -55,15 +33,23 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
-
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 
-public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
+public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
     
     private IEditorPart fEditor;
 		
@@ -100,159 +86,27 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-	    IJavaStackFrame frame = getFrame();
-	    if (frame != null) {
-	        // first check for 'this' - code resolve does not resolve java elements for 'this'
-	        IDocument document= textViewer.getDocument();
-			if (document != null) {
-			    try {
-                    String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
-                    if (variableName.equals("this")) { //$NON-NLS-1$
-                        try {
-                            IJavaVariable variable = frame.findVariable(variableName);
-                            if (variable != null) {
-                                return getVariableText(variable);
-                            }
-                        } catch (DebugException e) {
-                            return null;
-                        }
-                    }
-                } catch (BadLocationException e) {
-                    return null;
-                }
-			}
-		    ICodeAssist codeAssist = null;
-		    if (fEditor != null) {
-				IEditorInput input = fEditor.getEditorInput();
-				Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
-				if (element == null) {
-					element = input.getAdapter(IClassFile.class);
-				}
-				if (element instanceof ICodeAssist) {
-					codeAssist = ((ICodeAssist)element);
-				}
-		    }
-		    if (codeAssist == null) {
-		        return getRemoteHoverInfo(frame, textViewer, hoverRegion);
-		    }
-            
-            IJavaElement[] resolve = null;
-            try {
-                resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
-            } catch (JavaModelException e1) {
-                resolve = new IJavaElement[0];
-            }
-            try {
-            	for (int i = 0; i < resolve.length; i++) {
-            		IJavaElement javaElement = resolve[i];
-            		if (javaElement instanceof IField) {
-            		    IField field = (IField)javaElement;
-            		    IJavaVariable variable = null;
-            		    IJavaDebugTarget debugTarget = (IJavaDebugTarget)frame.getDebugTarget();
-            		    if (Flags.isStatic(field.getFlags())) {
-							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
-            		    	if (javaTypes != null) {
-	            		    	for (int j = 0; j < javaTypes.length; j++) {
-									IJavaType type = javaTypes[j];
-									if (type instanceof IJavaReferenceType) {
-										IJavaReferenceType referenceType = (IJavaReferenceType) type;
-										variable = referenceType.getField(field.getElementName());
-									}
-									if (variable != null) {
-										break;
-									}
-								}
-            		    	}
-            		    	if (variable == null) {
-            		    		// the class is not loaded yet, but may be an in-lined primitive constant
-            		    		Object constant = field.getConstant();
-								if (constant != null) {
-									IJavaValue value = null;
-            		    			if (constant instanceof Integer) {
-										value = debugTarget.newValue(((Integer)constant).intValue());
-									} else if (constant instanceof Byte) {
-										value = debugTarget.newValue(((Byte)constant).byteValue());
-									} else if (constant instanceof Boolean) {
-										value = debugTarget.newValue(((Boolean)constant).booleanValue());
-									} else if (constant instanceof Character) {
-										value = debugTarget.newValue(((Character)constant).charValue());
-									} else if (constant instanceof Double) {
-										value = debugTarget.newValue(((Double)constant).doubleValue());
-									} else if (constant instanceof Float) {
-										value = debugTarget.newValue(((Float)constant).floatValue());
-									} else if (constant instanceof Long) {
-										value = debugTarget.newValue(((Long)constant).longValue());
-									} else if (constant instanceof Short) {
-										value = debugTarget.newValue(((Short)constant).shortValue());
-									} else if (constant instanceof String) {
-										value = debugTarget.newValue((String)constant);
-									}
-            		    			if (value != null) {
-            		    				variable = new JDIPlaceholderVariable(field.getElementName(), value);
-            		    			}
-            		    		}
-								if (variable == null) {
-									return null; // class not loaded yet and not a constant
-								}
-            		    	}
-            		    } else {
-            		    	if (!frame.isStatic()) {
-            		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
-            		    		typeSignature = typeSignature.replace('.', '/');
-            		    		variable = frame.getThis().getField(field.getElementName(), typeSignature);
-            		    	}
-            		    }
-            		    if (variable != null) {
-            		        return getVariableText(variable);
-            		    }
-            			break;
-            		}
-            		if (javaElement instanceof ILocalVariable) {
-            		    ILocalVariable var = (ILocalVariable)javaElement;
-            		    IJavaElement parent = var.getParent();
-            		    while (!(parent instanceof IMethod) && parent != null) {
-            		    	parent = parent.getParent();
-            		    }
-            		    if (parent instanceof IMethod) {
-            				IMethod method = (IMethod) parent;
-            				boolean equal = false;
-            				if (method.isBinary()) {
-            					// compare resolved signatures
-            					if (method.getSignature().equals(frame.getSignature())) {
-            						equal = true;
-            					}
-            				} else {
-            					// compare unresolved signatures
-            					if (((frame.isConstructor() && method.isConstructor()) || frame.getMethodName().equals(method.getElementName()))
-            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())
-            							&& frame.getArgumentTypeNames().size() == method.getNumberOfParameters()) {
-            						equal = true;
-            					}
-            				}
-            				if (equal) {
-            					return generateHoverForLocal(frame, var.getElementName());
-            				}
-            			}
-            		    break;
-            		}
-            	}
-            } catch (CoreException e) {
-            	JDIDebugPlugin.log(e);
-            }
-	    }
-	    return null;
+		Object object = getHoverInfo2(textViewer, hoverRegion);
+		if (object instanceof IVariable) {	
+			IVariable var = (IVariable) object;
+			return getVariableText(var);
+		}
+		return null;
 	}
 	
 	/**
-	 * Generate hover info via a variable search, if the java element is not avilable.
+	 * Returns a local variable in the given frame based on the hover region
+	 * or <code>null</code> if none.
+	 * 
+	 * @return local variable or <code>null</code>
 	 */
-	private String getRemoteHoverInfo(IJavaStackFrame frame, ITextViewer textViewer, IRegion hoverRegion) {
+	private IVariable resolveLocalVariable(IJavaStackFrame frame, ITextViewer textViewer, IRegion hoverRegion) {
 		if (frame != null) {
 			try {
 				IDocument document= textViewer.getDocument();
 				if (document != null) {
 					String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
-					return generateHoverForLocal(frame, variableName);
+					return findLocalVariable(frame, variableName);
 				}
 			} catch (BadLocationException x) {
 			}
@@ -260,20 +114,24 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		return null;
 	}
 	
-	private String generateHoverForLocal(IJavaStackFrame frame, String varName) {
-	    String variableText= null;
-		try {
-			IVariable variable= frame.findVariable(varName);
-			if (variable != null) {
-				variableText= getVariableText(variable);
-			}
-		} catch (DebugException x) {
-			if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-				JDIDebugUIPlugin.log(x);
+	/**
+	 * Returns a local variable in the given frame based on the the given name
+	 * or <code>null</code> if none.
+	 * 
+	 * @return local variable or <code>null</code>
+	 */
+	private IVariable findLocalVariable(IJavaStackFrame frame, String variableName) {
+		if (frame != null) {
+			try {
+				return frame.findVariable(variableName);
+			} catch (DebugException x) {
+				if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					JDIDebugUIPlugin.log(x);
+				}
 			}
 		}
-		return variableText;
-	}
+		return null;
+	}	
 
 	/**
 	 * Returns HTML text for the given variable
@@ -361,10 +219,160 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
+		return new ExpressionInformationControlCreator();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+	    IJavaStackFrame frame = getFrame();
+	    if (frame != null) {
+	        // first check for 'this' - code resolve does not resolve java elements for 'this'
+	        IDocument document= textViewer.getDocument();
+			if (document != null) {
+			    try {
+                    String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
+                    if (variableName.equals("this")) { //$NON-NLS-1$
+                        try {
+                            IJavaVariable variable = frame.findVariable(variableName);
+                            if (variable != null) {
+                                return variable;
+                            }
+                        } catch (DebugException e) {
+                            return null;
+                        }
+                    }
+                } catch (BadLocationException e) {
+                    return null;
+                }
 			}
-		};
+		    ICodeAssist codeAssist = null;
+		    if (fEditor != null) {
+				IEditorInput input = fEditor.getEditorInput();
+				Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
+				if (element == null) {
+					element = input.getAdapter(IClassFile.class);
+				}
+				if (element instanceof ICodeAssist) {
+					codeAssist = ((ICodeAssist)element);
+				}
+		    }
+		    if (codeAssist == null) {
+		        return resolveLocalVariable(frame, textViewer, hoverRegion);
+		    }
+            
+            IJavaElement[] resolve = null;
+            try {
+                resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
+            } catch (JavaModelException e1) {
+                resolve = new IJavaElement[0];
+            }
+            try {
+            	for (int i = 0; i < resolve.length; i++) {
+            		IJavaElement javaElement = resolve[i];
+            		if (javaElement instanceof IField) {
+            		    IField field = (IField)javaElement;
+            		    IJavaVariable variable = null;
+            		    IJavaDebugTarget debugTarget = (IJavaDebugTarget)frame.getDebugTarget();
+            		    if (Flags.isStatic(field.getFlags())) {
+							IJavaType[] javaTypes = debugTarget.getJavaTypes(field.getDeclaringType().getFullyQualifiedName());
+            		    	if (javaTypes != null) {
+	            		    	for (int j = 0; j < javaTypes.length; j++) {
+									IJavaType type = javaTypes[j];
+									if (type instanceof IJavaReferenceType) {
+										IJavaReferenceType referenceType = (IJavaReferenceType) type;
+										variable = referenceType.getField(field.getElementName());
+									}
+									if (variable != null) {
+										break;
+									}
+								}
+            		    	}
+            		    	if (variable == null) {
+            		    		// the class is not loaded yet, but may be an in-lined primitive constant
+            		    		Object constant = field.getConstant();
+								if (constant != null) {
+									IJavaValue value = null;
+            		    			if (constant instanceof Integer) {
+										value = debugTarget.newValue(((Integer)constant).intValue());
+									} else if (constant instanceof Byte) {
+										value = debugTarget.newValue(((Byte)constant).byteValue());
+									} else if (constant instanceof Boolean) {
+										value = debugTarget.newValue(((Boolean)constant).booleanValue());
+									} else if (constant instanceof Character) {
+										value = debugTarget.newValue(((Character)constant).charValue());
+									} else if (constant instanceof Double) {
+										value = debugTarget.newValue(((Double)constant).doubleValue());
+									} else if (constant instanceof Float) {
+										value = debugTarget.newValue(((Float)constant).floatValue());
+									} else if (constant instanceof Long) {
+										value = debugTarget.newValue(((Long)constant).longValue());
+									} else if (constant instanceof Short) {
+										value = debugTarget.newValue(((Short)constant).shortValue());
+									} else if (constant instanceof String) {
+										value = debugTarget.newValue((String)constant);
+									}
+            		    			if (value != null) {
+            		    				variable = new JDIPlaceholderVariable(field.getElementName(), value);
+            		    			}
+            		    		}
+								if (variable == null) {
+									return null; // class not loaded yet and not a constant
+								}
+            		    	}
+            		    } else {
+            		    	if (!frame.isStatic()) {
+            		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
+            		    		typeSignature = typeSignature.replace('.', '/');
+            		    		variable = frame.getThis().getField(field.getElementName(), typeSignature);
+            		    	}
+            		    }
+            		    if (variable != null) {
+            		        return variable;
+            		    }
+            			break;
+            		}
+            		if (javaElement instanceof ILocalVariable) {
+            		    ILocalVariable var = (ILocalVariable)javaElement;
+            		    IJavaElement parent = var.getParent();
+            		    while (!(parent instanceof IMethod) && parent != null) {
+            		    	parent = parent.getParent();
+            		    }
+            		    if (parent instanceof IMethod) {
+            				IMethod method = (IMethod) parent;
+            				boolean equal = false;
+            				if (method.isBinary()) {
+            					// compare resolved signatures
+            					if (method.getSignature().equals(frame.getSignature())) {
+            						equal = true;
+            					}
+            				} else {
+            					// compare unresolved signatures
+            					if (((frame.isConstructor() && method.isConstructor()) || frame.getMethodName().equals(method.getElementName()))
+            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())
+            							&& frame.getArgumentTypeNames().size() == method.getNumberOfParameters()) {
+            						equal = true;
+            					}
+            				}
+            				if (equal) {
+            					return findLocalVariable(frame, var.getElementName());
+            				}
+            			}
+            		    break;
+            		}
+            	}
+            } catch (CoreException e) {
+            	JDIDebugPlugin.log(e);
+            }
+	    }
+	    return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new ExpressionInformationControlCreator();
 	}
 }

@@ -256,26 +256,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setVisible(boolean)
 		 */
 		public void setVisible(boolean visible) {
-			if (visible) {
-//				// restore weights
-//				IDialogSettings settings = getDialogSettings(false);
-//				if (settings != null) {
-//					int x = getIntSetting(settings, WIDTH);
-//					if (x > 0) {
-//						int y = getIntSetting(settings, HEIGHT);
-//						if (y > 0) {
-//							setSizeConstraints(x, y);
-//					    	int tree = getIntSetting(settings, SASH_WEIGHT_TREE);
-//					    	if (tree > 0) {
-//					    		int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
-//					    		if (details > 0) {
-//					    			fSashForm.setWeights(new int[]{tree, details});
-//					    		}
-//					    	}							
-//						}
-//					}
-//				}				
-			} else {
+			if (!visible) {		
 				persistSettings(getShell());
 			}
 			super.setVisible(visible);
