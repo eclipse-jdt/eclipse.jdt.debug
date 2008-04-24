@@ -66,8 +66,6 @@ public class ActionMessages extends NLS {
 	public static String ProjectSelectionDialog_Add_required_projects_of_selected_projects__2;
 
 	public static String AddJarAction_Add__JARs_1;
-	public static String AddJarAction_JAR_Selection_7;
-	public static String AddJarAction_Choose_jars_to_add__8;
 
 	public static String AddExternalJar_Add_E_xternal_JARs_1;
 	public static String AddExternalJar_Jar_Selection_3;
