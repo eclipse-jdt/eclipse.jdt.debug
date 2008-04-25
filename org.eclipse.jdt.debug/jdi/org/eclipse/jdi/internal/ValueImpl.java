@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 				return (VoidValueImpl) value;
 			}
 		}
-		throw new InvalidTypeException(MessageFormat.format(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1, new String[]{value.type().name(), type.name()})); 
+		throw new InvalidTypeException(MessageFormat.format(JDIMessages.ValueImpl_Type_of_the_value_not_compatible_with_the_expected_type__1, new String[]{value != null ? value.type().name() : "null", type.name()}));  //$NON-NLS-1$
 	}
 
 	/**
