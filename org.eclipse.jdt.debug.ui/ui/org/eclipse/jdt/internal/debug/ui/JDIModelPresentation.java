@@ -461,11 +461,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (isString) {
 				buffer.append('"');
 			}
-			if ("C".equals(signature)) { //$NON-NLS-1$
-				buffer.append(valueString);
-			} else {
-				buffer.append(DefaultLabelProvider.escapeSpecialChars(valueString));
-			}
+			buffer.append(DefaultLabelProvider.escapeSpecialChars(valueString));
 			if (isString) {
 				buffer.append('"');
 				if(value instanceof IJavaObject){
@@ -1213,8 +1209,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		
-		String valueString= getFormattedValueText(javaValue); 
-		
+		String valueString= getFormattedValueText(javaValue);
+
 		//do not put the equal sign for array partitions
 		if (valueString.length() != 0) {
 			buff.append("= "); //$NON-NLS-1$
