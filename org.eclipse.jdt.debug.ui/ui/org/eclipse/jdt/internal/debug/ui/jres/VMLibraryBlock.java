@@ -269,7 +269,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		}
 		FileDialog dialog= new FileDialog(fLibraryViewer.getControl().getShell(), SWT.MULTI);
 		dialog.setText(JREMessages.VMLibraryBlock_10);
-		dialog.setFilterExtensions(new String[] {"*.jar;*.zip"}); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*.jar;*.zip","*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();
 		if (res == null) {
