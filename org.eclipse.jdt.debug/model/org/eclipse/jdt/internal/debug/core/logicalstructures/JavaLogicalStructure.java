@@ -292,7 +292,9 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			}
 			// evaluate the logical value
 			IJavaValue logicalValue = evaluationBlock.evaluate(fValue); 
-			((JDIValue)logicalValue).setLogicalParent(javaValue);
+			if (logicalValue instanceof JDIValue){
+				((JDIValue)logicalValue).setLogicalParent(javaValue);
+			}
 			return logicalValue;
 
 		} catch (CoreException e) {
