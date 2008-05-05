@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,10 +90,16 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 	public void deactivated() {
         // remove EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
-        handlerService.deactivateHandler(fHandlerActivation);
-        IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
-        contextService.deactivateContext(fContextActivation);
+		if (fHandlerActivation != null){
+			IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+			handlerService.deactivateHandler(fHandlerActivation);
+			fHandlerActivation = null;
+		}
+        if (fContextActivation != null){
+        	IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
+        	contextService.deactivateContext(fContextActivation);
+        	fContextActivation = null;
+        }
 	}
 
 }
