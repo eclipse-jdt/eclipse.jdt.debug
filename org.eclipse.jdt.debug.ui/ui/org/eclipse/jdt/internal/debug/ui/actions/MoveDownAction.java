@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
-
 
 import java.util.List;
 
@@ -24,8 +23,9 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	public MoveDownAction(IClasspathViewer viewer) {
 		super(ActionMessages.MoveDownAction_M_ove_Down_1, viewer); 
 	}
-	/**
-	 * @see IAction#run()
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 		List targets = getOrderedSelection();
@@ -44,21 +44,28 @@ public class MoveDownAction extends RuntimeClasspathAction {
 				list.set(bottom, target);
 				list.set(index, temp);
 			}
-			bottom = index;
+			if (bottom == index){
+				bottom--;
+			} else {
+				bottom = index;
+			}
 		} 
 		setEntries(list);
 	}
 
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
 		}
-		return getViewer().updateSelection(getActionType(), selection) && !isIndexSelected(selection, getEntriesAsList().size() - 1);	
+		return getViewer().updateSelection(getActionType(), selection);	
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
+	 */
 	protected int getActionType() {
 		return MOVE;
 	}

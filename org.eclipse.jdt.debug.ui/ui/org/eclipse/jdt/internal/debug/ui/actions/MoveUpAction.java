@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
-
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +24,10 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	public MoveUpAction(IClasspathViewer viewer) {
 		super(ActionMessages.MoveUpAction_Move_U_p_1, viewer); 
 	}
-	/**
+
+	/* (non-Javadoc)
 	 * Moves all selected entries up one position (if possible).
-	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 		List targets = getOrderedSelection();
@@ -48,21 +47,28 @@ public class MoveUpAction extends RuntimeClasspathAction {
 				list.set(top, target);
 				list.set(index, temp);
 			}
-			top = index;
+			if (index == top){
+				top++;
+			} else {
+				top = index;
+			}
 		} 
 		setEntries(list);
 	}
 
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
 		}
-		return getViewer().updateSelection(getActionType(), selection) && !isIndexSelected(selection, 0);
+		return getViewer().updateSelection(getActionType(), selection);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
+	 */
 	protected int getActionType() {
 		return MOVE;
 	}
