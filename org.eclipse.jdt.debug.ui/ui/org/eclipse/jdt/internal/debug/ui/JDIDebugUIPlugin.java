@@ -336,15 +336,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		JavaDebugOptionsManager.getDefault().startup();
-		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
-			public void doneSaving(ISaveContext context) {}
-			public void prepareToSave(ISaveContext context)	throws CoreException {}
-			public void rollback(ISaveContext context) {}
-			public void saving(ISaveContext context) throws CoreException {
-				savePluginPreferences();
-			}
-		});
 		IAdapterManager manager= Platform.getAdapterManager();
 		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
 		manager.registerAdapters(fActionFilterAdapterFactory, IMember.class);
@@ -391,9 +382,18 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
 		
-		
 		// initialize exception inspector handler
 		new ExceptionInspector();
+		
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+			public void doneSaving(ISaveContext context) {}
+			public void prepareToSave(ISaveContext context)	throws CoreException {}
+			public void rollback(ISaveContext context) {}
+			public void saving(ISaveContext context) throws CoreException {
+				savePluginPreferences();
+			}
+		});
+		JavaDebugOptionsManager.getDefault().startup();
 	}
 	
 	/* (non-Javadoc)
