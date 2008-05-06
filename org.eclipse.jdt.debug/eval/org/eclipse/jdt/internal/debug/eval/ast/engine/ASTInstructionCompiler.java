@@ -2181,27 +2181,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
 		if(fieldBinding != null) {
 			ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
-			if(declaringTypeBinding != null) {
-				Expression expression = node.getExpression();
-				String fieldId = fieldName.getIdentifier();
-		
-				if (Modifier.isStatic(fieldBinding.getModifiers())) {
-					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
-					expression.accept(this);
-					addPopInstruction();
+			Expression expression = node.getExpression();
+			String fieldId = fieldName.getIdentifier();
+	
+			if (Modifier.isStatic(fieldBinding.getModifiers())) {
+				push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
+				expression.accept(this);
+				addPopInstruction();
+			} else {
+				if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
+					push(new PushArrayLength(fCounter));
 				} else {
-					if (declaringTypeBinding == null) { // it is a field without declaring type => it is the special length array field
-						push(new PushArrayLength(fCounter));
-					} else {
-						if (isALocalType(declaringTypeBinding)) {
-							setHasError(true);
-							addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31); 
-							return false;
-						}
-						push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
+					if (isALocalType(declaringTypeBinding)) {
+						setHasError(true);
+						addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31); 
+						return false;
 					}
-					expression.accept(this);
+					push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
 				}
+				expression.accept(this);
 			}
 		}
 		return false;
