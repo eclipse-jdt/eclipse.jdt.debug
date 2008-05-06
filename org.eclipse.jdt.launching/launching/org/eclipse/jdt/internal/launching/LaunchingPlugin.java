@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,15 +33,29 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
+
+import org.osgi.framework.BundleContext;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -57,18 +71,21 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -78,22 +95,12 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
-import org.osgi.framework.BundleContext;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
 	/**
 	 * The id of the JDT launching plug-in (value <code>"org.eclipse.jdt.launching"</code>).
-	 */	
+	 */
 	public static final String ID_PLUGIN= "org.eclipse.jdt.launching"; //$NON-NLS-1$
 	
 	/**
@@ -132,7 +139,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Mapping of top-level VM installation directories to library info for that
 	 * VM.
 	 */
-	private static Map fgLibraryInfoMap = null;	
+	private static Map fgLibraryInfoMap = null;
 	
 	/**
 	 * Whether changes in VM preferences are being batched. When being batched
@@ -173,7 +180,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				String name = vm.getName();
 				if (name != null) {
 					IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-					path = path.append(new Path(vm.getVMInstallType().getId()));				
+					path = path.append(new Path(vm.getVMInstallType().getId()));
 					path = path.append(new Path(name));
 					return path;
 				}
@@ -208,7 +215,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				// bug 33746 - if there is no old name, then this is not a re-name.
 				if (oldName != null) {
 					oldId = oldId.append(oldName);
-					fRenamedContainerIds.put(oldId, newId);	
+					fRenamedContainerIds.put(oldId, newId);
 					//bug 39222 update launch configurations that ref old name
 					try {
 						ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
@@ -251,7 +258,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor1) throws CoreException {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0, projects.length + 1); 
+					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0, projects.length + 1);
 					rebind(monitor1, projects);
 					monitor1.done();
 				}
@@ -294,7 +301,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 										// The JRE was re-named. This changes the identifier of
 										// the container entry.
 										newBinding = renamed;
-									}									
+									}
 								}
 								JREContainerInitializer initializer = new JREContainerInitializer();
 								if (newBinding == null){
@@ -326,7 +333,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		private VMChanges fChanges;
 		
 		public JREUpdateJob(VMChanges changes) {
-			super(LaunchingMessages.LaunchingPlugin_1); 
+			super(LaunchingMessages.LaunchingPlugin_1);
 			fChanges = changes;
 			setSystem(true);
 		}
@@ -362,7 +369,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public static LibraryInfo getLibraryInfo(String javaInstallPath) {
 		if (fgLibraryInfoMap == null) {
-			restoreLibraryInfo(); 
+			restoreLibraryInfo();
 		}
 		return (LibraryInfo) fgLibraryInfoMap.get(javaInstallPath);
 	}
@@ -376,15 +383,15 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public static void setLibraryInfo(String javaInstallPath, LibraryInfo info) {
 		if (fgLibraryInfoMap == null) {
-			restoreLibraryInfo(); 
-		}		
+			restoreLibraryInfo();
+		}
 		if (info == null) {
 			fgLibraryInfoMap.remove(javaInstallPath);
 		} else {
 			fgLibraryInfoMap.put(javaInstallPath, info);
 		}
 		saveLibraryInfo();
-	}	
+	}
 		
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
@@ -433,7 +440,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
-	}	
+	}
 		
 	/**
 	 * Logs the specified exception by creating a new <code>Status</code>
@@ -441,7 +448,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
-	}	
+	}
 	
 	/**
 	 * Clears zip file cache.
@@ -483,20 +490,20 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		// Exclude launch configurations from being copied to the output directory
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
 		Hashtable optionsMap = JavaCore.getOptions();
-		String filters= (String)optionsMap.get("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter"); //$NON-NLS-1$
+		String filters= (String)optionsMap.get(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER);
 		boolean modified = false;
 		if (filters == null || filters.length() == 0) {
 			filters= launchFilter;
 			modified = true;
 		} else if (filters.indexOf(launchFilter) == -1) {
-			filters= filters + ',' + launchFilter; 
+			filters= filters + ',' + launchFilter;
 			modified = true;
 		}
 
 		if (modified) {
-			optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter", filters);  //$NON-NLS-1$
+			optionsMap.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, filters);
 			JavaCore.setOptions(optionsMap);
-		}		
+		}
 
 		// set default preference values
 		getPluginPreferences().setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
@@ -510,7 +517,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Returns the VM connector with the specified id, or <code>null</code>
-	 * if none. 
+	 * if none.
 	 * 
 	 * @param id connector identifier
 	 * @return VM connector
@@ -519,7 +526,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		if (fVMConnectors == null) {
 			initializeVMConnectors();
 		}
-		return (IVMConnector)fVMConnectors.get(id); 
+		return (IVMConnector)fVMConnectors.get(id);
 	}
 	
 	/**
@@ -531,15 +538,15 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		if (fVMConnectors == null) {
 			initializeVMConnectors();
 		}
-		return (IVMConnector[])fVMConnectors.values().toArray(new IVMConnector[fVMConnectors.size()]); 
-	}	
+		return (IVMConnector[])fVMConnectors.values().toArray(new IVMConnector[fVMConnectors.size()]);
+	}
 	
 	/**
 	 * Loads VM connector extensions
 	 */
 	private void initializeVMConnectors() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
-		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
+		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, "Exception occurred reading vmConnectors extensions.", null);  //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
@@ -552,7 +559,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		if (!status.isOK()) {
 			LaunchingPlugin.log(status);
-		}			
+		}
 	}
 	
 	/**
@@ -568,7 +575,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		IConfigurationElement config = (IConfigurationElement) fClasspathEntryExtensions.get(id);
 		if (config == null) {
-			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null); 
+			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
 		}
 		return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
 	}
@@ -578,12 +585,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	private void initializeRuntimeClasspathExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
-		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
+		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		fClasspathEntryExtensions = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			fClasspathEntryExtensions.put(configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
 		}
-	}	
+	}
 	
 	/**
 	 * Save preferences whenever the connect timeout changes.
@@ -601,7 +608,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 
 	/**
-	 * Check for differences between the old & new sets of installed JREs.  
+	 * Check for differences between the old & new sets of installed JREs.
 	 * Differences may include additions, deletions and changes.  Take
 	 * appropriate action for each type of difference.
 	 * 
@@ -622,16 +629,16 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			String newPrefString;
 			
 			// If empty new value, save the old value and wait for 2nd propertyChange notification
-			if (newValue == null || newValue.equals(EMPTY_STRING)) {        
+			if (newValue == null || newValue.equals(EMPTY_STRING)) {
 				fOldVMPrefString = oldValue;
 				return;
-			}					
+			}
 			// An empty old value signals the second notification in the import preferences
 			// sequence.  Now that we have both old & new prefs, we can parse and compare them.
-			else if (oldValue == null || oldValue.equals(EMPTY_STRING)) {    	
+			else if (oldValue == null || oldValue.equals(EMPTY_STRING)) {
 				oldPrefString = fOldVMPrefString;
 				newPrefString = newValue;
-			} 
+			}
 			// If both old & new values are present, this is a normal user change
 			else {
 				oldPrefString = oldValue;
@@ -652,13 +659,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			List current = newResults.getValidVMList();
 			deleted.removeAll(current);
 			
-			// Dispose deleted VMs.  The 'disposeVMInstall' method fires notification of the 
+			// Dispose deleted VMs.  The 'disposeVMInstall' method fires notification of the
 			// deletion.
 			Iterator deletedIterator = deleted.iterator();
 			while (deletedIterator.hasNext()) {
 				VMStandin deletedVMStandin = (VMStandin) deletedIterator.next();
-				deletedVMStandin.getVMInstallType().disposeVMInstall(deletedVMStandin.getId());			
-			}			
+				deletedVMStandin.getVMInstallType().disposeVMInstall(deletedVMStandin.getId());
+			}
 			
 			// Fire change notification for added and changed VMs. The 'convertToRealVM'
 			// fires the appropriate notification.
@@ -678,13 +685,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 						JavaRuntime.setDefaultVMInstall(newDefaultVM, null, false);
 					} catch (CoreException ce) {
 						log(ce);
-					}			
+					}
 				}
 			}
 			
 		} finally {
 			// stop batch changes
-			fBatchingChanges = false;	
+			fBatchingChanges = false;
 			if (vmChanges != null) {
 				JavaRuntime.removeVMInstallChangedListener(vmChanges);
 				vmChanges.process();
@@ -709,7 +716,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				LaunchingPlugin.log(e);
 			}
 		}
-		return new VMDefinitionsContainer(); 
+		return new VMDefinitionsContainer();
 	}
 						
 	/**
@@ -737,7 +744,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			VMChanges changes = new VMChanges();
 			changes.vmChanged(event);
 			changes.process();
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -835,7 +842,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 		// Serialize the Document and return the resulting String
 		return DebugPlugin.serializeDocument(doc);
-	}	
+	}
 	
 	/**
 	 * Creates an XML element for the given info.
@@ -876,7 +883,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Saves the library info in a local workspace state location 
+	 * Saves the library info in a local workspace state location
 	 */
 	private static void saveLibraryInfo() {
 		OutputStream stream= null;
@@ -938,11 +945,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 							String[] endDirs = getPathsFromXML(element, "endorsedDirs"); //$NON-NLS-1$
 							if (location != null) {
 								LibraryInfo info = new LibraryInfo(version, bootpath, extDirs, endDirs);
-								fgLibraryInfoMap.put(location, info);										
+								fgLibraryInfoMap.put(location, info);
 							}
 						}
 					}
-				}				
+				}
 			} catch (IOException e) {
 				log(e);
 			} catch (ParserConfigurationException e) {
@@ -988,8 +995,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 					}
 				}
 			}
-		}			
-		return (String[])paths.toArray(new String[paths.size()]);		
+		}
+		return (String[])paths.toArray(new String[paths.size()]);
 	}
 	
 	/**
@@ -1035,7 +1042,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Returns a shared XML parser.
 	 * 
-	 * @return an XML parser 
+	 * @return an XML parser
 	 * @throws CoreException if unable to create a parser
 	 * @since 3.0
 	 */
@@ -1045,13 +1052,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				fgXMLParser.setErrorHandler(new DefaultHandler());
 			} catch (ParserConfigurationException e) {
-				abort(LaunchingMessages.LaunchingPlugin_33, e); 
+				abort(LaunchingMessages.LaunchingPlugin_33, e);
 			} catch (FactoryConfigurationError e) {
-				abort(LaunchingMessages.LaunchingPlugin_34, e); 
+				abort(LaunchingMessages.LaunchingPlugin_34, e);
 			}
 		}
 		return fgXMLParser;
-	}	
+	}
 	
 	/**
 	 * Throws an exception with the given message and underlying exception.
@@ -1063,7 +1070,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	protected static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
 		throw new CoreException(status);
-	}	
+	}
 	
 	/**
 	 * Validates the environment
@@ -1111,7 +1118,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				}
 			}
 		}
-	}	
+	}
 	
 	/**
 	 * creates a problem marker for a jre container problem
@@ -1123,13 +1130,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		try {
 			IMarker marker = javaProject.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
 			marker.setAttributes(
-				new String[] { 
-						IMarker.MESSAGE, 
-						IMarker.SEVERITY, 
+				new String[] {
+						IMarker.MESSAGE,
+						IMarker.SEVERITY,
 						IMarker.LOCATION},
 					new Object[] {
 						message,
-						new Integer(severity), 
+						new Integer(severity),
 						LaunchingMessages.LaunchingPlugin_37
 					});
 		} catch (CoreException e) {
