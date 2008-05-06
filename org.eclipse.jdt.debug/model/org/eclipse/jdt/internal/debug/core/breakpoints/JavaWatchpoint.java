@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +26,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -337,7 +339,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <ul>
 	 */
 	protected void setDefaultAccessAndModification() throws CoreException {
-		Object[] values = new Object[]{getDefaultAccessAndModificationValues()};
+		boolean[] def = getDefaultAccessAndModificationValues();
+		Object[] values = new Object[def.length];
+		for (int i = 0; i < def.length; i++) {
+			values[i] = new Boolean(def[i]);	
+		}
 		String[] attributes = new String[]{ACCESS, MODIFICATION};
 		setAttributes(attributes, values);
 	}
