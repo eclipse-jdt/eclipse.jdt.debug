@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.swt.widgets.Shell;
 
@@ -50,7 +52,20 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
      */
     public boolean saveVariable(IVariable variable, String expression, Shell shell) {
-        // support expressions for primitives as well as literals
+        // set the value of chars directly if expression is a single character (not an expression to evaluate)
+    	if (expression.length() == 1 && variable instanceof IJavaVariable){
+    		IJavaVariable javaVariable = (IJavaVariable)variable;
+    		try {
+				if (javaVariable.getJavaType() != null && javaVariable.getJavaType().getSignature() == Signature.SIG_CHAR){
+					javaVariable.setValue(expression);
+					return true;
+				}
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+			}
+    	}
+    	
+    	// support expressions for primitives as well as literals
         IVariableValueEditor editor= new JavaObjectValueEditor();
         return editor.saveVariable(variable, expression, shell);
     }
