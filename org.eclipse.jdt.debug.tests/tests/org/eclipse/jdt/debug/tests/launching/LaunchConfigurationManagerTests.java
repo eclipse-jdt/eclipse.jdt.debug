@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -165,13 +164,11 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
-		List types = fLCM.getApplicableConfigurationTypes(resource);
+		String[] types = fLCM.getApplicableConfigurationTypes(resource);
 		assertNotNull("this listing should never be null", types);
-		assertTrue("there should be 2 types: java and applet", types.size() == 2);
-		ILaunchConfigurationType type = (ILaunchConfigurationType) types.get(0);
-		assertTrue("The type should be either applet or local java application", type.getIdentifier().equals("org.eclipse.jdt.launching.localJavaApplication") || type.getIdentifier().equals("org.eclipse.jdt.launching.javaApplet"));
-		type = (ILaunchConfigurationType) types.get(1);
-		assertTrue("The type should be either applet or local java application", type.getIdentifier().equals("org.eclipse.jdt.launching.localJavaApplication") || type.getIdentifier().equals("org.eclipse.jdt.launching.javaApplet"));
+		assertTrue("there should be 2 types: java and applet", types.length == 2);
+		assertTrue("The type should be either applet or local java application", types[0].equals("org.eclipse.jdt.launching.localJavaApplication") || types[0].equals("org.eclipse.jdt.launching.javaApplet"));
+		assertTrue("The type should be either applet or local java application", types[1].equals("org.eclipse.jdt.launching.localJavaApplication") || types[1].equals("org.eclipse.jdt.launching.javaApplet"));
 	}
 	
 	/**
@@ -181,8 +178,8 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
-		List list = fLCM.getApplicableConfigurationTypes(resource);
+		String[] list = fLCM.getApplicableConfigurationTypes(resource);
 		assertNotNull("the listing cannot be null", list);
-		assertTrue("there should be at least one configuration for this resource", list.size() > 0);
+		assertTrue("there should be at least one configuration for this resource", list.length > 0);
 	}
 }
