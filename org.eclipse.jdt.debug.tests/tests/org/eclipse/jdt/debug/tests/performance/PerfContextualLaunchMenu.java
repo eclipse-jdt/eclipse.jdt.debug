@@ -38,6 +38,7 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
      * @throws Exception
      */
     public void testContextualLaunchMenu() throws Exception {
+    	setDegradationComment("This test is unreliable as it improved 10x during 3.3 (vs 3.2), and needs to be replaced.");
         final PerfTestContextualLaunchAction action = new PerfTestContextualLaunchAction();
         
         ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");        

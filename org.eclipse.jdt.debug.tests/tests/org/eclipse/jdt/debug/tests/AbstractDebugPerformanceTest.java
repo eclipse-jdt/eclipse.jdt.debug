@@ -60,6 +60,16 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 		Performance performance= Performance.getDefault();
 		performance.tagAsGlobalSummary(fPerformanceMeter, shortName, new Dimension[] { dimension } );
 	}
+	
+	/**
+	 * Sets a degradation comment on this test.
+	 * 
+	 * @param comment the reason for degradation.
+	 */
+	public void setDegradationComment(String comment) {
+		Performance performance= Performance.getDefault();
+		performance.setComment(fPerformanceMeter, Performance.EXPLAINS_DEGRADATION_COMMENT, comment);
+	}
 
 	/**
 	 * Mark the scenario represented by the given PerformanceMeter
