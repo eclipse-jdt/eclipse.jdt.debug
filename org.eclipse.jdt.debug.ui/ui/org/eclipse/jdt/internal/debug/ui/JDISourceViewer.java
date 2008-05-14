@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import com.ibm.icu.text.Bidi;
 
-import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.ui.text.IJavaPartitions;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BidiSegmentEvent;
 import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
@@ -41,7 +24,30 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.jdt.ui.text.IJavaPartitions;
+
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 
 /**
  * A source viewer configured to display Java source. This
@@ -49,6 +55,14 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * the Java UI plugin.
  */
 public class JDISourceViewer extends SourceViewer implements IPropertyChangeListener {
+	
+	/**
+	 * BIDI delimtiers.
+	 * 
+	 * @since 3.4
+	 */
+	private static final String BIDI_DELIMITERS= "[ \\p{Punct}&&[^_]]"; //$NON-NLS-1$
+
 	
 	private Font fFont;
 	private Color fBackgroundColor;
@@ -58,27 +72,18 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 
 
 	public JDISourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		super(parent, ruler, styles);
-		StyledText text= this.getTextWidget();
-		text.addBidiSegmentListener(new  BidiSegmentListener() {
-			public void lineGetSegments(BidiSegmentEvent event) {
-				try {
-					event.segments= getBidiLineSegments(event.lineOffset);
-				} catch (BadLocationException x) {
-					// ignore
-				}
-			}
-		});
+		this(parent, ruler, null, false, styles);
 	}
 
 
 	public JDISourceViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean isOverviewRulerVisible, int styles) {
 		super(parent, ruler, overviewRuler, isOverviewRulerVisible, styles);
 		StyledText text= this.getTextWidget();
+		final int baseLevel= (styles & SWT.RIGHT_TO_LEFT) != 0 ? Bidi.DIRECTION_RIGHT_TO_LEFT : Bidi.DIRECTION_LEFT_TO_RIGHT;
 		text.addBidiSegmentListener(new  BidiSegmentListener() {
 			public void lineGetSegments(BidiSegmentEvent event) {
 				try {
-					event.segments= getBidiLineSegments(event.lineOffset);
+					event.segments= getBidiLineSegments(getDocument(), baseLevel, widgetOffset2ModelOffset(event.lineOffset), event.lineText);
 				} catch (BadLocationException x) {
 					// ignore
 				}
@@ -151,7 +156,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			styledText.setRedraw(true);
 		} else {
 			getTextWidget().setFont(font);
-		}	
+		}
 	}
 	
 	/**
@@ -186,7 +191,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 * Returns <code>null</code> if there is no such information available.
 	 */
 	private Color createColor(IPreferenceStore store, String key, Display display) {
-		RGB rgb= null;	
+		RGB rgb= null;
 		if (store.contains(key)) {
 			if (store.isDefault(key)) {
 				rgb= PreferenceConverter.getDefaultColor(store, key);
@@ -269,63 +274,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	public IContentAssistant getContentAssistant() {
 		return fContentAssistant;
 	}
-	
-	/**
-	 * Returns a segmentation of the line of the given document appropriate for bidi rendering.
-	 * The default implementation returns only the string literals of a Java code line as segments.
-	 * 
-	 * @param document the document
-	 * @param lineOffset the offset of the line
-	 * @return the line's bidi segmentation
-	 * @throws BadLocationException in case lineOffset is not valid in document
-	 */
-	protected int[] getBidiLineSegments(int lineOffset) throws BadLocationException {
-		IDocument document= getDocument();
-		if (document == null) {
-			return null;
-		}
-		IRegion line= document.getLineInformationOfOffset(lineOffset);
-		ITypedRegion[] linePartitioning= document.computePartitioning(lineOffset, line.getLength());
-		
-		List segmentation= new ArrayList();
-		for (int i= 0; i < linePartitioning.length; i++) {
-			if (IJavaPartitions.JAVA_STRING.equals(linePartitioning[i].getType()))
-				segmentation.add(linePartitioning[i]);
-		}
-		
-		
-		if (segmentation.size() == 0) 
-			return null;
-			
-		int size= segmentation.size();
-		int[] segments= new int[size * 2 + 1];
-		
-		int j= 0;
-		for (int i= 0; i < size; i++) {
-			ITypedRegion segment= (ITypedRegion) segmentation.get(i);
-			
-			if (i == 0)
-				segments[j++]= 0;
-				
-			int offset= segment.getOffset() - lineOffset;
-			if (offset > segments[j - 1])
-				segments[j++]= offset;
-				
-			if (offset + segment.getLength() >= line.getLength())
-				break;
-				
-			segments[j++]= offset + segment.getLength();
-		}
-		
-		if (j < segments.length) {
-			int[] result= new int[j];
-			System.arraycopy(segments, 0, result, 0, j);
-			segments= result;
-		}
-		
-		return segments;
-	}
-	
+
 	/**
 	 * Disposes the system resources currently in use by this viewer.
 	 */
@@ -363,7 +312,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			fStore.addPropertyChangeListener(this);
 		}
 		updateViewerFont();
-		updateViewerColors();		
+		updateViewerColors();
 	}
 
 	/**
@@ -374,4 +323,99 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		return fStore;
 	}
 	
+	/**
+	 * Returns a segmentation of the line of the given document appropriate for Bidi rendering.
+	 * 
+	 * @param document the document
+	 * @param baseLevel the base level of the line
+	 * @param lineStart the offset of the line
+	 * @param lineText Text of the line to retrieve Bidi segments for
+	 * @return the line's Bidi segmentation
+	 * @throws BadLocationException in case lineOffset is not valid in document
+	 */
+	protected static int[] getBidiLineSegments(IDocument document, int baseLevel, int lineStart, String lineText) throws BadLocationException {
+
+		if (lineText == null || document == null)
+			return null;
+
+		int lineLength= lineText.length();
+		if (lineLength <= 2)
+			return null;
+
+		// Have ICU compute embedding levels. Consume these levels to reduce
+		// the Bidi impact, by creating selective segments (preceding
+		// character runs with a level mismatching the base level).
+		// XXX: Alternatively, we could apply TextLayout. Pros would be full
+		// synchronization with the underlying StyledText's (i.e. native) Bidi
+		// implementation. Cons are performance penalty because of
+		// unavailability of such methods as isLeftToRight and getLevels.
+
+		Bidi bidi= new Bidi(lineText, baseLevel);
+		if (bidi.isLeftToRight())
+			// Bail out if this is not Bidi text.
+			return null;
+
+		IRegion line= document.getLineInformationOfOffset(lineStart);
+		ITypedRegion[] linePartitioning= TextUtilities.computePartitioning(document, IJavaPartitions.JAVA_PARTITIONING, lineStart, line.getLength(), false);
+		if (linePartitioning == null || linePartitioning.length < 1)
+			return null;
+
+		int segmentIndex= 1;
+		int[] segments= new int[lineLength + 1];
+		byte[] levels= bidi.getLevels();
+		int nPartitions= linePartitioning.length;
+		for (int partitionIndex= 0; partitionIndex < nPartitions; partitionIndex++) {
+
+			ITypedRegion partition= linePartitioning[partitionIndex];
+			int lineOffset= partition.getOffset() - lineStart;
+			//Assert.isTrue(lineOffset >= 0 && lineOffset < lineLength);
+
+			if (lineOffset > 0 && isMismatchingLevel(levels[lineOffset], baseLevel) && isMismatchingLevel(levels[lineOffset - 1], baseLevel)) {
+				// Indicate a Bidi segment at the partition start - provided
+				// levels of both character at the current offset and its
+				// preceding character mismatch the base paragraph level.
+				// Partition end will be covered either by the start of the next
+				// partition, a delimiter inside a next partition, or end of line.
+				segments[segmentIndex++]= lineOffset;
+			}
+			if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
+				int partitionEnd= Math.min(lineLength, lineOffset + partition.getLength());
+				while (++lineOffset < partitionEnd) {
+					if (isMismatchingLevel(levels[lineOffset], baseLevel) && String.valueOf(lineText.charAt(lineOffset)).matches(BIDI_DELIMITERS)) {
+						// For default content types, indicate a segment before
+						// a delimiting character with a mismatching embedding
+						// level.
+						segments[segmentIndex++]= lineOffset;
+					}
+				}
+			}
+		}
+		if (segmentIndex <= 1)
+			return null;
+
+		segments[0]= 0;
+		if (segments[segmentIndex - 1] != lineLength)
+			segments[segmentIndex++]= lineLength;
+
+		if (segmentIndex == segments.length)
+			return segments;
+
+		int[] newSegments= new int[segmentIndex];
+		System.arraycopy(segments, 0, newSegments, 0, segmentIndex);
+		return newSegments;
+	}
+
+	/**
+	 * Checks if the given embedding level is consistent with the base level.
+	 * 
+	 * @param level Character embedding level to check.
+	 * @param baseLevel Base level (direction) of the text.
+	 * @return <code>true</code> if the character level is odd and the base level is even OR the character level is even and the base level is odd, and return <code>false</code> otherwise.
+	 * 
+	 * @since 3.4
+	 */
+	private static boolean isMismatchingLevel(int level, int baseLevel) {
+		return ((level ^ baseLevel) & 1) != 0;
+	}
+
 }
