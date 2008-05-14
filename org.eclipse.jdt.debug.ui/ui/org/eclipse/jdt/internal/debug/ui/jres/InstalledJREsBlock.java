@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,6 +244,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fTable= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
+		gd.widthHint = 350;
 		fTable.setLayoutData(gd);
 		fTable.setFont(font);
 		fTable.setHeaderVisible(true);
@@ -256,6 +257,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				sortByName();
 			}
 		});
+		int defaultwidth = 350/3 +1;
+		column.setWidth(defaultwidth);
 	
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_1); 
@@ -264,7 +267,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				sortByLocation();
 			}
 		});
-        
+		column.setWidth(defaultwidth);
+		
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_2); 
 		column.addSelectionListener(new SelectionAdapter() {
@@ -272,7 +276,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				sortByType();
 			}
 		});
-
+		column.setWidth(defaultwidth);
+		
 		fVMList = new CheckboxTableViewer(fTable);			
 		fVMList.setLabelProvider(new VMLabelProvider());
 		fVMList.setContentProvider(new JREsContentProvider());
