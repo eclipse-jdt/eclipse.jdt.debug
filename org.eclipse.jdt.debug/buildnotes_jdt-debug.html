@@ -17,16 +17,16 @@
 </p>
 <p>
 	The following classes are provided as API in the package <code>org.eclipse.jdt.debug.ui.launchConfigurations</code>:
-	<ul>
+<ul>
 		<li><code>JavaAppletLaunchShortcut</code> - the standard implementation for Java applets, used in the platform</li>
 		<li><code>JavaApplicationLaunchShortcut</code> - the standard implementation for Java application, used in the platform</li>
 		<li><code>JavaLaunchShortcut</code> - an abstract implementation of a shortcut to launch Java artifacts, used as the parent class to the two aforementioned classes</li>
-	</ul>
+</ul>
 </p>
 <p>
 	The methods exposed to consumers from the parent class <code>JavaLaunchShortcut</code> and through the 
 	two subclasses are:
-	<ul>
+<ul>
 		<li> <code>getConfigurationType()</code> - returns the type of configuration this shortcut creates</li>
 		<li> <code>createConfiguration(IType type)</code> - creates a launch configuration for the specified <code>IType</code></li>
 		<li> <code>chooseType(IType[] types, String title)</code> - allows an <code>IType</code> to be selected from the given list</li>
@@ -37,7 +37,7 @@
 		<li> <code>findLaunchConfiguration(IType type, ILaunchConfigurationType configType)</code> - searches for a launch configuration associated with the specified <code>IType</code> and configuration type</li>
 		<li> <code>chooseConfiguration(List configList)</code> - selects a specific configuration from the specified listing</li>
 		<li> <code>getShell()</code> - returns the shell used for the Java launch shortcuts</li>
-	</ul>
+</ul>
 </p>
 
 <h3>Support for Execution Environment Descriptions</h3>
@@ -88,6 +88,17 @@
   <li><code>public String getVersion()</code></li>
 </ul>
 
+<h3>New API methods on IJavaObject</h3>
+<ul>
+  <li><code>public void enableCollection()</code></li>
+  <li><code>public void disableCollection()</code></li>
+  <li><code>public long getUniqueId()</code>	 </li>
+</ul>
+<h3>New API preference constants (<code>IJavaDebugUIConstants</code>)</h3>
+<ul>
+  <li><code>PREF_ALLINSTANCES_MAX_COUNT</code></li>
+  <li><code>PREF_ALLREFERENCES_MAX_COUNT</code> </li>
+</ul>
 <h2>May 14, 2008</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=232060">Bug 232060</a>: BIDI algorithm in JDISourceViewer is wrong<br>
