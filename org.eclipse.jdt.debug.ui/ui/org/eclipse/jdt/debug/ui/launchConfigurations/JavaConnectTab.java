@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,7 +152,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			FieldEditor field = null;
 			if (arg instanceof Connector.IntegerArgument) {
 				store.setDefault(arg.name(), ((Connector.IntegerArgument)arg).intValue());
-				field = new IntegerFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
+				field = new IntegerFieldEditor(arg.name(), arg.label(), fArgumentComposite);
 			} else if (arg instanceof Connector.SelectedArgument) {
 				List choices = ((Connector.SelectedArgument)arg).choices();
 				String[][] namesAndValues = new String[choices.size()][2];
@@ -165,13 +165,13 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 					count++;
 				}
 				store.setDefault(arg.name(), arg.value());
-				field = new ComboFieldEditor(arg.name(), getLabel(arg.label()), namesAndValues, fArgumentComposite);
+				field = new ComboFieldEditor(arg.name(), arg.label(), namesAndValues, fArgumentComposite);
 			} else if (arg instanceof Connector.StringArgument) {
 				store.setDefault(arg.name(), arg.value());
-				field = new StringFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
+				field = new StringFieldEditor(arg.name(), arg.label(), fArgumentComposite);
 			} else if (arg instanceof Connector.BooleanArgument) {
 				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
-				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
+				field = new BooleanFieldEditor(arg.name(), arg.label(), fArgumentComposite);					
 			}
 			if(field != null) {
 				field.setPreferenceStore(store);
@@ -185,16 +185,6 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		updateLaunchConfigurationDialog();		
 	}
 	
-	/**
-	 * Adds a colon to the label if required
-	 */
-	private String getLabel(String label) {
-		if (!label.endsWith(":")) { //$NON-NLS-1$
-			return label+":"; //$NON-NLS-1$
-		}
-		return label;
-	}
-
 	 /* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
