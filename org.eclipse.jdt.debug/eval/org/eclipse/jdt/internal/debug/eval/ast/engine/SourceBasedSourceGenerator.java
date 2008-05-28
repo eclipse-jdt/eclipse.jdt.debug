@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,6 +281,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return typeName.replace('$', '.');
 	}
 
+	/**
+	 * Returns if the specified {@link ASTNode} has the 'correct' parent type to match the current
+	 * type name context
+	 * @param node
+	 * @return true if the parent type of the given node matches the current type name context,
+	 * false otherwise
+	 */
 	private boolean isRightType(ASTNode node) {
 		int position= getPosition();
 		int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
@@ -289,7 +296,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			// check the typeName
 			String typeName= fTypeName;
 			while (node != null) {
-				if (node instanceof TypeDeclaration || node instanceof EnumDeclaration) {
+				if (node instanceof AbstractTypeDeclaration) {
 					AbstractTypeDeclaration abstractTypeDeclaration= (AbstractTypeDeclaration) node;
 					String name= abstractTypeDeclaration.getName().getIdentifier();
 					if (abstractTypeDeclaration.isLocalTypeDeclaration()) {
@@ -342,6 +349,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 						node= parent;
 						parent= node.getParent();
 					}
+				}
+				else if(node instanceof AnonymousClassDeclaration) {
+					node = node.getParent();
 				}
 			}
 		}
