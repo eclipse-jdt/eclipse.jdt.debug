@@ -3823,24 +3823,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	}
 
+	/**
+	 * Returns the method signature given the binding and the enclosing type signature (if there is one)
+	 * @param methodBinding the binding to get the signature for
+	 * @param enclosingTypeSignature the enclosing type signature or <code>null</code>
+	 * @return the method signature for the given binding and enclosing type signature
+	 */
 	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
 		methodBinding= methodBinding.getMethodDeclaration();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
-		int i;
+		int offset = 0;
 		int argCount;
 		String[] parameterSignatures;
 		if (enclosingTypeSignature == null) {
-			i= 0;
 			argCount= parameterTypes.length;
 			parameterSignatures= new String[argCount];
 		} else {
-			i= 1;
+			offset = 1;
 			argCount= parameterTypes.length + 1;
 			parameterSignatures= new String[argCount];
 			parameterSignatures[0]= enclosingTypeSignature;
 		}
-		for (; i < argCount; i++) {
-			parameterSignatures[i]= getTypeSignature(parameterTypes[i]);
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterSignatures[i+offset]= getTypeSignature(parameterTypes[i]);
 		}
 		String signature= Signature.createMethodSignature(parameterSignatures, getTypeSignature(methodBinding.getReturnType()));
 		return signature;
