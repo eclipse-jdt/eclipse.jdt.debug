@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -385,19 +386,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	private int getEnclosingLevel(ASTNode node, ITypeBinding referenceTypeBinding) {
-		ASTNode parent= node;
+		ASTNode parent = node;
+		ITypeBinding refbinding = referenceTypeBinding.isParameterizedType() ? referenceTypeBinding.getTypeDeclaration() : referenceTypeBinding;
 		do {
-			parent= parent.getParent();
-		} while (!(parent instanceof TypeDeclaration || parent instanceof EnumDeclaration || parent instanceof AnonymousClassDeclaration));
-		ITypeBinding parentBinding;
-		if (parent instanceof TypeDeclaration) {
-			parentBinding= ((TypeDeclaration)parent).resolveBinding();
-		} else if (parent instanceof EnumDeclaration) {
-			parentBinding= ((EnumDeclaration)parent).resolveBinding();
-		} else {
-			parentBinding= ((AnonymousClassDeclaration)parent).resolveBinding();
+			parent = parent.getParent();
+		} while (parent != null && !(parent instanceof AbstractTypeDeclaration || parent instanceof AnonymousClassDeclaration));
+		if(parent == null) {
+			return 0;
 		}
-		if (parentBinding.isCastCompatible(referenceTypeBinding)) {
+		ITypeBinding parentBinding = null;
+		if(parent instanceof AbstractTypeDeclaration) {
+			parentBinding = ((AbstractTypeDeclaration)parent).resolveBinding();
+		}
+		else if(parent instanceof AnonymousClassDeclaration) {
+			parentBinding = ((AnonymousClassDeclaration)parent).resolveBinding();
+		}
+		if (parentBinding != null && parentBinding.isEqualTo(refbinding)) {
 			return 0;
 		}
 		return getEnclosingLevel(parent, referenceTypeBinding) + 1;
@@ -430,7 +434,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * i.e. all expressions expect method invocation expressions which
 	 * have <code>void</code> as return type and variable declaration expression.
 	 *
-	 * @param expression the expressien to test.
+	 * @param expression the expression to test.
 	 */
 	private void addPopInstructionIfNeeded(Expression expression) {
 		boolean pop= true;
@@ -464,7 +468,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 	
 	/**
-	 * Check the current type of a value and the requested type to decide if boxing/unboxing is required.
+	 * Check the current type of a value and the requested type to decide if boxing/un-boxing is required.
 	 * If needed, the correct instruction is added to the stack
 	 * Returns true if a storeInstruction() is needed after visiting the expression
 	 */
@@ -532,7 +536,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * Add the instruction to unbox a non-primitive value if needed.
+	 * Add the instruction to un-box a non-primitive value if needed.
 	 * Returns true if a storeInstruction() is needed after visiting the expression
 	 */
 	private boolean unBoxing(ITypeBinding valueBinding) {
@@ -769,7 +773,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		String label= getLabel(node);
 
-		// get adress of each part
+		// get address of each part
 		int conditionAddress= fInstructions.getEnd();
 		Instruction condition= fInstructions.getInstruction(conditionAddress);
 		int bodyAddress= conditionAddress - condition.getSize();
@@ -955,7 +959,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String label= getLabel(node);
 		boolean hasCondition= node.getExpression() != null;
 
-		// get adress of each part
+		// get address of each part
 		int updatersAddress= fInstructions.getEnd();
 		Instruction updaters= fInstructions.getInstruction(updatersAddress);
 		int bodyAddress= updatersAddress - updaters.getSize();
@@ -979,19 +983,19 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fCounter++;
 
 		if (hasCondition) {
-			// add conditionnal jump
+			// add conditional jump
 			ConditionalJump condJump= new ConditionalJump(false);
 			fInstructions.insert(condJump, conditionAddress + 1);
 			bodyAddress++;
 			bodyStartAddress++;
 			updatersAddress++;
 			fCounter++;
-			// set conditionnal jump offset
+			// set conditional jump offset
 			condJump.setOffset(body.getSize() + updaters.getSize() + 1);
 		}
 
 		// set jump offset
-		jump.setOffset(-((hasCondition ? condition.getSize() : 0) + body.getSize() + updaters.getSize() + 2));
+		jump.setOffset(-((hasCondition && (condition != null) ? condition.getSize() : 0) + body.getSize() + updaters.getSize() + 2));
 
 		// for each pending break or continue instruction which are related to
 		// this loop, set the offset of the corresponding jump.
@@ -1407,7 +1411,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		String label= getLabel(node);
 
-		// get adress of each part
+		// get address of each part
 		int bodyAddress= fInstructions.getEnd();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
 		int conditionAddress= bodyAddress - body.getSize();
@@ -1589,9 +1593,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (variableTypeId == Instruction.T_Object) {
 			// If the variable is an object, the value may need to be boxed for
-			// the simple assigment.
-			// For the compound assigment operators, the value of the variable
-			// have to be unboxed before the operation is done, then re-boxed to
+			// the simple assignment.
+			// For the compound assignment operators, the value of the variable
+			// have to be un-boxed before the operation is done, then re-boxed to
 			// to be stored in the variable.
 	
 			int unboxedVariableTypeId= getUnBoxedTypeId(leftHandSide);
@@ -1638,7 +1642,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					case '%': // remainder equal
 						push(new RemainderOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
 						break;
-					case '^': // xor equal
+					case '^': // XOr equal
 						push(new XorOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
 						break;
 					case '|': // or equal
@@ -1676,13 +1680,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 				unBoxing(leftHandSide.resolveTypeBinding());
 				push(new Dup());
-				storeInstruction(); // dup
-				storeInstruction(); // unboxing
+				storeInstruction(); // dupe
+				storeInstruction(); // un-boxing
 			
 				boolean storeRequired= unBoxing(rightHandSide.resolveTypeBinding());
 				rightHandSide.accept(this);
 				if (storeRequired) {
-					storeInstruction(); // unboxing
+					storeInstruction(); // un-boxing
 				}
 				
 				storeInstruction(); // operation
@@ -1712,7 +1716,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				case '%': // remainder equal
 					push(new RemainderAssignmentOperator(variableTypeId, valueTypeId, fCounter));
 					break;
-				case '^': // xor equal
+				case '^': // XOr equal
 					push(new XorAssignmentOperator(variableTypeId, valueTypeId, fCounter));
 					break;
 				case '|': // or equal
@@ -2071,7 +2075,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				storeInstruction();
 			storeInstruction();
 			
-			// conditionnal jump will be added here
+			// conditional jump will be added here
 			
 			push(new NoOp(fCounter));
 				push(new AssignmentOperator(paramTypeId, paramTypeId, fCounter));
@@ -2272,7 +2276,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * return <code>false</code>, don't use the standart accept order.
+	 * return <code>false</code>, don't use the standard accept order.
 	 *
 	 * @see ASTVisitor#visit(InfixExpression)
 	 */
@@ -2305,7 +2309,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression rightOperand= node.getRightOperand();
 		int leftTypeId;
 		int rightTypeId;
-		// == case, do not unbox, if the two operands are objects
+		// == case, do not un-box, if the two operands are objects
 		boolean unbox= char0 != '=' || leftOperand.resolveTypeBinding().isPrimitive() || rightOperand.resolveTypeBinding().isPrimitive();
 		if (unbox) {
 			leftTypeId= getUnBoxedTypeId(leftOperand);
@@ -2421,7 +2425,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					push(new EqualEqualOperator(types[i][1], types[i][2], false, fCounter));
 				}
 				break;
-			case '^': // xor
+			case '^': // XOr
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new XorOperator(types[i][0], types[i][1], types[i][2], fCounter));
 				}
@@ -2527,7 +2531,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new PushBoolean(isOrOr));
 			storeInstruction();
 
-			// store the noop
+			// store the no-op
 			storeInstruction();
 
 		} else { // other operators
@@ -2594,7 +2598,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(LabeledStatement)
-	 * return <code>false</code>, don't use the standart accept order.
+	 * return <code>false</code>, don't use the standard accept order.
 	 */
 	public boolean visit(LabeledStatement node) {
 		node.getBody().accept(this);
@@ -2712,7 +2716,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
-			// process the first arguments (no part of the var argument)
+			// process the first arguments (no part of the variable argument)
 			for (int i= 0; i < paramCount - 1; i++) {
 				Expression argument= (Expression)iterator.next();
 				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i]);
@@ -2954,18 +2958,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			push(new Value(fCounter));
 			push(new Dup());
-			storeInstruction(); // dup
+			storeInstruction(); // dupe
 			storeInstruction(); // value
 			push(new DupX1());
 			storeInstruction(); // dup_x1
 			unBoxing(operand.resolveTypeBinding());
-			storeInstruction(); // unboxing
+			storeInstruction(); // un-boxing
 			push(new PushInt(1));
 			storeInstruction(); // push 1
 			storeInstruction(); // operator
 			boxing(operand.resolveTypeBinding(), null);
 			storeInstruction(); // boxing
-			storeInstruction(); // assigment
+			storeInstruction(); // assignment
 			push(new Pop(assignmentInstruction.getSize() + 1));
 			
 			
@@ -3035,7 +3039,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	
 				unBoxing(operand.resolveTypeBinding());
 				operand.accept(this);
-				storeInstruction(); // unboxing
+				storeInstruction(); // un-boxing
 				
 			} else {
 				// plus plus and minus minus operators
@@ -3061,8 +3065,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				
 				unBoxing(operand.resolveTypeBinding());
 				push(new Dup());
-				storeInstruction(); // dup
-				storeInstruction(); // unboxing
+				storeInstruction(); // dupe
+				storeInstruction(); // un-boxing
 				push(new PushInt(1));
 				storeInstruction(); // push 1
 				
@@ -3271,7 +3275,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	
 	/**
 	 * @see ASTVisitor#visit(SingleVariableDeclaration)
-	 * return <code>false</code>, don't use the standart accept order.
+	 * return <code>false</code>, don't use the standard accept order.
 	 */
 	public boolean visit(SingleVariableDeclaration node) {
 		if (!isActive()) {
@@ -3391,7 +3395,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
-			// process the first arguments (no part of the var argument)
+			// process the first arguments (no part of the variable argument)
 			for (int i= 0; i < paramCount - 1; i++) {
 				Expression argument= (Expression) iterator.next();
 				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i]);
@@ -3466,12 +3470,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				} else {
 					push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
 					push(new Dup());
-					storeInstruction(); // dup
+					storeInstruction(); // dupe
 					switchCase.getExpression().accept(this);
-					storeInstruction(); // equalequal
+					storeInstruction(); // equal-equal
 					ConditionalJump condJump= new ConditionalJump(true);
 					push(condJump);
-					storeInstruction(); // cond jump
+					storeInstruction(); // conditional jump
 					if (currentJumpsStatements[1] != null) {
 						currentJumpsStatements= new ArrayList[] {new ArrayList(), null};
 						jumpsStatements.add(currentJumpsStatements);
@@ -3659,7 +3663,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(VariableDeclarationExpression node) {
 		/* if it is in the code to execute, return <code>false</code>,
-		 * we don't use the standart accept order.
+		 * we don't use the standard accept order.
 		 * Otherwise, return true. We want to search the code to execute
 		 * in variable declarations (in case of inner classes).
 		 */
@@ -3677,7 +3681,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
 		/* if it is in the code to execute, return <code>false</code>,
-		 * we don't use the standart accept order.
+		 * we don't use the standard accept order.
 		 * Otherwise, return true. We want to search the code to execute
 		 * in variable declarations (in case of inner classes).
 		 */
@@ -3725,7 +3729,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	public boolean visit(VariableDeclarationStatement node) {
 		/* if it is in the code to execute, return <code>false</code>,
-		 * we don't use the standart accept order.
+		 * we don't use the standard accept order.
 		 * Otherwise, return true. We want to search the code to execute
 		 * in variable declarations (in case of inner classes).
 		 */
@@ -3780,7 +3784,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else if ("java.lang.String".equals(typeName)){ //$NON-NLS-1$
 			return Instruction.T_String;
 		} else {
-			// unboxing
+			// un-boxing
 			if ("java.lang.Integer".equals(typeName)) { //$NON-NLS-1$
 				return Instruction.T_int;
 			} else if ("java.lang.Character".equals(typeName)) { //$NON-NLS-1$
