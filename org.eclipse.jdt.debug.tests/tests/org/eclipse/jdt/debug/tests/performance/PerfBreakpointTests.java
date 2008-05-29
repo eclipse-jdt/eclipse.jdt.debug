@@ -95,7 +95,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
      * @throws Exception
      */
     public void testBreakpointRemoval() throws Exception {
-        tagAsSummary("Remove Line Breakpoints", Dimension.ELAPSED_PROCESS);
+    	setDegradationComment("This degradation is not noticeable/important to the end user.");
         String typeName = "LargeSourceFile";
         IResource resource = getBreakpointResource(typeName);
 
