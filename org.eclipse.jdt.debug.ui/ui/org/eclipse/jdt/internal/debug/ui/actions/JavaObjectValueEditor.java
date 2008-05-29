@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,11 +35,9 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvalidTypeException;
@@ -111,32 +107,24 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      * @throws DebugException if an exception occurs evaluating the expression
      *  or setting the variable's value
      */
-    protected void setValue(final IVariable variable, final String expression) throws DebugException {
-        IProgressService service= PlatformUI.getWorkbench().getProgressService();
-        
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InvocationTargetException {
-                try {
-                IValue newValue = evaluate(expression);
-                if (newValue != null) {
-                    variable.setValue(newValue);
-                } else {
-                	variable.setValue(expression);
-                }
-                } catch (DebugException de) {
-                    throw new InvocationTargetException(de);
-                }
-            }
+    protected void setValue(final IVariable variable, final String expression){
+        UIJob job = new UIJob("Setting Variable Value"){ //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+					IValue newValue = evaluate(expression);
+					if (newValue != null) {
+						variable.setValue(newValue);
+					} else {
+						variable.setValue(expression);
+					}
+				} catch (DebugException de) {
+					handleException(de);
+				}
+				return Status.OK_STATUS;
+			}
         };
-        
-        try {
-            service.busyCursorWhile(runnable);
-        } catch (InvocationTargetException e) {
-        	if (e.getTargetException() instanceof DebugException) {
-                throw (DebugException)e.getTargetException();
-            }
-        } catch (InterruptedException e) {
-        }
+        job.setSystem(true);
+        job.schedule();
     }
 
     /**
