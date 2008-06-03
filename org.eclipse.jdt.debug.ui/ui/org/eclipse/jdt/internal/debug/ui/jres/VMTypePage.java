@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.launching.StandardVMType;
@@ -37,6 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page used to select a VM type.
@@ -136,6 +138,7 @@ public class VMTypePage extends WizardPage {
 		setControl(composite);
 		fTypesViewer.setSelection(new StructuredSelection(JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE)));
 		updateNextPage();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.ADD_NEW_JRE_WIZARD_PAGE);	
 	}
 	
 	/* (non-Javadoc)

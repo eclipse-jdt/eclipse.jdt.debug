@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ public interface IJavaDebugHelpContextIds {
 	public static final String STACK_TRACE_CONSOLE = PREFIX + "stack_trace_console_context"; //$NON-NLS-1$
 
 	//dialogs
-	public static final String EDIT_JRE_DIALOG= PREFIX + "edit_jre_dialog_context"; //$NON-NLS-1$
 	public static final String JRE_DETAILS_DIALOG= PREFIX + "jre_details_dialog_context"; //$NON-NLS-1$
 	public static final String MAIN_TYPE_SELECTION_DIALOG= PREFIX + "main_type_selection_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_DETAIL_FORMATTER_DIALOG= PREFIX + "edit_detail_formatter_dialog_context"; //$NON-NLS-1$
@@ -89,5 +88,9 @@ public interface IJavaDebugHelpContextIds {
 	public static final String SCRAPBOOK_IMPORTS_ACTION = PREFIX + "scrapbook_imports_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_AUTOFORMAT_STACKTRACES_ACTION = PREFIX + "console_autoformat_stacktraces_action"; //$NON-NLS-1$
 	
+	//wizards
+	public static final String ADD_NEW_JRE_WIZARD_PAGE= PREFIX + "add_new_jre_wizard_page_context"; //$NON-NLS-1$
+	public static final String EDIT_JRE_STD_VM_WIZARD_PAGE= PREFIX + "edit_std_vm_jre_wizard_page_context"; //$NON-NLS-1$
+	public static final String EDIT_JRE_EE_FILE_WIZARD_PAGE= PREFIX + "edit_ee_file_jre_wizard_page_context"; //$NON-NLS-1$
 	public static final String NEW_SNIPPET_WIZARD_PAGE= PREFIX + "new_snippet_wizard_page_context"; //$NON-NLS-1$
 }
