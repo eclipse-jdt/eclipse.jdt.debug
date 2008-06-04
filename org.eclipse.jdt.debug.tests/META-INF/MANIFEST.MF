@@ -23,6 +23,7 @@ Export-Package: org.eclipse.jdt.debug.test.stepping,
  org.eclipse.jdt.debug.tests.sourcelookup,
  org.eclipse.jdt.debug.tests.ui,
  org.eclipse.jdt.debug.tests.ui.performance,
+ org.eclipse.jdt.debug.tests.variables,
  org.eclipse.jdt.debug.tests.viewers
 Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ui.views;resolution:=optional,
