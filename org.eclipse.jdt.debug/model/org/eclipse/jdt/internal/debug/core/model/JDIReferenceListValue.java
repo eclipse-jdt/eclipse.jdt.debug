@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 
 	private IJavaObject fRoot;
 	private boolean fIsMoreThanPreference;
+	private IJavaType fType = null;
 	
 	/**
 	 * Constructor, initializes this value with its debug target and root object
@@ -48,6 +49,12 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	public JDIReferenceListValue(IJavaObject root) {
 		super((JDIDebugTarget)root.getDebugTarget(), ((JDIObjectValue)root).getUnderlyingObject());
 		fRoot = root;
+		try {
+			IJavaType[] javaTypes = ((JDIDebugTarget)root.getDebugTarget()).getJavaTypes("java.lang.Object[]"); //$NON-NLS-1$
+			if (javaTypes.length > 0) {
+				fType = javaTypes[0];
+			}
+		} catch (DebugException e) {}
 	}
 	
 	/**
@@ -130,11 +137,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements IIndexedVal
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
-		IJavaType[] javaTypes = getJavaDebugTarget().getJavaTypes(getReferenceTypeName());
-		if (javaTypes.length > 0) {
-			return javaTypes[0];
-		}
-		return null;
+		return fType;
 	}
 
 	/* (non-Javadoc)
