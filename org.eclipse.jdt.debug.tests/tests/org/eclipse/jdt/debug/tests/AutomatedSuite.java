@@ -104,6 +104,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
 import org.eclipse.jdt.debug.tests.viewers.ChildrenUpdateTests;
 import org.eclipse.jdt.debug.tests.viewers.FilterTransformTests;
 import org.eclipse.jdt.debug.tests.viewers.PresentationContextTests;
@@ -187,6 +188,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(LocalVariableTests.class));
 		addTest(new TestSuite(StaticVariableTests.class));
 		addTest(new TestSuite(ArrayTests.class));
+		addTest(new TestSuite(TestLogicalStructures.class));
 		
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));
