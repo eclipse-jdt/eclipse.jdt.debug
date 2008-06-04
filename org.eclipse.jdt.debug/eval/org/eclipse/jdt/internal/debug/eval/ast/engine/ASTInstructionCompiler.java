@@ -401,7 +401,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		else if(parent instanceof AnonymousClassDeclaration) {
 			parentBinding = ((AnonymousClassDeclaration)parent).resolveBinding();
 		}
-		if (parentBinding != null && parentBinding.isEqualTo(refbinding)) {
+		if (parentBinding != null && (parentBinding.isEqualTo(refbinding) || parentBinding.isCastCompatible(refbinding))) {
 			return 0;
 		}
 		return getEnclosingLevel(parent, referenceTypeBinding) + 1;
