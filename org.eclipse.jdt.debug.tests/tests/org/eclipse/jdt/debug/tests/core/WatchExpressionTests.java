@@ -108,8 +108,10 @@ public class WatchExpressionTests extends AbstractDebugTest {
 	
 	/**
 	 * Test a watch expression updates while stepping.
+	 * 
+	 * THIS TEST HAS BEEN DISABLED DUE TO BUG 228400
 	 */
-	public void testStepping() throws Exception {
+	public void DisabledtestStepping() throws Exception {
 		IWatchExpression expression = getExpressionManager().newWatchExpression("i");
 		getExpressionManager().addExpression(expression);
 		String typeName = "WatchItemTests";
