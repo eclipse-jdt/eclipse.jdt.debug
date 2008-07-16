@@ -3350,7 +3350,7 @@ M4 = Platform-specific fourth key
           class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionHyperlinkDetector"
           description="%stepIntoSelectionHyperlinkDetector.description"
           id="org.eclipse.jdt.debug.ui.hyperlinkdetector.stepIntoSelection"
-          modifierKeys="M1"
+          modifierKeys="M1+M3"
           name="%stepIntoSelectionHyperlinkDetector.label"
           targetId="org.eclipse.jdt.ui.javaCode">
     </hyperlinkDetector>
