@@ -449,6 +449,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 			}
 			version = libInfo.getVersion();
 		}
+		if (version == null) {
+			// unknown version
+			return 0D;
+		}
 		int index = version.indexOf("."); //$NON-NLS-1$
 		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
 		try {
