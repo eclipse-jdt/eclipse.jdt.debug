@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
@@ -85,27 +84,23 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (getValue()) {
-			// if showing system threads, no need to worry about displaying/hinding
+			// if showing system threads, no need to worry about displaying/hiding
 			return;
 		}
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			switch (event.getKind()) {
-				case DebugEvent.SUSPEND:
-					if (event.getDetail() == DebugEvent.BREAKPOINT) {
-						refresh(event.getSource(), true);
-					}
-					break;
 				case DebugEvent.RESUME:
 					if (event.getDetail() == DebugEvent.CLIENT_REQUEST) {
-						refresh(event.getSource(), false);
+						// when a system thread resumes we need to refresh the viewer to re-filter it
+						refresh(event.getSource());
 					}
 					break;
 			}
 		}
 	}
 	
-	private void refresh(Object source, final boolean select) {
+	private void refresh(Object source) {
         final IJavaThread thread = getJavaThread(source);
         if (thread != null) {
 			try {
@@ -113,16 +108,6 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 					Runnable r = new Runnable() {
 						public void run() {
 							getStructuredViewer().refresh();
-							if (select) {
-								Object tos;
-								try {
-									tos = thread.getTopStackFrame();
-									if (tos != null) {
-										getStructuredViewer().setSelection(new StructuredSelection(tos));
-									}
-								} catch (DebugException e) {
-								}								
-							}
 						}
 					};
 					JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
