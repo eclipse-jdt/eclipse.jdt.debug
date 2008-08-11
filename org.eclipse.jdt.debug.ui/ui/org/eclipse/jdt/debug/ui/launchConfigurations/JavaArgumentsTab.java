@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +41,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -55,7 +56,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		
 	// Program arguments widgets
 	protected Label fPrgmArgumentsLabel;
-	protected Text fPrgmArgumentsText;
+	protected StyledText fPrgmArgumentsText;
 
 	// VM arguments widgets
 	protected VMArgumentsBlock fVMArgumentsBlock;
@@ -102,12 +103,11 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		String controlName = (LauncherMessages.JavaArgumentsTab__Program_arguments__5); 
 		group.setText(controlName);
 		
-		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		fPrgmArgumentsText = SWTFactory.createStyledText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 1, null);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
-		fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -188,13 +188,15 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		fVMArgumentsBlock.performApply(configuration);
 		fWorkingDirectoryBlock.performApply(configuration);
 	}
-
+	
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
+	 * 
+	 * @since 3.5
 	 */
-	protected String getAttributeValueFrom(Text text) {
+	private String getAttributeValueFrom(StyledText text) {
 		String content = text.getText().trim();
 		if (content.length() > 0) {
 			return content;

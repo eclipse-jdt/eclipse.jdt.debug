@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,11 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,7 +32,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * Editor for VM arguments of a Java launch configuration.
@@ -38,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
 public class VMArgumentsBlock extends JavaLaunchTab {
 
 	// VM arguments widgets
-	protected Text fVMArgumentsText;
+	protected StyledText fVMArgumentsText;
 	private Button fPgrmArgVariableButton;
 	
 	/**
@@ -56,12 +57,11 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		group.setFont(font);
 		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6); 
 		
-		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
+		fVMArgumentsText = SWTFactory.createStyledText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 1, null);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fVMArgumentsText.setLayoutData(gd);
-		fVMArgumentsText.setFont(font);
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -118,11 +118,11 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	}
 	
 	/**
-	 * Retuns the string in the text widget, or <code>null</code> if empty.
+	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
 	 */
-	protected String getAttributeValueFrom(Text text) {
+	protected String getAttributeValueFrom(StyledText text) {
 		String content = text.getText().trim();
 		if (content.length() > 0) {
 			return content;
