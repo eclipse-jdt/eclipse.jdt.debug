@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,15 +43,32 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
         
         });
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
      */
     public void openConsole() {
+        openConsole(null);
+    }
+    
+    /**
+     * Opens the console (creating a new one if not previously initialized).
+     * If the passed string is not <code>null</code>, the text of the console
+     * is set to the string.
+     * 
+     * @param initialText text to put in the console or <code>null</code>.
+     */
+    public void openConsole(String initialText) {
         if (fConsole == null) {
             fConsole = new JavaStackTraceConsole(); 
             fConsole.initializeDocument();
 	        fConsoleManager.addConsoles(new IConsole[]{fConsole});
         }
+        if (initialText != null){
+        	fConsole.getDocument().set(initialText);
+        }
         fConsoleManager.showConsoleView(fConsole);
     }
+   
+    
 }
