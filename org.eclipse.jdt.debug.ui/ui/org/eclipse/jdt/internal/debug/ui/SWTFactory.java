@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -257,28 +256,6 @@ public class SWTFactory {
     	t.setText(text);
     	return t;
     }
-	
-	/**
-	 * Creates a new {@link StyledText} widget with a {@link GridData} layout
-	 * @param parent the parent to add the text widget to
-	 * @param style the style of widget. See {@link SWT} for available styles
-	 * @param hspan the horizontal span to take up in the parent
-	 * @param text the default text for the widget or <code>null</code>
-	 * @return a new {@link StyledText} widget
-	 * 
-	 * @since 3.5
-	 */
-	public static StyledText createStyledText(Composite parent, int style, int hspan, String text) {
-		StyledText t = new StyledText(parent, style);
-		t.setFont(parent.getFont());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = hspan;
-		t.setLayoutData(gd);
-		if(text != null) {
-			t.setText(text);
-		}
-		return t;
-	}
 	
 	/**
 	 * Creates a Group widget

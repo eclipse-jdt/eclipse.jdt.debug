@@ -17,21 +17,22 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Editor for VM arguments of a Java launch configuration.
@@ -39,7 +40,7 @@ import org.eclipse.swt.widgets.Group;
 public class VMArgumentsBlock extends JavaLaunchTab {
 
 	// VM arguments widgets
-	protected StyledText fVMArgumentsText;
+	protected Text fVMArgumentsText;
 	private Button fPgrmArgVariableButton;
 	
 	/**
@@ -57,11 +58,34 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		group.setFont(font);
 		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6); 
 		
-		fVMArgumentsText = SWTFactory.createStyledText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 1, null);
+		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
+		fVMArgumentsText.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				switch (e.detail) {
+					case SWT.TRAVERSE_ESCAPE:
+					case SWT.TRAVERSE_PAGE_NEXT:
+					case SWT.TRAVERSE_PAGE_PREVIOUS:
+						e.doit = true;
+						break;
+					case SWT.TRAVERSE_RETURN:
+					case SWT.TRAVERSE_TAB_NEXT:
+					case SWT.TRAVERSE_TAB_PREVIOUS:
+						if ((fVMArgumentsText.getStyle() & SWT.SINGLE) != 0) {
+							e.doit = true;
+						} else {
+							if (!fVMArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0) {
+								e.doit = true;
+							}
+						}
+						break;
+				}
+			}
+		});
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fVMArgumentsText.setLayoutData(gd);
+		fVMArgumentsText.setFont(font);
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -118,11 +142,11 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	}
 	
 	/**
-	 * Returns the string in the text widget, or <code>null</code> if empty.
+	 * Retuns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
 	 */
-	protected String getAttributeValueFrom(StyledText text) {
+	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
 		if (content.length() > 0) {
 			return content;

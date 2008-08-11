@@ -20,7 +20,6 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -28,11 +27,12 @@ import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -56,7 +57,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		
 	// Program arguments widgets
 	protected Label fPrgmArgumentsLabel;
-	protected StyledText fPrgmArgumentsText;
+	protected Text fPrgmArgumentsText;
 
 	// VM arguments widgets
 	protected VMArgumentsBlock fVMArgumentsBlock;
@@ -103,11 +104,34 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		String controlName = (LauncherMessages.JavaArgumentsTab__Program_arguments__5); 
 		group.setText(controlName);
 		
-		fPrgmArgumentsText = SWTFactory.createStyledText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 1, null);
+		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		fPrgmArgumentsText.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				switch (e.detail) {
+					case SWT.TRAVERSE_ESCAPE:
+					case SWT.TRAVERSE_PAGE_NEXT:
+					case SWT.TRAVERSE_PAGE_PREVIOUS:
+						e.doit = true;
+						break;
+					case SWT.TRAVERSE_RETURN:
+					case SWT.TRAVERSE_TAB_NEXT:
+					case SWT.TRAVERSE_TAB_PREVIOUS:
+						if ((fPrgmArgumentsText.getStyle() & SWT.SINGLE) != 0) {
+							e.doit = true;
+						} else {
+							if (!fPrgmArgumentsText.isEnabled() || (e.stateMask & SWT.MODIFIER_MASK) != 0) {
+								e.doit = true;
+							}
+						}
+						break;
+				}
+			}
+		});
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
+		fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -188,15 +212,13 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		fVMArgumentsBlock.performApply(configuration);
 		fWorkingDirectoryBlock.performApply(configuration);
 	}
-	
+
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
-	 * 
-	 * @since 3.5
 	 */
-	private String getAttributeValueFrom(StyledText text) {
+	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
 		if (content.length() > 0) {
 			return content;
