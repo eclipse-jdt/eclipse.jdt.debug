@@ -42,10 +42,10 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	public ImportBreakpointsTest(String name) {super(name);}
 
 	/**
-	 * Tests the normal import operation 
+	 * Tests import operation from a file. 
 	 * @throws Exception catch all passed to framework
 	 */
-	public void testBreakpointImport() throws Exception {
+	public void testBreakpointImportFile() throws Exception {
 		try {
 			ArrayList breakpoints = new ArrayList();
 			String typeName = "DropTests";
@@ -73,6 +73,36 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			removeAllBreakpoints();
 		}	
 	}
+	
+	/**
+	 * Tests import operation from a string buffer.
+	 *  
+	 * @throws Exception catch all passed to framework
+	 */
+	public void testBreakpointImportBuffer() throws Exception {
+		try {
+			ArrayList breakpoints = new ArrayList();
+			String typeName = "DropTests";
+			breakpoints.add(createClassPrepareBreakpoint(typeName));
+			breakpoints.add(createLineBreakpoint(32, typeName));
+			breakpoints.add(createLineBreakpoint(28, typeName));
+			breakpoints.add(createLineBreakpoint(24, typeName));
+			breakpoints.add(createExceptionBreakpoint("Exception", true, false));
+			breakpoints.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
+			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]));
+			op.run(new NullProgressMonitor());
+			StringBuffer buffer = op.getBuffer();
+			assertNotNull("Missing buffer", buffer);
+			removeAllBreakpoints();
+			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(buffer, true, true);
+			op2.run(new NullProgressMonitor());
+			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+		} 
+		finally {
+			removeAllBreakpoints();
+		}	
+	}	
 	
 	/**
 	 * tests and overwrote without remove all
