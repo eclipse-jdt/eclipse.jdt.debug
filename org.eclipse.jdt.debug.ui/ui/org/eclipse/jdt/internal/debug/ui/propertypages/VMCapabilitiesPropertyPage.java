@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -178,7 +179,8 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		}
 		if(target != null) {
 			if(!target.isTerminated() && !target.isDisconnected()) {
-				if(target instanceof JDIDebugTarget) {
+				IJavaDebugTarget dtarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
+				if(dtarget instanceof JDIDebugTarget) {
 					return (VirtualMachineImpl) ((JDIDebugTarget)target).getVM();
 				}
 			}
