@@ -67,6 +67,12 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(path.toOSString(), true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+			IBreakpoint[] importedBreakpoints = op2.getImportedBreakpoints();
+			assertEquals("imported list should contain same breakpoints", 6, importedBreakpoints.length);
+			for (int i = 0; i < importedBreakpoints.length; i++) {
+				IBreakpoint breakpoint = importedBreakpoints[i];
+				assertEquals("Missing imported breakpoint", breakpoint, getBreakpointManager().getBreakpoint(breakpoint.getMarker()));
+			}
 			file.delete();
 		} 
 		finally {
