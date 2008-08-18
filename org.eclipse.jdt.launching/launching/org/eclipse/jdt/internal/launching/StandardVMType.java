@@ -369,20 +369,22 @@ public class StandardVMType extends AbstractVMInstallType {
 			File extDir = new File(dirPaths[i]);
 			if (extDir.exists() && extDir.isDirectory()) {
 				String[] names = extDir.list();
-				for (int j = 0; j < names.length; j++) {
-					String name = names[j];
-					File jar = new File(extDir, name);
-					if (jar.isFile()) {
-						int length = name.length();
-						if (length > 4) {
-							String suffix = name.substring(length - 4);
-							if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
-								try {
-									IPath libPath = new Path(jar.getCanonicalPath());
-									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, null);
-									libraries.add(library);
-								} catch (IOException e) {
-									LaunchingPlugin.log(e);
+				if (names != null) {
+					for (int j = 0; j < names.length; j++) {
+						String name = names[j];
+						File jar = new File(extDir, name);
+						if (jar.isFile()) {
+							int length = name.length();
+							if (length > 4) {
+								String suffix = name.substring(length - 4);
+								if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
+									try {
+										IPath libPath = new Path(jar.getCanonicalPath());
+										LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, null);
+										libraries.add(library);
+									} catch (IOException e) {
+										LaunchingPlugin.log(e);
+									}
 								}
 							}
 						}
