@@ -218,7 +218,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 	
 	/**
-	 * Returns a path to the source attachment for the given libaray, or
+	 * Returns a path to the source attachment for the given library, or
 	 * an empty path if none.
 	 * 
 	 * @param libLocation
