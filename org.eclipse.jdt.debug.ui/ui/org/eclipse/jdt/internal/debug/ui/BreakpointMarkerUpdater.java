@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -86,10 +88,14 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		}
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint breakpoint = manager.getBreakpoint(marker);
+		if(breakpoint == null) {
+			return false;
+		}
 		if (breakpoint instanceof IJavaStratumLineBreakpoint || breakpoint instanceof IJavaPatternBreakpoint) {
 			return true;
 		}
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		setParserOptions(marker, parser);
 		parser.setSource(document.get().toCharArray());
 		CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 		if(unit != null) {
@@ -120,6 +126,21 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		}
 		return false;
+	}
+	
+	/**
+	 * Properly sets all of the compiler options for the parser used for the breakpoint marker updater
+	 * @param marker
+	 * @param parser
+	 */
+	private void setParserOptions(IMarker marker, ASTParser parser) {
+		IResource resource = marker.getResource();
+		if(resource != null) {
+			IJavaProject jproject = JavaCore.create(resource.getProject());
+			if(jproject != null) {
+				parser.setCompilerOptions(jproject.getOptions(true));
+			}
+		}
 	}
 	
 	/**
