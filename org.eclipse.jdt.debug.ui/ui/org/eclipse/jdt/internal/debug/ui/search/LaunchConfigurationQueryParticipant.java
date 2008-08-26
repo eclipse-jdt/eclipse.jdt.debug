@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ecliptical Software Inc. and others.
+ * Copyright (c) 2007, 2008 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,7 +219,12 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		if (mainTypeName == null) {
 			return false;
 		}
-		mainTypeName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainTypeName);
+		try {
+			mainTypeName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainTypeName);
+		}
+		catch(CoreException ce) {
+			return false;
+		}
 		if (! pattern.matcher(mainTypeName).matches()) {
 			return false;
 		}
