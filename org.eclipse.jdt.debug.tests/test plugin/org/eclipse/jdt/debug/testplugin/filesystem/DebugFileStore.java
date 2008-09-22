@@ -84,6 +84,7 @@ public class DebugFileStore extends FileStore {
 		byte[] contents = DebugFileSystem.getDefault().getContents(toURI());
 		FileInfo info = new FileInfo();
 		info.setName(getName());
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
 		if (contents == null) {
 			info.setExists(false);
 			info.setLength(0L);
@@ -91,6 +92,9 @@ public class DebugFileStore extends FileStore {
 			info.setExists(true);
 			info.setLength(contents.length);
 			info.setDirectory(contents == DebugFileSystem.DIRECTORY_BYTES);
+			if (info.isDirectory()) {
+				info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
+			}
 		}
 		return info;
 	}
