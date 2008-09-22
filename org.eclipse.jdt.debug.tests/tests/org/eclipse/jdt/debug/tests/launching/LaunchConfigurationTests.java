@@ -11,21 +11,41 @@
 package org.eclipse.jdt.debug.tests.launching;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Tests for launch configurations
@@ -41,6 +61,45 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	protected Object fLock = new Object();
 	protected ILaunchConfiguration fAdded;
 	protected ILaunchConfiguration fRemoved;
+	
+	class Listener implements ILaunchConfigurationListener {
+		
+		private List addedList = new ArrayList();
+		private List removedList = new ArrayList();
+		private List changedList = new ArrayList();
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+		 */
+		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+			addedList.add(configuration);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+		 */
+		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+			changedList.add(configuration);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+		 */
+		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+			removedList.add(configuration);
+		}
+		
+		public List getAdded() {
+			return addedList;
+		}
+		public List getChanged() {
+			return changedList;
+		}
+		public List getRemoved() {
+			return removedList;
+		}
+		
+	}
 	
 	/**
 	 * Constructor
@@ -111,6 +170,40 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Creates a local working copy configuration and tests its name.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testLocalName() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "localName"); //$NON-NLS-1$
+		 ILaunchConfiguration handle = wc.doSave();
+		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		 
+		 // retrieve attributes
+		 assertEquals("Wrong name", handle.getName(), "localName"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
+	}	
+	
+	/**
+	 * Creates a shared working copy configuration and tests is name.
+	 */
+	public void testSharedName() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "sharedName"); //$NON-NLS-1$
+		 ILaunchConfiguration handle = wc.doSave();
+		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		 
+		 // retrieve attributes
+		 assertEquals("Wrong name", handle.getName(), "sharedName"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		 
+ 		 // cleanup
+		 handle.delete();
+		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
+	}	
 	
 	/**
 	 * Ensures that a launch configuration returns a complete attribute map
@@ -724,6 +817,192 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 handle.delete();
 		 assertTrue("Config should not exist after deletion", !handle.exists()); //$NON-NLS-1$
 	}	
+	
+	/**
+	 * Creates a configuration in an EFS linked folder. Deletes configuration directly.
+	 * 
+	 * @throws CoreException
+	 * @throws URISyntaxException
+	 */	
+	public void testCreateDeleteEFS() throws CoreException, URISyntaxException {
+		IFileSystem fileSystem = EFS.getFileSystem("debug");
+		assertNotNull("Missing debug EFS", fileSystem);
+		
+		// create folder in EFS
+		IFolder folder = getJavaProject().getProject().getFolder("efs");
+		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null);
+		
+		// create configuration
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
+		ILaunchConfiguration handle = wc.doSave();
+		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		
+		 // retrieve attributes
+		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
+		
+		// delete configuration
+		handle.delete();
+		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
+		
+		// cleanup
+		folder.delete(IResource.NONE, null);
+	}
+	
+	/**
+	 * Creates a configuration in an EFS linked folder. Deletes the folder to ensure the
+	 * configuration is also deleted.
+	 * 
+	 * @throws CoreException
+	 * @throws URISyntaxException
+	 */
+	public void testCreateDeleteEFSLink() throws CoreException, URISyntaxException {
+		IFileSystem fileSystem = EFS.getFileSystem("debug");
+		assertNotNull("Missing debug EFS", fileSystem);
+		
+		// create folder in EFS
+		IFolder folder = getJavaProject().getProject().getFolder("efs2");
+		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null);
+		
+		// create configuration
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
+		ILaunchConfiguration handle = wc.doSave();
+		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		
+		 // retrieve attributes
+		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
+				
+		// cleanup
+		folder.delete(IResource.NONE, null);
+		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
+	}	
+	
+	/**
+	 * Test that renaming a project with a linked EFS folder containing a shared
+	 * launch configuration is properly updated.
+	 * 
+	 * @throws Exception
+	 */
+	public void testEFSProjectRename() throws Exception {
+        // create test project
+        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("RenameEFS");
+        if (pro.exists()) {
+            pro.delete(true, true, null);
+        }
+        // create project with source folders and output location
+        IJavaProject javaProject = JavaProjectHelper.createJavaProject("RenameEFS");
+        JavaProjectHelper.addSourceContainer(javaProject, "src", "bin");
+
+        // add rt.jar
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        assertNotNull("No default JRE", vm);
+        JavaProjectHelper.addContainerEntry(javaProject, new Path(JavaRuntime.JRE_CONTAINER));	
+        
+		IFileSystem fileSystem = EFS.getFileSystem("debug");
+		assertNotNull("Missing debug EFS", fileSystem);
+		
+		// create folder in EFS
+		IFolder folder = javaProject.getProject().getFolder("efs2");
+		folder.createLink(new URI("debug", Path.ROOT.toString(), null), 0, null);
+		
+		// create configuration
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(folder, "efsConfig"); //$NON-NLS-1$
+		ILaunchConfiguration handle = wc.doSave();
+		assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		
+		// retrieve attributes
+		assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
+		
+		// rename project
+		IProject project = javaProject.getProject();
+		IProjectDescription description = project.getDescription();
+		description.setName("SFEemaneR"); // reverse name
+		project.move(description, false, null);
+		
+		// original configuration should no longer exist - handle out of date
+		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
+		
+		// get the new handle
+		project = ResourcesPlugin.getWorkspace().getRoot().getProject("SFEemaneR");
+		assertTrue("Project should exist", project.exists());
+		IFile file = project.getFile(new Path("efs2/efsConfig.launch"));
+		assertTrue("launch config file should exist", file.exists());
+		handle = getLaunchManager().getLaunchConfiguration(file);
+		assertTrue("launch config should exist", handle.exists());
+		
+		// retrieve attributes
+		assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true)); //$NON-NLS-1$ //$NON-NLS-2$		
+		
+		// validate shared location
+		assertEquals("Shared location should be updated", file, handle.getFile());
+		
+		// cleanup
+		project.delete(IResource.NONE, null);
+		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
+        
+	}
+	
+	/**
+	 * Tests launch configuration import.
+	 * 
+	 * @throws Exception
+	 */
+	public void testImport() throws Exception {
+		// create a shared configuration "Import4" in the workspace to be overwritten on import
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "Import4"); //$NON-NLS-1$
+		 ILaunchConfiguration handle = wc.doSave();
+		 assertTrue("Configuration should exist", handle.exists()); //$NON-NLS-1$
+		 
+		 File dir = JavaTestPlugin.getDefault().getFileInPlugin(new Path("test-import"));
+		 assertTrue("Import directory does not exist", dir.exists());
+		 LaunchManager manager = (LaunchManager) getLaunchManager();
+
+		 Listener listener = new Listener();
+		 try {
+			 manager.addLaunchConfigurationListener(listener);
+			 // import
+			 manager.importConfigurations(dir.listFiles(), null);
+		 
+			 // should be one removed
+			 List removed = listener.getRemoved();
+			 assertEquals("Should be one removed config", 1, removed.size());
+			 assertTrue("Import4 should be removed", removed.contains(handle));
+			 
+			 // should be 5 added
+			 List added = listener.getAdded();
+			 assertEquals("Should be 5 added configs", 5, added.size());
+			 Set names = new HashSet();
+			 Iterator iterator = added.iterator();
+			 while (iterator.hasNext()) {
+				ILaunchConfiguration lc = (ILaunchConfiguration) iterator.next();
+				names.add(lc.getName());
+			}
+			assertTrue("Missing Name", names.contains("Import1"));
+			assertTrue("Missing Name", names.contains("Import2"));
+			assertTrue("Missing Name", names.contains("Import3"));
+			assertTrue("Missing Name", names.contains("Import4"));
+			assertTrue("Missing Name", names.contains("Import5"));
+			
+			// should be one changed
+			List changed = listener.getChanged();
+			assertEquals("Should be 1 changed config", 1, changed.size());
+			assertEquals("Wrong changed config", "Import4", ((ILaunchConfiguration)changed.get(0)).getName());
+		 } finally {
+			 manager.removeLaunchConfigurationListener(listener);
+		 }
+		 
+	}
 }
 
 

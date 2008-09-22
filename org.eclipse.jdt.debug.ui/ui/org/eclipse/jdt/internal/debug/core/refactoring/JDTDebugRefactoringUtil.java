@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaElement;
@@ -57,13 +56,10 @@ public class JDTDebugRefactoringUtil {
 	 * @return the new container name
 	 * @since 3.2
 	 */
-	protected static String computeNewContainerName(IJavaProject javaProject, ILaunchConfiguration launchConfiguration) {
-        IPath currentLocation = launchConfiguration.getLocation();
-        IPath projectLocation = javaProject.getProject().getLocation();
-        if (projectLocation.isPrefixOf(currentLocation)) {
-            String projectFile = new File(projectLocation.toOSString()).getAbsolutePath();
-            String configDir = new File(currentLocation.toOSString()).getParent();
-            return new String(configDir.substring(projectFile.length()));
+	protected static String computeNewContainerName(ILaunchConfiguration launchConfiguration) {
+        IFile file = launchConfiguration.getFile();
+        if (file != null) {
+            return file.getParent().getProjectRelativePath().toString();
         }
         return null;
     }
@@ -164,7 +160,7 @@ public class JDTDebugRefactoringUtil {
 		LaunchConfigurationProjectMainTypeChange change = null;
 		for (int i= 0; i < configs.length; i++) {
 			change = new LaunchConfigurationProjectMainTypeChange(configs[i], null, newname);
-            String newcname = computeNewContainerName(project, configs[i]);
+            String newcname = computeNewContainerName(configs[i]);
             if (newcname != null) {
                 change.setNewContainerName(newcname);
             }

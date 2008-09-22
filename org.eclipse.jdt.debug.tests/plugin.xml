@@ -481,5 +481,16 @@
            type="org.eclipse.jdt.debug.tests.testConfigType">
      </launchConfigurationTabGroup>
   </extension>
+  <extension
+        id="debugFS"
+        name="Debug File System"
+        point="org.eclipse.core.filesystem.filesystems">
+     <filesystem
+           scheme="debug">
+        <run
+              class="org.eclipse.jdt.debug.testplugin.filesystem.DebugFileSystem">
+        </run>
+     </filesystem>
+  </extension>
 
 </plugin>
