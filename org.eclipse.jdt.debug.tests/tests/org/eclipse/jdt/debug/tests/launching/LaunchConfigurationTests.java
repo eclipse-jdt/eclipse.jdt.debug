@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.launching;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -972,7 +973,15 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 		 try {
 			 manager.addLaunchConfigurationListener(listener);
 			 // import
-			 manager.importConfigurations(dir.listFiles(), null);
+			 manager.importConfigurations(dir.listFiles(
+				new FileFilter() {
+					public boolean accept(File file) {
+						return file.isFile() &&
+							file.getName().endsWith(
+								ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+					}
+				}),
+				null);
 		 
 			 // should be one removed
 			 List removed = listener.getRemoved();
