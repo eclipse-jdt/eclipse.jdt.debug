@@ -96,7 +96,6 @@ import com.ibm.icu.text.MessageFormat;
  * This class provides static methods only.
  * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class JavaRuntime {
 	

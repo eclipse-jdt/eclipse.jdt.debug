@@ -21,7 +21,6 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * <p>
  * Clients may instantiate this class.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class LibraryLocation {
 	private IPath fSystemLibrary;
