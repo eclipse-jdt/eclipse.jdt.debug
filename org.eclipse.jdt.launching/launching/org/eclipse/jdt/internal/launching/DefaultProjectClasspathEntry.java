@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeContainerComparator;
@@ -289,7 +290,21 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 						// fall through if not the special JRELIB variable
 					default:
 						if (!expandedPath.contains(entry)) {
-							expandedPath.add(entry);
+							// resolve project relative paths - @see bug 57732 & bug 248466
+							if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
+								IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(entry);
+								for (int i = 0; i < roots.length; i++) {
+									IPackageFragmentRoot root = roots[i];
+									IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath());
+									r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
+									r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
+									if (!expandedPath.contains(r)) {
+										expandedPath.add(r);
+									}
+								}
+							} else {
+								expandedPath.add(entry);
+							}
 						}
 						break;
 				}
