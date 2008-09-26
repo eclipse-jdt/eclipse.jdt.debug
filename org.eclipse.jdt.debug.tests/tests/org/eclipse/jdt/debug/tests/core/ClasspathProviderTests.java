@@ -17,16 +17,19 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 
 /**
  * Tests runtime classpath provider extension point
@@ -493,5 +496,75 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		
 		assertTrue("Classpath is missing " + location, list.contains(location));
 				
+	}	
+	
+	/**
+	 * Tests that a buildpath with a relative (../..) classpath entry will resolve properly.
+	 * 
+	 * @throws Exception
+	 */
+	public void testRelativeClasspathEntry() throws Exception {
+        // create a project with a relative classpath entry
+        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("RelativeCP");
+        assertFalse("Project should not exist", pro.exists());
+
+        // create project with source folder and output location
+        IJavaProject project = JavaProjectHelper.createJavaProject("RelativeCP");
+        JavaProjectHelper.addSourceContainer(project, "src", "bin");
+        IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
+        assertNotNull("Missing J2SE-1.4 environment", j2se14);
+        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+        JavaProjectHelper.addContainerEntry(project, path);
+        // add relative entry - point to A.jar in DebugTests/src
+        JavaProjectHelper.addLibrary(project, new Path("../DebugTests/src/A.jar"));
+     
+        // test runtime class path resolution
+        String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+        String jarPath = getJavaProject().getProject().getLocation().append("src").append("A.jar").toOSString();
+        List list = new ArrayList();
+		for (int i = 0; i < entries.length; i++) {
+			list.add(entries[i]);
+		}
+        
+        // delete the project
+        pro.delete(false, null);
+        
+        assertTrue("Classpath is missing " + jarPath, list.contains(jarPath));
+	}
+	
+	/**
+	 * Tests that a variable with a relative (../..) path will resolve properly.
+	 * 
+	 * @throws Exception
+	 */
+	public void testVariableWithRelativePath() throws Exception {
+        // create a project with a relative classpath entry
+        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("RelativeVar");
+        assertFalse("Project should not exist", pro.exists());
+
+        // create project with source folder and output location
+        IJavaProject project = JavaProjectHelper.createJavaProject("RelativeVar");
+        JavaProjectHelper.addSourceContainer(project, "src", "bin");
+        IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
+        assertNotNull("Missing J2SE-1.4 environment", j2se14);
+        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+        JavaProjectHelper.addContainerEntry(project, path);
+        // add relative entry - point to A.jar in DebugTests/src
+        String varName = "RELATIVE_DEBUG_TESTS";
+		JavaCore.setClasspathVariable(varName, new Path("../DebugTests"), null);        
+		JavaProjectHelper.addVariableEntry(project, new Path("RELATIVE_DEBUG_TESTS/src/A.jar"), null, null);
+     
+        // test runtime class path resolution
+        String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+        String jarPath = getJavaProject().getProject().getLocation().append("src").append("A.jar").toOSString();
+        List list = new ArrayList();
+		for (int i = 0; i < entries.length; i++) {
+			list.add(entries[i]);
+		}
+        
+        // delete the project
+        pro.delete(false, null);
+        
+        assertTrue("Classpath is missing " + jarPath, list.contains(jarPath));
 	}	
 }
