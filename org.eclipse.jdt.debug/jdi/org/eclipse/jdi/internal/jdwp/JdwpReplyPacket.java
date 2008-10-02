@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 	 * Reads header fields that are specific for this type of packet.
 	 */
 	protected int readSpecificHeaderFields(byte[] bytes, int index) throws IOException {
-		fErrorCode =  (short)((bytes[index] << 8) + (bytes[index+1] << 0));
+		fErrorCode =  (short)(((bytes[index] & 0xFF) << 8) + ((bytes[index+1] & 0xFF) << 0));
 		return 2;
 	}
 
