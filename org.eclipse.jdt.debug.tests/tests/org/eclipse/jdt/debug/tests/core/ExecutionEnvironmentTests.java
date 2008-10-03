@@ -163,4 +163,28 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertTrue("did not find JRE library on classpath", foundLib);		
 	}	
+	
+	/**
+	 * Tests that default access rules appear for system packages when a profile file is specified.
+	 * 
+	 * @throws Exception
+	 */
+	public void testDefaultSystemPackageAccessRules() throws Exception {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.systemPackages");
+		assertNotNull("Missing environment systemPackages", environment);
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		assertNotNull("Missing access rules", accessRules);
+		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
+		for (int i = 0; i < accessRules.length; i++) {
+			IAccessRule[] rules = accessRules[i];
+			assertEquals("wrong number of rules for lib", 4, rules.length);
+			assertEquals("Wrong rule", "java/**", rules[0].getPattern().toString());
+			assertEquals("Wrong rule", "one/two/*", rules[1].getPattern().toString());
+			assertEquals("Wrong rule", "three/four/*", rules[2].getPattern().toString());
+			assertEquals("Wrong rule", "**/*", rules[3].getPattern().toString());
+		}		
+	}
 }

@@ -303,6 +303,11 @@
             class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE15x"
             id="org.eclipse.jdt.debug.tests.analyzer.j2se15x">
       </analyzer>
+      <environment
+            description="Test default system package access rules"
+            id="org.eclipse.jdt.debug.tests.systemPackages"
+            profileProperties="testresources/systempackage.profile">
+      </environment>
    </extension>
    <extension
          point="org.eclipse.ui.views">

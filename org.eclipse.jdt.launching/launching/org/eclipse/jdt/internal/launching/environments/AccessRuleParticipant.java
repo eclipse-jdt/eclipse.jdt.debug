@@ -82,5 +82,37 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 			return fElement.getAttribute("id"); //$NON-NLS-1$
 		}
 	}
+	
+	private String getDelegateClassName() {
+		if (fElement.getName().equals(EnvironmentsManager.ENVIRONMENT_ELEMENT)) {
+			return fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
+		} else {
+			return fElement.getAttribute("class"); //$NON-NLS-1$
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof AccessRuleParticipant) {
+			AccessRuleParticipant participant = (AccessRuleParticipant) obj;
+			return participant.getDelegateClassName().equals(getDelegateClassName());
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getDelegateClassName().hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getDelegateClassName();
+	}
 }

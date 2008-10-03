@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
+import java.util.Properties;
+
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -103,4 +105,15 @@ public interface IExecutionEnvironment {
 	 * @since 3.3
 	 */
 	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project);
+	
+	/**
+	 * Returns the OSGi profile properties associated with this execution environment
+	 * or <code>null</code> if none. Profile properties specify attributes such as
+	 * {@link org.osgi.framework.Constants#FRAMEWORK_SYSTEMPACKAGES}. Profile properties
+	 * can be optionally contributed with an execution environment extension.  
+	 * 
+	 * @return associated profile properties or <code>null</code> if none
+	 * @since 3.5
+	 */
+	public Properties getProfileProperties();
 }

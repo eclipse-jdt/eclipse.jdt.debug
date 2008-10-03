@@ -259,6 +259,10 @@
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
             id="org.eclipse.jdt.launching.eeAnalyzer"/>
+      <ruleParticipant
+            class="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"
+            id="org.eclipse.jdt.launching.defaultParticipant">
+      </ruleParticipant>
    </extension>
      
 </plugin>

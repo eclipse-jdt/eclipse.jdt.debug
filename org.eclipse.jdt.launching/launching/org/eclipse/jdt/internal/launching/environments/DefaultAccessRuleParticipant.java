@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.environments;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -29,7 +24,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 /**
@@ -53,7 +47,7 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 		allRules = (IAccessRule[][]) fgRules.get(environment.getId());
 		if (allRules == null || allRules.length != libraries.length) {
 			// if a different number of libraries, create a new set of rules
-			String[] packages = retrieveSystemPackages(environment.getId());
+			String[] packages = retrieveSystemPackages(environment);
 			IAccessRule[] packageRules = null;
 			if (packages.length > 0) {
 				packageRules = new IAccessRule[packages.length + 1];
@@ -73,8 +67,8 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 		return allRules;
 	}
 
-	private String[] retrieveSystemPackages(String ee) {
-		Properties profile = getJavaProfileProperties(ee);
+	private String[] retrieveSystemPackages(IExecutionEnvironment environment) {
+		Properties profile = environment.getProfileProperties();
 		if (profile != null) {
 			String packages = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 			if (packages != null) {
@@ -88,33 +82,5 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 			}
 		}
 		return new String[0];
-	}
-
-	private Properties getJavaProfileProperties(String ee) {
-		Bundle osgiBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-		if (osgiBundle == null) 
-			return null;
-		URL profileURL = osgiBundle.getEntry(ee.replace('/', '_') + ".profile"); //$NON-NLS-1$
-		if (profileURL != null) {
-			InputStream is = null;
-			try {
-				profileURL = FileLocator.resolve(profileURL);
-				is = profileURL.openStream();
-				if (is != null) {
-					Properties profile = new Properties();
-					profile.load(is);
-					return profile;
-				}
-			} catch (IOException e) {
-			} finally {
-				try {
-					if (is != null) {
-						is.close();
-					}
-				} catch (IOException e) {
-				}				
-			}
-		}
-		return null;
 	}
 }

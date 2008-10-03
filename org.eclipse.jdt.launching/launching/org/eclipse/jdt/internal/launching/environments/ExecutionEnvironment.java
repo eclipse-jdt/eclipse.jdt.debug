@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.environments;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -37,6 +44,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.osgi.framework.Bundle;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -93,6 +101,16 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	private IAccessRuleParticipant fRuleParticipant;
 	
 	/**
+	 * OSGi profile properties or <code>null</code> if none.
+	 */
+	private Properties fProfileProperties;
+	
+	/**
+	 * Whether profile properties have been initialized
+	 */
+	private boolean fPropertiesInitialized;
+	
+	/**
 	 * Set of compatible vm's - just the strictly compatible ones
 	 */
 	private Set fStrictlyCompatible = new HashSet();
@@ -138,6 +156,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	ExecutionEnvironment(IConfigurationElement element) {
 		fElement = element;
+		fPropertiesInitialized = false;
 		String attribute = fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
 		if (attribute != null) {
 			fRuleParticipant = new AccessRuleParticipant(fElement);
@@ -317,11 +336,15 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			// check participants first
 			IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
 			if (fRuleParticipant != null) {
-				// check default provider last
-				IAccessRuleParticipant[] copy = new IAccessRuleParticipant[participants.length + 1];
-				System.arraycopy(participants, 0, copy, 0, participants.length);
-				copy[participants.length] = fRuleParticipant;
-				participants = copy;
+				// ensure environment specific provider is last and not duplicated
+				LinkedHashSet set = new LinkedHashSet();
+				for (int i = 0; i < participants.length; i++) {
+					set.add(participants[i]);
+				}
+				// remove, add to make last
+				set.remove(fRuleParticipant);
+				set.add(fRuleParticipant);
+				participants = (IAccessRuleParticipant[]) set.toArray(new IAccessRuleParticipant[set.size()]);
 			}
 			fParticipants = participants;
 		}
@@ -364,5 +387,60 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getProfileProperties()
+	 */
+	public Properties getProfileProperties() {
+		if (!fPropertiesInitialized) {
+			fPropertiesInitialized = true;
+			String path = fElement.getAttribute("profileProperties"); //$NON-NLS-1$
+			Bundle bundle = null;
+			if (path == null) {
+				// attempt default profiles known to OSGi
+				bundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+				path = getId().replace('/', '_') + ".profile"; //$NON-NLS-1$
+			} else {
+				// read provided file
+				bundle = Platform.getBundle(fElement.getContributor().getName());
+			}
+			if (bundle != null && path != null) {
+				fProfileProperties = getJavaProfileProperties(bundle, path);
+			}
+		}
+		return fProfileProperties;
+	}
 	
+	/**
+	 * Returns properties file contained in the specified bundle at the given
+	 * bundle relative path, or <code>null</code> if none.
+	 * 
+	 * @param bundle bundle to locate file in
+	 * @param path bundle relative path to properties file
+	 * @return properties or <code>null</code> if none
+	 */
+	private Properties getJavaProfileProperties(Bundle bundle, String path) {
+		URL profileURL = bundle.getEntry(path);
+		if (profileURL != null) {
+			InputStream is = null;
+			try {
+				profileURL = FileLocator.resolve(profileURL);
+				is = profileURL.openStream();
+				if (is != null) {
+					Properties profile = new Properties();
+					profile.load(is);
+					return profile;
+				}
+			} catch (IOException e) {
+			} finally {
+				try {
+					if (is != null) {
+						is.close();
+					}
+				} catch (IOException e) {
+				}				
+			}
+		}
+		return null;
+	}	
 }

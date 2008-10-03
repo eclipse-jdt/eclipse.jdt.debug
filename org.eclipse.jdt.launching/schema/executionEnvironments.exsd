@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.jdt.launching">
+<schema targetNamespace="org.eclipse.jdt.launching" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.jdt.launching" id="executionEnvironments" name="Execution Environments"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Allows execution environments and execution environment analyzers to be contributed. An execution environment represents a kind of JRE - for example J2SE5. Analyzers are contributed to categorize JREs according to environments.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="environment" minOccurs="0" maxOccurs="unbounded"/>
@@ -36,9 +41,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -58,9 +63,9 @@
                <documentation>
                   a brief human-readable description of this execution environment
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="ruleParticipant" type="string">
@@ -68,9 +73,19 @@
                <documentation>
                   the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules last, preceeded by any &lt;code&gt;ruleParticipants&lt;/code&gt; contributed as elements. This attribute was added in the 3.3 release.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
-               </appInfo>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="profileProperties" type="string">
+            <annotation>
+               <documentation>
+                  Plug-in relative path to a properties file containing standard OSGi profile properties. Properties provide tooling with extra infomration about an environment - for example, system packages and default source and target level settings to use when compiling with this environment. This attribute was added in the 3.5 release.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -90,9 +105,9 @@
                <documentation>
                   a fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer&lt;/code&gt;
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -117,27 +132,27 @@
                <documentation>
                   the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules before a &lt;code&gt;ruleParticipant&lt;/code&gt; contributed by an execution environment directly, allowing a participant to override an environment&apos;s default rules.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Following is an example definition of an execution environment and analyzer.
 &lt;p&gt;
@@ -155,12 +170,13 @@
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         JDT (&lt;code&gt;org.eclispe.jdt.launching&lt;/code&gt;) provides definitions and an analyzer for the following execution environments:
+         JDT (&lt;code&gt;org.eclispe.jdt.launching&lt;/code&gt;) provides definitions and an analyzer for the following execution environments. Since 3.5, a default access rule participant provides access rules for system packages assocaited with an execution environment. System packages are specified by an OSGi profile properties file (see &lt;code&gt;profileProperties&lt;/code&gt; above) via the &lt;code&gt;org.osgi.framework.system.packages&lt;/code&gt; property.
 &lt;ul&gt;
 &lt;li&gt;OSGi/Minimum-1.0&lt;/li&gt;
 &lt;li&gt;OSGi/Minimum-1.1&lt;/li&gt;
@@ -176,13 +192,5 @@
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
 </schema>

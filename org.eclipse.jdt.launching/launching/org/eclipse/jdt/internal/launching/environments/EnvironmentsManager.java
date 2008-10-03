@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -84,7 +86,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/**
 	 * List of access rule participants
 	 */
-	private List fRuleParticipants = null;
+	private Set fRuleParticipants = null;
 	
 	/**
 	 * Map of environments keyed by id
@@ -189,7 +191,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 			fEnvironments = new ArrayList();
-			fRuleParticipants = new ArrayList();
+			fRuleParticipants = new LinkedHashSet();
 			fEnvironmentsMap = new HashMap(configs.length);
 			fAnalyzers = new HashMap(configs.length);
 			for (int i = 0; i < configs.length; i++) {
@@ -216,6 +218,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 					if (id == null) {
 						LaunchingPlugin.log(MessageFormat.format("Execution environment rule participant must specify \"id\" attribute. Contributed by {0}", new String[]{element.getContributor().getName()})); //$NON-NLS-1$
 					} else {
+						// use a linked hash set to avoid duplicate rule participants
 						fRuleParticipants.add(new AccessRuleParticipant(element));
 					}
 				}
