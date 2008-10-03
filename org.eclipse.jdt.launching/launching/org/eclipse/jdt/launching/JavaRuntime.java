@@ -208,6 +208,37 @@ public final class JavaRuntime {
 	public static final String PREF_VM_XML = LaunchingPlugin.getUniqueIdentifier() + ".PREF_VM_XML"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key for the default problem severity when an execution environment is bound
+	 * to a project's build path for which there is no strictly compatible JRE available in the
+	 * workspace. Value is one of {@link #VALUE_IGNORE}, {@link #VALUE_WARNING} or
+	 * {@value #VALUE_ERROR}.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing a problem severity preference value of 'ignore'.
+	 * Value is: <code>Ignore</code>
+	 * @since 3.5
+	 */
+	public static final String VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing a problem severity preference value of 'warning'.
+	 * Value is: <code>Warning</code>
+	 * @since 3.5
+	 */
+	public static final String VALUE_WARNING = "Warning"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing a problem severity preference value of 'error'.
+	 * Value is: <code>Error</code>
+	 * @since 3.5
+	 */
+	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$	
+	
+	/**
 	 * Default launch/connect timeout (ms).
 	 * 
 	 * @since 2.0

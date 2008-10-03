@@ -33,29 +33,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.osgi.framework.BundleContext;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchesListener;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
-
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -71,21 +59,21 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -95,6 +83,16 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.osgi.framework.BundleContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
@@ -505,8 +503,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			JavaCore.setOptions(optionsMap);
 		}
 
-		// set default preference values
-		getPluginPreferences().setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 		getPluginPreferences().addPropertyChangeListener(this);
 
 		JavaRuntime.addVMInstallChangedListener(this);
@@ -1114,11 +1110,45 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 								LaunchingMessages.LaunchingPlugin_36,
 								new String[]{environment.getId()});
 					}
-					createJREContainerProblem(project, message, IMarker.SEVERITY_WARNING);
+					int sev = getSeverityLevel(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, project.getProject());
+					if (sev != -1) {
+						createJREContainerProblem(project, message, sev);
+					}
 				}
 			}
 		}
 	}
+	
+	/**
+	 * Returns the severity for the specific key from the given {@link IProject},
+	 * or -1 if the problem should be ignored.
+	 * If the project does not have project specific settings, the workspace preference
+	 * is returned. If <code>null</code> is passed in as the project the workspace
+	 * preferences are consulted.
+	 * 
+	 * @param prefkey the given preference key
+	 * @param project the given project or <code>null</code>
+	 * @return the severity level for the given preference key or -1
+	 */
+	private int getSeverityLevel(String prefkey, IProject project) {
+		IPreferencesService service = Platform.getPreferencesService();
+		List scopes = new ArrayList();
+		scopes.add(new InstanceScope());
+		if(project != null) {
+			scopes.add(new ProjectScope(project));
+		}
+		String value = service.getString(LaunchingPlugin.ID_PLUGIN, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
+		if(value == null) {
+			value = getPluginPreferences().getString(prefkey);
+		}
+		if(JavaRuntime.VALUE_ERROR.equals(value)) {
+			return IMarker.SEVERITY_ERROR;
+		}
+		if(JavaRuntime.VALUE_WARNING.equals(value)) {
+			return IMarker.SEVERITY_WARNING;
+		}
+		return -1;
+	}	
 	
 	/**
 	 * creates a problem marker for a jre container problem
