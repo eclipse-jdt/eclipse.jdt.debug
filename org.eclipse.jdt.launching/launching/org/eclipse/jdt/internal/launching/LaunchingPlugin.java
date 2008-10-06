@@ -1141,10 +1141,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		if(value == null) {
 			value = getPluginPreferences().getString(prefkey);
 		}
-		if(JavaRuntime.VALUE_ERROR.equals(value)) {
+		if (JavaCore.ERROR.equals(value)) {
 			return IMarker.SEVERITY_ERROR;
 		}
-		if(JavaRuntime.VALUE_WARNING.equals(value)) {
+		if (JavaCore.WARNING.equals(value)) {
 			return IMarker.SEVERITY_WARNING;
 		}
 		return -1;

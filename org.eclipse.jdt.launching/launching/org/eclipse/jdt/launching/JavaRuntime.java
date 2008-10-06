@@ -210,33 +210,20 @@ public final class JavaRuntime {
 	/**
 	 * Preference key for the default problem severity when an execution environment is bound
 	 * to a project's build path for which there is no strictly compatible JRE available in the
-	 * workspace. Value is one of {@link #VALUE_IGNORE}, {@link #VALUE_WARNING} or
-	 * {@value #VALUE_ERROR}.
+	 * workspace. Value is one of {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, or
+	 * {@link JavaCore#IGNORE}
 	 * 
 	 * @since 3.5
 	 */
-	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
+	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$	
 	
 	/**
-	 * Constant representing a problem severity preference value of 'ignore'.
-	 * Value is: <code>Ignore</code>
+	 * Unique identifier constant (value <code>"org.eclipse.jdt.launching"</code>)
+	 * for the Java launching plug-in.
+	 * 
 	 * @since 3.5
 	 */
-	public static final String VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a problem severity preference value of 'warning'.
-	 * Value is: <code>Warning</code>
-	 * @since 3.5
-	 */
-	public static final String VALUE_WARNING = "Warning"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a problem severity preference value of 'error'.
-	 * Value is: <code>Error</code>
-	 * @since 3.5
-	 */
-	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$	
+	public static final String ID_PLUGIN = LaunchingPlugin.ID_PLUGIN;
 	
 	/**
 	 * Default launch/connect timeout (ms).

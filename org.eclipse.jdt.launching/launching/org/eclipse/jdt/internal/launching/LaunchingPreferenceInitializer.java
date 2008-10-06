@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
@@ -28,7 +29,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		Preferences preferences = JavaRuntime.getPreferences();
 		
 		preferences.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
-		preferences.setDefault(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, JavaRuntime.VALUE_WARNING);
+		preferences.setDefault(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, JavaCore.WARNING);
 
 	}
 
