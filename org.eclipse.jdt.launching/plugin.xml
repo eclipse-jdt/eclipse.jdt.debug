@@ -264,5 +264,16 @@
             id="org.eclipse.jdt.launching.defaultParticipant">
       </ruleParticipant>
    </extension>
+      <extension
+            point="org.eclipse.jdt.core.compilationParticipant">
+         <compilationParticipant
+               class="org.eclipse.jdt.internal.launching.EECompilationParticipant"
+               createsProblems="true"
+               id="org.eclipse.jdt.launching.compilationParticipant.ee">
+            <managedMarker
+                  markerType="org.eclipse.jdt.launching.jreContainerMarker">
+            </managedMarker>
+         </compilationParticipant>
+      </extension>
      
 </plugin>

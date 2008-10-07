@@ -33,16 +33,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -59,9 +54,6 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -80,8 +72,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
@@ -506,7 +496,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		getPluginPreferences().addPropertyChangeListener(this);
 
 		JavaRuntime.addVMInstallChangedListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -755,42 +745,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 
 	/**
-	 * Clear the archive cache when a project is about to be deleted.
-	 * Warn when a build path changes and references an execution environment
-	 * that does not have a perfect match.
+	 * Clear the archive cache when a project is about to be deleted/closed.
 	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
-		if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
-			IResourceDelta delta = event.getDelta();
-			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
-			for (int i = 0, length = projectDeltas.length; i < length; i++) {
-				IResourceDelta projectDelta = projectDeltas[i];
-				IResourceDelta classpathDelta = projectDelta.findMember(new Path(".classpath")); //$NON-NLS-1$
-				if (classpathDelta != null || (projectDelta.getFlags() & IResourceDelta.DESCRIPTION) > 0) {
-					IJavaProject project = (IJavaProject) JavaCore.create(projectDelta.getResource());
-					if (project != null && project.exists()) {
-						try {
-							IClasspathEntry[] rawClasspath = project.getRawClasspath();
-							for (int j = 0; j < rawClasspath.length; j++) {
-								IClasspathEntry entry = rawClasspath[j];
-								if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-									IPath path = entry.getPath();
-									if (JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {
-										IVMInstall vm = JREContainerInitializer.resolveVM(path);
-										validateEnvironment(path, project, vm);
-									}
-								}
-							}
-						} catch (CoreException e) {
-							LaunchingPlugin.log(e);
-						}
-					}
-				}
-			}
-		}
 	}
 
 	/**
@@ -1066,112 +1026,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	protected static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
 		throw new CoreException(status);
-	}
-	
-	/**
-	 * Validates the environment
-	 * @param containerPath
-	 * @param project
-	 * @param vm
-	 */
-	private void validateEnvironment(IPath containerPath, final IJavaProject project, IVMInstall vm) {
-		try {
-			project.getProject().deleteMarkers(ID_JRE_CONTAINER_MARKER, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			LaunchingPlugin.log(e);
-		}
-		String id = JREContainerInitializer.getExecutionEnvironmentId(containerPath);
-		if (id != null) {
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			final IExecutionEnvironment environment = manager.getEnvironment(id);
-			if (environment != null) {
-				if (vm == null) {
-					String message = MessageFormat.format(
-							LaunchingMessages.LaunchingPlugin_38,
-							new String[]{environment.getId()});
-					createJREContainerProblem(project, message, IMarker.SEVERITY_ERROR);
-				} else if (!environment.isStrictlyCompatible(vm)) {
-					// warn that VM does not match EE
-					// first determine if there is a strictly compatible JRE available
-					IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
-					int exact = 0;
-					for (int i = 0; i < compatibleVMs.length; i++) {
-						if (environment.isStrictlyCompatible(compatibleVMs[i])) {
-							exact++;
-						}
-					}
-					String message = null;
-					if (exact == 0) {
-						message = MessageFormat.format(
-							LaunchingMessages.LaunchingPlugin_35,
-							new String[]{environment.getId()});
-					} else {
-						message = MessageFormat.format(
-								LaunchingMessages.LaunchingPlugin_36,
-								new String[]{environment.getId()});
-					}
-					int sev = getSeverityLevel(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, project.getProject());
-					if (sev != -1) {
-						createJREContainerProblem(project, message, sev);
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Returns the severity for the specific key from the given {@link IProject},
-	 * or -1 if the problem should be ignored.
-	 * If the project does not have project specific settings, the workspace preference
-	 * is returned. If <code>null</code> is passed in as the project the workspace
-	 * preferences are consulted.
-	 * 
-	 * @param prefkey the given preference key
-	 * @param project the given project or <code>null</code>
-	 * @return the severity level for the given preference key or -1
-	 */
-	private int getSeverityLevel(String prefkey, IProject project) {
-		IPreferencesService service = Platform.getPreferencesService();
-		List scopes = new ArrayList();
-		scopes.add(new InstanceScope());
-		if(project != null) {
-			scopes.add(new ProjectScope(project));
-		}
-		String value = service.getString(LaunchingPlugin.ID_PLUGIN, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
-		if(value == null) {
-			value = getPluginPreferences().getString(prefkey);
-		}
-		if (JavaCore.ERROR.equals(value)) {
-			return IMarker.SEVERITY_ERROR;
-		}
-		if (JavaCore.WARNING.equals(value)) {
-			return IMarker.SEVERITY_WARNING;
-		}
-		return -1;
-	}	
-	
-	/**
-	 * creates a problem marker for a jre container problem
-	 * @param javaProject
-	 * @param message
-	 * @param severity
-	 */
-	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
-		try {
-			IMarker marker = javaProject.getProject().createMarker(ID_JRE_CONTAINER_MARKER);
-			marker.setAttributes(
-				new String[] {
-						IMarker.MESSAGE,
-						IMarker.SEVERITY,
-						IMarker.LOCATION},
-					new Object[] {
-						message,
-						new Integer(severity),
-						LaunchingMessages.LaunchingPlugin_37
-					});
-		} catch (CoreException e) {
-			return;
-		}
 	}
 }
 
