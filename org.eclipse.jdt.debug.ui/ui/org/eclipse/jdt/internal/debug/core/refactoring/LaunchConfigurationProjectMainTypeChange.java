@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Feng(Marvin) Wang <feng.wang@sybase.com> - bug 244395
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.refactoring;
 
@@ -158,7 +159,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 			fLaunchConfiguration = wc.doSave();
 		}
 		// create the undo change
-		return new LaunchConfigurationProjectMainTypeChange(wc, oldMainTypeName, oldProjectName);
+		return new LaunchConfigurationProjectMainTypeChange(fLaunchConfiguration, oldMainTypeName, oldProjectName);
 	}
 	
 	/**
