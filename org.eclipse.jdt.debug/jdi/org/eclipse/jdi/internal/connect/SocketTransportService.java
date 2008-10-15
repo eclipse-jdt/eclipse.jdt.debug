@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,6 +295,10 @@ public class SocketTransportService extends TransportService {
         fServerSocket = null;
     }
 
+    /**
+     * Closes the current open socket, the transport service will continue to listen
+     * for new incoming connections.
+     */
     public void close() {
         if (fSocket != null) {
             try {
@@ -302,22 +306,20 @@ public class SocketTransportService extends TransportService {
             } catch (IOException e) {
             }
         }
- 
-        fServerSocket = null;
         fSocket = null;
         fInput = null;
         fOutput = null;
     }
 
     /**
-     * @return
+     * @return current socket input stream or <code>null</code>
      */
     public InputStream getInputStream() {
         return fInput;
     }
 
     /**
-     * @return
+     * @return curernt socket output stream or <code>null</code>
      */
     public OutputStream getOutputStream() {
         return fOutput;
