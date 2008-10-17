@@ -29,6 +29,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.actions.ValidBreakpointLocationLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.IMarkerUpdater;
 import org.eclipse.ui.texteditor.MarkerUtilities;
@@ -110,6 +111,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				if(MarkerUtilities.getLineNumber(marker) == line) {
 					//if there exists a breakpoint on the line remove this one
 					if(isLineBreakpoint(marker)) {
+						ensureRanges(document, marker, line);
 						return lineBreakpointExists(marker.getResource(), ((IJavaLineBreakpoint)breakpoint).getTypeName(), line, marker) == null;
 					}
 					return true;
@@ -120,12 +122,34 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 					return false;
 				}
 				MarkerUtilities.setLineNumber(marker, line);
+				if(isLineBreakpoint(marker)) {
+					ensureRanges(document, marker, line);
+				}
 				return true;
 			} 
 			catch (BadLocationException e) {JDIDebugUIPlugin.log(e);} 
 			catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		}
 		return false;
+	}
+	
+	/**
+	 * Updates the charstart and charend ranges if necessary for the given line.
+	 * Returns immediately if the line is not valid (< 0 or greater than the total line number count)
+	 * @param document
+	 * @param marker
+	 * @param line
+	 * @throws BadLocationException
+	 */
+	private void ensureRanges(IDocument document, IMarker marker, int line) throws BadLocationException {
+		if(line < 0 || line > document.getNumberOfLines()) {
+			return;
+		}
+		IRegion region = document.getLineInformation(line - 1);
+		int charstart = region.getOffset();
+		int charend = charstart + region.getLength();
+		MarkerUtilities.setCharStart(marker, charstart);
+		MarkerUtilities.setCharEnd(marker, charend);
 	}
 	
 	/**

@@ -260,17 +260,19 @@ public class BreakpointLocationVerifierJob extends Job {
 	 */
 	private void createNewBreakpoint(int lineNumber, String typeName) throws CoreException {
 		Map newAttributes = new HashMap(10);
+		int start = -1, end = -1;
 		if (fType != null) {
 			try {
 				IRegion line= fDocument.getLineInformation(lineNumber - 1);
-				int start= line.getOffset();
-				int end= start + line.getLength() - 1;
-				BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(newAttributes, fType, start, end);
+				start = line.getOffset();
+				end = start + line.getLength();
+				
 			} catch (BadLocationException ble) {
 				JDIDebugUIPlugin.log(ble);
 			}
+			BreakpointUtils.addJavaBreakpointAttributes(newAttributes, fType);
 		}
-		JDIDebugModel.createLineBreakpoint(fResource, typeName, lineNumber, -1, -1, 0, true, newAttributes);
+		JDIDebugModel.createLineBreakpoint(fResource, typeName, lineNumber, start, end, 0, true, newAttributes);
 	}
 
 	/**

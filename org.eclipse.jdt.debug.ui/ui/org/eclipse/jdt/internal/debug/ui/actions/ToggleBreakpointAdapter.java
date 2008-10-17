@@ -219,14 +219,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							    return Status.CANCEL_STATUS;
 							}
 							IDocument document = documentProvider.getDocument(editor.getEditorInput());
+							int charstart = -1, charend = -1;
 							try {
 								IRegion line = document.getLineInformation(lnumber - 1);
-								int start = line.getOffset();
-								int end = start + line.getLength() - 1;
-								BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
+								charstart = line.getOffset();
+								charend = charstart + line.getLength();
 							} 	
 							catch (BadLocationException ble) {JDIDebugUIPlugin.log(ble);}
-							IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, -1, -1, 0, true, attributes);
+							BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
+							IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
 							new BreakpointLocationVerifierJob(document, breakpoint, lnumber, bestMatch, tname, type, resource, editor).schedule();
 	                    }
 	                    else {
@@ -242,7 +243,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.setSystem(true);
         job.schedule();
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -1143,7 +1144,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     				IResource resource = BreakpointUtils.getBreakpointResource(declaringType);
 					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, createQualifiedTypeName(declaringType), ts.getStartLine() + 1);
     				if (breakpoint != null) {
-    					breakpoint.delete();
+    					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
     					return;
     				}
     				CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
