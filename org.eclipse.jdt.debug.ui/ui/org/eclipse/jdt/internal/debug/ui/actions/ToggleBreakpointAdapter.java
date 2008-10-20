@@ -366,7 +366,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						IType type = (IType) member;
 						IBreakpoint existing = getClassLoadBreakpoint(type);
 						if (existing != null) {
-							existing.delete(); 
+							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existing, true);
+							return Status.OK_STATUS;
 						}
 						else {
 							HashMap map = new HashMap(10);
