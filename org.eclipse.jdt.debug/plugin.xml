@@ -67,6 +67,7 @@
    </extension>
    <extension
          id="javaBreakpointMarker"
+         name="%JavaBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.debug.core.breakpointMarker">
@@ -74,6 +75,7 @@
    </extension>
    <extension
          id="javaClassPrepareBreakpointMarker"
+         name="%JavaClassLoadBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaBreakpointMarker">
@@ -84,6 +86,7 @@
    </extension>   
    <extension
          id="commonJavaLineBreakpointMarker"
+         name="%CommonJavaLineBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaBreakpointMarker">
@@ -109,6 +112,7 @@
    </extension>
    <extension
          id="javaLineBreakpointMarker"
+         name="%JavaLineBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
@@ -119,6 +123,7 @@
    </extension>
    <extension
          id="javaPatternBreakpointMarker"
+         name="%JavaPatternBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
@@ -135,6 +140,7 @@
    </extension>
    <extension
          id="javaTargetPatternBreakpointMarker"
+         name="%JavaTargetPatternBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
@@ -148,6 +154,7 @@
    </extension>
    <extension
          id="javaExceptionBreakpointMarker"
+         name="%JavaExceptionBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaBreakpointMarker">
@@ -167,6 +174,7 @@
    </extension>
    <extension
          id="javaWatchpointMarker"
+         name="%JavaWatchpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
@@ -189,6 +197,7 @@
    </extension>
    <extension
          id="javaMethodBreakpointMarker"
+         name="%JavaMethodBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
@@ -214,6 +223,7 @@
    </extension>
    <extension
          id="javaMethodEntryBreakpointMarker"
+         name="%JavaMethodEntryBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
@@ -230,6 +240,7 @@
    </extension>
    <extension
          id="javaStratumLineBreakpointMarker"
+         name="%JavaStratumLineBreakpoint.name"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">

@@ -3334,6 +3334,63 @@ M4 = Platform-specific fourth key
     <markerAttributeGrouping
           defaultGroupingEntry="org.eclipse.jdt.ui.category.buildpath"
           markerType="org.eclipse.jdt.launching.jreContainerMarker"/>
+    <markerTypeCategory
+          name="%JavaLineBPmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+       </markerTypeReference>
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+       </markerTypeReference>
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%JavaExceptionBPmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaExceptionBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%JavaMethodBPmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaMethodBreakpointMarker">
+       </markerTypeReference>
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%JavaClassBPmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%JavaWPmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaWatchpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%JavaPatternmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaPatternBreakpointMarker">
+       </markerTypeReference>
+       <markerTypeReference
+             id="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
+    <markerTypeCategory
+          name="%BreakpointsmarkerTypeCategory.name">
+       <markerTypeReference
+             id="org.eclipse.debug.core.breakpointMarker">
+       </markerTypeReference>
+       <markerTypeReference
+             id="org.eclipse.debug.core.lineBreakpointMarker">
+       </markerTypeReference>
+    </markerTypeCategory>
  </extension>
  <extension
        point="org.eclipse.ui.editors.markerUpdaters">
