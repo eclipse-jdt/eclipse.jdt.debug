@@ -1476,7 +1476,7 @@ public class CharOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("char equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("char equalEqual char : wrong result : ", xCharValue == xCharValue, booleanValue);
+		assertEquals("char equalEqual char : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1653,7 +1653,7 @@ public class CharOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("char notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("char notEqual char : wrong result : ", xCharValue != xCharValue, booleanValue);
+		assertEquals("char notEqual char : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

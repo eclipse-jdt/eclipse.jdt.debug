@@ -1501,7 +1501,7 @@ public class ShortOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("short equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("short equalEqual short : wrong result : ", xShortValue == xShortValue, booleanValue);
+		assertEquals("short equalEqual short : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1678,7 +1678,7 @@ public class ShortOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("short notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("short notEqual short : wrong result : ", xShortValue != xShortValue, booleanValue);
+		assertEquals("short notEqual short : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

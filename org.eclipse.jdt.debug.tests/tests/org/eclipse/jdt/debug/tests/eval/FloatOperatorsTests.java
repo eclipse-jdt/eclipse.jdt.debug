@@ -1576,7 +1576,7 @@ public class FloatOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("float equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("float equalEqual float : wrong result : ", xFloatValue == xFloatValue, booleanValue);
+		assertEquals("float equalEqual float : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1753,7 +1753,7 @@ public class FloatOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("float notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("float notEqual float : wrong result : ", xFloatValue != xFloatValue, booleanValue);
+		assertEquals("float notEqual float : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

@@ -1451,7 +1451,7 @@ public class ByteOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("byte equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("byte equalEqual byte : wrong result : ", xByteValue == xByteValue, booleanValue);
+		assertEquals("byte equalEqual byte : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1628,7 +1628,7 @@ public class ByteOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("byte notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("byte notEqual byte : wrong result : ", xByteValue != xByteValue, booleanValue);
+		assertEquals("byte notEqual byte : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

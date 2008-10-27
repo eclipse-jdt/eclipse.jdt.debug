@@ -1601,7 +1601,7 @@ public class DoubleOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("double equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("double equalEqual double : wrong result : ", xDoubleValue == xDoubleValue, booleanValue);
+		assertEquals("double equalEqual double : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1778,7 +1778,7 @@ public class DoubleOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("double notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("double notEqual double : wrong result : ", xDoubleValue != xDoubleValue, booleanValue);
+		assertEquals("double notEqual double : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

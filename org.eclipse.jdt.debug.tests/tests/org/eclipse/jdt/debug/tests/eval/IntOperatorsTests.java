@@ -1526,7 +1526,7 @@ public class IntOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("int equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("int equalEqual int : wrong result : ", xIntValue == xIntValue, booleanValue);
+		assertEquals("int equalEqual int : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1703,7 +1703,7 @@ public class IntOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("int notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("int notEqual int : wrong result : ", xIntValue != xIntValue, booleanValue);
+		assertEquals("int notEqual int : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}

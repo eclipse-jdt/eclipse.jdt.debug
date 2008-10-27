@@ -1551,7 +1551,7 @@ public class LongOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("long equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("long equalEqual long : wrong result : ", xLongValue == xLongValue, booleanValue);
+		assertEquals("long equalEqual long : wrong result : ", true, booleanValue);
 		} finally {
 		end();
 		}
@@ -1728,7 +1728,7 @@ public class LongOperatorsTests extends Tests {
 		typeName = value.getReferenceTypeName();
 		assertEquals("long notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
-		assertEquals("long notEqual long : wrong result : ", xLongValue != xLongValue, booleanValue);
+		assertEquals("long notEqual long : wrong result : ", false, booleanValue);
 		} finally {
 		end();
 		}
