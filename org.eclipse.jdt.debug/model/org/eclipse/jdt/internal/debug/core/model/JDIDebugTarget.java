@@ -2398,6 +2398,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				}
 			}
 			return (IJavaThreadGroup[]) modelGroups.toArray(new IJavaThreadGroup[modelGroups.size()]);
+		} catch (VMDisconnectedException e) {
+			// if the VM has disconnected, there are no thread groups
+			return new IJavaThreadGroup[0];
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIDebugTarget_1, e);
 		}
