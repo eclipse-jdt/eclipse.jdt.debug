@@ -240,6 +240,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 return Status.OK_STATUS;
             }
         };
+        job.setPriority(Job.INTERACTIVE);
         job.setSystem(true);
         job.schedule();
     }
@@ -335,6 +336,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 return Status.OK_STATUS;
             }
         };
+        job.setPriority(Job.INTERACTIVE);
         job.setSystem(true);
         job.schedule();
     }
@@ -393,6 +395,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				return Status.OK_STATUS;
 			}
     	};
+    	job.setPriority(Job.INTERACTIVE);
     	job.setSystem(true);
     	job.schedule();
     }
@@ -803,6 +806,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 return Status.OK_STATUS;
             }
         };
+        job.setPriority(Job.INTERACTIVE);
         job.setSystem(true);
         job.schedule();
     }
