@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -86,6 +87,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			        fLock.wait(30000);
 			    }
 			}
+			dumpOnError(11);
 			assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
 			// there are 10 lines and one "empty line" (i.e. the last "new line")
@@ -114,6 +116,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			        fLock.wait(30000);
 			    }
             }
+			dumpOnError(10);
 			assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Did not receive 'stopped' notification", fStopped);
 			assertEquals("Wrong number of lines", 10, fLinesRead.size());
@@ -255,6 +258,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			        fLock.wait(30000);
 			    }
 			}
+	        dumpOnError(2);
 	        assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
 			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
@@ -278,6 +282,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			        fLock.wait(30000);
 			    }
 			}
+	        dumpOnError(2);
 	        assertTrue("Never received 'start' notification", fStarted);
 			assertTrue("Never received 'stopped' notification", fStopped);
 			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
@@ -287,5 +292,15 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        removeAllBreakpoints();
 	        terminateAndRemove(fTarget);
 	    }
+	}
+	
+	private void dumpOnError(int expectedLines) {
+        if (fLinesRead.size() != expectedLines) {
+	    	Iterator lines = fLinesRead.iterator();
+	    	while (lines.hasNext()) {
+				String line = (String) lines.next();
+				System.out.println(line);
+			}
+        }
 	}
 }
