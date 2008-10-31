@@ -56,6 +56,7 @@ import org.eclipse.jdt.debug.tests.core.InstructionPointerTests;
 import org.eclipse.jdt.debug.tests.core.JDWPTests;
 import org.eclipse.jdt.debug.tests.core.JavaDebugTargetTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
+import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MemoryRenderingTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
@@ -216,7 +217,7 @@ public class AutomatedSuite extends DebugSuite {
 	//Console tests
 		addTest(new TestSuite(ConsoleTests.class));
 		addTest(new TestSuite(ConsoleInputTests.class));
-		//addTest(new TestSuite(LineTrackerTests.class));
+		addTest(new TestSuite(LineTrackerTests.class));
 		addTest(new TestSuite(IOConsoleTests.class));
 		
 	//Core tests
