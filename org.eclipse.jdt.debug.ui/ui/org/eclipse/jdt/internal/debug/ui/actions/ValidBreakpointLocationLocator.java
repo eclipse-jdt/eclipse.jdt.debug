@@ -349,7 +349,14 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
 	 */
 	public boolean visit(AnnotationTypeDeclaration node) {
+		if (visit(node, false)) {
+			List bodyDeclaration= node.bodyDeclarations();
+			for (Iterator iter= bodyDeclaration.iterator(); iter.hasNext();) {
+				((BodyDeclaration)iter.next()).accept(this);
+			}
+		}
 		return false;
+
 	}
 
 	/* (non-Javadoc)
