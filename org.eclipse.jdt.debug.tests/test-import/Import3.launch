@@ -8,4 +8,10 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="Breakpoints"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="DebugTests"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/DebugTests/src/Breakpoints.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
 </launchConfiguration>
