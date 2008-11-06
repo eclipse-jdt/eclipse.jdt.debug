@@ -116,4 +116,12 @@ public interface IExecutionEnvironment {
 	 * @since 3.5
 	 */
 	public Properties getProfileProperties();
+	
+	/**
+	 * Returns a collection of execution environments that are subsets of this environment.
+	 * 
+	 * @return a collection of execution environments that are subsets of this environment
+	 * @since 3.5
+	 */
+	public IExecutionEnvironment[] getSubEnvironments();
 }

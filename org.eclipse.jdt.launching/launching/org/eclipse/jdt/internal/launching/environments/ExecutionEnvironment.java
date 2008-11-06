@@ -45,6 +45,7 @@ import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -442,5 +443,26 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getSubEnvironments()
+	 */
+	public IExecutionEnvironment[] getSubEnvironments() {
+		Properties properties = getProfileProperties();
+		Set subenv = new LinkedHashSet();
+		if (properties != null) {
+			String subsets = properties.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+			if (subsets != null) {
+				String[] ids = subsets.split(","); //$NON-NLS-1$
+				for (int i = 0; i < ids.length; i++) {
+					IExecutionEnvironment sub = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(ids[i].trim());
+					if (sub != null && !sub.getId().equals(getId())) {
+						subenv.add(sub);
+					}
+				}
+			}
+		}
+		return (IExecutionEnvironment[]) subenv.toArray(new IExecutionEnvironment[subenv.size()]);
 	}	
 }
