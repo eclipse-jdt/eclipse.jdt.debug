@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +151,11 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * Wild card pattern matching all files
 	 */
 	private static final IPath ALL_PATTERN = new Path("**/*"); //$NON-NLS-1$
+	
+	/**
+	 * Prefix of compiler settings in properties file
+	 */
+	private static final String COMPILER_SETTING_PREFIX = JavaCore.PLUGIN_ID + ".compiler"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -464,5 +470,26 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 		return (IExecutionEnvironment[]) subenv.toArray(new IExecutionEnvironment[subenv.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getComplianceOptions()
+	 */
+	public Map getComplianceOptions() {
+		Properties properties = getProfileProperties();
+		if (properties != null) {
+			Map map = new HashMap();
+			Iterator iterator = properties.keySet().iterator();
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				if (key.startsWith(COMPILER_SETTING_PREFIX)) {
+					map.put(key, properties.getProperty(key));
+				}
+			}
+			if (!map.isEmpty()) {
+				return map;
+			}
+		}
+		return null;
 	}	
 }

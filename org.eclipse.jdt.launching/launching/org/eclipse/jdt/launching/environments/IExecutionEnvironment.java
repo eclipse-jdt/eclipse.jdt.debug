@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.jdt.core.IAccessRule;
@@ -124,4 +125,14 @@ public interface IExecutionEnvironment {
 	 * @since 3.5
 	 */
 	public IExecutionEnvironment[] getSubEnvironments();
+	
+	/**
+	 * Returns a map of Eclipse Java compiler options specified as default settings to
+	 * use when building with this profile, or <code>null</code> if unspecified.
+	 * 
+	 * @return a map of Eclipse Java compiler options associated with this profile or 
+	 * 	<code>null</code>
+	 * @since 3.5
+	 */
+	public Map getComplianceOptions();
 }
