@@ -81,7 +81,18 @@
          <attribute name="profileProperties" type="string">
             <annotation>
                <documentation>
-                  Plug-in relative path to a properties file containing standard OSGi profile properties. Properties provide tooling with extra infomration about an environment - for example, system packages and default source and target level settings to use when compiling with this environment. This attribute was added in the 3.5 release.
+                  Plug-in relative path to a properties file containing standard OSGi profile properties. Properties provide tooling with extra information about an environment - for example, system packages and default source and target level settings to use when compiling with this environment. This attribute was added in the 3.5 release. Minimally, the following properties should be specified. Note that any &quot;org.eclipse.jdt.core.compiler.*&quot; properties provided will be used as the default compiler settings for projects built against this execution environment.
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;org.osgi.framework.system.packages&lt;/code&gt; - a comma separated list of available (API) system packages&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.osgi.framework.bootdelegation&lt;/code&gt; - a comma spearated list of packages for which the Framework must delegate class loading to the boot class path&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.osgi.framework.executionenvironment&lt;/code&gt; - a comma separated list of execution environments provided by this environment (a list of environments that are a subset of this environment, including this environment)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;osgi.java.profile.name&lt;/code&gt; - environment identifier/name&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.compliance&lt;/code&gt; - compiler compliance level - 1.4, 1.5, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.source&lt;/code&gt; - source level - 1.3, 1.4, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.codegen.targetPlatform&lt;/code&gt; - target level - 1.2, 1.3, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.problem.assertIdentifier&lt;/code&gt; - severity of using &apos;assert&apos; as an identifier in source: error, warning, or ignore&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.problem.enumIdentifier&lt;/code&gt; - severity of using &apos;enum&apos; as an identifier in source: error, warning, or ignore&lt;/li&gt;
+&lt;/ul&gt;
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
@@ -180,6 +191,7 @@
 &lt;ul&gt;
 &lt;li&gt;OSGi/Minimum-1.0&lt;/li&gt;
 &lt;li&gt;OSGi/Minimum-1.1&lt;/li&gt;
+&lt;li&gt;OSGi/Minimum-1.2&lt;/li&gt;
 &lt;li&gt;JRE-1.1&lt;/li&gt;
 &lt;li&gt;J2SE-1.2&lt;/li&gt;
 &lt;li&gt;J2SE-1.3&lt;/li&gt;
