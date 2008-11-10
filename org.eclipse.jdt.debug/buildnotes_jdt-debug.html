@@ -18,6 +18,14 @@
 <p><strong>Description:</strong> In release 3.4 and earlier, clients could contribute an execution environment, but when that environment was bound to a build path for a plug-in project, default compiler compliance settings were not set appropriately. Since 3.5, clients may specify an OSGi system profile properties file with an execution environment. The properties file provides information about system packages, default source and target compiler settings, etc. When provided, tooling will be able to leverage the information to create default access rules for system packages and properly set default compiler compliance settings for projects bound to the contributed environment. See the newly added method <code>IExecutionEnvironment.getProfileProperties()</code> and the new extension point attribute <code>profileProperties</code>.</p>
 <p><strong>Action required:</strong> Clients contributing an execution environment should provide an associated OSGi system profile properties file. </p>
 
+<h2>November 11, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=253022">Bug 253022</a>: Suppport for new OSGi/Minimum-1.2 Execution environment<br>
+
+<h2>November 4, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=252521">Bug 252521</a>: VM Disconnection exception when program terminates with thread group turned on<br>
+
 <h2>October 21, 2008</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=244395">Bug 244395</a>: [refactoring] [launch config refactoring] project rename cannot undo<br>
