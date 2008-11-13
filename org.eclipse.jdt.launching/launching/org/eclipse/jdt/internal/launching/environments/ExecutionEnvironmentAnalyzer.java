@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	
 	private static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	private static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+	private static final String OSGI_MINIMUM_1_2 = "OSGi/Minimum-1.2"; //$NON-NLS-1$
 	
 	private static final String JAVA_SPEC_VERSION = "java.specification.version"; //$NON-NLS-1$
 	private static final String JAVA_SPEC_NAME = "java.specification.name"; //$NON-NLS-1$
@@ -59,11 +60,12 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	static {
 		// table where the key is the EE and the value is an array of EEs that it is a super-set of
 		mappings.put(CDC_FOUNDATION_1_0, new String[] {OSGI_MINIMUM_1_0});
-		mappings.put(CDC_FOUNDATION_1_1, new String[] {CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_1});
+		mappings.put(CDC_FOUNDATION_1_1, new String[] {CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_2});
 		mappings.put(OSGI_MINIMUM_1_1, new String[] {OSGI_MINIMUM_1_0});
+		mappings.put(OSGI_MINIMUM_1_2, new String[] {OSGI_MINIMUM_1_1});
 		mappings.put(J2SE_1_2, new String[] {JRE_1_1});
 		mappings.put(J2SE_1_3, new String[] {J2SE_1_2, CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_0});
-		mappings.put(J2SE_1_4, new String[] {J2SE_1_3, CDC_FOUNDATION_1_1, OSGI_MINIMUM_1_1});
+		mappings.put(J2SE_1_4, new String[] {J2SE_1_3, CDC_FOUNDATION_1_1, OSGI_MINIMUM_1_2});
 		mappings.put(J2SE_1_5, new String[] {J2SE_1_4});
 		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
 	}
