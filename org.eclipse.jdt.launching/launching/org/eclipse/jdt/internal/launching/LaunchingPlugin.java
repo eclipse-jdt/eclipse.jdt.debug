@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -74,6 +74,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -459,7 +460,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			super.stop(context);
 		}
 	}
-		
+	
 	/**
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
@@ -471,27 +472,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			public void prepareToSave(ISaveContext context1)	throws CoreException {}
 			public void rollback(ISaveContext context1) {}
 			public void saving(ISaveContext context1) throws CoreException {
-				savePluginPreferences();
+				try {
+					new InstanceScope().getNode(ID_PLUGIN).flush();
+				} catch (BackingStoreException e) {
+					log(e);
+				}
 			}
-			
 		});
-		// Exclude launch configurations from being copied to the output directory
-		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
-		Hashtable optionsMap = JavaCore.getOptions();
-		String filters= (String)optionsMap.get(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER);
-		boolean modified = false;
-		if (filters == null || filters.length() == 0) {
-			filters= launchFilter;
-			modified = true;
-		} else if (filters.indexOf(launchFilter) == -1) {
-			filters= filters + ',' + launchFilter;
-			modified = true;
-		}
-
-		if (modified) {
-			optionsMap.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, filters);
-			JavaCore.setOptions(optionsMap);
-		}
 
 		getPluginPreferences().addPropertyChangeListener(this);
 
