@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.actions;
+package org.eclipse.jdt.internal.debug.core.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -193,7 +193,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * Compute the name of the type which contains this node.
 	 * Result will be the name of the type or the inner type which contains this node, but not of the local or anonymous type.
 	 */
-	static protected String computeTypeName(ASTNode node) {
+	private String computeTypeName(ASTNode node) {
 		String typeName = null;
 		while (!(node instanceof CompilationUnit)) {
 			if (node instanceof AbstractTypeDeclaration) {
@@ -356,7 +356,6 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			}
 		}
 		return false;
-
 	}
 
 	/* (non-Javadoc)

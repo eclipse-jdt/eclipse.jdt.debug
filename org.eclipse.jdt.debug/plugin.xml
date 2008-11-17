@@ -311,5 +311,44 @@
             class="org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures"
             modelIdentifier="org.eclipse.jdt.debug"/>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.breakpointImportParticipants">
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaExceptionBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaMethodBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaPatternBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
+            type="org.eclipse.jdt.debug.javaWatchpointMarker">
+      </importParticipant>
+   </extension>
    
 </plugin>

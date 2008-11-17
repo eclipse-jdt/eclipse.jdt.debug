@@ -42,7 +42,7 @@ import com.sun.jdi.request.EventRequest;
  */
 public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaClassPrepareBreakpoint {
 	
-	private static final String JAVA_CLASS_PREPARE_BREAKPOINT= "org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker"; //$NON-NLS-1$
+	protected static final String JAVA_CLASS_PREPARE_BREAKPOINT= "org.eclipse.jdt.debug.javaClassPrepareBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Class prepare breakpoint attribute storing the type of member this

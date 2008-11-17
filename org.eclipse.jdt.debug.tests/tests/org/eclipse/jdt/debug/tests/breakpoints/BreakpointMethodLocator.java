@@ -8,17 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.actions;
+package org.eclipse.jdt.debug.tests.breakpoints;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -154,7 +159,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 				fMethodName= node.getName().getIdentifier();
 			}
 			fMethodSignature= computeMethodSignature(node);
-			fTypeName= ValidBreakpointLocationLocator.computeTypeName(node);
+			fTypeName= computeTypeName(node);
 			fFound= true;
 		}
 		return false;
@@ -181,4 +186,34 @@ public class BreakpointMethodLocator extends ASTVisitor {
 		return false;
 	}
 
+	/**
+	 * Compute the name of the type which contains this node.
+	 * Result will be the name of the type or the inner type which contains this node, but not of the local or anonymous type.
+	 */
+	private String computeTypeName(ASTNode node) {
+		String typeName = null;
+		while (!(node instanceof CompilationUnit)) {
+			if (node instanceof AbstractTypeDeclaration) {
+				String identifier= ((AbstractTypeDeclaration)node).getName().getIdentifier();
+				if (typeName == null) {
+					typeName= identifier;
+				} else {
+					typeName= identifier + "$" + typeName; //$NON-NLS-1$
+				}
+			}
+			node= node.getParent();
+		}
+		PackageDeclaration packageDecl= ((CompilationUnit)node).getPackage();
+		String packageIdentifier= ""; //$NON-NLS-1$
+		if (packageDecl != null) {
+			Name packageName= packageDecl.getName();
+			while (packageName.isQualifiedName()) {
+				QualifiedName qualifiedName= (QualifiedName) packageName;
+				packageIdentifier= qualifiedName.getName().getIdentifier() + "." + packageIdentifier; //$NON-NLS-1$
+				packageName= qualifiedName.getQualifier();
+			}
+			packageIdentifier= ((SimpleName)packageName).getIdentifier() + "." + packageIdentifier; //$NON-NLS-1$
+		}
+		return packageIdentifier + typeName;
+	}
 }

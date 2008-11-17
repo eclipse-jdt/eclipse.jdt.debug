@@ -46,7 +46,7 @@ import com.sun.jdi.request.MethodExitRequest;
 
 public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMethodBreakpoint {
 	
-	private static final String JAVA_METHOD_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodBreakpointMarker"; //$NON-NLS-1$
+	protected static final String JAVA_METHOD_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint attribute storing the name of the method
@@ -54,7 +54,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * (value <code>"org.eclipse.jdt.debug.core.methodName"</code>). 
 	 * This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
+	protected static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing the signature of the method
@@ -62,7 +62,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * (value <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). 
 	 * This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
+	protected static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing whether this breakpoint
@@ -70,7 +70,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * (value <code>"org.eclipse.jdt.debug.core.entry"</code>).
 	 * This attribute is a <code>boolean</code>.
 	 */
-	private static final String ENTRY = "org.eclipse.jdt.debug.core.entry"; //$NON-NLS-1$	
+	protected static final String ENTRY = "org.eclipse.jdt.debug.core.entry"; //$NON-NLS-1$	
 
 	/**
 	 * Breakpoint attribute storing whether this breakpoint
@@ -78,7 +78,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * (value <code>"org.eclipse.jdt.debug.core.exit"</code>).
 	 * This attribute is a <code>boolean</code>.
 	 */
-	private static final String EXIT = "org.eclipse.jdt.debug.core.exit"; //$NON-NLS-1$	
+	protected static final String EXIT = "org.eclipse.jdt.debug.core.exit"; //$NON-NLS-1$	
 		
 	/**
 	 * Breakpoint attribute storing whether this breakpoint
@@ -86,7 +86,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * (value <code>"org.eclipse.jdt.debug.core.native"</code>).
 	 * This attribute is a <code>boolean</code>.
 	 */
-	private static final String NATIVE = "org.eclipse.jdt.debug.core.native"; //$NON-NLS-1$
+	protected static final String NATIVE = "org.eclipse.jdt.debug.core.native"; //$NON-NLS-1$
 			
 	/**
 	 * Cache of method name attribute

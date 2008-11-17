@@ -17,9 +17,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.debug.ui.actions.BreakpointFieldLocator;
-import org.eclipse.jdt.internal.debug.ui.actions.BreakpointMethodLocator;
-import org.eclipse.jdt.internal.debug.ui.actions.ValidBreakpointLocationLocator;
+import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jface.text.Document;
 
 /**

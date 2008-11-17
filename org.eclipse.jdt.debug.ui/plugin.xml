@@ -3295,6 +3295,10 @@ M4 = Platform-specific fourth key
           id="org.eclipse.jdt.debug.ui.heapWalking"
           label="%preferenceKeywords.heapWalking">
     </keyword>
+    <keyword
+          id="org.eclipse.jdt.debug.ui.primitiveOptions"
+          label="%preferenceKeywords.primitiveOptions">
+    </keyword>
  </extension>
  <extension
        point="org.eclipse.ui.preferenceTransfer">
