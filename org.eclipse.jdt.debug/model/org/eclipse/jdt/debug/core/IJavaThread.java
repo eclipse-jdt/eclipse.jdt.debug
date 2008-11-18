@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IThread;
  * A thread in a Java virtual machine.
  * @see org.eclipse.debug.core.model.IThread
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IJavaThread extends IThread, IFilteredStep {
 	

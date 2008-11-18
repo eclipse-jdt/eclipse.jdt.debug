@@ -16,6 +16,7 @@ package org.eclipse.jdt.launching.environments;
  * via <code>JavaRuntime.getExecutionEnvironmentsManager()</code>.
  * @since 3.2
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IExecutionEnvironmentsManager {
 

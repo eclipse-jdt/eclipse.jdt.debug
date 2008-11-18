@@ -19,6 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * deploying and executing class files locally.
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */ 
 public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	/**

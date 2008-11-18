@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugException;
  * member declarations. For example, the method associated with a stack frame,
  * or the field associated with a variable.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IJavaModifiers {		
 
