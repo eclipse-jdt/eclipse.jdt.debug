@@ -278,31 +278,21 @@
    <extension
          point="org.eclipse.jdt.launching.executionEnvironments">
       <environment
-            description="Java 2 Platform, Standard Edition 1.4.x"
+            description="Java 2 Platform, Test Edition 1.4.x"
             id="org.eclipse.jdt.debug.tests.environment.j2se14x"
             ruleParticipant="org.eclipse.jdt.debug.testplugin.AccessRuleParticipant"/>
-      <analyzer
-            class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE14x"
-            id="org.eclipse.jdt.debug.tests.analyzer.j2se14x"/>
       <environment
-            description="Java 2 Platform, Standard Edition 1.3.x"
+            description="Java 2 Platform, Test Edition 1.3.x"
             id="org.eclipse.jdt.debug.tests.environment.j2se13x"/>
-      <analyzer
-            class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE13x"
-            id="org.eclipse.jdt.debug.tests.analyzer.j2se13x"/>
       <ruleParticipant
             class="org.eclipse.jdt.debug.testplugin.SecondaryAccessRuleParticipant"
             id="org.eclipse.jdt.debug.tests.secondaryRuleParticipant">
       </ruleParticipant>
       <environment
-            description="Java 2 Platform, Standard Edition 1.5.x"
+            description="Java 2 Platform, Test Edition 1.5.x"
             id="org.eclipse.jdt.debug.tests.environment.j2se15x"
             ruleParticipant="org.eclipse.jdt.debug.testplugin.AccessRuleParticipant">
       </environment>
-      <analyzer
-            class="org.eclipse.jdt.debug.testplugin.AnalyzerJ2SE15x"
-            id="org.eclipse.jdt.debug.tests.analyzer.j2se15x">
-      </analyzer>
       <environment
             description="Test default system package access rules"
             id="org.eclipse.jdt.debug.tests.systemPackages"

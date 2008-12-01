@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,19 +36,19 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertTrue("Should be at least one environment", executionEnvironments.length > 0);
 		for (int i = 0; i < executionEnvironments.length; i++) {
 			IExecutionEnvironment environment = executionEnvironments[i];
-			if (environment.getId().equals("org.eclipse.jdt.debug.tests.environment.j2se14x")) {
+			if (environment.getId().equals("J2SE-1.4")) {
 				return;
 			}
 		}
-		assertTrue("Did not find test environment org.eclipse.jdt.debug.tests.environment.j2se14x", false);
+		assertTrue("Did not find environment J2SE-1.4", false);
 	}
 	
 	public void testAnalyze() throws Exception {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				
-		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
-		assertNotNull("Missing environment j2se14x", environment);
+		IExecutionEnvironment environment = manager.getEnvironment("J2SE-1.4");
+		assertNotNull("Missing environment J2SE-1.4", environment);
 		IVMInstall[] installs = environment.getCompatibleVMs();
 		assertTrue("Should be at least one vm install for the environment", installs.length > 0);
 		for (int i = 0; i < installs.length; i++) {
@@ -57,7 +57,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 				return;
 			}
 		}
-		assertTrue("vm should be j2se14x", false);
+		assertTrue("vm should be J2SE-1.4 compliant", false);
 	}
 	
 	public void testAccessRuleParticipants() throws Exception {
