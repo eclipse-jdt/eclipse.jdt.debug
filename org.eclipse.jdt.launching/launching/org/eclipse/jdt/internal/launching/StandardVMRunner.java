@@ -81,7 +81,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @param commandLine
 	 * @return
 	 */
-	protected static String renderCommandLine(String[] commandLine) {
+	protected String renderCommandLine(String[] commandLine) {
 		if (commandLine.length < 1)
 			return ""; //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();

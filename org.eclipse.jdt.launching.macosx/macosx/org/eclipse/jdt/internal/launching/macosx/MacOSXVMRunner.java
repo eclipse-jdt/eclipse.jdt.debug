@@ -28,5 +28,9 @@ public class MacOSXVMRunner extends StandardVMRunner {
 
 	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine), workingDirectory, envp);
-	}	
+	}
+	
+	protected String renderCommandLine(String[] commandLine) {
+		return super.renderCommandLine(MacOSXLaunchingPlugin.wrap(getClass(), commandLine));
+	}
 }
