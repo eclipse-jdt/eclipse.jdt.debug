@@ -54,7 +54,7 @@ public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
 		IJavaElement destination= getPackageFragmentRoot(javaProject, "src").getPackageFragment("a.b").getCompilationUnit("MoveeRecipient.java"); 
 		processor.setDestination(ReorgDestinationFactory.createDestination(destination));
 		processor.setReorgQueries(new MockReorgQueries());
-		if(processor.canUpdateReferences())
+		if(processor.canUpdateJavaReferences())
 			processor.setUpdateReferences(true);//assuming is properly set otherwise
 		return processor;
 	}

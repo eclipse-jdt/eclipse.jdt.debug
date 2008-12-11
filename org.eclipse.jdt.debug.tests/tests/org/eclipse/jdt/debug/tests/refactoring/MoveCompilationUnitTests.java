@@ -58,7 +58,7 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
 		processor.setDestination(ReorgDestinationFactory.createDestination(destination));
 		processor.setReorgQueries(new MockReorgQueries());
-		if(processor.canUpdateReferences()) {
+		if(processor.canUpdateJavaReferences()) {
 			processor.setUpdateReferences(true);
 		}
 		executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);			
