@@ -75,6 +75,7 @@ import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VMListener;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.w3c.dom.Element;
@@ -266,7 +267,7 @@ public final class JavaRuntime {
 	 * @see org.eclipse.jdt.core.IClasspathAttribute
 	 */
 	public static final String CLASSPATH_ATTR_LIBRARY_PATH_ENTRY =  LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_ATTR_LIBRARY_PATH_ENTRY"; //$NON-NLS-1$
-
+	
 	// lock for vm initialization
 	private static Object fgVMLock = new Object();
 	private static boolean fgInitializingVMs = false;
@@ -2724,28 +2725,36 @@ public final class JavaRuntime {
 	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
 	 * 
 	 * @param eeFile VM definition file
-	 * @param name name for the VM
+	 * @param name name for the VM, or <code>null</code> if a default name should be assigned
 	 * @param id id to assign to the new VM
 	 * @return VM standin 
 	 * @exception CoreException if unable to create a VM from the given definition file
 	 * @since 3.4
 	 */
 	public static VMStandin createVMFromDefinitionFile(File eeFile, String name, String id) throws CoreException {
-		IStatus status = EEVMType.validateDefinitionFile(eeFile);
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(eeFile);
+		IStatus status = EEVMType.validateDefinitionFile(description);
 		if (status.isOK()) {
 			VMStandin standin = new VMStandin(getVMInstallType(EEVMType.ID_EE_VM_TYPE), id);
 			if (name != null && name.length() > 0){
 				standin.setName(name);
 			} else {
-				standin.setName(EEVMType.getVMName(eeFile));
+				name = description.getProperty(ExecutionEnvironmentDescription.EE_NAME);
+				if (name == null) {
+					name = eeFile.getName();
+				}
+				standin.setName(name);
 			}
-			String home = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, eeFile);
+			String home = description.getProperty(ExecutionEnvironmentDescription.JAVA_HOME);
 			standin.setInstallLocation(new File(home));
-			standin.setLibraryLocations(EEVMType.getLibraryLocations(eeFile));
-			standin.setVMArgs(EEVMType.getVMArguments(eeFile));
-			standin.setJavadocLocation(EEVMType.getJavadocLocation(eeFile));
-			standin.setAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID, EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFile));
-			File exe = EEVMType.getExecutable(eeFile);
+			standin.setLibraryLocations(description.getLibraryLocations());
+			standin.setVMArgs(description.getVMArguments());
+			standin.setJavadocLocation(EEVMType.getJavadocLocation(description.getProperties()));
+			standin.setAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID, description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
+			File exe = description.getExecutable();
+			if (exe == null) {
+				exe = description.getConsoleExecutable();
+			}
 			if (exe != null) {
 				try {
 					standin.setAttribute(EEVMInstall.ATTR_JAVA_EXE, exe.getCanonicalPath());
@@ -2754,9 +2763,9 @@ public final class JavaRuntime {
 							LaunchingMessages.JavaRuntime_24, e));
 				}
 			}
-			standin.setAttribute(EEVMInstall.ATTR_JAVA_VERSION, EEVMType.getJavaVersion(eeFile));
+			standin.setAttribute(EEVMInstall.ATTR_JAVA_VERSION, description.getProperty(ExecutionEnvironmentDescription.LANGUAGE_LEVEL));
 			standin.setAttribute(EEVMInstall.ATTR_DEFINITION_FILE, eeFile.getPath());
-			standin.setAttribute(EEVMInstall.ATTR_DEBUG_ARGS, EEVMType.getDebugArgs(eeFile));
+			standin.setAttribute(EEVMInstall.ATTR_DEBUG_ARGS, description.getProperty(ExecutionEnvironmentDescription.DEBUG_ARGS));
 			return standin;
 		} else {
 			throw new CoreException(status);

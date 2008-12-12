@@ -15,6 +15,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -25,12 +26,14 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.jres.LibraryContentProvider.SubElement;
+import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -149,9 +152,18 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		File installLocation = null;
 		if (fVmInstall != null) {
 			if (EEVMType.ID_EE_VM_TYPE.equals(fVmInstall.getVMInstallType().getId())) {
-				File definitionFile = EEVMType.getDefinitionFile(fVmInstall);
+				File definitionFile = null;
+				String path = fVmInstall.getAttribute(EEVMInstall.ATTR_DEFINITION_FILE);
+				if (path != null) {
+					definitionFile = new File(path);
+				}
 				if (definitionFile != null) {
-					libs = EEVMType.getLibraryLocations(definitionFile);
+					try {
+						ExecutionEnvironmentDescription desc = new ExecutionEnvironmentDescription(definitionFile);
+						libs = desc.getLibraryLocations();
+					} catch (CoreException e) {
+						libs = new LibraryLocation[0];
+					}
 				} else {
 					libs = new LibraryLocation[0];
 				}

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -22,7 +21,6 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.StatusInfo;
 import org.eclipse.jdt.internal.launching.EEVMInstall;
-import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
@@ -170,7 +168,6 @@ public class EEVMPage extends AbstractVMInstallPage {
 			if (!file.exists()) {
 				s = new StatusInfo(IStatus.ERROR, JREMessages.EEVMPage_5); 
 			} else {
-				EEVMType.clearProperties(file);
 				final IStatus[] temp = new IStatus[1];
 				final VMStandin[] vm = new VMStandin[1];
 				final File tempFile = file; 
@@ -269,22 +266,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 	 * @param vm the VM to initialize from
 	 */
 	protected void setFieldValuesToVM(VMStandin vm) {
-		File eeFile = getDefinitionFile();
-		File home = null;
-		if (eeFile != null) {
-			vm.setAttribute(EEVMInstall.ATTR_DEFINITION_FILE, eeFile.getPath());
-			String homePath = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, eeFile);
-			if (homePath != null) {
-				home = new File(homePath);
-				try {
-					home = home.getCanonicalFile();
-				} catch (IOException e) {
-				}
-			}
-		}
-		vm.setInstallLocation(home);
 		vm.setName(fVMName.getText());
-		
 		String argString = fVMArgs.getText().trim();
 		if (argString != null && argString.length() > 0) {
 			vm.setVMArgs(argString);			

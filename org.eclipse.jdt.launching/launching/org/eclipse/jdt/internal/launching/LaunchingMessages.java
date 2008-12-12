@@ -36,7 +36,6 @@ public class LaunchingMessages extends NLS {
 	public static String DefaultProjectClasspathEntry_3;
 	public static String DefaultProjectClasspathEntry_4;
 
-	public static String EEVMType_0;
 	public static String EEVMType_1;
 	public static String EEVMType_2;
 	public static String EEVMType_3;

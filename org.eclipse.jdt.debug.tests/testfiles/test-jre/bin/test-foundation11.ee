@@ -25,6 +25,9 @@
 # all args should get passed through to command line
 -XspecialArg:123
 
+# tests an empty property
+-Dee.empty=
+
 -Dee.language.level=1.4
 -Dee.class.library.level=CDC-1.1/Foundation-1.1
 -Dee.id=CDC-1.1/Foundation-1.1

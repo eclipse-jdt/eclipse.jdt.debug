@@ -363,7 +363,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @param dirPaths a list of absolute paths of directories to search
 	 * @return List of all zip's and jars
 	 */
-	protected static List gatherAllLibraries(String[] dirPaths) {
+	public static List gatherAllLibraries(String[] dirPaths) {
 		List libraries = new ArrayList();
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
@@ -611,7 +611,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @param version language version such as "1.4"
 	 * @return URL to default Javadoc location, or <code>null</code>
 	 */
-	protected static URL getDefaultJavadocLocation(String version) {
+	public static URL getDefaultJavadocLocation(String version) {
 		try {
 			if (version.startsWith("1.6")) { //$NON-NLS-1$
 				return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$

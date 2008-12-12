@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
@@ -51,10 +53,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests that the EE file is a valid file
 	 */
-	public void testValidateDefinitionFile() {
+	public void testValidateDefinitionFile() throws CoreException {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
-		IStatus status = EEVMType.validateDefinitionFile(file);
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(file);
+		IStatus status = EEVMType.validateDefinitionFile(description);
 		assertTrue("Invalid install location", status.isOK());
 	}
 	
@@ -73,10 +76,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests libraries for the EE file
 	 */
-	public void testLibraries() {
+	public void testLibraries() throws CoreException {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
-		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(file);
+		LibraryLocation[] libs = description.getLibraryLocations();
 		String[] expected = new String[]{"end.jar", "classes.txt", "others.txt", "add.jar", "ext1.jar", "ext2.jar", "opt-ext.jar"};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
@@ -100,10 +104,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests source attachments
 	 */
-	public void testSourceAttachments() {
+	public void testSourceAttachments() throws CoreException {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
-		LibraryLocation[] libs = EEVMType.getLibraryLocations(file);
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(file);
+		LibraryLocation[] libs = description.getLibraryLocations();
 		String[] expected = new String[]{"end.txt", "source.txt", "source.txt", "sourceaddsource.jar", "extra1-src.txt", "extra2-src.txt", ""};
 		assertEquals("Wrong number of libraries", expected.length, libs.length);
 		for (int i = 0; i < expected.length; i++) {
@@ -138,9 +143,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests that a javadoc location can be specified.
 	 */
-	public void testJavadocLocation() {
+	public void testJavadocLocation() throws CoreException {
 		File file = getEEFile();
-		URL location = EEVMType.getJavadocLocation(file);
+		assertNotNull("Missing EE file", file);
+		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+		URL location = EEVMType.getJavadocLocation(ee.getProperties());
 		URL expectedLocation = null;
 		try {
 			expectedLocation = new URL("http://a.javadoc.location");
@@ -153,9 +160,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	/**
 	 * Tests that a name with spaces can be specified.
 	 */
-	public void testVMName() {
+	public void testVMName() throws CoreException {
 		File file = getEEFile();
-		String name = EEVMType.getVMName(file);
+		assertNotNull("Missing EE file", file);
+		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+		String name = ee.getProperty(ExecutionEnvironmentDescription.EE_NAME);
 		assertEquals("Incorrect vm name", "Eclipse JDT Test JRE Definition", name);
 	}	
 	
@@ -163,10 +172,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	 * Tests default VM arguments. All arguments from the EE file should get passed through in the
 	 * same order to the command line.
 	 */
-	public void testVMArguments() {
+	public void testVMArguments() throws CoreException {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
-		String defaultVMArguments = EEVMType.getVMArguments(file);
+		ExecutionEnvironmentDescription description = new ExecutionEnvironmentDescription(file);
+		String defaultVMArguments = description.getVMArguments();
 		String[] expected = new String[] {
 				"-XspecialArg:123",
 				"-XspecialArg2=456"
@@ -220,4 +230,37 @@ public class EEDefinitionTests extends AbstractDebugTest {
 	protected IVMInstallType getVMInstallType() {
 		return JavaRuntime.getVMInstallType(EEVMType.ID_EE_VM_TYPE);
 	}
+	
+	/**
+	 * Tests raw EE properties map.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testParseProperties() throws CoreException {
+		File file = getEEFile();
+		assertNotNull("Missing EE file", file);
+		ExecutionEnvironmentDescription desc = new ExecutionEnvironmentDescription(file);
+		Map map = desc.getProperties();
+		
+		// validate expected properties
+		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE, "jrew.txt" , map);
+		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE_CONSOLE, "jre.txt", map);
+		validateProperty("-XspecialArg:123", "", map);
+		validateProperty("-XspecialArg2", "456", map);
+		
+	}
+	
+	protected void validateProperty(String key, String value, Map properties) {
+		assertEquals("Unexpeted value for: " + key, value, properties.get(key));
+	}
+	
+	/**
+	 * Tests that a name with spaces can be specified.
+	 */
+	public void testEmptyProperty() throws CoreException {
+		File file = getEEFile();
+		assertNotNull("Missing EE file", file);
+		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+		validateProperty("-Dee.empty", "", ee.getProperties());
+	}	
 }
