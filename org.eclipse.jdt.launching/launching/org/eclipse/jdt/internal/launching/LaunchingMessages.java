@@ -70,14 +70,12 @@ public class LaunchingMessages extends NLS {
 	public static String JavaRuntime_26;
 	public static String JavaRuntime_27;
 	public static String JavaRuntime_28;
-	public static String JavaRuntime_31;
 	public static String JavaRuntime_32;
 
 	public static String LaunchingPlugin_35;
 	public static String LaunchingPlugin_36;
 	public static String LaunchingPlugin_37;
 	public static String LaunchingPlugin_32;
-	public static String LaunchingPlugin_33;
 	public static String LaunchingPlugin_34;
 	public static String LaunchingPlugin_0;
 	public static String LaunchingPlugin_1;

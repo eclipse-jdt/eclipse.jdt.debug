@@ -713,7 +713,7 @@ public final class JavaRuntime {
 			}
 			return entry;
 		} catch (SAXException e) {
-			abort(LaunchingMessages.JavaRuntime_31, e); 
+			abort(LaunchingMessages.JavaRuntime_32, e); 
 		} catch (IOException e) {
 			abort(LaunchingMessages.JavaRuntime_32, e); 
 		}

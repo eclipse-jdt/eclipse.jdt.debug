@@ -995,7 +995,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				fgXMLParser.setErrorHandler(new DefaultHandler());
 			} catch (ParserConfigurationException e) {
-				abort(LaunchingMessages.LaunchingPlugin_33, e);
+				abort(LaunchingMessages.LaunchingPlugin_34, e);
 			} catch (FactoryConfigurationError e) {
 				abort(LaunchingMessages.LaunchingPlugin_34, e);
 			}
