@@ -379,10 +379,10 @@ public final class ExecutionEnvironmentDescription {
 			}
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					MessageFormat.format("Description file not found {0}",new String[]{eeFile.getPath()}), e));
+					MessageFormat.format(LaunchingMessages.ExecutionEnvironmentDescription_0,new String[]{eeFile.getPath()}), e));
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					MessageFormat.format("Error reading description file {0}",new String[]{eeFile.getPath()}), e));
+					MessageFormat.format(LaunchingMessages.ExecutionEnvironmentDescription_1,new String[]{eeFile.getPath()}), e));
 		} finally {
 			try {
 				if (bufferedReader != null) {

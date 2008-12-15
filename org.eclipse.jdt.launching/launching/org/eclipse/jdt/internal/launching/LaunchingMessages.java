@@ -43,6 +43,10 @@ public class LaunchingMessages extends NLS {
 	public static String EEVMType_5;
 	public static String EEVMType_6;
 
+	public static String ExecutionEnvironmentDescription_0;
+
+	public static String ExecutionEnvironmentDescription_1;
+
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_Creating_source_locator____2;
 	public static String JavaLocalApplicationLaunchConfigurationDelegate_0;
