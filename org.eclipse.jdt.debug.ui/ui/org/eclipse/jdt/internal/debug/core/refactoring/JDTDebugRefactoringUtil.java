@@ -78,6 +78,10 @@ public class JDTDebugRefactoringUtil {
 	 */
 	protected static Change createChangesForOuterTypeChange(ILaunchConfiguration config, IType type, String newfqname, String pname) throws CoreException {
 		IType[] innerTypes = type.getTypes();
+		if(innerTypes.length == 0) {
+			return null;
+		}
+		Change change = null;
 		String mtname = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 		for (int i= 0; i < innerTypes.length; i++) {
 			String newTypeName = newfqname + '$' + innerTypes[i].getElementName();
@@ -85,10 +89,12 @@ public class JDTDebugRefactoringUtil {
 			if (innerTypes[i].getFullyQualifiedName().equals(mtname)) {
 				return new LaunchConfigurationProjectMainTypeChange(config, newTypeName, pname);
 			}
-			// if it's not the type, check the inner types
-			return createChangesForOuterTypeChange(config, innerTypes[i], newTypeName, pname);
+			else {
+				// if it's not the type, check the inner types
+				change = createChangesForOuterTypeChange(config, innerTypes[i], newTypeName, pname);
+			}
 		}
-		return null;
+		return change;
 	}
 	
 	/**
