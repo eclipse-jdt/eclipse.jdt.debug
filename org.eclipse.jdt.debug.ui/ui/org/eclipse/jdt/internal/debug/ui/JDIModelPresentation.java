@@ -527,15 +527,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (signature == null) {
 			return false;
 		}
-		char sigChar= ' ';
-		for (int i= 0; i < signature.length(); i++) {
-			sigChar= signature.charAt(i);
-			if (sigChar == '[') {
-				return true;
-			}
-			break;
-		}
-		if ((sigChar == 'L') || (sigChar == 'Q')) {
+		String type = Signature.getElementType(signature);
+		char sigchar = type.charAt(0);
+		if(sigchar == Signature.C_UNRESOLVED || 
+				sigchar == Signature.C_RESOLVED) {
 			return true;
 		}
 		return false;
