@@ -23,12 +23,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
@@ -670,12 +669,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Search for installed VMs in the file system
 	 */
 	protected void search() {
-		
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			doMacSearch();
 			return;
 		}
-		
 		// choose a root directory for the search 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(JREMessages.InstalledJREsBlock_9); 
@@ -739,7 +736,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			while (iter.hasNext()) {
 				File location = (File)iter.next();
 				IVMInstallType type = (IVMInstallType)iter2.next();
-				IVMInstall vm = new VMStandin(type, createUniqueId(type));
+				AbstractVMInstall vm = new VMStandin(type, createUniqueId(type));
 				String name = location.getName();
 				String nameCopy = new String(name);
 				int i = 1;
@@ -752,16 +749,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					//set default java doc location
 					AbstractVMInstallType abs = (AbstractVMInstallType)type;
 					vm.setJavadocLocation(abs.getDefaultJavadocLocation(location));
-					String arguments = abs.getDefaultVMArguments(location);
-					if (arguments != null) {
-						if (vm instanceof IVMInstall2) {
-							IVMInstall2 vm2 = (IVMInstall2) vm;
-							vm2.setVMArgs(arguments);
-						} else {
-							String[] args2 = DebugPlugin.parseArguments(arguments);
-							vm.setVMArguments(args2);
-						}
-					}
+					vm.setVMArgs(abs.getDefaultVMArguments(location));
 				}
 				vmAdded(vm);
 			}
@@ -769,17 +757,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 	}
 	
+	/**
+	 * Calls out to {@link MacVMSearch} to find all installed JREs in the standard
+	 * Mac OS location
+	 */
 	private void doMacSearch() {
 		final List added = new ArrayList();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				VMStandin[] standins = new MacVMSearch().search(monitor);
 				Set exists = new HashSet();
 				Iterator iterator = fVMs.iterator();
 				while (iterator.hasNext()) {
 					IVMInstall vm = (IVMInstall) iterator.next();
 					exists.add(vm.getId());
 				}
+				VMStandin[] standins = new MacVMSearch().search(monitor);
 				for (int i = 0; i < standins.length; i++) {
 					if (!exists.contains(standins[i].getId())) {
 						added.add(standins[i]);
