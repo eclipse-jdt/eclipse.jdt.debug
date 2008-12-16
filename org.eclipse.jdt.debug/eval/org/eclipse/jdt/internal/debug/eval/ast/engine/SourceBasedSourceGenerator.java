@@ -861,11 +861,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 						fSource.append("static "); //$NON-NLS-1$
 					}
 					
-					Type type= enclosingFieldDeclaration.getType();
-					while (type instanceof ArrayType) {
-						type= ((ArrayType)type).getComponentType();
-					}
-					
+					Type type = getParentType(enclosingFieldDeclaration.getType());
 					fSource.append(getQualifiedIdentifier(((SimpleType)type).getName()));
 					fSource.append(' ');
 					fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
@@ -883,6 +879,22 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}		
 	}
 
+	/**
+	 * Recursively finds the parent {@link Type} from the given type, in the cases where
+	 * the type is an {@link ArrayType} or a {@link ParameterizedType}
+	 * @param type
+	 * @return the parent {@link Type}
+	 */
+	private Type getParentType(Type type) {
+		if(type instanceof ArrayType) {
+			return getParentType(((ArrayType)type).getComponentType());
+		}
+		if(type instanceof ParameterizedType) {
+			return getParentType(((ParameterizedType)type).getType());
+		}
+		return type;
+	}
+	
 	/**
 	 * @see ASTVisitor#endVisit(CompilationUnit)
 	 */
