@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.PreferenceModifyListener;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.osgi.service.prefs.BackingStoreException;
@@ -83,12 +82,12 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 							if (collision) {
 								// conflicting id, create a new one with unique id
 								long unique = System.currentTimeMillis();	
-								IVMInstallType vmType = vm.getVMInstallType();
-								while (vmType.findVMInstall(String.valueOf(unique)) != null) {
+								while(ids.contains(String.valueOf(unique))){
 									unique++;
 								}
 								vm = new VMStandin(vm, String.valueOf(unique));
-							}							
+								ids.add(vm.getId()); 
+							}
 							vms.addVM(vm);
 						}
 						// update default VM if it exists
