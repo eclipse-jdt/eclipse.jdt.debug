@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-import java.util.Hashtable;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -44,29 +42,17 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		} catch (BackingStoreException e) {
 			LaunchingPlugin.log(e);
 		}
-		
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=255381
+				
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=255381
+		// NOTE: only the pref's default value is initialized to avoid deadlock (we don't set the
+		// associated JavaCore options, as this can trigger a job to touch the project (see 
+		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=260445)
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
-		Hashtable optionsMap = JavaCore.getOptions();
-		String filters= (String)optionsMap.get(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER);
-		boolean added = false;
-		if (filters == null || filters.length() == 0) {
-			filters = launchFilter;
-			added = true;
-		} else if (filters.indexOf(launchFilter) == -1) {
-			added = true;
-			filters = filters + ',' + launchFilter;
-		}
-		if(added) {
-			optionsMap.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, filters);
-			JavaCore.setOptions(optionsMap);
-		}
-		
 		dnode = scope.getNode(JavaCore.PLUGIN_ID);
 		if(dnode == null) {
 			return;
 		}
-		dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, filters);
+		dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, launchFilter);
 		
 		try {
 			dnode.flush();
