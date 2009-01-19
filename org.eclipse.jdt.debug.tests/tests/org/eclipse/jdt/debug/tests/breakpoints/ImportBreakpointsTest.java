@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -233,4 +233,63 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 		}
 	}
 	
+	/**
+	 * tests importing breakpoints with working sets where the breakpoints are restored to 
+	 * another working set and removed from the current one
+	 * 
+	 * @throws Exception catch all to be passed back to the framework
+	 */
+	public void testImportWithWorkingsets() throws Exception {
+		try {
+		//create the working set and add breakpoints to it
+			IBreakpointOrganizer bporg = BreakpointOrganizerManager.getDefault().getOrganizer("org.eclipse.debug.ui.breakpointWorkingSetOrganizer");
+			IWorkingSetManager wsmanager = getWorkingSetManager();
+			String typeName = "DropTests";
+			String setname1 = "ws1";
+			String setname2 = "ws2";
+			IWorkingSet set = createSet(setname1);
+			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setname1));
+			WorkingSetCategory category = new WorkingSetCategory(set);
+			
+			bporg.addBreakpoint(createClassPrepareBreakpoint(typeName), category);
+			bporg.addBreakpoint(createLineBreakpoint(32, typeName), category);
+			bporg.addBreakpoint(createLineBreakpoint(28, typeName), category);
+			bporg.addBreakpoint(createLineBreakpoint(24, typeName), category);
+			bporg.addBreakpoint(createExceptionBreakpoint("Exception", true, false), category);
+			bporg.addBreakpoint(createMethodBreakpoint(typeName, "method4", "()V", true, false), category);
+			assertEquals("workingset does not have 6 elements", 6, set.getElements().length);
+			assertEquals("manager does not have 6 breakpoints", getBreakpointManager().getBreakpoints().length, 6);
+			Path path = new Path("exbkptC.bkpt");
+			assertNotNull("Invalid path", path);
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());
+			op.run(new NullProgressMonitor());
+		
+			//copy items to the alternate working set
+			IWorkingSet set2 = createSet(setname2);
+			set2.setElements(set.getElements());
+			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setname2));
+			
+			//remove bps and working set and do the import
+			removeAllBreakpoints();
+			set.setElements(new IAdaptable[] {});
+			wsmanager.removeWorkingSet(set);
+			set = wsmanager.getWorkingSet(setname1);
+			assertNull("workingset was not removed", set);
+			set = null;
+			File file = path.toFile();
+			assertNotNull(file);
+			assertEquals(true, file.exists());
+			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(path.toOSString(), true, true);
+			op2.run(new NullProgressMonitor());
+			set = wsmanager.getWorkingSet(setname1);
+			assertNotNull("Import did not create working set", set);
+			assertEquals("workingset does not contain 6 breakpoints", 6, set.getElements().length);
+			assertEquals("alternate working set should contain no breakpoints", 0, set2.getElements().length);
+			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
+			file.delete();
+		}
+		finally {
+			removeAllBreakpoints();
+		}
+	}
 }
