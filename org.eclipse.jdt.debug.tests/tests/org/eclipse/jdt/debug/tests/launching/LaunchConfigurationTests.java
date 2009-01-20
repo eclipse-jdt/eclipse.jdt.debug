@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1011,6 +1011,17 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 			 manager.removeLaunchConfigurationListener(listener);
 		 }
 		 
+	}
+	
+	/**
+	 * Tests the location of a local working copy.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testWorkingCopyGetLocation() throws CoreException {
+		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-get-location");
+		IPath location = workingCopy.getLocation();
+		assertEquals("Wrong path for local working copy", LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append("test-get-location.launch"), location);
 	}
 }
 
