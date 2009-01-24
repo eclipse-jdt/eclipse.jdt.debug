@@ -7,7 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214696 Expose WorkingDirectoryBlock as API
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
+ *      - Bug 214696 Expose WorkingDirectoryBlock as API
+ *      - Bug 221973 Make WorkingDirectoryBlock from JDT a Debug API class
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
@@ -17,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.debug.ui.WorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -24,7 +27,6 @@ import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
-import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -76,6 +78,11 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		return new VMArgumentsBlock();
 	}
 	
+	/**
+	 * Creates a control to specify a working directory.
+	 * 
+	 * @since 3.4
+	 */
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
 		return new JavaWorkingDirectoryBlock();
 	}

@@ -7,13 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214696 Expose WorkingDirectoryBlock as API
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
+ *      - Bug 214696 Expose WorkingDirectoryBlock as API
+ *      - Bug 221973 Make WorkingDirectoryBlock from JDT a Debug API class
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.WorkingDirectoryBlock;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;

@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>	- Bug 221973 Make WorkingDirectoryBlock from JDT a Debug API class
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
+import org.eclipse.debug.ui.WorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletWorkingDirectoryBlock;
-import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.ui.PlatformUI;
 
 /**

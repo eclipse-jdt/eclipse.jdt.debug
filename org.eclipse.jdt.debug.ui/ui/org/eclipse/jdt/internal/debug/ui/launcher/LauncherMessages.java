@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * BEA - Daniel R Somerfield - Bug 88939
+ * Remy Chi Jian Suen - Bug 221973
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
@@ -85,18 +86,6 @@ public class LauncherMessages extends NLS {
 	public static String JavaClasspathTab_Invalid_runtime_classpath_1;
 
 	public static String JavaSourceLookupTab_Source_1;
-
-	public static String WorkingDirectoryBlock_4;
-	public static String WorkingDirectoryBlock_7;
-	public static String WorkingDirectoryBlock_0;
-	public static String WorkingDirectoryBlock_Working_Directory_8;
-	public static String WorkingDirectoryBlock_10;
-	public static String WorkingDirectoryBlock_12;
-	public static String WorkingDirectoryBlock_17;
-	public static String WorkingDirectoryBlock_1;
-	public static String WorkingDirectoryBlock_18;
-	public static String WorkingDirectoryBlock_19;
-	public static String WorkingDirectoryBlock_20;
 	
 	public static String SourceLookupBlock_Source_1;
 	public static String SourceLookupBlock__Source_Lookup_Path__1;
