@@ -19,6 +19,12 @@
 <p><strong>Action required:</strong> Clients contributing an execution environment should provide an associated OSGi system profile properties file. </p>
 <h3>API to read execution environment description files </h3>
 <p><strong>Description:</strong> An API has been added to support reading of <a href="http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions">execution environment description files</a>. The class <code>ExecutionEnvironmentDescription</code> has been added to the <code>org.eclipse.jdt.launching.environments</code> package. The new class provides access to the properties in description files as well as convenience methods to generate descriptions of the system libraries assocaited with a description. </p>
+<h3>API to set/get stepping behavior with step filters </h3>
+<p><strong>Description:</strong> An API has been added to set/get the stepping behavior associated with step filters. This allows clients to programmatically set what happens when a step lands in a filtered location. The target can be configured to step through to an unfiltered location or return the location where the step originated. The following methods has been added to <code>IJavaDebugTarget</code>: <code>setStepThruFilters(boolean)</code> and <code>isStepThruFilters()</code>. </p>
+
+<h2>February 10, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=214130">Bug 214130</a>: Provide API support for Step Thru Filters preference<br>
 
 <h2>3.5 M5 - January 30, 2009</h2>
 <h3>Problem Reports Fixed</h3>
