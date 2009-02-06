@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
@@ -231,14 +230,11 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	
 	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		String compilerCompliance= project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
 		parser.setResolveBindings(true);
-		Map options=JavaCore.getDefaultOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, compilerCompliance);
-		options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
+		Map options=EvaluationSourceGenerator.getCompilerOptions(project);
 		parser.setCompilerOptions(options);
 		return (CompilationUnit) parser.createAST(null);
 	}

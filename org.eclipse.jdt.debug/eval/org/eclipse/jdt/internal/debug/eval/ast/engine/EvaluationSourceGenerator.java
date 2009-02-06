@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -143,10 +144,8 @@ public class EvaluationSourceGenerator {
 	private void createEvaluationSourceFromSource(String source, String typeName, int position, boolean createInAStaticMethod, IJavaProject project) throws DebugException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(source.toCharArray());
-		Map options=JavaCore.getDefaultOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		Map options=getCompilerOptions(project);
 		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
-		options.put(JavaCore.COMPILER_SOURCE, sourceLevel);
 		parser.setCompilerOptions(options);
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet, sourceLevel);
@@ -166,6 +165,29 @@ public class EvaluationSourceGenerator {
 		setRunMethodStart(visitor.getRunMethodStart());
 		setRunMethodLength(visitor.getRunMethodLength());
 	}
+	
+	/**
+	 * Returns the compiler options used for compiling the expression.
+	 * <p>
+	 * Turns all errors and warnings into ignore and disables task tags. The customizable set of
+	 * compiler options only contains additional Eclipse options. The standard JDK compiler options
+	 * can't be changed anyway.
+	 * 
+	 * @param element an element (not the Java model)
+	 * @return compiler options
+	 */
+	public static Map getCompilerOptions(IJavaProject project) {
+		Map options= project.getOptions(true);
+		for (Iterator iter= options.keySet().iterator(); iter.hasNext();) {
+			String key= (String)iter.next();
+			String value= (String)options.get(key);
+			if (JavaCore.ERROR.equals(value) || JavaCore.WARNING.equals(value)) {
+				options.put(key, JavaCore.IGNORE);
+			}
+		}
+		options.put(JavaCore.COMPILER_TASK_TAGS, ""); //$NON-NLS-1$
+		return options;
+	}	
 	
 	private void createEvaluationSourceFromJDIObject(BinaryBasedSourceGenerator objectToEvaluationSourceMapper) {
 		
