@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -757,7 +758,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	/**
 	 * Sets the selected resource in the navigator view.
 	 * 
-	 * @param resource resource to select
+	 * @param resource resource to select or <code>null</code> if empty
 	 */
 	protected void setSelection(final IResource resource) {
 		Runnable r = new Runnable() {
@@ -766,7 +767,13 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				IViewPart part;
 				try {
 					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
-					part.getSite().getSelectionProvider().setSelection(new StructuredSelection(resource));
+					ISelection selection = null;
+					if (resource == null) {
+						selection = new StructuredSelection();
+					} else {
+						selection = new StructuredSelection(resource);
+					}
+					part.getSite().getSelectionProvider().setSelection(selection);
 				} catch (PartInitException e) {
 					assertNotNull("Failed to open navigator view", null);
 				}
@@ -776,4 +783,51 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
 	
+	/**
+	 * Test the <code>${selected_resource_path}</code> variable with a file selected.
+	 */
+	public void testSelectedResourcePathFile() throws CoreException {
+		String expression = "${selected_resource_path}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath"); 
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getFullPath().toOSString(), result);
+	}		
+	
+	/**
+	 * Test the <code>${selected_resource_name}</code> variable with a file selected.
+	 */
+	public void testSelectedResourceNameFile() throws CoreException {
+		String expression = "${selected_resource_name}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getName(), result);
+	}
+	
+	/**
+	 * Test the <code>${selected_resource_loc}</code> variable with a folder selected.
+	 */
+	public void testSelectedResourceLocFolder() throws CoreException {
+		String expression = "${selected_resource_loc}";
+		IResource resource = getJavaProject().getProject().getFolder("src");
+		setSelection(resource);
+		String result = doSubs(expression);
+		assertEquals(resource.getLocation().toOSString(), result);
+	}	
+	
+	/**
+	 * Test the <code>${selected_resource_loc}</code> variable an empty selection
+	 */
+	public void testEmptySelectedResource() {
+		String expression = "${selected_resource_loc}";
+		setSelection(null);
+		try {
+			doSubs(expression);
+		} catch (CoreException e) {
+			// should cause an exception when no selection
+			return;
+		}
+		assertFalse("Empty selection should throw an exception", true);
+	}
 }
