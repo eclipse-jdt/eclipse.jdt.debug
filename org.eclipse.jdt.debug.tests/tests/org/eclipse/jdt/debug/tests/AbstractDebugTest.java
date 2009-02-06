@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,6 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -1519,7 +1518,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
 			target.setStepFiltersEnabled(true);
-			((JDIDebugTarget)target).setStepThruFilters(stepThru);
+			target.setStepThruFilters(stepThru);
 			frame.stepInto();
 			Object suspendee= waiter.waitForEvent();
 			setEventSet(waiter.getEventSet());
@@ -1528,7 +1527,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		} finally {
 			// turn filters off
 			target.setStepFiltersEnabled(false);
-			((JDIDebugTarget)target).setStepThruFilters(true);
+			target.setStepThruFilters(true);
 		}
 	}	
 

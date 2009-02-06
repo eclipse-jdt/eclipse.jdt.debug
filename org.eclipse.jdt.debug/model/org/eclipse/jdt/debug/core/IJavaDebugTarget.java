@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -290,6 +290,28 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	public abstract void setStepFilters(String[] list);
 	
 	/**
+	 * Sets whether a step that lands in a filtered location should continue through
+	 * to an un-filtered location, or return to where the step originated.
+	 * 
+	 * @param thru whether to step thru a filtered location or return to location where
+	 *  step originated
+	 * @since 3.5
+	 */
+	public void setStepThruFilters(boolean thru);	
+	
+	/**
+	 * Returns whether a step that lands in a filtered location should
+	 * proceed through to an un-filtered location or return to the location where
+	 * a step originated.
+	 * 
+	 * @return whether a step that lands in a filtered location should
+	 * proceed through to an un-filtered location or return to the location where
+	 * a step originated
+	 * @since 3.5
+	 */
+	public boolean isStepThruFilters();
+	
+	/**
 	 * Returns whether this debug target supports a request timeout - 
 	 * a maximum time for a JDI request to receive a response. This option
 	 * is only supported by the Eclipse JDI implementation.
@@ -427,4 +449,5 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * @since 3.4
 	 */
 	public String getVersion() throws DebugException;	
+	
 }

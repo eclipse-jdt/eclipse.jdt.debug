@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2066,14 +2066,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		return (fStepFilterMask & FILTER_SYNTHETICS) > 0;
 	}
 	
-	/**
-	 * Returns whether steps that land in filtered location should
-	 * proceed through to an un-filtered location or return.
-	 * 
-	 * @return whether steps that land in filtered location should
-	 * proceed through to an un-filtered location or return
-	 * @since 3.3
-	 * TODO: make API once API freeze is over
+	/* (non-Javadoc)
+	 *  Was added in 3.3, made API in 3.5
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#isStepThruFilters()
 	 */
 	public boolean isStepThruFilters() {
 		return (fStepFilterMask & STEP_THRU_FILTERS) > 0;
@@ -2119,13 +2114,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}				
 	}
 	
-	/**
-	 * Sets whether a step that lands in a filtered location should continue through
-	 * to an un-filtered location, or return to where the step originated.
-	 * 
-	 * @param thru whether to step thru
-	 * @since 3.3
-	 * TODO: make API once API freeze is over
+	/* (non-Javadoc)
+	 *  Was added in 3.3, made API in 3.5
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#setStepThruFilters(boolean)
 	 */
 	public void setStepThruFilters(boolean thru) {
 		if (thru) {
