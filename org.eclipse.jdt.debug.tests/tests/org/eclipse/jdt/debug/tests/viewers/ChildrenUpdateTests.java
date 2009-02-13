@@ -55,7 +55,7 @@ public class ChildrenUpdateTests extends AbstractDebugTest {
 				public void updateViewer(IModelDelta delta) {
 				}
 			
-				public void setSelection(ISelection selection, boolean reveal) {
+				public void setSelection(ISelection selection, boolean reveal, boolean force) {
 				}
 			
 				public void setInput(Object object) {
