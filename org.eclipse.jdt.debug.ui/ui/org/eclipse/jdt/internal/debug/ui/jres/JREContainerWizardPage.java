@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,23 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.wizard.WizardPage;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.wizard.WizardPage;
+
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.launching.JavaRuntime;
+
+import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 
 /**
  * Extension to allow a user to associate a JRE with a Java project.
@@ -94,7 +99,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
-		fJREBlock = new JREsComboBlock();
+		fJREBlock = new JREsComboBlock(false);
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3); 
 		fJREBlock.createControl(composite);

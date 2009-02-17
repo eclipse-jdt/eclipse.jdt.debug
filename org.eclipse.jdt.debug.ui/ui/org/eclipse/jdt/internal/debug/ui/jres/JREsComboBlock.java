@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
+
+import com.ibm.icu.text.MessageFormat;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,18 +23,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
-import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMStandin;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,10 +39,21 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
 /**
- * A composite that displays installed JRE's in a combo box, with a 'manage...'
+ * A composite that displays installed JREs in a combo box, with a 'manage...'
  * button to modify installed JREs.
  * <p>
  * This block implements ISelectionProvider - it sends selection change events
@@ -83,6 +87,11 @@ public class JREsComboBlock {
 	 * JRE change listeners
 	 */
 	private ListenerList fListeners = new ListenerList();
+	
+	/**
+	 * Whether the default JRE should be in first position (if <code>false</code>, it becomes last).
+	 */
+	private boolean fDefaultFirst;
 	
 	/**
 	 * Default JRE descriptor or <code>null</code> if none.
@@ -133,6 +142,15 @@ public class JREsComboBlock {
 	
 	private static IStatus OK_STATUS = new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 
+	/**
+	 * Creates a JREs combo block.
+	 * 
+	 * @param defaultFirst whether the default JRE should be in first position (if <code>false</code>, it becomes last)
+	 */
+	public JREsComboBlock(boolean defaultFirst) {
+		fDefaultFirst= defaultFirst;
+	}
+
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
@@ -162,21 +180,56 @@ public class JREsComboBlock {
 		}
 		Group group = SWTFactory.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
 		Composite comp = SWTFactory.createComposite(group, group.getFont(), 3, 1, GridData.FILL_BOTH, 0, 0);
-	// display a 'use default JRE' check box
-		if (fDefaultDescriptor != null) {
-			fDefaultButton = SWTFactory.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
-			fDefaultButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (fDefaultButton.getSelection()) {
-						setUseDefaultJRE();
-						setStatus(OK_STATUS);
-						firePropertyChange();
-					}
-				}
-			});
-		}
 		
-	//specific JRE type
+		if (fDefaultFirst) {
+			createDefaultJREControls(comp);
+		}
+		createEEControls(comp);
+		createAlternateJREControls(comp);
+		if (!fDefaultFirst) {
+			createDefaultJREControls(comp);
+		}
+	}
+
+	private void createEEControls(Composite comp) {
+		fEnvironmentsButton = SWTFactory.createRadioButton(comp, JREMessages.JREsComboBlock_4);
+		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fEnvironmentsButton.getSelection()) {
+					fCombo.setEnabled(false);
+					if (fEnvironmentsCombo.getText().length() == 0 && !fEnvironments.isEmpty()) {
+						fEnvironmentsCombo.select(0);
+					}
+					fEnvironmentsCombo.setEnabled(true);
+					if (fEnvironments.isEmpty()) {
+						setError(JREMessages.JREsComboBlock_5);
+					} else {
+						setStatus(OK_STATUS);
+					}
+					firePropertyChange();
+				}
+			}
+		});		
+		
+		fEnvironmentsCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
+		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
+				firePropertyChange();
+			}
+		});		
+		
+		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
+		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
+			}
+		});		
+		
+		fillWithWorkspaceProfiles();
+	}
+
+	private void createAlternateJREControls(Composite comp) {
 		String text = JREMessages.JREsComboBlock_1;
 		if (fSpecificDescriptor != null) {
 			text = fSpecificDescriptor.getDescription();
@@ -215,43 +268,21 @@ public class JREsComboBlock {
 			}
 		});
 		fillWithWorkspaceJREs();
-		
-	//execution environments
-		fEnvironmentsButton = SWTFactory.createRadioButton(comp, JREMessages.JREsComboBlock_4);
-		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fEnvironmentsButton.getSelection()) {
-					fCombo.setEnabled(false);
-					if (fEnvironmentsCombo.getText().length() == 0 && !fEnvironments.isEmpty()) {
-						fEnvironmentsCombo.select(0);
-					}
-					fEnvironmentsCombo.setEnabled(true);
-					if (fEnvironments.isEmpty()) {
-						setError(JREMessages.JREsComboBlock_5);
-					} else {
+	}
+
+	private void createDefaultJREControls(Composite comp) {
+		if (fDefaultDescriptor != null) {
+			fDefaultButton = SWTFactory.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
+			fDefaultButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (fDefaultButton.getSelection()) {
+						setUseDefaultJRE();
 						setStatus(OK_STATUS);
+						firePropertyChange();
 					}
-					firePropertyChange();
 				}
-			}
-		});		
-		
-		fEnvironmentsCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
-		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
-				firePropertyChange();
-			}
-		});		
-		
-		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
-		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
-			}
-		});		
-		
-		fillWithWorkspaceProfiles();
+			});
+		}
 	}
 	
 	/**
