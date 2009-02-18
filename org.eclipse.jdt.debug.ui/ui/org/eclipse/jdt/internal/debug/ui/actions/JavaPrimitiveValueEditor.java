@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
@@ -75,7 +75,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
                 variable.setValue(stringValue);
             }
         } catch (DebugException e) {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); // 
+            JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); // 
         }
         return true;
     }

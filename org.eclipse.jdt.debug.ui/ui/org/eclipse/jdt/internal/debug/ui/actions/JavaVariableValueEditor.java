@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -33,7 +32,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
         try {
             signature= getSignature(variable);
 	    } catch (DebugException e) {
-	        DebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
+	        JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
 	    }
 	    if (signature == null) {
 	        return false;

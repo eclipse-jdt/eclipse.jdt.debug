@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -295,6 +296,25 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public static void errorDialog(String message, Throwable t) {
 		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t);
 		statusDialog(status);
+	}
+	
+	/**
+	 * Opens an error dialog with the given title and message.
+	 */
+	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
+		IStatus status;
+		if (t instanceof CoreException) {
+			status= ((CoreException)t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message= null;
+			}
+		} else {
+			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$
+			log(status);
+		}
+		ErrorDialog.openError(shell, title, message, status);
 	}
 	
 	/**
