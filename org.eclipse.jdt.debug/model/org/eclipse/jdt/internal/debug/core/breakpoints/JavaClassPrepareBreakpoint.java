@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 
@@ -161,7 +162,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#handleClassPrepareEvent(com.sun.jdi.event.ClassPrepareEvent, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
-	public boolean handleClassPrepareEvent(ClassPrepareEvent event, JDIDebugTarget target) {
+	public boolean handleClassPrepareEvent(ClassPrepareEvent event, JDIDebugTarget target, boolean suspendVote) {
 		try {
 			if (isEnabled() && event.referenceType().name().equals(getTypeName())) {
 				ThreadReference threadRef= event.thread();
@@ -169,12 +170,20 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 				if (thread == null || thread.isIgnoringBreakpoints()) {
 					return true;
 				}
-				return handleBreakpointEvent(event, target, thread);
+				return handleBreakpointEvent(event, thread, suspendVote);
 			}
 		} catch (CoreException e) {
 		}
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#classPrepareComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIThread, boolean)
+	 */
+	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend) {
+		thread.completeBreakpointHandling(this, suspend, true);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint#getMemberType()
 	 */

@@ -6,6 +6,7 @@
 <!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
    <extension-point id="jdiclient" name="%virtualMachineManagerImpl"  schema="schema/jdiclient.exsd"/>
    <extension-point id="javaLogicalStructures" name="%javaLogicalStructures" schema="schema/javaLogicalStructures.exsd"/>
+   <extension-point id="breakpointListeners" name="%breakpointListeners.name" schema="schema/breakpointListeners.exsd"/>
 
 <!-- Extensions -->
    <extension

@@ -33,7 +33,10 @@ public interface IEvaluationResult {
 	 * associated evaluation failed. If
 	 * the associated evaluation failed, there will
 	 * be problems, or an exception in this result.
-	 *
+	 * <p>
+	 * Since 3.5, this method can also return null if
+	 * the evaluation was terminated before it completed.
+	 * </p>
 	 * @return the resulting value, possibly
 	 * <code>null</code>
 	 */
@@ -103,4 +106,12 @@ public interface IEvaluationResult {
 	 *  original snippet
 	 */
 	public IEvaluationEngine getEvaluationEngine();	
+	
+	/**
+	 * Returns whether this evaluation was terminated before it completed.
+	 * 
+	 * @return whether terminated.
+	 * @since 3.5
+	 */
+	public boolean isTerminated();
 }

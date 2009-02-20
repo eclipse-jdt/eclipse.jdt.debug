@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,5 +201,36 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 */
 	public boolean supportsThreadFilters();
 	
+	/**
+	 * Returns a collection of identifiers of breakpoint listener extensions registered
+	 * for this breakpoint, possibly empty.
+	 * 
+	 * @return breakpoint listener extension identifiers registered on this breakpoint
+	 * @throws CoreException if unable to retrieve the collection
+	 * @since 3.5
+	 */
+	public String[] getBreakpointListeners() throws CoreException;
+	
+	/**
+	 * Adds the breakpoint listener extension with specified identifier to this breakpoint.
+	 * Has no effect if an identical listener is already registered. 
+	 *  
+	 * @param identifier breakpoint listener extension identifier
+	 * @throws CoreException if unable to add the listener
+	 * @since 3.5
+	 */
+	public void addBreakpointListener(String identifier) throws CoreException;
+	
+	/**
+	 * Removes the breakpoint listener extension with the specified identifier from this
+	 * breakpoint and returns whether the listener was removed.
+	 * 
+	 * @param identifier breakpoint listener extension identifier 
+	 * @return whether the listener was removed
+	 * @throws CoreException if an error occurs removing the listener
+	 * @since 3.5
+	 */
+	public boolean removeBreakpointListener(String identifier) throws CoreException;
+
 }
 

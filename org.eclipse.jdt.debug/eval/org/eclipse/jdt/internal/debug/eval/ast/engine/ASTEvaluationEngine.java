@@ -469,6 +469,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			class EvaluationRunnable implements IEvaluationRunnable, ITerminate {
 				
 				CoreException fException;
+				boolean fTerminated = false;
 				
 				public void run(IJavaThread jt, IProgressMonitor pm) {
 					EventFilter filter = new EventFilter();
@@ -493,6 +494,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					}
 				}
 				public void terminate() {
+					fTerminated = true;
 					interpreter.stop();
 				}
 				public boolean canTerminate() {
@@ -521,6 +523,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				exception = er.getException();
 			}
             
+			result.setTerminated(er.fTerminated);
 			if (exception != null) {
 			    if (exception instanceof DebugException) {
 			        result.setException((DebugException)exception);

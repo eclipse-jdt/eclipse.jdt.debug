@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -371,18 +371,18 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
 	 */
-	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
+	public boolean handleBreakpointEvent(Event event, JDIThread thread, boolean suspendVote) {
 		if (event instanceof MethodEntryEvent) {
 			MethodEntryEvent entryEvent= (MethodEntryEvent) event;
-			fLastEventTypes.put(target, ENTRY_EVENT);
-			return handleMethodEvent(entryEvent, entryEvent.method(), target, thread);
+			fLastEventTypes.put(thread.getDebugTarget(), ENTRY_EVENT);
+			return handleMethodEvent(entryEvent, entryEvent.method(), thread, suspendVote);
 		} else if (event instanceof MethodExitEvent) {
 			MethodExitEvent exitEvent= (MethodExitEvent) event;
-			fLastEventTypes.put(target, EXIT_EVENT);
-			return handleMethodEvent(exitEvent, exitEvent.method(), target, thread);
+			fLastEventTypes.put(thread.getDebugTarget(), EXIT_EVENT);
+			return handleMethodEvent(exitEvent, exitEvent.method(), thread, suspendVote);
 		} else if (event instanceof BreakpointEvent) {
-			fLastEventTypes.put(target, ENTRY_EVENT);
-			return super.handleBreakpointEvent(event, target, thread);
+			fLastEventTypes.put(thread.getDebugTarget(), ENTRY_EVENT);
+			return super.handleBreakpointEvent(event, thread, suspendVote);
 		}
 		return true;
 	}
@@ -394,7 +394,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * the event has been fired by a method invocation that this breakpoint
 	 * is interested in. If it is not, do nothing.
 	 */
-	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target, JDIThread thread) {
+	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIThread thread, boolean suspendVote) {
 		try {
 			if (isNativeOnly()) {
 				if (!method.isNative()) {
@@ -430,15 +430,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				return true;
 			}
 			// no hit count
-			if (hasCondition()) {
-				try {
-					return handleConditionalBreakpointEvent(event, thread, target);
-				} catch (CoreException exception) {
-					// log error
-					return !suspendForEvent(event, thread);
-				}
-			}
-			return !suspendForEvent(event, thread); // Resume if suspend fails					
+			return !suspendForEvent(event, thread, suspendVote); // Resume if suspend fails					
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
 		}

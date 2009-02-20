@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -18,9 +24,16 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.debug.testplugin.EvalualtionBreakpointListener;
+import org.eclipse.jdt.debug.testplugin.GlobalBreakpointListener;
+import org.eclipse.jdt.debug.testplugin.ResumeBreakpointListener;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
@@ -138,6 +151,39 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			}
 			return DONT_CARE;
 		}
+	}
+	
+	/**
+	 * Collects hit breakpoints.
+	 */
+	class Collector implements IJavaBreakpointListener {
+		
+		public List HIT = new ArrayList();
+
+		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		}
+
+		public void breakpointHasCompilationErrors( IJavaLineBreakpoint breakpoint, Message[] errors) {
+		}
+
+		public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
+		}
+
+		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+			HIT.add(breakpoint);
+			return DONT_CARE;
+		}
+
+		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {			
+		}
+
+		public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		}
+
+		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
+			return DONT_CARE;
+		}
+		
 	}
 			
 	/**
@@ -693,4 +739,305 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			}
 	}
 
+	/**
+	 * Tests a breakpoint listener extension.
+	 */
+	public void testEvalListenerExtension() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(i);";
+		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
+			
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IEvaluationResult result = EvalualtionBreakpointListener.RESULT;
+			assertNotNull("Missing eval result", result);
+			assertFalse("Should be no errors", result.hasErrors());
+			IJavaValue value = result.getValue();
+			assertEquals("Wrong result type", "java.lang.Integer", value.getReferenceTypeName());
+			IVariable[] variables = value.getVariables();
+			for (int i = 0; i < variables.length; i++) {
+				IVariable variable = variables[i];
+				if (variable.getName().equals("value")) {
+					IValue iValue = variable.getValue();
+					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
+					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
+					assertEquals("Wrong value", 0, intValue);
+					break;
+				}
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}			
+	}
+	
+	/**
+	 * Tests that a step end that lands on a breakpoint listener that votes to resume
+	 * results in the step completing and suspending.
+	 * 
+	 * @throws Exception
+	 */
+	public void testStepEndResumeVote() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint first = createLineBreakpoint(16, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(17, typeName);
+		second.addBreakpointListener("org.eclipse.jdt.debug.tests.resumeListener");
+			
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, first);
+			thread = stepOver((IJavaStackFrame) thread.getTopStackFrame());
+			assertTrue("Listener not notified", ResumeBreakpointListener.WAS_HIT);
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			assertNotNull("Top frame should be available", thread.getTopStackFrame());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}					
+	}
+	
+	/**
+	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
+	 * can perform an evaluation and resume to complete the step.
+	 * 
+	 * @throws Exception
+	 */
+	public void testStepOverHitsNestedEvaluationHandlerResume() throws Exception {
+		String typeName = "MethodLoop";
+		// breakpoint on line 24 is where the step is initiated from
+		IJavaLineBreakpoint first = createLineBreakpoint(24, typeName);
+		// second breakpoint is where the evaluation is performed with a resume vote
+		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
+		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
+		EvalualtionBreakpointListener.RESULT = null;
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, first);
+			IStackFrame top = thread.getTopStackFrame();
+			assertNotNull("Missing top frame", top);
+			thread = stepOver((IJavaStackFrame) top);
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			assertEquals("Should be in frame where step originated", top, thread.getTopStackFrame());
+			IEvaluationResult result = EvalualtionBreakpointListener.RESULT;
+			assertNotNull("Missing eval result", result);
+			assertFalse("Should be no errors", result.hasErrors());
+			if (result.getException() != null) {
+				result.getException().printStackTrace();
+			}
+			IJavaValue value = result.getValue();
+			assertEquals("Wrong result type", "java.lang.Integer", value.getReferenceTypeName());
+			IVariable[] variables = value.getVariables();
+			for (int i = 0; i < variables.length; i++) {
+				IVariable variable = variables[i];
+				if (variable.getName().equals("value")) {
+					IValue iValue = variable.getValue();
+					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
+					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
+					assertEquals("Wrong value", 0, intValue);
+					break;
+				}
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+	
+	/**
+	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
+	 * can perform an evaluation and suspend to abort the step.
+	 * 
+	 * @throws Exception
+	 */
+	public void testStepOverHitsNestedEvaluationHandlerSuspend() throws Exception {
+		String typeName = "MethodLoop";
+		// breakpoint on line 24 is where the step is initiated from
+		IJavaLineBreakpoint first = createLineBreakpoint(24, typeName);
+		// second breakpoint is where the evaluation is performed with a resume vote
+		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
+		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
+		EvalualtionBreakpointListener.RESULT = null;
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, first);
+			IStackFrame top = thread.getTopStackFrame();
+			assertNotNull("Missing top frame", top);
+			thread = stepOverToBreakpoint((IJavaStackFrame) top);
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull("Missin top frame", frame);
+			assertEquals("Wrong location", "calculateSum", frame.getName());
+			IEvaluationResult result = EvalualtionBreakpointListener.RESULT;
+			assertNotNull("Missing eval result", result);
+			assertFalse("Should be no errors", result.hasErrors());
+			if (result.getException() != null) {
+				result.getException().printStackTrace();
+			}
+			IJavaValue value = result.getValue();
+			assertEquals("Wrong result type", "java.lang.Integer", value.getReferenceTypeName());
+			IVariable[] variables = value.getVariables();
+			for (int i = 0; i < variables.length; i++) {
+				IVariable variable = variables[i];
+				if (variable.getName().equals("value")) {
+					IValue iValue = variable.getValue();
+					assertTrue("Should be an int", iValue.getReferenceTypeName().equals("int"));
+					assertTrue("Should be a primitive", iValue instanceof IJavaPrimitiveValue);
+					int intValue = ((IJavaPrimitiveValue)iValue).getIntValue();
+					assertEquals("Wrong value", 0, intValue);
+					break;
+				}
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	/**
+	 * Suspends an evaluation. Ensures we're returned to the proper top frame.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSuspendEvaluation() throws Exception {
+		String typeName = "MethodLoop";
+		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
+		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
+		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.EXPRESSION = "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200);";
+		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
+		EvalualtionBreakpointListener.RESULT = null;
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, first);
+			IStackFrame top = thread.getTopStackFrame();
+			assertNotNull("Missing top frame", top);
+			thread.resume();
+			Thread.sleep(100);
+			thread.suspend();
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull("Missing top frame", frame);
+			assertEquals("Wrong location", "calculateSum", frame.getName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
+	}
+	
+	/**
+	 * Test that a global listener gets notifications.
+	 * 
+	 * @throws Exception
+	 */
+	public void testGlobalListener() throws Exception {
+		GlobalBreakpointListener.clear();
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			assertEquals("Should be ADDED", bp, GlobalBreakpointListener.ADDED);
+			assertEquals("Should be INSTALLING", bp, GlobalBreakpointListener.INSTALLING);
+			assertEquals("Should be INSTALLED", bp, GlobalBreakpointListener.INSTALLED);
+			assertEquals("Should be HIT", bp, GlobalBreakpointListener.HIT);
+			assertNull("Should not be REMOVED", GlobalBreakpointListener.REMOVED);
+						
+			bp.delete();
+			assertEquals("Should be REMOVED", bp, GlobalBreakpointListener.REMOVED);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
+	}
+	
+	/**
+	 * Tests that breakpoint listeners are only notified when condition is true.
+	 * 
+	 * @throws Exception
+	 */
+	public void testListenersOnConditionalBreakpoint() throws Exception {
+		String typeName = "HitCountLooper";
+		Collector collector = new Collector();
+		JDIDebugModel.addJavaBreakpointListener(collector);
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "return false;", true);
+		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 3", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, second);
+			assertEquals("Wrong number of breakpoints hit", 1, collector.HIT.size());
+			assertTrue("Wrong breakpoint hit", collector.HIT.contains(second));
+			assertFalse("Wrong breakpoint hit", collector.HIT.contains(bp));
+		} finally {
+			JDIDebugModel.removeJavaBreakpointListener(collector);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests addition and removal of breakpoint listeners to a breakpoint.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddRemoveListeners() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		
+		String[] listeners = bp.getBreakpointListeners();
+		assertEquals(0, listeners.length);
+		
+		bp.addBreakpointListener("a");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(1, listeners.length);
+		assertEquals("a", listeners[0]);
+		
+		bp.addBreakpointListener("b");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(2, listeners.length);
+		assertEquals("a", listeners[0]);
+		assertEquals("b", listeners[1]);
+		
+		bp.addBreakpointListener("c");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(3, listeners.length);
+		assertEquals("a", listeners[0]);
+		assertEquals("b", listeners[1]);
+		assertEquals("c", listeners[2]);
+		
+		bp.removeBreakpointListener("a");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(2, listeners.length);
+		assertEquals("b", listeners[0]);
+		assertEquals("c", listeners[1]);
+		
+		bp.removeBreakpointListener("c");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(1, listeners.length);
+		assertEquals("b", listeners[0]);
+		
+		bp.removeBreakpointListener("b");
+		listeners = bp.getBreakpointListeners();
+		assertEquals(0, listeners.length);
+
+	}
+	
 }

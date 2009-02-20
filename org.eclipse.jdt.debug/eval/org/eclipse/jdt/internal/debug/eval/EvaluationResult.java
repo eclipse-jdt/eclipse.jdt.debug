@@ -60,6 +60,11 @@ public class EvaluationResult implements IEvaluationResult {
 	 * List of <code>String</code>s describing compilation problems.
 	 */
 	private List fErrors;
+	
+	/**
+	 * Whether the evaluation was terminated.
+	 */
+	private boolean fTerminated = false;
 
 	/**
 	 * Constructs a new evaluation result for the given
@@ -189,6 +194,22 @@ public class EvaluationResult implements IEvaluationResult {
 	 */
 	public void addError(String message) {
 		fErrors.add(message);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationResult#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return fTerminated;
+	}
+
+	/**
+	 * Sets whether terminated.
+	 * 
+	 * @param terminated whether terminated
+	 */
+	public void setTerminated(boolean terminated) {
+		fTerminated = terminated;
 	}
 }
 

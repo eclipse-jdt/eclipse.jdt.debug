@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -417,13 +417,13 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * 
 	 * Also, @see JavaBreakpoint#handleEvent(Event, JDIDebugTarget)
 	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target)  {
+	public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote)  {
 		if (event instanceof AccessWatchpointEvent) {
 			fLastEventTypes.put(target, ACCESS_EVENT);
 		} else if (event instanceof ModificationWatchpointEvent) {
 			fLastEventTypes.put(target, MODIFICATION_EVENT);
 		}
-		return super.handleEvent(event, target);
+		return super.handleEvent(event, target, suspendVote);
 	}	
 	
 	

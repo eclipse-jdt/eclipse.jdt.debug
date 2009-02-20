@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,19 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
+
+import com.sun.jdi.VMDisconnectedException;
 
 public class Interpreter {
 	private Instruction[] fInstructions;
@@ -61,6 +66,8 @@ public class Interpreter {
 				instruction.execute();
 				instruction.setInterpreter(null);
 			}
+		} catch (VMDisconnectedException e) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), e.getMessage(), e));
 		} finally {
 			releaseObjects();
 		}

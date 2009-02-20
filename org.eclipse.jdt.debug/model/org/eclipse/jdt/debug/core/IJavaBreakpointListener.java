@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,18 @@ import org.eclipse.jdt.core.dom.Message;
  * Provides event and error notification for Java breakpoints.
  * Listeners register with the <code>JDIDebugModel</code>.
  * <p>
+ * Since 3.5, clients can also register breakpoint listeners using the
+ * <code>org.eclipse.jdt.debug.breakpointListeners</code> extension point.
+ * A listener can be contributed to receive notifications from all Java
+ * breakpoints or receive notifications about specific breakpoints by
+ * programmatically registering the extension with a breakpoint.
+ * </p>
+ * <p>
  * Clients are intended to implement this interface.
  * </p>
  * @since 2.0
+ * @see JDIDebugModel
+ * @see IJavaBreakpoint
  */
 public interface IJavaBreakpointListener {
 	
@@ -108,12 +117,16 @@ public interface IJavaBreakpointListener {
 	 * Notification that the given breakpoint has been hit
 	 * in the specified thread. Allows this listener to
 	 * vote to determine if the given thread should be suspended in
-	 * reponse to the breakpoint. If at least one listener votes to
+	 * response to the breakpoint. If at least one listener votes to
 	 * <code>SUSPEND</code>, the thread will suspend. If there
 	 * are no votes to suspend the thread, there must be at least one
 	 * <code>DONT_SUSPEND</code> vote to avoid the suspension (resume). If all
 	 * listeners vote <code>DONT_CARE</code>, the thread will suspend by default.
-	 * 
+	 * <p>
+	 * The thread the breakpoint has been encountered in is now suspended. Listeners
+	 * may query thread state and perform evaluations. All subsequent breakpoints
+	 * in this thread will be ignored until voting has completed.
+	 * </p>
 	 * @param thread Java thread
 	 * @param breakpoint Java breakpoint
 	 * @return whether the thread should suspend or whether this

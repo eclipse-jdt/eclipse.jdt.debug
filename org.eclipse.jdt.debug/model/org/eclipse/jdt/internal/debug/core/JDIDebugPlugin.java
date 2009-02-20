@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,10 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.internal.debug.core.breakpoints.BreakpointListenerManager;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.osgi.framework.BundleContext;
 
 import com.sun.jdi.VirtualMachineManager;
@@ -90,6 +92,14 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @since 3.1
 	 */
 	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES= "javaLogicalStructures"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Extension point for java breakpoint action delegates.
+	 * 
+	 * @since 3.5
+	 */
+	public static final String EXTENSION_POINT_JAVA_BREAKPOINT_LISTENERS= "breakpointListeners"; //$NON-NLS-1$
 
 	/**
 	 * Status code indicating an unexpected error.
@@ -157,6 +167,11 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * Associated status to retrieve a stack frame.
 	 */
 	public static IStatus STATUS_GET_EVALUATION_FRAME = new Status(IStatus.INFO, getUniqueIdentifier(), INFO_EVALUATION_STACK_FRAME, "Provides thread context for an evaluation", null); //$NON-NLS-1$
+	
+	/**
+	 * Manages breakpoint listener extensions
+	 */
+	private BreakpointListenerManager fJavaBreakpointManager;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -245,6 +260,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		});
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList();
+		fJavaBreakpointManager = new BreakpointListenerManager();
 	}
 	
 	/**
@@ -424,15 +440,77 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	private BreakpointNotifier getBreakpointNotifier() {
 		return new BreakpointNotifier();
 	}
+	
+	abstract class AbstractNotifier implements ISafeRunnable {
+		
+		private IJavaBreakpoint fBreakpoint;
+		private IJavaBreakpointListener fListener;
+		
+		/**
+		 * Iterates through listeners calling this notifier's safe runnable.
+		 */
+		protected void notifyListeners(IJavaBreakpoint breakpoint) {
+			fBreakpoint = breakpoint;
+			String[] ids = null;
+			try {
+				ids = breakpoint.getBreakpointListeners();
+			} catch (CoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+			// breakpoint specific listener extensions
+			if (ids != null && ids.length > 0) {
+				for (int i = 0; i < ids.length; i++) {
+					fListener = fJavaBreakpointManager.getBreakpointListener(ids[i]);
+					if (fListener != null) {
+						SafeRunner.run(this);
+					}
+				}
+			}
+			// global listener extensions
+			IJavaBreakpointListener[] global = fJavaBreakpointManager.getGlobalListeners();
+			if (global.length > 0) {
+				for (int i = 0; i < global.length; i++) {
+					fListener = global[i];
+					SafeRunner.run(this);
+				}
+			}
+			// programmatic global listeners
+			Object[] listeners = fBreakpointListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				fListener = (IJavaBreakpointListener)listeners[i];
+                SafeRunner.run(this);
+			}
+			fBreakpoint = null;
+			fListener = null;
+		}
+		
+		/**
+		 * Returns the breakpoint for which notification is proceeding or
+		 * <code>null</code> if not in notification.
+		 * 
+		 * @return breakpoint or <code>null</code>
+		 */
+		protected IJavaBreakpoint getBreakpoint() {
+			return fBreakpoint;
+		}
+		
+		/**
+		 * Returns the listener for which notification is proceeding or <code>null</code>
+		 * if not in notification loop.
+		 * 
+		 * @return breakpoint listener or <code>null</code>
+		 */
+		protected IJavaBreakpointListener getListener() {
+			return fListener;
+		}
+	}	
 
-	class BreakpointNotifier implements ISafeRunnable {
+	class BreakpointNotifier extends AbstractNotifier {
 		
 		private IJavaDebugTarget fTarget;
-		private IJavaBreakpoint fBreakpoint;
 		private int fKind;
 		private Message[] fErrors;
 		private DebugException fException;
-		private IJavaBreakpointListener fListener;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -446,19 +524,19 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		public void run() throws Exception {
 			switch (fKind) {
 				case ADDING:
-					fListener.addingBreakpoint(fTarget, fBreakpoint);
+					getListener().addingBreakpoint(fTarget, getBreakpoint());
 					break;
 				case INSTALLED:
-					fListener.breakpointInstalled(fTarget, fBreakpoint);
+					getListener().breakpointInstalled(fTarget, getBreakpoint());
 					break;
 				case REMOVED:
-					fListener.breakpointRemoved(fTarget, fBreakpoint);
+					getListener().breakpointRemoved(fTarget, getBreakpoint());
 					break;		
 				case COMPILATION_ERRORS:
-					fListener.breakpointHasCompilationErrors((IJavaLineBreakpoint)fBreakpoint, fErrors);
+					getListener().breakpointHasCompilationErrors((IJavaLineBreakpoint)getBreakpoint(), fErrors);
 					break;
 				case RUNTIME_EXCEPTION:
-					fListener.breakpointHasRuntimeException((IJavaLineBreakpoint)fBreakpoint, fException);
+					getListener().breakpointHasRuntimeException((IJavaLineBreakpoint)getBreakpoint(), fException);
 					break;	
 			}			
 		}
@@ -475,20 +553,13 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 */
 		public void notify(IJavaDebugTarget target, IJavaBreakpoint breakpoint, int kind, Message[] errors, DebugException exception) {
 			fTarget = target;
-			fBreakpoint = breakpoint;
 			fKind = kind;
 			fErrors = errors;
 			fException = exception;
-			Object[] listeners = fBreakpointListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				fListener = (IJavaBreakpointListener)listeners[i];
-                SafeRunner.run(this);
-			}
+			notifyListeners(breakpoint);
 			fTarget = null;
-			fBreakpoint = null;
 			fErrors = null;
 			fException = null;
-			fListener = null;
 		}
 	}
 	
@@ -496,12 +567,10 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		return new InstallingNotifier();
 	}
 		
-	class InstallingNotifier implements ISafeRunnable {
+	class InstallingNotifier extends AbstractNotifier {
 		
 		private IJavaDebugTarget fTarget;
-		private IJavaBreakpoint fBreakpoint;
 		private IJavaType fType;
-		private IJavaBreakpointListener fListener;
 		private int fInstall;
 		
 		/**
@@ -514,14 +583,12 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fInstall = fInstall | fListener.installingBreakpoint(fTarget, fBreakpoint, fType);		
+			fInstall = fInstall | getListener().installingBreakpoint(fTarget, getBreakpoint(), fType);		
 		}
 		
 		private void dispose() {
 			fTarget = null;
-			fBreakpoint = null;
 			fType = null;
-			fListener = null;
 		}
 
 		/**
@@ -536,14 +603,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 */
 		public boolean notifyInstalling(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			fTarget = target;
-			fBreakpoint = breakpoint;
 			fType = type;
 			fInstall = IJavaBreakpointListener.DONT_CARE;
-			Object[] listeners = fBreakpointListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				fListener = (IJavaBreakpointListener)listeners[i];
-                SafeRunner.run(this);
-			}
+			notifyListeners(breakpoint);
 			dispose();
 			// install if any listener voted to install, or if no one voted to not install
 			return (fInstall & IJavaBreakpointListener.INSTALL) > 0 ||
@@ -555,11 +617,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		return new HitNotifier();
 	}
 		
-	class HitNotifier implements ISafeRunnable {
+	class HitNotifier extends AbstractNotifier {
 		
 		private IJavaThread fThread;
-		private IJavaBreakpoint fBreakpoint;
-		private IJavaBreakpointListener fListener;
 		private int fSuspend;
 		
 		/**
@@ -572,7 +632,15 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fSuspend = fSuspend | fListener.breakpointHit(fThread, fBreakpoint);
+			if (fThread instanceof JDIThread) {
+				if (((JDIThread)fThread).hasClientRequestedSuspend()) {
+					// abort notification to breakpoint listeners if a client suspend
+					// request is received
+					fSuspend = fSuspend | IJavaBreakpointListener.SUSPEND;
+					return;
+				}
+			}
+			fSuspend = fSuspend | getListener().breakpointHit(fThread, getBreakpoint());
 		}
 
 		/**
@@ -585,16 +653,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		 */
 		public boolean notifyHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 			fThread = thread;
-			fBreakpoint = breakpoint;
-			Object[] listeners = fBreakpointListeners.getListeners();
 			fSuspend = IJavaBreakpointListener.DONT_CARE;
-			for (int i = 0; i < listeners.length; i++) {
-				fListener = (IJavaBreakpointListener)listeners[i];
-                SafeRunner.run(this);
-			}
+			notifyListeners(breakpoint);
 			fThread = null;
-			fBreakpoint = null;
-			fListener = null;
 			// Suspend if any listener voted to suspend or no one voted "don't suspend"
 			return (fSuspend & IJavaBreakpointListener.SUSPEND) > 0 ||
 					(fSuspend & IJavaBreakpointListener.DONT_SUSPEND) == 0;

@@ -487,5 +487,21 @@
         </run>
      </filesystem>
   </extension>
+  <extension
+        point="org.eclipse.jdt.debug.breakpointListeners">
+     <breakpointListener
+           class="org.eclipse.jdt.debug.testplugin.EvalualtionBreakpointListener"
+           id="org.eclipse.jdt.debug.tests.evalListener">
+     </breakpointListener>
+     <breakpointListener
+           class="org.eclipse.jdt.debug.testplugin.ResumeBreakpointListener"
+           id="org.eclipse.jdt.debug.tests.resumeListener">
+     </breakpointListener>
+     <breakpointListener
+           class="org.eclipse.jdt.debug.testplugin.GlobalBreakpointListener"
+           filter="*"
+           id="org.eclipse.jdt.debug.tests.listener.global">
+     </breakpointListener>
+  </extension>
 
 </plugin>

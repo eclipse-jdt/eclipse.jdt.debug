@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,17 +103,18 @@ public class EventDispatcher implements Runnable {
 	 * 
 	 * @param eventSet events to dispatch
 	 */
-	protected void dispatch(EventSet eventSet) {
+	private void dispatch(EventSet eventSet) {
 		if (isShutdown()) {
 			return;
 		}
 		EventIterator iter= eventSet.eventIterator();
+		IJDIEventListener[] listeners = new IJDIEventListener[eventSet.size()];
 		boolean vote = false; 
 		boolean resume = true;
 		int voters = 0; 
-		Event winningEvent = null;
-		IJDIEventListener winner = null;
+		int index=-1;
 		while (iter.hasNext()) {
+			index++;
 			if (isShutdown()) {
 				return;
 			}
@@ -123,6 +124,7 @@ public class EventDispatcher implements Runnable {
 			}
 			// Dispatch events to registered listeners, if any
 			IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
+			listeners[index] = listener;
 			if (listener != null) {
 				if (listener instanceof IJavaLineBreakpoint) {
 					// Event dispatch to conditional breakpoints is deferred until after
@@ -137,12 +139,8 @@ public class EventDispatcher implements Runnable {
 					}
 				}
 				vote = true;
-				resume = listener.handleEvent(event, fTarget) && resume;
+				resume = listener.handleEvent(event, fTarget, !resume) && resume;
 				voters++;
-				if (!resume && winner == null) {
-					winner = listener;
-					winningEvent = event;
-				}
 				continue;
 			}
 			
@@ -156,41 +154,48 @@ public class EventDispatcher implements Runnable {
 			} else if (event instanceof VMStartEvent) {
 				fTarget.handleVMStart((VMStartEvent)event);
 			} else {
-				// Unhandled Event
+				// not handled
 			}
 		}
 		
-		if (resume) {
-			// process deferred events if event handlers have voted
-			// to resume the thread
-			if (!getDeferredEvents().isEmpty()) {
-				Iterator deferredIter= getDeferredEvents().iterator();
-				while (deferredIter.hasNext()) {
-					if (isShutdown()) {
-						return;
-					}
-					Event event= (Event)deferredIter.next();
-					if (event == null) {
-						continue;
-					}
-					// Dispatch events to registered listeners, if any
-					IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
-					if (listener != null) {
-						vote = true;
-						resume = listener.handleEvent(event, fTarget) && resume;
-						continue;
-					}
+		// process deferred conditional breakpoint events
+		if (!getDeferredEvents().isEmpty()) {
+			Iterator deferredIter= getDeferredEvents().iterator();
+			while (deferredIter.hasNext()) {
+				if (isShutdown()) {
+					return;
+				}
+				Event event= (Event)deferredIter.next();
+				if (event == null) {
+					continue;
+				}
+				// Dispatch events to registered listeners, if any
+				IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
+				if (listener != null) {
+					vote = true;
+					resume = listener.handleEvent(event, fTarget, !resume) && resume;
+					continue;
 				}
 			}
 		}
-		// clear any deferred events (processed or not)
-		getDeferredEvents().clear();
 		
-		// let the winner know they won
-		if (winner != null && voters > 1) {
-			winner.wonSuspendVote(winningEvent, fTarget);
+		// notify handlers of the end result
+		index = -1;
+		iter = eventSet.eventIterator();
+		while (iter.hasNext()) {
+			index++;
+			Event event= iter.nextEvent();
+			// notify registered listener, if any
+			IJDIEventListener listener = listeners[index];
+			if (listener != null) {
+				listener.eventSetComplete(event, fTarget, !resume);
+			}
 		}
 		
+		// clear any deferred JDI events (processed or not)
+		getDeferredEvents().clear();
+		
+		// fire queued DEBUG events
 		fireEvents();
 		
 		if (vote && resume) {
@@ -255,7 +260,7 @@ public class EventDispatcher implements Runnable {
 	 * @return whether this event dispatcher has been
 	 * shutdown
 	 */
-	protected boolean isShutdown() {
+	private boolean isShutdown() {
 		return fShutdown;
 	}
 	
@@ -276,7 +281,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Deregisters the given listener and event request. The listener
 	 * will no longer be notified of events associated with the request.
-	 * Listeners are responsible for deleting the assocaited event
+	 * Listeners are responsible for deleting the associated event
 	 * request if required.
 	 * 
 	 * @param listener the listener to deregister
@@ -299,9 +304,9 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Fires debug events in the event queue, and clears the queue
 	 */
-	protected void fireEvents() {
+	private void fireEvents() {
 		DebugPlugin plugin= DebugPlugin.getDefault();
-		if (plugin != null) { //check that not in the process of shutting down
+		if (plugin != null && fDebugEvents.size() > 0) { //check that not in the process of shutting down
 			DebugEvent[] events = (DebugEvent[])fDebugEvents.toArray(new DebugEvent[fDebugEvents.size()]);
 			fDebugEvents.clear();
 			plugin.fireDebugEventSet(events);
@@ -314,16 +319,17 @@ public class EventDispatcher implements Runnable {
 	 * 
 	 * @param event event to defer
 	 */
-	protected void defer(Event event) {
+	private void defer(Event event) {
 		fDeferredEvents.add(event);
 	}
+	
 
 	/**
 	 * Returns the events currently deferred.
 	 * 
 	 * @return deferred events
 	 */
-	protected List getDeferredEvents() {
+	private List getDeferredEvents() {
 		return fDeferredEvents;
 	}
 		

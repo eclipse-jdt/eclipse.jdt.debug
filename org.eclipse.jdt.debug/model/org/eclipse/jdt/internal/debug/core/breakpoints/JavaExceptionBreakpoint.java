@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,10 +297,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * 
 	 * @return true if we do not want to suspend false otherwise
 	 */
-	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
+	public boolean handleBreakpointEvent(Event event, JDIThread thread, boolean suspendVote) {
 		if (event instanceof ExceptionEvent) {
 			ObjectReference ex = ((ExceptionEvent)event).exception(); 
-			fLastTarget = target;
+			fLastTarget = thread.getJavaDebugTarget();
 			fLastException = ex;
 			String name = null;
 			try {
@@ -316,7 +316,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				JDIDebugPlugin.log(e);
 			} catch (RuntimeException e) {
 				try {
-					target.targetRequestFailed(e.getMessage(), e);
+					thread.targetRequestFailed(e.getMessage(), e);
 				} catch (DebugException de) {
 					JDIDebugPlugin.log(e);
 					return false;
@@ -341,11 +341,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 						excluded = matchesFilters(filters, typeName, defaultPackage);
 					}
 					if (included && !excluded) {
-						return !suspend(thread);
+						return !suspend(thread, suspendVote);
 					}
 					return true;
 				} 
-			return !suspend(thread);
+			return !suspend(thread, suspendVote);
 		}	
 		return true;
 	}

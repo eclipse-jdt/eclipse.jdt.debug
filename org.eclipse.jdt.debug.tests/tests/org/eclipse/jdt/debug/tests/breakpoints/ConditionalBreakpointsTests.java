@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
@@ -147,4 +149,68 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/**
+	 * Tests a breakpoint condition is not evaluated when it coincides with a step end.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSkipConditionOnStep() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		IJavaLineBreakpoint bp2 = createConditionalLineBreakpoint(17, typeName, "i = 3; return true;", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			// step from 16 to 17, breakpoint condition should not evaluate
+			thread = stepOver((IJavaStackFrame) thread.getTopStackFrame());
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable var = findVariable(frame, "i");
+			assertNotNull("Could not find variable 'i'", var);
+			
+			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			int iValue = value.getIntValue();
+			assertTrue("value of 'i' should be '3', but was " + iValue, iValue == 0);
+			
+			// breakpoint should still be available from thread, even though not eval'd
+			IBreakpoint[] breakpoints = thread.getBreakpoints();
+			assertEquals("Wrong number of breakpoints", 1, breakpoints.length);
+			assertEquals("Wrong breakpoint", bp2, breakpoints[0]);
+			
+			bp.delete();
+			bp2.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	/**
+	 * Tests that a thread can be suspended when executing a long-running condition.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSuspendLongRunningCondition() throws Exception {
+		String typeName = "MethodLoop";
+		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
+		createConditionalLineBreakpoint(29, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200); return true;", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, first);
+			IStackFrame top = thread.getTopStackFrame();
+			assertNotNull("Missing top frame", top);
+			thread.resume();
+			Thread.sleep(100);
+			thread.suspend();
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull("Missing top frame", frame);
+			assertEquals("Wrong location", "calculateSum", frame.getName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
 }

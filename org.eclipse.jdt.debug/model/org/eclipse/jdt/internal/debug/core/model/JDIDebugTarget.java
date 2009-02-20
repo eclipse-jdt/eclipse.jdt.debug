@@ -554,7 +554,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// only allow suspend if no threads are currently suspended
 			IThread[] threads= getThreads();
 			for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-				if (((JDIThread)threads[i]).isSuspended()) {
+				if (!((JDIThread)threads[i]).canSuspend()) {
 					return false;
 				}
 			}
@@ -1244,6 +1244,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		try {
 			VirtualMachine vm = getVM();
+			prepareThreadsForClientSuspend();
 			if (vm != null) {
 				vm.suspend();
 			}
@@ -1252,11 +1253,25 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (RuntimeException e) {
 			setSuspended(false);
+			resumeThreads();
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_suspend, new String[] {e.toString()}), e); 
 		}
 		
 	}
+	
+	/**
+	 * Prepares threads to suspend (terminates evaluations, waits for invocations, etc.).
+	 * 
+	 * @exception DebugException if a thread times out
+	 */
+	protected void prepareThreadsForClientSuspend() throws DebugException {
+		Iterator threads = getThreadIterator();
+		while (threads.hasNext()) {
+			((JDIThread)threads.next()).prepareForClientSuspend();
+		}
+	}
+	
 	
 	/**
 	 * Notifies threads that they have been suspended
@@ -1812,7 +1827,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * @param target the target in which the thread started
 		 * @return <code>true</code> - the thread should be resumed
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
 			ThreadReference thread= ((ThreadStartEvent)event).thread();
 			try {
 				if (thread.isCollected()) {
@@ -1837,11 +1852,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 			return !jdiThread.isSuspended();
 		}
-
+		
 		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
 			// do nothing
 		}
 		
@@ -1903,7 +1918,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * @param target the target in which the thread died
 		 * @return <code>true</code> - the thread should be resumed
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
 			ThreadReference ref= ((ThreadDeathEvent)event).thread();
 			JDIThread thread= findThread(ref);
 			if (thread != null) {
@@ -1916,9 +1931,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
 			// do nothing
 		}
 	

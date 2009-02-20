@@ -68,6 +68,14 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	
 	protected Object[] getChildren(IJavaThread thread) {
 		try {
+			if (thread instanceof JDIThread) {
+				JDIThread jThread = (JDIThread) thread;
+				if (!jThread.getDebugTarget().isSuspended() ) {
+					if (jThread.isSuspendVoteInProgress()) {
+						return EMPTY;
+					}
+				}
+			}
 			IStackFrame[] frames = thread.getStackFrames();
 			if (!isDisplayMonitors()) {
 				return frames;
@@ -109,6 +117,14 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		if (element instanceof JDIThread) {
+			JDIThread jThread = (JDIThread) element;
+			if (!jThread.getDebugTarget().isSuspended()) {
+				if (jThread.isSuspendVoteInProgress()) {
+					return false;
+				}
+			}
+		}
 		return ((IJavaThread)element).hasStackFrames() ||
 			(isDisplayMonitors() && ((IJavaThread)element).hasOwnedMonitors());
 	}

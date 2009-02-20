@@ -35,6 +35,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -44,7 +45,9 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.breakpoints.ConditionalBreakpointHandler;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.BooleanValue;
@@ -87,6 +90,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Constant for the name of the main thread group.
 	 */
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
+	
+	/**
+	 * @since 3.5
+	 */
+	public static final int RESUME_QUIET = 500;
+	
+	/**
+	 * @since 3.5
+	 */
+	public static final int SUSPEND_QUIET = 501;
+	
 	/**
 	 * Status code indicating that a request to suspend this thread has timed out
 	 */
@@ -130,10 +144,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether terminated.
 	 */
 	private boolean fTerminated;
-	/**
-	 * whether suspended but without firing the equivalent events.
-	 */
-	private boolean fSuspendedQuiet;
+
 	/**
 	 * Whether this thread is a system thread.
 	 */
@@ -152,30 +163,55 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private List fCurrentBreakpoints = new ArrayList(2);
 	/**
-	 * Whether this thread is currently performing
-	 * an evaluation. An evaluation may involve a series
-	 * of method invocations.
+	 * Non-null when this thread is executing an evaluation runnable.
+	 * An evaluation may involve a series of method invocations.
 	 */
-	private boolean fIsPerformingEvaluation= false;
-	private IEvaluationRunnable fEvaluationRunnable;
+	private IEvaluationRunnable fEvaluationRunnable = null;
 	
 	/**
 	 * Whether this thread was manually suspended during an
 	 * evaluation.
 	 */
 	private boolean fEvaluationInterrupted = false;
+		
+	/**
+	 * <code>true</code> when there has been a request to suspend
+	 * this thread via {@link #suspend()}. Remains <code>true</code> until
+	 * there is a request to resume this thread via {@link #resume()}.
+	 */
+	private boolean fClientSuspendRequest = false;
 	
 	/**
 	 * Whether this thread is currently invoking a method.
 	 * Nested method invocations cannot be performed.
 	 */
 	private boolean fIsInvokingMethod = false;
+	
+	/**
+	 * Lock used to wait for method invocations to complete.
+	 */
+	private Object fInvocationLock = new Object();
+	
+	/**
+	 * Lock used to wait for evaluations to complete.
+	 */
+	private Object fEvaluationLock = new Object();
+	
 	/**
 	 * Whether or not this thread is currently honoring
 	 * breakpoints. This flag allows breakpoints to be
 	 * disabled during evaluations.
 	 */
 	private boolean fHonorBreakpoints= true;
+	
+	/**
+	 * Whether a suspend vote is currently in progress. While voting
+	 * this thread does not allow other breakpoints to be hit.
+	 * 
+	 * @since 3.5
+	 */
+	private boolean fSuspendVoteInProgress = false;
+	
 	/**
 	 * The kind of step that was originally requested.  Zero or
 	 * more 'secondary steps' may be performed programmatically after
@@ -200,10 +236,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether or not this thread is currently suspending (user-requested).
 	 */
 	private boolean fIsSuspending= false;
-    /**
-     * Whether or not this thread is currently evaluating an expression for a conditional breakpoint
-     */
-    private boolean fIsEvaluatingConditionalBreakpoint= false;
 
 	private ThreadJob fAsyncJob;
 	
@@ -338,14 +370,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && !isSuspendedQuiet() && (!isPerformingEvaluation() || isInvokingMethod());
+		return isSuspended() && (!isPerformingEvaluation() || isInvokingMethod()) && !isSuspendVoteInProgress();
 	}
 
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return !isSuspended() || isSuspendedQuiet() || (isPerformingEvaluation() && !isInvokingMethod());
+		return !isSuspended() || (isPerformingEvaluation() && !isInvokingMethod()) || isSuspendVoteInProgress();
 	}
 
 	/**
@@ -386,7 +418,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected boolean canStep() {
 		try {
 			return isSuspended()
-				&& !isSuspendedQuiet()
 				&& (!isPerformingEvaluation() || isInvokingMethod())
 				&& !isStepping()
 				&& getTopStackFrame() != null
@@ -465,9 +496,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IThread#getStackFrames()
 	 */
 	public synchronized IStackFrame[] getStackFrames() throws DebugException {
-		if (isSuspendedQuiet()) {
-			return new IStackFrame[0];
-		}
 		List list = computeStackFrames();
 		return (IStackFrame[])list.toArray(new IStackFrame[list.size()]);
 	}
@@ -622,10 +650,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			requestFailed(JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended, null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); 
 		}
 		
-		fIsPerformingEvaluation = true;
-		fEvaluationRunnable= evaluation;
-		fHonorBreakpoints= hitBreakpoints;
-		fireResumeEvent(evaluationDetail);
+		synchronized (fEvaluationLock) {
+			fEvaluationRunnable= evaluation;
+			fHonorBreakpoints= hitBreakpoints;
+		}
+		boolean quiet = isSuspendVoteInProgress();
+		if (quiet) {
+			// evaluations are quiet when a suspend vote is in progress (conditional breakpoints, etc.).
+			fireEvent(new DebugEvent(this, DebugEvent.MODEL_SPECIFIC, RESUME_QUIET));
+		} else {
+			fireResumeEvent(evaluationDetail);
+		}
 		//save and restore current breakpoint information - bug 30837
 		IBreakpoint[] breakpoints = getBreakpoints();
 		ISchedulingRule rule = null;
@@ -645,15 +680,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (rule != null) {
 				Job.getJobManager().endRule(rule);
 			}
-			fIsPerformingEvaluation = false;
-			fEvaluationRunnable= null;
-			fHonorBreakpoints= true;
+			synchronized (fEvaluationLock) {
+				fEvaluationRunnable= null;
+				fHonorBreakpoints= true;
+				fEvaluationLock.notifyAll();
+			}
 			if (getBreakpoints().length == 0 && breakpoints.length > 0) {
 				for (int i = 0; i < breakpoints.length; i++) {
 					addCurrentBreakpoint(breakpoints[i]);
 				} 
 			}
-			fireSuspendEvent(evaluationDetail);
+			if (quiet) {
+				fireEvent(new DebugEvent(this, DebugEvent.MODEL_SPECIFIC, SUSPEND_QUIET));
+			} else {
+				fireSuspendEvent(evaluationDetail);
+			}
 			if (fEvaluationInterrupted && (fAsyncJob == null || fAsyncJob.isEmpty()) && (fRunningAsyncJob == null || fRunningAsyncJob.isEmpty())) {
 				// @see bug 31585:
 				// When an evaluation was interrupted & resumed, the launch view does
@@ -674,13 +715,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * run an evaluation
 	 */
 	protected boolean canRunEvaluation() {
-		// NOTE similar to #canStep, except a quiet suspend state is OK
+		// NOTE similar to #canStep, except an evaluation can be run when in the middle of
+		// a step (conditional breakpoint, breakpoint listener, etc.)
 		try {
-			return isSuspendedQuiet() || (isSuspended()
+			return isSuspended()
 				&& !(isPerformingEvaluation() || isInvokingMethod())
-				&& !isStepping()
 				&& getTopStackFrame() != null
-				&& !getJavaDebugTarget().isPerformingHotCodeReplace());
+				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -700,8 +741,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#terminateEvaluation()
 	 */
 	public void terminateEvaluation() throws DebugException {
-		if (canTerminateEvaluation()) {
-			((ITerminate) fEvaluationRunnable).terminate();
+		synchronized (fEvaluationLock) {
+			if (canTerminateEvaluation()) {
+				fEvaluationInterrupted = true;
+				((ITerminate) fEvaluationRunnable).terminate();
+			}
 		}
 	}
 	
@@ -709,7 +753,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#canTerminateEvaluation()
 	 */
 	public boolean canTerminateEvaluation() {
-		return fEvaluationRunnable instanceof ITerminate;
+		synchronized (fEvaluationLock) {
+			return fEvaluationRunnable instanceof ITerminate;
+		}
 	}
 
 	/**
@@ -788,7 +834,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			preserveStackFrames();
 			int flags= ClassType.INVOKE_SINGLE_THREADED;
 			if (invokeNonvirtual) {
-				// Superclass method invocation must be performed nonvirtual.
+				// Superclass method invocation must be performed non-virtual.
 				flags |= ObjectReference.INVOKE_NONVIRTUAL;
 			}
 			if (receiverClass == null) {
@@ -936,9 +982,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected synchronized void invokeComplete(int restoreTimeout) {
-        if (!fIsEvaluatingConditionalBreakpoint) {
-            abortStep();
-        }
 		setInvokingMethod(false);
 		setRunning(false);
 		setRequestTimeout(restoreTimeout);
@@ -949,17 +992,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			logError(e);
 		}
 	}
-    
-    /**
-     * Sets whether or not this thread is currently evaluating a conditional
-     * breakpoint expression. This state is maintained as a workaround to problems
-     * that can occur related to the interaction of stepping and expression
-     * evaluation. See bug 81658 for more details.
-     * @param evaluating
-     */
-    public void setEvaluatingConditionalBreakpoint(boolean evaluating) {
-        fIsEvaluatingConditionalBreakpoint= evaluating;
-    }
 	
 	/**
 	 * @see IThread#getName()
@@ -1022,78 +1054,118 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	/**
 	 * A breakpoint has suspended execution of this thread.
-	 * Aborts any step currently in process and fires a
-	 * suspend event.
+	 * Aborts any step currently in process and notifies listeners
+	 * of the breakpoint to allow a vote to determine if the thread
+	 * should suspend. 
 	 * 
 	 * @param breakpoint the breakpoint that caused the suspend
+	 * @param suspendVote current vote before listeners are notified (for example, if a step request
+	 *  happens at the same location as a breakpoint, the step may have voted to suspend
+	 *  already - this allows a conditional breakpoint to avoid evaluation) 
 	 * @return whether this thread suspended
 	 */
-	public synchronized boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
-		addCurrentBreakpoint(breakpoint);
-		setSuspendedQuiet(false);
-		try {
+	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean suspendVote) {
+		int policy = IJavaBreakpoint.SUSPEND_THREAD;
+		synchronized (this) {
+			if (fClientSuspendRequest) {
+				// a request to suspend has overridden the breakpoint request - suspend and
+				// ignore the breakpoint
+				return true;
+			}
+			fSuspendVoteInProgress = true;
+			addCurrentBreakpoint(breakpoint);
+			try {
+				policy = breakpoint.getSuspendPolicy();
+			} catch (CoreException e) {
+				logError(e);
+				setRunning(true);
+				return false;
+			}
+			
 			// update state to suspended but don't actually
 			// suspend unless a registered listener agrees
-			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+			if (policy == IJavaBreakpoint.SUSPEND_VM) {
 				((JDIDebugTarget)getDebugTarget()).prepareToSuspendByBreakpoint(breakpoint);
 			} else {
 				setRunning(false);
 			}
-			
-			// poll listeners
-			boolean suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this, breakpoint);
-			
-			// suspend or resume
-			if (suspend) {
-				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
-					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, queueEvent);
-				}
-				abortStep();
-				if (queueEvent) {
-					queueSuspendEvent(DebugEvent.BREAKPOINT);
-				} else {
-					fireSuspendEvent(DebugEvent.BREAKPOINT);
-				}
-			} else {
-				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
-					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
-				} else {
-					setRunning(true);
-					// dispose cached stack frames so we re-retrieve on the next breakpoint
-					preserveStackFrames();
-				}				
-			}
-			return suspend;
-		} catch (CoreException e) {
-			logError(e);
-			setRunning(true);
-			return false;
 		}
-	}
-	
-	public void wonSuspendVote(JavaBreakpoint breakpoint) {
-		setSuspendedQuiet(false);
-		try {
-			setRunning(false);
-			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
-				((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, false);
+		
+		// Evaluate breakpoint condition (if any). If the vote is already in a
+		// suspend state, don't bother evaluating the condition.
+		if (!suspendVote) {
+			if (breakpoint instanceof JavaLineBreakpoint) {
+				JavaLineBreakpoint lbp = (JavaLineBreakpoint) breakpoint;
+				if (lbp.hasCondition()) {
+					ConditionalBreakpointHandler handler = new ConditionalBreakpointHandler();
+					int vote = handler.breakpointHit(this, breakpoint);
+					if (vote == IJavaBreakpointListener.DONT_SUSPEND) {
+						// condition is false, breakpoint is not hit
+						synchronized (this) {
+							fSuspendVoteInProgress = false;
+							return false;
+						}
+					}
+				}
 			}
-		} catch (CoreException e) {
-			logError(e);
-		}		
+		}
+			
+		// poll listeners without holding lock on thread
+		boolean suspend = true;
+		try {
+			suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this, breakpoint);
+		} finally {
+			synchronized (this) {
+				fSuspendVoteInProgress = false;
+				if (fClientSuspendRequest) {
+					// if a client has requested a suspend, then override the vote to suspend
+					suspend = true;
+				}
+			}
+		}
+		return suspend;
 	}
-	
+		
 	/**
-	 * Updates the state of this thread to suspend for
-	 * the given breakpoint  but does not fire notification
-	 * of the suspend. Do no abort the current step as the program
-	 * may be resumed quietly and the step may still finish.
+	 * Called after an event set with a breakpoint is done being processed.
+	 * Updates thread state based on the result of handling the event set.
+	 * Aborts any step in progress and fires a suspend event is suspending.
+	 * 
+	 * @param breakpoint the breakpoint that was hit
+	 * @param suspend whether to suspend 
+	 * @param queue whether to queue events or fire immediately
 	 */
-	public synchronized boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
-		addCurrentBreakpoint(breakpoint);
-		setSuspendedQuiet(true);
-		setRunning(false);
-		return true;
+	public void completeBreakpointHandling(JavaBreakpoint breakpoint, boolean suspend, boolean queue) {
+		synchronized (this) {
+			try {	
+				int policy = breakpoint.getSuspendPolicy();
+				// suspend or resume
+				if (suspend) {
+					if (policy == IJavaBreakpoint.SUSPEND_VM) {
+						((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, false);
+					}
+					abortStep();
+					if (queue) {
+						queueSuspendEvent(DebugEvent.BREAKPOINT);
+					} else {
+						fireSuspendEvent(DebugEvent.BREAKPOINT);
+					}
+				} else {
+					if (policy == IJavaBreakpoint.SUSPEND_VM) {
+						((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
+					} else {
+						setRunning(true);
+						// dispose cached stack frames so we re-retrieve on the next breakpoint
+						preserveStackFrames();
+					}				
+				}
+			} catch (CoreException e) {
+				logError(e);
+				setRunning(true);
+			}			
+		}
+
+		
 	}
 
 	/**
@@ -1108,13 +1180,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean isSuspended() {
 		return !fRunning && !fTerminated;
-	}
-
-	/**
-	 * @see ISuspendResume#isSuspended()
-	 */
-	public boolean isSuspendedQuiet() {
-		return fSuspendedQuiet;
 	}
 
 	/**
@@ -1201,19 +1266,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (getDebugTarget().isSuspended()) {
 			getDebugTarget().resume();
 		} else {
+			fClientSuspendRequest = false;
 			resumeThread(true);
-		}
-	}
-	
-	/**
-	 * @see ISuspendResume#resume()
-	 * 
-	 * Updates the state of this thread to resumed,
-	 * but does not fire notification of the resumption.
-	 */
-	public synchronized void resumeQuiet() throws DebugException {
-		if (isSuspendedQuiet()) {
-			resumeThread(false);
 		}
 	}
 	
@@ -1230,7 +1284,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		try {
 			setRunning(true);
-			setSuspendedQuiet(false);
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
@@ -1257,10 +1310,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (running) {
 			fCurrentBreakpoints.clear();
 		} 
-	}
-	
-	protected void setSuspendedQuiet(boolean suspendedQuiet) {
-		fSuspendedQuiet= suspendedQuiet;
 	}
 
 	/**
@@ -1418,17 +1467,72 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see ISuspendResume#suspend()
 	 */
-	public synchronized void suspend() throws DebugException {
-		try {
-			// Abort any pending step request
-			abortStep();
-			setSuspendedQuiet(false);
-			fEvaluationInterrupted = isPerformingEvaluation();
-			suspendUnderlyingThread();
-		} catch (RuntimeException e) {
-			setRunning(true);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_suspending, new String[] {e.toString()}), e); 
+	public void suspend() throws DebugException {
+		// prepare for the suspend request
+		prepareForClientSuspend();
+		
+		synchronized (this) {
+			try {
+				// Abort any pending step request
+				abortStep();
+				suspendUnderlyingThread();
+			} catch (RuntimeException e) {
+				fClientSuspendRequest = false;
+				setRunning(true);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_suspending, new String[] {e.toString()}), e); 
+			}			
 		}
+	}
+	
+	/**
+	 * Prepares to suspend this thread as requested by a client. Terminates any current
+	 * evaluation (to stop after next instruction). Waits for any method invocations
+	 * to complete.
+	 * 
+	 * @throws DebugException if thread does not suspend before timeout
+	 */
+	protected void prepareForClientSuspend() throws DebugException {
+		// note that a suspend request has started
+		synchronized (this) {
+			// this will abort notification to pending breakpoint listeners 
+			fClientSuspendRequest = true;
+		}
+		
+		synchronized (fEvaluationLock) {
+			// terminate active evaluation, if any
+			if (fEvaluationRunnable != null) {
+				if (canTerminateEvaluation()) {
+					fEvaluationInterrupted = true;
+					((ITerminate) fEvaluationRunnable).terminate();
+				}
+				// wait for termination to complete
+				int timeout = JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+				try {
+					fEvaluationLock.wait(timeout);
+				} catch (InterruptedException e) {
+				}
+				if (fEvaluationRunnable != null) {
+					fClientSuspendRequest = false;
+					targetRequestFailed(JDIDebugModelMessages.JDIThread_1, null);
+				}
+			}			
+		}
+		
+		// first wait for any method invocation in progress to complete its method invocation
+		synchronized (fInvocationLock) {
+			if (isInvokingMethod()) {
+				int timeout = JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+				try {
+					fInvocationLock.wait(timeout);
+				} catch (InterruptedException e) {
+				}
+				if (isInvokingMethod()) {
+					// timeout waiting for invocation to complete, abort
+					fClientSuspendRequest = false;
+					targetRequestFailed(JDIDebugModelMessages.JDIThread_1, null);
+				}
+			}
+		}		
 	}
 	
 	/**
@@ -1493,7 +1597,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */	
 	protected synchronized void suspendedByVM() {
 		setRunning(false);
-		setSuspendedQuiet(false);
 	}
 
 	/**
@@ -1501,6 +1604,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * to a VM resume.
 	 */
 	protected synchronized void resumedByVM() throws DebugException {
+		fClientSuspendRequest = false;
 		setRunning(true);
 		preserveStackFrames();
 		// This method is called *before* the VM is actually resumed.
@@ -1723,12 +1827,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#isPerformingEvaluation()
 	 */
 	public boolean isPerformingEvaluation() {
-		return fIsPerformingEvaluation;
+		return fEvaluationRunnable != null;
 	}
 	
 	/**
 	 * Returns whether this thread is currently performing
-	 * a method invokation 
+	 * a method invocation 
 	 */
 	public boolean isInvokingMethod() {
 		return fIsInvokingMethod;
@@ -1739,17 +1843,32 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * breakpoints.
 	 */
 	public boolean isIgnoringBreakpoints() {
-		return !fHonorBreakpoints;
+		return !fHonorBreakpoints || fSuspendVoteInProgress || hasClientRequestedSuspend();
 	}
 	
 	/**
-	 * Sets whether this thread is currently invoking a method
+	 * Returns whether a client has requested the target/thread to suspend.
+	 * 
+	 * @return whether a client has requested the target/thread to suspend
+	 */
+	public boolean hasClientRequestedSuspend() {
+		return fClientSuspendRequest;
+	}
+	
+	/**
+	 * Sets whether this thread is currently invoking a method. Notifies
+	 * any threads waiting for the method invocation lock
 	 * 
 	 * @param evaluating whether this thread is currently
 	 *  invoking a method
 	 */
 	protected void setInvokingMethod(boolean invoking) {
-		fIsInvokingMethod= invoking;
+		synchronized (fInvocationLock) {
+			fIsInvokingMethod= invoking;
+			if (!invoking) {
+				fInvocationLock.notifyAll();
+			}
+		}
 	}
 	
 	/**
@@ -1843,6 +1962,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void invokeThread() throws DebugException {
 			try {
+				synchronized (JDIThread.this) {
+					fClientSuspendRequest = false;
+				}
 				fThread.resume();
 			} catch (RuntimeException e) {
 				stepEnd();
@@ -2008,7 +2130,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * 
 		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
 			try {
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
@@ -2040,12 +2162,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		
-		
-		
 		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#wonSuspendVote(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void wonSuspendVote(Event event, JDIDebugTarget target) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
 			// do nothing
 		}
 
@@ -2288,9 +2408,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * another step request is created and this thread
 		 * is resumed.
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
 			try {
 				int numFrames = getUnderlyingFrameCount();
 				// tos should not be null
@@ -2385,10 +2505,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * top frame. Returns false, as this handler will resume this
 		 * thread with a special invocation (<code>doReturn</code>).
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
 		 * @see #invokeThread()
 		 */		
-		public boolean handleEvent(Event event, JDIDebugTarget target) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
 			// pop is complete, update number of frames to drop
 			setFramesToDrop(getFramesToDrop() - 1);
 			try {
@@ -2742,8 +2862,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public synchronized void resumedFromClassPrepare() {
 		if (isSuspended()) {
 			setRunning(true);
-			setSuspendedQuiet(false);
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 		}
+	}
+	
+	/**
+	 * Returns whether a suspend vote is currently in progress.
+	 * 
+	 * @return whether a suspend vote is currently in progress
+	 */
+	public synchronized boolean isSuspendVoteInProgress() {
+		return fSuspendVoteInProgress;
 	}
 }

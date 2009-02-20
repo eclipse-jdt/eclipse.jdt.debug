@@ -1458,6 +1458,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
 	}
+	
+	/**
+	 * Performs a step over in the given stack frame and returns when a breakpoint is hit.
+	 * 
+	 * @param frame stack frame to step in
+	 */
+	protected IJavaThread stepOverToBreakpoint(IJavaStackFrame frame) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		frame.stepOver();
+		
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
+		return (IJavaThread) suspendee;
+	}	
 
 	/**
 	 * Performs a step into in the given stack frame and returns when complete.

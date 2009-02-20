@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -318,10 +318,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else if (thread.isStepping()) {
 			key.append("stepping"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
+		} else if ((thread instanceof JDIThread && ((JDIThread)thread).isSuspendVoteInProgress()) && !thread.getDebugTarget().isSuspended()) {
+			// show running when listener notification is in progress
+			key.append("running"); //$NON-NLS-1$
+			args = new String[] {thread.getName()};
 		} else if (thread.isPerformingEvaluation() && breakpoints.length == 0) {
 			key.append("evaluating"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
-		} else if (!thread.isSuspended() || (thread instanceof JDIThread && ((JDIThread)thread).isSuspendedQuiet())) {
+		} else if (!thread.isSuspended()) {
 			key.append("running"); //$NON-NLS-1$
 			args = new String[] {thread.getName()};
 		} else {
@@ -663,6 +667,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaBreakpoint) {
 				return getBreakpointImage((IJavaBreakpoint)item);
 			}
+			if (item instanceof JDIThread) {
+				JDIThread jt = (JDIThread) item;
+				if (jt.getDebugTarget().isSuspended()) {
+					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
+				}
+				if (jt.isSuspendVoteInProgress()) {
+					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
+				}
+			}
 			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
 			}
@@ -912,7 +925,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		ImageDescriptor image= null;
 		if (element instanceof IJavaThread) {
 			IJavaThread thread = (IJavaThread)element;
-			if (thread.isSuspended() && !thread.isPerformingEvaluation()) {
+			// image also needs to handle suspended quiet
+			if (thread.isSuspended() && !thread.isPerformingEvaluation() && !(thread instanceof JDIThread && ((JDIThread)thread).isSuspendVoteInProgress())) {
 				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
 			} else if (thread.isTerminated()) {
 				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED);

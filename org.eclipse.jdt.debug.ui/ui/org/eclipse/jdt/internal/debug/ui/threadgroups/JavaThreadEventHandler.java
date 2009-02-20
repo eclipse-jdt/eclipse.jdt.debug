@@ -30,6 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaElementContentProvider;
@@ -268,4 +269,13 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 	}	
 
+	/**
+	 * Do not update for quiet resume/suspend
+	 */
+	protected void handleOther(DebugEvent event) {
+		if (event.getDetail() == JDIThread.SUSPEND_QUIET || event.getDetail() == JDIThread.RESUME_QUIET) {
+			return;
+		}
+		super.handleOther(event);
+	}
 }
