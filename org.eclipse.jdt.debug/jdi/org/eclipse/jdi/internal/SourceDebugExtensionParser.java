@@ -36,7 +36,8 @@ public class SourceDebugExtensionParser {
 		static final int ASTERISK_O=    10;
 		static final int ASTERISK_S=    11;
 		static final int ASTERISK_V=    12;
-		static final int WHITE_SPACE=   13;
+		// never used
+		//static final int WHITE_SPACE=   13;
 		static final int COLON=         14;
 		static final int COMMA=        15;
 		static final int SHARP=         16;
