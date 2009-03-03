@@ -141,12 +141,9 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 
 		IRuntimeClasspathEntry entry = JavaRuntime.newDefaultProjectClasspathEntry(project);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, project);
-		for (int i = 0; i < resolved.length; i++) {
-			System.out.println(resolved[i]);
-		}
-//		assertEquals("Should be one resolved entry", 1, resolved.length);
-//		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
-//		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-//		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
 	}	
 }
