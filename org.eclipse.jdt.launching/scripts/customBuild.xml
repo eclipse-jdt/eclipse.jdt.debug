@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Custom Build Launching Support JAR">
+	
+	<property name="tempSource" value="${bundleJavacSource}"/>
+	<property name="tempTarget" value="${bundleJavacTarget}"/>
+
+    <target name="pre.lib/launchingsupport.jar" description="Set source and target levels to 1.1">
+        <property name="bundleJavacSource" value="1.1"/>
+    	<property name="bundleJavacTarget" value="1.1"/>
+    </target>
+	
+    <target name="post.lib/launchingsupport.jar" description="Restore source and target levels">
+    	<property name="bundleJavacSource" value="${tempSource}"/>
+    	<property name="bundleJavacTarget" value="${tempTarget}"/>
+    </target>	
+
+
+</project>
