@@ -277,17 +277,13 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 						}
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
-						if (entry.getPath().segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
-							IRuntimeClasspathEntry r = JavaRuntime.newVariableRuntimeClasspathEntry(entry.getPath());
-							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
-							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
-							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-							if (!expandedPath.contains(r)) {
-								expandedPath.add(r);
-							}
-							break;
+						IRuntimeClasspathEntry r = JavaRuntime.newVariableRuntimeClasspathEntry(entry.getPath());
+						r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
+						r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
+						if (!expandedPath.contains(r)) {
+							expandedPath.add(r);
 						}
-						// fall through if not the special JRELIB variable
+						break;
 					default:
 						if (!expandedPath.contains(entry)) {
 							// resolve project relative paths - @see bug 57732 & bug 248466
@@ -295,7 +291,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 								IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(entry);
 								for (int i = 0; i < roots.length; i++) {
 									IPackageFragmentRoot root = roots[i];
-									IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath());
+									r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath());
 									r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 									r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 									if (!expandedPath.contains(r)) {

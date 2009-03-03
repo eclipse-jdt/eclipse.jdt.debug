@@ -14,7 +14,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -102,5 +104,49 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertNull("Should be null source attachment", resolved[0].getSourceAttachmentPath());
+	}	
+	
+	/**
+	 * Test a class path entry with variable extensions for archive and source attachment.
+	 * 
+	 * @throws Exception
+	 */
+	public void testVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "RELATIVE_ARCHIVE";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		runtimeClasspathEntry.setSourceAttachmentPath(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
+	}	
+	
+	/**
+	 * Test a class path entry with variable extensions for archive and source attachment.
+	 * 
+	 * @throws Exception
+	 */
+	public void testProjectResolutionWithVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
+		IJavaProject project = JavaProjectHelper.createJavaProject("VariableSource");
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "RELATIVE_ARCHIVE";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+		JavaProjectHelper.addVariableEntry(project, new Path(varName).append(new Path("src")).append(new Path("A.jar")), new Path(varName).append(new Path("src")).append(new Path("A.jar")), Path.EMPTY);
+
+		IRuntimeClasspathEntry entry = JavaRuntime.newDefaultProjectClasspathEntry(project);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, project);
+		for (int i = 0; i < resolved.length; i++) {
+			System.out.println(resolved[i]);
+		}
+//		assertEquals("Should be one resolved entry", 1, resolved.length);
+//		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+//		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+//		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
 	}	
 }
