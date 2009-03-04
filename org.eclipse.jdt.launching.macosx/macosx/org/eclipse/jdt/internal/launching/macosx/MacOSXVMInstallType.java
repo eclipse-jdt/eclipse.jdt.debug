@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * 		CurrentJDK -> 1.3.1
 	 */
 	 
-	private static final String JAVA_VM_NAME= "Java HotSpot(TM) Client VM";	//$NON-NLS-1$
 	
 	/** The OS keeps all the JVM versions in this directory */
 	private static final String JVM_VERSION_LOC= "/System/Library/Frameworks/JavaVM.framework/Versions/";	//$NON-NLS-1$
@@ -83,9 +82,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 	public File detectInstallLocation() {
 		
 		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
-		if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
+		if (javaVMName == null) {
 			return null;
-
+		}
 		// find all installed VMs
 		File defaultLocation= null;
 		File versionDir= new File(JVM_VERSION_LOC);
