@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.model.elements.VariableContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
@@ -122,7 +121,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 				// Only java objects have references
 				if (value instanceof IJavaObject){
 					// Null objects don't have references
-					if (!((IJavaDebugTarget)value.getDebugTarget()).nullValue().equals(value)){
+					if (!((IJavaObject)value).isNull()){
 						return HeapWalkingManager.getDefault().isShowReferenceInVarView();
 					}
 				}
