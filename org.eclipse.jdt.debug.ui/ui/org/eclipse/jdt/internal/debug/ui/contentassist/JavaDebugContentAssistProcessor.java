@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.contentassist;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.internal.corext.template.java.JavaContextType;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
@@ -38,7 +41,8 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 		
 	private JavaDebugCompletionProposalCollector fCollector;
 	private IContextInformationValidator fValidator;
-	private TemplateEngine fTemplateEngine;
+	private TemplateEngine fJavaEngine;
+	private TemplateEngine fStatementEngine;
     private String fErrorMessage = null;
 	
 	private char[] fProposalAutoActivationSet;
@@ -47,10 +51,15 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 		
 	public JavaDebugContentAssistProcessor(IJavaDebugContentAssistContext context) {
 		fContext = context;
-		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_ALL);
 		if (contextType != null) {
-			fTemplateEngine= new TemplateEngine(contextType);
+			fJavaEngine= new TemplateEngine(contextType);
 		}
+		contextType = JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_STATEMENTS);
+		if (contextType != null) {
+			fStatementEngine= new TemplateEngine(contextType);
+		}
+		
 		fComparator= new CompletionProposalComparator();
 	}
 	
@@ -137,22 +146,24 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 				 localVariableTypeNames, localVariableNames,
 				 localModifiers, fContext.isStatic(), fCollector);
 			
-			IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
+			List total = new ArrayList();
+			total.addAll(Arrays.asList(fCollector.getJavaCompletionProposals()));
 			
-			if (fTemplateEngine != null) {
-				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, documentOffset, null);
-				IJavaCompletionProposal[] templateResults= fTemplateEngine.getResults();
-
-				// concatenate arrays
-				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
-				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-				System.arraycopy(results, 0, total, templateResults.length, results.length);
-				results= total;					
-			}	 
+			if (fJavaEngine != null) {
+				fJavaEngine.reset();
+				fJavaEngine.complete(viewer, documentOffset, null);
+				total.addAll(Arrays.asList(fJavaEngine.getResults()));
+			}
+			
+			if (fStatementEngine != null) {
+				fStatementEngine.reset();
+				fStatementEngine.complete(viewer, documentOffset, null);
+				total.addAll(Arrays.asList(fStatementEngine.getResults()));
+			}
+		
 			 //Order here and not in result collector to make sure that the order
 			 //applies to all proposals and not just those of the compilation unit. 
-			return order(results);	
+			return order((IJavaCompletionProposal[])total.toArray(new IJavaCompletionProposal[total.size()]));	
 		} catch (CoreException x) {
 			setErrorMessage(x.getStatus().getMessage());
 		} finally {
