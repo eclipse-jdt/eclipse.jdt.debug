@@ -129,6 +129,10 @@ public class Interpreter {
 				try {
 					object.enableCollection();
 				} catch (CoreException e) {
+					// don't worry about GC if the VM has terminated 
+					if ((e.getStatus().getException() instanceof VMDisconnectedException)) {
+						break;
+					}
 					JDIDebugPlugin.log(e);
 				}
 			}
