@@ -292,7 +292,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend) {
-		// do nothing 
+		// resume the thread if this is a class load event to install a deferred breakpoint (and the vote is to resume)
+		if (thread != null && !suspend) {
+			thread.resumedFromClassPrepare();
+		}
 	}
 
 	/**
@@ -312,11 +315,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			createRequest(target, event.referenceType());
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
-		} finally {
-			JDIThread thread = target.findThread(event.thread());
-			if (thread != null) {
-				thread.resumedFromClassPrepare();
-			}
 		}
 		return true;
 	}
