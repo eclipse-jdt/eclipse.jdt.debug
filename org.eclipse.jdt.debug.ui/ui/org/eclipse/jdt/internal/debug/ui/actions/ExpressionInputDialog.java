@@ -37,6 +37,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -207,7 +208,7 @@ public class ExpressionInputDialog extends TrayDialog {
             public void documentAboutToBeChanged(DocumentEvent event) {
             }
             public void documentChanged(DocumentEvent event) {
-                refreshValidState();
+                refreshValidState(fSourceViewer);
             }
         };
 		fSourceViewer.getDocument().addDocumentListener(fDocumentListener);
@@ -294,14 +295,20 @@ public class ExpressionInputDialog extends TrayDialog {
 	/**
 	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 	 */
-	protected void refreshValidState() {
+	protected void refreshValidState(TextViewer viewer) {
 	    String errorMessage= null;
-		String text= fSourceViewer.getDocument().get();
-		boolean valid= text != null && text.trim().length() > 0;
-		if (!valid) {
-			errorMessage= ActionMessages.ExpressionInputDialog_1; 
-		}
+	    if (viewer != null) {
+			String text= viewer.getDocument().get();
+			boolean valid= text != null && text.trim().length() > 0;
+			if (!valid) {
+				errorMessage= ActionMessages.ExpressionInputDialog_1; 
+			}
+	    }
 		setErrorMessage(errorMessage);
+	}
+	
+	protected void refreshValidState() {
+		refreshValidState(fSourceViewer);
 	}
 	
 	/**

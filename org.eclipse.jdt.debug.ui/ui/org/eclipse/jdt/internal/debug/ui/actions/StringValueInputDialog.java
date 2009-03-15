@@ -17,6 +17,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -89,16 +91,12 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         if (settings != null) {
             useEvaluation= settings.getBoolean(USE_EVALUATION);
         }
-        if (useEvaluation) {
-        	setTextViewerVisible(false);
-        	setSourceViewerVisible(true);
-            fUseLiteralValue= false;
-            fEvaluationButton.setSelection(true);
-        } else {
-        	setSourceViewerVisible(false);
-            setTextViewerVisible(true);
-            fTextButton.setSelection(true);
-        }
+        
+        setTextViewerVisible(!useEvaluation);
+        setSourceViewerVisible(useEvaluation);
+        fUseLiteralValue = !useEvaluation;
+        fEvaluationButton.setSelection(useEvaluation);
+        fTextButton.setSelection(!useEvaluation);
     }
 
     /**
@@ -136,6 +134,15 @@ public class StringValueInputDialog extends ExpressionInputDialog {
                 updateWordWrap();
             }
         });
+        
+		IDocumentListener listener = new IDocumentListener() {
+            public void documentAboutToBeChanged(DocumentEvent event) {
+            }
+            public void documentChanged(DocumentEvent event) {
+                refreshValidState(fTextViewer);
+            }
+        };
+		fTextViewer.getDocument().addDocumentListener(listener);        
     }
     
     private void updateWordWrap() {
@@ -173,6 +180,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 	        	setSourceViewerVisible(true);
 	        }
 	        fInputArea.layout(true, true);
+	        refreshValidState();
         }
     }
     
@@ -192,12 +200,11 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * Updates the error message based on the user's input.
      */
     protected void refreshValidState() {
-        if (fSourceViewer != null) {
-            super.refreshValidState();
-            return;
-        }    
-    	// even an empty string is valid
-		setErrorMessage(null);
+        if (isUseLiteralValue()) {
+        	refreshValidState(fTextViewer);
+        } else {
+        	super.refreshValidState();
+        }
 	}
     
     /**
