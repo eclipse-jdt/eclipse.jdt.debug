@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
@@ -55,6 +56,7 @@ import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -512,9 +514,29 @@ public class JavaJRETab extends JavaLaunchTab {
 					return MessageFormat.format(LauncherMessages.JavaJRETab_8, new String[]{name}); 
 				}
 				try {
+					String eeName = null;
+					IClasspathEntry[] classpath = project.getRawClasspath();
+					for (int i = 0; i < classpath.length; i++) {
+						IClasspathEntry entry = classpath[i];
+						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							if (JavaRuntime.JRE_CONTAINER.equals(entry.getPath().segment(0))) {
+								String id = JavaRuntime.getExecutionEnvironmentId(entry.getPath());
+								if (id != null) {
+									IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
+									if (env != null) {
+										eeName = env.getId();
+										break;
+									}
+								}
+							}
+						}
+					}
 					IVMInstall vm = JavaRuntime.getVMInstall(project);
 					if (vm != null) {
 						name = vm.getName();
+					}
+					if (eeName != null) {
+						return MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[]{eeName, name});
 					}
 				} catch (CoreException e) {
 				}
