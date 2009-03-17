@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            class="org.eclipse.jdt.internal.ui.macbundler.MacBundleWizard"
+            icon="icons/full/ctool16/exportappbundle_wiz.gif"
+            id="org.eclipse.jdt.internal.ui.macbundler.MacBundleWizard"
+            name="%MacOSXAppBundleExporter.label">
+         <description>
+			%MacOSXAppBundleExporter.description
+         </description>
+         <selection
+			class="org.eclipse.jdt.core.IJavaElement">
+         </selection>
+      </wizard>
+   </extension>
+
+</plugin>
