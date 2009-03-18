@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
@@ -86,7 +87,6 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 public class DisplayView extends ViewPart implements ITextInputListener, IPerspectiveListener2 {
 		
@@ -264,7 +264,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		//TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayResourceBundleMessages"); //$NON-NLS-1$
 		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action_", this); //$NON-NLS-1$
-		findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		findReplaceAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
 		setGlobalAction(ActionFactory.FIND.getId(), findReplaceAction);
 		
 		fSelectionActions.add(ActionFactory.CUT.getId());
@@ -308,13 +308,13 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			// Create the undo action
 			OperationHistoryActionHandler undoAction= new UndoActionHandler(getSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);
 
 			// Create the redo action.
 			OperationHistoryActionHandler redoAction= new RedoActionHandler(getSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 			setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
 		}
 	}	

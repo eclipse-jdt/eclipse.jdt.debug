@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,40 +13,8 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchMatch;
-import org.eclipse.jdt.core.search.SearchParticipant;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.SearchRequestor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.text.IJavaPartitions;
-import org.eclipse.jdt.ui.text.JavaTextTools;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.source.ISourceViewer;
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -59,15 +27,57 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.StatusDialog;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.source.ISourceViewer;
+
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
+
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
+
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 
 /**
  * Dialog for edit detail formatter.
@@ -85,7 +95,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	private Button fCheckBox;
 
 	/**
-	 * Indicate if a search for a type with the given name 
+	 * Indicate if a search for a type with the given name
 	 * have been already performed.
 	 */
 	private boolean fTypeSearched;
@@ -98,7 +108,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * The type object which corresponds to the given name.
 	 * If this field is <code>null</code> and <code>fTypeSearched</code> is
-	 * <code>true</code>, that means there is no type with the given name in 
+	 * <code>true</code>, that means there is no type with the given name in
 	 * the workspace.
 	 */
 	private IType fType;
@@ -140,9 +150,9 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fTypeSearched= false;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		if (editDialog) {
-			setTitle(DebugUIMessages.DetailFormatterDialog_Edit_Detail_Formatter_1); 
+			setTitle(DebugUIMessages.DetailFormatterDialog_Edit_Detail_Formatter_1);
 		} else {
-			setTitle(DebugUIMessages.DetailFormatterDialog_Add_Detail_Formatter_2); 
+			setTitle(DebugUIMessages.DetailFormatterDialog_Add_Detail_Formatter_2);
 		}
 		fEditTypeName= editTypeName;
 		fDefinedTypes= definedTypes;
@@ -158,7 +168,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		
 		workbench.getHelpSystem().setHelp(
 			parent,
-			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);			
+			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);
 		
 		Font font = parent.getFont();
 		Composite container = (Composite)super.createDialogArea(parent);
@@ -187,7 +197,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		
 		String labelText = null;
         IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
-        String binding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
+		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENTASSIST);
         if (binding != null) {
             labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
         }
@@ -197,7 +207,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		
         SWTFactory.createLabel(container, labelText, 1);
 
-        createSnippetViewer(container);        
+        createSnippetViewer(container);
 		
 		fCheckBox = SWTFactory.createCheckButton(container, DebugUIMessages.DetailFormatterDialog__Enable_1, null, fDetailFormatter.isEnabled(), 1);
        
@@ -206,7 +216,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				if (fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
 					findCorrespondingType();
-					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				}
 				return null;
 			}
@@ -243,7 +253,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
-		document.set(fDetailFormatter.getSnippet());	
+		document.set(fDetailFormatter.getSnippet());
 		
 		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -265,13 +275,13 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		StatusInfo status= new StatusInfo();
 		String typeName= fTypeNameText.getText().trim();
 		if (typeName.length() == 0) {
-			status.setError(DebugUIMessages.DetailFormatterDialog_Qualified_type_name_must_not_be_empty__3); 
+			status.setError(DebugUIMessages.DetailFormatterDialog_Qualified_type_name_must_not_be_empty__3);
 		} else if (fDefinedTypes != null && fDefinedTypes.contains(typeName)) {
-			status.setError(DebugUIMessages.DetailFormatterDialog_A_detail_formatter_is_already_defined_for_this_type_2); 
+			status.setError(DebugUIMessages.DetailFormatterDialog_A_detail_formatter_is_already_defined_for_this_type_2);
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
-			status.setError(DebugUIMessages.DetailFormatterDialog_Associated_code_must_not_be_empty_3); 
+			status.setError(DebugUIMessages.DetailFormatterDialog_Associated_code_must_not_be_empty_3);
 		} else if (fType == null && fTypeSearched) {
-			status.setWarning(DebugUIMessages.No_type_with_the_given_name_found_in_the_workspace__1); 
+			status.setWarning(DebugUIMessages.No_type_with_the_given_name_found_in_the_workspace__1);
 		}
 		updateStatus(status);
 	}
@@ -297,14 +307,14 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES, false, fTypeNameText.getText());
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6; 
-			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7; 
+			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6;
+			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7;
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8); 
-		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9); 
+		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
+		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -314,7 +324,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			fType = (IType)types[0];
 			fTypeNameText.setText(fType.getFullyQualifiedName());
 			fTypeSearched = true;
-		}		
+		}
 	}
 	
 	/**
