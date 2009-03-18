@@ -104,8 +104,8 @@ class BundleDescription implements BundleAttributes {
 	private static AbstractJavaLaunchConfigurationDelegate getDelegate(ILaunchConfiguration lc) throws CoreException {
 		ILaunchDelegate[] delegates = lc.getType().getDelegates(RUN_MODE);
 		for (int i = 0; i < delegates.length; i++) {
-			if (delegates[i] instanceof AbstractJavaLaunchConfigurationDelegate) {
-				return (AbstractJavaLaunchConfigurationDelegate) delegates[i];
+			if (delegates[i].getDelegate() instanceof AbstractJavaLaunchConfigurationDelegate) {
+				return (AbstractJavaLaunchConfigurationDelegate) delegates[i].getDelegate();
 			}
 		}
 		throw new CoreException(new Status(IStatus.ERROR, MacOSXUILaunchingPlugin.getUniqueIdentifier(), "Internal Error: missing Java launcher")); //$NON-NLS-1$
