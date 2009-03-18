@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -24,7 +25,40 @@ import org.eclipse.ui.part.ShowInContext;
  */
 public class StackFrameShowInSourceAdapter implements IShowInSource {
 	
+	class LazyShowInContext extends ShowInContext {
+
+		boolean resolved = false;
+		
+		/**
+		 * Constructs a 'show in context' that resolves its selection lazily
+		 * since it requires a source lookup.
+		 */
+		public LazyShowInContext() {
+			super(null, null);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.ShowInContext#getSelection()
+		 */
+		public ISelection getSelection() {
+			if (!resolved) {
+				try {
+					resolved = true;
+					IType type = JavaDebugUtils.resolveDeclaringType(fFrame);
+					if (type != null) {
+						setSelection(new StructuredSelection(type));
+					}
+				} catch (CoreException e) {
+				}
+			}
+			return super.getSelection();
+		}
+		
+	}
+	
 	private IJavaStackFrame fFrame;
+	
+	private ShowInContext fLazyContext = null;
 
 	/**
 	 * Constructs a new adapter on the given frame.
@@ -39,14 +73,10 @@ public class StackFrameShowInSourceAdapter implements IShowInSource {
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
-		try {
-			IType type = JavaDebugUtils.resolveDeclaringType(fFrame);
-			if (type != null) {
-				return new ShowInContext(null, new StructuredSelection(type));
-			}
-		} catch (CoreException e) {
+		if (fLazyContext == null) {
+			fLazyContext = new LazyShowInContext();
 		}
-		return null;
+		return fLazyContext;
 	}
 
 }
