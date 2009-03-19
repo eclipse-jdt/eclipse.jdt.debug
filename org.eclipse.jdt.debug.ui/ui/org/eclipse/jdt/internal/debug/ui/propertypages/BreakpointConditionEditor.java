@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,8 @@ import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -140,6 +142,15 @@ public class BreakpointConditionEditor {
 				}
 			};
 			fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+			
+			fViewer.getControl().addFocusListener(new FocusAdapter() {
+				public void focusGained(FocusEvent e) {
+					activateContentAssist();
+				}
+				public void focusLost(FocusEvent e) {
+					deactivateContentAssist();
+				}				
+			});
 		} 
 		catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
 	}
@@ -176,14 +187,10 @@ public class BreakpointConditionEditor {
 	    fViewer.getTextWidget().setEnabled(enabled);
 		if (enabled) {
 			fViewer.updateViewerColors();
-			fViewer.getTextWidget().setFocus();
-			fActivation = fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fHandler);
+			fViewer.getTextWidget().setFocus();			
 		} else {
 			Color color = fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			fViewer.getTextWidget().setBackground(color);
-			if(fActivation != null) {
-				fHandlerService.deactivateHandler(fActivation);
-			}
+			fViewer.getTextWidget().setBackground(color);			
 		}
 		valueChanged();
 	}
@@ -203,10 +210,20 @@ public class BreakpointConditionEditor {
 	 * Dispose of the handlers, etc
 	 */
 	public void dispose() {
-	    if (fViewer.isEditable()) {
-	    	fHandlerService.deactivateHandler(fActivation);
-	    }
+		deactivateContentAssist();
+		
 	    fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		fViewer.dispose();
+	}
+	
+	private void activateContentAssist() {
+		fActivation = fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fHandler);
+	}
+
+	private void deactivateContentAssist() {
+		if(fActivation != null) {
+			fHandlerService.deactivateHandler(fActivation);
+			fActivation = null;
+		}
 	}
 }
