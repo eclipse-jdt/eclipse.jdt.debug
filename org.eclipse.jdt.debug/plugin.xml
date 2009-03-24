@@ -336,18 +336,6 @@
       </importParticipant>
       <importParticipant
             participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
-            type="org.eclipse.jdt.debug.javaPatternBreakpointMarker">
-      </importParticipant>
-      <importParticipant
-            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
-            type="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker">
-      </importParticipant>
-      <importParticipant
-            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
-            type="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker">
-      </importParticipant>
-      <importParticipant
-            participant="org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpointImportParticipant"
             type="org.eclipse.jdt.debug.javaWatchpointMarker">
       </importParticipant>
    </extension>
