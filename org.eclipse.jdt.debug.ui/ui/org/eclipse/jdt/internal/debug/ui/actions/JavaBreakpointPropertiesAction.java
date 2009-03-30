@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,12 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Presents the standard properties dialog to configure
@@ -31,37 +27,21 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
  */
 public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	
-	private IWorkbenchPart fPart;
 	private IJavaBreakpoint fBreakpoint;
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		if(fBreakpoint != null) {
-		    IShellProvider provider;
-		    if (fPart != null) {
-		        provider = fPart.getSite();
-		    } else {
-		        provider = new IShellProvider() {
-		            public Shell getShell() {
-		                return JDIDebugUIPlugin.getActiveWorkbenchShell();
-		            }
-		        };
-	        }
-			PropertyDialogAction propertyAction= 
-				new PropertyDialogAction(provider, new ISelectionProvider() {
-					public void addSelectionChangedListener(ISelectionChangedListener listener) {
-					}
-					public ISelection getSelection() {
-						return new StructuredSelection(fBreakpoint);
-					}
-					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-					}
-					public void setSelection(ISelection selection) {
-					}
-				});
-			propertyAction.run();
+		//hack to prevent https://bugs.eclipse.org/bugs/show_bug.cgi?id=269878
+		//where conditions randomly seem to have errors while using an IBM VM in testing mode
+		if(fBreakpoint != null && !ErrorDialog.AUTOMATED_MODE) {
+		    PreferencesUtil.createPropertyDialogOn(
+		    		JDIDebugUIPlugin.getActiveWorkbenchShell(), 
+		    		fBreakpoint, 
+		    		null, 
+		    		null, 
+		    		null).open();
 		}
 	}
 
@@ -95,7 +75,5 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		fPart = targetPart;
-	}
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 }
