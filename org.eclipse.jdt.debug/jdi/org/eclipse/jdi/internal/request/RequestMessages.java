@@ -15,8 +15,6 @@ import org.eclipse.osgi.util.NLS;
 public class RequestMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdi.internal.request.RequestMessages";//$NON-NLS-1$
 
-	public static String ClassPrepareRequestImpl_does_not_support_source_name_filters;
-
 	public static String EventRequestImpl___not_enabled__1;
 	public static String EventRequestImpl____2;
 	public static String EventRequestImpl_Invalid_suspend_policy_encountered___3;

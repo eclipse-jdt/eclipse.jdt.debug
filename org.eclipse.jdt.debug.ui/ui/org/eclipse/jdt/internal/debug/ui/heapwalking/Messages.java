@@ -19,7 +19,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.heapwalking.Messages"; //$NON-NLS-1$
 
 	public static String AllInstancesActionDelegate_0;
-	public static String AllInstancesActionDelegate_1;
 	public static String AllInstancesActionDelegate_2;
 	public static String AllInstancesActionDelegate_3;
 	

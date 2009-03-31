@@ -21,8 +21,6 @@ public class JREMessages extends NLS {
 	public static String AbstractJavaCommandTab_4;
 	public static String AbstractJavaCommandTab_Java_executable_must_be_specified_5;
 
-	public static String AddVMDialog_21;
-
 	public static String AddVMDialog_22;
 
 	public static String AddVMInstallWizard_0;
@@ -36,8 +34,6 @@ public class JREMessages extends NLS {
 	public static String InstalledJREsBlock_4;
 	public static String InstalledJREsBlock_5;
 	public static String InstalledJREsBlock_6;
-	public static String InstalledJREsBlock_7;
-	public static String InstalledJREsBlock_8;
 	public static String InstalledJREsBlock_9;
 	public static String InstalledJREsBlock_10;
 	public static String InstalledJREsBlock_11;
@@ -46,7 +42,6 @@ public class JREMessages extends NLS {
 	public static String InstalledJREsBlock_14;
 	public static String InstalledJREsBlock_15;
 	public static String InstalledJREsBlock_16;
-	public static String InstalledJREsBlock_18;
 
 	public static String JREsComboBlock_1;
 

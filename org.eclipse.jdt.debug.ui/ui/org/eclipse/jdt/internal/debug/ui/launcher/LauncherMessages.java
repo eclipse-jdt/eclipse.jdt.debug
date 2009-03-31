@@ -143,10 +143,6 @@ public class LauncherMessages extends NLS {
 
 	public static String JREContainerResolution_Select_a_system_library_to_use_when_building__0__2;
 	public static String JREContainerResolution_Unable_to_update_classpath_1;
-
-	public static String JREResolution_Select_System_Library_1;
-	public static String JREResolution_Select_a_system_library_to_use_when_building__0__2;
-
 	public static String DefineSystemLibraryQuickFix_Create_a_system_library_definition_2;
 
 	public static String SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1;

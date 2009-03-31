@@ -17,8 +17,6 @@ public class RefactoringMessages extends NLS {
 
 	public static String ClassPrepareBreakpointTypeChange_0;
 
-	public static String ClassPrepareBreakpointTypeChange_1;
-
 	public static String DeleteBreakpointChange_0;
 
 	public static String ExceptionBreakpointTypeChange_0;
