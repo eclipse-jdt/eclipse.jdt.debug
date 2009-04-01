@@ -197,7 +197,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		
 		String labelText = null;
         IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
-		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENTASSIST);
+		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST);
         if (binding != null) {
             labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
         }

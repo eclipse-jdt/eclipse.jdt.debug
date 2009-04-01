@@ -82,6 +82,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
+
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -112,13 +113,13 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				if (offset != document.getLineInformationOfOffset(offset).getOffset()) {
 					expression= System.getProperty("line.separator") + expression.trim(); //$NON-NLS-1$
 				}
-				fSourceViewer.getDocument().replace(offset, 0, expression);	
-				fSourceViewer.setSelectedRange(offset + expression.length(), 0);	
+				fSourceViewer.getDocument().replace(offset, 0, expression);
+				fSourceViewer.setSelectedRange(offset + expression.length(), 0);
 				fSourceViewer.revealRange(offset, expression.length());
 			} catch (BadLocationException ble) {
 				JDIDebugUIPlugin.log(ble);
 			}
-		}		
+		}
 		
 		/**
 		 * @see IDataDisplay#displayExpressionValue(String)
@@ -130,14 +131,14 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			int offset= selection.getOffset() + selection.getLength();
 			int length= value.length();
 			try {
-				fSourceViewer.getDocument().replace(offset, 0, value);	
+				fSourceViewer.getDocument().replace(offset, 0, value);
 			} catch (BadLocationException ble) {
 				JDIDebugUIPlugin.log(ble);
 			}
-			fSourceViewer.setSelectedRange(offset + length, 0);	
+			fSourceViewer.setSelectedRange(offset + length, 0);
 			fSourceViewer.revealRange(offset, length);
 		}
-	}	
+	}
 		
 	protected IDataDisplay fDataDisplay= new DataDisplay();
 	protected IDocumentListener fDocumentListener= null;
@@ -235,36 +236,36 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	protected void createActions() {
 				
-		fClearDisplayAction= new ClearOutputAction(fSourceViewer);	
+		fClearDisplayAction= new ClearOutputAction(fSourceViewer);
 		
 		IAction action= new DisplayViewAction(this, ITextOperationTarget.CUT);
-		action.setText(DisplayMessages.DisplayView_Cut_label); 
-		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip); 
-		action.setDescription(DisplayMessages.DisplayView_Cut_description); 
+		action.setText(DisplayMessages.DisplayView_Cut_label);
+		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip);
+		action.setDescription(DisplayMessages.DisplayView_Cut_description);
 		setGlobalAction(ActionFactory.CUT.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
-		action.setText(DisplayMessages.DisplayView_Copy_label); 
-		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip); 
-		action.setDescription(DisplayMessages.DisplayView_Copy_description); 
+		action.setText(DisplayMessages.DisplayView_Copy_label);
+		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip);
+		action.setDescription(DisplayMessages.DisplayView_Copy_description);
 		setGlobalAction(ActionFactory.COPY.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
-		action.setText(DisplayMessages.DisplayView_Paste_label); 
-		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip); 
-		action.setDescription(DisplayMessages.DisplayView_Paste_Description); 
+		action.setText(DisplayMessages.DisplayView_Paste_label);
+		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip);
+		action.setDescription(DisplayMessages.DisplayView_Paste_Description);
 		setGlobalAction(ActionFactory.PASTE.getId(), action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
-		action.setText(DisplayMessages.DisplayView_SelectAll_label); 
-		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip); 
-		action.setDescription(DisplayMessages.DisplayView_SelectAll_description); 
+		action.setText(DisplayMessages.DisplayView_SelectAll_label);
+		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip);
+		action.setDescription(DisplayMessages.DisplayView_SelectAll_description);
 		setGlobalAction(ActionFactory.SELECT_ALL.getId(), action);
 		
 		//TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayResourceBundleMessages"); //$NON-NLS-1$
 		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action_", this); //$NON-NLS-1$
-		findReplaceAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
+		findReplaceAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		setGlobalAction(ActionFactory.FIND.getId(), findReplaceAction);
 		
 		fSelectionActions.add(ActionFactory.CUT.getId());
@@ -273,9 +274,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		fContentAssistAction= new DisplayViewAction(this, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		fContentAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		fContentAssistAction.setText(DisplayMessages.DisplayView_Co_ntent_Assist_Ctrl_Space_1); 
-		fContentAssistAction.setDescription(DisplayMessages.DisplayView_Content_Assist_2); 
-		fContentAssistAction.setToolTipText(DisplayMessages.DisplayView_Content_Assist_2); 
+		fContentAssistAction.setText(DisplayMessages.DisplayView_Co_ntent_Assist_Ctrl_Space_1);
+		fContentAssistAction.setDescription(DisplayMessages.DisplayView_Content_Assist_2);
+		fContentAssistAction.setToolTipText(DisplayMessages.DisplayView_Content_Assist_2);
 		fContentAssistAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		fContentAssistAction.setHoverImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		fContentAssistAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -317,7 +318,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 			setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
 		}
-	}	
+	}
 	
 	/**
 	 * Returns this editor's viewer's undo manager undo context.
@@ -330,10 +331,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		if (undoManager instanceof IUndoManagerExtension)
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
 		return null;
-	}	
+	}
 
 	protected void setGlobalAction(String actionID, IAction action) {
-		IActionBars actionBars = getViewSite().getActionBars();	
+		IActionBars actionBars = getViewSite().getActionBars();
 		fGlobalActions.put(actionID, action);
 		actionBars.setGlobalActionHandler(actionID, action);
 	}
@@ -355,12 +356,12 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		if (fSourceViewer.getDocument() == null) {
 			return;
-		} 
+		}
 		menu.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 		if (EvaluationContextManager.getEvaluationContext(this) != null) {
 			menu.add(fContentAssistAction);
 		}
-		menu.add(new Separator());		
+		menu.add(new Separator());
 		menu.add((IAction) fGlobalActions.get(ActionFactory.CUT.getId()));
 		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
 		menu.add((IAction) fGlobalActions.get(ActionFactory.PASTE.getId()));
@@ -402,7 +403,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				 ((IUpdate) action).update();
 			}
 		}
-	}		
+	}
 	
 	/**
 	 * Saves the contents of the display view and the formatting.
@@ -449,7 +450,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
         		event.data = fSourceViewer.getTextWidget().getSelectionText();
         	}
         });
-    }    
+    }
 	
 	/**
 	 * Returns the entire trimmed contents of the current document.
@@ -479,7 +480,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
-			updateAction((String)iterator.next());		
+			updateAction((String)iterator.next());
 	}
 
 
