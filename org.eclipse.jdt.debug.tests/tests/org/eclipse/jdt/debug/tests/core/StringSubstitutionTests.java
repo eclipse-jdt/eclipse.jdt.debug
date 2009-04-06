@@ -766,6 +766,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		Runnable r = new Runnable() {
 			public void run() {
 				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+				assertNotNull("the active workbench window page should not be null", page);
 				IViewPart part;
 				try {
 					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
