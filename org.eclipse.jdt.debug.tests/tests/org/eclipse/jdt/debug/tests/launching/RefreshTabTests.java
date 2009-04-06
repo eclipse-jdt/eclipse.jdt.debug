@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,9 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -46,7 +48,11 @@ public class RefreshTabTests extends AbstractDebugTest {
 				IViewPart part;
 				try {
 					part = page.showView("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
-					part.getSite().getSelectionProvider().setSelection(new StructuredSelection(resource));
+					IWorkbenchPartSite site = part.getSite();
+					assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site);
+					ISelectionProvider provider = site.getSelectionProvider();
+					assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider);
+					provider.setSelection(new StructuredSelection(resource));
 				} catch (PartInitException e) {
 					assertNotNull("Failed to open navigator view", null); //$NON-NLS-1$
 				}

@@ -31,9 +31,11 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 
@@ -767,13 +769,18 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				IViewPart part;
 				try {
 					part = page.showView("org.eclipse.ui.views.ResourceNavigator");
+					assertNotNull("the part org.eclipse.ui.views.ResourceNavigator should not be null", part);
 					ISelection selection = null;
 					if (resource == null) {
 						selection = new StructuredSelection();
 					} else {
 						selection = new StructuredSelection(resource);
 					}
-					part.getSite().getSelectionProvider().setSelection(selection);
+					IWorkbenchPartSite site = part.getSite();
+					assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site);
+					ISelectionProvider provider = site.getSelectionProvider();
+					assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider);
+					provider.setSelection(selection);
 				} catch (PartInitException e) {
 					assertNotNull("Failed to open navigator view", null);
 				}
