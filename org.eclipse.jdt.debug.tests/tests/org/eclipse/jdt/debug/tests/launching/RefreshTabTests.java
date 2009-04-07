@@ -45,7 +45,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 		Runnable r = new Runnable() {
 			public void run() {
 				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
-				assertNotNull("The acive workbench page should not be null", page);
+				assertNotNull("The active workbench page should not be null", page);
 				IViewPart part;
 				try {
 					part = page.showView("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
