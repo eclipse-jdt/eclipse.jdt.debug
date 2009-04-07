@@ -70,6 +70,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -1134,19 +1135,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param breakpoint the breakpoint that was hit
 	 * @param suspend whether to suspend 
 	 * @param queue whether to queue events or fire immediately
+	 * @param set event set handling is associated with
 	 */
-	public void completeBreakpointHandling(JavaBreakpoint breakpoint, boolean suspend, boolean queue) {
+	public void completeBreakpointHandling(JavaBreakpoint breakpoint, boolean suspend, boolean queue, EventSet set) {
 		synchronized (this) {
 			try {	
 				int policy = breakpoint.getSuspendPolicy();
 				// suspend or resume
 				if (suspend) {
 					if (policy == IJavaBreakpoint.SUSPEND_VM) {
-						((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, false);
+						((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint, false, set);
 					}
 					abortStep();
 					if (queue) {
-						queueSuspendEvent(DebugEvent.BREAKPOINT);
+						queueSuspendEvent(DebugEvent.BREAKPOINT, set);
 					} else {
 						fireSuspendEvent(DebugEvent.BREAKPOINT);
 					}
@@ -1967,7 +1969,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 				fThread.resume();
 			} catch (RuntimeException e) {
-				stepEnd();
+				stepEnd(null);
+				fireSuspendEvent(DebugEvent.STEP_END);
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_stepping, new String[] {e.toString()}), e); 
 			}
 		}
@@ -2130,7 +2133,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * 
 		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			try {
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
@@ -2153,11 +2156,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					return true;		
 				// otherwise, we're done stepping
 				}
-				stepEnd();
+				stepEnd(eventSet);
 				return false;
 			} catch (DebugException e) {
 				logError(e);
-				stepEnd();
+				stepEnd(eventSet);
 				return false;
 			}
 		}
@@ -2165,7 +2168,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend, EventSet eventSet) {
 			// do nothing
 		}
 
@@ -2218,11 +2221,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * <li>A suspend event is fired</li>
 		 * </ul>
 		 */
-		protected void stepEnd() {
+		protected void stepEnd(EventSet set) {
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
-			queueSuspendEvent(DebugEvent.STEP_END);
+			if (set != null) {
+				queueSuspendEvent(DebugEvent.STEP_END, set);
+			}
 		}
 		
 		/**
@@ -2410,12 +2415,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * 
 		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			try {
 				int numFrames = getUnderlyingFrameCount();
 				// tos should not be null
 				if (numFrames <= getRemainingFrames()) {
-					stepEnd();
+					stepEnd(eventSet);
 					return false;
 				}
 				// reset running state and keep going
@@ -2425,7 +2430,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return true;
 			} catch (DebugException e) {
 				logError(e);
-				stepEnd();
+				stepEnd(eventSet);
 				return false;
 			}
 		}				
@@ -2493,7 +2498,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) fThread;
 					hcrThread.doReturn(null, true);
 				} catch (RuntimeException e) {
-					stepEnd();
+					stepEnd(null);
+					fireSuspendEvent(DebugEvent.STEP_END);
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_while_popping_stack_frame, new String[] {e.toString()}), e); 
 				}
 			}
@@ -2508,7 +2514,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
 		 * @see #invokeThread()
 		 */		
-		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			// pop is complete, update number of frames to drop
 			setFramesToDrop(getFramesToDrop() - 1);
 			try {
@@ -2516,10 +2522,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					deleteStepRequest();
 					doSecondaryStep();
 				} else {
-					stepEnd();
+					stepEnd(eventSet);
 				}
 			} catch (DebugException e) {
-				stepEnd();
+				stepEnd(eventSet);
 				logError(e);
 			}
 			return false;

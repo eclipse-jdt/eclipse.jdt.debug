@@ -210,6 +210,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("ForceReturnTests");
         createLaunchConfiguration("ForceReturnTestsTwo");
         createLaunchConfiguration("LogicalStructures");
+        createLaunchConfiguration("BreakpointListenerTest");
         
         //launch history tests
         createLaunchConfiguration("LaunchHistoryTest");

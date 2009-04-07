@@ -34,6 +34,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.AccessWatchpointEvent;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.ModificationWatchpointEvent;
 import com.sun.jdi.request.AccessWatchpointRequest;
 import com.sun.jdi.request.EventRequest;
@@ -417,13 +418,13 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * 
 	 * Also, @see JavaBreakpoint#handleEvent(Event, JDIDebugTarget)
 	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote)  {
+	public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet)  {
 		if (event instanceof AccessWatchpointEvent) {
 			fLastEventTypes.put(target, ACCESS_EVENT);
 		} else if (event instanceof ModificationWatchpointEvent) {
 			fLastEventTypes.put(target, MODIFICATION_EVENT);
 		}
-		return super.handleEvent(event, target, suspendVote);
+		return super.handleEvent(event, target, suspendVote, eventSet);
 	}	
 	
 	

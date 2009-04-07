@@ -49,6 +49,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
@@ -255,7 +256,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#handleEvent(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+	public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 		if (event instanceof ClassPrepareEvent) {
 			return handleClassPrepareEvent((ClassPrepareEvent)event, target, suspendVote);
 		}
@@ -270,7 +271,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 	 */
-	public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
+	public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend, EventSet eventSet) {
 		ThreadReference threadRef = null;
 		if (event instanceof ClassPrepareEvent) {
 			threadRef = ((ClassPrepareEvent)event).thread();
@@ -285,13 +286,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		if (event instanceof ClassPrepareEvent) {
-			classPrepareComplete(event, thread, suspend);
+			classPrepareComplete(event, thread, suspend, eventSet);
 		} else {
-			thread.completeBreakpointHandling(this, suspend, true);
+			thread.completeBreakpointHandling(this, suspend, true, eventSet);
 		}
 	}
 	
-	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend) {
+	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend, EventSet eventSet) {
 		// resume the thread if this is a class load event to install a deferred breakpoint (and the vote is to resume)
 		if (thread != null && !suspend) {
 			thread.resumedFromClassPrepare();

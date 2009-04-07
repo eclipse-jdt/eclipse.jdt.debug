@@ -33,6 +33,7 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 
@@ -180,8 +181,8 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#classPrepareComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIThread, boolean)
 	 */
-	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend) {
-		thread.completeBreakpointHandling(this, suspend, true);
+	protected void classPrepareComplete(Event event, JDIThread thread, boolean suspend, EventSet eventSet) {
+		thread.completeBreakpointHandling(this, suspend, true, eventSet);
 	}
 	
 	/* (non-Javadoc)

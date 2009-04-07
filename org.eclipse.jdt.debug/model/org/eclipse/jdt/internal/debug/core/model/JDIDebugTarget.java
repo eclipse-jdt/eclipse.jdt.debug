@@ -69,6 +69,7 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
@@ -1312,9 +1313,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that caused the
 	 *  suspension
 	 */
-	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
+	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent, EventSet set) {
 		if (queueEvent) {
-			queueSuspendEvent(DebugEvent.BREAKPOINT);
+			queueSuspendEvent(DebugEvent.BREAKPOINT, set);
 		} else {
 			fireSuspendEvent(DebugEvent.BREAKPOINT);
 		}
@@ -1827,7 +1828,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * @param target the target in which the thread started
 		 * @return <code>true</code> - the thread should be resumed
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			ThreadReference thread= ((ThreadStartEvent)event).thread();
 			try {
 				if (thread.isCollected()) {
@@ -1856,7 +1857,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend, EventSet eventSet) {
 			// do nothing
 		}
 		
@@ -1918,7 +1919,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * @param target the target in which the thread died
 		 * @return <code>true</code> - the thread should be resumed
 		 */
-		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote) {
+		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			ThreadReference ref= ((ThreadDeathEvent)event).thread();
 			JDIThread thread= findThread(ref);
 			if (thread != null) {
@@ -1933,7 +1934,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
-		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend) {
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspend, EventSet eventSet) {
 			// do nothing
 		}
 	

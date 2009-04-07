@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -73,17 +78,10 @@ public class EventDispatcher implements Runnable {
 	
 	/**
 	 * Queue of debug model events to fire, created
-	 * when processing events on the target VM
+	 * when processing events on the target VM. Keyed by
+	 * event sets, processed independently.
 	 */
-	private List fDebugEvents = new ArrayList(5);
-	
-	/**
-	 * Collection of deferred events for conditional breakpoints.
-	 * Conditional breakpoints are handled after all other events
-	 * in an event set, such that we only evaluate conditions
-	 * if required.
-	 */
-	private List fDeferredEvents = new ArrayList(5);
+	private Map fSetToQueue = new HashMap();
 	
 	/**
 	 * Constructs a new event dispatcher listening for events
@@ -113,6 +111,7 @@ public class EventDispatcher implements Runnable {
 		boolean resume = true;
 		int voters = 0; 
 		int index=-1;
+		List deferredEvents = null;
 		while (iter.hasNext()) {
 			index++;
 			if (isShutdown()) {
@@ -131,7 +130,10 @@ public class EventDispatcher implements Runnable {
 					// other listeners vote.
 					try {
 						if (((IJavaLineBreakpoint)listener).isConditionEnabled()) {
-							defer(event);
+							if (deferredEvents == null) {
+								deferredEvents = new ArrayList(5);
+							}
+							deferredEvents.add(event);
 							continue;
 						}
 					} catch (CoreException exception) {
@@ -139,7 +141,7 @@ public class EventDispatcher implements Runnable {
 					}
 				}
 				vote = true;
-				resume = listener.handleEvent(event, fTarget, !resume) && resume;
+				resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
 				voters++;
 				continue;
 			}
@@ -159,8 +161,8 @@ public class EventDispatcher implements Runnable {
 		}
 		
 		// process deferred conditional breakpoint events
-		if (!getDeferredEvents().isEmpty()) {
-			Iterator deferredIter= getDeferredEvents().iterator();
+		if (deferredEvents != null) {
+			Iterator deferredIter= deferredEvents.iterator();
 			while (deferredIter.hasNext()) {
 				if (isShutdown()) {
 					return;
@@ -173,7 +175,7 @@ public class EventDispatcher implements Runnable {
 				IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
 				if (listener != null) {
 					vote = true;
-					resume = listener.handleEvent(event, fTarget, !resume) && resume;
+					resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
 					continue;
 				}
 			}
@@ -188,15 +190,12 @@ public class EventDispatcher implements Runnable {
 			// notify registered listener, if any
 			IJDIEventListener listener = listeners[index];
 			if (listener != null) {
-				listener.eventSetComplete(event, fTarget, !resume);
+				listener.eventSetComplete(event, fTarget, !resume, eventSet);
 			}
 		}
 		
-		// clear any deferred JDI events (processed or not)
-		getDeferredEvents().clear();
-		
 		// fire queued DEBUG events
-		fireEvents();
+		fireEvents(eventSet);
 		
 		if (vote && resume) {
 			try {
@@ -234,7 +233,15 @@ public class EventDispatcher implements Runnable {
 					}
 									
 					if(!isShutdown() && eventSet != null) {
-						dispatch(eventSet);
+						final EventSet set = eventSet;
+						Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
+							protected IStatus run(IProgressMonitor monitor) {
+								dispatch(set);
+								return Status.OK_STATUS;
+							}
+						};
+						job.setSystem(true);
+						job.schedule();
 					}
 				} catch (InterruptedException e) {
 					break;
@@ -293,44 +300,38 @@ public class EventDispatcher implements Runnable {
 	
 	/** 
 	 * Adds the given event to the queue of debug events to fire when done
-	 * dispatching events from the current event set.
+	 * dispatching events from the given event set.
 	 * 
 	 * @param event the event to queue
+	 * @param the event set the event is associated with 
 	 */
-	public void queue(DebugEvent event) {
-		fDebugEvents.add(event);
-	}
-	
-	/**
-	 * Fires debug events in the event queue, and clears the queue
-	 */
-	private void fireEvents() {
-		DebugPlugin plugin= DebugPlugin.getDefault();
-		if (plugin != null && fDebugEvents.size() > 0) { //check that not in the process of shutting down
-			DebugEvent[] events = (DebugEvent[])fDebugEvents.toArray(new DebugEvent[fDebugEvents.size()]);
-			fDebugEvents.clear();
-			plugin.fireDebugEventSet(events);
+	public void queue(DebugEvent event, EventSet set) {
+		synchronized (fSetToQueue) {
+			List list = (List)fSetToQueue.get(set);
+			if (list == null) {
+				list = new ArrayList(5);
+				fSetToQueue.put(set, list);
+			}
+			list.add(event);
 		}
 	}
-
-	/**
-	 * Defer the given event, to be handled after all other events in
-	 * an event set.
-	 * 
-	 * @param event event to defer
-	 */
-	private void defer(Event event) {
-		fDeferredEvents.add(event);
-	}
 	
-
 	/**
-	 * Returns the events currently deferred.
-	 * 
-	 * @return deferred events
+	 * Fires debug events in the event queue associated with the given event
+	 * set, and clears the queue.
 	 */
-	private List getDeferredEvents() {
-		return fDeferredEvents;
+	private void fireEvents(EventSet set) {
+		DebugPlugin plugin= DebugPlugin.getDefault();
+		if (plugin != null) { //check that not in the process of shutting down
+			List list = null;
+			synchronized (fSetToQueue) {
+				list = (List) fSetToQueue.remove(set);
+			}
+			if (list != null) {
+				DebugEvent[] events = (DebugEvent[])list.toArray(new DebugEvent[list.size()]);
+				plugin.fireDebugEventSet(events);
+			}
+		}
 	}
 		
 }

@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.EventSet;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
@@ -94,11 +95,12 @@ public abstract class JDIDebugElement extends DebugElement implements IDisconnec
 	 * as an event set when all event processing is complete.
 	 * 
 	 * @param event the event to queue
+	 * @param set the event set the event is associated with
 	 */
-	public void queueEvent(DebugEvent event) {
+	public void queueEvent(DebugEvent event, EventSet set) {
 		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
 		if (dispatcher != null) {
-			dispatcher.queue(event);
+			dispatcher.queue(event, set);
 		}
 	}
 
@@ -119,11 +121,12 @@ public abstract class JDIDebugElement extends DebugElement implements IDisconnec
 	 * the associated detail.
 	 * 
 	 * @param detail The int detail of the event
+	 * @param set the event set the event is associated with
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	public void queueSuspendEvent(int detail) {
+	public void queueSuspendEvent(int detail, EventSet set) {
 	    getJavaDebugTarget().incrementSuspendCount(detail);
-		queueEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
+		queueEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail), set);
 	}
 	
 	/**

@@ -213,4 +213,27 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}	
 	}
+	
+	/**
+	 * Tests that a conditional breakpoint with an expression that will hit a breakpoint
+	 * will complete the conditional expression evaluation (bug 269231).
+	 * 
+	 * @throws Exception
+	 */
+	public void testConditionalExpressionIgnoresBreakpoint() throws Exception {
+		String typeName = "BreakpointListenerTest";
+		createConditionalLineBreakpoint(15, typeName, "foo(); return false;", true);
+		IJavaLineBreakpoint breakpoint = createLineBreakpoint(20, typeName);
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, breakpoint);
+			IStackFrame top = thread.getTopStackFrame();
+			assertNotNull("Missing top frame", top);
+			assertTrue("Thread should be suspended", thread.isSuspended());
+			assertEquals("Wrong location", breakpoint.getLineNumber(), top.getLineNumber());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
 }
