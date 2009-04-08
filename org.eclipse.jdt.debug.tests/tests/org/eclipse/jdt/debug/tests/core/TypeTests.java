@@ -30,7 +30,7 @@ public class TypeTests extends AbstractDebugTest {
 		super(name);
 	}
 
-	public void testDeclaringTypes() throws Exception {
+	public void XtestDeclaringTypes() throws Exception {
 		IJavaType[] types = new IJavaType[3];
 		int index = 0;
 		String typeName = "Breakpoints";
