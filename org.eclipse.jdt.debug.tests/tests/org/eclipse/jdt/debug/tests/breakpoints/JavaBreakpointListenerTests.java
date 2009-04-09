@@ -992,6 +992,44 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			removeAllBreakpoints();
 		}
 	}
+	
+	/**
+	 * Tests that breakpoint listeners are only notified when condition is true
+	 * while stepping to a breakpoint.
+	 * 
+	 * @throws Exception
+	 */
+	public void testListenersOnConditionalBreakpointStepping() throws Exception {
+		String typeName = "HitCountLooper";
+		Collector collector = new Collector();
+		JDIDebugModel.addJavaBreakpointListener(collector);
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 1", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			// step over to next line with conditional (should be false && not hit)
+			thread = stepOver((IJavaStackFrame) thread.getTopStackFrame());
+			assertEquals("Wrong number of breakpoints hit", 1, collector.HIT.size());
+			assertTrue("Wrong breakpoint hit", collector.HIT.contains(bp));
+			assertFalse("Wrong breakpoint hit", collector.HIT.contains(second));
+			collector.HIT.clear();
+			
+			// resume to line breakpoint again
+			thread = resumeToLineBreakpoint(thread, bp);
+			// step over to next line with conditional (should be true && hit)
+			thread = stepOver((IJavaStackFrame) thread.getTopStackFrame());
+			assertEquals("Wrong number of breakpoints hit", 2, collector.HIT.size());
+			assertTrue("Wrong breakpoint hit", collector.HIT.contains(bp));
+			assertTrue("Wrong breakpoint hit", collector.HIT.contains(second));
+			
+		} finally {
+			JDIDebugModel.removeJavaBreakpointListener(collector);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}	
 
 	/**
 	 * Tests addition and removal of breakpoint listeners to a breakpoint.

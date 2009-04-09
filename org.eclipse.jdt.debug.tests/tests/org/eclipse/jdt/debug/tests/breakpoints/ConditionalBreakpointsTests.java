@@ -150,11 +150,12 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Tests a breakpoint condition is not evaluated when it coincides with a step end.
+	 * Tests a breakpoint condition *is* evaluated when it coincides with a step end.
+	 * See bug 265714.
 	 * 
 	 * @throws Exception
 	 */
-	public void testSkipConditionOnStep() throws Exception {
+	public void testEvalConditionOnStep() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		IJavaLineBreakpoint bp2 = createConditionalLineBreakpoint(17, typeName, "i = 3; return true;", true);
@@ -162,7 +163,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
-			// step from 16 to 17, breakpoint condition should not evaluate
+			// step from 16 to 17, breakpoint condition *should* evaluate
 			thread = stepOver((IJavaStackFrame) thread.getTopStackFrame());
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable var = findVariable(frame, "i");
@@ -171,7 +172,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'i' should be '3', but was " + iValue, iValue == 0);
+			assertEquals("'i' has wrong value", 3, iValue);
 			
 			// breakpoint should still be available from thread, even though not eval'd
 			IBreakpoint[] breakpoints = thread.getBreakpoints();

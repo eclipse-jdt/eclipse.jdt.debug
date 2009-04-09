@@ -1093,20 +1093,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 		
-		// Evaluate breakpoint condition (if any). If the vote is already in a
-		// suspend state, don't bother evaluating the condition.
-		if (!suspendVote) {
-			if (breakpoint instanceof JavaLineBreakpoint) {
-				JavaLineBreakpoint lbp = (JavaLineBreakpoint) breakpoint;
-				if (lbp.hasCondition()) {
-					ConditionalBreakpointHandler handler = new ConditionalBreakpointHandler();
-					int vote = handler.breakpointHit(this, breakpoint);
-					if (vote == IJavaBreakpointListener.DONT_SUSPEND) {
-						// condition is false, breakpoint is not hit
-						synchronized (this) {
-							fSuspendVoteInProgress = false;
-							return false;
-						}
+		// Evaluate breakpoint condition (if any). The condition is evaluated
+		// regardless of the current suspend vote status, since breakpoint listeners
+		// should only be notified when a condition is true (i.e. when the breakpoint
+		// is really hit).
+		if (breakpoint instanceof JavaLineBreakpoint) {
+			JavaLineBreakpoint lbp = (JavaLineBreakpoint) breakpoint;
+			if (lbp.hasCondition()) {
+				ConditionalBreakpointHandler handler = new ConditionalBreakpointHandler();
+				int vote = handler.breakpointHit(this, breakpoint);
+				if (vote == IJavaBreakpointListener.DONT_SUSPEND) {
+					// condition is false, breakpoint is not hit
+					synchronized (this) {
+						fSuspendVoteInProgress = false;
+						return false;
 					}
 				}
 			}
