@@ -59,6 +59,8 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -149,6 +151,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			try {
 				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
 				bp.setPersisted(false);
+				bp.addBreakpointListener(SuspendOnCompilationErrorListener.ID_COMPILATION_ERROR_LISTENER);
 				setSuspendOnCompilationErrorsBreakpoint(bp);
 			} catch (CoreException e) {
 				status.add(e.getStatus());
@@ -159,6 +162,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
 				((JavaExceptionBreakpoint)bp).setSuspendOnSubclasses(true);
 				bp.setPersisted(false);
+				bp.addBreakpointListener(SuspendOnUncaughtExceptionListener.ID_UNCAUGHT_EXCEPTION_LISTENER);
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
 			} catch (CoreException e) {
 				status.add(e.getStatus());
@@ -371,7 +375,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @return whether suspend on compilation errors is
 	 * enabled
 	 */
-	protected boolean isSuspendOnCompilationErrors() {
+	public boolean isSuspendOnCompilationErrors() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS);
 	}
 	
@@ -544,55 +548,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
-		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
-			IJavaExceptionBreakpoint exception = (IJavaExceptionBreakpoint) breakpoint;
-			if (exception.getExceptionTypeName().equals("java.lang.Error")) { //$NON-NLS-1$
-				// only lookup source if the exception actually is a java.lang.Error (which is used
-				// to indicate compilation errors by the Eclipse Java compiler).
-			    try {
-			        return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
-			    } catch (DebugException e) {
-			        JDIDebugUIPlugin.log(e);
-			        // don't suspend if we can't determine if there is a problem
-			        return DONT_SUSPEND;
-			    }
-			}
-			return DONT_SUSPEND;
-		}
-		if (breakpoint == getSuspendOnUncaughtExceptionBreakpoint()) {
-			// the "uncaught" exceptions breakpoint subsumes the "compilation error" breakpoint
-			// since "Throwable" is a supertype of "Error". Thus, if there is actually a compilation
-			// error here, but the option to suspend on compilation errors is off, we should
-			// resume (i.e. do not suspend)
-			if (!isSuspendOnCompilationErrors()) {
-			    try {
-			        if (getProblem(thread) != null) {
-			            return DONT_SUSPEND;
-			        }
-			    } catch (DebugException e) {
-			        JDIDebugUIPlugin.log(e);
-			        // unable to determine if there was a compilation problem, so fall thru and suspend
-			    }
-			}
-			return SUSPEND;
-		}
 		return DONT_CARE;
-	}
-	
-	/**
-	 * Returns any problem for the top stack frame in the given thread, or
-	 * <code>null</code> if none.
-	 * 
-	 * @param thread thread to look for a compilation problem in
-	 * @return problem or <code>null</code>
-	 * @throws DebugException if an exception occurrs retrieveing the problem
-	 */
-	private IMarker getProblem(IJavaThread thread) throws DebugException {
-		IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-		if (frame != null) {
-			return  getProblem(frame);
-		}
-		return null;	
 	}
 
 	/**
@@ -615,7 +571,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @return marker representing compilation problem, or <code>null</code>
 	 * @throws DebugException if an exception occurrs retrieveing the problem
 	 */
-	protected IMarker getProblem(IJavaStackFrame frame) {
+	public IMarker getProblem(IJavaStackFrame frame) {
 		ILaunch launch = frame.getLaunch();
 		if (launch != null) {
 			ISourceLookupResult result = DebugUITools.lookupSource(frame, null);

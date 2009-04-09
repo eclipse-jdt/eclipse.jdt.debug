@@ -3442,4 +3442,15 @@ M4 = Platform-specific fourth key
           nature="org.eclipse.jdt.core.javanature">
     </queryParticipant>
  </extension>
+ <extension
+       point="org.eclipse.jdt.debug.breakpointListeners">
+    <breakpointListener
+          class="org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnCompilationErrorListener"
+          id="org.eclipse.jdt.debug.ui.compilationErrorListener">
+    </breakpointListener>
+    <breakpointListener
+          class="org.eclipse.jdt.internal.debug.ui.breakpoints.SuspendOnUncaughtExceptionListener"
+          id="org.eclipse.jdt.debug.ui.uncaughtExceptionListener">
+    </breakpointListener>
+ </extension>
 </plugin>
