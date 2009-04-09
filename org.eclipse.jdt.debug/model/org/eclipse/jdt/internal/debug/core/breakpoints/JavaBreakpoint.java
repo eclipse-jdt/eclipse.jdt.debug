@@ -23,7 +23,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -51,6 +53,7 @@ import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventSet;
 import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -262,6 +265,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		ThreadReference threadRef= ((LocatableEvent)event).thread();
 		JDIThread thread= target.findThread(threadRef);	
+		if (thread == null) {
+			// wait for any thread start event sets to complete processing
+			// see bug 271700
+			try {
+				Job.getJobManager().join(ThreadStartEvent.class, null);
+			} catch (OperationCanceledException e) {
+			} catch (InterruptedException e) {
+			}
+			thread = target.findThread(threadRef);	
+		}
 		if (thread == null || thread.isIgnoringBreakpoints()) {
 			return true;
 		}

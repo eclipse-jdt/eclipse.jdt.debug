@@ -250,6 +250,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		JDIDebugOptions.initDebugOptions();
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
 			public void doneSaving(ISaveContext c) {}
 			public void prepareToSave(ISaveContext c)	throws CoreException {}

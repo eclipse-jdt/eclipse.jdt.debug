@@ -105,6 +105,17 @@ public class EventDispatcher implements Runnable {
 		if (isShutdown()) {
 			return;
 		}
+		if (JDIDebugOptions.DEBUG_JDI_EVENTS) {
+			EventIterator eventIter = eventSet.eventIterator();
+			System.out.print("JDI Event Set: {"); //$NON-NLS-1$
+			while (eventIter.hasNext()) {
+				System.out.print(eventIter.next());
+				if (eventIter.hasNext()) {
+					System.out.print(", "); //$NON-NLS-1$
+				}
+			}
+			System.out.println("}"); //$NON-NLS-1$
+		}
 		EventIterator iter= eventSet.eventIterator();
 		IJDIEventListener[] listeners = new IJDIEventListener[eventSet.size()];
 		boolean vote = false; 
@@ -238,6 +249,22 @@ public class EventDispatcher implements Runnable {
 							protected IStatus run(IProgressMonitor monitor) {
 								dispatch(set);
 								return Status.OK_STATUS;
+							}
+							/* (non-Javadoc)
+							 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+							 */
+							public boolean belongsTo(Object family) {
+								if (family instanceof Class) {
+									Class clazz = (Class) family;
+									EventIterator iterator = set.eventIterator();
+									while (iterator.hasNext()) {
+										Event event = iterator.nextEvent();
+										if (clazz.isInstance(event)) {
+											return true;
+										}
+									}									
+								}
+								return false;
 							}
 						};
 						job.setSystem(true);
