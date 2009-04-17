@@ -1615,17 +1615,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// is resumed, make sure the suspend count of each thread
 		// is no greater than 1. @see Bugs 23328 and 27622
 		ThreadReference thread= fThread;
-		while (thread.suspendCount() > 1) {
-			try {
+		try {
+			while (thread.suspendCount() > 1) {
 				thread.resume();
-			} catch (ObjectCollectedException e) {
-			} catch (VMDisconnectedException e) {
-				disconnected();
-			}catch (RuntimeException e) {
-				setRunning(false);
-				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //				
 			}
+		} catch (ObjectCollectedException e) {
+		} catch (VMDisconnectedException e) {
+			disconnected();
+		}catch (RuntimeException e) {
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThread_exception_resuming, new String[] {e.toString()}), e); //				
 		}
 	}
 
