@@ -1109,6 +1109,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						return false;
 					}
 				}
+				if (handler.hasErrors()) {
+					// there were errors, suspend and do not notify listeners of hit since
+					// they were already notified of compilation/runtime errors
+					synchronized (this) {
+						fSuspendVoteInProgress = false;
+						return true;
+					}
+				}
 			}
 		}
 			

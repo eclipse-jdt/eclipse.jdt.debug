@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -41,6 +44,11 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	public static int VOTE = IJavaBreakpointListener.DONT_CARE;
 	
 	/**
+	 * Whether hit
+	 */
+	public static boolean HIT = false;
+	
+	/**
 	 * Expression to evaluate when hit
 	 */
 	public static String EXPRESSION;
@@ -54,6 +62,26 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	 * Evaluation result
 	 */
 	public static IEvaluationResult RESULT;
+	
+	/**
+	 * List of breakpoints with compilation errors
+	 */
+	public static List COMPILATION_ERRORS = new ArrayList();
+	
+	/**
+	 * List of breakpoints with runtime errors
+	 */
+	public static List RUNTIME_ERRORS = new ArrayList();
+	
+	public static void reset() {
+		VOTE = IJavaBreakpointListener.DONT_CARE;
+		EXPRESSION = null;
+		PROJECT = null;
+		RESULT = null;
+		HIT = false;
+		COMPILATION_ERRORS.clear();
+		RUNTIME_ERRORS.clear();
+	}
 
 	/**
 	 * Constructs a breakpoint listener to evaluate an expression when a breakpoint is hit.
@@ -71,18 +99,21 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
 	public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
+		COMPILATION_ERRORS.add(breakpoint);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 	 */
 	public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
+		RUNTIME_ERRORS.add(breakpoint);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+		HIT = true;
 		final Object lock = new Object();
 		RESULT = null;
 		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(PROJECT, (IJavaDebugTarget) thread.getDebugTarget());

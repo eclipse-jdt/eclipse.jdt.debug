@@ -46,6 +46,11 @@ import com.sun.jdi.VMDisconnectedException;
 public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	
 	/**
+	 * Whether the condition had compile or runtime errors
+	 */
+	private boolean fHasErrors = false;
+	
+	/**
 	 * Listens for evaluation completion for condition evaluation.
 	 * If an evaluation evaluates <code>true</code> or has an error, this breakpoint
 	 * will suspend the thread in which the breakpoint was hit.
@@ -242,6 +247,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	}	
 	
 	private void fireConditionHasRuntimeErrors(IJavaLineBreakpoint breakpoint, DebugException exception) {
+		fHasErrors = true;
 		JDIDebugPlugin.getDefault().fireBreakpointHasRuntimeException(breakpoint, exception);
 	}
 
@@ -250,6 +256,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	 * compiled that contains errors
 	 */
 	private void fireConditionHasErrors(IJavaLineBreakpoint breakpoint, Message[] messages) {
+		fHasErrors = true;
 		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(breakpoint, messages);
 	}
 	
@@ -264,5 +271,14 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 			messages[i]= new Message(errorMessages[i], -1);
 		}
 		return messages;
-	}	
+	}
+	
+	/**
+	 * Returns whether errors were encountered when evaluating the condition (compilation or runtime).
+	 * 
+	 * @return whether errors were encountered when evaluating the condition
+	 */
+	public boolean hasErrors() {
+		return fHasErrors;
+	}
 }

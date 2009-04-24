@@ -159,14 +159,18 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	class Collector implements IJavaBreakpointListener {
 		
 		public List HIT = new ArrayList();
+		public List COMPILATION_ERRORS = new ArrayList();
+		public List RUNTIME_ERRORS = new ArrayList();
 
 		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}
 
 		public void breakpointHasCompilationErrors( IJavaLineBreakpoint breakpoint, Message[] errors) {
+			COMPILATION_ERRORS.add(breakpoint);
 		}
 
 		public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
+			RUNTIME_ERRORS.add(breakpoint);
 		}
 
 		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
@@ -746,6 +750,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = getJavaProject();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(i);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
@@ -814,6 +819,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		// second breakpoint is where the evaluation is performed with a resume vote
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = getJavaProject();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
@@ -866,6 +872,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		// second breakpoint is where the evaluation is performed with a resume vote
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = getJavaProject();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
@@ -917,6 +924,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.PROJECT = getJavaProject();
 		EvalualtionBreakpointListener.EXPRESSION = "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
@@ -1029,6 +1037,56 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
+	}	
+	
+	/**
+	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
+	 * errors. Also they should be notified of the compilation errors.
+	 * 
+	 * @throws Exception
+	 */
+	public void testListenersOnCompilationError() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(17, typeName, "x == 1", true);
+		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
+			
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			assertFalse(EvalualtionBreakpointListener.HIT);
+			assertEquals(1, EvalualtionBreakpointListener.COMPILATION_ERRORS.size());
+			assertEquals(bp, EvalualtionBreakpointListener.COMPILATION_ERRORS.get(0));
+			assertEquals(0, EvalualtionBreakpointListener.RUNTIME_ERRORS.size());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	/**
+	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
+	 * errors. Also they should be notified of the compilation errors.
+	 * 
+	 * @throws Exception
+	 */
+	public void testListenersOnRuntimeError() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(17, typeName, "(new String()).charAt(34) == 'c'", true);
+		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
+			
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			assertFalse(EvalualtionBreakpointListener.HIT);
+			assertEquals(1, EvalualtionBreakpointListener.RUNTIME_ERRORS.size());
+			assertEquals(bp, EvalualtionBreakpointListener.RUNTIME_ERRORS.get(0));
+			assertEquals(0, EvalualtionBreakpointListener.COMPILATION_ERRORS.size());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
 	}	
 
 	/**
