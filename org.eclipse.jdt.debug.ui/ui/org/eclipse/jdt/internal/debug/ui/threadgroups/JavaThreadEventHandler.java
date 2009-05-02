@@ -278,4 +278,53 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		super.handleOther(event);
 	}
+	
+	/**
+	 * Returns whether the given thread is missing its required thread group in order
+	 * to build a proper delta. See bug 274552. Returns <code>false</code> when not 
+	 * displaying thread groups.
+	 * 
+	 * @param event thread start/death event
+	 * @return <code>true</code> if the thread group is missing
+	 */
+	private boolean isMissingRequiredThreadGroup(DebugEvent event) {
+		if (JavaElementContentProvider.isDisplayThreadGroups()) {
+			Object source = event.getSource();
+			if (source instanceof IJavaThread) {
+				// if we can't retrieve a thread group we won't be able to add/remove
+				// the thread from the view (we can't get a path to the thread)
+				IJavaThread thread = (IJavaThread) source;
+				try {
+					if (thread.getThreadGroup() == null) {
+						return true;
+					}
+				} catch (DebugException e) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleCreate(DebugEvent event) {
+		if (isMissingRequiredThreadGroup(event)) {
+			// don't bother adding/removing thread missing thread group
+			return;
+		}
+		super.handleCreate(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleTerminate(DebugEvent event) {
+		if (isMissingRequiredThreadGroup(event)) {
+			// don't bother adding/removing thread missing thread group
+			return;
+		}
+		super.handleTerminate(event);
+	}
 }
