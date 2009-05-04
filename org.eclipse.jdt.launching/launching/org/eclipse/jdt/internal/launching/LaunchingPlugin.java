@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1013,6 +1013,51 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	protected static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
 		throw new CoreException(status);
+	}
+	
+	/*
+	 * Compares two URL for equality, but do not connect to do DNS resolution
+	 * 
+	 * @since 3.5
+	 */
+	public static boolean sameURL(URL url1, URL url2) {
+		if (url1 == url2) {
+			return true;
+		}
+		if (url1 == null ^ url2 == null) {
+			return false;
+		}
+		// check if URL are file: URL as we may have two URL pointing to the same doc location
+		// but with different representation - (i.e. file:/C;/ and file:C:/)
+		final boolean isFile1 = "file".equalsIgnoreCase(url1.getProtocol());//$NON-NLS-1$
+		final boolean isFile2 = "file".equalsIgnoreCase(url2.getProtocol());//$NON-NLS-1$
+		if (isFile1 && isFile2) {
+			File file1 = new File(url1.getFile());
+			File file2 = new File(url2.getFile());
+			return file1.equals(file2);
+		}
+		// URL1 xor URL2 is a file, return false. (They either both need to be files, or neither)
+		if (isFile1 ^ isFile2) {
+			return false;
+		}
+		return getExternalForm(url1).equals(getExternalForm(url2));
+	}
+
+	/**
+	 * Gets the external form of this URL. In particular, it trims any white space, 
+	 * removes a trailing slash and creates a lower case string.
+	 */
+	private static String getExternalForm(URL url) {
+		String externalForm = url.toExternalForm();
+		if (externalForm == null)
+			return ""; //$NON-NLS-1$
+		externalForm = externalForm.trim();
+		if (externalForm.endsWith("/")) { //$NON-NLS-1$
+			// Remove the trailing slash
+			externalForm = externalForm.substring(0, externalForm.length() - 1);
+		}
+		return externalForm.toLowerCase();
+
 	}
 }
 

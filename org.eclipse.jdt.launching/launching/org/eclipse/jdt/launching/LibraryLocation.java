@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 
 /**
@@ -119,11 +120,11 @@ public final class LibraryLocation {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
-				&& equalsOrNull(getJavadocLocation(), lib.getJavadocLocation());
+				&& LaunchingPlugin.sameURL(getJavadocLocation(), lib.getJavadocLocation());
 		} 
 		return false;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
