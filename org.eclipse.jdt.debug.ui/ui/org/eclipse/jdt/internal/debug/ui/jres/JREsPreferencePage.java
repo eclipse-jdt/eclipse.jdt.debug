@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,14 @@ import com.ibm.icu.text.MessageFormat;
  * @since 3.0
  */
 public class JREsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-							
+				
+	/**
+	 * ID for the page
+	 * 
+	 * @since 3.5
+	 */
+	public static final String ID = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
+	
 	// JRE Block
 	private InstalledJREsBlock fJREBlock;
 	private Link fCompliance;

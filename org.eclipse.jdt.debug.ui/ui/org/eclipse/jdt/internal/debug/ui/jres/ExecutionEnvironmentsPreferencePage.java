@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,13 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.2
  */
 public class ExecutionEnvironmentsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	
+	/**
+	 * The ID of the page 
+	 * 
+	 * @since 3.5
+	 */
+	public static final String ID = "org.eclipse.jdt.debug.ui.jreProfiles"; //$NON-NLS-1$
 	
 	private TableViewer fProfilesViewer;
 	private CheckboxTableViewer fJREsViewer;

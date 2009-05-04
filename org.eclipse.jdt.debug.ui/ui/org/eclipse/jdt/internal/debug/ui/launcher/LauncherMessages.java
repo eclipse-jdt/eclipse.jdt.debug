@@ -163,6 +163,10 @@ public class LauncherMessages extends NLS {
 	public static String JavaLaunchShortcut_2;
 	public static String JavaLaunchShortcut_3;
 
+	public static String JreResolutionGenerator_open_ee_prefs;
+
+	public static String JreResolutionGenerator_opens_ee_prefs;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LauncherMessages.class);

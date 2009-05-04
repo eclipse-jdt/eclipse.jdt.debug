@@ -222,7 +222,7 @@ public class JREsComboBlock {
 		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				showPrefPage("org.eclipse.jdt.debug.ui.jreProfiles"); //$NON-NLS-1$
+				showPrefPage(ExecutionEnvironmentsPreferencePage.ID);
 			}
 		});		
 		
@@ -264,7 +264,7 @@ public class JREsComboBlock {
 		fManageButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_2, null); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				showPrefPage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"); //$NON-NLS-1$
+				showPrefPage(JREsPreferencePage.ID); 
 			}
 		});
 		fillWithWorkspaceJREs();
