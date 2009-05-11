@@ -1724,9 +1724,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	protected synchronized void stepToFrame(IStackFrame frame) throws DebugException {
-		if (!canStepReturn()) {
-			return;
+	protected void stepToFrame(IStackFrame frame) throws DebugException {
+		synchronized (this) {
+			if (!canStepReturn()) {
+				return;
+			}			
 		}
 		StepHandler handler = new StepToFrameHandler(frame);
 		handler.step();
