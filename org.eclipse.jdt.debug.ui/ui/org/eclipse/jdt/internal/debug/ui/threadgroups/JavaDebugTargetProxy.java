@@ -14,12 +14,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy;
 import org.eclipse.debug.internal.ui.viewers.update.StackFrameEventHandler;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.internal.debug.ui.monitors.JavaElementContentProvider;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -36,11 +43,14 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	 */
 	private boolean fIsScrapbook = false;
 	
+	private IDebugTarget fDebugTarget = null;
+	
 	/**
 	 * @param target
 	 */
 	public JavaDebugTargetProxy(IDebugTarget target) {
 		super(target);
+		fDebugTarget = target;
 		ILaunch launch = target.getLaunch();
 		if (launch != null) {
 			fIsScrapbook = launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null;
@@ -70,7 +80,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 		Job job = new Job("Initialize Java Debug Session") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!isDisposed()) {
-					JavaDebugTargetProxy.super.installed(finalViewer);
+					doInstalled(finalViewer);
 				}
 				return Status.OK_STATUS;
 			}
@@ -80,4 +90,45 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 		fThreadEventHandler.init(viewer);
 	}
 
+	private void doInstalled(Viewer viewer) {
+        // select any thread that is already suspended after installation
+        IDebugTarget target = fDebugTarget;
+        
+        if (target != null) {
+            ModelDelta delta = getNextSuspendedThreadDelta(null, false);
+            if (delta == null) {
+                try {
+                    ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+                    ILaunch launch = target.getLaunch();
+                    int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+                    int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+                    delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+                    ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+                    node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, getTargetChildCount(target));
+                } catch (DebugException e) {
+                    // In case of exception do not fire delta
+                    return;
+                }                     
+            }
+            // expand the target if no suspended thread
+            fireModelChanged(delta);
+        }	    
+	}	
+	
+	private int getTargetChildCount(IDebugTarget target) throws DebugException{
+	    if (target instanceof IJavaDebugTarget) {
+	        IJavaDebugTarget javaTarget = (IJavaDebugTarget)target;
+	    
+            if (JavaElementContentProvider.isDisplayThreadGroups()) {
+                if (javaTarget.isDisconnected() || javaTarget.isTerminated()) {
+                    return 0;
+                }
+                return javaTarget.getRootThreadGroups().length;
+            } else {
+                return javaTarget.getThreads().length;
+            }
+	    }
+	    return 0;
+	}
+	
 }
