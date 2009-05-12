@@ -1914,17 +1914,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		int argCount= methodBinding.getParameterTypes().length;
+		int paramCount= methodBinding.getParameterTypes().length;
 
 		String enclosingTypeSignature= null;
 		if (isInstanceMemberType) {
 			enclosingTypeSignature= getTypeSignature(enclosingTypeBinding);
-			argCount++;
+			paramCount++;
 		}
 
 		String signature= getMethodSignature(methodBinding, enclosingTypeSignature).replace('.','/');
 
-		push(new Constructor(signature, argCount, fCounter));
+		push(new Constructor(signature, paramCount, fCounter));
 
 		push(new PushType(getTypeName(typeBinding)));
 		storeInstruction();
@@ -1950,10 +1950,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 		}
 
-		Iterator iterator= node.arguments().iterator();
-		while (iterator.hasNext()) {
-			((Expression) iterator.next()).accept(this);
-		}
+		List arguments = node.arguments();
+		pushMethodArguments(methodBinding, arguments);
 
 		return false;
 	}
@@ -2687,8 +2685,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
-		int paramCount= parameterTypes.length;
+		int paramCount = methodBinding.getParameterTypes().length;
 		String selector= methodBinding.getName();
 
 		String signature= getMethodSignature(methodBinding, null).replace('.','/');
@@ -2714,7 +2711,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		List arguments = node.arguments();
+		pushMethodArguments(methodBinding, arguments);
+
+		return false;
+	}
+	
+	/**
+	 * Pushes method arguments onto the stack for a method or constructor invocation taking
+	 * variable arguments and auto-boxing into consideration.
+	 * 
+	 * @param methodBinding method or constructor being called
+	 * @param arguments argument list
+	 */
+	private void pushMethodArguments(IMethodBinding methodBinding, List arguments) {
 		int argCount = arguments.size();
+		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
+		int paramCount = parameterTypes.length;
 		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
@@ -2753,8 +2765,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 			}
 		} 
-
-		return false;
 	}
 	
 	/* (non-Javadoc)
