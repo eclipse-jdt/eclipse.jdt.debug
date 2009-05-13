@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,46 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		assertEquals("Wrong number of lines", linesExpected, fLinesRead.size());
 		return (String[])fLinesRead.toArray(new String[0]);
 	}
+	
+	/**
+	 * Appends the given text to the given console. Text should not have new lines.
+	 * 
+	 * @param console
+	 * @param text
+	 * @throws Exception
+	 */
+	private void append(IConsole console, final String text) throws Exception {
+		final IDocument document = console.getDocument();
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                try {
+                    document.replace(document.getLength(), 0, text);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+	}	
 		
+	/**
+	 * Deletes all text in the given console.
+	 * 
+	 * @param console
+	 * @throws Exception
+	 */
+	private void deleteAll(IConsole console) throws Exception {
+		final IDocument document = console.getDocument();
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                try {
+                    document.replace(0, document.getLength(), "");
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+	}
+	
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
@@ -218,6 +257,37 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			fStopped = true;
 			fLock.notifyAll();
         }
+	}
+	
+	/**
+	 * Tests the scenario reported in bug 241394 - 'a', backspace, 'b', backspace, 'c', Enter.
+	 * Result should be 'c'.
+	 * 
+	 * @throws Exception
+	 */
+	public void testDeleteAllEnteredText() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		ILaunchConfiguration configuration = getLaunchConfiguration("ConsoleInput");
+		ILaunch launch = null;
+		try {
+			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			synchronized (fConsoleLock) {
+				if (!fStarted) {
+					fConsoleLock.wait(30000);
+				}
+			}
+			assertNotNull("Console is null", fConsole);
+			append(fConsole, "a");
+			deleteAll(fConsole);
+			append(fConsole, "b");
+			deleteAll(fConsole);
+			String[] list = appendAndGet(fConsole, "c\n", 2);
+			verifyOutput(new String[]{"c", "c"}, list);
+			
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			launch.getProcesses()[0].terminate();
+		}		
 	}
 	
 }
