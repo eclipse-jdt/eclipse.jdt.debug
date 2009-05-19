@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * A classpath provider computes an unresolved classpath for a launch
  * configuration, and resolves classpath entries for a launch configuration.
  * A classpath provider is defined as an extension of type 
- * <code>org.eclipse.jdt.launching.classpathProvider</code>.
+ * <code>org.eclipse.jdt.launching.classpathProviders</code>.
  * <p>
  * A provider is registered with an identifier that can be
  * referenced by a launch configuration. A classpath provider is consulted
@@ -34,7 +34,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * extension.
  * <pre>
  * &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
- *   &lt;classpathProvider 
+ *   &lt;classpathProvider&gt; 
  *      id="com.example.ExampleClasspathProvider"
  *      class="com.example.ExampleClasspathProviderImpl"
  *   &lt;/classpathProvider&gt;
