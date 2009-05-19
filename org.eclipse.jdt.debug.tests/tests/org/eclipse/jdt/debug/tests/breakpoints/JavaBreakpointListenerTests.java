@@ -13,6 +13,11 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
@@ -1095,45 +1100,150 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 * @throws Exception
 	 */
 	public void testAddRemoveListeners() throws Exception {
-		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-		
-		String[] listeners = bp.getBreakpointListeners();
-		assertEquals(0, listeners.length);
-		
-		bp.addBreakpointListener("a");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(1, listeners.length);
-		assertEquals("a", listeners[0]);
-		
-		bp.addBreakpointListener("b");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(2, listeners.length);
-		assertEquals("a", listeners[0]);
-		assertEquals("b", listeners[1]);
-		
-		bp.addBreakpointListener("c");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(3, listeners.length);
-		assertEquals("a", listeners[0]);
-		assertEquals("b", listeners[1]);
-		assertEquals("c", listeners[2]);
-		
-		bp.removeBreakpointListener("a");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(2, listeners.length);
-		assertEquals("b", listeners[0]);
-		assertEquals("c", listeners[1]);
-		
-		bp.removeBreakpointListener("c");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(1, listeners.length);
-		assertEquals("b", listeners[0]);
-		
-		bp.removeBreakpointListener("b");
-		listeners = bp.getBreakpointListeners();
-		assertEquals(0, listeners.length);
-
+		try {
+			String typeName = "HitCountLooper";
+			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+			
+			String[] listeners = bp.getBreakpointListeners();
+			assertEquals(0, listeners.length);
+			
+			bp.addBreakpointListener("a");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(1, listeners.length);
+			assertEquals("a", listeners[0]);
+			
+			bp.addBreakpointListener("b");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(2, listeners.length);
+			assertEquals("a", listeners[0]);
+			assertEquals("b", listeners[1]);
+			
+			bp.addBreakpointListener("c");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(3, listeners.length);
+			assertEquals("a", listeners[0]);
+			assertEquals("b", listeners[1]);
+			assertEquals("c", listeners[2]);
+			
+			bp.removeBreakpointListener("a");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(2, listeners.length);
+			assertEquals("b", listeners[0]);
+			assertEquals("c", listeners[1]);
+			
+			bp.removeBreakpointListener("c");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(1, listeners.length);
+			assertEquals("b", listeners[0]);
+			
+			bp.removeBreakpointListener("b");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(0, listeners.length);
+		} finally {
+			removeAllBreakpoints();
+		}
 	}
+	
+	/**
+	 * Tests addition of duplicate breakpoint listeners to a breakpoint.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddDuplicateListeners() throws Exception {
+		try {
+			String typeName = "HitCountLooper";
+			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+			
+			String[] listeners = bp.getBreakpointListeners();
+			assertEquals(0, listeners.length);
+			
+			bp.addBreakpointListener("a");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(1, listeners.length);
+			assertEquals("a", listeners[0]);
+			
+			bp.addBreakpointListener("a");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(1, listeners.length);
+			assertEquals("a", listeners[0]);		
+			
+			bp.addBreakpointListener("b");
+			listeners = bp.getBreakpointListeners();
+			assertEquals(2, listeners.length);
+			assertEquals("a", listeners[0]);
+			assertEquals("b", listeners[1]);
+		} finally {
+			removeAllBreakpoints();
+		}
+	}	
+	
+	/**
+	 * Tests that listeners can be retrieved after breakpoint deletion.
+	 * 
+	 * @throws Exception
+	 */
+	public void testGetListenersAfterDelete() throws Exception {
+		try {
+			String typeName = "HitCountLooper";
+			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
+			
+			String[] listeners = bp.getBreakpointListeners();
+			assertEquals(0, listeners.length);
+			
+			bp.addBreakpointListener("a");
+			bp.addBreakpointListener("b");
+			
+			listeners = bp.getBreakpointListeners();
+			assertEquals(2, listeners.length);
+			assertEquals("a", listeners[0]);
+			assertEquals("b", listeners[1]);
+			
+			bp.delete();
+			listeners = bp.getBreakpointListeners();
+			assertEquals(2, listeners.length);
+			assertEquals("a", listeners[0]);
+			assertEquals("b", listeners[1]);
+			
+		} finally {
+			removeAllBreakpoints();
+		}
+	}		
+	
+	/**
+	 * Tests a breakpoint listener extension gets removal notification when the underlying
+	 * marker is deleted.
+	 */
+	public void testRemovedNotification() throws Exception {
+		String typeName = "HitCountLooper";
+		final IJavaLineBreakpoint bp = createLineBreakpoint(17, typeName);
+		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
+		EvalualtionBreakpointListener.reset();
+		EvalualtionBreakpointListener.VOTE = SUSPEND;
+			
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			assertTrue(EvalualtionBreakpointListener.HIT);			
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					bp.getMarker().delete();
+					getJavaProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+				}
+			};
+			ResourcesPlugin.getWorkspace().run(runnable, null);
+			synchronized (EvalualtionBreakpointListener.REMOVE_LOCK) {
+				if (!EvalualtionBreakpointListener.REMOVED) {
+					EvalualtionBreakpointListener.REMOVE_LOCK.wait(10000);
+					if (!EvalualtionBreakpointListener.REMOVED) {
+						System.out.println("oops");
+					}
+				}
+			}
+			assertTrue(EvalualtionBreakpointListener.REMOVED);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}					
+	}	
 	
 }

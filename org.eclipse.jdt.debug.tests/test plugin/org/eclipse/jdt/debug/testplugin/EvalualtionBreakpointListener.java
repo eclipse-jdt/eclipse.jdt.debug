@@ -49,6 +49,11 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	public static boolean HIT = false;
 	
 	/**
+	 * Whether removed
+	 */
+	public static boolean REMOVED = false;
+	
+	/**
 	 * Expression to evaluate when hit
 	 */
 	public static String EXPRESSION;
@@ -69,6 +74,11 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	public static List COMPILATION_ERRORS = new ArrayList();
 	
 	/**
+	 * Lock used to notify when a notification is received.
+	 */
+	public static Object REMOVE_LOCK = new Object();
+	
+	/**
 	 * List of breakpoints with runtime errors
 	 */
 	public static List RUNTIME_ERRORS = new ArrayList();
@@ -79,6 +89,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 		PROJECT = null;
 		RESULT = null;
 		HIT = false;
+		REMOVED = false;
 		COMPILATION_ERRORS.clear();
 		RUNTIME_ERRORS.clear();
 	}
@@ -116,24 +127,26 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 		HIT = true;
 		final Object lock = new Object();
 		RESULT = null;
-		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(PROJECT, (IJavaDebugTarget) thread.getDebugTarget());
-		IEvaluationListener listener = new IEvaluationListener(){
-			public void evaluationComplete(IEvaluationResult result) {
-				RESULT = result;
-				synchronized (lock) {
-					lock.notifyAll();
+		if (PROJECT != null && EXPRESSION != null) {
+			IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(PROJECT, (IJavaDebugTarget) thread.getDebugTarget());
+			IEvaluationListener listener = new IEvaluationListener(){
+				public void evaluationComplete(IEvaluationResult result) {
+					RESULT = result;
+					synchronized (lock) {
+						lock.notifyAll();
+					}
 				}
+			};
+			try {
+				synchronized (lock) {
+					engine.evaluate(EXPRESSION, (IJavaStackFrame) thread.getTopStackFrame(), listener, DebugEvent.EVALUATION_IMPLICIT, false);
+					lock.wait(AbstractDebugTest.DEFAULT_TIMEOUT);
+				}
+			} catch (DebugException e) {
+				throw new AssertionFailedError(e.getStatus().getMessage());
+			} catch (InterruptedException e) {
+				throw new AssertionFailedError(e.getMessage());
 			}
-		};
-		try {
-			synchronized (lock) {
-				engine.evaluate(EXPRESSION, (IJavaStackFrame) thread.getTopStackFrame(), listener, DebugEvent.EVALUATION_IMPLICIT, false);
-				lock.wait(AbstractDebugTest.DEFAULT_TIMEOUT);
-			}
-		} catch (DebugException e) {
-			throw new AssertionFailedError(e.getStatus().getMessage());
-		} catch (InterruptedException e) {
-			throw new AssertionFailedError(e.getMessage());
 		}
 		return VOTE;
 	}
@@ -148,6 +161,10 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
 	public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		REMOVED = true;
+		synchronized (REMOVE_LOCK) {
+			REMOVE_LOCK.notifyAll();
+		}
 	}
 
 	/* (non-Javadoc)

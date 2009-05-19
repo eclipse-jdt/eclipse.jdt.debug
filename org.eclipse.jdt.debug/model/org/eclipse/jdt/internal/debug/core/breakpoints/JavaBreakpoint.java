@@ -143,6 +143,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected List fInstanceFilters = null;
 	
 	/**
+	 * List of breakpoint listener identifiers corresponding to breakpoint
+	 * listener extensions. Listeners are cached with the breakpoint object
+	 * such that they can be notified when a breakpoint is removed.
+	 */
+	private List fBreakpointListenerIds = null;
+	
+	/**
 	 * Empty instance filters array.
 	 */
 	protected static final IJavaObject[] fgEmptyInstanceFilters = new IJavaObject[0];
@@ -841,6 +848,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			String[] strAttributes= new String[attributes.size()];
 			setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
 		}
+		String[] listeners = readBreakpointListeners();
+		if (listeners.length > 0) {
+			fBreakpointListenerIds = new ArrayList();
+			for (int i = 0; i < listeners.length; i++) {
+				fBreakpointListenerIds.add(listeners[i]);
+			}
+		}
 	}	
 
 	/* (non-Javadoc)
@@ -1214,45 +1228,40 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#addBreakpointListener(java.lang.String)
 	 */
-	public void addBreakpointListener(String identifier) throws CoreException {
-		String value = ensureMarker().getAttribute(BREAKPOINT_LISTENERS, (String) null);
-		if (value == null) {
-			value = identifier;
-		} else {
-			StringBuffer buf = new StringBuffer(value);
-			buf.append(","); //$NON-NLS-1$
-			buf.append(identifier);
-			value = buf.toString();
+	public synchronized void addBreakpointListener(String identifier) throws CoreException {
+		if (fBreakpointListenerIds == null) {
+			fBreakpointListenerIds = new ArrayList();
 		}
-		setAttribute(BREAKPOINT_LISTENERS, value);
+		if (!fBreakpointListenerIds.contains(identifier)) {
+			fBreakpointListenerIds.add(identifier);
+			writeBreakpointListeners();
+		}
+	}
+	
+	/**
+	 * Writes the current breakpoint listener collection to the underlying marker.
+	 * 
+	 * @throws CoreException
+	 */
+	private void writeBreakpointListeners() throws CoreException {
+		StringBuffer buf = new StringBuffer();
+		Iterator iterator = fBreakpointListenerIds.iterator();
+		while (iterator.hasNext()) {
+			buf.append((String)iterator.next());
+			if (iterator.hasNext()) {
+				buf.append(","); //$NON-NLS-1$
+			}
+		}
+		setAttribute(BREAKPOINT_LISTENERS, buf.toString());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#removeBreakpointListener(java.lang.String)
 	 */
-	public boolean removeBreakpointListener(String identifier) throws CoreException {
-		String value = ensureMarker().getAttribute(BREAKPOINT_LISTENERS, (String) null);
-		if (value != null) {
-			String[] ids = value.split(","); //$NON-NLS-1$
-			List list = new ArrayList(ids.length);
-			for (int i = 0; i < ids.length; i++) {
-				list.add(ids[i]);
-			}
-			if (list.remove(identifier)) {
-				if (list.isEmpty()) {
-					setAttribute(BREAKPOINT_LISTENERS, null);
-				} else {
-					StringBuffer buf = new StringBuffer();
-					Iterator iterator = list.iterator();
-					while (iterator.hasNext()) {
-						String id = (String) iterator.next();
-						buf.append(id);
-						if (iterator.hasNext()) {
-							buf.append(","); //$NON-NLS-1$
-						}
-					}
-					setAttribute(BREAKPOINT_LISTENERS, buf.toString());
-				}
+	public synchronized boolean removeBreakpointListener(String identifier) throws CoreException {
+		if (fBreakpointListenerIds != null) {
+			if (fBreakpointListenerIds.remove(identifier)) {
+				writeBreakpointListeners();
 				return true;
 			}
 		}
@@ -1262,11 +1271,25 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#getBreakpointListeners()
 	 */
-	public String[] getBreakpointListeners() throws CoreException {
+	public synchronized String[] getBreakpointListeners() throws CoreException {
+		// use the cache in case the underlying marker has been deleted
+		if (fBreakpointListenerIds == null) {
+			return new String[0];
+		}
+		return (String[]) fBreakpointListenerIds.toArray(new String[fBreakpointListenerIds.size()]);
+	}
+	
+	/**
+	 * Reads breakpoint listeners from the underlying marker.
+	 * 
+	 * @return breakpoint listener identifiers stored in this breakpoint's marker
+	 * @throws CoreException if no marker
+	 */
+	private String[] readBreakpointListeners() throws CoreException {
 		String value = ensureMarker().getAttribute(BREAKPOINT_LISTENERS, (String) null);
 		if (value == null) {
 			return new String[0];
 		}
 		return value.split(","); //$NON-NLS-1$
-	}
+	} 
 }

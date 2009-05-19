@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -921,7 +922,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		Map map = getExtraBreakpointAttributes(member);
-		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, map);		
+		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, map);
+		forceDeltas(bp);
+		return bp;
+	}
+	
+	/**
+	 * Forces marker deltas to be sent based on breakpoint creation.
+	 * 
+	 * @param breakpoint
+	 */
+	private void forceDeltas(IBreakpoint breakpoint) throws CoreException {
+		IProject project = breakpoint.getMarker().getResource().getProject();
+		if (project != null) {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		}
 	}
 	
 	/**
@@ -1064,7 +1079,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		Map map = getExtraBreakpointAttributes(method);
-		return JDIDebugModel.createMethodBreakpoint(resource, typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+		IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(resource, typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+		forceDeltas(bp);
+		return bp;
 	}	
 	
 	/**
@@ -1091,7 +1108,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		Map map = getExtraBreakpointAttributes(method);
-		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+		IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
+		forceDeltas(bp);
+		return bp;
 	}
 		
 
@@ -1128,7 +1147,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("did not find type to install breakpoint in", methodParent); //$NON-NLS-1$
 				
 		Map map = getExtraBreakpointAttributes(targetMethod);
-		return JDIDebugModel.createMethodBreakpoint(getBreakpointResource(methodParent), methodParent.getFullyQualifiedName(),targetMethod.getElementName(), targetMethod.getSignature(), entry, exit,false, -1, -1, -1, 0, true, map);
+		IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(getBreakpointResource(methodParent), methodParent.getFullyQualifiedName(),targetMethod.getElementName(), targetMethod.getSignature(), entry, exit,false, -1, -1, -1, 0, true, map);
+		forceDeltas(bp);
+		return bp;
 	}		
 	
 	/**
@@ -1204,7 +1225,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
 		}
 		Map map = getExtraBreakpointAttributes(type);
-		return JDIDebugModel.createClassPrepareBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), kind, -1, -1, true, map);		
+		IJavaClassPrepareBreakpoint bp = JDIDebugModel.createClassPrepareBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), kind, -1, -1, true, map);
+		forceDeltas(bp);
+		return bp;
 	}
 	
 	/**
@@ -1242,7 +1265,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws Exception {
 		IType type = getType(exName);
 		Map map = getExtraBreakpointAttributes(type);
-		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(type),exName, caught, uncaught, false, true, map);
+		IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(type),exName, caught, uncaught, false, true, map);
+		forceDeltas(bp);
+		return bp;
 	}
 	
 	/**
@@ -1338,6 +1363,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(type), type.getFullyQualifiedName(), fieldName, -1, -1, -1, 0, true, map);
 		wp.setAccess(access);
 		wp.setModification(modification);
+		forceDeltas(wp);
 		return wp;
 	}	
 		
