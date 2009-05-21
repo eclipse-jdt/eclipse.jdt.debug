@@ -11,7 +11,9 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -188,13 +190,16 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		try {
 			IJavaVariable[] localsVar = context.getLocals();
 			int numLocalsVar= localsVar.length;
+			Set names = new HashSet();
 			// ******
 			// to hide problems with local variable declare as instance of Local Types
+			// and to remove locals with duplicate names
 			IJavaVariable[] locals= new IJavaVariable[numLocalsVar];
 			int numLocals= 0;
 			for (int i = 0; i < numLocalsVar; i++) {
-				if (!isLocalType(localsVar[i].getSignature())) {
+				if (!isLocalType(localsVar[i].getSignature()) && !names.contains(localsVar[i].getName())) {
 					locals[numLocals++]= localsVar[i];
+					names.add(localsVar[i].getName());
 				}
 			}
 			// to solve and remove
