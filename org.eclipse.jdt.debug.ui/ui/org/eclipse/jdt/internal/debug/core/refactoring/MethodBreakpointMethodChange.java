@@ -60,7 +60,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 				isEntry(),
 				isExit(),
 				isNativeOnly(),
-				-1,
+				NO_LINE_NUMBER,
 				range[1],
 				range[2],
 				getHitCount(), 

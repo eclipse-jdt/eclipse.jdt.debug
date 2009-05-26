@@ -67,7 +67,7 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 				resource,
 				getDestinationType().getFullyQualifiedName(),
 				destinationField.getElementName(),
-				range[0],
+				NO_LINE_NUMBER,
 				range[1],
 				range[2],
 				getHitCount(),

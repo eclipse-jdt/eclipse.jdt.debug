@@ -57,7 +57,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 				resource,
 				fDestField.getDeclaringType().getFullyQualifiedName(),
 				fDestField.getElementName(),
-				range[0],
+				NO_LINE_NUMBER,
 				range[1],
 				range[2],
 				getHitCount(),

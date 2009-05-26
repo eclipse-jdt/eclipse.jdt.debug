@@ -42,6 +42,13 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  */
 public abstract class BreakpointChange extends Change {
 	
+	/**
+	 * constant for no line number
+	 * 
+	 * @since 3.5
+	 */
+	protected static final int NO_LINE_NUMBER = -1;
+	
 	private IJavaBreakpoint fBreakpoint;
 	private String fTypeName;
 	private int fHitCount;
