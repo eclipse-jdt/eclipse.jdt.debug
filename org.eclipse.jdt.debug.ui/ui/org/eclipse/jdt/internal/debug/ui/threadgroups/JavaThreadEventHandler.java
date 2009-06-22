@@ -224,7 +224,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 						if (event.getKind() == DebugEvent.SUSPEND) {
 							try {
 								IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
-								if (frame.getDeclaringTypeName().startsWith("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) { //$NON-NLS-1$
+								if (frame == null || frame.getDeclaringTypeName().startsWith("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain")) { //$NON-NLS-1$
 									return false;
 								}
 							} catch (DebugException e) {
