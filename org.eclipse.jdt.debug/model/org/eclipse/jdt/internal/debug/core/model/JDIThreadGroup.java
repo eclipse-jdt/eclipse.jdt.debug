@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @since 3.2
@@ -59,6 +60,9 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 				}
 			}
 			return (IJavaThread[]) modelThreads.toArray(new IJavaThread[modelThreads.size()]);
+		} catch (VMDisconnectedException e) {
+			// terminated/disconnected, return empty collection
+			return new IJavaThread[0];
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIThreadGroup_0, e);
 		}
@@ -96,6 +100,8 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 				}
 			}
 			return (IJavaThreadGroup[]) modelGroups.toArray(new IJavaThreadGroup[modelGroups.size()]);
+		} catch (VMDisconnectedException e) {
+			return new IJavaThreadGroup[0];
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIThreadGroup_2, e);
 		}
