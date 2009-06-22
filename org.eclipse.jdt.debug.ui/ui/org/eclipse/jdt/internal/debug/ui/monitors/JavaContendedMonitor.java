@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,8 +161,12 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		if(getOwningThread() != null) {
-			return getOwningThread().getThread().getOriginalThread().canResume();
+		JavaOwningThread owningThread = getOwningThread();
+		if(owningThread != null) {
+			IThread originalThread = owningThread.getThread().getOriginalThread();
+			if (originalThread != null) {
+				return originalThread.canResume();
+			}
 		}
 		return false;
 	}
@@ -178,8 +182,12 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
-		if(getOwningThread() != null) {
-			return getOwningThread().getThread().getOriginalThread().isSuspended();
+		JavaOwningThread owningThread = getOwningThread();
+		if(owningThread != null) {
+			IThread originalThread = owningThread.getThread().getOriginalThread();
+			if (originalThread != null) {
+				return originalThread.isSuspended();
+			}
 		}
 		return false;
 	}
