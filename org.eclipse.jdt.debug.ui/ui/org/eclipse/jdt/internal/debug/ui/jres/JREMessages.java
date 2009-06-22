@@ -106,6 +106,8 @@ public class JREMessages extends NLS {
 
 	public static String EEVMPage_2;
 
+	public static String EEVMPage_3;
+
 	public static String EEVMPage_4;
 
 	public static String EEVMPage_5;
@@ -150,6 +152,8 @@ public class JREMessages extends NLS {
 	public static String StandardVMPage_1;
 
 	public static String StandardVMPage_2;
+
+	public static String StandardVMPage_3;
 
 	public static String JREProfilesPreferencePage_0;
 

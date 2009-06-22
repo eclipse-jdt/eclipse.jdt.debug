@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -27,10 +28,12 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -100,7 +103,10 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		fVMName = SWTFactory.createSingleText(composite, 2);
 	//VM arguments
 		SWTFactory.createLabel(composite, JREMessages.AddVMDialog_23, 1);
-		fVMArgs = SWTFactory.createSingleText(composite, 2);
+		fVMArgs = SWTFactory.createSingleText(composite, 1);
+		Button variables = SWTFactory.createPushButton(composite, JREMessages.StandardVMPage_3, null);
+		data = (GridData) variables.getLayoutData();
+		data.horizontalAlignment = GridData.END;
 	//VM libraries block 
 		SWTFactory.createLabel(composite, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
 		fLibraryBlock = new VMLibraryBlock();
@@ -137,6 +143,17 @@ public class StandardVMPage extends AbstractVMInstallPage {
 				String newPath = dialog.open();
 				if (newPath != null) {
 					fJRERoot.setText(newPath);
+				}
+			}
+		});
+		variables.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				if (dialog.open() == Window.OK) {
+					String expression = dialog.getVariableExpression();
+					if (expression != null) {
+						fVMArgs.insert(expression);
+					}
 				}
 			}
 		});

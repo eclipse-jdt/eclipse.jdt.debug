@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,13 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Abstract implementation of a VM runner.
@@ -130,6 +133,15 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		String[] vmVMArgs = vmInstall.getVMArguments();
 		if (vmVMArgs == null || vmVMArgs.length == 0) {
 			return launchVMArgs;
+		}
+		// string substitution
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		for (int i = 0; i < vmVMArgs.length; i++) {
+			try {
+				vmVMArgs[i] = manager.performStringSubstitution(vmVMArgs[i], false);
+			} catch (CoreException e) {
+				LaunchingPlugin.log(e.getStatus());
+			}
 		}
 		String[] allVMArgs = new String[launchVMArgs.length + vmVMArgs.length];
 		System.arraycopy(launchVMArgs, 0, allVMArgs, 0, launchVMArgs.length);
