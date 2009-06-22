@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,14 @@ import org.eclipse.jdt.debug.core.IJavaArray;
 /**
  * Pops an array object off the stack, and pushes its length.
  */
-public class PushArrayLength extends CompoundInstruction {
+public class PushArrayLength extends ArrayAccess {
 	
 	public PushArrayLength(int start) {
 		super(start);
 	}
 	
 	public void execute() throws CoreException {
-		IJavaArray receiver= (IJavaArray)popValue();
-		
+		IJavaArray receiver= popArray();
 		int length= receiver.getLength();
 		pushNewValue(length);
 	}

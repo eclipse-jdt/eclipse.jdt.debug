@@ -34,24 +34,35 @@ public class ArrayAccess extends ArrayInstruction {
 	
 	public void execute() throws CoreException {
 		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
+		IJavaArray array = popArray();
+		if (index >= array.getLength() || index < 0) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index, new Object[] {new Integer(index)}), null)); 
+		}
+		push(array.getVariable(index));
+	}
+
+	public String toString() {
+		return InstructionsEvaluationMessages.ArrayAccess_array_access_1; 
+	}
+	
+	/**
+	 * Pops an array object off the top of the stack. Throws an exception if not an array
+	 * object or <code>null</code>.
+	 * 
+	 * @return array object on top of the stack
+	 * @throws CoreException if not available
+	 */
+	protected IJavaArray popArray() throws CoreException {
 		IJavaValue value = popValue();
 		if (value instanceof IJavaArray) {
-			IJavaArray array = (IJavaArray)value;
-			if (index >= array.getLength() || index < 0) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index, new Object[] {new Integer(index)}), null)); 
-			}
-			push(array.getVariable(index));
+			return (IJavaArray)value;
 		} else if (value.isNull()) {
 			// null pointer
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.ArrayAccess_0, null));
 		} else {
 			// internal error
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, "Internal error: attempt to access index of non-array object", null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, "Internal error: attempt to access non-array object", null)); //$NON-NLS-1$
 		}
-	}
-
-	public String toString() {
-		return InstructionsEvaluationMessages.ArrayAccess_array_access_1; 
 	}
 }
 
