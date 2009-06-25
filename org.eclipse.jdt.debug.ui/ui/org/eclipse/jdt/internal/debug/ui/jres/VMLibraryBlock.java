@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,6 +243,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent e) {
+		boolean completed = true; 
 		Object source= e.getSource();
 		if (source == fUpButton) {
 			fLibraryContentProvider.up((IStructuredSelection) fLibraryViewer.getSelection());
@@ -251,7 +252,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		} else if (source == fRemoveButton) {
 			fLibraryContentProvider.remove((IStructuredSelection) fLibraryViewer.getSelection());
 		} else if (source == fAddButton) {
-			add((IStructuredSelection) fLibraryViewer.getSelection());
+			completed = add((IStructuredSelection) fLibraryViewer.getSelection());
 		} 
 		else if(source == fJavadocButton) {
 			edit((IStructuredSelection) fLibraryViewer.getSelection(), SubElement.JAVADOC_URL);
@@ -262,7 +263,9 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		else if (source == fDefaultButton) {
 			restoreDefaultLibraries();
 		}
-		update();
+		if (completed) {
+			update();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -271,9 +274,10 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	public void widgetDefaultSelected(SelectionEvent e) {}
 
 	/**
-	 * Open the file selection dialog, and add the return jars as libraries.
+	 * Adds external libraries to the JRE. Returns <code>true</code> if successful and
+	 * <code>false</code> if canceled.
 	 */
-	private void add(IStructuredSelection selection) {
+	private boolean add(IStructuredSelection selection) {
 		IDialogSettings dialogSettings= JDIDebugUIPlugin.getDefault().getDialogSettings();
 		String lastUsedPath= dialogSettings.get(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
@@ -285,7 +289,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();
 		if (res == null) {
-			return;
+			return false;
 		}
 		String[] fileNames= dialog.getFileNames();
 		int nChosen= fileNames.length;
@@ -298,6 +302,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		dialogSettings.put(LAST_PATH_SETTING, filterPath.toOSString());
 		
 		fLibraryContentProvider.add(libs, selection);
+		return true;
 	}
 
 	/**
