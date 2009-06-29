@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.refactoring;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +39,10 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		super(name);
 	}
 	
+	/**
+	 * Clean up all the test files
+	 * @throws CoreException
+	 */
 	protected void cleanTestFiles() throws CoreException {
 		IWorkspaceRunnable cleaner = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -52,86 +57,80 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		ResourcesPlugin.getWorkspace().run(cleaner, null);
 	}
 
+	/**
+	 * Cleans up refactored files and reverts the source.
+	 * @throws Exception
+	 */
 	private void doClean() throws Exception {
-		// ensure proper packages
-		// cleanup new Package
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(),
-				"src");
+		IProject project = getJavaProject().getProject();
+		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
 		IPackageFragment fragment = root.getPackageFragment("renamedPackage");
-		if (fragment.exists())
+		if (fragment.exists()) {
 			fragment.delete(true, new NullProgressMonitor());
-
+		}
 		fragment = root.getPackageFragment("a.b.c");
-		if (!fragment.exists())
-			root
-					.createPackageFragment("a.b.c", true,
-							new NullProgressMonitor());
+		if (!fragment.exists()) {
+			root.createPackageFragment("a.b.c", true, new NullProgressMonitor());
+		}
+		
+	// cleanup MoveeSource / Movee.java
+		IFile target = project.getFile("src/a/b/Movee.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		target = project.getFile("src/a/b/c/Movee.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		IFile source = project.getFile("src/a/MoveeSource");// no .java - it's a bin
+		source.copy(target.getFullPath(), true, null);
 
-		// cleanup Movee
-		IFile target = getJavaProject().getProject().getFile(
-				"src/a/b/Movee.java");
-		if (target.exists())
-			target.delete(false, false, null);
-		target = getJavaProject().getProject().getFile("src/a/b/c/Movee.java");// move
-																				// up a
-																				// dir
-		if (target.exists())
-			target.delete(false, false, null);
-		// get original source & replace old result
-		IFile source = getJavaProject().getProject().getFile(
-				"src/a/MoveeSource");// no .java - it's a bin
-		source.copy(target.getFullPath(), false, null);
-
-		// cleanup moveeRecipient
-		target = getJavaProject().getProject().getFile(
-				"src/a/b/MoveeRecipient.java");// move up a dir
-		if (target.exists())
-			target.delete(false, false, null);
-		// get original source & replace old result
-		source = getJavaProject().getProject().getFile(
-				"src/a/MoveeRecipientSource");// no .java - it's a bin
-		source.copy(target.getFullPath(), false, null);
-
-		// cleanup renamedType
-		target = getJavaProject().getProject().getFile(
-				"src/a/b/c/RenamedType.java");// move up a dir
-		if (target.exists())
-			target.delete(false, false, null);
-		// cleanup renamedType
-		target = getJavaProject().getProject().getFile(
-				"src/a/b/c/RenamedCompilationUnit.java");// move up a dir
-		if (target.exists())
-			target.delete(false, false, null);
-
-		// cleanup child
-		target = getJavaProject().getProject().getFile(
-				"src/a/b/MoveeChild.java");// move up a dir
-		if (target.exists())
-			target.delete(false, false, null);
-		target = getJavaProject().getProject().getFile(
-				"src/a/b/c/MoveeChild.java");// move up a dir
-		if (target.exists())
-			target.delete(false, false, null);
-		// get original source & replace old result
-		source = getJavaProject().getProject()
-				.getFile("src/a/MoveeChildSource");// no .java - it's a bin
-		source.copy(target.getFullPath(), false, null);
+	// cleanup MoveeRecipientSource / MoveeRecipient.java
+		target = project.getFile("src/a/b/MoveeRecipient.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		source = project.getFile("src/a/MoveeRecipientSource");// no .java - it's a bin
+		source.copy(target.getFullPath(), true, null);
+		target = project.getFile("src/a/b/c/RenamedType.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		target = project.getFile("src/a/b/c/RenamedCompilationUnit.java");// move up a dir
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		
+	// cleanup MoveeChildSource / MoveeChild.java
+		target = project.getFile("src/a/b/MoveeChild.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		target = project.getFile("src/a/b/c/MoveeChild.java");
+		if (target.exists()) {
+			target.delete(true, false, null);
+		}
+		source = project.getFile("src/a/MoveeChildSource");// no .java - it's a bin
+		source.copy(target.getFullPath(), true, null);
 	}
 
+	/**
+	 * Wait until the search index is ready
+	 */
 	protected static void waitUntilIndexesReady() {
 		// dummy query for waiting until the indexes are ready
 		SearchEngine engine = new SearchEngine();
 		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
 		try {
-			engine.searchAllTypeNames(null, "!@$#!@".toCharArray(),
-					SearchPattern.R_PATTERN_MATCH
-							| SearchPattern.R_CASE_SENSITIVE,
-					IJavaSearchConstants.CLASS, scope, new TypeNameRequestor() {
-						public void acceptType(int modifiers,
-								char[] packageName, char[] simpleTypeName,
-								char[][] enclosingTypeNames, String path) {
-						}
-					}, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+			engine.searchAllTypeNames(null, 
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE, 
+					"!@$#!@".toCharArray(), 
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE, 
+					IJavaSearchConstants.CLASS, 
+					scope, 
+					new TypeNameRequestor() {}, 
+					IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, 
+					null);
 		} catch (CoreException e) {
 		}
 	}
