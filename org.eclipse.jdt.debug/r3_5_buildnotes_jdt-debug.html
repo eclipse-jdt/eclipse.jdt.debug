@@ -1,0 +1,156 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Java Debug Release Notes</title>
+</head>
+<body>
+<h1>Eclipse 3.5 Java Debug Build Notes</h1>
+
+<h2>Summary of API changes in 3.5</h2>
+<h3>Configurable problem severity when a compatible JRE cannot be bound to specified execution environment </h3>
+<p><strong>Description:</strong> In release 3.4 and earlier, when a project was bound to an execution environment (for example, J2SE-1.4), and the workspace did not have a strictly compatible JRE installed (for example, only a J2SE-1.5 JRE was available), a build path problem with a warning severity was issued. Since 3.5, API has been added to allow the severity of the problem to be ignored, a warning, or an error. See the newly added constants in JavaRuntime: <code>PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE</code>, <code>VALUE_IGNORE</code>, <code>VALUE_WARNING</code>, and <code>VALUE_ERROR</code>.</p>
+<h3>OSGi Profile Properties for IExecutionEnvironment </h3>
+<p><strong>What is affected:</strong> Clients contributing an execution environment can provide an associated OSGi system profile properties file. </p>
+<p><strong>Description:</strong> In release 3.4 and earlier, clients could contribute an execution environment, but when that environment was bound to a build path for a plug-in project, default compiler compliance settings were not set appropriately. Since 3.5, clients may specify an OSGi system profile properties file with an execution environment. The properties file provides information about system packages, default source and target compiler settings, etc. When provided, tooling will be able to leverage the information to create default access rules for system packages and properly set default compiler compliance settings for projects bound to the contributed environment. See the newly added method <code>IExecutionEnvironment.getProfileProperties()</code> and the new extension point attribute <code>profileProperties</code>.</p>
+<p><strong>Action required:</strong> Clients contributing an execution environment should provide an associated OSGi system profile properties file. </p>
+<h3>API to read execution environment description files </h3>
+<p><strong>Description:</strong> An API has been added to support reading of <a href="http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions">execution environment description files</a>. The class <code>ExecutionEnvironmentDescription</code> has been added to the <code>org.eclipse.jdt.launching.environments</code> package. The new class provides access to the properties in description files as well as convenience methods to generate descriptions of the system libraries assocaited with a description. </p>
+<h3>API to set/get stepping behavior with step filters </h3>
+<p><strong>Description:</strong> An API has been added to set/get the stepping behavior associated with step filters. This allows clients to programmatically set what happens when a step lands in a filtered location. The target can be configured to step through to an unfiltered location or return the location where the step originated. The following methods has been added to <code>IJavaDebugTarget</code>: <code>setStepThruFilters(boolean)</code> and <code>isStepThruFilters()</code>. </p>
+
+<h2>May 21, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=268241">Bug 268241</a>: [breakpoint][refactor]  Saving file causes refactored breakpoint to be removed<br>
+
+<h2>May 21, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=277187">Bug 277187</a>: [evaluation] duplicate named synthetic local variables cause expression evaluation error<br>
+
+<h2>May 11, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=275486">Bug 275486</a>: NPE while debugging.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=265037">Bug 265037</a>: Deadlock in the debugger<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=273633">Bug 273633</a>: JDIObjectValue / IJavaClassType classcast in inspect / display<br>
+
+<h2>May 5, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=273858">Bug 273858</a>: Edit and Remove buttons incorrectly enabled<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=273656">Bug 273656</a>: Generated launch configuration has no name if anonymous class is instantiated in main<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=274727">Bug 274727</a>: [launching] Debug Configurations dialog is slow when network is down<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=274552">Bug 274552</a>: Can end up with empty target when thread groups are on<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=273845">Bug 273845</a>: quick fix for &quot;no compatible JREs installed in the workspace&quot;<br>
+
+<h2>April 21, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=272494">Bug 272494</a>: Debug view shows stale threads<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=272508">Bug 272508</a>: Many com.sun.jdi.ObjectCollectedException recently<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=271785">Bug 271785</a>: Migrate compilation error/uncaught exception handling to breakpoint listener extension<br>
+
+<h2>March 24, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=269273">Bug 269273</a>: updating "show in context" looks  up source agressively<br>
+
+<h2>March 17, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=268241">Bug 268241</a>: [breakpoint][refactor]  Saving file causes refactored breakpoint to be removed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=268393">Bug 268393</a>: Debugger not letting me change value on null String<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=268104">Bug 268104</a>: Launch config: JRE tab should show project's EE<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=268238">Bug 268238</a>: JDT doesn't know that it has stopped at a class load breakpoint<br>
+
+<h2>March 10, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=258845">Bug 258845</a>: Launch configs fail with "Source attachment path '...' for IClasspathEntry must be absolute"<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=258119">Bug 258119</a>: [64] no JRE detected on x86_64<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=267060">Bug 267060</a>: Add API for IJavaValue.isNull()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=260910">Bug 260910</a>: Ability to contribute actions to be run whenever a java breakpoint is hit<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=265871">Bug 265871</a>: IOException from VM not suppressed for conditional breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=77737">Bug 77737</a>: No templates in code assist in debug pseudo editors<br>
+
+<h2>February 17, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=265115">Bug 265115</a>: Make EE first in JRE container wizard page<br>
+
+<h2>February 10, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=234425">Bug 234425</a>: Only use relevant compiler options for debug evaluations<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=214130">Bug 214130</a>: Provide API support for Step Thru Filters preference<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=234425">Bug 234425</a>: Only use relevant compiler options for debug evaluations<br>
+
+<h2>3.5 M5 - January 30, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=256566">Bug 256566</a>: Possibly broken code in JDIModelPresentation.isObjectValue(String)<br>
+
+<h2>January 20, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=260834">Bug 260834</a>: [doc] breakpoint conditions are arbitrary expression evals<br>
+
+<h2>January 13, 2009</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=260402">Bug 260402</a>: Conflits during JRE's import are not solved correctly.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=260445">Bug 260445</a>: Deadlock in JavaRuntime.initializeVMs<br>
+
+<h2>December 16, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=254994">Bug 254994</a>: Improve message regarding compatible JREs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=256568">Bug 256568</a>: Possibly broken code in JDTDebugRefactoringUtil.createChangesForOuterTypeChange(ILaunchConfiguration, IType, String, String)<br>
+
+<h2>Milestone 4 - December 9, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=236296">Bug 236296</a>: update the classpath settings feature sets wrong project compiler compliance level<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=212605">Bug 212605</a>: [launching] Mac OS X launcher should not hide the necessary -XstartOnFirstThread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=257466">Bug 257466</a>: Hot Code Replace Fail dlg has two buttons with _D_<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=258560">Bug 258560</a>: API to retrieve properties from ee definition files<br>
+
+<h2>November 18, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=255031">Bug 255031</a>: Missing EEs prevent project to build<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=255381">Bug 255381</a>: Inconsistent Default Filtered resources<br>
+
+<h2>November 11, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=253022">Bug 253022</a>: Suppport for new OSGi/Minimum-1.2 Execution environment<br>
+
+<h2>November 4, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=252521">Bug 252521</a>: VM Disconnection exception when program terminates with thread group turned on<br>
+
+<h2>October 21, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=244395">Bug 244395</a>: [refactoring] [launch config refactoring] project rename cannot undo<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=249932">Bug 249932</a>: Clean + project build does not update 'strictly match JRE' problem<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=232710">Bug 232710</a>: [breakpoints] Java breakpoint markers description icon/text missing<br>
+
+<h2>October 7, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=248466">Bug 248466</a>: Cannot launch if build path contains a &quot;..&quot; entry<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=244693">Bug 244693</a>: Default severity for missing JRE for Execution Environment should be Error<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=249490">Bug 249490</a>: JDI fails to unmarshal JDWP reply packet correctly<br>
+
+<h2>August 26, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=189486">Bug 189486</a>: Unable to retrieve system properties for 1.1.8 VM<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=245153">Bug 245153</a>: Variable references empty selection: ${java_type_name}<br>
+
+<h2>August 19, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=244285">Bug 244285</a>: An internal error occurred during: &quot;Initializing Java Tooling&quot;.<br>
+
+<h2>3.5 M1 - August 8, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=238350">Bug 238350</a>: Starting Java application (like JBoss) in debug causes NPE. Run mode works ok<br>
+
+<h2>July 8, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=239612">Bug 239612</a>: Use Ctrl+Click instead of Ctrl+Alt for 'Step Into Selection'<br>
+
+<h2>August 12, 2008</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=217752">Bug 217752</a>: [logview] provide action to open entry stack trace in console<br>
+
+<p>&nbsp;</p>
+</body>
+</html>
