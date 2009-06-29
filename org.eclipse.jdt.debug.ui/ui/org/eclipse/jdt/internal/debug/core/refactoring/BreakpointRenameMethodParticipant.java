@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,10 +47,15 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 			IBreakpoint breakpoint = getBreakpoint(marker);
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoint;
-				IType breakpointType = BreakpointUtils.getType(methodBreakpoint);
-				if (breakpointType != null && originalMethod.getDeclaringType().equals(breakpointType)) {
-					IMethod destMethod = originalMethod.getDeclaringType().getMethod(destMethodName, originalMethod.getParameterTypes());
-					changes.add(new MethodBreakpointMethodChange(methodBreakpoint, destMethod));
+				//ensure we only update the marker that corresponds to the method being renamed
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=280518
+				if(methodBreakpoint.getMethodName().equals(originalMethod.getElementName()) &&
+						methodBreakpoint.getMethodSignature().equals(originalMethod.getSignature())) {
+					IType breakpointType = BreakpointUtils.getType(methodBreakpoint);
+					if (breakpointType != null && originalMethod.getDeclaringType().equals(breakpointType)) {
+						IMethod destMethod = originalMethod.getDeclaringType().getMethod(destMethodName, originalMethod.getParameterTypes());
+						changes.add(new MethodBreakpointMethodChange(methodBreakpoint, destMethod));
+					}
 				}
 			}
 		}
