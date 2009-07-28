@@ -2310,8 +2310,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression rightOperand= node.getRightOperand();
 		int leftTypeId;
 		int rightTypeId;
-		// == case, do not un-box, if the two operands are objects
-		boolean unbox= char0 != '=' || leftOperand.resolveTypeBinding().isPrimitive() || rightOperand.resolveTypeBinding().isPrimitive();
+		boolean unbox = false;
+		// for == and != un-box when at least operand is primitive (otherwise compare the objects)
+		if ((char0 == '=' || char0 == '!') && char1 == '=') {
+			unbox = leftOperand.resolveTypeBinding().isPrimitive() || rightOperand.resolveTypeBinding().isPrimitive();
+		} else {
+			unbox = true;
+		}
 		if (unbox) {
 			leftTypeId= getUnBoxedTypeId(leftOperand);
 			rightTypeId = getUnBoxedTypeId(rightOperand);
