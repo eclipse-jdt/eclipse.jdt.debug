@@ -411,7 +411,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#setClasspathProperty(int)
+	 * @see IRuntimeClasspathEntry#getClasspathProperty(int)
 	 */
 	public int getClasspathProperty() {
 		return fClasspathProperty;
