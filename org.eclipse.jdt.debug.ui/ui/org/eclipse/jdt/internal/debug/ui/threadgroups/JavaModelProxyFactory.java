@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.threadgroups;
 
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
@@ -29,7 +30,14 @@ public class JavaModelProxyFactory implements IModelProxyFactory {
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (element instanceof IJavaDebugTarget) {
-				return new JavaDebugTargetProxy((IDebugTarget) element);
+				ILaunch launch = ((IDebugTarget) element).getLaunch();
+				Object[] children = launch.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					if (children[i] == element) {
+						// ensure the target is a visible child of the launch
+						return new JavaDebugTargetProxy((IDebugTarget) element);
+					}
+				}
 			}
 		}
 		return null;
