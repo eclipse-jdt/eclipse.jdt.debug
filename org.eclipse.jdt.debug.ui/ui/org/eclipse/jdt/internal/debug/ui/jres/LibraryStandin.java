@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.net.URL;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.launching.LibraryLocation;
 
@@ -95,7 +97,7 @@ public final class LibraryStandin {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
-				&& equalsOrNull(getJavadocLocation(), lib.getJavadocLocation());
+				&& equalURLs(getJavadocLocation(), lib.getJavadocLocation());
 		} 
 		return false;
 	}
@@ -134,6 +136,22 @@ public final class LibraryStandin {
 		return o1.equals(o2);
 	}
 
+	/**
+	 * Returns whether the given URLs are equal - either may be <code>null</code>.
+	 * @param url1 URL to be compared
+	 * @param url2 URL to be compared
+	 * @return whether the given URLs are equal
+	 */
+	protected boolean equalURLs(URL url1, URL url2) {
+		if (url1 == null) {
+			return url2 == null;
+		}
+		if (url2 == null) {
+			return false;
+		}
+		return url1.toExternalForm().equals(url2.toExternalForm());
+	}
+	
 	/**
 	 * Returns the Javadoc location associated with this Library location.
 	 * 
