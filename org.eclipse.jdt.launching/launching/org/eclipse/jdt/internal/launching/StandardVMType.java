@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Allman - Bug 211648, Bug 156343 - Standard VM not supported on MacOS
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -442,18 +443,14 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
 		IStatus status = null;
-		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
-			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Standard_VM_not_supported_on_MacOS__1, null); 
+		File javaExecutable = findJavaExecutable(javaHome);
+		if (javaExecutable == null) {
+			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //			
 		} else {
-			File javaExecutable = findJavaExecutable(javaHome);
-			if (javaExecutable == null) {
-				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_Root__Java_executable_was_not_found_1, null); //			
+			if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
+				status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null); 
 			} else {
-				if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
-					status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_ok_2, null); 
-				} else {
-					status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null); 
-				}
+				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.StandardVMType_Not_a_JDK_root__System_library_was_not_found__1, null); 
 			}
 		}
 		return status;		
