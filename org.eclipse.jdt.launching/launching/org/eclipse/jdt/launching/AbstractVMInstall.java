@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,7 +211,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			return;
 		}
 		if (url != null && fJavadocLocation != null) {
-			if (url.equals(fJavadocLocation)) {
+			if (url.toExternalForm().equals(fJavadocLocation.toExternalForm())) {
 				// no change
 				return;
 			}
