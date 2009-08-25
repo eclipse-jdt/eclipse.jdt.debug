@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,32 +10,43 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import com.sun.jdi.VMDisconnectedException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-import com.sun.jdi.VMDisconnectedException;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
 /**
  * A Utilities class.
@@ -192,7 +203,7 @@ public class JavaDebugUtils {
      * @param javaElement java element containing the type
      * @return type
      */
-    private static IType resolveType(String qualifiedName, IJavaElement javaElement) {
+    private static IType resolveType(final String qualifiedName, IJavaElement javaElement) {
     	IType type = null;
         String[] typeNames = getNestedTypeNames(qualifiedName);
         if (javaElement instanceof IClassFile) {
@@ -205,10 +216,49 @@ public class JavaDebugUtils {
         if (type != null) {
             for (int i = 1; i < typeNames.length; i++) {
                 String innerTypeName= typeNames[i];
-                try {
-                    Integer.parseInt(innerTypeName);
-                    return type;
-                } catch (NumberFormatException e) {
+                
+                class ResultException extends RuntimeException {
+					private static final long serialVersionUID= 1L;
+					private final IType fResult;
+                	public ResultException(IType result) {
+                		fResult= result;
+                	}
+                }
+                if (innerTypeName.length() > 0) {
+                	try {
+                		Integer.parseInt(innerTypeName.substring(0, 1)); // throws NFE if not an integer
+                		
+                		// perform expensive lookup for anonymous types:
+                		ASTParser parser = ASTParser.newParser(AST.JLS3);
+                		parser.setResolveBindings(true);
+                		parser.setSource(type.getTypeRoot());
+                		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+                		cu.accept(new ASTVisitor(false) {
+                			public boolean visit(AnonymousClassDeclaration node) {
+                				ITypeBinding binding = node.resolveBinding();
+                				if (binding == null)
+                					return false;
+                				if (qualifiedName.equals(binding.getBinaryName()))
+                					throw new ResultException((IType) binding.getJavaElement());
+                				return true;
+                			}
+                			public boolean visit(TypeDeclarationStatement node) {
+                				ITypeBinding binding = node.resolveBinding();
+                				if (binding == null)
+                					return false;
+                				if (qualifiedName.equals(binding.getBinaryName()))
+                					throw new ResultException((IType) binding.getJavaElement());
+                				return true;
+                			}
+                		});
+                		return type; // return enclosing type if exact type not found
+                	} catch (NumberFormatException e) {
+	                	// normal nested type, continue
+	                } catch (IllegalStateException e) {
+	                	return type; // binary class without source
+	                } catch (ResultException e) {
+	                	return e.fResult;
+	                }
                 }
                 type = type.getType(innerTypeName);
             }
