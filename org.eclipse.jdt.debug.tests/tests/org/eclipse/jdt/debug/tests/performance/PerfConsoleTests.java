@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -62,7 +62,6 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
      */
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
         tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
-        setComment("3.1 uses regex pattern matching support to detect hyperlinks.");
         runStackTrace(5000, 75); // 2 lines * 5000 repeats = 10000 lines
     }
 
