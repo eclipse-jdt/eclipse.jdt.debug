@@ -204,20 +204,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		removeCachedThreads(fCompiledExpressions, target);
 
 		// clean up cached projects for stack frames
-		Set frames= fProjectsByFrame.keySet();
-		List framesToRemove= new ArrayList();
-		Iterator iter= frames.iterator();
-		JDIStackFrame frame;
-		while (iter.hasNext()) {
-			frame= (JDIStackFrame)iter.next();
-			if (frame.getDebugTarget() == target) {
-				framesToRemove.add(frame);
+		synchronized (fProjectsByFrame) {
+			Set frames= fProjectsByFrame.keySet();
+			List framesToRemove= new ArrayList();
+			Iterator iter= frames.iterator();
+			JDIStackFrame frame;
+			while (iter.hasNext()) {
+				frame= (JDIStackFrame)iter.next();
+				if (frame.getDebugTarget() == target) {
+					framesToRemove.add(frame);
+				}
 			}
+			iter= framesToRemove.iterator();
+			while (iter.hasNext()) {
+				fProjectsByFrame.remove(iter.next());
+			}					
 		}
-		iter= framesToRemove.iterator();
-		while (iter.hasNext()) {
-			fProjectsByFrame.remove(iter.next());
-		}		
 		
 	}
 	
@@ -395,14 +397,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 		
 	protected IJavaProject getJavaProject(IJavaStackFrame stackFrame) {
-	    IJavaProject project= (IJavaProject) fProjectsByFrame.get(stackFrame);
-	    if (project == null) {
-	        project = computeJavaProject(stackFrame);
-	        if (project != null) {
-	            fProjectsByFrame.put(stackFrame, project);
-	        }
-	    }
-	    return project;
+		synchronized (fProjectsByFrame) {
+		    IJavaProject project= (IJavaProject) fProjectsByFrame.get(stackFrame);
+		    if (project == null) {
+		        project = computeJavaProject(stackFrame);
+		        if (project != null) {
+		            fProjectsByFrame.put(stackFrame, project);
+		        }
+		    }
+		    return project;			
+		}
 	}
 	
 	private IJavaProject computeJavaProject(IJavaStackFrame stackFrame) {
