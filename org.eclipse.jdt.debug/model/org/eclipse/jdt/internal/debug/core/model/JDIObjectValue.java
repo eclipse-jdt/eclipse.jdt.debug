@@ -416,6 +416,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		if (getJavaDebugTarget().supportsSelectiveGarbageCollection()) {
 			try {
 				getUnderlyingObject().disableCollection();
+			} catch (UnsupportedOperationException e) {
+				// The VM does not support enable/disable GC - update target capabilities and ignore (bug 246577)
+				getJavaDebugTarget().setSupportsSelectiveGarbageCollection(false);
 			} catch (RuntimeException e) {
 				targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_13, e);
 			}

@@ -2481,6 +2481,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public boolean supportsSelectiveGarbageCollection() {
 		return fSupportsDisableGC;
 	}
+	
+	/**
+	 * Sets whether this target supports selectively disabling/enabling garbage collection
+	 * of specific objects.
+	 * 
+	 * @param enableGC whether this target supports selective GC
+	 */
+	void setSupportsSelectiveGarbageCollection(boolean enableGC) {
+		fSupportsDisableGC = enableGC;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
