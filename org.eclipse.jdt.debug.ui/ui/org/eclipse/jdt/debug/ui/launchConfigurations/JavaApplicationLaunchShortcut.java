@@ -47,12 +47,14 @@ import org.eclipse.jface.operation.IRunnableContext;
 public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	
 	/**
-	 * Returns the Java elements corresponding to the given objects.
+	 * Returns the Java elements corresponding to the given objects. Members are translated
+	 * to corresponding declaring types where possible.
 	 * 
 	 * @param objects selected objects
 	 * @return corresponding Java elements
+	 * @since 3.5
 	 */
-	private IJavaElement[] getJavaElements(Object[] objects) {
+	protected IJavaElement[] getJavaElements(Object[] objects) {
 		List list= new ArrayList(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
