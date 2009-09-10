@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,6 @@ import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -176,23 +174,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	private void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		initializeJavaProject(javaElement, config);
 		initializeMainTypeAndName(javaElement, config);
-		initializeHardCodedDefaults(config);
 		initializeAppletViewerClass(config);
-	}
-	
-	/**
-	 * Set the VM attributes on the working copy based on the workbench default VM.
-	 */
-	private void initializeDefaultVM(ILaunchConfigurationWorkingCopy config) {
-		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
-		if (vmInstall == null) {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		}
-		else {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmInstall.getName());
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstall.getVMInstallType().getId());
-		}
 	}
 		
 	/* (non-Javadoc)
@@ -202,13 +184,6 @@ public class AppletMainTab extends SharedJavaMainTab {
 		super.initializeFrom(config);
 		updateMainTypeFromConfig(config);
 		updateAppletViewerClassNameFromConfig(config);
-	}
-
-	/**
-	 * Initialize those attributes whose default values are independent of any context.
-	 */
-	private void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
-		initializeDefaultVM(config);
 	}
 	
 	/**
@@ -278,10 +253,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement je= getContext();
-		if (je == null) {
-			initializeHardCodedDefaults(config);
-		}
-		else {
+		if (je != null) {
 			initializeDefaults(je, config);
 		}
 	}
