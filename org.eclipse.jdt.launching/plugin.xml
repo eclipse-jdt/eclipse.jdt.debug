@@ -270,6 +270,10 @@
             description="%environment.description.9"
             id="JavaSE-1.6"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>
+      <environment
+            description="%environment.description.11"
+            id="JavaSE-1.7"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant"/>            
       <analyzer
             class="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentAnalyzer"
             id="org.eclipse.jdt.launching.eeAnalyzer"/>
