@@ -12,6 +12,8 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import com.ibm.icu.text.MessageFormat;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,17 +33,19 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jdt.core.JavaCore;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.service.environment.Constants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -610,15 +614,17 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if (version.startsWith("1.6")) { //$NON-NLS-1$
+			if (version.startsWith(JavaCore.VERSION_1_7)) {
+				return new URL("http://java.sun.com/javase/7/docs/api/"); //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_1_6)) {
 				return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$
-			} else if (version.startsWith("1.5")) { //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_1_5)) {
 				return new URL("http://java.sun.com/j2se/1.5.0/docs/api/"); //$NON-NLS-1$
-			} else if (version.startsWith("1.4")) { //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_1_4)) {
 				return new URL("http://java.sun.com/j2se/1.4.2/docs/api/"); //$NON-NLS-1$
-			} else if (version.startsWith("1.3")) { //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_1_3)) {
 				return new URL("http://java.sun.com/j2se/1.3/docs/api/"); //$NON-NLS-1$
-			} else if (version.startsWith("1.2")) { //$NON-NLS-1$
+			} else if (version.startsWith(JavaCore.VERSION_1_2)) {
 				return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
