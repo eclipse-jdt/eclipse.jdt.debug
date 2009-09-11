@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -115,7 +116,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * in this case we are testing that a group exists for a java application config
 	 * in debug mode
 	 */
-	public void getLaunchGroupForConfigurationAndMode() {
+	public void testGetLaunchGroupForConfigurationAndMode() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchConfiguration configuration = getLaunchConfiguration("ThrowsNPE");
 		assertNotNull("the ThrowsNPE configuration should exist", configuration);
@@ -127,7 +128,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * tests that all of the launch groups can be acquired, there should be at least 3 of
 	 * them (run, debug, profile)
 	 */
-	public void getAllLaunchGroups() {
+	public void testGetAllLaunchGroups() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchGroup[] groups = fLCM.getLaunchGroups();
 		assertNotNull("the listing of launch groups cannot be null", groups);
@@ -138,7 +139,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * tests that the default launch group for run mode is the launch group
 	 * contributed by debug
 	 */
-	public void getDefaultLaunchGroupForRunMode() {
+	public void testGetDefaultLaunchGroupForRunMode() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchGroup group = fLCM.getDefaultLaunchGroup("run");
 		assertNotNull("the default launch group cannot be null", group);
@@ -149,7 +150,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * tests that the default launch group for debug mode is the launch group
 	 * contributed by debug
 	 */
-	public void getDefaultLaunchGroupForDebugMode() {
+	public void testGetDefaultLaunchGroupForDebugMode() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		ILaunchGroup group = fLCM.getDefaultLaunchGroup("debug");
 		assertNotNull("the default launch group cannot be null", group);
@@ -182,4 +183,17 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("the listing cannot be null", list);
 		assertTrue("there should be at least one configuration for this resource", list.length > 0);
 	}
+	
+	/**
+	 * Tests that a launch group does not exist for a given configuration and mode that it does not support.
+	 * In this case we are testing that a group does not exist for a java application config
+	 * in profile mode
+	 */
+	public void testGetLaunchGroupForConfigurationAndUnsupportedMode() {
+		assertNotNull("The launch configuration manager cannot be null", fLCM);
+		ILaunchConfiguration configuration = getLaunchConfiguration("ThrowsNPE");
+		assertNotNull("the ThrowsNPE configuration should exist", configuration);
+		ILaunchGroup group = DebugUITools.getLaunchGroup(configuration, ILaunchManager.PROFILE_MODE);
+		assertNull("the launch group for a java app config in profile mode should *not* exist", group);
+	}	
 }
