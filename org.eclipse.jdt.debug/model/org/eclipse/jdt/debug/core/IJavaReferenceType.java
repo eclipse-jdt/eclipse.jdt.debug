@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,6 +123,7 @@ public interface IJavaReferenceType extends IJavaType {
      * the specified stratum, or <code>null</code> if the source name debug attribute is
      * not present. 
      * 
+     * @param stratum stratum identifier or <code>null</code> to use this type's default stratum
      * @return unqualified source file names or <code>null</code>
      * @throws DebugException if an exception occurs retrieving the source name
      * @since 3.2
@@ -134,6 +135,7 @@ public interface IJavaReferenceType extends IJavaType {
      * the specified stratum, or <code>null</code> if the source name debug attribute is
      * not present. 
      * 
+     * @param stratum stratum identifier or <code>null</code> to use this type's default stratum
      * @return qualified source file names or <code>null</code>
      * @throws DebugException if an exception occurs retrieving the source name
      * @since 3.2
