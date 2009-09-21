@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,23 @@ package org.eclipse.jdt.internal.debug.ui;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * An error dialog reporting a problem with a debug
@@ -66,8 +73,35 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 		if (canTerminate && !canDisconnect) {
 			createButton(parent, RESTART_ID, DebugUIMessages.HotCodeReplaceErrorDialog_7, false); 
 		}
+		blockMnemonicWithoutModifier(getToggleButton());
 	}
 
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite, int, java.lang.String, boolean)
+	 * @since 3.6
+	 */
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+		Button button= super.createButton(parent, id, label, defaultButton);
+		blockMnemonicWithoutModifier(button);
+		return button;
+	}
+
+	/**
+	 * Ensures that simple key presses don't activate the given button.
+	 *  
+	 * @param button the button to tweak
+	 * @since 3.6
+	 */
+	protected void blockMnemonicWithoutModifier(Button button) {
+		button.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit == true && e.stateMask != SWT.MOD3) {
+					e.doit= false;
+				}
+			}
+		});
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
