@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,11 +56,11 @@ public class FilterTransformTests extends AbstractDebugTest {
 		element5 = new Object();
 		element6 = new Object();
 		element7 = new Object();
-		transform.addFilteredIndex(TreePath.EMPTY, 0, element0);
-		transform.addFilteredIndex(TreePath.EMPTY, 2, element2);
-		transform.addFilteredIndex(TreePath.EMPTY, 3, element3);
-		transform.addFilteredIndex(TreePath.EMPTY, 6, element6);
-		transform.addFilteredIndex(TreePath.EMPTY, 7, element7);
+		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 0, element0));
+		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 2, element2));
+		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 3, element3));
+		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 6, element6));
+		assertTrue(transform.addFilteredIndex(TreePath.EMPTY, 7, element7));
 	}
 	
 	protected boolean equals(int[] a, int[] b) {
@@ -125,5 +125,11 @@ public class FilterTransformTests extends AbstractDebugTest {
 		assertEquals("Wrong model index", 1, transform.viewToModelIndex(TreePath.EMPTY, 0));
 		assertEquals("Wrong model index", 4, transform.viewToModelIndex(TreePath.EMPTY, 1));
 		assertEquals("Wrong model index", 5, transform.viewToModelIndex(TreePath.EMPTY, 2));
+	}
+	
+	public void testAddAlreadyFiltered() {
+		assertTrue("Element should be filtered", transform.isFiltered(TreePath.EMPTY, 0));
+		boolean added = transform.addFilteredIndex(TreePath.EMPTY, 0, element0);
+		assertFalse("Filter should not be added - should already have been there", added);
 	}
 }
