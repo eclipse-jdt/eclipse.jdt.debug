@@ -102,6 +102,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.JavaProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
+import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
@@ -182,6 +183,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(JavaProjectSourceContainerTests.class));
 		addTest(new TestSuite(SourceLocationTests.class));
+		addTest(new TestSuite(TypeResolutionTests.class));
 		
 	// Variable tests
 		addTest(new TestSuite(InstanceVariableTests.class));
