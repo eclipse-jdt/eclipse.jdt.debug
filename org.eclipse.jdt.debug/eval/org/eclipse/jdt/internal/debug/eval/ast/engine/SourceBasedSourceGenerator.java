@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.SourceRange;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -107,6 +110,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 
 public class SourceBasedSourceGenerator extends ASTVisitor  {
@@ -127,11 +131,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private String fError;
 	
-	private CompilationUnit fUnit;
-	
-	private String fTypeName;
-	
-	private int fPosition;
+	private IType fType;
 	
 	private StringBuffer fSource;
 	
@@ -157,11 +157,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * which contains the code snippet is an no-static method, even if <code>position</code>
 	 * is in a static method.
 	 */
-	public SourceBasedSourceGenerator(CompilationUnit unit, String typeName, int position, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet, String sourceLevel) {
+	public SourceBasedSourceGenerator(IType type, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet, String sourceLevel) {
 		fRightTypeFound= false;
-		fUnit= unit;
-		fTypeName= typeName;
-		fPosition= position;
+		fType= type;
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
@@ -183,10 +181,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return fSource.toString();
 	}
 	
-	private CompilationUnit getCompilationUnit() {
-		return fUnit;
-	}
-	
 	public String getCompilationUnitName() {
 		return fCompilationUnitName;
 	}
@@ -199,15 +193,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 	public int getRunMethodLength() {
 		return fRunMethodLength;
-	}
-	
-	private int getPosition() {
-		return fPosition;
-	}
-	
-	private int getCorrespondingLineNumber(int charOffset) {
-        int lineNumber = getCompilationUnit().getLineNumber(charOffset);
-        return lineNumber < 1 ? 1 : lineNumber;
 	}
 	
 	private boolean rightTypeFound() {
@@ -289,71 +274,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * false otherwise
 	 */
 	private boolean isRightType(ASTNode node) {
-		int position= getPosition();
-		int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
-		int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength() - 1);
-		if (startLineNumber <= position && position <= endLineNumber) {
-			// check the typeName
-			String typeName= fTypeName;
-			while (node != null) {
-				if (node instanceof AbstractTypeDeclaration) {
-					AbstractTypeDeclaration abstractTypeDeclaration= (AbstractTypeDeclaration) node;
-					String name= abstractTypeDeclaration.getName().getIdentifier();
-					if (abstractTypeDeclaration.isLocalTypeDeclaration()) {
-						if (! typeName.endsWith('$' + name)) {
-							return false;
-						}
-						typeName= typeName.substring(0, typeName.length() - name.length() - 1);
-						int index= typeName.lastIndexOf('$');
-						if (index < 0) {
-							return false;
-						}
-						for (int i= typeName.length() - 1; i > index; i--) {
-							if (!Character.isDigit(typeName.charAt(i))) {
-								return false;
-							}
-						}
-						typeName= typeName.substring(0, index);
-						ASTNode parent= node.getParent();
-						while (!(parent instanceof CompilationUnit)) {
-							node= parent;
-							parent= node.getParent();
-						}
-					} else {
-						if (abstractTypeDeclaration.isPackageMemberTypeDeclaration()) {
-							PackageDeclaration packageDeclaration= ((CompilationUnit) node.getParent()).getPackage();
-							if (packageDeclaration == null) {
-								return typeName.equals(name);
-							}
-							return typeName.equals(getQualifiedIdentifier(packageDeclaration.getName()) + '.' + name);
-						}
-						if (!typeName.endsWith('$' + name)) {
-							return false;
-						}
-						typeName= typeName.substring(0, typeName.length() - name.length() - 1);
-						node= node.getParent();
-					}
-				} else if (node instanceof ClassInstanceCreation) {
-					int index= typeName.lastIndexOf('$');
-					if (index < 0) {
-						return false;
-					}
-					for (int i= typeName.length() - 1; i > index; i--) {
-						if (!Character.isDigit(typeName.charAt(i))) {
-							return false;
-						}
-					}
-					typeName= typeName.substring(0, index);
-					ASTNode parent= node.getParent();
-					while (!(parent instanceof CompilationUnit)) {
-						node= parent;
-						parent= node.getParent();
-					}
-				}
-				else if(node instanceof AnonymousClassDeclaration) {
-					node = node.getParent();
-				}
-			}
+		SourceRange range = new SourceRange(node.getStartPosition(), node.getLength());
+		try {
+			return fType.getSourceRange().equals(range);
+		} catch (JavaModelException e) {
+			JDIDebugPlugin.log(e.getStatus());
 		}
 		return false;
 	}

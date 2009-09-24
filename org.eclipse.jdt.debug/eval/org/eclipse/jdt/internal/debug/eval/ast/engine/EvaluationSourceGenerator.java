@@ -11,20 +11,15 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -32,10 +27,6 @@ import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
-
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Location;
-import com.sun.jdi.ReferenceType;
 
 /**
  * Creates the source code necessary to evaluate a code snippet.
@@ -141,14 +132,14 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, String typeName, int position, boolean createInAStaticMethod, IJavaProject project) throws DebugException {
+	private void createEvaluationSourceFromSource(String source, IType type, boolean createInAStaticMethod, IJavaProject project) throws DebugException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(source.toCharArray());
 		Map options=getCompilerOptions(project);
 		String sourceLevel = project.getOption(JavaCore.COMPILER_SOURCE, true);
 		parser.setCompilerOptions(options);
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet, sourceLevel);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(type, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet, sourceLevel);
 		unit.accept(visitor);
 		
 		if (visitor.hasError()) {
@@ -207,10 +198,17 @@ public class EvaluationSourceGenerator {
 	
 	public String getSource(IJavaReferenceType type, IJavaProject javaProject, boolean isStatic) throws CoreException {
 		if (fSource == null) {
-			String baseSource= getTypeSourceFromProject(type, javaProject);
-			int lineNumber= getLineNumber((JDIReferenceType)type);
-			if (baseSource != null && lineNumber != -1) {
-				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, isStatic, javaProject);
+			IType iType = JavaDebugUtils.resolveType(type);
+			if (iType != null && !iType.isInterface()) {
+				String baseSource = null;
+				if (iType.isBinary()) {
+					baseSource = iType.getClassFile().getSource();
+				} else {
+					baseSource = iType.getCompilationUnit().getSource();
+				}
+				if (baseSource != null) {
+					createEvaluationSourceFromSource(baseSource, iType, isStatic, javaProject);
+				}
 			}
 			if (fSource == null) {
 				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, isStatic, javaProject);
@@ -220,56 +218,12 @@ public class EvaluationSourceGenerator {
 		return fSource;
 	}
 
-	private int getLineNumber(JDIReferenceType type) {
-		ReferenceType referenceType= (ReferenceType) type.getUnderlyingType();
-		try {
-			List allLineLocations = referenceType.allLineLocations();
-			if (!allLineLocations.isEmpty()) {
-				return ((Location)allLineLocations.get(0)).lineNumber();
-			}
-		} catch (AbsentInformationException e) {
-		}
-		return -1;
-	}
-
 	protected void setCompilationUnitName(String name) {
 		fCompilationUnitName= name;
 	}
 	
 	protected void setSource(String source) {
 		fSource= source;
-	}
-
-	private String getTypeSourceFromProject(IJavaReferenceType type, IJavaProject javaProject) throws CoreException {
-		String[] sourcePaths = type.getSourcePaths(null);
-		IJavaElement element = null;
-		if (sourcePaths != null && sourcePaths.length > 0) {
-			element = javaProject.findElement(new Path(sourcePaths[0]));
-		} else {
-			// must guess at source name when debug attribute not present
-			element = JavaDebugUtils.findElement(type.getName(), javaProject);
-		}	
-		return resolveSource(element);
-	}
-	
-	/**
-	 * Returns source for the given class file or compilation unit
-	 * or <code>null</code> if none.
-	 *  
-	 * @param element Java element or <code>null</code> 
-	 */
-	private String resolveSource(IJavaElement element) throws DebugException {
-		String source= null;
-		try {
-			if (element instanceof IClassFile) {
-				source = ((IClassFile)element).getSource();
-			} else if (element instanceof ICompilationUnit) {
-				source = ((ICompilationUnit)element).getSource();
-			}
-		} catch (JavaModelException e) {
-			throw new DebugException(e.getStatus());
-		}
-		return source;			
 	}
 
 }
