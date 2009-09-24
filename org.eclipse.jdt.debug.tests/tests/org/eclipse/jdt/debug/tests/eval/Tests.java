@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,11 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String xBoolean = "true";
 	static final String xNull = "null";
 	
-	static final byte xByteValue = (byte)-3;
-	static final char xCharValue = (char)-3;
-	static final short xShortValue = (short)-3;
-	static final int xIntValue = -3;
-	static final long xLongValue = -3l;
+	static byte xByteValue = (byte)-3;
+	static char xCharValue = (char)-3;
+	static short xShortValue = (short)-3;
+	static int xIntValue = -3;
+	static long xLongValue = -3l;
 	static final float xFloatValue = -3.2f;
 	static final double xDoubleValue = -3.2;
 	static final String xStringValue = "minus three";
