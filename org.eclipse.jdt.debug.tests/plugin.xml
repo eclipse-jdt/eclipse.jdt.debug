@@ -225,47 +225,7 @@
       </statusHandler>
    </extension>
 
-   <extension point="org.eclipse.debug.ui.memoryRenderings">
-      <renderingType
-            id="rendering_type_1"
-            name="Rendering One"
-            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </renderingType>
-      <renderingType
-            id="rendering_type_2"
-            name="Rendering Two"
-            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </renderingType>
-      <renderingType
-            id="rendering_type_3"
-            name="Rendering Default"
-            class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </renderingType>      
-      <renderingBindings
-      		primaryId="rendering_type_1">
-      		<enablement>
-      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockOne"/>
-      		</enablement>
-      </renderingBindings>
-      <renderingBindings
-      		renderingIds="rendering_type_1, rendering_type_2">
-      		<enablement>
-      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockTwo"/>
-      		</enablement>
-      </renderingBindings>
-      <renderingBindings
-      		defaultIds="rendering_type_3">
-      		<enablement>
-      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockThree"/>
-      		</enablement>
-      </renderingBindings>  
-      <renderingBindings
-      		class="org.eclipse.jdt.debug.testplugin.DynamicRenderingBindings">
-      		<enablement>
-      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockDynamic"/>
-      		</enablement>
-      </renderingBindings>                  
-   </extension>
+
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator

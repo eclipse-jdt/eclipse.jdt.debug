@@ -58,7 +58,6 @@ import org.eclipse.jdt.debug.tests.core.JavaDebugTargetTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
-import org.eclipse.jdt.debug.tests.core.MemoryRenderingTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -69,7 +68,6 @@ import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
-import org.eclipse.jdt.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
@@ -106,9 +104,6 @@ import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
-import org.eclipse.jdt.debug.tests.viewers.ChildrenUpdateTests;
-import org.eclipse.jdt.debug.tests.viewers.FilterTransformTests;
-import org.eclipse.jdt.debug.tests.viewers.PresentationContextTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -143,7 +138,6 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MigrationDelegateTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
 		addTest(new TestSuite(LaunchHistoryTests.class));
-		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 		addTest(new TestSuite(ConfigurationResourceMappingTests.class));
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
@@ -231,15 +225,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StratumTests.class));
 		addTest(new TestSuite(JavaDebugTargetTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
-
-	//Memory view tests
-		addTest(new TestSuite(MemoryRenderingTests.class));
 		
-	// Viewer tests
-		addTest(new TestSuite(FilterTransformTests.class));
-		addTest(new TestSuite(ChildrenUpdateTests.class));
-		addTest(new TestSuite(PresentationContextTests.class));
-
 	// Refactoring tests
 		//TODO: project rename
 		//TODO: package move
