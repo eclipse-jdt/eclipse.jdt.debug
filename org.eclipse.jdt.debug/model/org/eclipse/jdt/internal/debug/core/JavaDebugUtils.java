@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
-import com.sun.jdi.VMDisconnectedException;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import org.eclipse.core.resources.IResource;
-
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -35,18 +35,14 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
-
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import com.sun.jdi.VMDisconnectedException;
 
 /**
  * A Utilities class.
@@ -242,7 +238,7 @@ public class JavaDebugUtils {
                 					throw new ResultException((IType) binding.getJavaElement());
                 				return true;
                 			}
-                			public boolean visit(TypeDeclarationStatement node) {
+                			public boolean visit(TypeDeclaration node) {
                 				ITypeBinding binding = node.resolveBinding();
                 				if (binding == null)
                 					return false;
