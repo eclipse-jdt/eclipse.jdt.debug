@@ -141,7 +141,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob();
 			}
 		});
 		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
