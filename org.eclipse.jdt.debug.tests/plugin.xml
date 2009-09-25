@@ -447,17 +447,6 @@
      </launchConfigurationTabGroup>
   </extension>
   <extension
-        id="debugFS"
-        name="Debug File System"
-        point="org.eclipse.core.filesystem.filesystems">
-     <filesystem
-           scheme="debug">
-        <run
-              class="org.eclipse.jdt.debug.testplugin.filesystem.DebugFileSystem">
-        </run>
-     </filesystem>
-  </extension>
-  <extension
         point="org.eclipse.jdt.debug.breakpointListeners">
      <breakpointListener
            class="org.eclipse.jdt.debug.testplugin.EvalualtionBreakpointListener"
