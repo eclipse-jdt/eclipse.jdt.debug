@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,8 +152,9 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * 
 	 * @param type type to launch
 	 * @param mode launch mode
+	 * @since 3.5
 	 */
-	private void launch(IType type, String mode) {
+	protected void launch(IType type, String mode) {
 		ILaunchConfiguration config = findLaunchConfiguration(type, getConfigurationType());
 		if (config == null) {
 			config = createConfiguration(type);
