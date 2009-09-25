@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
@@ -191,9 +192,35 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
 	/**
 	 * Compute the name of the type which contains this node.
-	 * Result will be the name of the type or the inner type which contains this node, but not of the local or anonymous type.
+	 * <br><br>
+	 * Delegates to the old method of computing the type name if bindings are not available.
+	 * @see #computeTypeName0(ASTNode)
+	 * @since 3.6
 	 */
 	private String computeTypeName(ASTNode node) {
+		AbstractTypeDeclaration type = null;
+		while (!(node instanceof CompilationUnit)) {
+			if (node instanceof AbstractTypeDeclaration) {
+				type = (AbstractTypeDeclaration) node;
+				break;
+			}
+			node = node.getParent();
+		}
+		if(type != null) {
+			ITypeBinding binding = type.resolveBinding();
+			if(binding != null) {
+				return binding.getBinaryName();
+			}
+		}
+		return computeTypeName0(node);
+	}
+
+	/**
+	 * Fall back to compute the type name if bindings are not resolved
+	 * @param node
+	 * @return the computed type name
+	 */
+	String computeTypeName0(ASTNode node) {
 		String typeName = null;
 		while (!(node instanceof CompilationUnit)) {
 			if (node instanceof AbstractTypeDeclaration) {
@@ -219,7 +246,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		}
 		return packageIdentifier + typeName;
 	}
-
+	
 	/**
 	 * Return <code>true</code> if this node children may contain a valid location
 	 * for the breakpoint.

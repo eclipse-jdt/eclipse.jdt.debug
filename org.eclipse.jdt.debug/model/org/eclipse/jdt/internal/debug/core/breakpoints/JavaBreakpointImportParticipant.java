@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -143,12 +144,18 @@ public class JavaBreakpointImportParticipant implements IBreakpointImportPartici
 				default : {
 					if (node instanceof AbstractTypeDeclaration) {
 						AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) node;
-						if (typeDeclaration.isPackageMemberTypeDeclaration()) {
-							buffer.insert(0, typeDeclaration.getName().getIdentifier());
+						ITypeBinding binding = typeDeclaration.resolveBinding();
+						if(binding != null) {
+							return binding.getBinaryName();
 						}
 						else {
-							buffer.insert(0, typeDeclaration.getName().getFullyQualifiedName());
-							buffer.insert(0, '$');
+							if (typeDeclaration.isPackageMemberTypeDeclaration()) {
+								buffer.insert(0, typeDeclaration.getName().getIdentifier());
+							}
+							else {
+								buffer.insert(0, typeDeclaration.getName().getFullyQualifiedName());
+								buffer.insert(0, '$');
+							}
 						}
 					}
 				}
@@ -257,7 +264,8 @@ public class JavaBreakpointImportParticipant implements IBreakpointImportPartici
 		 */
 		public boolean visit(MethodDeclaration node) {
 			SimpleName name = node.getName();
-			if(!fTypename.equals(fTypeNameStack.peek())) {
+			String typename = (String) fTypeNameStack.peek();
+			if(!fTypename.equals(typename) && !fTypename.startsWith(typename)) {
 				return false;
 			}
 			if(name != null && name.getFullyQualifiedName().equals(fName)) {
@@ -278,7 +286,8 @@ public class JavaBreakpointImportParticipant implements IBreakpointImportPartici
 					}
 				}
 			}
-			return false;
+			//visit children in the event we have a class load breakpoint on a local type
+			return fBreakpoint instanceof JavaClassPrepareBreakpoint;
 		}
 		
 		/**
@@ -483,8 +492,17 @@ public class JavaBreakpointImportParticipant implements IBreakpointImportPartici
 				int newline = locator.getLineLocation();
 				if(locator.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
 					if(currentline != newline) {
+						bp.getMarker().setAttribute(JavaBreakpoint.TYPE_NAME, locator.getFullyQualifiedTypeName());
 						bp.getMarker().setAttribute(IMarker.LINE_NUMBER, newline);
+						int length = bp.getCharEnd() - bp.getCharStart();
+						int pos = unit.getPosition(newline, 1);
+						bp.getMarker().setAttribute(IMarker.CHAR_START, pos);
+						bp.getMarker().setAttribute(IMarker.CHAR_END, pos+length);
 					}
+				}
+				else {
+					//the line breakpoint will not be a line breakpoint anymore get rid of it
+					throw new CoreException(Status.CANCEL_STATUS);
 				}
 			}
 		}

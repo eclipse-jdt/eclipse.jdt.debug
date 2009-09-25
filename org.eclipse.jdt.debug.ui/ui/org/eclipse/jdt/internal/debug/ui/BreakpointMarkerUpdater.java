@@ -98,6 +98,8 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		setParserOptions(marker, parser);
 		parser.setSource(document.get().toCharArray());
+		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
 		CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 		if(unit != null) {
 			try {

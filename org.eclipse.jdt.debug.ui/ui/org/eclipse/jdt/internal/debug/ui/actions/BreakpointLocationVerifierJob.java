@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,19 +13,13 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -46,11 +40,6 @@ import com.ibm.icu.text.MessageFormat;
  * Job used to verify the position of a breakpoint
  */
 public class BreakpointLocationVerifierJob extends Job {
-
-	/**
-	 * The document which contains the code source.
-	 */
-	private IDocument fDocument;
 	
 	/**
 	 * The temporary breakpoint that has been set. Can be <code>null</code> if the callee was not able
@@ -75,37 +64,52 @@ public class BreakpointLocationVerifierJob extends Job {
 	private IType fType;
 	
 	/**
-	 * Indicate if the search for a valid location should be limited to a line
-	 * or expanded to field and method declaration.
-	 */
-	private boolean fBestMatch;
-
-	/**
-	 * The resource in which should be set the breakpoint.
-	 */
-	private IResource fResource;
-	
-	/**
 	 * The current IEditorPart
 	 */
 	private IEditorPart fEditorPart;
+	
+	/**
+	 * The parsed {@link CompilationUnit}
+	 */
+	CompilationUnit fCunit = null;
+	
+	/**
+	 * The document context
+	 */
+	private IDocument fDocument = null;
 	
 	/**
 	 * The status line to use to display errors
 	 */
 	private IEditorStatusLine fStatusLine;
 	
-	public BreakpointLocationVerifierJob(IDocument document, IJavaLineBreakpoint breakpoint, int lineNumber, boolean bestMatch, String typeName, IType type, IResource resource, IEditorPart editorPart) {
+	/**
+	 * If a best guess should be made at the breakpoint location
+	 */
+	private boolean fBestMatch = false;
+	
+	/**
+	 * Constructor
+	 * @param document
+	 * @param cunit
+	 * @param breakpoint
+	 * @param lineNumber
+	 * @param typeName
+	 * @param type
+	 * @param editorPart
+	 * @param bestmatch
+	 */
+	public BreakpointLocationVerifierJob(IDocument document, CompilationUnit cunit, IJavaLineBreakpoint breakpoint, int lineNumber, String typeName, IType type, IEditorPart editorPart, boolean bestmatch) {
 		super(ActionMessages.BreakpointLocationVerifierJob_breakpoint_location); 
-		fDocument= document;
-		fBreakpoint= breakpoint;
-		fLineNumber= lineNumber;
-		fBestMatch= bestMatch;
-		fTypeName= typeName;
-		fType= type;
-		fResource= resource;
-		fEditorPart= editorPart;
-		fStatusLine= (IEditorStatusLine) editorPart.getAdapter(IEditorStatusLine.class);
+		fCunit = cunit;
+		fDocument = document;
+		fBreakpoint = breakpoint;
+		fLineNumber = lineNumber;
+		fTypeName = typeName;
+		fType = type;
+		fEditorPart = editorPart;
+		fBestMatch = bestmatch;
+		fStatusLine = (IEditorStatusLine) editorPart.getAdapter(IEditorStatusLine.class);
 		setSystem(true);
 	}
 	
@@ -113,63 +117,10 @@ public class BreakpointLocationVerifierJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		char[] source = fDocument.get().toCharArray();
-		parser.setSource(source);
-		IJavaElement javaElement = JavaCore.create(fResource);
-		IJavaProject project= null;
-		if (javaElement != null) {
-			Map options=JavaCore.getDefaultOptions();
-            project= javaElement.getJavaProject();
-            String compilerCompliance = JavaCore.VERSION_1_5;
-            String compilerSource = JavaCore.VERSION_1_5;
-            if (project != null) {
-                compilerCompliance = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
-                compilerSource = project.getOption(JavaCore.COMPILER_SOURCE, true);
-            }
-            options.put(JavaCore.COMPILER_COMPLIANCE, compilerCompliance);
-            options.put(JavaCore.COMPILER_SOURCE, compilerSource);
-			parser.setCompilerOptions(options);
-		}
-		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, false, fBestMatch);
-		compilationUnit.accept(locator);
-		if (locator.isBindingsRequired()) {
-			if (javaElement != null) {
-				// try again with bindings if required and available
-				String unitName = null;
-				if (fType == null) {
-					String name = fResource.getName();
-					if (JavaCore.isJavaLikeFileName(name)) {
-						unitName = name;
-					}
-				} else {
-					if (fType.isBinary()) {
-						String className= fType.getClassFile().getElementName();
-						int nameLength= className.indexOf('$');
-						if (nameLength < 0) {
-							nameLength= className.indexOf('.');
-						}
-						unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
-					} else {
-						unitName= fType.getCompilationUnit().getElementName();
-					}
-				}
-				if (unitName != null) {
-					parser = ASTParser.newParser(AST.JLS3);
-					parser.setSource(source);
-					parser.setProject(project);
-					parser.setUnitName(unitName);
-					parser.setResolveBindings(true);
-					compilationUnit= (CompilationUnit)parser.createAST(null);
-					locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, true, fBestMatch);
-					compilationUnit.accept(locator);
-				}
-			}
-		}
-		int lineNumber= locator.getLineLocation();		
-		String typeName= locator.getFullyQualifiedTypeName();
-		
+		ValidBreakpointLocationLocator locator = new ValidBreakpointLocationLocator(fCunit, fLineNumber, true, fBestMatch);
+		fCunit.accept(locator);
+		int lineNumber = locator.getLineLocation();		
+		String typeName = locator.getFullyQualifiedTypeName();
 		try {
 			switch (locator.getLocationType()) {
 				case ValidBreakpointLocationLocator.LOCATION_LINE:
@@ -211,7 +162,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	public IStatus manageLineBreakpoint(String typeName, int lineNumber) {
 		try {
 			boolean differentLineNumber= lineNumber != fLineNumber;
-			IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(fResource, typeName, lineNumber);
+			IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(fBreakpoint.getMarker().getResource(), typeName, lineNumber);
 			boolean breakpointExist= breakpoint != null;
 			if (fBreakpoint == null) {
 				if (breakpointExist) {
@@ -264,7 +215,7 @@ public class BreakpointLocationVerifierJob extends Job {
 		int start = -1, end = -1;
 		if (fType != null) {
 			try {
-				IRegion line= fDocument.getLineInformation(lineNumber - 1);
+				IRegion line = fDocument.getLineInformation(lineNumber - 1);
 				start = line.getOffset();
 				end = start + line.getLength();
 				
@@ -273,7 +224,7 @@ public class BreakpointLocationVerifierJob extends Job {
 			}
 			BreakpointUtils.addJavaBreakpointAttributes(newAttributes, fType);
 		}
-		JDIDebugModel.createLineBreakpoint(fResource, typeName, lineNumber, start, end, 0, true, newAttributes);
+		JDIDebugModel.createLineBreakpoint(fBreakpoint.getMarker().getResource(), typeName, lineNumber, start, end, 0, true, newAttributes);
 	}
 
 	/**

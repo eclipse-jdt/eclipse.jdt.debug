@@ -221,7 +221,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testInnerStaticClass() throws Exception {
-		testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.StaticInnerClass");
+		testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass");
 	}
 
 	/**

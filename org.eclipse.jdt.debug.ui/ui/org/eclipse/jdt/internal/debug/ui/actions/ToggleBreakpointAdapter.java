@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,8 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
@@ -170,7 +172,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
     public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-    	toggleLineBreakpoints(part, selection, false);
+    	toggleLineBreakpoints(part, selection, false, null);
     }
     
     /**
@@ -179,7 +181,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @param selection the current selection
      * @param bestMatch if we should make a best match or not
      */
-    public void toggleLineBreakpoints(final IWorkbenchPart part, final ISelection selection, final boolean bestMatch) {
+    public void toggleLineBreakpoints(final IWorkbenchPart part, final ISelection selection, final boolean bestMatch, final ValidBreakpointLocationLocator locator) {
         Job job = new Job("Toggle Line Breakpoint") { //$NON-NLS-1$
             protected IStatus run(IProgressMonitor monitor) {
             	ITextEditor editor = getTextEditor(part);
@@ -206,9 +208,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                    	else {
 	                    		type = member.getDeclaringType();
 	                    	}
-	                    	String tname = createQualifiedTypeName(type);
+	                    	String tname = locator == null ? getQualifiedName(type) : locator.getFullyQualifiedTypeName();
 	                    	IResource resource = BreakpointUtils.getBreakpointResource(type);
-							int lnumber = ((ITextSelection) selection).getStartLine() + 1;
+							int lnumber = locator == null ? ((ITextSelection) selection).getStartLine() + 1 : locator.getLineLocation();
 							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
 							if (existingBreakpoint != null) {
 								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
@@ -229,7 +231,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							catch (BadLocationException ble) {JDIDebugUIPlugin.log(ble);}
 							BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 							IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
-							new BreakpointLocationVerifierJob(document, breakpoint, lnumber, bestMatch, tname, type, resource, editor).schedule();
+							if(locator == null) {
+								new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot(), true), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
+							}
 	                    }
 	                    else {
 	                    	report(ActionMessages.ToggleBreakpointAdapter_3, part);
@@ -321,7 +325,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                         return Status.OK_STATUS;
                                     }
                                 }
-                                JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(members[i]), createQualifiedTypeName(type), mname, signature, true, false, false, -1, start, end, 0, true, attributes);
+                                JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(members[i]), getQualifiedName(type), mname, signature, true, false, false, -1, start, end, 0, true, attributes);
                             } else {
                             	DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
                             }
@@ -382,7 +386,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								start = range.getOffset();
 								end = start + range.getLength();
 							}
-							JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(member), createQualifiedTypeName(type), IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
+							JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(member), getQualifiedName(type), IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
 						}
 					}
 					else {
@@ -414,7 +418,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	IJavaBreakpoint breakpoint = null;
     	for (int i = 0; i < breakpoints.length; i++) {
 			breakpoint = (IJavaBreakpoint) breakpoints[i];
-			if (breakpoint instanceof IJavaClassPrepareBreakpoint && createQualifiedTypeName(type).equals(breakpoint.getTypeName())) {
+			if (breakpoint instanceof IJavaClassPrepareBreakpoint && getQualifiedName(type).equals(breakpoint.getTypeName())) {
 				existing = breakpoint;
 				break;
 			}
@@ -423,13 +427,33 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     }
     	
     /**
+     * Returns the binary name for the {@link IType} derived from its {@link ITypeBinding}.
+     * <br><br>
+     * If the {@link ITypeBinding} cannot be derived this method falls back to calling
+     * {@link #createQualifiedTypeName(IType)} to try and compose the type name.
+     * @param type
+     * @return the binary name for the given {@link IType}
+     * @since 3.6
+     */
+    String getQualifiedName(IType type) {
+    	 ASTParser parser = ASTParser.newParser(AST.JLS3);
+	     parser.setSource(type.getTypeRoot());
+	     IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
+	     if(bindings != null && bindings.length > 0) {
+	    	 ITypeBinding tbinding = (ITypeBinding) bindings[0];
+	    	 return tbinding.getBinaryName();
+	     }
+	     return createQualifiedTypeName(type);
+    }
+    
+    /**
      * Returns the package qualified name, while accounting for the fact that a source file might
      * not have a project
      * @param type the type to ensure the package qualified name is created for
      * @return the package qualified name
      * @since 3.3
      */
-    private String createQualifiedTypeName(IType type) {
+    String createQualifiedTypeName(IType type) {
     	String tname = pruneAnonymous(type);
     	try {
     		String packName = null;
@@ -760,7 +784,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        if (element instanceof IField) {
 								javaField = (IField) element;
 								IType type = javaField.getDeclaringType();
-								typeName = createQualifiedTypeName(type);
+								typeName = getQualifiedName(type);
 								fieldName = javaField.getElementName();
 								int f = javaField.getFlags();
 								boolean fin = Flags.isFinal(f);
@@ -1008,18 +1032,30 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     /**
      * Returns the compilation unit from the editor
      * @param editor the editor to get the compilation unit from
+     * @param binding if bindings should be resolved
      * @return the compilation unit or <code>null</code>
      */
-    protected CompilationUnit parseCompilationUnit(ITextEditor editor) {
-        ITypeRoot root = getTypeRoot(editor.getEditorInput());
-        if(root != null) {
+    protected CompilationUnit parseCompilationUnit(ITextEditor editor, boolean binding) {
+        return parseCompilationUnit(getTypeRoot(editor.getEditorInput()), binding);
+    }
+
+    /**
+     * Parses the {@link ITypeRoot} with or without bindings resolution
+     * @param root
+     * @param bindings
+     * @return the parsed {@link CompilationUnit}
+     */
+    CompilationUnit parseCompilationUnit(ITypeRoot root, boolean bindings) {
+    	if(root != null) {
 	        ASTParser parser = ASTParser.newParser(AST.JLS3);
+	        parser.setResolveBindings(bindings);
+	        parser.setBindingsRecovery(bindings);
 	        parser.setSource(root);
 	        return (CompilationUnit) parser.createAST(null);
         }
         return null;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -1148,12 +1184,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     				ITextSelection ts = (ITextSelection) selection;
     				IType declaringType = member.getDeclaringType();
     				IResource resource = BreakpointUtils.getBreakpointResource(declaringType);
-					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, createQualifiedTypeName(declaringType), ts.getStartLine() + 1);
+					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, getQualifiedName(declaringType), ts.getStartLine() + 1);
     				if (breakpoint != null) {
     					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
     					return;
     				}
-    				CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
+    				CompilationUnit unit = parseCompilationUnit(getTextEditor(part), true);
         			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine()+1, true, true);
         			unit.accept(loc);
         			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
@@ -1163,7 +1199,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         				toggleWatchpoints(part, ts);
         			}
         			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
-        				toggleLineBreakpoints(part, ts);
+        				toggleLineBreakpoints(part, ts, false, loc);
         			}
     			} 
     		}
@@ -1172,7 +1208,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		}
     		else {
     			//fall back to old behavior, always create a line breakpoint
-    			toggleLineBreakpoints(part, selection, true);
+    			toggleLineBreakpoints(part, selection, true, null);
     		}
     	}
     }
