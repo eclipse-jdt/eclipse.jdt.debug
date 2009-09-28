@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchesTests;
+import org.eclipse.jdt.debug.tests.launching.LaunchManagerTests;
 import org.eclipse.jdt.debug.tests.launching.MigrationDelegateTests;
 import org.eclipse.jdt.debug.tests.launching.RefreshTabTests;
 import org.eclipse.jdt.debug.tests.launching.TabGroupWrapperTests;
@@ -126,6 +127,7 @@ public class AutomatedSuite extends DebugSuite {
 	//Launching tests
 		
 		addTest(new TestSuite(LaunchModeTests.class));
+		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
 		addTest(new TestSuite(LaunchShortcutTests.class));
 		addTest(new TestSuite(LaunchTests.class));
