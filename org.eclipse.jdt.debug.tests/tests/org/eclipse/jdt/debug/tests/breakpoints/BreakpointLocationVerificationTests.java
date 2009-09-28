@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -221,7 +222,13 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testInnerStaticClass() throws Exception {
-		testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass");
+		String version = getClassFileVersion();
+		if(JavaCore.VERSION_1_5.equals(version) || JavaCore.VERSION_1_6.equals(version)) {
+			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1StaticInnerClass");
+		}
+		else {
+			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass");
+		}
 	}
 
 	/**

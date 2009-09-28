@@ -1850,5 +1850,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         display.syncExec(closeAll);
 	}
     
+	/**
+	 * Returns the version level of the class files being run, based on the system property <code>java.class.version</code>
+	 * @return the version level of the class files being run in the current VM
+	 *  
+	 *  @since 3.6
+	 */
+	protected String getClassFileVersion() {
+		String version = System.getProperty("java.class.version");
+		if(version.compareTo("48.0") <= 0) {
+			return JavaCore.VERSION_1_4;
+		}
+		if(version.compareTo("49.0") <= 0) {
+			return JavaCore.VERSION_1_5;
+		}
+		return JavaCore.VERSION_1_6;
+	}
+	
 }
 
