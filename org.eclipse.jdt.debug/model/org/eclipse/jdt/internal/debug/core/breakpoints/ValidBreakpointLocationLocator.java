@@ -1138,17 +1138,29 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
 		Expression initializer = node.getInitializer();
-		if (visit(node, false) && initializer != null) {
+		if (visit(node, false)) {
 			int startLine = lineNumber(node.getName().getStartPosition());
-            
-			if (fLineNumber == startLine) {
-				fLineLocation= startLine;
-				fLocationFound= true;
-				fLocationType= LOCATION_LINE;
-				fTypeName= computeTypeName(node);
-				return false;
+			if(initializer != null) {
+				if (fLineNumber == startLine) {
+					fLineLocation = startLine;
+					fLocationFound = true;
+					fLocationType = LOCATION_LINE;
+					fTypeName = computeTypeName(node);
+					return false;
+				}
+				initializer.accept(this);
 			}
-			initializer.accept(this);
+			else {
+				//the variable has no initializer
+				int offset = node.getName().getStartPosition();
+				// check if the breakpoint is to be set on the line which contains the name of the field
+				if (lineNumber(offset) == fLineNumber) {
+					fMemberOffset = offset;
+					fLocationType = LOCATION_FIELD;
+					fLocationFound = true;
+					return false;
+				}
+			}
 		}
 		return false;
 	}
