@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kelly Campbell - Bug 285607
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -154,6 +155,7 @@ public class JavaSourceLookupUtil {
 			// External jars are shared, so it does not matter which project it
 			// originates from
 			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+			Path entryPath = new Path(entry.getLocation());
 			try {
 				IJavaProject[] jps = model.getJavaProjects();
 				for (int i = 0; i < jps.length; i++) {
@@ -163,7 +165,7 @@ public class JavaSourceLookupUtil {
 						IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 						for (int j = 0; j < allRoots.length; j++) {
 							IPackageFragmentRoot root = allRoots[j];
-							if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
+							if (root.isExternal() && root.getPath().equals(entryPath)) {
 								if (isSourceAttachmentEqual(root, entry)) {
 									// use package fragment root
 									return root;
