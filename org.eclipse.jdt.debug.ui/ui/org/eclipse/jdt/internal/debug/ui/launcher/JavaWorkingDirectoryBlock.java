@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.WorkingDirectoryBlock;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 
@@ -40,7 +39,7 @@ public class JavaWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#getProject(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.WorkingDirectoryBlock#getProject(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	protected IProject getProject(ILaunchConfiguration configuration)
 			throws CoreException {
@@ -49,10 +48,10 @@ public class JavaWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#log(org.eclipse.core.runtime.CoreException)
+	 * @see org.eclipse.debug.ui.WorkingDirectoryBlock#log(org.eclipse.core.runtime.CoreException)
 	 */
 	protected void log(CoreException e) {
-		JDIDebugUIPlugin.log(e);
+		setErrorMessage(e.getMessage());
 	}
 
 }
