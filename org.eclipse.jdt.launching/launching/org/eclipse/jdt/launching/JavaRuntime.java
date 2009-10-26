@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2699,7 +2699,7 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_7;
             	}
             	if (compliance != null) {
-	                Map defaultOptions = JavaCore.getOriginalDefaultOptions();
+	                Hashtable defaultOptions = JavaCore.getDefaultOptions();
 	                Hashtable options = JavaCore.getOptions();
 	                boolean isDefault =
 	                	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
