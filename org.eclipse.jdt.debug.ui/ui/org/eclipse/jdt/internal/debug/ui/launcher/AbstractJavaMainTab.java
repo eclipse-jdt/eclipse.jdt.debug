@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,19 +22,18 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.internal.launching.JavaMigrationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -111,20 +110,10 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	 * @param parent the parent composite
 	 */
 	protected void createProjectEditor(Composite parent) {
-		Font font= parent.getFont();
-		Group group= new Group(parent, SWT.NONE);
-		group.setText(LauncherMessages.AbstractJavaMainTab_0); 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setFont(font);
-		fProjText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fProjText.setLayoutData(gd);
-		fProjText.setFont(font);
+		Group group = SWTFactory.createGroup(parent, LauncherMessages.AbstractJavaMainTab_0, 2, 1, GridData.FILL_HORIZONTAL);
+		fProjText = SWTFactory.createSingleText(group, 1);
 		fProjText.addModifyListener(fListener);
+		ControlAccessibleListener.addListener(fProjText, group.getText());
 		fProjButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_1, null); 
 		fProjButton.addSelectionListener(fListener);
 	}	

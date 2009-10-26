@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,12 +25,12 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
  * Provides general widgets and methods for a Java type launch configuration 
  * 'Main' tab. 
  * This class provides shared functionality for those main tabs which have a 'main type' field on them;
- * such as a main method for a local Java app, or an applet for Java applets
+ * such as a main method for a local Java application, or an Applet for Java Applets
  * 
  * @since 3.2
  */
@@ -56,16 +56,15 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 	 * @param parent the parent composite
 	 */
 	protected void createMainTypeEditor(Composite parent, String text) {
-		Font font= parent.getFont();
-		Group mainGroup = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
-		Composite comp = SWTFactory.createComposite(mainGroup, font, 2, 2, GridData.FILL_BOTH, 0, 0);
-		fMainText = SWTFactory.createSingleText(comp, 1);
+		Group group = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
+		fMainText = SWTFactory.createSingleText(group, 1);
 		fMainText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fSearchButton = createPushButton(comp, LauncherMessages.AbstractJavaMainTab_2, null); 
+		ControlAccessibleListener.addListener(fMainText, group.getText());
+		fSearchButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_2, null); 
 		fSearchButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -73,7 +72,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 				handleSearchButtonSelected();
 			}
 		});
-		createMainTypeExtensions(comp);
+		createMainTypeExtensions(group);
 	}
 	
 	/**
