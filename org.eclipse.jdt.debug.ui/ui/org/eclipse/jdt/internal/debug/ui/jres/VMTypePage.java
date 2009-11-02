@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
@@ -101,11 +100,7 @@ public class VMTypePage extends WizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		
 		SWTFactory.createLabel(composite, JREMessages.VMTypePage_3, 1);
 		
@@ -113,6 +108,7 @@ public class VMTypePage extends WizardPage {
 		GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 250;
         data.widthHint = 300;
+        fTypesViewer.getControl().setFont(composite.getFont());
         fTypesViewer.getControl().setLayoutData(data);
         fTypesViewer.setContentProvider(new ArrayContentProvider());
         fTypesViewer.setLabelProvider(new TypeLabelProvider());
