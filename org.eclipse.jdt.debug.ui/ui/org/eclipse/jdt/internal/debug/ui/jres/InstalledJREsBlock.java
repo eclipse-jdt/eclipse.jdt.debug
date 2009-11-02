@@ -376,18 +376,24 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
             standin.setName(generateName(selectedVM.getName()));
 			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
-			if (dialog.open() == Window.OK) {
+			int dialogResult = dialog.open();
+			if (dialogResult == Window.OK) {
 				VMStandin result = wizard.getResult();
 				if (result != null) {
-					// add the new VM
-					fVMs.add(result);
-					fVMList.refresh();
-					fVMList.setSelection(new StructuredSelection(result));
+					newEntries.add(result);
 				}
+			} else if (dialogResult == Window.CANCEL){
+				// Cancelling one wizard should cancel all subsequent wizards
+				break;
 			}
         }
-        fVMList.refresh();
-        fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
+        if (newEntries.size() > 0){
+        	fVMs.addAll(newEntries);
+        	fVMList.refresh();
+        	fVMList.setSelection(new StructuredSelection(newEntries.toArray()));
+        } else {
+        	fVMList.setSelection(selection);
+        }
     }
 
 	/**
