@@ -43,6 +43,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 	public NewSnippetFileWizardPage(IStructuredSelection selection) {
 		super("createScrapBookPage", selection); //$NON-NLS-1$
 		setTitle(SnippetMessages.getString("NewSnippetFileWizardPage.title")); //$NON-NLS-1$
+		setDescription(SnippetMessages.getString("NewSnippetFileWizardPage.description"));		 //$NON-NLS-1$
 	}
 
 	public boolean finish() {
