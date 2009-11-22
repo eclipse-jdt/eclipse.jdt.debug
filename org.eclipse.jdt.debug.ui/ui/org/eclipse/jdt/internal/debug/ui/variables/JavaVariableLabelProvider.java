@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,18 +14,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.DebugUIMessages;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -45,8 +51,19 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	private Map fQualifiedNameSettings = new HashMap();
 	private boolean fQualifiedNames = false;
 	
+	/**
+	 * Whether to use a thread rule for a label update job (serialize on thread)
+	 */
+	private int fSerializeMode = SERIALIZE_NONE;
+	
+	private static final int SERIALIZE_ALL = 0; // no toString()'s in line, so serialize labels
+	private static final int SERIALIZE_NONE = 1; // all toString()'s in line, so don't serialize labels (evaluations will be serialized)
+	private static final int SERIALIZE_SOME = 2; // some - only serialize those that don't have formatters (ones with formatters will be serialized by evaluation)
+	
 	public JavaVariableLabelProvider() {
-		JDIDebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+		Preferences prefs = JDIDebugUIPlugin.getDefault().getPluginPreferences();
+		prefs.addPropertyChangeListener(this);
+		determineSerializationMode(prefs.getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS));
 	}
 	
 	/* (non-Javadoc)
@@ -135,6 +152,23 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
 			fQualifiedNameSettings.clear();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
+			determineSerializationMode((String) event.getNewValue());
+		}
+	}
+	
+	/**
+	 * Sets the serialization mode for label jobs based on the current preference setting.
+	 * 
+	 * @param value preferance value for PREF_SHOW_DETAILS
+	 */
+	private void determineSerializationMode(String value) {
+		if (value.equals(IJDIPreferencesConstants.INLINE_ALL)) {
+			fSerializeMode = SERIALIZE_NONE;
+		} else if (value.equals(IJDIPreferencesConstants.INLINE_FORMATTERS)) {
+			fSerializeMode = SERIALIZE_SOME;
+		} else {
+			fSerializeMode = SERIALIZE_ALL;
 		}
 	}
 
@@ -152,5 +186,37 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		return super.getLabel(elementPath, context, columnId);
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
+	 */
+	protected ISchedulingRule getRule(ILabelUpdate update) {
+		IJavaStackFrame frame = null;
+		switch (fSerializeMode) {
+		case SERIALIZE_NONE:
+			return null;
+		case SERIALIZE_ALL:
+			Object input = update.getViewerInput();
+			frame = (IJavaStackFrame) DebugPlugin.getAdapter(input, IJavaStackFrame.class);
+			break;
+		case SERIALIZE_SOME:
+			Object element = update.getElement();
+			if (element instanceof IJavaVariable) {
+				try {
+					IValue value = ((IJavaVariable)element).getValue();
+					if (value instanceof IJavaValue) {
+						if (!fLabelProvider.isShowLabelDetails((IJavaValue)value)) {
+							input = update.getViewerInput();
+							frame = (IJavaStackFrame) DebugPlugin.getAdapter(input, IJavaStackFrame.class);			
+						}
+					}
+				} catch (DebugException e) {
+
+				}
+			}
+		}
+		if (frame != null) {
+			return ((JDIThread)frame.getThread()).getThreadRule();
+		}
+		return null;
+	}
 }
