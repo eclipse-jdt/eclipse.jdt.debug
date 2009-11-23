@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -36,9 +37,14 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
@@ -61,6 +67,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.ibm.icu.text.MessageFormat;
+import com.sun.jdi.InternalException;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadGroupReference;
@@ -2526,5 +2533,122 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// #targetRequestFailed will throw an exception				
 			return null;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#refreshState()
+	 */
+	public void refreshState() throws DebugException {
+		if (isTerminated() || isDisconnected()) {
+			return;
+		}
+		boolean prevSuspend = isSuspended();
+		int running = 0;
+		int suspended = 0;
+		List toSuspend = new ArrayList();
+		List toResume = new ArrayList();
+		List toRefresh = new ArrayList();
+		Iterator iterator = getThreadIterator();
+		while (iterator.hasNext()) {
+			JDIThread thread = (JDIThread) iterator.next();
+			boolean modelSuspended = thread.isSuspended(); 
+			ThreadReference reference = thread.getUnderlyingThread();
+			try {
+				boolean realSuspended = reference.isSuspended();
+				if (realSuspended) {
+					suspended++;
+					if (modelSuspended) {
+						// Even if the model is suspended, it might be in a different location so refresh
+						toRefresh.add(thread);
+					} else {
+						// The thread is actually suspended, refresh frames and fire suspend event.
+						toSuspend.add(thread);
+					}
+				} else {
+					running++;
+					if (modelSuspended) {
+						// thread is actually running, model is suspended, resume model 
+						toResume.add(thread);
+					}
+					// else both are running - OK
+				}
+			} catch (InternalException e) {
+				requestFailed(e.getMessage(), e);
+			}
+		}
+		// if the entire target changed state/fire events at target level, else fire thread events
+		boolean targetLevelEvent = false;
+		if (prevSuspend) {
+			if (running > 0) {
+				// was suspended, but now a thread is running
+				targetLevelEvent = true;
+			}
+		} else {
+			if (running == 0) {
+				// was running, but now all threads are suspended
+				targetLevelEvent = true;
+			}
+		}
+		if (targetLevelEvent) {
+			iterator = toSuspend.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.suspendedByVM();
+			}
+			iterator = toResume.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.resumedByVM();
+			}
+			iterator = toRefresh.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.preserveStackFrames();
+			}
+			if (running == 0) {
+				synchronized (this) {
+					setSuspended(true);
+				}
+				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			} else {
+				synchronized (this) {
+					setSuspended(false);
+				}
+				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			}
+		} else {
+			iterator = toSuspend.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.preserveStackFrames();
+				thread.setRunning(false);
+				thread.fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			}
+			iterator = toResume.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.setRunning(true);
+				thread.fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			}
+			iterator = toRefresh.iterator();
+			while (iterator.hasNext()) {
+				JDIThread thread = (JDIThread) iterator.next();
+				thread.preserveStackFrames();
+				thread.fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			}
+		}
+			 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#sendCommand(byte, byte, byte[])
+	 */
+	public byte[] sendCommand(byte commandSet, byte commandId, byte[] data) throws DebugException {
+		try {
+			return sendJDWPCommand(commandSet, commandId, data);
+		} catch (IOException e) {
+			requestFailed(e.getMessage(), e);
+		}
+		return null;
 	}	
 }

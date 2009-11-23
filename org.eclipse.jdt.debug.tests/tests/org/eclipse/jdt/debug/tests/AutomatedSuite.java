@@ -98,6 +98,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
+import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
@@ -250,6 +251,8 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// JDWP tests
 		addTest(new TestSuite(JDWPTests.class));
+	// Refresh state tests
+		addTest(new TestSuite(RefreshStateTests.class));		
 		
 	// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));

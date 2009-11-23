@@ -271,5 +271,14 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @since 3.3
 	 */
 	public int getFrameCount() throws DebugException;
+	
+	/**
+	 * Returns the object reference associated with this thread.
+	 * 
+	 * @return thread object reference 
+	 * @throws DebugException if unable to retrieve an object reference
+	 * @since 3.6
+	 */
+	public IJavaObject getThreadObject() throws DebugException;
 
 }

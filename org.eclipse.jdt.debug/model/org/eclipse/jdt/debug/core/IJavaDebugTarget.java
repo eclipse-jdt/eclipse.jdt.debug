@@ -450,4 +450,34 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 */
 	public String getVersion() throws DebugException;	
 	
+	/**
+	 * Refreshes the state of the Java debug model elements (client) with the current
+	 * state of the debug target.
+	 * <p>
+	 * For example, a {@link IJavaThread} may currently have a suspended state, but was
+	 * somehow resumed on the target. Calling this method will causes all threads to update
+	 * their state based on the current state of the target. Elements will fire debug events
+	 * associated with any state changes. For example, a thread would fire a resume event
+	 * if it discovered it was in a running state when it thought it was suspended.
+	 * </p>
+	 * @throws DebugException if an exception occurs
+	 * @since 3.6
+	 */
+	public void refreshState() throws DebugException;
+	
+	/**
+	 * Sends a JDWP command to the back end and returns the JDWP reply packet as bytes.
+	 * This method creates an appropriate command header and packet id, before sending
+	 * to the back end.
+	 * 
+	 * @param commandSet command set identifier as defined by JDWP
+	 * @param commandId command identifier as defined by JDWP
+	 * @param data any bytes required for the command that follow the command header
+	 * 	or <code>null</code> for commands that have no data
+	 * @return raw reply packet as bytes defined by JDWP
+	 * @exception DebugException if an error occurs sending the packet or receiving the reply
+	 * @since 3.6
+	 */
+	public byte[] sendCommand(byte commandSet, byte commandId, byte[] data) throws DebugException;	
+	
 }

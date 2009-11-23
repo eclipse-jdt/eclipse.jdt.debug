@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -31,7 +32,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -2891,4 +2895,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public synchronized boolean isSuspendVoteInProgress() {
 		return fSuspendVoteInProgress;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getThreadObject()
+	 */
+	public IJavaObject getThreadObject() throws DebugException {
+		return (IJavaObject) JDIValue.createValue(getJavaDebugTarget(), fThread);
+	}
+	
 }

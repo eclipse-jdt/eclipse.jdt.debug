@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpString;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -52,9 +53,9 @@ public class JDWPTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IDebugTarget target = thread.getDebugTarget();
 			assertTrue("Wrong target", target instanceof JDIDebugTarget);
-			JDIDebugTarget jdiTarget = (JDIDebugTarget) target;
+			IJavaDebugTarget jdiTarget = (IJavaDebugTarget) target;
 			// VM capabilities
-			byte[] reply = jdiTarget.sendJDWPCommand((byte)1, (byte)12, null);
+			byte[] reply = jdiTarget.sendCommand((byte)1, (byte)12, null);
 			JdwpReplyPacket packet = (JdwpReplyPacket) JdwpPacket.build(reply);
 			
 			assertEquals("Unexpected error code in reply packet", 0, packet.errorCode());
@@ -84,12 +85,12 @@ public class JDWPTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IDebugTarget target = thread.getDebugTarget();
 			assertTrue("Wrong target", target instanceof JDIDebugTarget);
-			JDIDebugTarget jdiTarget = (JDIDebugTarget) target;
+			IJavaDebugTarget jdiTarget = (IJavaDebugTarget) target;
 			// VM capabilities
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			JdwpString.write("LBreakpoints;", outData);
-			byte[] reply = jdiTarget.sendJDWPCommand((byte)1, (byte)2, outBytes.toByteArray());
+			byte[] reply = jdiTarget.sendCommand((byte)1, (byte)2, outBytes.toByteArray());
 			JdwpReplyPacket packet = (JdwpReplyPacket) JdwpPacket.build(reply);
 			assertEquals("Unexpected error code in reply packet", 0, packet.errorCode());
 			DataInputStream replyData = packet.dataInStream();

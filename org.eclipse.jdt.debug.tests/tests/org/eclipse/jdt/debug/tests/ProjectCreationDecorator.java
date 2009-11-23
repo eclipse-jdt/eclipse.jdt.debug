@@ -167,6 +167,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("ThrowsNPE");
         createLaunchConfiguration("ThrowsException");
         createLaunchConfiguration("org.eclipse.debug.tests.targets.Watchpoint");
+        createLaunchConfiguration("org.eclipse.debug.tests.targets.CallLoop");
         createLaunchConfiguration("A");
         createLaunchConfiguration("HitCountLooper");
         createLaunchConfiguration("CompileError");
