@@ -99,7 +99,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 				}
 				if(config == null) {
 					//create a new one
-					ILaunchConfigurationWorkingCopy copy = type.newInstance(null, lm.generateUniqueLaunchConfigurationNameFrom("New_Test_Config"));
+					ILaunchConfigurationWorkingCopy copy = type.newInstance(null, lm.generateLaunchConfigurationName("New_Test_Config"));
 					copy.setAttribute("testconfig", true);
 					config = copy.doSave();
 				}
