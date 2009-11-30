@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,37 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.model.IDebugElement;
+
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchMatch;
-import org.eclipse.jdt.core.search.SearchParticipant;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
+
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-import org.eclipse.jdt.ui.JavaUI;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
+
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+
+import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
+
+import org.eclipse.jdt.ui.JavaUI;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
 	
@@ -140,31 +144,38 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @throws JavaModelException
 	 */
 	public static IType findTypeInWorkspace(String typeName) throws CoreException {
-		IType[] types= findTypes(typeName, null);
-		if (types.length > 0) {
-			return types[0];
+		int dot= typeName.lastIndexOf('.');
+		char[][] qualifications;
+		String simpleName;
+		if (dot != -1) {
+			qualifications= new char[][] { typeName.substring(0, dot).toCharArray() };
+			simpleName= typeName.substring(dot + 1);
+		} else {
+			qualifications= null;
+			simpleName= typeName;
+		}
+		char[][] typeNames= new char[][] { simpleName.toCharArray() };
+		
+		class ResultException extends RuntimeException {
+			private static final long serialVersionUID= 1L;
+			private final IType fType;
+			public ResultException(IType type) {
+				fType= type;
+			}
+		}
+		TypeNameMatchRequestor requestor= new TypeNameMatchRequestor() {
+			public void acceptTypeNameMatch(TypeNameMatch match) {
+				throw new ResultException(match.getType());
+			}
+		};
+		try {
+			new SearchEngine().searchAllTypeNames(qualifications, typeNames, SearchEngine.createWorkspaceScope(), requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+		} catch (ResultException e) {
+			return e.fType;
 		}
 		return null;
 	}
 	
-	private static IType[] findTypes(String typeName, IProgressMonitor monitor) throws CoreException {
-		
-		final List results= new ArrayList();
-		
-		SearchRequestor collector= new SearchRequestor() {
-			public void acceptSearchMatch(SearchMatch match) throws CoreException {
-				Object element= match.getElement();
-				if (element instanceof IType)
-					results.add(element);
-			}
-		};
-		
-		SearchEngine engine= new SearchEngine();
-		SearchPattern pattern= SearchPattern.createPattern(typeName, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH);
-		engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, SearchEngine.createWorkspaceScope(), collector, monitor);
-		
-		return (IType[]) results.toArray(new IType[results.size()]);
-	}
 	
 	protected void typeHierarchyError() {
 		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); 
