@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,8 +114,8 @@ public class NameValuePairDialog extends Dialog {
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-			fName= fNameText.getText();
-			fValue = fValueText.getText();
+			fName= fNameText.getText().trim();
+			fValue = fValueText.getText().trim();
 		} else {
 			fName = null;
 			fValue = null;
