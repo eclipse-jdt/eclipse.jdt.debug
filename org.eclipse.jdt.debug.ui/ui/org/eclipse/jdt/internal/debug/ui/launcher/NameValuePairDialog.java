@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -52,20 +53,8 @@ public class NameValuePairDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
-		Composite comp = new Composite(parent, SWT.NULL);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		topLayout.marginHeight =
-			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		topLayout.marginWidth =
-			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		topLayout.verticalSpacing =
-			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		topLayout.horizontalSpacing =
-			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);		
-		comp.setLayout(topLayout);
-		comp.setFont(font);
-		GridData gd;
+		Composite comp = (Composite) super.createDialogArea(parent);
+		((GridLayout)comp.getLayout()).numColumns=2;
 		
 		fNameLabel = new Label(comp, SWT.NONE);
 		fNameLabel.setText(fFieldLabels[0]);
@@ -79,7 +68,7 @@ public class NameValuePairDialog extends Dialog {
 		
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(font);
