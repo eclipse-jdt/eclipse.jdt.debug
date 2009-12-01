@@ -330,7 +330,6 @@ public class ExpressionInputDialog extends TrayDialog {
 	 */
     protected void okPressed() {
         fResult= getText();
-		dispose();
         super.okPressed();
     }
     
