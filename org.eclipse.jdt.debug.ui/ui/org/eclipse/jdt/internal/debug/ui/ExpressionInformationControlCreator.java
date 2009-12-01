@@ -85,6 +85,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 */
 		private IVariable fVariable;
 		
+		private IPresentationContext fContext;
 	    private TreeModelViewer fViewer;
 	    private SashForm fSashForm;
 	    private Composite fDetailPaneComposite;
@@ -230,6 +231,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 */
 		public void dispose() {
 			persistSettings(getShell());
+            fContext.dispose();
 			super.dispose();
 		}
 
@@ -272,18 +274,18 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		    // update presentation context
 	        AbstractDebugView view = getViewToEmulate();
-	        IPresentationContext context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+	        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
 	        if (view != null) {
 	        	// copy over properties
 	        	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
 	        	String[] properties = copy.getProperties();
 	        	for (int i = 0; i < properties.length; i++) {
 					String key = properties[i];
-					context.setProperty(key, copy.getProperty(key));
+					fContext.setProperty(key, copy.getProperty(key));
 				}
 	        }
 	       
-	        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
+	        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
 	        fViewer.setAutoExpandLevel(1);
 	        
 	        if (view != null) {
@@ -425,7 +427,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			};
 		}
-
 	}
 
 	/* (non-Javadoc)
