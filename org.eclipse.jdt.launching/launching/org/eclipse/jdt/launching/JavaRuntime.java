@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,18 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -47,16 +55,23 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.core.runtime.preferences.BundleDefaultsScope;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
@@ -75,20 +90,14 @@ import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VMListener;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The central access point for launching support. This class manages
- * the registered VM types contributed through the 
+ * the registered VM types contributed through the
  * <code>"org.eclipse.jdt.launching.vmType"</code> extension point.
  * As well, this class provides VM install change notification,
  * and computes class paths and source lookup paths for launch
@@ -115,7 +124,7 @@ public final class JavaRuntime {
 	/**
 	 * Classpath variable name used for the default JRE's library source root
 	 * (value <code>"JRE_SRCROOT"</code>).
-	 */	
+	 */
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
 	
 	/**
@@ -124,7 +133,7 @@ public final class JavaRuntime {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS= "runtimeClasspathEntryResolvers";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS= "runtimeClasspathEntryResolvers";	 //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"classpathProviders"</code>) for the
@@ -132,7 +141,7 @@ public final class JavaRuntime {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$		
+	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"executionEnvironments"</code>) for the
@@ -148,7 +157,7 @@ public final class JavaRuntime {
 	 * 
 	 * @since 3.2
 	 */
-	public static final String EXTENSION_POINT_VM_INSTALLS = "vmInstalls";	 //$NON-NLS-1$		
+	public static final String EXTENSION_POINT_VM_INSTALLS = "vmInstalls";	 //$NON-NLS-1$
 		
 	/**
 	 * Classpath container used for a project's JRE
@@ -216,7 +225,7 @@ public final class JavaRuntime {
 	 * 
 	 * @since 3.5
 	 */
-	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$	
+	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
 	
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.jdt.launching"</code>)
@@ -252,7 +261,7 @@ public final class JavaRuntime {
 	 * <p>
 	 * The factory methods <code>newLibraryPathsAttribute(String[])</code>
 	 * and <code>getLibraryPaths(IClasspathAttribute)</code> should be used to
-	 * encode and decode the attribute value. 
+	 * encode and decode the attribute value.
 	 * </p>
 	 * <p>
 	 * Each string is used to create an <code>IPath</code> using the constructor
@@ -260,7 +269,7 @@ public final class JavaRuntime {
 	 * Variable substitution is performed on the string prior to constructing
 	 * a path from the string.
 	 * If the resulting <code>IPath</code> is a relative path, it is interpreted
-	 * as relative to the workspace location. If the path is absolute, it is 
+	 * as relative to the workspace location. If the path is absolute, it is
 	 * interpreted as an absolute path in the local file system.
 	 * </p>
 	 * @since 3.1
@@ -326,13 +335,13 @@ public final class JavaRuntime {
 	private static void initializeVMTypeExtensions() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, "vmInstallTypes"); //$NON-NLS-1$
 		if(extensionPoint != null) {
-			IConfigurationElement[] configs = extensionPoint.getConfigurationElements(); 
+			IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
 			MultiStatus status = new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, "Exceptions occurred", null);  //$NON-NLS-1$
 			fgVMTypes = new HashSet();
 			for (int i= 0; i < configs.length; i++) {
 				try {
 					fgVMTypes.add(configs[i].createExecutableExtension("class")); //$NON-NLS-1$
-				} 
+				}
 				catch (CoreException e) {status.add(e.getStatus());}
 			}
 			if (!status.isOK()) {
@@ -385,7 +394,7 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns the VM install type with the given unique id. 
+	 * Returns the VM install type with the given unique id.
 	 * @param id the VM install type unique id
 	 * @return	The VM install type for the given id, or <code>null</code> if no
 	 * 			VM install type with the given id is registered.
@@ -404,19 +413,19 @@ public final class JavaRuntime {
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
 	 * change listeners of the change.
 	 * 
-	 * @param vm	The vm to make the default. May be <code>null</code> to clear 
+	 * @param vm	The vm to make the default. May be <code>null</code> to clear
 	 * 				the default.
 	 * @param monitor progress monitor or <code>null</code>
 	 */
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		setDefaultVMInstall(vm, monitor, true);
-	}	
+	}
 	
 	/**
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
 	 * change listeners of the change.
 	 * 
-	 * @param vm	The vm to make the default. May be <code>null</code> to clear 
+	 * @param vm	The vm to make the default. May be <code>null</code> to clear
 	 * 				the default.
 	 * @param monitor progress monitor or <code>null</code>
 	 * @param savePreference If <code>true</code>, update workbench preferences to reflect
@@ -443,8 +452,8 @@ public final class JavaRuntime {
 	
 	/**
 	 * Sets a VM connector as the system-wide default VM. This setting is persisted when
-	 * saveVMConfiguration is called. 
-	 * @param	connector The connector to make the default. May be <code>null</code> to clear 
+	 * saveVMConfiguration is called.
+	 * @param	connector The connector to make the default. May be <code>null</code> to clear
 	 * 				the default.
 	 * @param monitor The progress monitor to use
 	 * @since 2.0
@@ -453,7 +462,7 @@ public final class JavaRuntime {
 	public static void setDefaultVMConnector(IVMConnector connector, IProgressMonitor monitor) throws CoreException {
 		fgDefaultVMConnectorId= connector.getIdentifier();
 		saveVMConfiguration();
-	}		
+	}
 	
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
@@ -497,7 +506,7 @@ public final class JavaRuntime {
 			connector = new SocketAttachConnector();
 		}
 		return connector;
-	}	
+	}
 	
 	/**
 	 * Returns the list of registered VM types. VM types are registered via
@@ -508,7 +517,7 @@ public final class JavaRuntime {
 	 */
 	public static IVMInstallType[] getVMInstallTypes() {
 		initializeVMs();
-		return (IVMInstallType[]) fgVMTypes.toArray(new IVMInstallType[fgVMTypes.size()]); 
+		return (IVMInstallType[]) fgVMTypes.toArray(new IVMInstallType[fgVMTypes.size()]);
 	}
 	
 	/**
@@ -527,9 +536,9 @@ public final class JavaRuntime {
 	private static String getDefaultVMConnectorId() {
 		initializeVMs();
 		return fgDefaultVMConnectorId;
-	}	
+	}
 	
-	/** 
+	/**
 	 * Returns a String that uniquely identifies the specified VM across all VM types.
 	 * 
 	 * @param vm the instance of IVMInstallType to be identified
@@ -548,7 +557,7 @@ public final class JavaRuntime {
 	
 	/**
 	 * Return the VM corresponding to the specified composite Id.  The id uniquely
-	 * identifies a VM across all vm types.  
+	 * identifies a VM across all vm types.
 	 * 
 	 * @param idString the composite id that specifies an instance of IVMInstall
 	 * 
@@ -583,7 +592,7 @@ public final class JavaRuntime {
 	
 	/**
 	 * Returns a new runtime classpath entry containing the default classpath
-	 * for the specified Java project. 
+	 * for the specified Java project.
 	 * 
 	 * @param project Java project
 	 * @return runtime classpath entry
@@ -591,7 +600,7 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry newDefaultProjectClasspathEntry(IJavaProject project) {
 		return new DefaultProjectClasspathEntry(project);
-	}	
+	}
 	
 	/**
 	 * Returns a new runtime classpath entry for the given project.
@@ -632,7 +641,7 @@ public final class JavaRuntime {
 	 * Returns a new runtime classpath entry for the classpath
 	 * variable with the given path.
 	 * 
-	 * @param path variable path; first segment is the name of the variable; 
+	 * @param path variable path; first segment is the name of the variable;
 	 * 	trailing segments are appended to the resolved variable value
 	 * @return runtime classpath entry
 	 * @since 2.0
@@ -674,7 +683,7 @@ public final class JavaRuntime {
 		RuntimeClasspathEntry entry = new RuntimeClasspathEntry(JavaCore.newContainerEntry(path), classpathProperty);
 		entry.setJavaProject(project);
 		return entry;
-	}	
+	}
 		
 	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
@@ -713,9 +722,9 @@ public final class JavaRuntime {
 			}
 			return entry;
 		} catch (SAXException e) {
-			abort(LaunchingMessages.JavaRuntime_32, e); 
+			abort(LaunchingMessages.JavaRuntime_32, e);
 		} catch (IOException e) {
-			abort(LaunchingMessages.JavaRuntime_32, e); 
+			abort(LaunchingMessages.JavaRuntime_32, e);
 		}
 		return null;
 	}
@@ -731,7 +740,7 @@ public final class JavaRuntime {
 	 */
 	private static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
 		return new RuntimeClasspathEntry(entry);
-	}	
+	}
 			
 	/**
 	 * Computes and returns the default unresolved runtime classpath for the
@@ -757,11 +766,11 @@ public final class JavaRuntime {
 								break;
 							case IClasspathContainer.K_DEFAULT_SYSTEM:
 								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES, project));
-								break;	
+								break;
 							case IClasspathContainer.K_SYSTEM:
 								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, project));
 								break;
-						}						
+						}
 					}
 					break;
 				case IClasspathEntry.CPE_VARIABLE:
@@ -804,7 +813,7 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] resolveSourceLookupPath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		return getSourceLookupPathProvider(configuration).resolveClasspath(entries, configuration);
-	}	
+	}
 	
 	/**
 	 * Returns the classpath provider for the given launch configuration.
@@ -822,11 +831,11 @@ public final class JavaRuntime {
 		} else {
 			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_26, new String[]{providerId}), null); 
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_26, new String[]{providerId}), null);
 			}
 		}
 		return provider;
-	}	
+	}
 		
 	/**
 	 * Returns the source lookup path provider for the given launch configuration.
@@ -844,11 +853,11 @@ public final class JavaRuntime {
 		} else {
 			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_27, new String[]{providerId}), null); 
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_27, new String[]{providerId}), null);
 			}
 		}
 		return provider;
-	}	
+	}
 		
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
@@ -880,7 +889,7 @@ public final class JavaRuntime {
 				if (resource instanceof IProject) {
 					IProject p = (IProject)resource;
 					IJavaProject project = JavaCore.create(p);
-					if (project == null || !p.isOpen() || !project.exists()) { 
+					if (project == null || !p.isOpen() || !project.exists()) {
 						return new IRuntimeClasspathEntry[0];
 					}
 					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty());
@@ -889,34 +898,34 @@ public final class JavaRuntime {
 					}
 				} else {
 					// could not resolve project
-					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null); 
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null);
 				}
 				break;
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
 					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, null, configuration);
-					if (resolved != null) { 
+					if (resolved != null) {
 						return resolved;
 					}
 					break;
-				} 
-				return resolver.resolveRuntimeClasspathEntry(entry, configuration);				
+				}
+				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
 					return computeDefaultContainerEntries(entry, configuration);
-				} 
+				}
 				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 			case IRuntimeClasspathEntry.ARCHIVE:
 				// verify the archive exists
 				String location = entry.getLocation();
 				if (location == null) {
-					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null); 
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null);
 				}
 				File file = new File(location);
 				if (!file.exists()) {
-					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null); 
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null);
 				}
 				break;
 			case IRuntimeClasspathEntry.OTHER:
@@ -957,10 +966,10 @@ public final class JavaRuntime {
 							srcPath = srcPath.append(srcVar.removeFirstSegments(1));
 						}
 						if (srcRootVar != null && !srcRootVar.isEmpty()) {
-							srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
+							srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));
 							if (srcRootPath != null) {
 								if (srcRootVar.segmentCount() > 1) {
-									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
+									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));
 								}
 							}
 						}
@@ -972,9 +981,9 @@ public final class JavaRuntime {
 				runtimeArchEntry.setClasspathProperty(entry.getClasspathProperty());
 				if (configuration == null) {
 					return resolveRuntimeClasspathEntry(runtimeArchEntry, project);
-				} 
+				}
 				return resolveRuntimeClasspathEntry(runtimeArchEntry, configuration);
-			}		
+			}
 		}
 		return null;
 	}
@@ -1004,12 +1013,12 @@ public final class JavaRuntime {
 			}
 		}
 		if (nonDefault.isEmpty()) {
-			return null; 
-		} 
+			return null;
+		}
 		// add the default location if not already included
 		IPath def = project.getOutputLocation();
 		if (!nonDefault.contains(def)) {
-			nonDefault.add(def);						
+			nonDefault.add(def);
 		}
 		IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
 		for (int i = 0; i < locations.length; i++) {
@@ -1017,7 +1026,7 @@ public final class JavaRuntime {
 			locations[i] = new RuntimeClasspathEntry(newEntry);
 			locations[i].setClasspathProperty(classpathProperty);
 		}
-		return locations;						
+		return locations;
 	}
 	
 	/**
@@ -1032,7 +1041,7 @@ public final class JavaRuntime {
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
 	 * resolver is not registered, resolved runtime classpath entries are calculated
-	 * from the associated container classpath entries, in the context of the 
+	 * from the associated container classpath entries, in the context of the
 	 * given project.
 	 * </p>
 	 * @param entry runtime classpath entry
@@ -1059,31 +1068,31 @@ public final class JavaRuntime {
 						return new IRuntimeClasspathEntry[0];
 					}
 				}
-				break;			
+				break;
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
 					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, project, null);
-					if (resolved != null) { 
+					if (resolved != null) {
 						return resolved;
 					}
 					break;
-				} 
-				return resolver.resolveRuntimeClasspathEntry(entry, project);				
+				}
+				return resolver.resolveRuntimeClasspathEntry(entry, project);
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
 					return computeDefaultContainerEntries(entry, project);
-				} 
+				}
 				return resolver.resolveRuntimeClasspathEntry(entry, project);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
-				return resolver.resolveRuntimeClasspathEntry(entry, project);				
+				return resolver.resolveRuntimeClasspathEntry(entry, project);
 			default:
 				break;
 		}
 		return new IRuntimeClasspathEntry[] {entry};
-	}	
+	}
 		
 	/**
 	 * Performs default resolution for a container entry.
@@ -1105,13 +1114,13 @@ public final class JavaRuntime {
 		if (project == null || entry == null) {
 			// cannot resolve without entry or project context
 			return new IRuntimeClasspathEntry[0];
-		} 
+		}
 		IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 		if (container == null) {
-			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Could_not_resolve_classpath_container___0__1, new String[]{entry.getPath().toString()}), null); 
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Could_not_resolve_classpath_container___0__1, new String[]{entry.getPath().toString()}), null);
 			// execution will not reach here - exception will be thrown
 			return null;
-		} 
+		}
 		IClasspathEntry[] cpes = container.getClasspathEntries();
 		int property = -1;
 		switch (container.getKind()) {
@@ -1120,11 +1129,11 @@ public final class JavaRuntime {
 				break;
 			case IClasspathContainer.K_DEFAULT_SYSTEM:
 				property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-				break;	
+				break;
 			case IClasspathContainer.K_SYSTEM:
 				property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 				break;
-		}			
+		}
 		List resolved = new ArrayList(cpes.length);
 		List projects = (List) fgProjects.get();
 		Integer count = (Integer) fgEntryCount.get();
@@ -1203,7 +1212,7 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
-	}	
+	}
 	
 	/**
 	 * Return the <code>IJavaProject</code> referenced in the specified configuration or
@@ -1216,13 +1225,13 @@ public final class JavaRuntime {
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
 			return null;
-		}			
+		}
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
 		if (javaProject != null && javaProject.getProject().exists() && !javaProject.getProject().isOpen()) {
-			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_28, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null); 
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_28, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null);
 		}
 		if ((javaProject == null) || !javaProject.exists()) {
-			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); 
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null);
 		}
 		return javaProject;
 	}
@@ -1288,7 +1297,7 @@ public final class JavaRuntime {
 	}
 	/**
 	 * Returns the VM of the given type with the specified name.
-	 *  
+	 * 
 	 * @param type vm type identifier
 	 * @param name vm name
 	 * @return vm install
@@ -1299,20 +1308,20 @@ public final class JavaRuntime {
 		IVMInstallType vt = getVMInstallType(type);
 		if (vt == null) {
 			// error type does not exist
-			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null); 
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null);
 		}
 		IVMInstall vm = null;
 		// look for a name
 		if (name == null) {
 			// error - type specified without a specific install (could be an old config that specified a VM ID)
-			// log the error, but choose the default VM.  
+			// log the error, but choose the default VM.
 			LaunchingPlugin.log(new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format("VM not fully specified in launch configuration {0} - missing VM name. Reverting to default VM.", new String[] {configuration.getName()}), null));  //$NON-NLS-1$
 			return getDefaultVMInstall();
-		} 
+		}
 		vm = vt.findVMInstallByName(name);
 		if (vm == null) {
 			// error - install not found
-			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);					 
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);
 		} else {
 			return vm;
 		}
@@ -1329,7 +1338,7 @@ public final class JavaRuntime {
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
 		abort(message, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, exception);
-	}	
+	}
 		
 		
 	/**
@@ -1343,10 +1352,10 @@ public final class JavaRuntime {
 	 */
 	private static void abort(String message, int code, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
-	}	
+	}
 		
 	/**
-	 * Computes the default application classpath entries for the given 
+	 * Computes the default application classpath entries for the given
 	 * project.
 	 * 
 	 * @param	jproject The project to compute the classpath for
@@ -1365,13 +1374,13 @@ public final class JavaRuntime {
 				for (int j = 0; j < entries.length; j++) {
 					String location = entries[j].getLocation();
 					if (location != null) {
-						resolved.add(location); 
+						resolved.add(location);
 					}
 				}
 			}
 		}
 		return (String[])resolved.toArray(new String[resolved.size()]);
-	}	
+	}
 		
 	/**
 	 * Saves the VM configuration information to the preferences. This includes
@@ -1390,7 +1399,7 @@ public final class JavaRuntime {
 		}
 		String xml = getVMsAsXML();
 		getPreferences().setValue(PREF_VM_XML, xml);
-		savePreferences(); 
+		savePreferences();
 	}
 	
 	/**
@@ -1399,9 +1408,9 @@ public final class JavaRuntime {
 	 * @throws CoreException
 	 */
 	private static String getVMsAsXML() throws CoreException {
-		VMDefinitionsContainer container = new VMDefinitionsContainer();	
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
-		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
+		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());
 		IVMInstallType[] vmTypes = getVMInstallTypes();
 		IVMInstall[] vms = null;
 		for (int i = 0; i < vmTypes.length; ++i) {
@@ -1433,19 +1442,19 @@ public final class JavaRuntime {
 				return false;
 			} catch (IOException ioe) {
 				LaunchingPlugin.log(ioe);
-			}			
-		} else {			
+			}
+		} else {
 			// Otherwise, look for the old file that previously held the VM definitions
 			IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
 			IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 			File file = new File(stateFile.toOSString());
 			
-			if (file.exists()) {        
+			if (file.exists()) {
 				// If file exists, load VM definitions from it into memory and write the definitions to
 				// the preference store WITHOUT triggering any processing of the new value
 				InputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
-				VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream, vmDefs);			
-			}		
+				VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream, vmDefs);
+			}
 		}
 		return true;
 	}
@@ -1488,7 +1497,7 @@ public final class JavaRuntime {
 						if (home == null) {
 							abort(MessageFormat.format("vmInstall {0} contributed by {1} missing required attribute home", //$NON-NLS-1$
 									new String[]{id, element.getContributor().getName()}), null);
-						}		
+						}
 						String javadoc = element.getAttribute("javadocURL"); //$NON-NLS-1$
 						String vmArgs = element.getAttribute("vmArgs"); //$NON-NLS-1$
 						VMStandin standin = null;
@@ -1588,7 +1597,7 @@ public final class JavaRuntime {
      * Performs string substitution on the given expression.
      * 
      * @param expression
-     * @return expression after string substitution 
+     * @return expression after string substitution
      * @throws CoreException
      * @since 3.2
      */
@@ -1622,7 +1631,7 @@ public final class JavaRuntime {
 		URL[] javadocLocations;
 		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
-            URL defJavaDocLocation = vm.getJavadocLocation(); 
+            URL defJavaDocLocation = vm.getJavadocLocation();
 			File installLocation = vm.getInstallLocation();
 			if (installLocation == null) {
 				return new LibraryLocation[0];
@@ -1656,7 +1665,7 @@ public final class JavaRuntime {
 			sourcePaths = new IPath[locations.length];
 			sourceRootPaths = new IPath[locations.length];
 			javadocLocations= new URL[locations.length];
-			for (int i = 0; i < locations.length; i++) {			
+			for (int i = 0; i < locations.length; i++) {
 				libraryPaths[i]= locations[i].getSystemLibraryPath();
 				sourcePaths[i]= locations[i].getSystemLibrarySourcePath();
 				sourceRootPaths[i]= locations[i].getPackageRootPath();
@@ -1690,14 +1699,14 @@ public final class JavaRuntime {
 					}
 					if (vmFile.isFile()){
 						// Make sure the VM id is unique
-						long unique = System.currentTimeMillis();	
+						long unique = System.currentTimeMillis();
 						while (vmTypes[i].findVMInstall(String.valueOf(unique)) != null) {
 							unique++;
 						}
 
 						// Create a standin for the detected VM and add it to the result collector
 						String vmID = String.valueOf(unique);
-						try{ 
+						try{
 							return createVMFromDefinitionFile(vmFile, "", vmID); //$NON-NLS-1$
 						} catch (CoreException e){
 							// The file was not a valid ee file, continue the detection process
@@ -1713,7 +1722,7 @@ public final class JavaRuntime {
 			if (detectedLocation != null) {
 				
 				// Make sure the VM id is unique
-				long unique = System.currentTimeMillis();	
+				long unique = System.currentTimeMillis();
 				IVMInstallType vmType = vmTypes[i];
 				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
 					unique++;
@@ -1727,7 +1736,7 @@ public final class JavaRuntime {
 				if (vmType instanceof AbstractVMInstallType) {
 				    AbstractVMInstallType abs = (AbstractVMInstallType)vmType;
 				    URL url = abs.getDefaultJavadocLocation(detectedLocation);
-				    detectedVMStandin.setJavadocLocation(url);	
+				    detectedVMStandin.setJavadocLocation(url);
 				    String arguments = abs.getDefaultVMArguments(detectedLocation);
 					if (arguments != null) {
 						detectedVMStandin.setVMArgs(arguments);
@@ -1740,17 +1749,28 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns whether the specified option is the same in both option maps.
+	 * Returns whether the specified option is the same in the given
+	 * map and preference store.
+	 * 
+	 * <p>
+	 * Notes:
+	 * <ul>
+	 * <li>Returns <code>false</code> if the option is only contained in one map</li>
+	 * <li>Returns <code>true</code> if the option is not contained in either map</li>
+	 * </ul> 
+	 * </p>
 	 * 
 	 * @param optionName name of option to test
-	 * @param defaultOptions map of default options
-	 * @param options map of other options
+	 * @param options map of options
+	 * @param prefStore preferences node
 	 * @return whether the options are the same in both maps
 	 */
-	private static boolean equals(String optionName, Map defaultOptions, Map options) {
-		if (defaultOptions.containsKey(optionName)) {
+	private static boolean equals(String optionName, Map options, org.osgi.service.prefs.Preferences prefStore) {
+		String dummy= new String();
+		String prefValue= prefStore.get(optionName, dummy);
+		if (prefValue != null && prefValue != dummy) {
 			return options.containsKey(optionName) &&
-				equals(defaultOptions.get(optionName), options.get(optionName));
+				equals(prefValue, options.get(optionName));
 		} else {
 			return !options.containsKey(optionName);
 		}
@@ -1806,21 +1826,21 @@ public final class JavaRuntime {
 	 */
 	public static IClasspathEntry getDefaultJREContainerEntry() {
 		return JavaCore.newContainerEntry(newDefaultJREContainerPath());
-	}	
+	}
 	
 	/**
-	 * Returns a path for the JRE classpath container identifying the 
+	 * Returns a path for the JRE classpath container identifying the
 	 * default VM install.
 	 * 
 	 * @return classpath container path
 	 * @since 3.2
-	 */	
+	 */
 	public static IPath newDefaultJREContainerPath() {
 		return new Path(JRE_CONTAINER);
 	}
 	
 	/**
-	 * Returns a path for the JRE classpath container identifying the 
+	 * Returns a path for the JRE classpath container identifying the
 	 * specified VM install by type and name.
 	 * 
 	 * @param vm vm install
@@ -1832,23 +1852,23 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Returns a path for the JRE classpath container identifying the 
+	 * Returns a path for the JRE classpath container identifying the
 	 * specified VM install by type and name.
 	 * 
 	 * @param typeId vm install type identifier
 	 * @param name vm install name
 	 * @return classpath container path
 	 * @since 3.2
-	 */	
+	 */
 	public static IPath newJREContainerPath(String typeId, String name) {
 		IPath path = newDefaultJREContainerPath();
 		path = path.append(typeId);
 		path = path.append(name);
-		return path;		
+		return path;
 	}
 	
 	/**
-	 * Returns a path for the JRE classpath container identifying the 
+	 * Returns a path for the JRE classpath container identifying the
 	 * specified execution environment.
 	 * 
 	 * @param environment execution environment
@@ -1856,16 +1876,16 @@ public final class JavaRuntime {
 	 * @since 3.2
 	 */
 	public static IPath newJREContainerPath(IExecutionEnvironment environment) {
-		IPath path = newDefaultJREContainerPath(); 
+		IPath path = newDefaultJREContainerPath();
 		path = path.append(StandardVMType.ID_STANDARD_VM_TYPE);
 		path = path.append(JREContainerInitializer.encodeEnvironmentId(environment.getId()));
 		return path;
-	}	
+	}
 	
 	/**
 	 * Returns the JRE referenced by the specified JRE classpath container
 	 * path or <code>null</code> if none.
-	 *  
+	 * 
 	 * @param jreContainerPath
 	 * @return JRE referenced by the specified JRE classpath container
 	 *  path or <code>null</code>
@@ -1908,7 +1928,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns the execution environment identifier in the following JRE
 	 * classpath container path, or <code>null</code> if none.
-	 *  
+	 * 
 	 * @param jreContainerPath classpath container path
 	 * @return execution environment identifier or <code>null</code>
 	 * @since 3.2
@@ -1992,7 +2012,7 @@ public final class JavaRuntime {
 						if (resolver.isVMInstallReference(entry)) {
 							return newRuntimeClasspathEntry(entry);
 						}
-					}					
+					}
 					break;
 				case IClasspathEntry.CPE_CONTAINER:
 					resolver = getContainerResolver(entry.getPath().segment(0));
@@ -2016,7 +2036,7 @@ public final class JavaRuntime {
 			
 		}
 		return null;
-	}	
+	}
 	
 	/**
 	 * Returns whether the given runtime classpath entry refers to a vm install.
@@ -2034,7 +2054,7 @@ public final class JavaRuntime {
 					if (resolver != null) {
 						return resolver.isVMInstallReference(classpathEntry);
 					}
-					break;					
+					break;
 				case IClasspathEntry.CPE_CONTAINER:
 					resolver = getContainerResolver(classpathEntry.getPath().segment(0));
 					if (resolver != null) {
@@ -2066,7 +2086,7 @@ public final class JavaRuntime {
 	 */
 	public static IVMConnector[] getVMConnectors() {
 		return LaunchingPlugin.getDefault().getVMConnectors();
-	}	
+	}
 	
 	/**
 	 * Returns the preference store for the launching plug-in.
@@ -2109,7 +2129,7 @@ public final class JavaRuntime {
 	public static void addContainerResolver(IRuntimeClasspathEntryResolver resolver, String containerIdentifier) {
 		Map map = getContainerResolvers();
 		map.put(containerIdentifier, resolver);
-	}	
+	}
 	
 	/**
 	 * Returns all registered variable resolvers.
@@ -2139,7 +2159,7 @@ public final class JavaRuntime {
 			initializeResolvers();
 		}
 		return fgRuntimeClasspathEntryResolvers;
-	}	
+	}
 
 	/**
 	 * Initializes the listing of runtime classpath entry resolvers
@@ -2164,7 +2184,7 @@ public final class JavaRuntime {
 			if (entryId != null) {
 				fgRuntimeClasspathEntryResolvers.put(entryId, res);
 			}
-		}		
+		}
 	}
 
 	/**
@@ -2187,7 +2207,7 @@ public final class JavaRuntime {
 		for (int i = 0; i < extensions.length; i++) {
 			RuntimeClasspathProvider res = new RuntimeClasspathProvider(extensions[i]);
 			fgPathProviders.put(res.getIdentifier(), res);
-		}		
+		}
 	}
 		
 	/**
@@ -2209,7 +2229,7 @@ public final class JavaRuntime {
 	 * @param containerId the container to determine the resolver for
 	 * @return the resolver registered for the given container id, or
 	 * <code>null</code> if none
-	 */	
+	 */
 	private static IRuntimeClasspathEntryResolver2 getContainerResolver(String containerId) {
 		return (IRuntimeClasspathEntryResolver2)getContainerResolvers().get(containerId);
 	}
@@ -2220,14 +2240,14 @@ public final class JavaRuntime {
 	 * 
 	 * @param typeId the id of the contributed classpath entry
 	 * @return the resolver registered for the given classpath entry
-	 */	
+	 */
 	private static IRuntimeClasspathEntryResolver getContributedResolver(String typeId) {
 		IRuntimeClasspathEntryResolver resolver = (IRuntimeClasspathEntryResolver)getEntryResolvers().get(typeId);
 		if (resolver == null) {
 			return new DefaultEntryResolver();
 		}
 		return resolver;
-	}	
+	}
 	
 	/**
 	 * Adds the given listener to the list of registered VM install changed
@@ -2249,7 +2269,7 @@ public final class JavaRuntime {
 	 */
 	public static void removeVMInstallChangedListener(IVMInstallChangedListener listener) {
 		fgVMListeners.remove(listener);
-	}	
+	}
 	
 	/**
 	 * Notifies registered listeners that the default VM has changed
@@ -2275,7 +2295,7 @@ public final class JavaRuntime {
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
 			listener.vmChanged(event);
-		}		
+		}
 	}
 	
 	/**
@@ -2292,7 +2312,7 @@ public final class JavaRuntime {
 				listener.vmAdded(vm);
 			}
 		}
-	}	
+	}
 	
 	/**
 	 * Notifies all VM install changed listeners of the VM removal
@@ -2305,8 +2325,8 @@ public final class JavaRuntime {
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
 			listener.vmRemoved(vm);
-		}		
-	}		
+		}
+	}
 	
 	/**
 	 * Return the String representation of the default output directory of the
@@ -2331,10 +2351,10 @@ public final class JavaRuntime {
 							return path.makeRelative().toString();
 						}
 					}
-				} 
+				}
 			}
 		} catch (CoreException ce) {
-		} 
+		}
 		return null;
 	}
 	
@@ -2401,7 +2421,7 @@ public final class JavaRuntime {
 	 * projects.
 	 * 
 	 * @param project project to gather entries for
-	 * @param requiredProjects whether to consider required projects 
+	 * @param requiredProjects whether to consider required projects
 	 * @param visited projects already considered
 	 * @param entries collection to add library entries to
 	 * @throws CoreException if unable to gather classpath entries
@@ -2434,7 +2454,7 @@ public final class JavaRuntime {
 	 * Adds all java library path extra classpath entry values to the given entries collection
 	 * specified on the given project's classpath, and returns a collection of required
 	 * projects, or <code>null</code>.
-	 *  
+	 * 
 	 * @param project project being processed
 	 * @param collectRequired whether to collect required projects
 	 * @param classpathEntries the project's raw classpath
@@ -2517,11 +2537,11 @@ public final class JavaRuntime {
 	 * for an associated {@link IClasspathEntry}, or <code>null</code> if the
 	 * given attribute is not a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code>.
 	 * Each string is used to create an <code>IPath</code> using the constructor
-	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s. 
+	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
 	 * <p>
 	 * The factory methods <code>newLibraryPathsAttribute(String[])</code>
 	 * and <code>getLibraryPaths(IClasspathAttribute)</code> should be used to
-	 * encode and decode the attribute value. 
+	 * encode and decode the attribute value.
 	 * </p>
 	 * @param attribute a <code>CLASSPATH_ATTR_LIBRARY_PATH_ENTRY</code> classpath attribute
 	 * @return an array of strings referencing shared libraries that should
@@ -2531,7 +2551,7 @@ public final class JavaRuntime {
 	 * Each string is used to create an <code>IPath</code> using the constructor
 	 * <code>Path(String)</code>, and may contain <code>IStringVariable</code>'s.
 	 * @since 3.1
-	 */	
+	 */
 	public static String[] getLibraryPaths(IClasspathAttribute attribute) {
 		if (CLASSPATH_ATTR_LIBRARY_PATH_ENTRY.equals(attribute.getName())) {
 			String value = attribute.getValue();
@@ -2641,7 +2661,7 @@ public final class JavaRuntime {
 						while (vmListIterator.hasNext()) {
 							VMStandin vmStandin = (VMStandin) vmListIterator.next();
 							vmStandin.convertToRealVM();
-						}						
+						}
 						
 
 					} catch (IOException e) {
@@ -2699,14 +2719,16 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_7;
             	}
             	if (compliance != null) {
-	                Hashtable defaultOptions = JavaCore.getDefaultOptions();
-	                Hashtable options = JavaCore.getOptions();
+	                Hashtable options= JavaCore.getOptions();
+
+	                org.osgi.service.prefs.Preferences bundleDefaults = new BundleDefaultsScope().getNode(JavaCore.PLUGIN_ID);
+
 	                boolean isDefault =
-	                	equals(JavaCore.COMPILER_COMPLIANCE, defaultOptions, options) &&
-	                	equals(JavaCore.COMPILER_SOURCE, defaultOptions, options) &&
-	                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, defaultOptions, options) &&
-	                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, defaultOptions, options) &&
-	                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, defaultOptions, options);
+	                	equals(JavaCore.COMPILER_COMPLIANCE, options, bundleDefaults) &&
+	                	equals(JavaCore.COMPILER_SOURCE, options, bundleDefaults) &&
+	                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults) &&
+	                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults) &&
+	                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
 	                // only update the compliance settings if they are default settings, otherwise the
 	                // settings have already been modified by a tool or user
 	                if (isDefault) {
@@ -2715,18 +2737,18 @@ public final class JavaRuntime {
 	                }
             	}
             }
-        }		
+        }
 	}
 	
 	/**
-	 * Creates a new VM based on the attributes specified in the given execution 
+	 * Creates a new VM based on the attributes specified in the given execution
 	 * environment description file. The format of the file is defined by
 	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
 	 * 
 	 * @param eeFile VM definition file
 	 * @param name name for the VM, or <code>null</code> if a default name should be assigned
 	 * @param id id to assign to the new VM
-	 * @return VM standin 
+	 * @return VM standin
 	 * @exception CoreException if unable to create a VM from the given definition file
 	 * @since 3.4
 	 */
