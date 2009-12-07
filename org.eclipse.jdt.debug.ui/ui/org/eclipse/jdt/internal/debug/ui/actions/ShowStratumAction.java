@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -100,19 +100,21 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
     private void fillMenu(Menu m) {
         IStackFrame frame = (IStackFrame) fSelection.getFirstElement();
         final IJavaStackFrame javaStackFrame = (IJavaStackFrame) frame.getAdapter(IJavaStackFrame.class);
-        try {
-            IJavaReferenceType declaringType = javaStackFrame.getReferenceType();
-            final IJavaDebugTarget target = (IJavaDebugTarget) javaStackFrame.getDebugTarget();
-            String currentStratum = target.getDefaultStratum();
-            String[] strata = declaringType.getAvailableStrata();
-            for (int i = 0; i < strata.length; i++) {
-                final String stratum = strata[i];
-                MenuItem item = createMenuItem(m, stratum, javaStackFrame, target);
-                item.setSelection(stratum.equals(currentStratum));
-            }
-            MenuItem item = createMenuItem(m, null, javaStackFrame, target);
-            item.setSelection(currentStratum == null);
-        } catch (DebugException e) {
+        if (javaStackFrame != null) {
+	        try {
+	            IJavaReferenceType declaringType = javaStackFrame.getReferenceType();
+	            final IJavaDebugTarget target = (IJavaDebugTarget) javaStackFrame.getDebugTarget();
+	            String currentStratum = target.getDefaultStratum();
+	            String[] strata = declaringType.getAvailableStrata();
+	            for (int i = 0; i < strata.length; i++) {
+	                final String stratum = strata[i];
+	                MenuItem item = createMenuItem(m, stratum, javaStackFrame, target);
+	                item.setSelection(stratum.equals(currentStratum));
+	            }
+	            MenuItem item = createMenuItem(m, null, javaStackFrame, target);
+	            item.setSelection(currentStratum == null);
+	        } catch (DebugException e) {
+	        }
         }
     }
     
@@ -132,8 +134,10 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
                 }
                 DebugEvent event = new DebugEvent(frame, DebugEvent.CHANGE, DebugEvent.CONTENT);
                 DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{event});
-                // TODO: post 3.2 - make API to force source lookup
-                SourceLookupManager.getDefault().displaySource(frame, fPart.getSite().getPage(), true);
+                ISourceDisplay display = (ISourceDisplay) frame.getAdapter(ISourceDisplay.class);
+                if (display != null) {
+                	display.displaySource(frame, fPart.getSite().getPage(), true);
+                }
             }
         });
         return item;
