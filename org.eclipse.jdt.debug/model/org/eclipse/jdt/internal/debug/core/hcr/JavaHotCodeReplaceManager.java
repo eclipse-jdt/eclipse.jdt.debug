@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,8 +195,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners = new ListenerList();
-		fHotSwapTargets= null;
-		fNoHotSwapTargets= null;
+		synchronized (this) {
+			fHotSwapTargets.clear();
+			fNoHotSwapTargets.clear();
+		}
 	}
 	/**
 	 * Returns the workspace.
@@ -219,9 +221,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!projects.isEmpty()) {
 			updateProjectBuildTime(projects);
 		}
-		if (fHotSwapTargets.isEmpty() && fNoHotSwapTargets.isEmpty()) {
-			// If there are no targets to notify, only update the build times.
-			return;
+		synchronized (this) {
+			if (fHotSwapTargets.isEmpty() && fNoHotSwapTargets.isEmpty()) {
+				// If there are no targets to notify, only update the build times.
+				return;
+			}
 		}
 		ChangedClassFilesVisitor visitor = getChangedClassFiles(event);
 		if (visitor != null) {
@@ -383,7 +387,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Returns the currently registered debug targets that support
 	 * hot code replace.
 	 */
-	protected List getHotSwapTargets() {
+	protected synchronized List getHotSwapTargets() {
 		return (List) fHotSwapTargets.clone();
 	}
 	
@@ -391,7 +395,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Returns the currently registered debug targets that do
 	 * not support hot code replace.
 	 */
-	protected List getNoHotSwapTargets() {
+	protected synchronized List getNoHotSwapTargets() {
 		return (List) fNoHotSwapTargets.clone();
 	}
 	
@@ -1192,8 +1196,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				}				
 			}
 		}
-		if (!fHotSwapTargets.isEmpty() || !fNoHotSwapTargets.isEmpty()) {
-			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
+		synchronized (this) {
+			if (!fHotSwapTargets.isEmpty() || !fNoHotSwapTargets.isEmpty()) {
+				getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
+			}			
 		}
 	}
 	
@@ -1253,7 +1259,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * 
 	 * @param target a target that supports hot swap
 	 */
-	protected void addHotSwapTarget(JDIDebugTarget target) {
+	protected synchronized void addHotSwapTarget(JDIDebugTarget target) {
 		if (!fHotSwapTargets.contains(target)) {
 			fHotSwapTargets.add(target);
 		}
@@ -1265,7 +1271,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * 
 	 * @param target a target that does not support hot swap
 	 */
-	protected void addNonHotSwapTarget(JDIDebugTarget target) {
+	protected synchronized void addNonHotSwapTarget(JDIDebugTarget target) {
 		if (!fNoHotSwapTargets.contains(target)) {
 			fNoHotSwapTargets.add(target);
 		}
