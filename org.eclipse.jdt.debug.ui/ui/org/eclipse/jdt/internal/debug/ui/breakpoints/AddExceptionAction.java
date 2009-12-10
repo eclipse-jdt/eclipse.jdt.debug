@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,9 +122,10 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		BreakpointUtils.addJavaBreakpointAttributes(map, type);
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(
 						JDIDebugModel.getPluginIdentifier());
+		IJavaBreakpoint breakpoint = null;
 		boolean exists = false;
 		for (int j = 0; j < breakpoints.length; j++) {
-			IJavaBreakpoint breakpoint = (IJavaBreakpoint) breakpoints[j];
+			breakpoint = (IJavaBreakpoint) breakpoints[j];
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
 				if (breakpoint.getTypeName().equals(type.getFullyQualifiedName())) {
 					exists = true;
@@ -132,6 +133,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 				}
 			}
 		}
+		// If the breakpoint does not exist, add it.  If it does exist, make sure it is enabled.
 		if (!exists) {
 			new Job(BreakpointMessages.AddExceptionAction_0) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -146,6 +148,18 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 				}
 
 			}.schedule();
+		} else {
+			final IJavaBreakpoint existingBreakpoint = breakpoint;
+			new Job(BreakpointMessages.AddExceptionAction_EnableExceptionBreakpoint) {
+	            protected IStatus run(IProgressMonitor monitor) {
+	                try {
+	                	existingBreakpoint.setEnabled(true);
+	                    return Status.OK_STATUS;
+	                } catch (final CoreException e) {
+	                	return e.getStatus();
+	                }
+	            }
+	        }.schedule();
 		}
 	}
 	
