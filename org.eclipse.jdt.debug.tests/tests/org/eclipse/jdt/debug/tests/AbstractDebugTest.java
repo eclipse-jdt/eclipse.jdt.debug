@@ -123,6 +123,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import com.sun.jdi.InternalException;
+
 /**
  * Tests for launch configurations
  */
@@ -1567,11 +1569,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			setEventSet(waiter.getEventSet());
 			assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 			return (IJavaThread) suspendee;
+		} catch (DebugException e) {
+			tryTestAgain(e);
 		} finally {
 			// turn filters off
 			target.setStepFiltersEnabled(false);
 			target.setStepThruFilters(true);
 		}
+		return null;
 	}	
 
 	/**
@@ -1589,6 +1594,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		try {
 			target.setStepFiltersEnabled(true);
 			frame.stepReturn();
+		} catch (DebugException e) {
+			tryTestAgain(e);
 		} finally {
 			// turn filters off
 			target.setStepFiltersEnabled(false);
@@ -1616,6 +1623,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		try {
 			target.setStepFiltersEnabled(true);
 			frame.stepOver();
+		} catch (DebugException e) {
+			tryTestAgain(e);
 		} finally {
 			// turn filters off
 			target.setStepFiltersEnabled(false);
@@ -1865,6 +1874,25 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			return JavaCore.VERSION_1_5;
 		}
 		return JavaCore.VERSION_1_6;
+	}
+	
+	/**
+	 * Determines if the test should be attempted again based on the error code.
+	 * See bug 297071.
+	 * 
+	 * @param e Debug Exception
+	 * @throws TestAgainException
+	 * @throws DebugException
+	 */
+	protected void tryTestAgain(DebugException e) throws Exception {
+		Throwable cause = e.getCause();
+		if (cause instanceof InternalException) {
+			int code = ((InternalException)cause).errorCode();
+			if (code == 13) {
+				throw new TestAgainException();
+			}
+		}
+		throw e;
 	}
 	
 }
