@@ -441,7 +441,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	     IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
 	     if(bindings != null && bindings.length > 0) {
 	    	 ITypeBinding tbinding = (ITypeBinding) bindings[0];
-	    	 return tbinding.getBinaryName();
+	    	 if(tbinding != null) {
+	    		 return tbinding.getBinaryName();
+	    	 }
 	     }
 	     return createQualifiedTypeName(type);
     }
