@@ -122,11 +122,11 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		BreakpointUtils.addJavaBreakpointAttributes(map, type);
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(
 						JDIDebugModel.getPluginIdentifier());
-		IJavaBreakpoint breakpoint = null;
+		IJavaExceptionBreakpoint breakpoint = null;
 		boolean exists = false;
 		for (int j = 0; j < breakpoints.length; j++) {
-			breakpoint = (IJavaBreakpoint) breakpoints[j];
-			if (breakpoint instanceof IJavaExceptionBreakpoint) {
+			if (breakpoints[j] instanceof IJavaExceptionBreakpoint) {
+				breakpoint = (IJavaExceptionBreakpoint) breakpoints[j];
 				if (breakpoint.getTypeName().equals(type.getFullyQualifiedName())) {
 					exists = true;
 					break;
@@ -135,7 +135,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		}
 		// If the breakpoint does not exist, add it.  If it does exist, make sure it is enabled.
 		if (!exists) {
-			new Job(BreakpointMessages.AddExceptionAction_0) {
+			Job job = new Job(BreakpointMessages.AddExceptionAction_0) {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						JDIDebugModel.createExceptionBreakpoint(resource,
@@ -147,10 +147,13 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 					}
 				}
 
-			}.schedule();
+			};
+			job.setSystem(true);
+			job.setPriority(Job.INTERACTIVE);
+			job.schedule();
 		} else {
 			final IJavaBreakpoint existingBreakpoint = breakpoint;
-			new Job(BreakpointMessages.AddExceptionAction_EnableExceptionBreakpoint) {
+			Job job = new Job(BreakpointMessages.AddExceptionAction_EnableExceptionBreakpoint) {
 	            protected IStatus run(IProgressMonitor monitor) {
 	                try {
 	                	existingBreakpoint.setEnabled(true);
@@ -159,7 +162,10 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	                	return e.getStatus();
 	                }
 	            }
-	        }.schedule();
+	        };
+	        job.setSystem(true);
+			job.setPriority(Job.INTERACTIVE);
+			job.schedule();
 		}
 	}
 	
