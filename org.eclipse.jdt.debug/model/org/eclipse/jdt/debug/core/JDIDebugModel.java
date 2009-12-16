@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,9 +180,15 @@ public class JDIDebugModel {
 	/**
 	 * Registers the given listener for hot code replace notifications. Has no
 	 * effect if an identical listener is already registered.
-	 * 
+	 * <p>
+	 * Note that since 3.6, if an {@link IJavaDebugTarget} has hot code replace listeners
+	 * registered with it directly, listeners registered with this class are not notified
+	 * of hot code replace events for that target. This allows a target to have custom
+	 * hot code replace notification behavior. 
+	 * </p>
 	 * @param listener hot code replace listener
 	 * @see IJavaHotCodeReplaceListener
+	 * @see IJavaDebugTarget#addHotCodeReplaceListener(IJavaHotCodeReplaceListener)
 	 * @since 2.0
 	 */
 	public static void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {

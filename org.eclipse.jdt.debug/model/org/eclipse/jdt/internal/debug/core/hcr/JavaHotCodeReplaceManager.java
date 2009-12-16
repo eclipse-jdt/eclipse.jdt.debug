@@ -649,10 +649,29 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
+	 * Return the listeners to notify for the given target. Target specific
+	 * listeners take precedence over generic listeners registered with the
+	 * debug model plug-in.
+	 * 
+	 * @param target Java debug target
+	 * @return hot code replace listeners
+	 */
+	private Object[] getHotCodeReplaceListeners(IJavaDebugTarget target) {
+		Object[] listeners = null;
+		if (target instanceof JDIDebugTarget) {
+			listeners = ((JDIDebugTarget)target).getHotCodeReplaceListeners();
+		}
+		if (listeners == null || listeners.length == 0) {
+			listeners= fHotCodeReplaceListeners.getListeners();
+		}
+		return listeners;
+	}
+	
+	/**
 	 * Notifies listeners that a hot code replace attempt succeeded
 	 */
 	private void fireHCRSucceeded(IJavaDebugTarget target) {
-		Object[] listeners= fHotCodeReplaceListeners.getListeners();
+		Object[] listeners= getHotCodeReplaceListeners(target);
 		for (int i=0; i<listeners.length; i++) {
 			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceSucceeded(target);
 		}		
@@ -662,7 +681,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Notifies listeners that a hot code replace attempt failed with the given exception
 	 */
 	private void fireHCRFailed(JDIDebugTarget target, DebugException exception) {
-		Object[] listeners= fHotCodeReplaceListeners.getListeners();
+		Object[] listeners= getHotCodeReplaceListeners(target);
 		for (int i=0; i<listeners.length; i++) {
 			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceFailed(target, exception);
 		}
@@ -672,7 +691,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Notifies listeners that obsolete methods remain on the stack
 	 */
 	private void fireObsoleteMethods(JDIDebugTarget target) {
-		Object[] listeners= fHotCodeReplaceListeners.getListeners();
+		Object[] listeners= getHotCodeReplaceListeners(target);
 		for (int i=0; i<listeners.length; i++) {
 			((IJavaHotCodeReplaceListener)listeners[i]).obsoleteMethods(target);
 		}

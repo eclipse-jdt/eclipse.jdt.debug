@@ -480,4 +480,26 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 */
 	public byte[] sendCommand(byte commandSet, byte commandId, byte[] data) throws DebugException;	
 	
+	/**
+	 * Adds the given listener to this target for hot code replace notifications. Has
+	 * no effect if an identical listener is already registered.
+	 * <p>
+	 * When a hot code replace listener is added to a specific target, general hot code
+	 * replace notifications via {@link JDIDebugModel} are not reported for that target.
+	 * This allows a target to override general/default hot code replace listeners/handlers.
+	 * </p>
+	 * @param listener hot code replace listener
+	 * @since 3.6
+	 */
+	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener);
+	
+	/**
+	 * Removes the given listener from this target. Has no effect if an identical
+	 * listener is not already registered.
+	 * 
+	 * @param listener hot code replace listener
+	 * @since 3.6
+	 */
+	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener);
+	
 }

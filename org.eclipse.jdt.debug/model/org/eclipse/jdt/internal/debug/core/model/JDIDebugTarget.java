@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -52,6 +53,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -245,7 +247,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private boolean fIsPerformingHotCodeReplace= false;
 	
-	 
+	/**
+	 * Target specific HCR listeners
+	 * @since 3.6
+	 */
+	private ListenerList fHCRListeners = new ListenerList();
+	
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
 	 * 
@@ -1437,6 +1444,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setThreadStartHandler(null);
 		setEventDispatcher(null);
 		setStepFilters(new String[0]);
+		fHCRListeners.clear();
 	}
 
 	/**
@@ -2650,5 +2658,29 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			requestFailed(e.getMessage(), e);
 		}
 		return null;
-	}	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#addHotCodeReplaceListener(org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
+	 */
+	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		fHCRListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#removeHotCodeReplaceListener(org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
+	 */
+	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		fHCRListeners.remove(listener);
+	}
+	
+	/**
+	 * Returns an array of current hot code replace listeners.
+	 * 
+	 * @return registered hot code replace listeners
+	 * @since 3.6
+	 */
+	public Object[] getHotCodeReplaceListeners() {
+		return fHCRListeners.getListeners();
+	}
 }

@@ -12,6 +12,18 @@
 
 <h2>Summary of API changes in 3.6</h2>
 
+<h3>Target specific hot code replace listeners</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Method addition: <code>public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener)</code></li>
+  <li>Method addition: <code>public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener)</code> </li>
+</ul>
+<p><strong>Description: </strong>Methods have been added to <code>org.eclipse.jdt.debug.core.IJavaDebugTarget</code> to
+support target sepcific hot code replace listeners. When listeners are registered with a specific target, the listeners
+registered with <code>org.eclipse.jdt.debug.core.JDIDebugModel</code> are not notified for that target. This allows a target
+to have custom hot code replace event handling.
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
 <p>&nbsp;</p>
 </body>
 </html>
