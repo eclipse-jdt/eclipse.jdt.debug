@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,10 +324,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	protected IResource getResource(IPath path) {
 		if (path != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			if (path.getDevice() == null) {
-				// search relative to the workspace if no device present
-				return root.findMember(path);
-			} 
 			// look for files or folders with the given path
 			IFile[] files = root.findFilesForLocation(path);
 			if (files.length > 0) {
@@ -337,6 +333,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (containers.length > 0) {
 				return containers[0];
 			}
+			if (path.getDevice() == null) {
+				// search relative to the workspace if no device present
+				return root.findMember(path);
+			} 
 		}		
 		return null;
 	}
