@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,28 +11,25 @@
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Property page for editing breakpoints of type
@@ -40,11 +37,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	
-	private Button fEnableConditionButton;
-	private BreakpointConditionEditor fConditionEditor;
-	private Button fConditionIsTrue;
-	private Button fConditionHasChanged;
-	private Label fSuspendWhenLabel;
+	private JavaBreakpointConditionEditor fConditionEditor;
+	private String fPrevMessage;
 	// Watchpoint editors
 	private Button fFieldAccess;
 	private Button fFieldModification;
@@ -62,18 +56,7 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		IJavaLineBreakpoint breakpoint= (IJavaLineBreakpoint) getBreakpoint();
 		super.doStore();
 		if (fConditionEditor != null) {
-			boolean enableCondition = fEnableConditionButton.getSelection();
-			String condition = fConditionEditor.getCondition();
-			boolean suspendOnTrue= fConditionIsTrue.getSelection();
-			if (breakpoint.isConditionEnabled() != enableCondition) {
-				breakpoint.setConditionEnabled(enableCondition);
-			}
-			if (!condition.equals(breakpoint.getCondition())) {
-				breakpoint.setCondition(condition);
-			}
-			if (breakpoint.isConditionSuspendOnTrue() != suspendOnTrue) {
-				breakpoint.setConditionSuspendOnTrue(suspendOnTrue);
-			}
+			fConditionEditor.doSave();
 		}
 		if (breakpoint instanceof IJavaWatchpoint) {
 			IJavaWatchpoint watchpoint= (IJavaWatchpoint) getBreakpoint();
@@ -218,51 +201,25 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * @throws CoreException if an exception occurs accessing the breakpoint
 	 */
 	private void createConditionEditor(Composite parent) throws CoreException {
-		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
-		String label = null;
-		if (BreakpointUtils.getType(breakpoint) != null) {
-			IBindingService bindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-			if(bindingService != null) {
-				TriggerSequence keyBinding = bindingService.getBestActiveBindingFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-				if (keyBinding != null) {
-					label = MessageFormat.format(PropertyPageMessages.JavaLineBreakpointPage_12, new String[] {keyBinding.format()}); 
-				} 
-			}
-		}
-		if (label == null) {
-			label = PropertyPageMessages.JavaLineBreakpointPage_13; 
-		}
-		
+		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();		
 		Composite conditionComposite = SWTFactory.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_BOTH);
-		fEnableConditionButton = createCheckButton(conditionComposite, label);
-		fEnableConditionButton.setSelection(breakpoint.isConditionEnabled());
-		fEnableConditionButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setConditionEnabled(fEnableConditionButton.getSelection());
+		fConditionEditor = new JavaBreakpointConditionEditor(); 
+		fConditionEditor.createControl(conditionComposite);
+		fConditionEditor.setInput(breakpoint);
+		fConditionEditor.addPropertyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int propId) {
+				IStatus status = fConditionEditor.getStatus();
+				if (status.isOK()) {
+					if (fPrevMessage != null) {
+						removeErrorMessage(fPrevMessage);
+						fPrevMessage = null;
+					}
+				} else {
+					fPrevMessage = status.getMessage();
+					addErrorMessage(fPrevMessage);
+				}
 			}
 		});
-		fConditionEditor = new BreakpointConditionEditor(conditionComposite, this); 
-		fSuspendWhenLabel = createLabel(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_15); 
-		fConditionIsTrue = createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_16); 
-		fConditionHasChanged = createRadioButton(conditionComposite, PropertyPageMessages.JavaLineBreakpointPage_17); 
-		if (breakpoint.isConditionSuspendOnTrue()) {
-			fConditionIsTrue.setSelection(true);
-		} 
-		else {
-			fConditionHasChanged.setSelection(true);
-		}
-		setConditionEnabled(fEnableConditionButton.getSelection());
-	}
-
-	/**
-	 * Sets the enabled state of the condition editing controls.
-	 * @param enabled
-	 */
-	private void setConditionEnabled(boolean enabled) {
-		fConditionEditor.setEnabled(enabled);
-		fSuspendWhenLabel.setEnabled(enabled);
-		fConditionIsTrue.setEnabled(enabled);
-		fConditionHasChanged.setEnabled(enabled);
 	}
 	
 	/* (non-Javadoc)
@@ -277,16 +234,6 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 */
 	public int convertWidthInCharsToPixels(int chars) {
 		return super.convertWidthInCharsToPixels(chars);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		if (fConditionEditor != null) {
-			fConditionEditor.dispose();
-		}
-		super.dispose();
 	}
 	
 	/* (non-Javadoc)

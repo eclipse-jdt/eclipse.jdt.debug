@@ -47,7 +47,7 @@ import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
 
-	private static final String JAVA_EXCEPTION_BREAKPOINT= "org.eclipse.jdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
+	public static final String JAVA_EXCEPTION_BREAKPOINT= "org.eclipse.jdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Exception breakpoint attribute storing the suspend on caught value

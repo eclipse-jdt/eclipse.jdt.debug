@@ -27,7 +27,17 @@ public class BreakpointMessages extends NLS {
 	public static String AddClassPrepareBreakpointAction_1;
 	public static String AddClassPrepareBreakpointAction_2;
 	
+	public static String BreakpointConditionDetailPane_0;
+	
+	public static String ExceptionBreakpointDetailPane_0;
+	
 	public static String JavaBreakpointTypeAdapterFactory_0;
+	
+	public static String MethodBreakpointDetailPane_0;
+	
+	public static String StandardBreakpointDetailPane_0;
+
+	public static String WatchpointDetailPane_0;
 
 	static {
 		// load message values from bundle file

@@ -3451,4 +3451,32 @@ M4 = Platform-specific fourth key
           id="org.eclipse.jdt.debug.ui.uncaughtExceptionListener">
     </breakpointListener>
  </extension>
+ <extension
+       point="org.eclipse.debug.ui.detailPaneFactories">
+    <detailFactories
+          class="org.eclipse.jdt.internal.debug.ui.breakpoints.BreakpointDetailPaneFactory"
+          id="org.eclipse.jdt.debug.ui.breakpoint.detailFactories">
+       <enablement>
+          <with
+                variable="selection">
+             <count
+                   value="1">
+             </count>
+             <iterate>
+                <or>
+                   <instanceof
+                         value="org.eclipse.jdt.debug.core.IJavaLineBreakpoint">
+                   </instanceof>
+                   <instanceof
+                         value="org.eclipse.jdt.debug.core.IJavaWatchpoint">
+                   </instanceof>
+                   <instanceof
+                         value="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
+                   </instanceof>
+                </or>
+             </iterate>
+          </with>
+       </enablement>
+    </detailFactories>
+ </extension>
 </plugin>

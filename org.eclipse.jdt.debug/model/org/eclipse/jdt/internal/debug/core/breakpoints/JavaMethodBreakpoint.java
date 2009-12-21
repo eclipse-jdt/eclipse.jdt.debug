@@ -46,7 +46,7 @@ import com.sun.jdi.request.MethodExitRequest;
 
 public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMethodBreakpoint {
 	
-	protected static final String JAVA_METHOD_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodBreakpointMarker"; //$NON-NLS-1$
+	public static final String JAVA_METHOD_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint attribute storing the name of the method

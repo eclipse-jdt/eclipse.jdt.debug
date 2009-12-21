@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,11 @@ public class PropertyPageMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages";//$NON-NLS-1$
 
 	public static String BreakpointConditionEditor_1;
+	public static String ExceptionBreakpointEditor_0;
+	public static String ExceptionBreakpointEditor_1;
+	public static String ExceptionBreakpointEditor_2;
+	public static String ExceptionBreakpointEditor_3;
+
 	public static String ExceptionFilterEditor_5;
 	public static String ExceptionFilterEditor_6;
 	public static String ExceptionFilterEditor_7;
@@ -32,6 +37,11 @@ public class PropertyPageMessages extends NLS {
 	public static String ExceptionFilterEditor_19;
 	public static String ExceptionFilterEditor_20;
 	public static String ExceptionFilterEditor_22;
+	
+	public static String JavaBreakpointConditionEditor_0;
+	public static String JavaBreakpointConditionEditor_1;
+	public static String JavaBreakpointConditionEditor_2;
+
 	public static String JavaBreakpointPage_0;
 	public static String JavaBreakpointPage_10;
 

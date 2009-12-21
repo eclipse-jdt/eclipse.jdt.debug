@@ -92,7 +92,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected static final String SOURCE_NAME= "org.eclipse.jdt.debug.core.sourceName";	 //$NON-NLS-1$
 
-	protected static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
+	public static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Maps suspended threads to the suspend event that suspended them

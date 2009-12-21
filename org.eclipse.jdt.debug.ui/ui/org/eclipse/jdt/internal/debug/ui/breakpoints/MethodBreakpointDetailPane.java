@@ -1,0 +1,45 @@
+/*******************************************************************************
+ *  Copyright (c) 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jdt.internal.debug.ui.breakpoints;
+
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.swt.widgets.Composite;
+
+/**
+ * Watchpoint detail pane. Suspend on access or modification.
+ * 
+ * @since 3.6
+ */
+public class MethodBreakpointDetailPane extends AbstractDetailPane {
+	
+	/**
+	 * Identifier for this detail pane editor
+	 */
+	public static final String DETAIL_PANE_METHOD_BREAKPOINT = JDIDebugUIPlugin.getUniqueIdentifier() + ".DETAIL_PANE_METHOD_BREAKPOINT"; //$NON-NLS-1$
+
+	public MethodBreakpointDetailPane() {
+		super(BreakpointMessages.MethodBreakpointDetailPane_0, BreakpointMessages.MethodBreakpointDetailPane_0, DETAIL_PANE_METHOD_BREAKPOINT);
+		addAutosaveProperties(new int[]{
+				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
+				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,
+				MethodBreakpointEditor.PROP_ENTRY,
+				MethodBreakpointEditor.PROP_EXIT
+		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractDetailPane#createEditor(org.eclipse.swt.widgets.Composite)
+	 */
+	protected AbstractJavaBreakpointEditor createEditor(Composite parent) {
+		return new MethodBreakpointEditor();
+	}
+
+}

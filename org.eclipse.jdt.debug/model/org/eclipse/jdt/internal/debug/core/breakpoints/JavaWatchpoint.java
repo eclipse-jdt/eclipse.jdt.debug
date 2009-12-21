@@ -44,7 +44,7 @@ import com.sun.jdi.request.WatchpointRequest;
 
 public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoint {
 	
-	private static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
+	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
 	/**
 	 * Watchpoint attribute storing the access value (value <code>"org.eclipse.jdt.debug.core.access"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
