@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -406,10 +406,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		new ExceptionInspector();
 		
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
-			public void doneSaving(ISaveContext context) {}
-			public void prepareToSave(ISaveContext context)	throws CoreException {}
-			public void rollback(ISaveContext context) {}
-			public void saving(ISaveContext context) throws CoreException {
+			public void doneSaving(ISaveContext sc) {}
+			public void prepareToSave(ISaveContext sc)	throws CoreException {}
+			public void rollback(ISaveContext sc) {}
+			public void saving(ISaveContext sc) throws CoreException {
 				savePluginPreferences();
 			}
 		});

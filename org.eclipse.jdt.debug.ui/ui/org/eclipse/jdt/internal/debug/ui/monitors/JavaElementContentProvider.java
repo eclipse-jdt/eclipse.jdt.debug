@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 3.3
  */
 public abstract class JavaElementContentProvider extends ElementContentProvider {
-	
-	protected Object[] EMPTY = new Object[0];
 	
 	private static boolean fgDisplayMonitors;
 	private static boolean fgDisplayThreadGroups;
