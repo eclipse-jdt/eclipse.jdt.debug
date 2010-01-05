@@ -84,7 +84,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * </p>
  * 
  * @since 3.5
- * @noextend This class is not intended to be subclassed by clients.
  */
 public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointEditor {
 	
