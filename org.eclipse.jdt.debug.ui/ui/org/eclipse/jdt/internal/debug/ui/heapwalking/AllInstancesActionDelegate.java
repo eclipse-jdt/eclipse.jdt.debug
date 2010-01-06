@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 						    		IJavaElement[] selectedTypes = ((ICodeAssist)element).codeSelect(selectedWord.getOffset(), selectedWord.getLength());
 						    		// findWord() will only return one element, so only check the first element
 						    		if (selectedTypes.length > 0){
-						    			runAllInstancesForType(selectedTypes[0]);  
+						    			runForSelection(selectedTypes[0]);  
 						    			return;
 						    		}
 								} catch (JavaModelException e){
@@ -111,7 +111,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 					
 				// Otherwise, get the first selected element and check if it is a type
 				} else if (selection instanceof IStructuredSelection){
-					runAllInstancesForType(((IStructuredSelection)selection).getFirstElement());
+					runForSelection(((IStructuredSelection)selection).getFirstElement());
 					return;
 				}
 			}
@@ -120,12 +120,12 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	}
 	
 	/**
-	 * Checks if the passed element is a java type or constructor that all instances can 
-	 * be retrieved for. If so, retrieves the instances and displays them in a popup dialog.
+	 * Resolves a debug reference type for the selected element and then
+	 * runs the action.
 	 * 
-	 * @param selectedElement The element to obtain all instances for
+	 * @param selectedElement a method, type, or variable
 	 */
-	protected void runAllInstancesForType(Object selectedElement){
+	protected void runForSelection(Object selectedElement){
 		if (selectedElement != null){
 						
 			IJavaType type = null;
@@ -147,13 +147,8 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 							if(types != null && types.length > 0) {
 								type = types[0];
 							} else {
-								// If the type is not known the the VM, open a popup dialog with 0 instances
-								JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)target, null);
-								InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
-										getAnchor(), 
-										PopupInspectAction.ACTION_DEFININITION_ID,
-										new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{itype.getElementName()}), aiv));
-								ipd.open();
+								// If the type is not known the the VM, open a pop-up dialog with 0 instances
+								displayNoInstances(target, itype.getFullyQualifiedName());
 								return;
 							}
 						}
@@ -179,21 +174,46 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 					
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
-				try{
-					JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)rtype.getDebugTarget(), rtype);
-					InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
-							getAnchor(), 
-							PopupInspectAction.ACTION_DEFININITION_ID,
-							new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{type.getName()}), aiv));
-					ipd.open();
-					return;
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
-					report(Messages.AllInstancesActionDelegate_0,getPart());
-				}
+				displayInstaces((JDIDebugTarget)rtype.getDebugTarget(), rtype);
+				return;
 			}
 		}
 		report(Messages.AllInstancesActionDelegate_3,getPart());
+	}
+	
+	/**
+	 * No types are loaded in the given target with the specified type name. Displays the result.
+	 * 
+	 * @param target target
+	 * @param typeName resolve type name
+	 */
+	protected void displayNoInstances(IJavaDebugTarget target, String typeName) {
+		JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)target, null);
+		InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
+				getAnchor(), 
+				PopupInspectAction.ACTION_DEFININITION_ID,
+				new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{typeName}), aiv));
+		ipd.open();
+	}
+	
+	/**
+	 * Display instances of the given resolved type.
+	 * 
+	 * @param target target
+	 * @param rtype resolved reference type
+	 */
+	protected void displayInstaces(IJavaDebugTarget target, JDIReferenceType rtype) {
+		try{
+			JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)rtype.getDebugTarget(), rtype);
+			InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
+					getAnchor(), 
+					PopupInspectAction.ACTION_DEFININITION_ID,
+					new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{rtype.getName()}), aiv));
+			ipd.open();
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+			report(Messages.AllInstancesActionDelegate_0,getPart());
+		}
 	}
 	
 	 /**
@@ -324,7 +344,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	/**
 	 * @return the shell to use for new popups or <code>null</code>
 	 */
-	private Shell getShell(){
+	protected Shell getShell(){
 		if (fWindow != null){
 			return fWindow.getShell();
 		}

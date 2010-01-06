@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,5 +151,15 @@ public interface IJavaReferenceType extends IJavaType {
      * @since 3.3
      */
     public IJavaObject[] getInstances(long max) throws DebugException;
+    
+    /**
+     * Returns the number of instances of this type currently allocated in the target
+     * virtual machine, or -1 if instance counts are not supported by the target.
+     * 
+     * @return number of instances of this type, or -1 if unsupported
+     * @throws DebugException on failure
+     * @since 3.6
+     */
+    public long getInstanceCount() throws DebugException;
 	
 }

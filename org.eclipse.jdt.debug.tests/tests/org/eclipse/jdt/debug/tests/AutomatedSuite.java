@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
 
 /**
@@ -180,6 +181,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StaticVariableTests.class));
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(TestLogicalStructures.class));
+		addTest(new TestSuite(TestInstanceRetrieval.class));
 		
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));

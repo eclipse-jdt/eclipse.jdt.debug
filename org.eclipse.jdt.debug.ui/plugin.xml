@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?><!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -310,6 +310,41 @@
                </and>
             </enablement>
          </action>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.actions.InstanceCount"
+               label="%instanceCount.label"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
+               tooltip="%instanceCount.tooltip">
+                           <enablement>
+                              <and>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.debuggerActive"
+                                       value="true">
+                                 </systemProperty>
+                                 <systemProperty
+                                       name="org.eclipse.jdt.debug.ui.supportsInstanceRetrieval"
+                                       value="true">
+                                 </systemProperty>
+                                 <or>
+                                    <objectClass
+                                          name="org.eclipse.jface.text.ITextSelection">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.debug.core.IJavaVariable">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.core.IMethod">
+                                    </objectClass>
+                                    <objectClass
+                                          name="org.eclipse.jdt.core.IType">
+                                    </objectClass>
+                                 </or>
+                              </and>
+            </enablement>
+         </action>         
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -964,6 +999,15 @@
             </systemProperty>
          </visibility>
          <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.cuPopup.InstanceCount"
+               label="%instanceCount.label"
+               menubarPath="additions"
+               tooltip="%instanceCount.tooltip">
+         </action>
+         <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
                helpContextId="all_instances_action_context"
@@ -1088,6 +1132,15 @@
                      value="true">
             </systemProperty>
          </visibility>
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.cuPopup.InstanceCount"
+               label="%instanceCount.label"
+               menubarPath="additions"
+               tooltip="%instanceCount.tooltip">
+         </action>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -1275,6 +1328,16 @@
       <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+         <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               enablesFor="1"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.instanceCount"
+               label="%instanceCount.label"
+               menubarPath="emptyNavigationGroup"
+               tooltip="%instanceCount.tooltip">
+         </action>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -1739,6 +1802,16 @@
             </and>
          </visibility>
           <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               enablesFor="1"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.instanceCount"
+               label="%instanceCount.label"
+               menubarPath="additions"
+               tooltip="%instanceCount.tooltip">
+          </action>
+          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
                enablesFor="1"
@@ -1765,6 +1838,16 @@
                </objectState>
              </and>
 	      </visibility>
+	      <action
+               class="org.eclipse.jdt.internal.debug.ui.heapwalking.InstanceCountActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+               enablesFor="1"
+               helpContextId="instance_count_action_context"
+               id="org.eclipse.jdt.debug.ui.instanceCount"
+               label="%instanceCount.label"
+               menubarPath="additions"
+               tooltip="%instanceCount.tooltip">
+          </action>
           <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -2575,6 +2658,13 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.commands.AllInstances"
             name="%ActionDefinition.allInstances.name">
       </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.instanceCount.description"
+            helpContextId="all_instances_action_context"
+            id="org.eclipse.jdt.debug.ui.commands.InstanceCount"
+            name="%ActionDefinition.instanceCount.name">
+      </command>      
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.breakpointproperties.description"

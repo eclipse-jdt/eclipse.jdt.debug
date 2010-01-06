@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import com.sun.jdi.Field;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * References a class, interface, or array type.
@@ -292,4 +294,22 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstanceCount()
+	 */
+	public long getInstanceCount() throws DebugException {
+		JDIDebugTarget target = getJavaDebugTarget();
+		if (target.supportsInstanceRetrieval()) {
+			ArrayList list = new ArrayList(2);
+			list.add(getUnderlyingType());
+			VirtualMachine vm = getVM();
+			try {
+				long[] counts = vm.instanceCounts(list);
+				return counts[0];
+			} catch (RuntimeException e) {
+				targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_5, e);
+			}
+		}
+		return -1;
+	}
 }

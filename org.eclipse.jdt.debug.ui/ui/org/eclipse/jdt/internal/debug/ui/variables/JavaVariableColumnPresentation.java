@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,14 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	 */
 	public final static String JAVA_VARIABLE_COLUMN_PRESENTATION = IJavaDebugUIConstants.PLUGIN_ID + ".VARIALBE_COLUMN_PRESENTATION";  //$NON-NLS-1$
 	/**
-	 * Default column identifiers
+	 * Instance ID column identifier
 	 */
 	public final static String COLUMN_INSTANCE_ID = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_INSTANCE_ID"; //$NON-NLS-1$
+	
+	/**
+	 * Instance count column identifier
+	 */
+	public final static String COLUMN_INSTANCE_COUNT = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_INSTANCE_COUNT"; //$NON-NLS-1$
 	
 	/**
 	 * Column ids
@@ -38,9 +43,10 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	public String[] getAvailableColumns() {
 		if (fgAllColumns == null) {
 			String[] basic = super.getAvailableColumns();
-			fgAllColumns = new String[basic.length + 1];
+			fgAllColumns = new String[basic.length + 2];
 			System.arraycopy(basic, 0, fgAllColumns, 0, basic.length);
 			fgAllColumns[basic.length] = COLUMN_INSTANCE_ID;
+			fgAllColumns[basic.length+1] = COLUMN_INSTANCE_COUNT;
 		}
 		return fgAllColumns;
 	}
@@ -51,6 +57,9 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	public String getHeader(String id) {
 		if (COLUMN_INSTANCE_ID.equals(id)) {
 			return VariableMessages.JavaVariableColumnPresentation_0;
+		}
+		if (COLUMN_INSTANCE_COUNT.equals(id)) {
+			return VariableMessages.JavaVariableColumnPresentation_1;
 		}
 		return super.getHeader(id);
 	}

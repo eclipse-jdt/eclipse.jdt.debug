@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,11 @@ import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -129,6 +133,26 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 					StringBuffer buffer = new StringBuffer();
 					buffer.append(uniqueId);
 					return buffer.toString();
+				}
+			}
+			return ""; //$NON-NLS-1$
+		}
+		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_COUNT.equals(columnId)) {
+			if (value instanceof IJavaObject) {
+				IJavaType jType = ((IJavaObject)value).getJavaType();
+				if (jType == null && variable instanceof IJavaVariable) {
+					jType = ((IJavaVariable)variable).getJavaType();
+				}
+				if (jType instanceof IJavaReferenceType) {
+					if (!(jType instanceof IJavaInterfaceType)) {
+						long count = ((IJavaReferenceType)jType).getInstanceCount();
+						if (count == -1) {
+							return DebugUIMessages.JavaVariableLabelProvider_0;
+						}
+						StringBuffer buffer = new StringBuffer();
+						buffer.append(count);
+						return buffer.toString();
+					}
 				}
 			}
 			return ""; //$NON-NLS-1$
