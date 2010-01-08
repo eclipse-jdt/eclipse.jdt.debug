@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,76 +150,51 @@ public class JavaSourceLookupUtil {
 	 */
 	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry) {
 		IResource resource = entry.getResource();
-		if (resource == null) { 
-			// Check all package fragment roots for case of external archive.
-			// External jars are shared, so it does not matter which project it
-			// originates from
-			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-			Path entryPath = new Path(entry.getLocation());
+		if (resource != null) {
+			// find package fragment associated with the resource
+			IProject project = resource.getProject();
+			IJavaProject jp = JavaCore.create(project);
 			try {
-				IJavaProject[] jps = model.getJavaProjects();
-				for (int i = 0; i < jps.length; i++) {
-					IJavaProject jp = jps[i];
-					IProject p =  jp.getProject();
-					if (p.isOpen()) {
-						IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
-						for (int j = 0; j < allRoots.length; j++) {
-							IPackageFragmentRoot root = allRoots[j];
-							if (root.isExternal() && root.getPath().equals(entryPath)) {
-								if (isSourceAttachmentEqual(root, entry)) {
-									// use package fragment root
-									return root;
-								}							
-							}
+				if (project.isOpen() && jp.exists()) {
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot(resource.getFullPath());
+					if (root != null) {
+						// ensure source attachment paths match
+						if (isSourceAttachmentEqual(root, entry)) {
+							// use package fragment root
+							return root;
 						}
 					}
 				}
 			} catch (JavaModelException e) {
 				LaunchingPlugin.log(e);
 			}
-		} else {
-			// check if the archive is a package fragment root
-			IProject project = resource.getProject();
-			IJavaProject jp = JavaCore.create(project);
-			try {
-				if (project.isOpen() && jp.exists()) {
-					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
+		}
+		// Check all package fragment roots for case of external archive.
+		// External jars are shared, so it does not matter which project it
+		// originates from
+		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+		Path entryPath = new Path(entry.getLocation());
+		try {
+			IJavaProject[] jps = model.getJavaProjects();
+			for (int i = 0; i < jps.length; i++) {
+				IJavaProject jp = jps[i];
+				IProject p =  jp.getProject();
+				if (p.isOpen()) {
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
-						if (allRoots[j].equals(root)) {
-							// ensure source attachment paths match
+						IPackageFragmentRoot root = allRoots[j];
+						if (root.isExternal() && root.getPath().equals(entryPath)) {
 							if (isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
-							}
-						}
-					}
-
-				}
-				// check all other java projects to see if another project references
-				// the archive
-				IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-				IJavaProject[] jps = model.getJavaProjects();
-				for (int i = 0; i < jps.length; i++) {
-					IJavaProject jp1 = jps[i];
-					IProject p = jp1.getProject();
-					if (p.isOpen()) {
-						IPackageFragmentRoot[] allRoots = jp1.getPackageFragmentRoots();
-						for (int j = 0; j < allRoots.length; j++) {
-							IPackageFragmentRoot root = allRoots[j];
-							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-								if (isSourceAttachmentEqual(root, entry)) {
-									// use package fragment root
-									return root;
-								}							
-							}
+							}							
 						}
 					}
 				}
-			} catch (JavaModelException e) {
-				LaunchingPlugin.log(e);
-			}		
-		}		
+			}
+		} catch (JavaModelException e) {
+			LaunchingPlugin.log(e);
+		}
 		return null;
 	}	
 }
