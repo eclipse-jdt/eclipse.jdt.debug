@@ -342,10 +342,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	protected IResource getResource(IPath path) {
 		if (path != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			if (path.getDevice() == null) {
-				// search relative to the workspace if no device present
-				return root.findMember(path);
-			} 
 			// look for files or folders with the given path
 			IFile[] files = root.findFilesForLocation(path);
 			if (files.length > 0) {
@@ -355,6 +351,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (containers.length > 0) {
 				return containers[0];
 			}
+			if (path.getDevice() == null) {
+				// search relative to the workspace if no device present
+				return root.findMember(path);
+			} 
 		}		
 		return null;
 	}
