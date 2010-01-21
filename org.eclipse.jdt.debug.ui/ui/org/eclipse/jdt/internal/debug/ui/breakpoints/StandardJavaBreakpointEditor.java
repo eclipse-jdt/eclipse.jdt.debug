@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,19 +124,23 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	protected void setBreakpoint(IJavaBreakpoint breakpoint) throws CoreException {
 		fBreakpoint = breakpoint;
 		boolean enabled = false;
+		boolean hasHitCount = false;
 		String text = ""; //$NON-NLS-1$
 		boolean suspendThread = true;
 		if (breakpoint != null) {
+			enabled = true;
 			int hitCount = breakpoint.getHitCount();
 			if (hitCount > 0) {
 				text = new Integer(hitCount).toString();
-				enabled = true;
+				hasHitCount = true;
 			}
 			suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 		}
-		fHitCountButton.setSelection(enabled);
-		fHitCountText.setEnabled(enabled);
+		fHitCountButton.setEnabled(enabled);
+		fHitCountButton.setSelection(enabled & hasHitCount);
+		fHitCountText.setEnabled(hasHitCount);
 		fHitCountText.setText(text);
+		fSuspendPolicy.setEnabled(enabled);
 		if(suspendThread) {
 			fSuspendPolicy.select(0);
 		} else {

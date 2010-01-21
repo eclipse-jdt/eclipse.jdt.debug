@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,12 +166,14 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fViewer.setInput(document);
 		String condition = null;
 		IType type = null;
-		boolean enabled = false;
+		boolean controlsEnabled = false;
+		boolean conditionEnabled = false;
 		boolean whenTrue = true;
 		if (breakpoint != null) {
+			controlsEnabled = true;
 			if (breakpoint.supportsCondition()) {
 				condition = breakpoint.getCondition();
-				enabled = breakpoint.isConditionEnabled();
+				conditionEnabled = breakpoint.isConditionEnabled();
 				whenTrue = breakpoint.isConditionSuspendOnTrue();
 				type = BreakpointUtils.getType(breakpoint);
 			}
@@ -217,14 +219,15 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
             	setDirty(PROP_CONDITION);
             }
         };
-		fViewer.getDocument().addDocumentListener(fDocumentListener);		
-		fConditional.setSelection(enabled);
+		fViewer.getDocument().addDocumentListener(fDocumentListener);
+		fConditional.setEnabled(controlsEnabled);
+		fConditional.setSelection(conditionEnabled);
 		if (whenTrue) {
 			fSuspendBehavior.select(0);
 		} else {
 			fSuspendBehavior.select(1);
 		}
-		setEnabled(enabled && breakpoint != null && breakpoint.supportsCondition(), false);
+		setEnabled(conditionEnabled && breakpoint != null && breakpoint.supportsCondition(), false);
 		setDirty(false);
 	}
 	
