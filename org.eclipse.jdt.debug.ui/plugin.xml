@@ -3563,6 +3563,9 @@ M4 = Platform-specific fourth key
                    <instanceof
                          value="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
                    </instanceof>
+                   <instanceof
+                         value="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint">
+                   </instanceof>
                 </or>
              </iterate>
           </with>
