@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009 IBM Corporation and others.
+ *  Copyright (c) 2009, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class MethodBreakpointDetailPane extends AbstractDetailPane {
 	public static final String DETAIL_PANE_METHOD_BREAKPOINT = JDIDebugUIPlugin.getUniqueIdentifier() + ".DETAIL_PANE_METHOD_BREAKPOINT"; //$NON-NLS-1$
 
 	public MethodBreakpointDetailPane() {
-		super(BreakpointMessages.MethodBreakpointDetailPane_0, BreakpointMessages.MethodBreakpointDetailPane_0, DETAIL_PANE_METHOD_BREAKPOINT);
+		super(BreakpointMessages.StandardBreakpointDetailPane_0, BreakpointMessages.StandardBreakpointDetailPane_0, DETAIL_PANE_METHOD_BREAKPOINT);
 		addAutosaveProperties(new int[]{
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,

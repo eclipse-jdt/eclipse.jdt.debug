@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 			fNameMap = new HashMap();
 			fNameMap.put(BreakpointConditionDetailPane.DETAIL_PANE_CONDITION, BreakpointMessages.BreakpointConditionDetailPane_0);
 			fNameMap.put(WatchpointDetailPane.DETAIL_PANE_WATCHPOINT, BreakpointMessages.WatchpointDetailPane_0);
-			fNameMap.put(MethodBreakpointDetailPane.DETAIL_PANE_METHOD_BREAKPOINT, BreakpointMessages.MethodBreakpointDetailPane_0);
+			fNameMap.put(MethodBreakpointDetailPane.DETAIL_PANE_METHOD_BREAKPOINT, BreakpointMessages.StandardBreakpointDetailPane_0);
 			fNameMap.put(StandardBreakpointDetailPane.DETAIL_PANE_STANDARD, BreakpointMessages.StandardBreakpointDetailPane_0);
 			fNameMap.put(ExceptionBreakpointDetailPane.DETAIL_PANE_EXCEPTION_BREAKPOINT, BreakpointMessages.ExceptionBreakpointDetailPane_0);
 		}
