@@ -82,7 +82,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 		});
 		fHitCountText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
+		GridData gd = new GridData();
+		gd.widthHint = 100;
 		fHitCountText.setLayoutData(gd);
 		fHitCountText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
