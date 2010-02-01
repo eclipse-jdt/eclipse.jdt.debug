@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 20010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,23 +13,18 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.WizardPage;
-
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
-import org.eclipse.jdt.launching.JavaRuntime;
-
-import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Extension to allow a user to associate a JRE with a Java project.
