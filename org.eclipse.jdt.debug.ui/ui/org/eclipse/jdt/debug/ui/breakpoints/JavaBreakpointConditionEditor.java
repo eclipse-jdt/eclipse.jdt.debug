@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
@@ -54,7 +55,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -239,20 +239,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @return top level control
 	 */
 	public Control createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.marginLeft = 8;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		Composite controls = new Composite(composite, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		controls.setLayout(layout);
-		controls.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = new Button(controls, SWT.CHECK);
 		fConditional.setText(PropertyPageMessages.JavaBreakpointConditionEditor_0);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -265,14 +252,14 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		});
 		fSuspendBehavior = new Combo(controls, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fSuspendBehavior.setItems(new String[]{PropertyPageMessages.JavaBreakpointConditionEditor_1, PropertyPageMessages.JavaBreakpointConditionEditor_2});
-		fSuspendBehavior.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		fSuspendBehavior.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		fSuspendBehavior.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
 		});
 				
-		fViewer = new JDISourceViewer(composite, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
+		fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fViewer.setEditable(false);
 		ControlDecoration decoration = new ControlDecoration(fViewer.getControl(), SWT.TOP | SWT.LEFT);
 		decoration.setShowOnlyOnFocus(true);
@@ -303,12 +290,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				deactivateContentAssist();
 			}				
 		});
-		composite.addDisposeListener(new DisposeListener() {
+		parent.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
 		});
-		return composite;
+		return parent;
 	}
 	
 	/**

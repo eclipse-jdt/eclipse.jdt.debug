@@ -194,15 +194,12 @@ public class JavaBreakpointPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		setTitle(PropertyPageMessages.JavaBreakpointPage_11);
 		noDefaultAndApplyButton();
-		Composite mainComposite = createComposite(parent, 1);
+		Composite mainComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		createLabels(mainComposite);
-		try {
-			createEnabledButton(mainComposite);
-			createHitCountEditor(mainComposite);
-			createTypeSpecificEditors(mainComposite);
-			createSuspendPolicyEditor(mainComposite); // Suspend policy is considered uncommon. Add it last.
-		} 
-		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
+		createEnabledButton(mainComposite);
+		createHitCountEditor(mainComposite);
+		createTypeSpecificEditors(mainComposite);
+		createSuspendPolicyEditor(mainComposite); // Suspend policy is considered uncommon. Add it last.
 		setValid(true);
 		// if this breakpoint is being created, change the shell title to indicate 'creation'
 		try {
@@ -247,7 +244,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @param parent
 	 */
 	protected void createLabels(Composite parent) {
-		Composite labelComposite = createComposite(parent, 2);
+		Composite labelComposite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		try {
 			String typeName = ((IJavaBreakpoint) getElement()).getTypeName();
 			if (typeName != null) {
@@ -267,16 +264,21 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @param parent the composite in which the suspend policy
 	 * 		editor will be created.
 	 */
-	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
-		Composite comp = createComposite(parent, 2);
+	private void createSuspendPolicyEditor(Composite parent) {
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		createLabel(comp, PropertyPageMessages.JavaBreakpointPage_6); 
-		boolean suspendThread= getBreakpoint().getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
 		fSuspendPolicy = new Combo(comp, SWT.BORDER | SWT.READ_ONLY);
 		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
 		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_8);
 		fSuspendPolicy.select(1);
-		if(suspendThread) {
-			fSuspendPolicy.select(0);
+		try {
+			boolean suspendThread = getBreakpoint().getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
+			if(suspendThread) {
+				fSuspendPolicy.select(0);
+			}
+		}
+		catch(CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
 		}
 	}
 
@@ -284,32 +286,39 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @param parent the composite in which the hit count editor
 	 * 		will be created
 	 */
-	private void createHitCountEditor(Composite parent) throws CoreException {
-		Composite hitCountComposite = createComposite(parent, 2);
-		fHitCountButton= createCheckButton(hitCountComposite, PropertyPageMessages.JavaBreakpointPage_4); 
+	private void createHitCountEditor(Composite parent) {
+		Composite hitCountComposite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fHitCountButton = createCheckButton(hitCountComposite, PropertyPageMessages.JavaBreakpointPage_4); 
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				fHitCountText.setEnabled(fHitCountButton.getSelection());
 				hitCountChanged();
 			}
 		});
-		int hitCount = getBreakpoint().getHitCount();
-		String hitCountString= EMPTY_STRING;
-		if (hitCount > 0) {
-			hitCountString = new Integer(hitCount).toString();
-			fHitCountButton.setSelection(true);
-		} else {
-			fHitCountButton.setSelection(false);
-		}
-		fHitCountText= createText(hitCountComposite, hitCountString); 
-		if (hitCount <= 0) {
-			fHitCountText.setEnabled(false);
-		}
+		fHitCountText = createText(hitCountComposite, EMPTY_STRING); 
 		fHitCountText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				hitCountChanged();
 			}
 		});
+		try {
+			int hitCount = getBreakpoint().getHitCount();
+			String hitCountString = EMPTY_STRING;
+			if (hitCount > 0) {
+				hitCountString = new Integer(hitCount).toString();
+				fHitCountText.setText(hitCountString);
+				fHitCountButton.setSelection(true);
+			} else {
+				fHitCountButton.setSelection(false);
+			}
+			if (hitCount <= 0) {
+				fHitCountText.setEnabled(false);
+			}
+		}
+		catch(CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
+		
 	}
 	
 	/**
@@ -340,11 +349,15 @@ public class JavaBreakpointPage extends PropertyPage {
 	/**
 	 * Creates the button to toggle enablement of the breakpoint
 	 * @param parent
-	 * @throws CoreException
 	 */
-	protected void createEnabledButton(Composite parent) throws CoreException {
+	protected void createEnabledButton(Composite parent) {
 		fEnabledButton = createCheckButton(parent, PropertyPageMessages.JavaBreakpointPage_5); 
-		fEnabledButton.setSelection(getBreakpoint().isEnabled());
+		try {
+			fEnabledButton.setSelection(getBreakpoint().isEnabled());
+		}
+		catch(CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
 	}
 	
 	/**
@@ -366,9 +379,8 @@ public class JavaBreakpointPage extends PropertyPage {
 	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
 	* @param parent
-	* @throws CoreException
 	*/
-   protected void createTypeSpecificEditors(Composite parent) throws CoreException {}
+   protected void createTypeSpecificEditors(Composite parent) {}
 	
 	/**
 	 * Creates a fully configured text editor with the given initial value
@@ -378,16 +390,6 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	protected Text createText(Composite parent, String initialValue) {
 		return SWTFactory.createText(parent, SWT.SINGLE | SWT.BORDER, 1, initialValue);
-	}
-	
-	/**
-	 * Creates a fully configured composite with the given number of columns
-	 * @param parent
-	 * @param numColumns
-	 * @return the configured composite
-	 */
-	protected Composite createComposite(Composite parent, int numColumns) {
-		return SWTFactory.createComposite(parent, parent.getFont(), numColumns, 1, GridData.FILL_HORIZONTAL, 0, 0);
 	}
 
 	/**

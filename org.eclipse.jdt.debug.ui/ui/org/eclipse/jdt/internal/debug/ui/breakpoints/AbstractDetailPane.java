@@ -16,11 +16,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDetailPane3;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -51,6 +53,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	
 	// property listeners
 	private ListenerList fListeners = new ListenerList();
+	private Composite fEditorParent;
 	
 	/**
 	 * Constructs a detail pane.
@@ -125,6 +128,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 		fSite = null;
 		fListeners.clear();
 		fAutoSaveProperties.clear();
+		fEditorParent.dispose();
 	}	
 	
 	/**
@@ -143,7 +147,8 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		fEditor = createEditor(parent);
+		fEditorParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		fEditor = createEditor(fEditorParent);
 		fEditor.addPropertyListener(new IPropertyListener() {
 			public void propertyChanged(Object source, int propId) {
 				if (fAutoSaveProperties.contains(new Integer(propId))) {
@@ -156,7 +161,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 				firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
 			}
 		});
-		return fEditor.createControl(parent);
+		return fEditor.createControl(fEditorParent);
 	}
 	
 	/**

@@ -24,7 +24,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -121,11 +120,10 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
 	}
 	
-	/**
-	 * Create the condition editor and associated editors.
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#createTypeSpecificEditors(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createTypeSpecificEditors(Composite parent) throws CoreException {
+	protected void createTypeSpecificEditors(Composite parent) {
 		setTitle(PropertyPageMessages.JavaLineBreakpointPage_18);
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
 		if (breakpoint.supportsCondition()) {
@@ -142,11 +140,16 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_6); 
 			fEnabledButton.addSelectionListener(watchpointValidator);
 			fFieldAccess = createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_7); 
-			fFieldAccess.setSelection(watchpoint.isAccess());
 			fFieldAccess.addSelectionListener(watchpointValidator);
 			fFieldModification = createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_8); 
-			fFieldModification.setSelection(watchpoint.isModification());
 			fFieldModification.addSelectionListener(watchpointValidator);
+			try {
+				fFieldAccess.setSelection(watchpoint.isAccess());
+				fFieldModification.setSelection(watchpoint.isModification());
+			}
+			catch(CoreException ce) {
+				JDIDebugUIPlugin.log(ce);
+			}
 		}
 		if (breakpoint instanceof IJavaMethodBreakpoint) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
@@ -159,11 +162,16 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 			createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_9); 
 			fEnabledButton.addSelectionListener(methodBreakpointValidator);
 			fMethodEntry = createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_10); 
-			fMethodEntry.setSelection(methodBreakpoint.isEntry());
 			fMethodEntry.addSelectionListener(methodBreakpointValidator);
 			fMethodExit = createCheckButton(parent, PropertyPageMessages.JavaLineBreakpointPage_11); 
-			fMethodExit.setSelection(methodBreakpoint.isExit());
 			fMethodExit.addSelectionListener(methodBreakpointValidator);
+			try {
+				fMethodEntry.setSelection(methodBreakpoint.isEntry());
+				fMethodExit.setSelection(methodBreakpoint.isExit());
+			}
+			catch(CoreException ce) {
+				JDIDebugUIPlugin.log(ce);
+			}
 		}
 	}
 	
@@ -200,12 +208,10 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * @param parent the composite in which the condition editor should be created
 	 * @throws CoreException if an exception occurs accessing the breakpoint
 	 */
-	private void createConditionEditor(Composite parent) throws CoreException {
-		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();		
-		Composite conditionComposite = SWTFactory.createGroup(parent, EMPTY_STRING, 1, 1, GridData.FILL_BOTH);
+	private void createConditionEditor(Composite parent) {
+		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();	
 		fConditionEditor = new JavaBreakpointConditionEditor(); 
-		fConditionEditor.createControl(conditionComposite);
-		fConditionEditor.setInput(breakpoint);
+		fConditionEditor.createControl(parent);
 		fConditionEditor.addPropertyListener(new IPropertyListener() {
 			public void propertyChanged(Object source, int propId) {
 				IStatus status = fConditionEditor.getStatus();
@@ -220,6 +226,12 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 				}
 			}
 		});
+		try {
+			fConditionEditor.setInput(breakpoint);
+		}
+		catch(CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -64,7 +64,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	}
 	
 	protected Control createStandardControls(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_VERTICAL, 5, 5);
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_VERTICAL, 0, 0);
 		SWTFactory.createLabel(composite, PropertyPageMessages.JavaBreakpointPage_6, 1);
 		fSuspendPolicy = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
@@ -81,10 +81,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				setDirty(PROP_HIT_COUNT_ENABLED);
 			}
 		});
-		fHitCountText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		GridData gd = new GridData();
-		gd.widthHint = 100;
-		fHitCountText.setLayoutData(gd);
+		fHitCountText = SWTFactory.createSingleText(composite, 1);
 		fHitCountText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setDirty(PROP_HIT_COUNT);
