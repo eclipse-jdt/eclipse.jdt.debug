@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionsEvaluationMessages;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 
 /**
@@ -105,7 +104,11 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
     	if (loader == null) {
     		loaderArg = getVM().nullValue();
     	}
-        IJavaValue[] args = new IJavaValue[] {getVM().newValue(qualifiedName), getVM().newValue(true), loaderArg};
+    	//prevent the name string from being collected during the class lookup call
+    	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=301412
+    	final IJavaValue name = getVM().newValue(qualifiedName);
+    	((IJavaObject)name).disableCollection();
+        IJavaValue[] args = new IJavaValue[] {name, getVM().newValue(true), loaderArg};
         try {
             return (IJavaClassObject) getJavaLangClass().sendMessage(FOR_NAME, FOR_NAME_SIGNATURE, args, getThread());
         } catch (CoreException e) {
@@ -116,6 +119,9 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
                 }
             }
             throw e;
+        }
+        finally {
+        	((IJavaObject)name).enableCollection();
         }
     }
 
