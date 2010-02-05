@@ -610,12 +610,12 @@ public class JREsComboBlock {
 				if (environment == null) {
 					fErrorPath = containerPath;
 					selectEnvironment(environment);
-					setError(MessageFormat.format("Unknown execution environment specified: {0}", new String[]{envId})); //$NON-NLS-1$
+					setError(MessageFormat.format(JREMessages.JREsComboBlock_6, new String[]{envId}));
 				} else {
 					selectEnvironment(environment);
 					IVMInstall[] installs = environment.getCompatibleVMs();
 					if (installs.length == 0) {
-						setError(MessageFormat.format("No JREs in workspace compatible with specified execution environment: {0}", new String[]{environment.getId()})); //$NON-NLS-1$
+						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
 					}
 				}
 			} else {
@@ -625,17 +625,17 @@ public class JREsComboBlock {
 					fErrorPath = containerPath;
 					String installTypeId = JavaRuntime.getVMInstallTypeId(containerPath);
 					if (installTypeId == null) {
-						setError("JRE type not specified"); //$NON-NLS-1$
+						setError(JREMessages.JREsComboBlock_8);
 					} else {
 						IVMInstallType installType = JavaRuntime.getVMInstallType(installTypeId);
 						if (installType == null) {
-							setError(MessageFormat.format("Unknown JRE type specified: {0}", new String[]{installTypeId})); //$NON-NLS-1$
+							setError(MessageFormat.format(JREMessages.JREsComboBlock_9, new String[]{installTypeId}));
 						} else {
 							String installName = JavaRuntime.getVMInstallName(containerPath);
 							if (installName == null) {
-								setError(MessageFormat.format("JRE name not specified for JRE type: {0}", new String[]{installType.getName()})); //$NON-NLS-1$
+								setError(MessageFormat.format(JREMessages.JREsComboBlock_10, new String[]{installType.getName()}));
 							} else {
-								setError(MessageFormat.format("Unable to resolve JRE: {0} ({1})", new String[]{installName, installType.getName()})); //$NON-NLS-1$
+								setError(MessageFormat.format(JREMessages.JREsComboBlock_11, new String[]{installName, installType.getName()}));
 							}
 						}
 					}
@@ -643,9 +643,9 @@ public class JREsComboBlock {
 					selectJRE(install);
 					File location = install.getInstallLocation();
 					if (location == null) {
-						setError("JRE home directory not specified");  //$NON-NLS-1$
+						setError(JREMessages.JREsComboBlock_12); 
 					} else if (!location.exists()) {
-						setError("JRE home directory does not exist");  //$NON-NLS-1$
+						setError(JREMessages.JREsComboBlock_13);
 					}							
 				}
 			}

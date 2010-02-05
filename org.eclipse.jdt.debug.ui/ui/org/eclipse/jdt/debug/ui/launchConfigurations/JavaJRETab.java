@@ -257,41 +257,45 @@ public class JavaJRETab extends JavaLaunchTab {
 			source = LauncherMessages.JavaJRETab_4;
 		}
 		IPath vmPath = fJREBlock.getPath();
-		IVMInstall vm = null;
-		if(JavaRuntime.newDefaultJREContainerPath().equals(vmPath)) {
-			if(javaProject.isOpen()) {
-				try {
-					vm = JavaRuntime.getVMInstall(getJavaProject());
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
-					return Status.OK_STATUS;
-				}
-				if(vm == null) {
-					vm = JavaRuntime.getVMInstall(vmPath);
-				}
-			}
-		}
-		else {
-			vm = JavaRuntime.getVMInstall(vmPath);
-		}
-		String environmentId = JavaRuntime.getExecutionEnvironmentId(vmPath);
-		if(vm instanceof AbstractVMInstall) {
-			AbstractVMInstall install = (AbstractVMInstall) vm;
-			String vmver = install.getJavaVersion();
-			if(vmver != null) {
-				int val = compliance.compareTo(vmver);
-				if(val > 0) {
-					String setting = null;
-					if (environmentId == null) {
-						setting = LauncherMessages.JavaJRETab_2;
-					} else {
-						setting = LauncherMessages.JavaJRETab_1;
+		if (vmPath != null) {
+			IVMInstall vm = null;
+			if(JavaRuntime.newDefaultJREContainerPath().equals(vmPath)) {
+				if(javaProject.isOpen()) {
+					try {
+						vm = JavaRuntime.getVMInstall(getJavaProject());
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+						return Status.OK_STATUS;
 					}
-					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, MessageFormat.format(LauncherMessages.JavaJRETab_0, new String[] {setting, source, compliance}), null); 
+					if(vm == null) {
+						vm = JavaRuntime.getVMInstall(vmPath);
+					}
 				}
 			}
+			else {
+				vm = JavaRuntime.getVMInstall(vmPath);
+			}
+			String environmentId = JavaRuntime.getExecutionEnvironmentId(vmPath);
+			if(vm instanceof AbstractVMInstall) {
+				AbstractVMInstall install = (AbstractVMInstall) vm;
+				String vmver = install.getJavaVersion();
+				if(vmver != null) {
+					int val = compliance.compareTo(vmver);
+					if(val > 0) {
+						String setting = null;
+						if (environmentId == null) {
+							setting = LauncherMessages.JavaJRETab_2;
+						} else {
+							setting = LauncherMessages.JavaJRETab_1;
+						}
+						return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, MessageFormat.format(LauncherMessages.JavaJRETab_0, new String[] {setting, source, compliance}), null); 
+					}
+				}
+			}
+			return Status.OK_STATUS;
 		}
-		return Status.OK_STATUS;
+		// when no VM path is specified return the error status from the JRE block
+		return fJREBlock.getStatus();
 	}	
 
 	/**

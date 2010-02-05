@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,14 @@ public class JREMessages extends NLS {
 	public static String InstalledJREsBlock_16;
 
 	public static String JREsComboBlock_1;
+
+	public static String JREsComboBlock_10;
+
+	public static String JREsComboBlock_11;
+
+	public static String JREsComboBlock_12;
+
+	public static String JREsComboBlock_13;
 
 	public static String JREsComboBlock_2;
 	public static String JREsComboBlock_3;
@@ -170,6 +178,14 @@ public class JREMessages extends NLS {
 	public static String JREsEnvironmentLabelProvider_1;
 
 	public static String JREsComboBlock_14;
+
+	public static String JREsComboBlock_6;
+
+	public static String JREsComboBlock_7;
+
+	public static String JREsComboBlock_8;
+
+	public static String JREsComboBlock_9;
 
 	public static String InstalledJREsBlock_19;
 
