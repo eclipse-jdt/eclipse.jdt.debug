@@ -56,7 +56,6 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
@@ -88,7 +87,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointEditor {
 	
 	private Button fConditional;
-	private Combo fSuspendBehavior;
+	private Button fWhenTrue;
+	private Button fWhenChange;
 	private JDISourceViewer fViewer;
 	private IContentAssistProcessor fCompletionProcessor;	
 	private IJavaLineBreakpoint fBreakpoint;
@@ -222,11 +222,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fViewer.getDocument().addDocumentListener(fDocumentListener);
 		fConditional.setEnabled(controlsEnabled);
 		fConditional.setSelection(conditionEnabled);
-		if (whenTrue) {
-			fSuspendBehavior.select(0);
-		} else {
-			fSuspendBehavior.select(1);
-		}
+		fWhenTrue.setSelection(whenTrue);
+		fWhenChange.setSelection(!whenTrue);
 		setEnabled(conditionEnabled && breakpoint != null && breakpoint.supportsCondition(), false);
 		setDirty(false);
 	}
@@ -239,7 +236,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @return top level control
 	 */
 	public Control createControl(Composite parent) {
-		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = new Button(controls, SWT.CHECK);
 		fConditional.setText(PropertyPageMessages.JavaBreakpointConditionEditor_0);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -250,10 +247,16 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				setDirty(PROP_CONDITION_ENABLED);
 			}
 		});
-		fSuspendBehavior = new Combo(controls, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fSuspendBehavior.setItems(new String[]{PropertyPageMessages.JavaBreakpointConditionEditor_1, PropertyPageMessages.JavaBreakpointConditionEditor_2});
-		fSuspendBehavior.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
-		fSuspendBehavior.addSelectionListener(new SelectionAdapter() {
+		fWhenTrue = SWTFactory.createRadioButton(controls, PropertyPageMessages.JavaBreakpointConditionEditor_1);
+		fWhenTrue.setLayoutData(new GridData());
+		fWhenChange = SWTFactory.createRadioButton(controls, PropertyPageMessages.JavaBreakpointConditionEditor_2);
+		fWhenChange.setLayoutData(new GridData());
+		fWhenTrue.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(PROP_CONDITION_SUSPEND_POLICY);
+			}
+		});
+		fWhenChange.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
@@ -329,7 +332,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		if (fBreakpoint != null && isDirty()) {
 			fBreakpoint.setCondition(fViewer.getDocument().get().trim());
 			fBreakpoint.setConditionEnabled(fConditional.getSelection());
-			fBreakpoint.setConditionSuspendOnTrue(fSuspendBehavior.getSelectionIndex() == 0);
+			fBreakpoint.setConditionSuspendOnTrue(fWhenTrue.getSelection());
 			setDirty(false);
 		}
 	}
@@ -380,7 +383,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private void setEnabled(boolean enabled, boolean focus) {
 	    fViewer.setEditable(enabled);
 	    fViewer.getTextWidget().setEnabled(enabled);
-	    fSuspendBehavior.setEnabled(enabled);
+	    fWhenChange.setEnabled(enabled);
+	    fWhenTrue.setEnabled(enabled);
 		if (enabled) {
 			fViewer.updateViewerColors();
 			if (focus) {

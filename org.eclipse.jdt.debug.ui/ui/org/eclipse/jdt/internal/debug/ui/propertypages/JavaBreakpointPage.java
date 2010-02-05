@@ -19,27 +19,39 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaClassPrepareBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.CompositeBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.MethodBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.WatchpointEditor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -53,10 +65,9 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
-	protected Button fHitCountButton;
-	protected Text fHitCountText;
-	protected Combo fSuspendPolicy;
 	protected List fErrorMessages= new ArrayList();
+	protected String fPrevMessage = null;
+	private AbstractJavaBreakpointEditor fEditor;
 	
 	/**
 	 * Attribute used to indicate that a breakpoint should be deleted
@@ -68,11 +79,6 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Constant for the empty string
 	 */
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	/**
-	 * the hit count error message
-	 */
-	private static final String fgHitCountErrorMessage = PropertyPageMessages.JavaBreakpointPage_0; 
 	
 	/**
 	 * Store the breakpoint properties.
@@ -140,9 +146,10 @@ public class JavaBreakpointPage extends PropertyPage {
 	 */
 	protected void doStore() throws CoreException {
 		IJavaBreakpoint breakpoint = getBreakpoint();
-		storeSuspendPolicy(breakpoint);
-		storeHitCount(breakpoint);
 		storeEnabled(breakpoint);
+		if (fEditor.isDirty()) {
+			fEditor.doSave();
+		}
 	}
 
 	/**
@@ -154,52 +161,18 @@ public class JavaBreakpointPage extends PropertyPage {
 	private void storeEnabled(IJavaBreakpoint breakpoint) throws CoreException {
 		breakpoint.setEnabled(fEnabledButton.getSelection());
 	}
-
-	/**
-	 * Stores the value of the hit count in the breakpoint.
-	 * @param breakpoint the breakpoint to update
-	 * @throws CoreException if an exception occurs while setting
-	 *  the hit count
-	 */
-	private void storeHitCount(IJavaBreakpoint breakpoint) throws CoreException {
-		int hitCount = -1;
-		if (fHitCountButton.getSelection()) {
-			try {
-				hitCount = Integer.parseInt(fHitCountText.getText());
-			} 
-			catch (NumberFormatException e) {
-				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format("JavaBreakpointPage allowed input of invalid string for hit count value: {0}.", new String[] { fHitCountText.getText() }), e));  //$NON-NLS-1$
-			}
-		}
-		breakpoint.setHitCount(hitCount);
-	}
-
-	/**
-	 * Stores the value of the suspend policy in the breakpoint.
-	 * @param breakpoint the breakpoint to update
-	 * @throws CoreException if an exception occurs while setting the suspend policy
-	 */
-	private void storeSuspendPolicy(IJavaBreakpoint breakpoint) throws CoreException {
-		int suspendPolicy = IJavaBreakpoint.SUSPEND_VM;
-		if(fSuspendPolicy.getSelectionIndex() == 0) {
-			suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
-		}
-		breakpoint.setSuspendPolicy(suspendPolicy);
-	}
-
+	
 	/**
 	 * Creates the labels and editors displayed for the breakpoint.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		setTitle(PropertyPageMessages.JavaBreakpointPage_11);
 		noDefaultAndApplyButton();
 		Composite mainComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		createLabels(mainComposite);
+		createLabel(mainComposite, ""); //$NON-NLS-1$ // spacer
 		createEnabledButton(mainComposite);
-		createHitCountEditor(mainComposite);
 		createTypeSpecificEditors(mainComposite);
-		createSuspendPolicyEditor(mainComposite); // Suspend policy is considered uncommon. Add it last.
 		setValid(true);
 		// if this breakpoint is being created, change the shell title to indicate 'creation'
 		try {
@@ -259,94 +232,6 @@ public class JavaBreakpointPage extends PropertyPage {
 	}
 
 	/**
-	 * Creates the editor for configuring the suspend policy (suspend
-	 * VM or suspend thread) of the breakpoint.
-	 * @param parent the composite in which the suspend policy
-	 * 		editor will be created.
-	 */
-	private void createSuspendPolicyEditor(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		createLabel(comp, PropertyPageMessages.JavaBreakpointPage_6); 
-		fSuspendPolicy = new Combo(comp, SWT.BORDER | SWT.READ_ONLY);
-		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
-		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_8);
-		fSuspendPolicy.select(1);
-		try {
-			boolean suspendThread = getBreakpoint().getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-			if(suspendThread) {
-				fSuspendPolicy.select(0);
-			}
-		}
-		catch(CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-	}
-
-	/**
-	 * @param parent the composite in which the hit count editor
-	 * 		will be created
-	 */
-	private void createHitCountEditor(Composite parent) {
-		Composite hitCountComposite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		fHitCountButton = createCheckButton(hitCountComposite, PropertyPageMessages.JavaBreakpointPage_4); 
-		fHitCountButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				fHitCountText.setEnabled(fHitCountButton.getSelection());
-				hitCountChanged();
-			}
-		});
-		fHitCountText = createText(hitCountComposite, EMPTY_STRING); 
-		fHitCountText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				hitCountChanged();
-			}
-		});
-		try {
-			int hitCount = getBreakpoint().getHitCount();
-			String hitCountString = EMPTY_STRING;
-			if (hitCount > 0) {
-				hitCountString = new Integer(hitCount).toString();
-				fHitCountText.setText(hitCountString);
-				fHitCountButton.setSelection(true);
-			} else {
-				fHitCountButton.setSelection(false);
-			}
-			if (hitCount <= 0) {
-				fHitCountText.setEnabled(false);
-			}
-		}
-		catch(CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-		
-	}
-	
-	/**
-	 * Validates the current state of the hit count editor.
-	 * Hit count value must be a positive integer.
-	 */
-	private void hitCountChanged() {
-		if (!fHitCountButton.getSelection()) {
-			removeErrorMessage(fgHitCountErrorMessage);
-			return;
-		}
-		String hitCountText= fHitCountText.getText();
-		int hitCount= -1;
-		try {
-			hitCount = Integer.parseInt(hitCountText);
-		} 
-		catch (NumberFormatException e1) {
-			addErrorMessage(fgHitCountErrorMessage);
-			return;
-		}
-		if (hitCount < 1) {
-			addErrorMessage(fgHitCountErrorMessage);
-		} else {
-			removeErrorMessage(fgHitCountErrorMessage);
-		}
-	}
-
-	/**
 	 * Creates the button to toggle enablement of the breakpoint
 	 * @param parent
 	 */
@@ -373,14 +258,91 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * breakpoint page.
 	 * @param parent
 	 */
-	protected void createTypeSpecificLabels(Composite parent) {}
+	protected void createTypeSpecificLabels(Composite parent) {
+		// Line number
+		IJavaBreakpoint jb = getBreakpoint();
+		if (jb instanceof IJavaLineBreakpoint) {
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) jb;
+			StringBuffer lineNumber = new StringBuffer(4);
+			try {
+				int lNumber = breakpoint.getLineNumber();
+				if (lNumber > 0) {
+					lineNumber.append(lNumber);
+				}
+			} catch (CoreException ce) {
+				JDIDebugUIPlugin.log(ce);
+			}
+			if (lineNumber.length() > 0) {
+				createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2); 
+				Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
+				text.setBackground(parent.getBackground());
+			}
+			// Member
+			try {
+				IMember member = BreakpointUtils.getMember(breakpoint);
+				if (member == null) {
+					return;
+				}
+				String label = PropertyPageMessages.JavaLineBreakpointPage_3; 
+				if (breakpoint instanceof IJavaMethodBreakpoint) {
+					label = PropertyPageMessages.JavaLineBreakpointPage_4; 
+				} else if (breakpoint instanceof IJavaWatchpoint) {
+					label = PropertyPageMessages.JavaLineBreakpointPage_5; 
+				}
+				createLabel(parent, label);
+				Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
+				text.setBackground(parent.getBackground());
+			} 
+			catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
+		}
+	}
 	
 	/**
 	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
 	* @param parent
 	*/
-   protected void createTypeSpecificEditors(Composite parent) {}
+   protected void createTypeSpecificEditors(Composite parent) {
+	   try {
+		String type = getBreakpoint().getMarker().getType();
+		if (JavaClassPrepareBreakpoint.JAVA_CLASS_PREPARE_BREAKPOINT.equals(type)) {
+			setTitle(PropertyPageMessages.JavaBreakpointPage_11);
+			fEditor = new StandardJavaBreakpointEditor();
+		} else if (JavaLineBreakpoint.JAVA_LINE_BREAKPOINT.equals(type)) {
+			setTitle(PropertyPageMessages.JavaLineBreakpointPage_18);
+			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[]
+			    {new StandardJavaBreakpointEditor(), new JavaBreakpointConditionEditor()}); 
+		} else if (JavaExceptionBreakpoint.JAVA_EXCEPTION_BREAKPOINT.equals(type)) {
+			setTitle(PropertyPageMessages.JavaExceptionBreakpointPage_5);
+			fEditor = new ExceptionBreakpointEditor();
+		} else if (JavaWatchpoint.JAVA_WATCHPOINT.equals(type)) {
+			setTitle(PropertyPageMessages.JavaLineBreakpointPage_19);
+			fEditor = new WatchpointEditor();
+		} else if (JavaMethodBreakpoint.JAVA_METHOD_BREAKPOINT.equals(type)) {
+			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
+			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 
+			    {new MethodBreakpointEditor(), new JavaBreakpointConditionEditor()});
+		}
+		fEditor.createControl(parent);
+		fEditor.addPropertyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int propId) {
+				IStatus status = fEditor.getStatus();
+				if (status.isOK()) {
+					if (fPrevMessage != null) {
+						removeErrorMessage(fPrevMessage);
+						fPrevMessage = null;
+					}
+				} else {
+					fPrevMessage = status.getMessage();
+					addErrorMessage(fPrevMessage);
+				}
+			}
+		});
+		fEditor.setInput(getBreakpoint());
+	} catch (CoreException e) {
+		setErrorMessage(e.getMessage());
+	}
+   }
 	
 	/**
 	 * Creates a fully configured text editor with the given initial value

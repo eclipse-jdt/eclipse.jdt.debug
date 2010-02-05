@@ -2220,7 +2220,7 @@
       </page>
       <page
             name="%breakpointPropertiesPage.label"
-            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaLineBreakpointPage"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage"
             id="org.eclipse.jdt.debug.ui.propertypages.LineBreakpoints">
          <enabledWhen>
             <or>
@@ -2281,7 +2281,7 @@
       </page>
       <page
             name="%breakpointPropertiesPage.label"
-            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage"
             id="org.eclipse.jdt.debug.ui.propertypages.ExceptionBreakpoint">
          <enabledWhen>
             <or>

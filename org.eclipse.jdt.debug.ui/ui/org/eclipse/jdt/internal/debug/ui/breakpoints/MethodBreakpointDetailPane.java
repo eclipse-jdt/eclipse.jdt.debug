@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
+import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
@@ -31,7 +32,9 @@ public class MethodBreakpointDetailPane extends AbstractDetailPane {
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,
 				MethodBreakpointEditor.PROP_ENTRY,
-				MethodBreakpointEditor.PROP_EXIT
+				MethodBreakpointEditor.PROP_EXIT,
+				JavaBreakpointConditionEditor.PROP_CONDITION_ENABLED,
+				JavaBreakpointConditionEditor.PROP_CONDITION_SUSPEND_POLICY
 		});
 	}
 	
@@ -39,7 +42,8 @@ public class MethodBreakpointDetailPane extends AbstractDetailPane {
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractDetailPane#createEditor(org.eclipse.swt.widgets.Composite)
 	 */
 	protected AbstractJavaBreakpointEditor createEditor(Composite parent) {
-		return new MethodBreakpointEditor();
+		return new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 
+			{new MethodBreakpointEditor(), new JavaBreakpointConditionEditor()});
 	}
 
 }

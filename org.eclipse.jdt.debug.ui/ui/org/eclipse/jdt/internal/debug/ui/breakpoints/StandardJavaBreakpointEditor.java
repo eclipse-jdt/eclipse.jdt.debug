@@ -26,7 +26,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -39,7 +38,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	private IJavaBreakpoint fBreakpoint;
 	private Button fHitCountButton;
 	private Text fHitCountText;
-	private Combo fSuspendPolicy;
+	private Button fSuspendThread;
+	private Button fSuspendVM;
 	
 	/**
      * Property id for hit count enabled state.
@@ -64,17 +64,9 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	}
 	
 	protected Control createStandardControls(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_VERTICAL, 0, 0);
-		SWTFactory.createLabel(composite, PropertyPageMessages.JavaBreakpointPage_6, 1);
-		fSuspendPolicy = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_7);
-		fSuspendPolicy.add(PropertyPageMessages.JavaBreakpointPage_8);
-		fSuspendPolicy.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setDirty(PROP_SUSPEND_POLICY);
-			}
-		});
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 5, 1, 0, 0, 0);
 		fHitCountButton = SWTFactory.createCheckButton(composite, PropertyPageMessages.JavaBreakpointPage_4, null, false, 1);
+		fHitCountButton.setLayoutData(new GridData());
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				fHitCountText.setEnabled(fHitCountButton.getSelection());
@@ -82,9 +74,26 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 		});
 		fHitCountText = SWTFactory.createSingleText(composite, 1);
+		GridData gd = (GridData) fHitCountText.getLayoutData();
+		gd.minimumWidth = 50;
 		fHitCountText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setDirty(PROP_HIT_COUNT);
+			}
+		});
+		SWTFactory.createLabel(composite, "", 1); // spacer //$NON-NLS-1$
+		fSuspendThread = SWTFactory.createRadioButton(composite, PropertyPageMessages.JavaBreakpointPage_7, 1);
+		fSuspendThread.setLayoutData(new GridData());
+		fSuspendVM = SWTFactory.createRadioButton(composite, PropertyPageMessages.JavaBreakpointPage_8, 1);
+		fSuspendVM.setLayoutData(new GridData());
+		fSuspendThread.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(PROP_SUSPEND_POLICY);
+			}
+		});	
+		fSuspendVM.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(PROP_SUSPEND_POLICY);
 			}
 		});
 		composite.addDisposeListener(new DisposeListener() {
@@ -138,12 +147,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fHitCountButton.setSelection(enabled & hasHitCount);
 		fHitCountText.setEnabled(hasHitCount);
 		fHitCountText.setText(text);
-		fSuspendPolicy.setEnabled(enabled);
-		if(suspendThread) {
-			fSuspendPolicy.select(0);
-		} else {
-			fSuspendPolicy.select(1);
-		}
+		fSuspendThread.setEnabled(enabled);
+		fSuspendVM.setEnabled(enabled);
+		fSuspendThread.setSelection(suspendThread);
+		fSuspendVM.setSelection(!suspendThread);
 		setDirty(false);
 	}
 	
@@ -168,9 +175,9 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 */
 	public void doSave() throws CoreException {
 		if (fBreakpoint != null) {
-			int suspendPolicy = IJavaBreakpoint.SUSPEND_VM;
-			if(fSuspendPolicy.getSelectionIndex() == 0) {
-				suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
+			int suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
+			if(fSuspendVM.getSelection()) {
+				suspendPolicy = IJavaBreakpoint.SUSPEND_VM;
 			}
 			fBreakpoint.setSuspendPolicy(suspendPolicy);
 			int hitCount = -1;

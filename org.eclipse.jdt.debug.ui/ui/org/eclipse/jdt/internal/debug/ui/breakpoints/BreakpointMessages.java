@@ -28,6 +28,10 @@ public class BreakpointMessages extends NLS {
 	public static String AddClassPrepareBreakpointAction_2;
 	
 	public static String BreakpointConditionDetailPane_0;
+
+	public static String BreakpointDetailPaneFactory_0;
+
+	public static String BreakpointDetailPaneFactory_1;
 	
 	public static String ExceptionBreakpointDetailPane_0;
 	

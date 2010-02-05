@@ -16,12 +16,9 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * @since 3.6
@@ -44,21 +41,15 @@ public class ExceptionBreakpointEditor extends StandardJavaBreakpointEditor {
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
 		// add standard controls
-		super.createStandardControls(composite);
-		Composite watchComp = SWTFactory.createComposite(composite, parent.getFont(), 3, 1, GridData.FILL_BOTH, 5, 5);
-		Label label = SWTFactory.createLabel(watchComp, PropertyPageMessages.ExceptionBreakpointEditor_0, 1);
-		GridData gd = (GridData) label.getLayoutData();
-		gd.horizontalAlignment = SWT.LEFT;
-		gd.grabExcessHorizontalSpace = false;
-		fCaught = createSusupendPropertyEditor(watchComp, PropertyPageMessages.ExceptionBreakpointEditor_1, PROP_CAUGHT);
-		fUncaught = createSusupendPropertyEditor(watchComp, PropertyPageMessages.ExceptionBreakpointEditor_2, PROP_UNCAUGHT);
-		new Label(watchComp, SWT.None);
-		fSubclasses = createSusupendPropertyEditor(watchComp, PropertyPageMessages.ExceptionBreakpointEditor_3, PROP_SUBCLASSES);
-		gd = (GridData) fSubclasses.getLayoutData();
-		gd.horizontalSpan = 2;
-		return composite;
+		super.createControl(container);
+		Composite composite = SWTFactory.createComposite(container, parent.getFont(), 5, 1, 0, 0, 0);
+//		SWTFactory.createLabel(composite, PropertyPageMessages.ExceptionBreakpointEditor_0, 1);
+		fCaught = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_1, PROP_CAUGHT);
+		fUncaught = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_2, PROP_UNCAUGHT);
+		fSubclasses = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_3, PROP_SUBCLASSES);
+		return container;
 	}
 	
 	/* (non-Javadoc)

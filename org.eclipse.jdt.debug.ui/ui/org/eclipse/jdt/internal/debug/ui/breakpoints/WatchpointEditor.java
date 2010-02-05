@@ -15,12 +15,9 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * @since 3.6
@@ -41,17 +38,13 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
 		// add standard controls
-		super.createStandardControls(composite);
-		Composite watchComp = SWTFactory.createComposite(composite, parent.getFont(), 3, 1, GridData.FILL_BOTH, 5, 5);
-		Label label = SWTFactory.createLabel(watchComp, PropertyPageMessages.JavaLineBreakpointPage_6, 1);
-		GridData gd = (GridData) label.getLayoutData();
-		gd.horizontalAlignment = SWT.LEFT;
-		gd.grabExcessHorizontalSpace = false;
+		super.createStandardControls(container);
+		Composite watchComp = SWTFactory.createComposite(container, parent.getFont(), 2, 1, 0, 0, 0);
 		fAccess = createSusupendPropertyEditor(watchComp, PropertyPageMessages.JavaLineBreakpointPage_7, PROP_ACCESS);
 		fModification = createSusupendPropertyEditor(watchComp, PropertyPageMessages.JavaLineBreakpointPage_8, PROP_MODIFICATION);
-		return composite;
+		return container;
 	}
 	
 	/* (non-Javadoc)
