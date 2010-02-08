@@ -236,7 +236,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @return top level control
 	 */
 	public Control createControl(Composite parent) {
-		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = new Button(controls, SWT.CHECK);
 		fConditional.setText(PropertyPageMessages.JavaBreakpointConditionEditor_0);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -247,9 +247,10 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				setDirty(PROP_CONDITION_ENABLED);
 			}
 		});
-		fWhenTrue = SWTFactory.createRadioButton(controls, PropertyPageMessages.JavaBreakpointConditionEditor_1);
+		Composite radios = SWTFactory.createComposite(controls, controls.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fWhenTrue = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointConditionEditor_1);
 		fWhenTrue.setLayoutData(new GridData());
-		fWhenChange = SWTFactory.createRadioButton(controls, PropertyPageMessages.JavaBreakpointConditionEditor_2);
+		fWhenChange = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointConditionEditor_2);
 		fWhenChange.setLayoutData(new GridData());
 		fWhenTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

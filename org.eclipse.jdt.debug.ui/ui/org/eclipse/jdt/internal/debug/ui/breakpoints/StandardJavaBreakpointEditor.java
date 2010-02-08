@@ -64,7 +64,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	}
 	
 	protected Control createStandardControls(Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 5, 1, 0, 0, 0);
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 4, 1, 0, 0, 0);
 		fHitCountButton = SWTFactory.createCheckButton(composite, PropertyPageMessages.JavaBreakpointPage_4, null, false, 1);
 		fHitCountButton.setLayoutData(new GridData());
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
@@ -82,9 +82,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 		});
 		SWTFactory.createLabel(composite, "", 1); // spacer //$NON-NLS-1$
-		fSuspendThread = SWTFactory.createRadioButton(composite, PropertyPageMessages.JavaBreakpointPage_7, 1);
+		Composite radios = SWTFactory.createComposite(composite, composite.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fSuspendThread = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointPage_7, 1);
 		fSuspendThread.setLayoutData(new GridData());
-		fSuspendVM = SWTFactory.createRadioButton(composite, PropertyPageMessages.JavaBreakpointPage_8, 1);
+		fSuspendVM = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointPage_8, 1);
 		fSuspendVM.setLayoutData(new GridData());
 		fSuspendThread.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
