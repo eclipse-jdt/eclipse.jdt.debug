@@ -22,14 +22,10 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -57,24 +53,6 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	
 	// property listeners
 	private ListenerList fListeners = new ListenerList();
-	private SashForm fSash;
-	/**
-	 * Top level composite that remains as orientation changes.
-	 */
-	private Composite fDetailsContainer;
-	/**
-	 * Inner composite containing separator and editor composite that gets
-	 * disposed/created as orientation changes with *no* margins (so separator
-	 * spans entire width/height of the pane).
-	 */
-	private Composite fSeparatorContainer; 
-	/**
-	 * Cached orientation currently being displayed
-	 */
-	private int fOrientation = -1;
-	/**
-	 * Composite that contains the editor that has margins.
-	 */
 	private Composite fEditorParent;
 	
 	/**
@@ -148,10 +126,9 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	public void dispose() {
 		fEditor = null;
 		fSite = null;
-		fSash = null;
 		fListeners.clear();
 		fAutoSaveProperties.clear();
-		fDetailsContainer.dispose();
+		fEditorParent.dispose();
 	}	
 	
 	/**
@@ -170,48 +147,8 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		fDetailsContainer = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-		if (parent instanceof SashForm) {
-			fSash = (SashForm) parent;
-		}
-		createEditor();
-		return fDetailsContainer;
-	}
-	
-	/**
-	 * Creates the editor with a separator based on orientation.
-	 */
-	protected void createEditor() {
-		int parentOrientation = SWT.HORIZONTAL;
-		if (fSash != null) {
-			parentOrientation = fSash.getOrientation();
-		}
-		if (parentOrientation == fOrientation) {
-			return;
-		}
-		if (fSeparatorContainer != null) {
-			fSeparatorContainer.dispose();
-		}
-		if (parentOrientation == SWT.VERTICAL) {
-			fSeparatorContainer = SWTFactory.createComposite(fDetailsContainer, fDetailsContainer.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-			Label sep = new Label(fSeparatorContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-			sep.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-			GridLayout layout= (GridLayout)fSeparatorContainer.getLayout();
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			fEditorParent = SWTFactory.createComposite(fSeparatorContainer, 1, 1, GridData.FILL_BOTH);
-		} else {
-			fSeparatorContainer = SWTFactory.createComposite(fDetailsContainer, fDetailsContainer.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-			Label sep= new Label(fSeparatorContainer, SWT.SEPARATOR | SWT.VERTICAL);
-			sep.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
-			GridLayout layout= (GridLayout)fSeparatorContainer.getLayout();
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			fEditorParent = SWTFactory.createComposite(fSeparatorContainer, 1, 1, GridData.FILL_BOTH);
-		}
-		fOrientation = parentOrientation;
+		fEditorParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fEditor = createEditor(fEditorParent);
-		fEditor.createControl(fEditorParent);
 		fEditor.addPropertyListener(new IPropertyListener() {
 			public void propertyChanged(Object source, int propId) {
 				if (fAutoSaveProperties.contains(new Integer(propId))) {
@@ -224,7 +161,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 				firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
 			}
 		});
-		fDetailsContainer.layout(true);
+		return fEditor.createControl(fEditorParent);
 	}
 	
 	/**
@@ -329,8 +266,6 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void display(IStructuredSelection selection) {
-		// re-create controls if the layout has changed
-		createEditor();
 		// clear status line
 		IStatusLineManager statusLine = getStatusLine();
 		if (statusLine != null) {
