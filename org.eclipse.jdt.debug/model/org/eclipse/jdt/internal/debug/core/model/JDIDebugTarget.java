@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
@@ -1938,16 +1937,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			ThreadReference ref= ((ThreadDeathEvent)event).thread();
 			JDIThread thread= findThread(ref);
-			if (thread == null) {
-				// wait for any thread start event sets to complete processing
-				// see bug 272494
-				try {
-					Job.getJobManager().join(ThreadStartEvent.class, null);
-				} catch (OperationCanceledException e) {
-				} catch (InterruptedException e) {
-				}
-				thread = target.findThread(ref);	
-			}			
 			if (thread != null) {
 				synchronized (fThreads) {
 					fThreads.remove(thread);
