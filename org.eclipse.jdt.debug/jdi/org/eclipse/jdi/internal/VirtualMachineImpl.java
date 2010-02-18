@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -883,7 +883,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			return;
 
 		/*
-		 * fGotIDSizes must first be assigned true to prevent an invinite loop
+		 * fGotIDSizes must first be assigned true to prevent an infinite loop
 		 * because getIDSizes() calls requestVM which calls packetSendManager.
 		 */
 		fGotIDSizes = true;
