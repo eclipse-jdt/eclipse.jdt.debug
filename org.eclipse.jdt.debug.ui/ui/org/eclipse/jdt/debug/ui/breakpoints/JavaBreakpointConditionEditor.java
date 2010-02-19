@@ -238,7 +238,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	public Control createControl(Composite parent) {
 		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = new Button(controls, SWT.CHECK);
-		fConditional.setText(PropertyPageMessages.JavaBreakpointConditionEditor_0);
+		fConditional.setText(processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_0));
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		fConditional.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -248,9 +248,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			}
 		});
 		Composite radios = SWTFactory.createComposite(controls, controls.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		fWhenTrue = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointConditionEditor_1);
+		fWhenTrue = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_1));
 		fWhenTrue.setLayoutData(new GridData());
-		fWhenChange = SWTFactory.createRadioButton(radios, PropertyPageMessages.JavaBreakpointConditionEditor_2);
+		fWhenChange = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_2));
 		fWhenChange.setLayoutData(new GridData());
 		fWhenTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -363,6 +363,17 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	public boolean isDirty() {
 		return super.isDirty();
+	}
+	
+	/**
+	 * Sets whether mnemonics should be displayed in editor controls.
+	 * Only has an effect if set before {@link #createControl(Composite)}
+	 * is called. By default, mnemonics are displayed.
+	 * 
+	 * @param mnemonics whether to display mnemonics
+	 */
+	public void setMnemonics(boolean mnemonics) {
+		super.setMnemonics(mnemonics);
 	}
 	
 	private void activateContentAssist() {

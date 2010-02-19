@@ -41,8 +41,8 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 		// add standard controls
 		super.createStandardControls(composite);
 		Composite watchComp = SWTFactory.createComposite(composite, parent.getFont(), 3, 1, 0, 0, 0);
-		fEntry = createSusupendPropertyEditor(watchComp, PropertyPageMessages.JavaLineBreakpointPage_10, PROP_ENTRY);
-		fExit = createSusupendPropertyEditor(watchComp, PropertyPageMessages.JavaLineBreakpointPage_11, PROP_EXIT); 
+		fEntry = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_10), PROP_ENTRY);
+		fExit = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_11), PROP_EXIT); 
 		return composite;
 	}
 	

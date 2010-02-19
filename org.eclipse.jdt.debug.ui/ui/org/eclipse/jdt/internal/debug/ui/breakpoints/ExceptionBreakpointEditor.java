@@ -46,9 +46,9 @@ public class ExceptionBreakpointEditor extends StandardJavaBreakpointEditor {
 		super.createControl(container);
 		Composite composite = SWTFactory.createComposite(container, parent.getFont(), 5, 1, 0, 0, 0);
 //		SWTFactory.createLabel(composite, PropertyPageMessages.ExceptionBreakpointEditor_0, 1);
-		fCaught = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_1, PROP_CAUGHT);
-		fUncaught = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_2, PROP_UNCAUGHT);
-		fSubclasses = createSusupendPropertyEditor(composite, PropertyPageMessages.ExceptionBreakpointEditor_3, PROP_SUBCLASSES);
+		fCaught = createSusupendPropertyEditor(composite, processMnemonics(PropertyPageMessages.ExceptionBreakpointEditor_1), PROP_CAUGHT);
+		fUncaught = createSusupendPropertyEditor(composite, processMnemonics(PropertyPageMessages.ExceptionBreakpointEditor_2), PROP_UNCAUGHT);
+		fSubclasses = createSusupendPropertyEditor(composite, processMnemonics(PropertyPageMessages.ExceptionBreakpointEditor_3), PROP_SUBCLASSES);
 		return container;
 	}
 	

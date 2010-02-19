@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
@@ -27,6 +28,7 @@ public abstract class AbstractJavaBreakpointEditor {
 	
     private ListenerList fListeners = new ListenerList();
     private boolean fDirty = false;
+    private boolean fMnemonics = true;
 	
 	/**
 	 * Adds the given property listener to this editor. Property changes
@@ -37,6 +39,39 @@ public abstract class AbstractJavaBreakpointEditor {
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
 		fListeners.add(listener);
+	}
+	
+	/**
+	 * Sets whether mnemonics should be displayed in editor controls.
+	 * Only has an effect if set before {@link #createControl(Composite)}
+	 * is called. By default, mnemonics are displayed.
+	 * 
+	 * @param mnemonics whether to display mnemonics
+	 */
+	public void setMnemonics(boolean mnemonics) {
+		fMnemonics = mnemonics;
+	}
+	
+	/**
+	 * Returns whether mnemonics should be displayed in editor controls.
+	 * 
+	 * @return whether mnemonics should be displayed in editor controls
+	 */
+	protected boolean isMnemonics() {
+		return fMnemonics;
+	}
+	
+	/**
+	 * Returns text with mnemonics in tact or removed based on {@link #isMnemonics()}.
+	 * 
+	 * @param text string to process 
+	 * @return text with mnemonics in tact or removed based on {@link #isMnemonics()}
+	 */
+	protected String processMnemonics(String text) {
+		if (isMnemonics()) {
+			return text;
+		}
+		return LegacyActionTools.removeMnemonics(text);
 	}
 	
 	/**

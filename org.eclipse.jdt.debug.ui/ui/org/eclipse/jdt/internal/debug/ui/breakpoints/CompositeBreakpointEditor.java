@@ -127,5 +127,15 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 			fEditors[i].setInput(breakpoint);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setMnemonics(boolean)
+	 */
+	public void setMnemonics(boolean mnemonics) {
+		super.setMnemonics(mnemonics);
+		for (int i = 0; i < fEditors.length; i++) {
+			fEditors[i].setMnemonics(mnemonics);
+		}
+	}
 
 }

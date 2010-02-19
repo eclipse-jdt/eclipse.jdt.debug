@@ -149,6 +149,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	public Control createControl(Composite parent) {
 		fEditorParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fEditor = createEditor(fEditorParent);
+		fEditor.setMnemonics(false);
 		fEditor.addPropertyListener(new IPropertyListener() {
 			public void propertyChanged(Object source, int propId) {
 				if (fAutoSaveProperties.contains(new Integer(propId))) {
