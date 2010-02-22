@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,18 @@ package org.eclipse.jdt.internal.debug.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -28,12 +32,16 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.ThreadDeathEvent;
+import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
@@ -95,6 +103,135 @@ public class EventDispatcher implements Runnable {
 		fTarget= target;
 		fShutdown = false;
 	}
+	
+	/**
+	 * Job to dispatch thread start/death events. Ensures thread start/death events are serialized
+	 * and handled in the proper order (start before death), and is more efficient when many
+	 * threads start/stop at once. 
+	 */
+	class ThreadEventJob extends Job {
+		
+		private Vector fEventSets = new Vector(); // synchronized collection
+		private ThreadStartRule fRule;
+
+		public ThreadEventJob() {
+			super("JDI Thread Events Dispatch"); //$NON-NLS-1$
+			setSystem(true);
+			fRule = new ThreadStartRule();
+			setRule(fRule);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			while (!fEventSets.isEmpty()) {
+				EventSet set= (EventSet) fEventSets.remove(0);
+				dispatch(set);
+				Iterator iterator = set.iterator();
+				while (iterator.hasNext()) {
+					Object object = iterator.next();
+					if (object instanceof ThreadStartEvent) {
+						fRule.remove(((ThreadStartEvent)object).thread());
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+		
+		/**
+		 * Queues the event set and schedules event dispatch.
+		 * 
+		 * @param eventSet event set
+		 */
+		void queueEventSet(EventSet eventSet) {
+			fEventSets.add(eventSet);
+			schedule();
+		}
+		
+		/**
+		 * Queues the event set and schedules event dispatch.
+		 * 
+		 * @param eventSet event set
+		 * @param start thread start event
+		 */
+		void queueEventSet(EventSet eventSet, ThreadStartEvent start) {
+			fEventSets.add(eventSet);
+			fRule.add(start.thread());
+			schedule();
+		}
+		
+	}
+	
+	/**
+	 * Scheduling rule that won't allow breakpoint events to be
+	 * processed while a thread start event is being processed 
+	 * from the same thread reference in a target VM. Although one
+	 * would not expect a breakpoint event from a thread until the
+	 * start event has been resumed, on Linux, an event set for a
+	 * breakpoint can be created/dispatched at the same time
+	 * as a thread start event.
+	 */
+	class ThreadStartRule implements ISchedulingRule {
+		
+		private Set fThreads = new HashSet();
+
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof BreakpointRule) {
+				return fThreads.contains(((BreakpointRule)rule).getThread());
+			}
+			return rule == this;
+		}
+		
+		void add(ThreadReference thread) {
+			fThreads.add(thread);
+		}
+		
+		boolean contains(ThreadReference thread) {
+			return fThreads.contains(thread);
+		}
+		
+		void remove(ThreadReference thread) {
+			fThreads.remove(thread);
+		}
+		
+	}
+	
+	/**
+	 * Conflicts with a thread start event for the thread in
+	 * which the breakpoint has occurred.
+	 */
+	class BreakpointRule implements ISchedulingRule {
+		private ThreadReference fThread;
+		
+		BreakpointRule(ThreadReference thread) {
+			fThread = thread;
+		}
+		
+		ThreadReference getThread() {
+			return fThread;
+		}
+
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof ThreadStartRule) {
+				return ((ThreadStartRule)rule).contains(fThread);
+			}
+			return rule == this;
+		}
+	}
+	
+	/**
+	 * Job used to dispatch thread start/death events
+	 */
+	private ThreadEventJob fThreadEventJob = new ThreadEventJob();
 
 	/**
 	 * Dispatch the given event set.
@@ -244,37 +381,46 @@ public class EventDispatcher implements Runnable {
 					}
 									
 					if(!isShutdown() && eventSet != null) {
-						final EventSet set = eventSet;
-						Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
-							protected IStatus run(IProgressMonitor monitor) {
-								dispatch(set);
-								return Status.OK_STATUS;
-							}
-							/* (non-Javadoc)
-							 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-							 */
-							public boolean belongsTo(Object family) {
-								if (family instanceof Class) {
-									Class clazz = (Class) family;
-									EventIterator iterator = set.eventIterator();
-									while (iterator.hasNext()) {
-										Event event = iterator.nextEvent();
-										if (clazz.isInstance(event)) {
-											return true;
-										}
-									}									
-								}
-								return false;
-							}
-						};
-						job.setSystem(true);
-						job.schedule();
+						queueEventSet(eventSet);
 					}
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Queues the events for processing in a job. Thread start and death events are processed in 
+	 * a single job, to avoid creating many jobs when lots of threads start/stop.
+	 * 
+	 * @param eventSet event set
+	 */
+	private void queueEventSet(EventSet eventSet) {
+		Object event = null;
+		if (eventSet.size() > 0) {
+			event = eventSet.iterator().next();
+		}
+		if (event instanceof ThreadStartEvent) {
+			//coalesce thread start/death events in one job
+			fThreadEventJob.queueEventSet(eventSet, (ThreadStartEvent)event);
+			return;
+		} else if (event instanceof ThreadDeathEvent) {
+			fThreadEventJob.queueEventSet(eventSet);
+			return;
+		}
+		final EventSet set = eventSet;
+		Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				dispatch(set);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		if (event instanceof BreakpointEvent) {
+			job.setRule(new BreakpointRule(((BreakpointEvent)event).thread()));
+		}
+		job.schedule();
 	}
 
 	/**
