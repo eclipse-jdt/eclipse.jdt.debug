@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,8 +34,6 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.ThreadDeathEvent;
-import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
@@ -98,47 +95,6 @@ public class EventDispatcher implements Runnable {
 		fTarget= target;
 		fShutdown = false;
 	}
-	
-	/**
-	 * Job to dispatch thread start/death events. Ensures thread start/death events are serialized
-	 * and handled in the proper order (start before death), and is more efficient when many
-	 * threads start/stop at once. 
-	 */
-	class ThreadEventJob extends Job {
-		
-		private Vector fEventSets = new Vector(); // synchronized collection
-
-		public ThreadEventJob() {
-			super("JDI Thread Events Dispatch"); //$NON-NLS-1$
-			setSystem(true);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		protected IStatus run(IProgressMonitor monitor) {
-			while (!fEventSets.isEmpty()) {
-				dispatch((EventSet) fEventSets.remove(0));
-			}
-			return Status.OK_STATUS;
-		}
-		
-		/**
-		 * Queues the event set and schedules event dispatch.
-		 * 
-		 * @param eventSet event set
-		 */
-		void queueEventSet(EventSet eventSet) {
-			fEventSets.add(eventSet);
-			schedule();
-		}
-		
-	}
-	
-	/**
-	 * Job used to dispatch thread start/death events
-	 */
-	private ThreadEventJob fThreadEventJob = new ThreadEventJob();
 
 	/**
 	 * Dispatch the given event set.
@@ -288,39 +244,37 @@ public class EventDispatcher implements Runnable {
 					}
 									
 					if(!isShutdown() && eventSet != null) {
-						queueEventSet(eventSet);
+						final EventSet set = eventSet;
+						Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
+							protected IStatus run(IProgressMonitor monitor) {
+								dispatch(set);
+								return Status.OK_STATUS;
+							}
+							/* (non-Javadoc)
+							 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+							 */
+							public boolean belongsTo(Object family) {
+								if (family instanceof Class) {
+									Class clazz = (Class) family;
+									EventIterator iterator = set.eventIterator();
+									while (iterator.hasNext()) {
+										Event event = iterator.nextEvent();
+										if (clazz.isInstance(event)) {
+											return true;
+										}
+									}									
+								}
+								return false;
+							}
+						};
+						job.setSystem(true);
+						job.schedule();
 					}
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Queues the events for processing in a job. Thread start and death events are processed in 
-	 * a single job, to avoid creating many jobs when lots of threads start/stop.
-	 * 
-	 * @param eventSet event set
-	 */
-	private void queueEventSet(EventSet eventSet) {
-		if (eventSet.size() == 1) {
-			Object object = eventSet.iterator().next();
-			if (object instanceof ThreadStartEvent || object instanceof ThreadDeathEvent) {
-				//coalesce thread start/death events in one job
-				fThreadEventJob.queueEventSet(eventSet);
-				return;
-			}
-		}
-		final EventSet set = eventSet;
-		Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				dispatch(set);
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
 	}
 
 	/**
