@@ -139,6 +139,20 @@ public class EventDispatcher implements Runnable {
 			return Status.OK_STATUS;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+		 */
+		public boolean shouldRun() {
+			return !isShutdown();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return EventDispatcher.this == family;
+		}
+		
 		/**
 		 * Queues the event set and schedules event dispatch.
 		 * 
@@ -415,6 +429,12 @@ public class EventDispatcher implements Runnable {
 				dispatch(set);
 				return Status.OK_STATUS;
 			}
+			public boolean shouldRun() {
+				return !isShutdown();
+			}
+			public boolean belongsTo(Object family) {
+				return EventDispatcher.this == family;
+			}
 		};
 		job.setSystem(true);
 		if (event instanceof BreakpointEvent) {
@@ -431,6 +451,7 @@ public class EventDispatcher implements Runnable {
 	 */
 	public void shutdown() {
 		fShutdown= true;
+		Job.getJobManager().cancel(this);
 	}
 	
 	/**
