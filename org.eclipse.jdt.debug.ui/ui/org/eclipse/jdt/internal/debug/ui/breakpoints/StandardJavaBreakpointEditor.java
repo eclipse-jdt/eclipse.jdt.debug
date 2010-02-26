@@ -69,7 +69,11 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fHitCountButton.setLayoutData(new GridData());
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				fHitCountText.setEnabled(fHitCountButton.getSelection());
+				boolean enabled = fHitCountButton.getSelection();
+				fHitCountText.setEnabled(enabled);
+				if(enabled) {
+					fHitCountText.setFocus();
+				}
 				setDirty(PROP_HIT_COUNT_ENABLED);
 			}
 		});
