@@ -2673,9 +2673,20 @@ M4 = Platform-specific fourth key
       </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
-     <!-- On carbon: Command+F5 starts Voice Over -->
       <key
-            sequence="CTRL+F5"
+            sequence="M1+F5"
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <!-- On carbon: Command+F5 starts Voice Over, Ctrl+F5 moves focus to toolbar -->
+      <key
+            platform="carbon"
+            sequence="M1+F5"
+            contextId="org.eclipse.debug.ui.debugging"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M3+F5"
             contextId="org.eclipse.debug.ui.debugging"
             commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
