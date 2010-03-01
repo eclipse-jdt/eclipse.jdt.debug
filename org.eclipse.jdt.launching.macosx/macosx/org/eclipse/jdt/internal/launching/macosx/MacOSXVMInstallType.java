@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,17 +156,17 @@ public class MacOSXVMInstallType extends StandardVMType {
 		File lib = new File(installLocation, "lib"); //$NON-NLS-1$
 		File extDir = new File(lib, "ext"); //$NON-NLS-1$
 		String[] dirs = null;
-		if (extDir == null)
-			dirs = new String[0];
-		else
+		if (extDir.exists())
 			dirs = new String[] {extDir.getAbsolutePath()};
+		else
+			dirs = new String[0];
 
 		File endDir = new File(lib, "endorsed"); //$NON-NLS-1$
 		String[] endDirs = null;
-		if (endDir == null)
-			endDirs = new String[0]; 
-		else
+		if (endDir.exists())
 			endDirs = new String[] {endDir.getAbsolutePath()};
+		else
+			endDirs = new String[0]; 
 		
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
