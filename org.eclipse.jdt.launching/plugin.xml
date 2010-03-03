@@ -193,6 +193,9 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <modifier class="org.eclipse.jdt.internal.launching.JREPreferenceModifyListener"/>
+      <initializer
+            class="org.eclipse.jdt.internal.launching.LaunchingPreferenceInitializer">
+      </initializer>
    </extension>
    
    <extension point="org.eclipse.core.expressions.propertyTesters">
