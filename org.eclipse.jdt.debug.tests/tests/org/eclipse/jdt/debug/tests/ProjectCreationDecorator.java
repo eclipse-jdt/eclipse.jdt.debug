@@ -276,6 +276,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
             folder.create(true, true, null);
             
             createLaunchConfiguration(jp, "a.b.c.MethodBreakpoints");
+            createLaunchConfiguration(jp, "a.b.c.IntegerAccess");
     	}
     }
     

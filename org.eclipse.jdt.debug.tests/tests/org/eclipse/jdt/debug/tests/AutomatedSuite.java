@@ -102,6 +102,7 @@ import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
+import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
 
 /**
@@ -159,6 +160,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RunToLineTests.class));
 		if (isJ2SE15Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
+			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
 		}
 		
 	//Sourcelookup tests
