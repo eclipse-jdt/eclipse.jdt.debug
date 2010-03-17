@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.PreLaunchBreakpointTest;
 import org.eclipse.jdt.debug.tests.breakpoints.RunToLineTests;
 import org.eclipse.jdt.debug.tests.breakpoints.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
+import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
@@ -158,6 +159,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
+		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
 		if (isJ2SE15Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));

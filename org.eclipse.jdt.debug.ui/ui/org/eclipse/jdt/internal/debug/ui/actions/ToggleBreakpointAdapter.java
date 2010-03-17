@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
@@ -208,7 +209,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                    	else {
 	                    		type = member.getDeclaringType();
 	                    	}
-	                    	String tname = locator == null ? getQualifiedName(type) : locator.getFullyQualifiedTypeName();
+	                    	String tname = null;
+	                    	IJavaProject project = type.getJavaProject();
+	                    	if (locator == null || (project != null && !project.isOnClasspath(type))) {
+	                    		tname = createQualifiedTypeName(type);
+	                    	} else {
+	                    		tname = locator.getFullyQualifiedTypeName();
+	                    	}
 	                    	IResource resource = BreakpointUtils.getBreakpointResource(type);
 							int lnumber = locator == null ? ((ITextSelection) selection).getStartLine() + 1 : locator.getLineLocation();
 							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
@@ -436,16 +443,22 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @since 3.6
      */
     String getQualifiedName(IType type) {
-    	 ASTParser parser = ASTParser.newParser(AST.JLS3);
-	     parser.setSource(type.getTypeRoot());
-	     IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
-	     if(bindings != null && bindings.length > 0) {
-	    	 ITypeBinding tbinding = (ITypeBinding) bindings[0];
-	    	 if(tbinding != null) {
-	    		 return tbinding.getBinaryName();
-	    	 }
-	     }
-	     return createQualifiedTypeName(type);
+    	IJavaProject project = type.getJavaProject();
+    	if (project != null && project.isOnClasspath(type)) {
+	    	 ASTParser parser = ASTParser.newParser(AST.JLS3);
+		     parser.setSource(type.getTypeRoot());
+		     IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
+		     if(bindings != null && bindings.length > 0) {
+		    	 ITypeBinding tbinding = (ITypeBinding) bindings[0];
+		    	 if(tbinding != null) {
+		    		 String name = tbinding.getBinaryName();
+		    		 if (name != null) {
+		    			 return name;
+		    		 }
+		    	 }
+		     }
+    	}
+	    return createQualifiedTypeName(type);
     }
     
     /**
