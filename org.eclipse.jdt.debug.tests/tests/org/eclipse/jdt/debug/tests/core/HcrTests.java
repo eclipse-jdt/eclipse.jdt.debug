@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 
 /**
  * Tests hot code replace
@@ -137,6 +138,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("HcrClass.java does not exist", cu.exists());
 				IBuffer buffer = cu.getBuffer();
 				String contents = buffer.getContents();
+				String originalContent = buffer.getContents();
 				int index = contents.indexOf("\"One\"");
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
@@ -151,6 +153,13 @@ public class HcrTests extends AbstractDebugTest {
 				// should have dropped to frame 'one'
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull("No top stack frame", frame);
+				if (!"one".equals(frame.getMethodName())) {
+					// terminate & restore, and try again - @see bug 287084
+					thread.terminate();
+					buffer.setContents(originalContent);
+					cu.commitWorkingCopy(false, null);
+					throw new TestAgainException();
+				}
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
 				
 				// resume to breakpoint
