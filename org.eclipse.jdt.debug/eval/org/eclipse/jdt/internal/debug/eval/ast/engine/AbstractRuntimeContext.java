@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -102,7 +103,14 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
     protected IJavaClassObject classForName(String qualifiedName, IJavaObject loader) throws CoreException {
 		IJavaType[] types = getVM().getJavaTypes(qualifiedName);
 		if (types != null && types.length > 0) {
-			return ((IJavaClassType)types[0]).getClassObject();
+			// find the one with the right class loader
+			for (int i = 0; i < types.length; i++) {
+				IJavaClassType type = (IJavaClassType) types[i];
+				IJavaObject cloader = type.getClassLoaderObject();
+				if (isCompatibleLoader(loader, cloader)) {
+					return type.getClassObject();
+				}
+			}
 		}
     	IJavaValue loaderArg = loader;
     	if (loader == null) {
@@ -142,4 +150,59 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	public IJavaProject getProject() {
 		return fProject;
 	}
+	
+	/**
+	 * Returns whether the class loaded by the <code>otherLoader</code> is compatible
+	 * with the receiver's class loader. To be compatible, the other's loader must
+	 * be the same or a parent of the receiver's loader.
+	 * 
+	 * @param recLoader class loader of receiver
+	 * @param otherLoader class loader of other class
+	 * @return whether compatible
+	 */
+	private boolean isCompatibleLoader(IJavaObject recLoader, IJavaObject otherLoader) throws CoreException {
+		if (recLoader == null || otherLoader == null) {
+			// if either class is a bootstrap loader, then they are compatible since all loaders
+			// stem from the bootstrap loader
+			return true;
+		} 
+		if (recLoader.equals(otherLoader)) {
+			return true;
+		}
+		// check parent loaders
+		IJavaObject parent = getParentLoader(recLoader);
+		while (parent != null) {
+			if (parent.equals(otherLoader)) {
+				return true;
+			}
+			parent = getParentLoader(parent);
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the parent class loader of the given class loader object or <code>null</code>
+	 * if none.
+	 * 
+	 * @param loader class loader object
+	 * @return parent class loader or <code>null</code>
+	 * @throws CoreException
+	 */
+	private IJavaObject getParentLoader(IJavaObject loader) throws CoreException {
+		// to avoid message send, first check for 'parent' field
+		IJavaFieldVariable field = loader.getField("parent", false); //$NON-NLS-1$
+		if (field != null) {
+			IJavaValue value = (IJavaValue)field.getValue();
+			if (value.isNull()) {
+				return null;
+			}
+			return (IJavaObject)value;
+		}
+		IJavaValue result = loader.sendMessage("getParent", "()Ljava/lang/ClassLoader;", null, getThread(), false); //$NON-NLS-1$ //$NON-NLS-2$
+		if (result.isNull()) {
+			return null;
+		}
+		return (IJavaObject)result;
+	}
 }
+
