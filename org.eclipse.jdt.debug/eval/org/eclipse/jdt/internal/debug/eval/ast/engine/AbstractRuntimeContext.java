@@ -100,6 +100,10 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
      * @throws CoreException if loading fails
      */
     protected IJavaClassObject classForName(String qualifiedName, IJavaObject loader) throws CoreException {
+		IJavaType[] types = getVM().getJavaTypes(qualifiedName);
+		if (types != null && types.length > 0) {
+			return ((IJavaClassType)types[0]).getClassObject();
+		}
     	IJavaValue loaderArg = loader;
     	if (loader == null) {
     		loaderArg = getVM().nullValue();
