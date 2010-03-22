@@ -13,11 +13,13 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdi.internal.TypeImpl;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -101,11 +103,15 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
      * @throws CoreException if loading fails
      */
     protected IJavaClassObject classForName(String qualifiedName, IJavaObject loader) throws CoreException {
-		IJavaType[] types = getVM().getJavaTypes(qualifiedName);
+    	String tname = qualifiedName;
+    	if (tname.startsWith("[")) { //$NON-NLS-1$
+    		tname = TypeImpl.signatureToName(qualifiedName);
+    	}
+		IJavaType[] types = getVM().getJavaTypes(tname);
 		if (types != null && types.length > 0) {
 			// find the one with the right class loader
 			for (int i = 0; i < types.length; i++) {
-				IJavaClassType type = (IJavaClassType) types[i];
+				IJavaReferenceType type = (IJavaReferenceType) types[i];
 				IJavaObject cloader = type.getClassLoaderObject();
 				if (isCompatibleLoader(loader, cloader)) {
 					return type.getClassObject();
