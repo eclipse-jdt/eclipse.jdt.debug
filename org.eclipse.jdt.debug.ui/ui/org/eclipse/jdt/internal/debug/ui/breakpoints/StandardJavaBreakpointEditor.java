@@ -113,10 +113,15 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setInput(java.lang.Object)
 	 */
 	public void setInput(Object breakpoint) throws CoreException {
-		if (breakpoint instanceof IJavaBreakpoint) {
-			setBreakpoint((IJavaBreakpoint) breakpoint);
-		} else {
-			setBreakpoint(null);
+		try {
+			suppressPropertyChanges(true);
+			if (breakpoint instanceof IJavaBreakpoint) {
+				setBreakpoint((IJavaBreakpoint) breakpoint);
+			} else {
+				setBreakpoint(null);
+			}
+		} finally {
+			suppressPropertyChanges(false);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public abstract class AbstractJavaBreakpointEditor {
     private ListenerList fListeners = new ListenerList();
     private boolean fDirty = false;
     private boolean fMnemonics = true;
+    private boolean fSuppressPropertyChanges = false;
 	
 	/**
 	 * Adds the given property listener to this editor. Property changes
@@ -162,10 +163,12 @@ public abstract class AbstractJavaBreakpointEditor {
 	 * @param value
 	 */
 	protected void firePropertyChange(int propId) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IPropertyListener listener = (IPropertyListener) listeners[i];
-			listener.propertyChanged(this, propId);
+		if (!fSuppressPropertyChanges) {
+			Object[] listeners = fListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				IPropertyListener listener = (IPropertyListener) listeners[i];
+				listener.propertyChanged(this, propId);
+			}
 		}
 	}
 	
@@ -183,5 +186,14 @@ public abstract class AbstractJavaBreakpointEditor {
 	 * @exception CoreException if unable to set the input
 	 */
 	public abstract void setInput(Object breakpoint) throws CoreException;
+	
+	/**
+	 * Sets whether to suppress property change notification.
+	 * 
+	 * @param suppress whether to suppress notification
+	 */
+	protected void suppressPropertyChanges(boolean suppress) {
+		fSuppressPropertyChanges = suppress;
+	}
 	
 }

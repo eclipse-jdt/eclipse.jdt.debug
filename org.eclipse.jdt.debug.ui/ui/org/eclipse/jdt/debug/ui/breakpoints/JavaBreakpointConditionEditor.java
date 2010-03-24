@@ -139,10 +139,15 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @throws CoreException if unable to access breakpoint attributes
 	 */
 	public void setInput(Object input) throws CoreException {
-		if (input instanceof IJavaLineBreakpoint) {
-			setBreakpoint((IJavaLineBreakpoint)input);
-		} else {
-			setBreakpoint(null);
+		try {
+			suppressPropertyChanges(true);
+			if (input instanceof IJavaLineBreakpoint) {
+				setBreakpoint((IJavaLineBreakpoint)input);
+			} else {
+				setBreakpoint(null);
+			}
+		} finally {
+			suppressPropertyChanges(false);
 		}
 	}
 	
