@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -567,14 +567,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean canSuspend() {
 		if (!isSuspended() && isAvailable()) {
-			// only allow suspend if no threads are currently suspended
+			// allow suspend when one or more threads are currently running
 			IThread[] threads= getThreads();
 			for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-				if (!((JDIThread)threads[i]).canSuspend()) {
-					return false;
+				if (((JDIThread)threads[i]).canSuspend()) {
+					return true;
 				}
 			}
-			return true;
+			return false;
 		}
 		return false;
 	}
