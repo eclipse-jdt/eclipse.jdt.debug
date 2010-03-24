@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,6 +231,12 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		for (int i = 0; i < environments.length; i++) {
 			IExecutionEnvironment environment = environments[i];
 			IVMInstall vm = (IVMInstall) fDefaults.get(environment);
+			// if the VM no longer exists - set to default to avoid illegal argument exception (bug 267914)
+			if (vm != null) {
+				if (vm.getVMInstallType().findVMInstall(vm.getId()) == null) {
+					vm = null;
+				}
+			}
 			environment.setDefaultVM(vm);
 		}
 		return super.performOk();
