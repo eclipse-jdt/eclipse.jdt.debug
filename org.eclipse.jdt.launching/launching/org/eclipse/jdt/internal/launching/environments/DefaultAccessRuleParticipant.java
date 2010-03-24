@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,7 +54,8 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 				for (int i = 0; i < packages.length; i++) {
 					packageRules[i] = JavaCore.newAccessRule(new Path(packages[i].replace('.', IPath.SEPARATOR)), IAccessRule.K_ACCESSIBLE);
 				}
-				packageRules[packages.length] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
+				// add IGNORE_IF_BETTER flag in case another explicit entry allows access (see bug 228488)
+				packageRules[packages.length] = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 			} else {
 				packageRules = new IAccessRule[0];
 			}
