@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,15 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -323,6 +330,20 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    	}
             		    } else {
             		    	if (!frame.isStatic()) {
+            		    		// ensure that we only resolve a field access on 'this':
+            		    		if (!(codeAssist instanceof ITypeRoot))
+            		    			return null;
+            		    		ASTParser parser = ASTParser.newParser(AST.JLS3);
+            		    		parser.setSource((ITypeRoot) codeAssist);
+            		    		parser.setFocalPosition(hoverRegion.getOffset());
+            		    		ASTNode root = parser.createAST(null);
+            		    		ASTNode node = NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
+            		    		if (node == null || node.getLocationInParent() != FieldAccess.NAME_PROPERTY)
+            		    			return null;
+            		    		FieldAccess fieldAccess = (FieldAccess) node.getParent();
+								if (!(fieldAccess.getExpression() instanceof ThisExpression))
+            		    			return null;
+            		    		
             		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
             		    		typeSignature = typeSignature.replace('.', '/');
             		    		variable = frame.getThis().getField(field.getElementName(), typeSignature);
