@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
@@ -27,6 +26,7 @@ import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
+import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -95,43 +95,40 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		if (breakpoint instanceof IJavaStratumLineBreakpoint || breakpoint instanceof IJavaPatternBreakpoint) {
 			return true;
 		}
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		setParserOptions(marker, parser);
-		parser.setSource(document.get().toCharArray());
-		parser.setResolveBindings(true);
-		parser.setBindingsRecovery(true);
-		CompilationUnit unit = (CompilationUnit) parser.createAST(null);
-		if(unit != null) {
-			try {
-				ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())+1, true, true);
-				unit.accept(loc);
-				if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
-					return false;
-				}
-				int line = loc.getLineLocation();
-				//if the line number is already good, perform no marker updating
-				if(MarkerUtilities.getLineNumber(marker) == line) {
-					//if there exists a breakpoint on the line remove this one
-					if(isLineBreakpoint(marker)) {
-						ensureRanges(document, marker, line);
-						return lineBreakpointExists(marker.getResource(), ((IJavaLineBreakpoint)breakpoint).getTypeName(), line, marker) == null;
-					}
-					return true;
-				}
-				//if the line info is a valid location with an invalid line number,
-				//a line breakpoint must be removed
-				if(isLineBreakpoint(marker) & line == -1) {
-					return false;
-				}
-				MarkerUtilities.setLineNumber(marker, line);
+		ICompilationUnit cunit = JavaCore.createCompilationUnitFrom((IFile) marker.getResource());
+		if(cunit == null) {
+			return false;
+		}
+		CompilationUnit unit = SharedASTProvider.getAST(cunit, SharedASTProvider.WAIT_YES, null);
+		try {
+			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())+1, true, true);
+			unit.accept(loc);
+			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
+				return false;
+			}
+			int line = loc.getLineLocation();
+			//if the line number is already good, perform no marker updating
+			if(MarkerUtilities.getLineNumber(marker) == line) {
+				//if there exists a breakpoint on the line remove this one
 				if(isLineBreakpoint(marker)) {
 					ensureRanges(document, marker, line);
+					return lineBreakpointExists(marker.getResource(), ((IJavaLineBreakpoint)breakpoint).getTypeName(), line, marker) == null;
 				}
 				return true;
-			} 
-			catch (BadLocationException e) {JDIDebugUIPlugin.log(e);} 
-			catch (CoreException e) {JDIDebugUIPlugin.log(e);}
-		}
+			}
+			//if the line info is a valid location with an invalid line number,
+			//a line breakpoint must be removed
+			if(isLineBreakpoint(marker) & line == -1) {
+				return false;
+			}
+			MarkerUtilities.setLineNumber(marker, line);
+			if(isLineBreakpoint(marker)) {
+				ensureRanges(document, marker, line);
+			}
+			return true;
+		} 
+		catch (BadLocationException e) {JDIDebugUIPlugin.log(e);} 
+		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		return false;
 	}
 	
@@ -152,21 +149,6 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		int charend = charstart + region.getLength();
 		MarkerUtilities.setCharStart(marker, charstart);
 		MarkerUtilities.setCharEnd(marker, charend);
-	}
-	
-	/**
-	 * Properly sets all of the compiler options for the parser used for the breakpoint marker updater
-	 * @param marker
-	 * @param parser
-	 */
-	private void setParserOptions(IMarker marker, ASTParser parser) {
-		IResource resource = marker.getResource();
-		if(resource != null) {
-			IJavaProject jproject = JavaCore.create(resource.getProject());
-			if(jproject != null) {
-				parser.setCompilerOptions(jproject.getOptions(true));
-			}
-		}
 	}
 	
 	/**
