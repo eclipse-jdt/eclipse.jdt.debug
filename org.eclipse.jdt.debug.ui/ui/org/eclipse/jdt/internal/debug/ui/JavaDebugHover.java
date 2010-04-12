@@ -43,6 +43,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -333,10 +334,14 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		// ensure that we only resolve a field access on 'this':
             		    		if (!(codeAssist instanceof ITypeRoot))
             		    			return null;
-            		    		ASTParser parser = ASTParser.newParser(AST.JLS3);
-            		    		parser.setSource((ITypeRoot) codeAssist);
-            		    		parser.setFocalPosition(hoverRegion.getOffset());
-            		    		ASTNode root = parser.createAST(null);
+            		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
+            		    		ASTNode root= SharedASTProvider.getAST(typeRoot, SharedASTProvider.WAIT_NO, null);
+            		    		if (root == null) {
+	            		    		ASTParser parser = ASTParser.newParser(AST.JLS3);
+	            		    		parser.setSource(typeRoot);
+	            		    		parser.setFocalPosition(hoverRegion.getOffset());
+									root = parser.createAST(null);
+            		    		}
             		    		ASTNode node = NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
             		    		if (node == null || node.getLocationInParent() != FieldAccess.NAME_PROPERTY)
             		    			return null;
