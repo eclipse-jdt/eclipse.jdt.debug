@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
  
+
+import com.ibm.icu.text.UTF16;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,8 +25,8 @@ import org.eclipse.jface.text.Region;
 public class JavaWordFinder {
 	
 	/**
-	 * Returns the IRegion containing the java identifier ("word") enclosing the specified offset or 
-	 * <code>null</code> if the document or offset is invalid.  Checks characters before and after the 
+	 * Returns the IRegion containing the java identifier ("word") enclosing the specified offset or
+	 * <code>null</code> if the document or offset is invalid.  Checks characters before and after the
 	 * offset to see if they are allowed java identifier characters until a separator character (period,
 	 * space, etc) is found.
 	 * 
@@ -48,8 +51,20 @@ public class JavaWordFinder {
 			
 			while (pos >= 0) {
 				c= document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
+				if (!Character.isJavaIdentifierPart(c)) {
+					// Check for surrogates
+					if (UTF16.isSurrogate(c)) {
+						/*
+						 * XXX: Here we should create the code point and test whether it is a Java
+						 * identifier part. Currently this is not possible because
+						 * java.lang.Character in 1.4 does not support surrogates and because
+						 * com.ibm.icu.lang.UCharacter.isJavaIdentifierPart(int) is not correctly
+						 * implemented.
+						 */
+					} else {
+						break;
+					}
+				}
 				--pos;
 			}
 			
