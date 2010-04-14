@@ -32,6 +32,8 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -343,11 +345,17 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 									root = parser.createAST(null);
             		    		}
             		    		ASTNode node = NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
-            		    		if (node == null || node.getLocationInParent() != FieldAccess.NAME_PROPERTY)
+            		    		if (node == null)
             		    			return null;
-            		    		FieldAccess fieldAccess = (FieldAccess) node.getParent();
-								if (!(fieldAccess.getExpression() instanceof ThisExpression))
-            		    			return null;
+								StructuralPropertyDescriptor locationInParent = node.getLocationInParent();
+								if (locationInParent == FieldAccess.NAME_PROPERTY) {
+									FieldAccess fieldAccess = (FieldAccess) node.getParent();
+									if (!(fieldAccess.getExpression() instanceof ThisExpression)) {
+										return null;
+									}
+								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
+									return null;
+								}
             		    		
             		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
             		    		typeSignature = typeSignature.replace('.', '/');
