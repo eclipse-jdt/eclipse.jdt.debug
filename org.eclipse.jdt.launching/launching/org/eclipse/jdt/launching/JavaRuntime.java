@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2716,7 +2716,8 @@ public final class JavaRuntime {
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_6)) {
             		compliance = JavaCore.VERSION_1_6;
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
-            		compliance = JavaCore.VERSION_1_7;
+            		// since 1.7 compliance options are not yet supported, default to 1.6 compliance when running on 1.7
+            		compliance = JavaCore.VERSION_1_6;
             	}
             	if (compliance != null) {
 	                Hashtable options= JavaCore.getOptions();
