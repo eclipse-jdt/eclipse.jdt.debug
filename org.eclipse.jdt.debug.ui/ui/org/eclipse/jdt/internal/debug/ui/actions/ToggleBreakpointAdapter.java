@@ -66,6 +66,7 @@ import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -442,23 +443,50 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return the binary name for the given {@link IType}
      * @since 3.6
      */
-    String getQualifiedName(IType type) {
+    String getQualifiedName(IType type) throws JavaModelException {
     	IJavaProject project = type.getJavaProject();
-    	if (project != null && project.isOnClasspath(type)) {
-	    	 ASTParser parser = ASTParser.newParser(AST.JLS3);
-		     parser.setSource(type.getTypeRoot());
-		     IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
-		     if(bindings != null && bindings.length > 0) {
-		    	 ITypeBinding tbinding = (ITypeBinding) bindings[0];
-		    	 if(tbinding != null) {
-		    		 String name = tbinding.getBinaryName();
-		    		 if (name != null) {
-		    			 return name;
-		    		 }
-		    	 }
-		     }
+    	if (project != null && project.isOnClasspath(type) && needsBindings(type)) {
+    		ASTParser parser = ASTParser.newParser(AST.JLS3);
+    		parser.setSource(type.getTypeRoot());
+    		IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
+		    if(bindings != null && bindings.length > 0) {
+		    	ITypeBinding tbinding = (ITypeBinding) bindings[0];
+		    	if(tbinding != null) {
+		    		String name = tbinding.getBinaryName();
+		    		if (name != null) {
+		    			return name;
+		    		}
+		    	}
+		    }
     	}
 	    return createQualifiedTypeName(type);
+    }
+    
+    /**
+     * Checks if the type or any of its enclosing types are local types.
+     * @param type
+     * @return <code>true</code> if the type or a parent type are a local type
+     * @throws JavaModelException
+     * @since 3.6
+     */
+    boolean needsBindings(IType type) throws JavaModelException {
+    	if(type.isMember()) {
+    		if(type.isLocal() && !type.isAnonymous()) {
+    			return true;
+    		}
+    		IJavaElement parent = type.getParent();
+    		IType ptype = null;
+    		while(parent != null) {
+    			if(parent.getElementType() == IJavaElement.TYPE) {
+    				ptype = (IType) parent;
+    				if(ptype.isLocal() && !ptype.isAnonymous()) {
+    					return true;
+    				}
+    			}
+    			parent = parent.getParent();
+    		}
+    	}
+    	return false;
     }
     
     /**
@@ -1062,11 +1090,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     CompilationUnit parseCompilationUnit(ITypeRoot root, boolean bindings) {
     	if(root != null) {
-	        ASTParser parser = ASTParser.newParser(AST.JLS3);
-	        parser.setResolveBindings(bindings);
-	        parser.setBindingsRecovery(bindings);
-	        parser.setSource(root);
-	        return (CompilationUnit) parser.createAST(null);
+    		return SharedASTProvider.getAST(root, SharedASTProvider.WAIT_YES, null);
         }
         return null;
     }
@@ -1193,7 +1217,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if(sel instanceof IStructuredSelection) {
     		IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
     		int mtype = member.getElementType();
-    		if(mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD) {
+    		if(mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
     			// remove line breakpoint if present first
     	    	if (selection instanceof ITextSelection) {
     				ITextSelection ts = (ITextSelection) selection;
