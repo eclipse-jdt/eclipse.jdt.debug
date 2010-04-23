@@ -46,11 +46,15 @@ import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.SourceRange;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
@@ -240,7 +244,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 							IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
 							if(locator == null) {
-								new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot(), true), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
+								new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot()), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
 							}
 	                    }
 	                    else {
@@ -446,18 +450,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     String getQualifiedName(IType type) throws JavaModelException {
     	IJavaProject project = type.getJavaProject();
     	if (project != null && project.isOnClasspath(type) && needsBindings(type)) {
-    		ASTParser parser = ASTParser.newParser(AST.JLS3);
-    		parser.setSource(type.getTypeRoot());
-    		IBinding[] bindings = parser.createBindings(new IJavaElement[] {type}, null);
-		    if(bindings != null && bindings.length > 0) {
-		    	ITypeBinding tbinding = (ITypeBinding) bindings[0];
-		    	if(tbinding != null) {
-		    		String name = tbinding.getBinaryName();
-		    		if (name != null) {
-		    			return name;
-		    		}
-		    	}
-		    }
+    		CompilationUnit cuNode = parseCompilationUnit(type.getTypeRoot());
+    		ISourceRange nameRange = type.getNameRange();
+    		if (SourceRange.isAvailable(nameRange)) {
+				ASTNode node = NodeFinder.perform(cuNode, nameRange);
+				if (node instanceof SimpleName) {
+					IBinding binding;
+					if (node.getLocationInParent() == SimpleType.NAME_PROPERTY &&
+							node.getParent().getLocationInParent() == ClassInstanceCreation.TYPE_PROPERTY) {
+						binding = ((ClassInstanceCreation) node.getParent().getParent()).resolveTypeBinding();
+					} else {
+						binding = ((SimpleName) node).resolveBinding();
+					}
+					if (binding instanceof ITypeBinding) {
+			    		String name = ((ITypeBinding) binding).getBinaryName();
+			    		if (name != null) {
+			    			return name;
+			    		}
+					}
+				}
+    		}    		
     	}
 	    return createQualifiedTypeName(type);
     }
@@ -1075,20 +1087,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     /**
      * Returns the compilation unit from the editor
      * @param editor the editor to get the compilation unit from
-     * @param binding if bindings should be resolved
      * @return the compilation unit or <code>null</code>
      */
-    protected CompilationUnit parseCompilationUnit(ITextEditor editor, boolean binding) {
-        return parseCompilationUnit(getTypeRoot(editor.getEditorInput()), binding);
+    protected CompilationUnit parseCompilationUnit(ITextEditor editor) {
+        return parseCompilationUnit(getTypeRoot(editor.getEditorInput()));
     }
 
     /**
-     * Parses the {@link ITypeRoot} with or without bindings resolution
-     * @param root
-     * @param bindings
+     * Parses the {@link ITypeRoot}.
+     * @param root the root
      * @return the parsed {@link CompilationUnit}
      */
-    CompilationUnit parseCompilationUnit(ITypeRoot root, boolean bindings) {
+    CompilationUnit parseCompilationUnit(ITypeRoot root) {
     	if(root != null) {
     		return SharedASTProvider.getAST(root, SharedASTProvider.WAIT_YES, null);
         }
@@ -1228,7 +1238,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
     					return;
     				}
-    				CompilationUnit unit = parseCompilationUnit(getTextEditor(part), true);
+    				CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
         			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine()+1, true, true);
         			unit.accept(loc);
         			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
