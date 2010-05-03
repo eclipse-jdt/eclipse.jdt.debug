@@ -139,7 +139,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	
 	private void createImportButtons(Composite container) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
-		Font font = container.getFont();
 		
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
@@ -152,12 +151,10 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		buttonContainer.setLayout(buttonLayout);
 		
 		// Add type button
-		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText(SnippetMessages.getString("SelectImportsDialog.Add_&Type_1")); //$NON-NLS-1$
-		fAddTypeButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddTypeButton);
-		fAddTypeButton.setLayoutData(gd);
-		fAddTypeButton.setFont(font);
+		fAddTypeButton = SWTFactory.createPushButton(buttonContainer, 
+				SnippetMessages.getString("SelectImportsDialog.Add_&Type_1"),  //$NON-NLS-1$
+				SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2"),  //$NON-NLS-1$
+				null);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addType();
@@ -167,12 +164,10 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});
 		
 		// Add package button
-		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setText(SnippetMessages.getString("SelectImportsDialog.Add_&Package_3")); //$NON-NLS-1$
-		fAddPackageButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddPackageButton);
-		fAddPackageButton.setLayoutData(gd);
-		fAddPackageButton.setFont(font);
+		fAddPackageButton = SWTFactory.createPushButton(buttonContainer, 
+				SnippetMessages.getString("SelectImportsDialog.Add_&Package_3"),  //$NON-NLS-1$
+				SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4"),  //$NON-NLS-1$
+				null);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addPackage();
@@ -182,12 +177,10 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});
 		
 		// Remove button
-		fRemoveImportsButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveImportsButton.setText(SnippetMessages.getString("SelectImportsDialog.&Remove_5")); //$NON-NLS-1$
-		fRemoveImportsButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6")); //$NON-NLS-1$
-		gd = getButtonGridData(fRemoveImportsButton);
-		fRemoveImportsButton.setLayoutData(gd);
-		fRemoveImportsButton.setFont(font);
+		fRemoveImportsButton = SWTFactory.createPushButton(buttonContainer, 
+				SnippetMessages.getString("SelectImportsDialog.&Remove_5"),  //$NON-NLS-1$
+				SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6"),  //$NON-NLS-1$
+				null);
 		fRemoveImportsButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				removeImports();
@@ -199,13 +192,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 	}
 	
-	private GridData getButtonGridData(Button button) {
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		button.setLayoutData(gd);
-		SWTFactory.setButtonDimensionHint(button);
-		return gd;
-	}
-		
 	private void removeImports() {
 		IStructuredSelection selection = (IStructuredSelection)fImportsViewer.getSelection();		
 		fImportContentProvider.removeImports(selection.toArray());
