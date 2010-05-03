@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -272,7 +272,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			monitor.worked(1);
 														
 			// re-bind all container entries
-			for (int i = 0; i < projects.length; i++) {
+			int length = projects.length;
+			Map projectsMap = new HashMap();
+			for (int i = 0; i < length; i++) {
 				IJavaProject project = projects[i];
 				IClasspathEntry[] entries = project.getRawClasspath();
 				boolean replace = false;
@@ -292,10 +294,14 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 										newBinding = renamed;
 									}
 								}
-								JREContainerInitializer initializer = new JREContainerInitializer();
 								if (newBinding == null){
 									// re-bind old path
-									initializer.initialize(reference, project);
+									// @see bug 310789 - batch updates by common container paths
+									List projectsList = (List) projectsMap.get(reference);
+									if (projectsList == null) {
+										projectsMap.put(reference, projectsList = new ArrayList(length));
+									}
+									projectsList.add(project);
 								} else {
 									// replace old class path entry with a new one
 									IClasspathEntry newEntry = JavaCore.newContainerEntry(newBinding, entry.isExported());
@@ -313,7 +319,16 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				}
 				monitor.worked(1);
 			}
-
+			Iterator references = projectsMap.keySet().iterator();
+			while (references.hasNext()) {
+				IPath reference = (IPath) references.next();
+				List projectsList = (List) projectsMap.get(reference);
+				IJavaProject[] referenceProjects = new IJavaProject[projectsList.size()];
+				projectsList.toArray(referenceProjects);
+				// re-bind old path
+				JREContainerInitializer initializer = new JREContainerInitializer();
+				initializer.initialize(reference, referenceProjects);
+			}
 		}
 
 	}

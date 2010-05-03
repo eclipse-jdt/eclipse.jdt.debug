@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,45 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					}
 				}
 				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
+			} else {
+				if (JREContainer.DEBUG_JRE_CONTAINER) {
+					System.out.println("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
+				}	
+			}
+		} else {
+			if (JREContainer.DEBUG_JRE_CONTAINER) {
+				System.out.println("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	/**
+	 * Sets the specified class path container for all of the given projects.
+	 *  
+	 * @param containerPath JRE container path
+	 * @param projects projects set the container on
+	 * @throws CoreException on failure
+	 */
+	public void initialize(IPath containerPath, IJavaProject[] projects) throws CoreException {
+		int size = containerPath.segmentCount();
+		if (size > 0) {
+			if (containerPath.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+				int length = projects.length;
+				IVMInstall vm = resolveVM(containerPath);
+				IClasspathContainer[] containers = new JREContainer[length];
+				if (vm != null) {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
+					}
+					for (int i=0; i<length; i++) {
+						containers[i] = new JREContainer(vm, containerPath, projects[i]);
+					}
+				} else {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
+						System.out.println("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
+					}
+				}
+				JavaCore.setClasspathContainer(containerPath, projects, containers, null);
 			} else {
 				if (JREContainer.DEBUG_JRE_CONTAINER) {
 					System.out.println("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
