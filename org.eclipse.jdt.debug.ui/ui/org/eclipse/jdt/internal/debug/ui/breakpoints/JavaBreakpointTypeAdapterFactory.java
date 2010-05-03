@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
             	IBreakpoint breakpoint = (IBreakpoint)adaptableObject;
             	String type = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
             	IBreakpointTypeCategory category = (IBreakpointTypeCategory) fOtherTypes.get(type);
-            	if (category == null) {
+            	if (category == null && type != null) {
 	            	if (breakpoint instanceof IJavaExceptionBreakpoint) {
 	                   	category = new BreakpointTypeCategory(type, getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION_BRKPT_TYPE));
 	            	} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
