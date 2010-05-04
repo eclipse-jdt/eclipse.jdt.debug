@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,18 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -554,7 +558,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
 		String typePattern= marker.getAttribute(TYPE_NAME, ""); //$NON-NLS-1$
 		if (typePattern != null) {
-			fPattern = Pattern.compile(convertToRegularExpression(typePattern));
+			try {
+				fPattern = Pattern.compile(convertToRegularExpression(typePattern));
+			} catch (PatternSyntaxException e) {
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), JDIDebugBreakpointMessages.JavaMethodBreakpoint_0, e));
+			}
 		}
 	}	
 	
