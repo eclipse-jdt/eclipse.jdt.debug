@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,14 +32,13 @@ import org.eclipse.ui.IMarkerResolutionGenerator2;
 public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
 	private final static IMarkerResolution[] NO_RESOLUTION = new IMarkerResolution[0];
-	private static final String JRE_CONTAINR_MARKER = "org.eclipse.jdt.launching.jreContainerMarker"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		try {
-			if(JRE_CONTAINR_MARKER.equals(marker.getType())) { 
+			if(JavaRuntime.JRE_CONTAINER_MARKER.equals(marker.getType())) { 
 				return new IMarkerResolution[] {new OpenPreferencePageResolution(ExecutionEnvironmentsPreferencePage.ID, 
 						new String[] {ExecutionEnvironmentsPreferencePage.ID, JREsPreferencePage.ID}, 
 						LauncherMessages.JreResolutionGenerator_open_ee_prefs, 
@@ -110,7 +109,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 		try {
 			String type = marker.getType();
 			return IJavaModelMarker.BUILDPATH_PROBLEM_MARKER.equals(type) || 
-				   JRE_CONTAINR_MARKER.equals(type);
+				   JavaRuntime.JRE_CONTAINER_MARKER.equals(type);
 		} catch (CoreException ce) {}
 		return false;
 	}

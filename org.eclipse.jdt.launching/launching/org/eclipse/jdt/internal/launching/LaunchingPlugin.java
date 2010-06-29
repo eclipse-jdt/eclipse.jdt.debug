@@ -102,13 +102,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	public static final String ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES = "runtimeClasspathEntries"; //$NON-NLS-1$
 	
-	/**
-	 * Marker type for JRE container problems.
-	 * 
-	 * @since 3.2
-	 */
-	public static final String ID_JRE_CONTAINER_MARKER = ID_PLUGIN + ".jreContainerMarker"; //$NON-NLS-1$
-	
 	private static LaunchingPlugin fgLaunchingPlugin;
 	
 	private HashMap fVMConnectors = null;

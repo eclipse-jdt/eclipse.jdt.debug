@@ -177,7 +177,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 */
 	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
 		try {
-			IMarker marker = javaProject.getProject().createMarker(LaunchingPlugin.ID_JRE_CONTAINER_MARKER);
+			IMarker marker = javaProject.getProject().createMarker(JavaRuntime.JRE_CONTAINER_MARKER);
 			marker.setAttributes(
 				new String[] {
 						IMarker.MESSAGE,
