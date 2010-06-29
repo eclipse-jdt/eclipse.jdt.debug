@@ -16,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.jdi.Bootstrap;
@@ -23,7 +24,10 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpString;
+import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidStackFrameException;
@@ -51,7 +55,10 @@ public class MirrorImpl implements Mirror {
 	protected VerboseWriter fVerboseWriter = null;
 	/** True if a Jdwp request has been sent to the VM and the response is not yet (fully) processed. */
 	private boolean fPendingJdwpRequest = false;
-
+	
+	// used for debug messages
+	private static final DateFormat LOCAL_SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+	
 	/**
 	 * Constructor only to be used by Virtual Machine objects: stores description of Mirror object and Virtual Machine.
 	 */	
@@ -167,11 +174,25 @@ public class MirrorImpl implements Mirror {
 	public JdwpReplyPacket requestVM(int command, byte[] outData) {
 		JdwpCommandPacket commandPacket = new JdwpCommandPacket(command);
 		commandPacket.setData(outData);
+		long sent = System.currentTimeMillis();
 		fVirtualMachineImpl.packetSendManager().sendPacket(commandPacket);
 		fPendingJdwpRequest = true;
 		writeVerboseCommandPacketHeader(commandPacket);
 
 		JdwpReplyPacket reply = fVirtualMachineImpl.packetReceiveManager().getReply(commandPacket);
+		long recieved = System.currentTimeMillis();
+		if (JDIDebugOptions.DEBUG_JDI_REQUEST_TIMES) {
+			StringBuffer buf = new StringBuffer();
+			buf.append(LOCAL_SDF.format(new Date(sent)));
+			buf.append(" JDI Request: "); //$NON-NLS-1$
+			buf.append(commandPacket.toString());
+			buf.append("\n\tResponse Time: "); //$NON-NLS-1$
+			buf.append(recieved - sent);
+			buf.append("ms"); //$NON-NLS-1$
+			buf.append(" length: "); //$NON-NLS-1$
+			buf.append(reply.getLength());
+			System.out.println(buf.toString());
+		}
 		if (fVerboseWriter != null) {
 			fVerboseWriter.println();
 			fVerboseWriter.println("Received reply"); //$NON-NLS-1$
