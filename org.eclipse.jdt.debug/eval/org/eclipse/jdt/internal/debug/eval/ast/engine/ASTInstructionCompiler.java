@@ -3833,7 +3833,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return getPrimitiveTypeId(((PrimitiveType)type).getPrimitiveTypeCode().toString());
 		} else if (type.isSimpleType()) {
 			SimpleType simpleType = (SimpleType) type;
-			if ("java.lang.String".equals(simpleType.getName())){ //$NON-NLS-1$
+			if ("java.lang.String".equals(simpleType.getName().getFullyQualifiedName())){ //$NON-NLS-1$
 				return Instruction.T_String;
 			} 
 			return Instruction.T_Object;
