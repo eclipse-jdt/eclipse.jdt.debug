@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -50,6 +52,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -111,6 +114,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		traceCaller(snippet, frame.getThread());
         checkInterface(frame);
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
 		evaluateExpression(expression, frame, listener, evaluationDetail, hitBreakpoints);
@@ -120,9 +124,37 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String, org.eclipse.jdt.debug.core.IJavaObject, org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		traceCaller(snippet, thread);
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
 		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail, hitBreakpoints);
 	}
+	
+	/**
+	 * Writes a stack dump to trace the calling thread.
+	 * 
+	 * @param snippet expression to evaluate
+	 * @param thread thread to evaluate in
+	 */
+	private void traceCaller(String snippet, IThread thread) {
+		if (JDIDebugOptions.DEBUG_AST_EVAL_THREAD_TRACE) {
+			StringBuffer buf = new StringBuffer();
+			buf.append(JDIDebugOptions.FORMAT.format(new Date()));
+			buf.append(" : Evaluation Request Trace - Expression: "); //$NON-NLS-1$
+			buf.append(snippet);
+			buf.append("\n\tThread: "); //$NON-NLS-1$
+			try {
+				String name = thread.getName();
+				buf.append('[');
+				buf.append(name);
+				buf.append("] "); //$NON-NLS-1$
+			} catch (DebugException e) {
+				buf.append(thread.toString());
+			}
+			System.out.println(buf.toString());
+			System.out.flush();
+			Thread.dumpStack();
+		}
+	}	
     
     /**
      * Checks if the stack frame is declared in an interface an aborts
@@ -143,6 +175,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaStackFrame, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		traceCaller(expression.getSnippet(), frame.getThread());
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
 		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail, hitBreakpoints);
 	}
@@ -151,6 +184,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org.eclipse.jdt.debug.eval.ICompiledExpression, org.eclipse.jdt.debug.core.IJavaObject, org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
 	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		traceCaller(expression.getSnippet(), thread);
 		IRuntimeContext context = null;
 		if (thisContext instanceof IJavaArray) {
 			context = new ArrayRuntimeContext((IJavaArray) thisContext, thread, getJavaProject());
@@ -460,6 +494,33 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 
 		public void run() {
+			if (JDIDebugOptions.DEBUG_AST_EVAL) {
+				StringBuffer buf = new StringBuffer();
+				buf.append(JDIDebugOptions.FORMAT.format(new Date()));
+				buf.append(" : AST Evaluation"); //$NON-NLS-1$
+				buf.append("\n\tExpression: "); //$NON-NLS-1$
+				buf.append(fExpression.getSnippet());
+				buf.append("\n\tThread: "); //$NON-NLS-1$
+				try {
+					String name = fThread.getName();
+					buf.append('[');
+					buf.append(name);
+					buf.append("] "); //$NON-NLS-1$
+				} catch (DebugException e) {
+				}
+				buf.append(fThread.toString());
+				buf.append("\n\tDetail: "); //$NON-NLS-1$
+				if (fEvaluationDetail == DebugEvent.EVALUATION) {
+					buf.append("EVALUATION"); //$NON-NLS-1$
+				} else if (fEvaluationDetail == DebugEvent.EVALUATION_IMPLICIT) {
+					buf.append("EVALUATION_IMPLICIT"); //$NON-NLS-1$
+				} else {
+					buf.append(fEvaluationDetail);
+				}
+				buf.append(" Hit Breakpoints: "); //$NON-NLS-1$
+				buf.append(fHitBreakpoints);
+				System.out.println(buf.toString());
+			}
 			EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
 			if (fExpression.hasErrors()) {
 				String[] errors = fExpression.getErrorMessages();
@@ -467,6 +528,18 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					result.addError(errors[i]);
 				}
 				evaluationFinished(result);
+				if (JDIDebugOptions.DEBUG_AST_EVAL) {
+					StringBuffer buf = new StringBuffer();
+					buf.append("\tErrors: "); //$NON-NLS-1$
+					for (int i = 0; i < errors.length; i++) {
+						if (i > 0) {
+							buf.append('\n');
+						}
+						buf.append("\t\t"); //$NON-NLS-1$
+						buf.append(errors[i]);
+					}
+					System.out.println(buf.toString());
+				}
 				return;
 			}
 			final Interpreter interpreter = new Interpreter(fExpression, fContext);
@@ -516,11 +589,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 			EvaluationRunnable er = new EvaluationRunnable();
 			CoreException exception = null;
+			long start = System.currentTimeMillis();
 			try {
 				fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);
 			} catch (DebugException e) {
 				exception = e;
 			}
+			long end = System.currentTimeMillis();
 		
             IJavaValue value = interpreter.getResult();
 
@@ -530,6 +605,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
             
 			result.setTerminated(er.fTerminated);
 			if (exception != null) {
+				if (JDIDebugOptions.DEBUG_AST_EVAL) {
+					StringBuffer buf = new StringBuffer();
+					buf.append("\tException: "); //$NON-NLS-1$
+					buf.append(exception.toString());
+					System.out.println(buf.toString());
+				}
 			    if (exception instanceof DebugException) {
 			        result.setException((DebugException)exception);
 			    } else {
@@ -538,11 +619,24 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} else {   
 			    if (value != null) {
 			        result.setValue(value);
+			        if (JDIDebugOptions.DEBUG_AST_EVAL) {
+						StringBuffer buf = new StringBuffer();
+						buf.append("\tResult: "); //$NON-NLS-1$
+						buf.append(value);
+						System.out.println(buf.toString());
+					}
 			    } else {
 			        result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation); 
 			    }
 			}
             
+			if (JDIDebugOptions.DEBUG_AST_EVAL) {
+				StringBuffer buf = new StringBuffer();
+				buf.append("\tDuration: "); //$NON-NLS-1$
+				buf.append(end - start);
+				buf.append("ms"); //$NON-NLS-1$
+				System.out.println(buf.toString());
+			}
 			
 			evaluationFinished(result);
 		}
