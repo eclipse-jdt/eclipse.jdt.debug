@@ -188,6 +188,8 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.Value;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorOperator;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The AST instruction compiler generates a sequence
  * of instructions (InstructionSequence) from a
@@ -441,12 +443,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
+			if (methodBinding != null && "void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof SuperMethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
+			if (methodBinding != null && "void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
 				pop= false;
 			}
 		} else if (expression instanceof VariableDeclarationExpression) {
@@ -593,7 +595,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ArrayAccess node) {
 		if (!isActive() || hasErrors())
 			return;
-		if (unBoxing(node.getIndex().resolveTypeBinding())) {
+		ITypeBinding typeBinding = node.getIndex().resolveTypeBinding();
+		if (typeBinding != null && unBoxing(typeBinding)) {
 			// un-box the index, if required
 			storeInstruction();
 		}
@@ -1522,10 +1525,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		ArrayType arrayType= node.getType();
 
-		if (isALocalType(arrayType.resolveBinding().getElementType())) {
+		ITypeBinding binding = resolveTypeBinding(arrayType);
+		if (binding != null && isALocalType(binding.getElementType())) {
 			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29); 
 			setHasError(true);
-			return true;
+			return false;
 		}
 
 		push(new ArrayAllocation(arrayType.getDimensions(), node.dimensions().size(), node.getInitializer() != null, fCounter));
@@ -1541,11 +1545,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		ITypeBinding typeBinding= node.resolveTypeBinding();
-		int dimension= typeBinding.getDimensions();
-		String signature= getTypeSignature(typeBinding.getElementType());
-
-		push(new ArrayInitializerInstruction(signature, node.expressions().size(), dimension, fCounter));
+		ITypeBinding typeBinding = resolveTypeBinding(node);
+		if (typeBinding != null) {
+			int dimension= typeBinding.getDimensions();
+			String signature= getTypeSignature(typeBinding.getElementType());
+			push(new ArrayInitializerInstruction(signature, node.expressions().size(), dimension, fCounter));
+		}
 
 		return true;
 	}
@@ -1557,11 +1562,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding arrayTypeBinding= node.resolveBinding();
-		int dimension= arrayTypeBinding.getDimensions();
-		String signature= getTypeSignature(arrayTypeBinding.getElementType());
-
-		push(new PushArrayType(signature, dimension, fCounter));
+		ITypeBinding arrayTypeBinding= resolveTypeBinding(node);
+		if (arrayTypeBinding != null) {
+			int dimension= arrayTypeBinding.getDimensions();
+			String signature= getTypeSignature(arrayTypeBinding.getElementType());
+			push(new PushArrayType(signature, dimension, fCounter));
+		}
 
 		return false;
 	}
@@ -1575,7 +1581,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		setHasError(true);
 		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Assert_statement_cannot_be_used_in_an_evaluation_expression_3); 
-		return true;
+		return false;
 	}
 
 	/**
@@ -1598,6 +1604,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			char2 = opToken.charAt(2);
 		}
 
+		ITypeBinding rightBinding = resolveTypeBinding(rightHandSide);
+		if (rightBinding == null) {
+			return false;
+		}
+		ITypeBinding leftBinding = resolveTypeBinding(leftHandSide);
+		if (leftBinding == null) {
+			return false;
+		}
 		if (variableTypeId == Instruction.T_Object) {
 			// If the variable is an object, the value may need to be boxed for
 			// the simple assignment.
@@ -1616,8 +1630,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			if (char0 == '=') {
 				
 				boolean storeRequired= false;
-				if (rightHandSide.resolveTypeBinding().isPrimitive()) {
-					boxing(leftHandSide.resolveTypeBinding(), rightHandSide.resolveTypeBinding());
+				if (rightBinding.isPrimitive()) {
+					boxing(leftBinding, rightBinding);
 					storeRequired= true;
 				}
 				rightHandSide.accept(this);
@@ -1629,7 +1643,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				boolean unrecognized = false;
 				
 				
-				boxing(leftHandSide.resolveTypeBinding(), rightHandSide.resolveTypeBinding());
+				boxing(leftBinding, rightBinding);
 				
 				switch (char0) {
 					case '=': // equal
@@ -1685,12 +1699,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					return false;
 				}
 
-				unBoxing(leftHandSide.resolveTypeBinding());
+				unBoxing(leftBinding);
 				push(new Dup());
 				storeInstruction(); // dupe
 				storeInstruction(); // un-boxing
 			
-				boolean storeRequired= unBoxing(rightHandSide.resolveTypeBinding());
+				boolean storeRequired= unBoxing(rightBinding);
 				rightHandSide.accept(this);
 				if (storeRequired) {
 					storeInstruction(); // un-boxing
@@ -1760,7 +1774,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			
 			leftHandSide.accept(this);
-			boolean storeRequired= unBoxing(rightHandSide.resolveTypeBinding());
+			boolean storeRequired= unBoxing(rightBinding);
 			rightHandSide.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -1840,20 +1854,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		Type type= node.getType();
 		int typeId= getTypeId(type);
-		ITypeBinding typeBinding= type.resolveBinding();
-
-		String baseTypeSignature;
-		int dimension= typeBinding.getDimensions();
-
-		if (typeBinding.isArray()) {
-			typeBinding= typeBinding.getElementType();
-		}
+		ITypeBinding typeBinding= resolveTypeBinding(type);
 		
-		baseTypeSignature= getTypeName(typeBinding);
-
-		push(new Cast(typeId, baseTypeSignature, dimension, fCounter));
-
-		node.getExpression().accept(this);
+		if (typeBinding != null) {
+			String baseTypeSignature;
+			int dimension= typeBinding.getDimensions();
+			if (typeBinding.isArray()) {
+				typeBinding= typeBinding.getElementType();
+			}
+			baseTypeSignature= getTypeName(typeBinding);
+			push(new Cast(typeId, baseTypeSignature, dimension, fCounter));
+			node.getExpression().accept(this);
+		}
 
 		return false;
 	}
@@ -1867,7 +1879,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		setHasError(true);
 		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Catch_clause_cannot_be_used_in_an_evaluation_expression_6); 
-		return true;
+		return false;
 	}
 
 	/**
@@ -1898,8 +1910,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		IMethodBinding methodBinding= node.resolveConstructorBinding();
+		if (methodBinding == null) {
+			setHasError(true);
+			addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_1, new String[]{node.toString()}));
+			return false;
+		}
 		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
-		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
 
 		boolean isInstanceMemberType= typeBinding.isMember() && ! Modifier.isStatic(typeBinding.getModifiers());
 
@@ -1915,13 +1931,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 
 		if (hasErrors()) {
-			return true;
+			return false;
 		}
 
 		int paramCount= methodBinding.getParameterTypes().length;
 
 		String enclosingTypeSignature= null;
+		ITypeBinding enclosingTypeBinding= null;
 		if (isInstanceMemberType) {
+			enclosingTypeBinding= typeBinding.getDeclaringClass();
+			if (enclosingTypeBinding == null) {
+				setHasError(true);
+				addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_2, new String[]{typeBinding.getQualifiedName()}));
+				return false;
+			}
 			enclosingTypeSignature= getTypeSignature(enclosingTypeBinding);
 			paramCount++;
 		}
@@ -1946,7 +1969,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				if (Modifier.isStatic(((MethodDeclaration)parent).getModifiers())) {
 					setHasError(true);
 					addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33); 
-					return true;
+					return false;
 				}
 
 				push(new PushThis(getEnclosingLevel(node, enclosingTypeBinding)));
@@ -2048,9 +2071,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		push(new NoOp(fCounter));
 		
 		
-		ITypeBinding typeBinding= node.getExpression().resolveTypeBinding();
+		ITypeBinding typeBinding= resolveTypeBinding(node.getExpression());
+		if (typeBinding == null) {
+			return false;
+		}
 		Type paramType= node.getParameter().getType();
-        ITypeBinding paramBinding = paramType.resolveBinding();
+        ITypeBinding paramBinding = resolveTypeBinding(paramType);
+        if (paramBinding == null) {
+			return false;
+        }
 		String typeSignature= getTypeSignature(paramBinding);
 		int paramTypeId= getTypeId(paramType);
 		boolean isParamPrimitiveType= paramTypeId != Instruction.T_Object && paramTypeId != Instruction.T_String;
@@ -2316,8 +2345,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		int rightTypeId;
 		boolean unbox = false;
 		// for == and != un-box when at least operand is primitive (otherwise compare the objects)
+		ITypeBinding leftBinding = resolveTypeBinding(leftOperand);
+		if (leftBinding == null) {
+			return false;
+		}
+		ITypeBinding rightBinding = resolveTypeBinding(rightOperand);
+		if (rightBinding == null) {
+			return false;
+		}
 		if ((char0 == '=' || char0 == '!') && char1 == '=') {
-			unbox = leftOperand.resolveTypeBinding().isPrimitive() || rightOperand.resolveTypeBinding().isPrimitive();
+			unbox = leftBinding.isPrimitive() || rightBinding.isPrimitive();
 		} else {
 			unbox = true;
 		}
@@ -2485,7 +2522,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		if (hasErrors()) {
-			return true;
+			return false;
 		}
 
 		iterator = extendedOperands.iterator();
@@ -2497,7 +2534,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			ConditionalJump[] conditionalJumps= new ConditionalJump[operatorNumber];
 			int[] conditionalJumpAddresses = new int[operatorNumber];
 
-			boolean storeRequired= unBoxing(leftOperand.resolveTypeBinding());
+			boolean storeRequired= unBoxing(leftBinding);
 			leftOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -2509,7 +2546,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(conditionalJump);
 			storeInstruction();
 
-			storeRequired= unBoxing(rightOperand.resolveTypeBinding());
+			storeRequired= unBoxing(rightBinding);
 			rightOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -2522,7 +2559,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				push(conditionalJump);
 				storeInstruction();
 				Expression operand= (Expression) iterator.next();
-				storeRequired= unBoxing(operand.resolveTypeBinding());
+				ITypeBinding typeBinding = resolveTypeBinding(operand);
+				if (typeBinding == null) {
+					return false;
+				}
+				storeRequired= unBoxing(typeBinding);
 				operand.accept(this);
 				if (storeRequired) {
 					storeInstruction();
@@ -2548,14 +2589,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 			boolean storeRequired= false;
 			if (unbox) {
-				storeRequired= unBoxing(leftOperand.resolveTypeBinding());
+				storeRequired= unBoxing(leftBinding);
 			}
 			leftOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
 			}
 			if (unbox) {
-				storeRequired= unBoxing(rightOperand.resolveTypeBinding());
+				storeRequired= unBoxing(rightBinding);
 			}
 			rightOperand.accept(this);
 			if (storeRequired) {
@@ -2566,7 +2607,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			for (int i= 1; i < operatorNumber; i ++) {
 				Expression operand= (Expression) iterator.next();
 				if (unbox) {
-					storeRequired= unBoxing(operand.resolveTypeBinding());
+					ITypeBinding typeBinding = resolveTypeBinding(operand);
+					if (typeBinding == null) {
+						return false;
+					}
+					storeRequired= unBoxing(typeBinding);
 				}
 				operand.accept(this);
 				if (storeRequired) {
@@ -2682,16 +2727,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		if (hasErrors()) {
-			return true;
+			return false;
 		}
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32); 
-		}
-
-		if (hasErrors()) {
-			return true;
+			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32);
+			return false;
 		}
 
 		int paramCount = methodBinding.getParameterTypes().length;
@@ -2736,7 +2778,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		int argCount = arguments.size();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int paramCount = parameterTypes.length;
-		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
+		ITypeBinding lastArgBinding = null;
+		if (methodBinding.isVarargs()) {
+			Expression lastArg = (Expression)arguments.get(argCount - 1);
+			lastArgBinding = resolveTypeBinding(lastArg);
+			if (lastArgBinding == null) {
+				return;
+			}
+		}
+		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
@@ -2930,8 +2980,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushType(getTypeName(typeBinding)));
+		ITypeBinding typeBinding  = resolveTypeBinding(node);
+		if (typeBinding != null) {
+			push(new PushType(getTypeName(typeBinding)));
+		}
 		return false;
 	}
 
@@ -2976,7 +3028,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				default:
 					setHasError(true);
 					addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_unrecognized_postfix_operator____15 + opToken); 
-					break;
+					return false;
 			}
 			push(new Value(fCounter));
 			push(new Dup());
@@ -2984,12 +3036,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction(); // value
 			push(new DupX1());
 			storeInstruction(); // dup_x1
-			unBoxing(operand.resolveTypeBinding());
+			ITypeBinding typeBinding = resolveTypeBinding(operand);
+			if (typeBinding == null) {
+				return false;
+			}
+			unBoxing(typeBinding);
 			storeInstruction(); // un-boxing
 			push(new PushInt(1));
 			storeInstruction(); // push 1
 			storeInstruction(); // operator
-			boxing(operand.resolveTypeBinding(), null);
+			boxing(typeBinding, null);
 			storeInstruction(); // boxing
 			storeInstruction(); // assignment
 			push(new Pop(assignmentInstruction.getSize() + 1));
@@ -3008,7 +3064,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			default:
 				setHasError(true);
 				addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_unrecognized_postfix_operator____15 + opToken); 
-				break;
+				return false;
 		}
 
 		return true;
@@ -3039,6 +3095,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			
 			int expressionUnBoxedTypeId= getUnBoxedTypeId(operand);
 			
+			ITypeBinding typeBinding = resolveTypeBinding(operand);
+			if (typeBinding == null) {
+				return false;
+			}
 			if (char1 == '\0') {
 				switch (char0) {
 					case '+': // unary plus
@@ -3056,10 +3116,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					default:
 						setHasError(true);
 						addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_unrecognized_prefix_operator____16 + opToken); 
-						break;
+						return false;
 				}
 	
-				unBoxing(operand.resolveTypeBinding());
+				unBoxing(typeBinding);
 				operand.accept(this);
 				storeInstruction(); // un-boxing
 				
@@ -3070,7 +3130,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				
 				operand.accept(this);
 				
-				boxing(operand.resolveTypeBinding(), null);
+				boxing(typeBinding, null);
 				
 				switch (char1) {
 					case '+':
@@ -3082,10 +3142,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					default:
 						setHasError(true);
 						addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_unrecognized_prefix_operator____16 + opToken); 
-						break;
+						return false;
 				}
 				
-				unBoxing(operand.resolveTypeBinding());
+				unBoxing(typeBinding);
 				push(new Dup());
 				storeInstruction(); // dupe
 				storeInstruction(); // un-boxing
@@ -3142,6 +3202,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (unrecognized) {
 			setHasError(true);
 			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_unrecognized_prefix_operator____16 + opToken); 
+			return false;
 		}
 
 		return true;
@@ -3154,8 +3215,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushPrimitiveType(getTypeName(typeBinding)));
+		ITypeBinding typeBinding  = resolveTypeBinding(node);
+		if (typeBinding != null) {
+			push(new PushPrimitiveType(getTypeName(typeBinding)));
+		}
 		return false;
 	}
 
@@ -3171,14 +3234,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		IBinding binding = node.resolveBinding();
+		IBinding binding = resolveBinding(node);
+		if (binding == null) {
+			return false;
+		}
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
 				node.getName().accept(this);
 				break;
 			case IBinding.VARIABLE:
 				SimpleName fieldName= node.getName();
-				IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+				IVariableBinding fieldBinding= (IVariableBinding) resolveBinding(fieldName);
+				if (fieldBinding == null) {
+					return false;
+				}
 				ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
 				String fieldId = fieldName.getIdentifier();
 
@@ -3206,8 +3275,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushType(getTypeName(typeBinding)));
+		ITypeBinding typeBinding  = resolveTypeBinding(node);
+		if (typeBinding != null) {
+			push(new PushType(getTypeName(typeBinding)));
+		}
 		return false;
 	}
 
@@ -3234,14 +3305,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		IBinding binding = node.resolveBinding();
-
-		String variableId = node.getIdentifier();
+		IBinding binding = resolveBinding(node);
 		if (binding == null) {
-			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_binding_null_for__17 + variableId); 
 			return true;
 		}
+		String variableId = node.getIdentifier();
 
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
@@ -3282,9 +3350,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		ITypeBinding typeBinding  = node.resolveBinding();
-		push(new PushType(getTypeName(typeBinding)));
-
+		ITypeBinding typeBinding  = resolveTypeBinding(node);
+		if (typeBinding != null) {
+			push(new PushType(getTypeName(typeBinding)));
+		}
 		return false;
 	}
 
@@ -3303,15 +3372,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding= node.getType().resolveBinding();
-		int typeDimension= typeBinding.getDimensions();
-		if (typeDimension != 0) {
-			typeBinding= typeBinding.getElementType();
-		}
-		Expression initializer= node.getInitializer();
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), initializer != null, fCounter));
-		if (initializer != null) {
-			initializer.accept(this);
+		ITypeBinding typeBinding= resolveTypeBinding(node.getType());
+		if (typeBinding != null) {
+			int typeDimension= typeBinding.getDimensions();
+			if (typeDimension != 0) {
+				typeBinding= typeBinding.getElementType();
+			}
+			Expression initializer= node.getInitializer();
+			push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, typeBinding.isPrimitive(), initializer != null, fCounter));
+			if (initializer != null) {
+				initializer.accept(this);
+			}
 		}
 		return false;
 	}
@@ -3350,7 +3421,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		SimpleName fieldName= node.getName();
-		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
+		IVariableBinding fieldBinding= (IVariableBinding) resolveBinding(fieldName);
+		if (fieldBinding == null) {
+			return false;
+		}
 		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
 		String fieldId = fieldName.getIdentifier();
 
@@ -3361,8 +3435,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			int superLevel= 1;
 			int enclosingLevel= 0;
 			if (qualifier != null) {
-				superLevel= getSuperLevel(qualifier.resolveTypeBinding(), declaringTypeBinding);
-				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+				ITypeBinding typeBinding = resolveTypeBinding(qualifier);
+				if (typeBinding == null) {
+					return false;
+				}
+				superLevel= getSuperLevel(typeBinding, declaringTypeBinding);
+				ITypeBinding binding = (ITypeBinding)resolveBinding(qualifier);
+				if (binding == null) {
+					return false;
+				}
+				enclosingLevel= getEnclosingLevel(node, binding);
 			}
 			push(new PushFieldVariable(fieldId, superLevel, fCounter));
 			push(new PushThis(enclosingLevel));
@@ -3382,15 +3464,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
+		IMethodBinding methodBinding = (IMethodBinding) resolveBinding(node.getName());
+		if (methodBinding == null) {
+			return false;
+		}
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32); 
-		}
-
-		if (hasErrors()) {
-			return true;
+			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32);
+			return false;
 		}
 
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
@@ -3405,7 +3487,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new SendMessage(selector, signature, paramCount, getTypeSignature(methodBinding.getDeclaringClass()), fCounter));
 			int enclosingLevel= 0;
 			if (qualifier != null) {
-				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+				ITypeBinding typeBinding = (ITypeBinding)resolveBinding(qualifier);
+				if (typeBinding == null) {
+					return false;
+				}
+				enclosingLevel= getEnclosingLevel(node, typeBinding);
 			}
 			push(new PushThis(enclosingLevel));
 			storeInstruction();
@@ -3413,7 +3499,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		List arguments = node.arguments();
 		int argCount = arguments.size();
-		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
+		ITypeBinding lastArgBinding = null;
+		if (methodBinding.isVarargs()) {
+			lastArgBinding = resolveTypeBinding((Expression)arguments.get(argCount - 1));
+			if (lastArgBinding == null) {
+				return false;
+			}
+		}
+		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
@@ -3606,7 +3699,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Name qualifier= node.getQualifier();
 		int enclosingLevel= 0;
 		if (qualifier != null) {
-			enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
+			ITypeBinding binding = (ITypeBinding)resolveBinding(qualifier);
+			if (binding == null) {
+				return false;
+			}
+			enclosingLevel= getEnclosingLevel(node, binding);
 		}
 		push(new PushThis(enclosingLevel));
 
@@ -3633,7 +3730,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		setHasError(true);
 		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Try_statement_cannot_be_used_in_an_evaluation_expression_23); 
-		return true;
+		return false;
 	}
 
 	/**
@@ -3715,15 +3812,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ASTNode parent= node.getParent();
 		switch (parent.getNodeType()) {
 			case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-				varTypeBinding= ((VariableDeclarationExpression)parent).getType().resolveBinding();
+				varTypeBinding= resolveTypeBinding(((VariableDeclarationExpression)parent).getType());
 				break;
 			case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-				varTypeBinding= ((VariableDeclarationStatement)parent).getType().resolveBinding();
+				varTypeBinding= resolveTypeBinding(((VariableDeclarationStatement)parent).getType());
 				break;
 			default:
 				setHasError(true);
 				addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Error_in_type_declaration_statement); 
 				return false;
+		}
+		if (varTypeBinding == null) {
+			return false;
 		}
 		int typeDimension= varTypeBinding.getDimensions();
 		ITypeBinding elementBinding = varTypeBinding;
@@ -3788,6 +3888,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	private int getTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
+		if (typeBinding == null) {
+			return Instruction.T_undefined;
+		}
 		String typeName = typeBinding.getQualifiedName();
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
@@ -3800,6 +3903,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	private int getUnBoxedTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
+		if (typeBinding == null) {
+			return Instruction.T_undefined;
+		}
 		String typeName = typeBinding.getQualifiedName();
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
@@ -3833,7 +3939,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return getPrimitiveTypeId(((PrimitiveType)type).getPrimitiveTypeCode().toString());
 		} else if (type.isSimpleType()) {
 			SimpleType simpleType = (SimpleType) type;
-			if ("java.lang.String".equals(simpleType.getName())){ //$NON-NLS-1$
+			if ("java.lang.String".equals(simpleType.getName().getFullyQualifiedName())){ //$NON-NLS-1$
 				return Instruction.T_String;
 			} 
 			return Instruction.T_Object;
@@ -3901,5 +4007,69 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return Instruction.T_void;
 		}
 		return Instruction.T_undefined;
+	}
+	
+	/**
+	 * Resolves and returns the type binding from the given expression reporting an error
+	 * if the binding is <code>null</code>.
+	 *  
+	 * @param expression expression to resolve type binding for
+	 * @return type binding or <code>null</code> if not available
+	 */
+	private ITypeBinding resolveTypeBinding(Expression expression) {
+		ITypeBinding typeBinding = expression.resolveTypeBinding();
+		if (typeBinding == null) {
+			setHasError(true);
+			addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_3, new String[]{expression.toString()}));
+		}
+		return typeBinding;
+	}
+	
+	/**
+	 * Resolves and returns the type binding for the give type reporting an error
+	 * if the binding is <code>null</code>.
+	 * 
+	 * @param type type to resolve binding for
+	 * @return type binding or <code>null</code> if not available
+	 */
+	private ITypeBinding resolveTypeBinding(Type type) {
+		ITypeBinding typeBinding = type.resolveBinding();
+		if (typeBinding == null) {
+			setHasError(true);
+			addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_3, new String[]{type.toString()}));
+		}
+		return typeBinding;
+	}
+	
+	/**
+	 * Resolves and returns the binding for the given name reporting an error
+	 * if the binding is <code>null</code>.
+	 * 
+	 * @param name name to resolve binding for
+	 * @return binding or <code>null</code> if not available
+	 */
+	private IBinding resolveBinding(Name name) {
+		IBinding binding = name.resolveBinding();
+		if (binding == null) {
+			setHasError(true);
+			addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_5, new String[]{name.getFullyQualifiedName()}));
+		}
+		return binding;
+	}	
+	
+	/**
+	 * Resolves and returns the type binding for the given name reporting an error
+	 * if the binding is <code>null</code>.
+	 * 
+	 * @param name name to resolve type binding for
+	 * @return type binding or <code>null</code> if not available
+	 */
+	private ITypeBinding resolveTypeBinding(Name name) {
+		ITypeBinding typeBinding = name.resolveTypeBinding();
+		if (typeBinding == null) {
+			setHasError(true);
+			addErrorMessage(MessageFormat.format(EvaluationEngineMessages.ASTInstructionCompiler_3, new String[]{name.getFullyQualifiedName()}));
+		}
+		return typeBinding;
 	}
 }
