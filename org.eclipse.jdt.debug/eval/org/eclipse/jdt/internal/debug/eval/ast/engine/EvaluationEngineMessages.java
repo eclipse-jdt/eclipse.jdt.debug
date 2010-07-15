@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ public class EvaluationEngineMessages extends NLS {
 
 	public static String ASTInstructionCompiler_unrecognized_postfix_operator____15;
 	public static String ASTInstructionCompiler_unrecognized_prefix_operator____16;
-	public static String ASTInstructionCompiler_binding_null_for__17;
 
 	public static String ASTInstructionCompiler_super_constructor_invocation_cannot_be_used_in_an_evaluation_expression_19;
 	public static String ASTInstructionCompiler_Try_statement_cannot_be_used_in_an_evaluation_expression_23;
@@ -48,8 +47,12 @@ public class EvaluationEngineMessages extends NLS {
 	public static String ASTEvaluationEngine_AST_evaluation_engine_cannot_evaluate_expression;
 	public static String ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation;
 	public static String ASTEvaluationEngine_Cannot_perform_nested_evaluations;
+	public static String ASTInstructionCompiler_3;
 	public static String ASTInstructionCompiler_36;
 	public static String ASTInstructionCompiler_0;
+	public static String ASTInstructionCompiler_1;
+	public static String ASTInstructionCompiler_2;
+	public static String ASTInstructionCompiler_5;
 
 	static {
 		// load message values from bundle file
