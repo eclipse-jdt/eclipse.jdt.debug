@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-
-import com.ibm.icu.text.MessageFormat;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,19 +31,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jdt.core.JavaCore;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
-
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.service.environment.Constants;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -615,17 +612,15 @@ public class StandardVMType extends AbstractVMInstallType {
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
 			if (version.startsWith(JavaCore.VERSION_1_7)) {
-				return new URL("http://java.sun.com/javase/7/docs/api/"); //$NON-NLS-1$
+				return new URL("http://download.oracle.com/javase/7/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_6)) {
-				return new URL("http://java.sun.com/javase/6/docs/api/"); //$NON-NLS-1$
+				return new URL("http://download.oracle.com/javase/6/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_5)) {
-				return new URL("http://java.sun.com/j2se/1.5.0/docs/api/"); //$NON-NLS-1$
+				return new URL("http://download.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_4)) {
-				return new URL("http://java.sun.com/j2se/1.4.2/docs/api/"); //$NON-NLS-1$
+				return new URL("http://download.oracle.com/javase/1.4.2/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_3)) {
-				return new URL("http://java.sun.com/j2se/1.3/docs/api/"); //$NON-NLS-1$
-			} else if (version.startsWith(JavaCore.VERSION_1_2)) {
-				return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
+				return new URL("http://download.oracle.com/javase/1.3/docs/api/"); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
 		}
