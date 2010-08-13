@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -151,6 +151,9 @@ public class LauncherMessages extends NLS {
 	public static String SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5;
 
 	public static String AppletSelectionDialog_Searching____1;
+
+	public static String ExecutionEnvironmentSelector_0;
+	public static String ExecutionEnvironmentSelector_1;
 	
 	public static String JavaAppletLaunchShortcut_0;
 	public static String JavaAppletLaunchShortcut_1;

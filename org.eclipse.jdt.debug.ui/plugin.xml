@@ -3584,4 +3584,11 @@ M4 = Platform-specific fourth key
        </enablement>
     </detailFactories>
  </extension>
+ <extension
+       point="org.eclipse.debug.ui.stringVariablePresentations">
+    <variablePresentation
+          argumentSelector="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionEnvironmentSelector"
+          variableName="ee_home">
+    </variablePresentation>
+ </extension>
 </plugin>

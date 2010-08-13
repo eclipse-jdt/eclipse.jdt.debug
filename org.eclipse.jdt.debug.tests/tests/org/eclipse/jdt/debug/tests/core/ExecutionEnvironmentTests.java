@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -187,4 +190,46 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("Wrong rule", "**/*", rules[3].getPattern().toString());
 		}		
 	}
+	
+	/**
+	 * Tests that a location can be resolved for ${ee_home:J2SE-1.4}
+	 * 
+	 * @throws Exception
+	 */
+	public void testEEHomeVariable() throws Exception {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		String result = manager.performStringSubstitution("${ee_home:J2SE-1.4}");
+		assertNotNull(result);
+		assertEquals(JavaRuntime.getDefaultVMInstall().getInstallLocation().getAbsolutePath(), result);
+	}
+	
+	/**
+	 * Tests that a location cannot be resolved for ${ee_home}
+	 * 
+	 * @throws Exception
+	 */
+	public void testEEHomeVariableMissingArgument() throws Exception {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			manager.performStringSubstitution("${ee_home}");
+		} catch (CoreException e) {
+			return; // expected
+		}
+		assertNotNull("Test should have thrown an exception", null);
+	}
+	
+	/**
+	 * Tests that a location cannot be resolved for ${ee_home:bogus}
+	 * 
+	 * @throws Exception
+	 */
+	public void testEEHomeVariableInvalidArgument() throws Exception {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			manager.performStringSubstitution("${ee_home:bogus}");
+		} catch (CoreException e) {
+			return; // expected
+		}
+		assertNotNull("Test should have thrown an exception", null);
+	}	
 }
