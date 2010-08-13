@@ -294,5 +294,13 @@
             </managedMarker>
          </compilationParticipant>
       </extension>
+      <extension
+            point="org.eclipse.core.variables.dynamicVariables">
+         <variable
+               description="%ee.home.description"
+               name="ee_home"
+               resolver="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentVariableResolver">
+         </variable>
+      </extension>
      
 </plugin>
