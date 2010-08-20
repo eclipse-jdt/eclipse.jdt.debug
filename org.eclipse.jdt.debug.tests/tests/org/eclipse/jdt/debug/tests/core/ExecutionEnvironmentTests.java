@@ -200,7 +200,9 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		String result = manager.performStringSubstitution("${ee_home:J2SE-1.4}");
 		assertNotNull(result);
-		assertEquals(JavaRuntime.getDefaultVMInstall().getInstallLocation().getAbsolutePath(), result);
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
+		IVMInstall install = JavaRuntime.getVMInstall(JavaRuntime.newJREContainerPath(ee));
+		assertEquals(install.getInstallLocation().getAbsolutePath(), result);
 	}
 	
 	/**
