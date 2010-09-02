@@ -3615,5 +3615,9 @@ M4 = Platform-specific fourth key
           argumentSelector="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionEnvironmentSelector"
           variableName="ee_home">
     </variablePresentation>
+    <variablePresentation
+          argumentSelector="org.eclipse.jdt.internal.debug.ui.launcher.ProjectClasspathArugumentSelector"
+          variableName="project_classpath">
+    </variablePresentation>
  </extension>
 </plugin>

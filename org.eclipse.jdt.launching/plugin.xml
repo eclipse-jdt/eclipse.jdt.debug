@@ -301,6 +301,11 @@
                name="ee_home"
                resolver="org.eclipse.jdt.internal.launching.environments.ExecutionEnvironmentVariableResolver">
          </variable>
+         <variable
+               description="%project.classpath.description"
+               name="project_classpath"
+               resolver="org.eclipse.jdt.internal.launching.ProjectClasspathVariableResolver">
+         </variable>
       </extension>
      
 </plugin>
