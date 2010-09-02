@@ -101,6 +101,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
+import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
@@ -146,7 +147,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(HitCountBreakpointsTests.class));
 		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
-		addTest(new TestSuite(PreLaunchBreakpointTest.class)); 
+		addTest(new TestSuite(PreLaunchBreakpointTest.class));
 		addTest(new TestSuite(ImportBreakpointsTest.class));
 		addTest(new TestSuite(BreakpointWorkingSetTests.class));
 		addTest(new TestSuite(MethodBreakpointTests.class));
@@ -170,7 +171,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(FolderSourceContainerTests.class));
 		addTest(new TestSuite(DirectorySourceContainerTests.class));
 		addTest(new TestSuite(ProjectSourceContainerTests.class));
-		addTest(new TestSuite(WorkspaceSourceContainerTests.class));		
+		addTest(new TestSuite(WorkspaceSourceContainerTests.class));
 		addTest(new TestSuite(DefaultSourceContainerTests.class));
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ExternalArchiveSourceContainerTests.class));
@@ -258,7 +259,7 @@ public class AutomatedSuite extends DebugSuite {
 	// JDWP tests
 		addTest(new TestSuite(JDWPTests.class));
 	// Refresh state tests
-		addTest(new TestSuite(RefreshStateTests.class));		
+		addTest(new TestSuite(RefreshStateTests.class));
 		
 	// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
@@ -271,6 +272,9 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// Variables View Detail Pane tests
 		addTest(new TestSuite(DetailPaneManagerTests.class));
+
+	// Open from Clipboard action tests
+		addTest(new TestSuite(OpenFromClipboardTests.class));
 	}
 	
 	protected static boolean isJ2SE15Compatible() {
