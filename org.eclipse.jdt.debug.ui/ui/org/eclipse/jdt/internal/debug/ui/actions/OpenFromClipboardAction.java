@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -38,6 +39,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -50,6 +52,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -100,7 +103,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Pattern to match a line from a stack trace e.g.
-	 * <code> at org.eclipse.core.internal.runtime.Assert.isLegal(Assert.java:41)</code>
+	 * <code> at org.eclipse.core.runtime.Assert.isLegal(Assert.java:41)</code>
 	 */
 	private static final String STACK_TRACE_LINE_PATTERN = ".*\\(" //$NON-NLS-1$
 			+ WS + JAVA_FILE_LINE_PATTERN + WS + "\\).*"; //$NON-NLS-1$
@@ -222,8 +225,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static void handleSingleLineInput(String inputText) {
-		IProgressMonitor progressMonitor = new NullProgressMonitor();
-		String s = inputText;
+		String s = inputText.trim();
 		switch (getMatchingPattern(s)) {
 		case JAVA_FILE_LINE: {
 			int index = s.indexOf(':');
@@ -233,12 +235,12 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			lineNumber = lineNumber.trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
 
-			handleMatches(getTypeMatches(typeName, progressMonitor), line, inputText);
+			handleMatches(getTypeMatches(typeName), line, inputText);
 			break;
 		}
 		case JAVA_FILE: {
 			String typeName = s.substring(0, s.indexOf(".java")); //$NON-NLS-1$
-			handleMatches(getTypeMatches(typeName, progressMonitor), -1, inputText);
+			handleMatches(getTypeMatches(typeName), -1, inputText);
 			break;
 		}
 		case TYPE_LINE: {
@@ -248,26 +250,33 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			String lineNumber = s.substring(index + 1, s.length());
 			lineNumber = lineNumber.trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
-			handleMatches(getTypeMatches(typeName, progressMonitor), line, inputText);
+			handleMatches(getTypeMatches(typeName), line, inputText);
 			break;
 		}
 		case STACK_TRACE_LINE: {
 			int index1 = s.indexOf('(');
 			int index2 = s.indexOf(')');
-			s = s.substring(index1 + 1, index2);
-
-			int index = s.indexOf(':');
-			String typeName = s.substring(0, index);
-			typeName = s.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
-			String lineNumber = s.substring(index + 1, s.length());
-			lineNumber = lineNumber.trim();
+			String typeLine = s.substring(index1 + 1, index2);
+			int index = typeLine.indexOf(':');
+			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
 
-			handleMatches(getTypeMatches(typeName, progressMonitor), line, inputText);
+			Pattern pattern = Pattern.compile(QUALIFIED_NAME_PATTERN + WS + "\\("); //$NON-NLS-1$
+			Matcher matcher = pattern.matcher(s);
+			if (matcher.find()) {
+				String qualifiedName = matcher.group();
+				index = qualifiedName.lastIndexOf('.');
+				qualifiedName = qualifiedName.substring(0, index);
+				handleMatches(getTypeMatches(qualifiedName), line, inputText);
+			} else {
+				String typeName = typeLine.substring(0, index);
+				typeName = typeLine.substring(0, typeName.indexOf(".java")); //$NON-NLS-1$
+				handleMatches(getTypeMatches(typeName), line, inputText);
+			}
 			break;
 		}
 		case METHOD: {
-			handleMatches(getMethodMatches(s, progressMonitor), -1, inputText);
+			handleMatches(getMethodMatches(s), -1, inputText);
 			break;
 		}
 		case STACK: {
@@ -276,14 +285,14 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			index = s.indexOf(':');
 			String lineNumber = s.substring(index + 1).trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
-			handleMatches(getMethodMatches(method, progressMonitor), line, inputText);
+			handleMatches(getMethodMatches(method), line, inputText);
 			break;
 		}
 		case MEMBER:
-			handleMatches(getMemberMatches(s.replace('#', '.'), progressMonitor), -1, inputText);
+			handleMatches(getMemberMatches(s.replace('#', '.')), -1, inputText);
 			break;
 		case QUALIFIED_NAME:
-			handleMatches(getNameMatches(s, progressMonitor), -1, inputText);
+			handleMatches(getNameMatches(s), -1, inputText);
 			break;
 		case INVALID:
 			openInputEditDialog(inputText);
@@ -296,25 +305,24 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * 
 	 * @param typeName
 	 *            the Type name
-	 * @param progressMonitor
-	 *            the Progress Monitor
 	 * @return matched Java elements
 	 */
-	private static List getTypeMatches(String typeName, IProgressMonitor progressMonitor) {
+	private static List getTypeMatches(final String typeName) {
 		final List matches = new ArrayList();
-		SearchPattern pattern = createSearchPattern(typeName, IJavaSearchConstants.TYPE);
-		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-		SearchRequestor requestor = createSearchRequestor(matches);
-
-		SearchEngine searchEngine = new SearchEngine();
-		try {
-			IProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 95, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-			searchEngine.search(pattern, createSearchParticipant(), scope, requestor, monitor);
-			return matches;
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		return null;
+		executeRunnable(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SearchPattern pattern = createSearchPattern(typeName, IJavaSearchConstants.TYPE);
+				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
+				SearchRequestor requestor = createSearchRequestor(matches);
+				SearchEngine searchEngine = new SearchEngine();
+				try {
+					searchEngine.search(pattern, createSearchParticipant(), scope, requestor, monitor);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		});
+		return matches;
 	}
 
 	/**
@@ -323,28 +331,26 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * 
 	 * @param s
 	 *            the method pattern
-	 * @param progressMonitor
-	 *            the Progress Monitor
 	 * @return matched Java elements
 	 */
-	private static List getMethodMatches(String s, IProgressMonitor progressMonitor) {
+	private static List getMethodMatches(final String s) {
 		final List matches = new ArrayList();
-		SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-		SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
-		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-		SearchRequestor requestor = createSearchRequestor(matches);
-
-		SearchEngine searchEngine = new SearchEngine();
-		try {
-			IProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 95, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-			searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
-
-			return matches;
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		return null;
+		executeRunnable(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
+				SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
+				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
+				SearchRequestor requestor = createSearchRequestor(matches);
+				SearchEngine searchEngine = new SearchEngine();
+				try {
+					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
+					searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		});
+		return matches;
 	}
 
 	/**
@@ -353,63 +359,69 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * 
 	 * @param s
 	 *            the member pattern
-	 * @param progressMonitor
-	 *            the Progress Monitor
 	 * @return matched Java elements
 	 */
-	private static List getMemberMatches(String s, IProgressMonitor progressMonitor) {
+	private static List getMemberMatches(final String s) {
 		final List matches = new ArrayList();
-		SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-		SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
-		SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
-		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-		SearchRequestor requestor = createSearchRequestor(matches);
+		executeRunnable(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
+				SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
+				SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
+				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
+				SearchRequestor requestor = createSearchRequestor(matches);
+				SearchEngine searchEngine = new SearchEngine();
+				try {
+					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
+					searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
+					searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		});
 
-		SearchEngine searchEngine = new SearchEngine();
-		try {
-			IProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 95, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-			searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
-
-			return matches;
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		return null;
+		return matches;
 	}
 
 	/**
-	 * Perform a Java search for types, fields, methods and constructors and return the
-	 * corresponding Java elements.
+	 * Perform a Java search for types, fields and methods and return the corresponding Java
+	 * elements.
 	 * 
 	 * @param s
-	 *            the member pattern
-	 * @param progressMonitor
-	 *            the Progress Monitor
+	 *            the qualified name pattern
 	 * @return matched Java elements
 	 */
-	private static List getNameMatches(String s, IProgressMonitor progressMonitor) {
+	private static List getNameMatches(final String s) {
 		final List matches = new ArrayList();
-		SearchPattern typePattern = createSearchPattern(s, IJavaSearchConstants.TYPE);
-		SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-		SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
-		SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
-		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-		SearchRequestor requestor = createSearchRequestor(matches);
+		executeRunnable(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SearchPattern typePattern = createSearchPattern(s, IJavaSearchConstants.TYPE);
+				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
+				SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
+				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
+				SearchRequestor requestor = createSearchRequestor(matches);
+				SearchEngine searchEngine = new SearchEngine();
+				try {
+					searchEngine.search(typePattern, createSearchParticipant(), scope, requestor, monitor);
+					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
+					searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		});
+		return matches;
+	}
 
-		SearchEngine searchEngine = new SearchEngine();
+	private static void executeRunnable(IRunnableWithProgress runnableWithProgress) {
 		try {
-			IProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 95, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-			searchEngine.search(typePattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
-			searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
-			return matches;
-		} catch (CoreException e) {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnableWithProgress);
+		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			// Do nothing
 		}
-		return null;
 	}
 
 	private static void handleMatches(List matches, int line, String inputText) {
