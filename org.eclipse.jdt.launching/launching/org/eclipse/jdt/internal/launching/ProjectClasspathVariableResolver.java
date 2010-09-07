@@ -15,12 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -36,10 +40,18 @@ import com.ibm.icu.text.MessageFormat;
 public class ProjectClasspathVariableResolver implements IDynamicVariableResolver {
 
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
+		IProject proj = null;
 		if (argument == null) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.ProjectClasspathVariableResolver_0));
+			IResource resource = getSelectedResource();
+			if (resource != null && resource.exists()) {
+				proj = resource.getProject();
+			}
+			if (proj == null) {
+				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.ProjectClasspathVariableResolver_2));
+			}
+		} else {
+			proj = ResourcesPlugin.getWorkspace().getRoot().getProject(argument);
 		}
-		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(argument);
 		IJavaProject javaProject = JavaCore.create(proj);
 		if (javaProject.exists()) {
 			IRuntimeClasspathEntry2 defClassPath = (IRuntimeClasspathEntry2) JavaRuntime.newDefaultProjectClasspathEntry(javaProject);
@@ -63,6 +75,26 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(LaunchingMessages.ProjectClasspathVariableResolver_1, new String[]{argument})));
 		}
+	}
+	
+	/**
+	 * Returns the selected resource. Uses the ${selected_resource_path} variable
+	 * to determine the selected resource. This variable is provided by the debug.ui
+	 * plug-in. Selected resource resolution is only available when the debug.ui
+	 * plug-in is present.
+	 * 
+	 * @return selected resource
+	 * @throws CoreException if there is no selection
+	 */
+	protected IResource getSelectedResource() throws CoreException {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			String pathString = manager.performStringSubstitution("${selected_resource_path}"); //$NON-NLS-1$
+			return ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(pathString));
+		} catch (CoreException e) {
+			// unable to resolve a selection
+		}
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.ProjectClasspathVariableResolver_3));	
 	}
 
 }

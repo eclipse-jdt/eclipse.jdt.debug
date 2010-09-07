@@ -211,8 +211,9 @@ public class LaunchingMessages extends NLS {
 	public static String PackageFragmentRootSourceContainerTypeDelegate_7;
 	public static String PackageFragmentRootSourceContainerTypeDelegate_8;
 
-	public static String ProjectClasspathVariableResolver_0;
 	public static String ProjectClasspathVariableResolver_1;
+	public static String ProjectClasspathVariableResolver_2;
+	public static String ProjectClasspathVariableResolver_3;
 
 	static {
 		// load message values from bundle file

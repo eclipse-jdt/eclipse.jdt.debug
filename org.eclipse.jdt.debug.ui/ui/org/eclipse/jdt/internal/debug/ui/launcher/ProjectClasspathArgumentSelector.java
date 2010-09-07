@@ -27,9 +27,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Allows a Java project to be selected for the ${project_classpath} variable.
  */
-public class ProjectClasspathArugumentSelector implements IArgumentSelector {
+public class ProjectClasspathArgumentSelector implements IArgumentSelector {
 
-	public ProjectClasspathArugumentSelector() {
+	public ProjectClasspathArgumentSelector() {
 	}
 
 	public String selectArgument(IStringVariable variable, Shell shell) {
