@@ -420,10 +420,11 @@
        <menuContribution
             locationURI="menu:navigate?endof=open.ext">
         <command
-          commandId="org.eclipse.jdt.debug.ui.command.OpenFromClipboard"
-          label="%OpenFromClipboardAction.label"
-          tooltip="%OpenFromClipboardAction.tooltip"
-          style="push">
+              commandId="org.eclipse.jdt.debug.ui.command.OpenFromClipboard"
+              helpContextId="org.eclipse.jdt.debug.ui.open_from_clipboard_action_context"
+              label="%OpenFromClipboardAction.label"
+              tooltip="%OpenFromClipboardAction.tooltip"
+              style="push">
         </command>
        </menuContribution>
    </extension>
