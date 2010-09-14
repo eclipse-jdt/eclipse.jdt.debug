@@ -322,6 +322,9 @@ public class JavaBreakpointPage extends PropertyPage {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
 			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 
 			    {new MethodBreakpointEditor(), new JavaBreakpointConditionEditor()});
+		} else {
+			// use standard editor for any other kind of breakpoint (@see bug 325161)
+			fEditor = new StandardJavaBreakpointEditor();
 		}
 		fEditor.createControl(parent);
 		fEditor.addPropertyListener(new IPropertyListener() {
