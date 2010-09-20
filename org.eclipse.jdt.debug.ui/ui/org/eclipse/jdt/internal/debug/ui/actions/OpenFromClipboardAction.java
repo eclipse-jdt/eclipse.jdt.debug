@@ -18,9 +18,11 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -29,6 +31,8 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsole;
@@ -127,6 +131,13 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	private static final String MEMBER_PATTERN = QUALIFIED_NAME_PATTERN + "#" //$NON-NLS-1$
 			+ SIMPLE_NAME_PATTERN;
 
+	/**
+	 * Pattern to match a method e.g. <code>OpenFromClipboardAction#run(IAction)</code>,
+	 * <code>Worker#run()</code>
+	 */
+	private static final String METHOD_JAVADOC_REFERENCE_PATTERN = QUALIFIED_NAME_PATTERN + "#" //$NON-NLS-1$
+			+ SIMPLE_NAME_PATTERN + "\\(.*\\)"; //$NON-NLS-1$
+
 	/*
 	 * Constants to indicate the pattern matched
 	 */
@@ -147,7 +158,10 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	private static final int STACK = 7;
 
 	private static final int MEMBER = 8;
+	
+	private static final int METHOD_JAVADOC_REFERENCE = 9;
 
+	private static final String TASK_NAME = ActionMessages.OpenFromClipboardAction_OpeningFromClipboard;
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -219,6 +233,8 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			return STACK;
 		if (s.matches(MEMBER_PATTERN))
 			return MEMBER;
+		if (s.matches(METHOD_JAVADOC_REFERENCE_PATTERN))
+			return METHOD_JAVADOC_REFERENCE;
 		if (s.matches(QUALIFIED_NAME_PATTERN))
 			return QUALIFIED_NAME;
 		return INVALID;
@@ -291,6 +307,9 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		case MEMBER:
 			handleMatches(getMemberMatches(s.replace('#', '.')), -1, inputText);
 			break;
+		case METHOD_JAVADOC_REFERENCE:
+			handleMatches(getMethodMatches(s.replace('#', '.')), -1, inputText);
+			break;
 		case QUALIFIED_NAME:
 			handleMatches(getNameMatches(s), -1, inputText);
 			break;
@@ -311,15 +330,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		final List matches = new ArrayList();
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				SearchPattern pattern = createSearchPattern(typeName, IJavaSearchConstants.TYPE);
-				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-				SearchRequestor requestor = createSearchRequestor(matches);
-				SearchEngine searchEngine = new SearchEngine();
-				try {
-					searchEngine.search(pattern, createSearchParticipant(), scope, requestor, monitor);
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
-				}
+				doTypeSearch(typeName, matches, monitor);
 			}
 		});
 		return matches;
@@ -337,17 +348,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		final List matches = new ArrayList();
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-				SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
-				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-				SearchRequestor requestor = createSearchRequestor(matches);
-				SearchEngine searchEngine = new SearchEngine();
-				try {
-					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-					searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
-				}
+				doMemberSearch(s, matches, true, true, false, monitor, 100);
 			}
 		});
 		return matches;
@@ -365,19 +366,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		final List matches = new ArrayList();
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-				SearchPattern constructorPattern = createSearchPattern(s, IJavaSearchConstants.CONSTRUCTOR);
-				SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
-				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-				SearchRequestor requestor = createSearchRequestor(matches);
-				SearchEngine searchEngine = new SearchEngine();
-				try {
-					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-					searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, monitor);
-					searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
-				}
+				doMemberSearch(s, matches, true, true, true, monitor, 100);
 			}
 		});
 
@@ -396,19 +385,10 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		final List matches = new ArrayList();
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				SearchPattern typePattern = createSearchPattern(s, IJavaSearchConstants.TYPE);
-				SearchPattern methodPattern = createSearchPattern(s, IJavaSearchConstants.METHOD);
-				SearchPattern fieldPattern = createSearchPattern(s, IJavaSearchConstants.FIELD);
-				IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
-				SearchRequestor requestor = createSearchRequestor(matches);
-				SearchEngine searchEngine = new SearchEngine();
-				try {
-					searchEngine.search(typePattern, createSearchParticipant(), scope, requestor, monitor);
-					searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, monitor);
-					searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, monitor);
-				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
-				}
+				SubMonitor progress = SubMonitor.convert(monitor, 100);
+				progress.beginTask(TASK_NAME, 100);
+				doTypeSearch(s, matches, progress.newChild(34));
+				doMemberSearch(s, matches, true, false, true, progress.newChild(34), 66);
 			}
 		});
 		return matches;
@@ -536,7 +516,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static SearchPattern createSearchPattern(String s, int searchFor) {
-		return SearchPattern.createPattern(s, searchFor, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH);
+		return SearchPattern.createPattern(s, searchFor, IJavaSearchConstants.DECLARATIONS, getSearchFlags());
+	}
+
+	private static int getSearchFlags() {
+		return SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH;
 	}
 
 	private static SearchRequestor createSearchRequestor(final List matches) {
@@ -550,6 +534,119 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	private static SearchParticipant[] createSearchParticipant() {
 		return new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() };
+	}
+
+	/**
+	 * Perform a Java search for the type and return the corresponding Java elements.
+	 * 
+	 * <p>
+	 * TODO: Because of faster performance SearchEngine.searchAllTypeNames(...) is used to do the
+	 * Java Search, instead of the usual SearchEngine.search(...) API. This logic should be moved to
+	 * JDT/Core.
+	 * </p>
+	 * 
+	 * @param typeName
+	 *            the Type Name
+	 * @param matches
+	 *            matched Java Elements
+	 * @param monitor
+	 *            the Progress Monitor
+	 */
+	private static void doTypeSearch(String typeName, final List matches, IProgressMonitor monitor) {
+		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
+		SearchEngine searchEngine = new SearchEngine();
+
+		String packageName = null;
+		int index = typeName.lastIndexOf('.');
+		if (index != -1) {
+			packageName = typeName.substring(0, index);
+			typeName = typeName.substring(index + 1);
+		}
+		try {
+			searchEngine.searchAllTypeNames(packageName == null ? null : packageName.toCharArray(), packageName == null ? SearchPattern.R_EXACT_MATCH : getSearchFlags(), typeName.toCharArray(),
+					getSearchFlags(), IJavaSearchConstants.TYPE, scope, new TypeNameMatchRequestor() {
+						public void acceptTypeNameMatch(TypeNameMatch match) {
+							matches.add(match.getType());
+						}
+					}, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	}
+
+	/**
+	 * Perform a Java search for one or more of fields, methods and constructors and return the
+	 * corresponding Java elements.
+	 * 
+	 * <p>
+	 * TODO: Because of faster performance, if the type name is available
+	 * SearchEngine.searchAllTypeNames(...) is used to narrow the scope of Java Search. This logic
+	 * should be moved to JDT/Core.
+	 * </p>
+	 * 
+	 * @param memberName
+	 *            the Member Name
+	 * @param matches
+	 *            matched Java Elements
+	 * @param searchForMethods
+	 *            if <code>true</code>, a method search is performed
+	 * @param searchForConstructors
+	 *            if <code>true</code>, a constructor search is performed
+	 * @param searchForFields
+	 *            if <code>true</code>, a field search is performed
+	 * @param monitor
+	 *            the Progress Monitor
+	 * @param work
+	 *            the remaining Work
+	 */
+	private static void doMemberSearch(String memberName, final List matches, boolean searchForMethods, boolean searchForConstructors, boolean searchForFields, IProgressMonitor monitor, int work) {
+		int noOfSearches = 0;
+		noOfSearches = searchForMethods ? noOfSearches + 1 : noOfSearches;
+		noOfSearches = searchForConstructors ? noOfSearches + 1 : noOfSearches;
+		noOfSearches = searchForFields ? noOfSearches + 1 : noOfSearches;
+		if (noOfSearches == 0) {
+			return;
+		}
+
+		SubMonitor progress = SubMonitor.convert(monitor);
+		progress.beginTask(TASK_NAME, work);
+
+		IJavaSearchScope scope = null;
+		SearchRequestor requestor = createSearchRequestor(matches);
+		SearchEngine searchEngine = new SearchEngine();
+
+		String typeName = null;
+		int index = memberName.lastIndexOf('.');
+		if (index != -1) {
+			typeName = memberName.substring(0, index);
+			memberName = memberName.substring(index + 1);
+			final List typeMatches = new ArrayList();
+			noOfSearches++;
+			doTypeSearch(typeName, typeMatches, progress.newChild(work / noOfSearches));
+			IType[] types = new IType[typeMatches.size()];
+			for (int i = 0; i < typeMatches.size(); i++) {
+				types[i] = (IType) typeMatches.get(i);
+			}
+			scope = SearchEngine.createJavaSearchScope(types);
+		} else {
+			scope = SearchEngine.createWorkspaceScope();
+		}
+		try {
+			if (searchForMethods) {
+				SearchPattern methodPattern = createSearchPattern(memberName, IJavaSearchConstants.METHOD);
+				searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+			}
+			if (searchForConstructors) {
+				SearchPattern constructorPattern = createSearchPattern(memberName, IJavaSearchConstants.CONSTRUCTOR);
+				searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+			}
+			if (searchForFields) {
+				SearchPattern fieldPattern = createSearchPattern(memberName, IJavaSearchConstants.FIELD);
+				searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+			}
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 	}
 
 	/*

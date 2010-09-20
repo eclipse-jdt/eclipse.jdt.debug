@@ -40,6 +40,8 @@ public class OpenFromClipboardTests extends TestCase {
 
 	private static final int MEMBER = 8;
 
+	private static final int METHOD_JAVADOC_REFERENCE = 9;
+
 	private int getMatachingPattern(String s) {
 		return OpenFromClipboardAction.getMatchingPattern(s);
 	}
@@ -126,6 +128,10 @@ public class OpenFromClipboardTests extends TestCase {
 
 	public void testMember_2() {
 		assertEquals(MEMBER, getMatachingPattern("java.lang.String#getBytes"));
+	}
+
+	public void testMember_3() {
+		assertEquals(METHOD_JAVADOC_REFERENCE, getMatachingPattern("java.lang.String#getBytes(String)"));
 	}
 
 	// qualified name tests

@@ -57,6 +57,7 @@ public class ActionMessages extends NLS {
 
 	public static String OpenFromClipboardAction_ElementToOpen;
 	public static String OpenFromClipboardAction_OpenFromClipboard;
+	public static String OpenFromClipboardAction_OpeningFromClipboard;
 	public static String OpenFromClipboardAction_SelectOrEnterTheElementToOpen;
 
 	public static String OpenTypeAction_2;
