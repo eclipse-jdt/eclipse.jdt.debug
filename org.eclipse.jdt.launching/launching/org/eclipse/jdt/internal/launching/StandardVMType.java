@@ -25,24 +25,28 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.osgi.service.environment.Constants;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+
 import org.eclipse.jdt.core.JavaCore;
+
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.osgi.service.environment.Constants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -476,7 +480,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		}
 		//locate the launching support jar - it contains the main program to run
 		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
-		if (file.exists()) {	
+		if (file != null && file.exists()) {
 			String javaExecutablePath = javaExecutable.getAbsolutePath();
 			String[] cmdLine = new String[] {javaExecutablePath, "-classpath", file.getAbsolutePath(), "org.eclipse.jdt.internal.launching.support.LibraryDetector"};  //$NON-NLS-1$ //$NON-NLS-2$
 			Process p = null;
