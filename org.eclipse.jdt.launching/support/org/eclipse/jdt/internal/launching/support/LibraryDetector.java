@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.support;
 
+import java.util.Enumeration;
 
 /**
  * Used to discover the boot path, extension directories, and endorsed
@@ -45,7 +46,21 @@ public class LibraryDetector {
 		} else {
 			System.out.print(System.getProperty("java.version")); //$NON-NLS-1$
 			System.out.print("|"); //$NON-NLS-1$
-			System.out.print(System.getProperty("sun.boot.class.path")); //$NON-NLS-1$
+			// get the boot class path - the property may vary for different vendors
+			Enumeration keys = System.getProperties().keys();
+			boolean found = false;
+			while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				if (key.endsWith(".boot.class.path")) { //$NON-NLS-1$
+					found = true;
+					System.out.print(System.getProperty(key));
+					break;
+				}
+			}
+			if (!found) {
+				// old behavior
+				System.out.print(System.getProperty("sun.boot.class.path")); //$NON-NLS-1$
+			}
 		}
 		System.out.print("|"); //$NON-NLS-1$
 		System.out.print(System.getProperty("java.ext.dirs")); //$NON-NLS-1$
