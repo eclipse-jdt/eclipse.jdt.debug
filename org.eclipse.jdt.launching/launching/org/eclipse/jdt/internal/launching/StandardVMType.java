@@ -250,6 +250,22 @@ public class StandardVMType extends AbstractVMInstallType {
 		IPath result = checkForJ9LibrarySource(libLocation);
 		if (result != null)
 			return result;
+		// check for <lib>-src.jar pattern
+		IPath libName = new Path(libLocation.getName());
+		String extension = libName.getFileExtension();
+		String prefix = libName.removeFileExtension().lastSegment();
+		if (extension != null) {
+			IPath srcPath = new Path(libLocation.getPath());
+			srcPath = srcPath.removeLastSegments(1);
+			StringBuffer buf = new StringBuffer();
+			buf.append(prefix);
+			buf.append("-src."); //$NON-NLS-1$
+			buf.append(extension);
+			srcPath = srcPath.append(buf.toString());
+			if (srcPath.toFile().exists()) {
+				return srcPath;
+			}
+		}
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY; 
 	}
