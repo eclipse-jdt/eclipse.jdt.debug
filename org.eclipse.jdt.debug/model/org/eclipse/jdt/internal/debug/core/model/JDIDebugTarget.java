@@ -2552,7 +2552,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		boolean prevSuspend = isSuspended();
 		int running = 0;
-		int suspended = 0;
 		List toSuspend = new ArrayList();
 		List toResume = new ArrayList();
 		List toRefresh = new ArrayList();
@@ -2564,7 +2563,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			try {
 				boolean realSuspended = reference.isSuspended();
 				if (realSuspended) {
-					suspended++;
 					if (modelSuspended) {
 						// Even if the model is suspended, it might be in a different location so refresh
 						toRefresh.add(thread);

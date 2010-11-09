@@ -120,7 +120,6 @@ public class EventDispatcher implements Runnable {
 		IJDIEventListener[] listeners = new IJDIEventListener[eventSet.size()];
 		boolean vote = false; 
 		boolean resume = true;
-		int voters = 0; 
 		int index=-1;
 		List deferredEvents = null;
 		while (iter.hasNext()) {
@@ -153,7 +152,6 @@ public class EventDispatcher implements Runnable {
 				}
 				vote = true;
 				resume = listener.handleEvent(event, fTarget, !resume, eventSet) && resume;
-				voters++;
 				continue;
 			}
 			

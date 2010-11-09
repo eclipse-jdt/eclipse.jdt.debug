@@ -76,7 +76,7 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 		fProperties.removeAll();
 		if (fBundleDescription.fProperties2 != null && fBundleDescription.fProperties2.size() > 0) {
 			Enumeration iter= fBundleDescription.fProperties2.keys();
-			for (int i= 0; iter.hasMoreElements(); i++) {
+			while (iter.hasMoreElements()) {
 				String key= (String) iter.nextElement();
 				String value= (String) fBundleDescription.fProperties2.get(key);
 				TableItem ti= new TableItem(fProperties, SWT.NONE);
