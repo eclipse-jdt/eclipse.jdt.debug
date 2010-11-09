@@ -770,7 +770,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void doMacSearch() {
 		final List added = new ArrayList();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				Set exists = new HashSet();
 				Iterator iterator = fVMs.iterator();
 				while (iterator.hasNext()) {

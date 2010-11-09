@@ -79,6 +79,7 @@ import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchesTests;
 import org.eclipse.jdt.debug.tests.launching.MigrationDelegateTests;
+import org.eclipse.jdt.debug.tests.launching.PListParserTests;
 import org.eclipse.jdt.debug.tests.launching.ProjectClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.launching.TabGroupWrapperTests;
 import org.eclipse.jdt.debug.tests.refactoring.MoveCompilationUnitTests;
@@ -142,6 +143,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
+		addTest(new TestSuite(PListParserTests.class));
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));

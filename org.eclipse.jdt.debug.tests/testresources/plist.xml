@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>JVMArch</key>
+		<string>i386</string>
+		<key>JVMBundleID</key>
+		<string>com.apple.javajdk15</string>
+		<key>JVMEnabled</key>
+		<true/>
+		<key>JVMHomePath</key>
+		<string>/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home</string>
+		<key>JVMIsBuiltIn</key>
+		<true/>
+		<key>JVMName</key>
+		<string>J2SE 5.0</string>
+		<key>JVMPlatformVersion</key>
+		<string>1.5</string>
+		<key>JVMVersion</key>
+		<string>1.5.0_24</string>
+		<key>test</key>
+		<false/>
+		<key>testint</key>
+		<integer>42</integer>
+	</dict>
+	<dict>
+		<key>JVMArch</key>
+		<string>x86_64</string>
+		<key>JVMBundleID</key>
+		<string>com.apple.javajdk16</string>
+		<key>JVMEnabled</key>
+		<true/>
+		<key>JVMHomePath</key>
+		<string>/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home</string>
+		<key>JVMIsBuiltIn</key>
+		<true/>
+		<key>JVMName</key>
+		<string>Java SE 6</string>
+		<key>JVMPlatformVersion</key>
+		<string>1.6</string>
+		<key>JVMVersion</key>
+		<string>1.6.0_20</string>
+	</dict>
+	<dict>
+		<key>JVMArch</key>
+		<string>x86_64</string>
+		<key>JVMBundleID</key>
+		<string>com.apple.javajdk15</string>
+		<key>JVMEnabled</key>
+		<true/>
+		<key>JVMHomePath</key>
+		<string>/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home</string>
+		<key>JVMIsBuiltIn</key>
+		<true/>
+		<key>JVMName</key>
+		<string>J2SE 5.0</string>
+		<key>JVMPlatformVersion</key>
+		<string>1.5</string>
+		<key>JVMVersion</key>
+		<string>1.5.0_24</string>
+	</dict>
+</array>
+</plist>

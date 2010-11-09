@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.LibraryInfo;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs.JREDescriptor;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -67,7 +69,6 @@ public class MacOSXVMInstallType extends StandardVMType {
 	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
 	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
 	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
-		
 				
 	public String getName() {
 		return MacOSXLaunchingPlugin.getString("MacOSXVMType.name"); //$NON-NLS-1$
@@ -81,6 +82,55 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
+		try {
+			// find all installed VMs
+			File defaultLocation= null;
+			JREDescriptor[] jres= new MacInstalledJREs().getInstalledJREs();
+			for (int i= 0; i < jres.length; i++) {
+				JREDescriptor descripor = jres[i];
+				String name = jres[i].getName();
+				File home= descripor.getHome();
+				IPath path= new Path(home.getAbsolutePath());
+				String id= path.segment(path.segmentCount() - 2); // ID is the second last segment in the install path (e.g. 1.5.0)
+				if (home.exists()) {
+					boolean isDefault= i == 0;
+					IVMInstall install= findVMInstall(id);
+					if (install == null) {
+						VMStandin vm= new VMStandin(this, id);
+						vm.setInstallLocation(home);
+						String format= MacOSXLaunchingPlugin.getString(isDefault
+								? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
+										: "MacOSXVMType.jvmName");				//$NON-NLS-1$
+										vm.setName(MessageFormat.format(format, new Object[] { name } ));
+										vm.setLibraryLocations(getDefaultLibraryLocations(home));
+										vm.setJavadocLocation(getDefaultJavadocLocation(home));
+										
+										install= vm.convertToRealVM();
+					}
+					if (isDefault) {
+						defaultLocation= home;
+						try {
+							JavaRuntime.setDefaultVMInstall(install, null);
+						} catch (CoreException e) {
+							LaunchingPlugin.log(e);
+						}
+					}
+				}
+			}
+			return defaultLocation;
+		} catch (CoreException e) {
+			MacOSXLaunchingPlugin.getDefault().getLog().log(e.getStatus());
+			return detectInstallLocationOld();
+		}
+	}
+
+	/**
+	 * The proper way to find installed JREs is to parse the XML output produced from "java_home -X"
+	 * (see bug 325777). However, if that fails, revert to the hard coded search. 
+	 * 
+	 * @return file that points to the default JRE install
+	 */
+	private File detectInstallLocationOld() {
 		
 		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
 		if (javaVMName == null) {
@@ -95,8 +145,8 @@ public class MacOSXVMInstallType extends StandardVMType {
 
 		// find all installed VMs
 		File defaultLocation= null;
-		File[] versions= getAllVersions();
-		File currentJDK= getCurrentJDK();
+		File[] versions= getAllVersionsOld();
+		File currentJDK= getCurrentJDKOld();
 		for (int i= 0; i < versions.length; i++) {
 			File versionFile= versions[i];
 			String version= versionFile.getName();
@@ -128,8 +178,14 @@ public class MacOSXVMInstallType extends StandardVMType {
 		}
 		return defaultLocation;
 	}
-
-	private File[] getAllVersions() {
+	
+	/**
+	 * The proper way to find installed JREs is to parse the XML output produced from "java_home -X"
+	 * (see bug 325777). However, if that fails, revert to the hard coded search. 
+	 * 
+	 * @return array of files that point to JRE install directories
+	 */
+	private File[] getAllVersionsOld() {
 		File[] versionFiles= JVM_VERSIONS_FOLDER.listFiles();
 		for (int i= 0; i < versionFiles.length; i++) {
 			versionFiles[i]= resolveSymbolicLinks(versionFiles[i]);
@@ -137,7 +193,13 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return versionFiles;
 	}
 
-	private File getCurrentJDK() {
+	/**
+	 * The proper way to find the default JRE is to parse the XML output produced from "java_home -X"
+	 * and take the first entry in the list. However, if that fails, revert to the hard coded search.
+	 * 
+	 * @return a file that points to the default JRE install directory
+	 */
+	private File getCurrentJDKOld() {
 		return resolveSymbolicLinks(new File(JVM_VERSIONS_FOLDER, CURRENT_JDK));
 	}
 	
@@ -255,4 +317,5 @@ public class MacOSXVMInstallType extends StandardVMType {
 	protected String getVMVersion(File javaHome, File javaExecutable) {
 		return super.getVMVersion(javaHome, javaExecutable);
 	}
+	
 }
