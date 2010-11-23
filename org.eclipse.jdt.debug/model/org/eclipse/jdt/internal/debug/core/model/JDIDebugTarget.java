@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -238,6 +239,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private static final int STEP_THRU_FILTERS = 0x010;
 	
+	/**
+	 * Step filter bit mask - indicates if simple getters are filtered.
+	 * @since 3.7
+	 */
+	private static final int FILTER_GETTERS = 0x020;
+
+	/**
+	 * Step filter bit mask - indicates if simple setters are filtered.
+	 * 
+	 * 	@since 3.7
+	 */
+	private static final int FILTER_SETTERS = 0x040;
+
 	/**
 	 * Mask used to flip individual bit masks via XOR
 	 */
@@ -2168,6 +2182,30 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}				
 	}	
 
+	public boolean isFilterGetters() {
+		return (fStepFilterMask & FILTER_GETTERS) > 0;
+	}
+
+	public void setFilterGetters(boolean filter) {
+		if (filter) {
+			fStepFilterMask = fStepFilterMask | FILTER_GETTERS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (FILTER_GETTERS ^ XOR_MASK);
+		}				
+	}
+	
+	public boolean isFilterSetters() {
+		return (fStepFilterMask & FILTER_SETTERS) > 0;
+	}
+
+	public void setFilterSetters(boolean filter) {
+		if (filter) {
+			fStepFilterMask = fStepFilterMask | FILTER_SETTERS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (FILTER_SETTERS ^ XOR_MASK);
+		}				
+	}
+	
 	/**
 	 * @see IJavaDebugTarget#setStepFilters(String[])
 	 */

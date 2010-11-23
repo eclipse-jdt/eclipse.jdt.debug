@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
@@ -260,6 +261,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		target.setFilterConstructors(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 		target.setFilterStaticInitializers(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		target.setFilterSynthetics(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+		target.setFilterGetters(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_GETTERS));
+		target.setFilterSetters(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SETTERS));
 		target.setStepThruFilters(store.getBoolean(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS));
 		target.setStepFilters(getActiveStepFilters());
 
@@ -339,6 +342,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	private boolean isUseFilterProperty(String property) {
 		return property.equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS) ||
 			property.equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS) ||
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_GETTERS) ||
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_SETTERS) ||
 			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS) ||
 			property.equals(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS);
 	}

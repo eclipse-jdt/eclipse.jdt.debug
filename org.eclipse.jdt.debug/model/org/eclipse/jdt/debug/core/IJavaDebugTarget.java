@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.debug.core;
 
@@ -233,6 +234,39 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * when stepping
 	 */
 	public abstract void setFilterSynthetics(boolean filter);
+	
+	/**
+	 * Returns whether simple getters are filtered
+	 * when stepping.
+	 * 
+	 * @returns true, if simple getters should be filtered when stepping
+	 */
+	public abstract boolean isFilterGetters();
+
+	/**
+	 * Sets whether simple getters are filtered
+	 * when stepping.
+	 * 
+	 * @param filter whether to filter simple getters when stepping
+	 */
+	public abstract void setFilterGetters(boolean filter);
+	
+	/**
+	 * Returns whether simple setters are filtered
+	 * when stepping.
+	 * 
+	 * @returns true, if simple setters should be filtered when stepping
+	 */
+	public abstract boolean isFilterSetters();
+
+	/**
+	 * Sets whether simple setters are filtered
+	 * when stepping.
+	 * 
+	 * @param filter whether to filter simple setters when stepping
+	 */
+	public abstract void setFilterSetters(boolean filter);
+	
 	
 	/**
 	 * Returns whether static initializers are filtered

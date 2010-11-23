@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
@@ -46,11 +47,26 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_FILTER_STATIC_INITIALIZERS = IJavaDebugUIConstants.PLUGIN_ID + ".filter_statics"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference controlling whether simple getters
+	 * are to be filtered when stepping (and step
+	 * filters are enabled).
+	 */			
+	public static final String PREF_FILTER_GETTERS = IJavaDebugUIConstants.PLUGIN_ID + ".filter_get"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether simple setters
+	 * are to be filtered when stepping (and step
+	 * filters are enabled).
+	 */			
+	public static final String PREF_FILTER_SETTERS = IJavaDebugUIConstants.PLUGIN_ID + ".filter_setters"; //$NON-NLS-1$
+
+	/**
 	 * Boolean preference controlling whether constructors
 	 * are to be filtered when stepping (and step
 	 * filters are enabled).
 	 */			
 	public static final String PREF_FILTER_CONSTRUCTORS = IJavaDebugUIConstants.PLUGIN_ID + ".filter_constructors"; //$NON-NLS-1$
+
 	
 	/**
 	 * Boolean preference controlling whether a step landing in a filtered

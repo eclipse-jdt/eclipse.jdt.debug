@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
@@ -177,6 +178,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         createLaunchConfiguration("MultiThreadedList");
         createLaunchConfiguration("MethodLoop");
         createLaunchConfiguration("StepFilterOne");
+        createLaunchConfiguration("StepFilterFour");
 
         createLaunchConfiguration("EvalArrayTests");
         createLaunchConfiguration("EvalSimpleTests");

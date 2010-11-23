@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
@@ -77,6 +78,8 @@ public class DebugUIMessages extends NLS {
 	public static String JavaStepFilterPreferencePage_Filter_co_nstructors_19;
 	public static String JavaStepFilterPreferencePage_Filter_s_ynthetic_methods__requires_VM_support__17;
 	public static String JavaStepFilterPreferencePage_Filter_static__initializers_18;
+	public static String JavaStepFilterPreferencePage_Filter_getters;
+	public static String JavaStepFilterPreferencePage_Filter_setters;
 	public static String JavaStepFilterPreferencePage_title;
 	public static String JavaStepFilterPreferencePage_description;
 	public static String JavaStepFilterPreferencePage_Remove_all_selected_step_filters_16;

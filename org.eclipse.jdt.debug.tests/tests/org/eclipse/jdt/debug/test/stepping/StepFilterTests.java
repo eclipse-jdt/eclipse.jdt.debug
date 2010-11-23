@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.debug.test.stepping;
 
@@ -218,7 +219,77 @@ public class StepFilterTests extends AbstractDebugTest {
 			resetStepFilters();
 		}				
 	}	
-	
+
+	/**
+	 * Tests filtering of getter methods
+	 * @throws Exception
+	 */
+	public void testGetterFilters() throws Exception {
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_GETTERS, true);
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_SETTERS, false);
+		String typeName = "StepFilterFour";
+		ILineBreakpoint bp = createLineBreakpoint(91, typeName);
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			String recTypeName = stackFrame.getReceivingTypeName();
+			assertEquals("Wrong receiving type", "StepFilterFour", recTypeName);
+			assertEquals("Wrong line number", 92, stackFrame.getLineNumber());			
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			assertEquals("Wrong line number", 96, stackFrame.getLineNumber());			
+			// now step into the line with the call to sum() which is not a simple getter
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			assertEquals("Wrong line number", 71, stackFrame.getLineNumber());			
+			assertEquals("Should be in sum()", "sum", stackFrame.getMethodName());			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}				
+	}	
+
+	/**
+	 * Tests filtering of setter methods
+	 * @throws Exception
+	 */
+	public void testSetterFilters() throws Exception {
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_GETTERS, false);
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_FILTER_SETTERS, true);
+		String typeName = "StepFilterFour";
+		ILineBreakpoint bp = createLineBreakpoint(84, typeName);
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			String recTypeName = stackFrame.getReceivingTypeName();
+			assertEquals("Wrong receiving type", "StepFilterFour", recTypeName);
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			assertEquals("Wrong line number", 91, stackFrame.getLineNumber());			
+			// now step into the line with the call to getI() which is a simple getter
+			// since we're not filtering getters, we should end up in getI
+			stackFrame = (IJavaStackFrame)stepIntoWithFilters(stackFrame).getTopStackFrame();
+			assertEquals("Wrong line number", 34, stackFrame.getLineNumber());			
+			assertEquals("Should be in getI()", "getI", stackFrame.getMethodName());			
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}				
+	}	
+
 	/**
 	 * Reset the step filtering preferences
 	 */

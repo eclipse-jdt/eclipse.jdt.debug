@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 89643
+ *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -2213,13 +2214,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				boolean filterStatics = getJavaDebugTarget().isFilterStaticInitializers();
 				boolean filterSynthetics = getJavaDebugTarget().isFilterSynthetics();
 				boolean filterConstructors = getJavaDebugTarget().isFilterConstructors();
-				if (!(filterStatics || filterSynthetics || filterConstructors)) {
+				boolean filterSetters = getJavaDebugTarget().isFilterSetters();
+				boolean filterGetters = getJavaDebugTarget().isFilterGetters();
+				if (!(filterStatics || filterSynthetics || filterConstructors || filterGetters || filterSetters)) {
 					return false;
 				}			
 				
 				if ((filterStatics && method.isStaticInitializer()) ||
 					(filterSynthetics && method.isSynthetic()) ||
-					(filterConstructors && method.isConstructor()) ) {
+					(filterConstructors && method.isConstructor()) ||
+					(filterGetters && JDIMethod.isGetterMethod(method)) ||
+					(filterSetters && JDIMethod.isSetterMethod(method))) {
 					return true;	
 				}
 			}
