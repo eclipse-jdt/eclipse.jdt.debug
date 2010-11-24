@@ -237,10 +237,9 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	public abstract void setFilterSynthetics(boolean filter);
 	
 	/**
-	 * Returns whether simple getters are filtered
-	 * when stepping.
+	 * Returns whether simple getters are filtered when stepping.
 	 * 
-	 * @returns true, if simple getters should be filtered when stepping
+	 * @return true, if simple getters should be filtered when stepping
 	 * @since 3.7
 	 */
 	public abstract boolean isFilterGetters();
@@ -255,10 +254,9 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	public abstract void setFilterGetters(boolean filter);
 	
 	/**
-	 * Returns whether simple setters are filtered
-	 * when stepping.
+	 * Returns whether simple setters are filtered when stepping.
 	 * 
-	 * @returns true, if simple setters should be filtered when stepping
+	 * @return true, if simple setters should be filtered when stepping
 	 * @since 3.7
 	 */
 	public abstract boolean isFilterSetters();
