@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - enhancement 254677 - filter getters/setters
+ *     Codenza Software Development Inc. - Darin Wright - bug 330987
  *******************************************************************************/
 package org.eclipse.jdt.debug.core;
 
@@ -240,6 +241,7 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * when stepping.
 	 * 
 	 * @returns true, if simple getters should be filtered when stepping
+	 * @since 3.7
 	 */
 	public abstract boolean isFilterGetters();
 
@@ -248,6 +250,7 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * when stepping.
 	 * 
 	 * @param filter whether to filter simple getters when stepping
+	 * @since 3.7
 	 */
 	public abstract void setFilterGetters(boolean filter);
 	
@@ -256,6 +259,7 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * when stepping.
 	 * 
 	 * @returns true, if simple setters should be filtered when stepping
+	 * @since 3.7
 	 */
 	public abstract boolean isFilterSetters();
 
@@ -264,6 +268,7 @@ public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	 * when stepping.
 	 * 
 	 * @param filter whether to filter simple setters when stepping
+	 * @since 3.7
 	 */
 	public abstract void setFilterSetters(boolean filter);
 	
