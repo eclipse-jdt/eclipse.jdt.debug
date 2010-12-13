@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -698,7 +698,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
-	 * Looks for the deepest effected stack frame in the stack
+	 * Looks for the deepest affected stack frame in the stack
 	 * and forces a drop to frame.  Does this for all of the active
 	 * stack frames in the target.
 	 * 
@@ -722,7 +722,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
-	 * Looks for the deepest effected stack frame in the stack
+	 * Looks for the deepest affected stack frame in the stack
 	 * and forces a drop to frame.  Does this for all of the active
 	 * stack frames in the target.
 	 * 

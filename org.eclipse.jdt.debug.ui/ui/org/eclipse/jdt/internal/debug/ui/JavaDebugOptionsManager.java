@@ -122,7 +122,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	private String[] fActiveStepFilters = null;
 	
 	/**
-	 * Preferences that effect variable display options.
+	 * Preferences that affect variable display options.
 	 * 
 	 * @since 3.3
 	 */
