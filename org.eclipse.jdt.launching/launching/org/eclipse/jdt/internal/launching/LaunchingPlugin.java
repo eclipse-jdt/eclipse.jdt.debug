@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,8 +51,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
@@ -129,6 +130,20 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * VM.
 	 */
 	private static Map fgLibraryInfoMap = null;
+	
+	/**
+	 * Mapping of the last time the directory of a given SDK was modified.
+	 * <br><br>
+	 * Mapping: <code>Map&lt;String,Long&gt;</code>
+	 * @since 3.7
+	 */
+	private static Map fgInstallTimeMap = null;
+	/**
+	 * Mutex for checking the time stamp of an install location
+	 * 
+	 * @since 3.7
+	 */
+	private static Object installLock = new Object();
 	
 	/**
 	 * Whether changes in VM preferences are being batched. When being batched
@@ -914,6 +929,137 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				log(e);
 			} catch (SAXException e) {
 				log(e);
+			}
+		}
+	}
+	
+	/**
+	 * Checks to see if the time stamp of the file describe by the given location string
+	 * has been modified since the last recorded time stamp. If there is no last recorded 
+	 * time stamp we assume it has changed.
+	 * 
+	 * @param location the location of the SDK we want to check the time stamp for 
+	 * @return <code>true</code> if the time stamp has changed compared to the cached one or if there is
+	 * no recorded time stamp, <code>false</code> otherwise.
+	 * 
+	 * @since 3.6.2
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
+	 */
+	public static boolean timeStampChanged(String location) {
+		synchronized (installLock) {
+			File file = new File(location);
+			if(file.exists()) {
+				if(fgInstallTimeMap == null) {
+					readInstallInfo();
+				}
+				Long stamp = (Long) fgInstallTimeMap.get(location);
+				long fstamp = file.lastModified();
+				if(stamp != null) {
+					if(stamp.longValue() == fstamp) {
+						return false;
+					}
+				}
+				//if there is no recorded stamp we have to assume it is new
+				stamp = new Long(fstamp);
+				fgInstallTimeMap.put(location, stamp);
+				writeInstallInfo();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Reads the file of saved time stamps and populates the {@link #fgInstallTimeMap}
+	 * 
+	 * @since 3.6.2
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
+	 */
+	private static void readInstallInfo() {
+		fgInstallTimeMap = new HashMap();
+		IPath libPath = getDefault().getStateLocation();
+		libPath = libPath.append(".install.xml"); //$NON-NLS-1$
+		File file = libPath.toFile();
+		if (file.exists()) {
+			try {
+				InputStream stream = new BufferedInputStream(new FileInputStream(file));
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				parser.setErrorHandler(new DefaultHandler());
+				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
+				if(root.getNodeName().equalsIgnoreCase("dirs")) { //$NON-NLS-1$
+					NodeList nodes = root.getChildNodes();
+					Node node = null;
+					Element element = null;
+					for (int i = 0; i < nodes.getLength(); i++) {
+						node = nodes.item(i);
+						if(node.getNodeType() == Node.ELEMENT_NODE) {
+							element = (Element) node;
+							if(element.getNodeName().equalsIgnoreCase("entry")) { //$NON-NLS-1$
+								String loc = element.getAttribute("loc"); //$NON-NLS-1$
+								String stamp = element.getAttribute("stamp"); //$NON-NLS-1$
+								try {
+									Long l = new Long(stamp);
+									fgInstallTimeMap.put(loc, l);
+								}
+								catch(NumberFormatException nfe) {
+								//do nothing	
+								}
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				log(e);
+			} catch (ParserConfigurationException e) {
+				log(e);
+			} catch (SAXException e) {
+				log(e);
+			}
+		}
+	}
+	
+	/**
+	 * Writes out the mappings of SDK install time stamps to disk.
+	 * 
+	 * @since 3.6.2
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
+	 */
+	private static synchronized void writeInstallInfo() {
+		if(fgInstallTimeMap != null) {
+			OutputStream stream= null;
+			try {
+				Document doc = DebugPlugin.newDocument();
+				Element root = doc.createElement("dirs");    //$NON-NLS-1$
+				doc.appendChild(root);
+				Entry entry = null;
+				Element e = null;
+				for(Iterator i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
+					entry = (Entry) i.next();
+					e = doc.createElement("entry"); //$NON-NLS-1$
+					root.appendChild(e);
+					e.setAttribute("loc", entry.getKey().toString()); //$NON-NLS-1$
+					e.setAttribute("stamp", entry.getValue().toString()); //$NON-NLS-1$
+				}
+				String xml = DebugPlugin.serializeDocument(doc);
+				IPath libPath = getDefault().getStateLocation();
+				libPath = libPath.append(".install.xml"); //$NON-NLS-1$
+				File file = libPath.toFile();
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				stream = new BufferedOutputStream(new FileOutputStream(file));
+				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			} catch (IOException e) {
+				log(e);
+			}  catch (CoreException e) {
+				log(e);
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e1) {
+					}
+				}
 			}
 		}
 	}
