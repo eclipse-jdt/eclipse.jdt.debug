@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationManagerTests;
+import org.eclipse.jdt.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchDelegateTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
@@ -142,6 +143,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ConfigurationResourceMappingTests.class));
 		addTest(new TestSuite(ConfigurationEncodingTests.class));
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
+		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
 		addTest(new TestSuite(PListParserTests.class));
 		
