@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,20 +17,53 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
+import org.eclipse.ui.texteditor.ITextEditor;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
+
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -55,35 +88,16 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
+
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IEditorStatusLine;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Toggles a line breakpoint in a Java editor.
@@ -93,7 +107,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
 	 */
@@ -225,7 +239,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							int lnumber = locator == null ? ((ITextSelection) selection).getStartLine() + 1 : locator.getLineLocation();
 							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
 							if (existingBreakpoint != null) {
-								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
+								deleteBreakpoint(existingBreakpoint, editor, monitor);
 								return Status.OK_STATUS;
 							}
 							Map attributes = new HashMap(10);
@@ -339,7 +353,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                 }
                                 JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(members[i]), getQualifiedName(type), mname, signature, true, false, false, -1, start, end, 0, true, attributes);
                             } else {
-                            	DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+								deleteBreakpoint(breakpoint, part, monitor);
                             }
                         }
                     }
@@ -383,9 +397,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					if(sel instanceof IStructuredSelection) {
 						IMember member = (IMember)((IStructuredSelection)sel).getFirstElement();
 						IType type = (IType) member;
-						IBreakpoint existing = getClassLoadBreakpoint(type);
+						IJavaBreakpoint existing= getClassLoadBreakpoint(type);
 						if (existing != null) {
-							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existing, true);
+							deleteBreakpoint(existing, part, monitor);
 							return Status.OK_STATUS;
 						}
 						else {
@@ -424,18 +438,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @throws CoreException
      * @since 3.3
      */
-    protected IBreakpoint getClassLoadBreakpoint(IType type) throws CoreException {
+	protected IJavaBreakpoint getClassLoadBreakpoint(IType type) throws CoreException {
     	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
-    	IBreakpoint existing = null;
-    	IJavaBreakpoint breakpoint = null;
     	for (int i = 0; i < breakpoints.length; i++) {
-			breakpoint = (IJavaBreakpoint) breakpoints[i];
+			IJavaBreakpoint breakpoint = (IJavaBreakpoint)breakpoints[i];
 			if (breakpoint instanceof IJavaClassPrepareBreakpoint && getQualifiedName(type).equals(breakpoint.getTypeName())) {
-				existing = breakpoint;
-				break;
+				return breakpoint;
 			}
 		}
-    	return existing;
+		return null;
     }
     	
     /**
@@ -874,7 +885,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                            }
 	                        	JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, start, end, 0, true, attributes);
 	                        } else {
-	                            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+								deleteBreakpoint(breakpoint, part, monitor);
 	                        }
 	                    }
                     }
@@ -1235,7 +1246,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     				IResource resource = BreakpointUtils.getBreakpointResource(declaringType);
 					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, getQualifiedName(declaringType), ts.getStartLine() + 1);
     				if (breakpoint != null) {
-    					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+						deleteBreakpoint(breakpoint, part, null);
     					return;
     				}
     				CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
@@ -1261,6 +1272,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		}
     	}
     }
+
+	/**
+	 * Deletes the given breakpoint using the operation history, which allows to undo the deletion.
+	 * 
+	 * @param breakpoint the breakpoint to delete
+	 * @param part a workbench part, or <code>null</code> if unknown
+	 * @param progressMonitor the progress monitor
+	 * @throws CoreException if the deletion fails
+	 */
+	private static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
+		final Shell shell= part != null ? part.getSite().getShell() : null;
+		DebugUITools.deleteBreakpoints(new IBreakpoint[] { breakpoint }, shell, monitor);
+	}
 
     /*
      * (non-Javadoc)
