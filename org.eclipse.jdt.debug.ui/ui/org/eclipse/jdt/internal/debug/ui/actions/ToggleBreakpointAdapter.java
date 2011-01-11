@@ -26,6 +26,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +40,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -51,6 +56,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -60,6 +66,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
@@ -107,6 +114,10 @@ import org.eclipse.jdt.ui.SharedASTProvider;
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
+	private static final String DO_NOT_PROMPT_KEY= "do_not_prompt"; //$NON-NLS-1$
+	private static final String DIALOG_SECTION_NAME= "ToggleBreakpointAdapter.dialogSectionName"; //$NON-NLS-1$
+
 
 	/**
 	 * Constructor
@@ -441,7 +452,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	protected IJavaBreakpoint getClassLoadBreakpoint(IType type) throws CoreException {
     	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
     	for (int i = 0; i < breakpoints.length; i++) {
-			IJavaBreakpoint breakpoint = (IJavaBreakpoint)breakpoints[i];
+			IJavaBreakpoint breakpoint= (IJavaBreakpoint)breakpoints[i];
 			if (breakpoint instanceof IJavaClassPrepareBreakpoint && getQualifiedName(type).equals(breakpoint.getTypeName())) {
 				return breakpoint;
 			}
@@ -1283,7 +1294,27 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 */
 	private static void deleteBreakpoint(IJavaBreakpoint breakpoint, IWorkbenchPart part, IProgressMonitor monitor) throws CoreException {
 		final Shell shell= part != null ? part.getSite().getShell() : null;
-		DebugUITools.deleteBreakpoints(new IBreakpoint[] { breakpoint }, shell, monitor);
+		final boolean[] result= new boolean[] { true };
+
+		final IDialogSettings settings= DialogSettings.getOrCreateSection(DebugUIPlugin.getDefault().getDialogSettings(), DIALOG_SECTION_NAME);
+		boolean prompt= !settings.getBoolean(DO_NOT_PROMPT_KEY);
+		if (prompt && breakpoint instanceof IJavaLineBreakpoint && ((IJavaLineBreakpoint)breakpoint).getCondition() != null) {
+			Display display= shell != null && !shell.isDisposed() ? shell.getDisplay() : PlatformUI.getWorkbench().getDisplay();
+			if (!display.isDisposed()) {
+				display.syncExec(new Runnable() {
+					public void run() {
+						MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(shell, ActionMessages.ToggleBreakpointAdapter_confirmDeleteTitle,
+								ActionMessages.ToggleBreakpointAdapter_confirmDeleteMessage, ActionMessages.ToggleBreakpointAdapter_confirmDeleteShowAgain, false,
+								null, null);
+						if (dialog.getToggleState())
+							settings.put(DO_NOT_PROMPT_KEY, true);
+						result[0]= dialog.getReturnCode() == IDialogConstants.OK_ID;
+					}
+				});
+			}
+		}
+		if (result[0])
+			DebugUITools.deleteBreakpoints(new IBreakpoint[] { breakpoint }, shell, monitor);
 	}
 
     /*
