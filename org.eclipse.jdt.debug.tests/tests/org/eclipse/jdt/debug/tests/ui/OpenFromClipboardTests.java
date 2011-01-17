@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 IBM Corporation and others.
+ *  Copyright (c) 2010, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -121,6 +121,14 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern("java.util.List.containsAll(Collection<?>)"));
 	}
 
+	public void testMethod_10() {
+		assertEquals(METHOD, getMatachingPattern("A$B.run()"));
+	}
+
+	public void testMethod_11() {
+		assertEquals(METHOD, getMatachingPattern("$.$$()"));
+	}
+
 	// member tests
 	public void testMember_1() {
 		assertEquals(MEMBER, getMatachingPattern("String#getBytes"));
@@ -145,6 +153,18 @@ public class OpenFromClipboardTests extends TestCase {
 
 	public void testQualifiedName_3() {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern("java.lang.String.getBytes"));
+	}
+
+	public void testQualifiedName_4() {
+		assertEquals(QUALIFIED_NAME, getMatachingPattern("$"));
+	}
+
+	public void testQualifiedName_5() {
+		assertEquals(QUALIFIED_NAME, getMatachingPattern("$$"));
+	}
+
+	public void testQualifiedName_6() {
+		assertEquals(QUALIFIED_NAME, getMatachingPattern("A$"));
 	}
 
 	// stack element tests
