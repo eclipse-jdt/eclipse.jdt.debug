@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
  
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.debug.internal.ui.SWTFactory;
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -31,13 +23,28 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+
+import org.eclipse.core.runtime.Preferences;
+
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.internal.ui.SWTFactory;
+
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Preference page for debug preferences that apply specifically to
@@ -73,6 +80,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendDuringEvaluations;
 	private Button fOpenInspector;
 	private Button fPromptUnableToInstallBreakpoint;
+	private Button fPromptDeleteConditionalBreakpoint;
 	private Combo fSuspendVMorThread;
 	private Combo fWatchpoint;
 	
@@ -153,6 +161,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1);
+		fPromptDeleteConditionalBreakpoint= SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint, null, false, 1);
 		
 		setValues();
 		fTimeoutText.setPropertyChangeListener(this);
@@ -190,6 +199,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, fPromptDeleteConditionalBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
 		JDIDebugModel.savePreferences();
 		JavaRuntime.savePreferences();
@@ -218,6 +228,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setStringValue(new Integer(coreStore.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 		fPromptUnableToInstallBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
+		fPromptDeleteConditionalBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 		super.performDefaults();	
 	}
@@ -244,6 +255,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setStringValue(new Integer(coreStore.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
+		fPromptDeleteConditionalBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 	}
 

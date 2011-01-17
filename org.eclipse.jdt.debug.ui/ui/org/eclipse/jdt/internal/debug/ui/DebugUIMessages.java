@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,11 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_Debugger__timeout__2;
 	public static String JavaDebugPreferencePage__Launch_timeout__ms___1;
 	public static String JavaDebugPreferencePage_14;
+	public static String JavaDebugPreferencePage_19;
+	public static String JavaDebugPreferencePage_0;
+	public static String JavaDebugPreferencePage_20;
+	public static String JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint;
+
 
 	public static String JavaDetailFormattersManager_6;
 
@@ -319,7 +324,6 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_5;
 	public static String JDIModelPresentation_6;
 	public static String NoLineNumberAttributesStatusHandler_3;
-	public static String JavaDebugPreferencePage_19;
 	public static String EditLogicalStructureDialog_0;
 	public static String EditLogicalStructureDialog_1;
 	public static String EditLogicalStructureDialog_2;
@@ -357,13 +361,11 @@ public class DebugUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
 
-	public static String JavaDebugPreferencePage_0;
 
 	public static String EditLogicalStructureDialog_32;
 
 	public static String EditLogicalStructureDialog_33;
 
-	public static String JavaDebugPreferencePage_20;
 
 	public static String JavaPrimitivesPreferencePage_0;
 

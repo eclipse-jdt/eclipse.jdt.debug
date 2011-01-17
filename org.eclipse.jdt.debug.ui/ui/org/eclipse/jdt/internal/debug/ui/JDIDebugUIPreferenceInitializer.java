@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -37,6 +40,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, false);
 		

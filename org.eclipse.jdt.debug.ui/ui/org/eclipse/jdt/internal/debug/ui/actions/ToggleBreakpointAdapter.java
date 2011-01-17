@@ -35,14 +35,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -66,7 +66,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
@@ -100,6 +99,7 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -114,9 +114,6 @@ import org.eclipse.jdt.ui.SharedASTProvider;
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
-	private static final String DO_NOT_PROMPT_KEY= "do_not_prompt"; //$NON-NLS-1$
-	private static final String DIALOG_SECTION_NAME= "ToggleBreakpointAdapter.dialogSectionName"; //$NON-NLS-1$
 
 
 	/**
@@ -1296,8 +1293,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		final Shell shell= part != null ? part.getSite().getShell() : null;
 		final boolean[] result= new boolean[] { true };
 
-		final IDialogSettings settings= DialogSettings.getOrCreateSection(DebugUIPlugin.getDefault().getDialogSettings(), DIALOG_SECTION_NAME);
-		boolean prompt= !settings.getBoolean(DO_NOT_PROMPT_KEY);
+		final IEclipsePreferences prefs= InstanceScope.INSTANCE.getNode(JDIDebugUIPlugin.getUniqueIdentifier());
+		boolean prompt= prefs.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, true);
 		if (prompt && breakpoint instanceof IJavaLineBreakpoint && ((IJavaLineBreakpoint)breakpoint).getCondition() != null) {
 			Display display= shell != null && !shell.isDisposed() ? shell.getDisplay() : PlatformUI.getWorkbench().getDisplay();
 			if (!display.isDisposed()) {
@@ -1307,7 +1304,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								ActionMessages.ToggleBreakpointAdapter_confirmDeleteMessage, ActionMessages.ToggleBreakpointAdapter_confirmDeleteShowAgain, false,
 								null, null);
 						if (dialog.getToggleState())
-							settings.put(DO_NOT_PROMPT_KEY, true);
+							prefs.putBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, false);
 						result[0]= dialog.getReturnCode() == IDialogConstants.OK_ID;
 					}
 				});

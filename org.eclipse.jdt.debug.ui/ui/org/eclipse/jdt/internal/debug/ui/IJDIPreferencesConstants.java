@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,4 +223,11 @@ public interface IJDIPreferencesConstants {
 	 * @since 3.3
 	 */
 	public static final String PREF_AUTO_FORMAT_JSTCONSOLE = IJavaDebugUIConstants.PLUGIN_ID + ".auto_format_jstconsole"; //$NON-NLS-1$;
+
+	/**
+	 * Boolean preference controlling whether to prompt with a dialog when deleting a conditional
+	 * breakpoint.
+	 */
+	public static final String PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT= IJavaDebugUIConstants.PLUGIN_ID + ".prompt_delete_conditional_breakpoint"; //$NON-NLS-1$
+
 }
