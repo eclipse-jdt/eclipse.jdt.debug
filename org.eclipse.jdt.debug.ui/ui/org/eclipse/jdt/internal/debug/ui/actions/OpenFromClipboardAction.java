@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Pattern to match a simple name e.g. <code>OpenFromClipboardAction</code>
 	 */
-	private static final String SIMPLE_NAME_PATTERN = "\\w+"; //$NON-NLS-1$
+	private static final String SIMPLE_NAME_PATTERN = "[\\w\\$]+"; //$NON-NLS-1$
 
 	/**
 	 * Pattern to match a qualified name e.g.
@@ -272,7 +272,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		case STACK_TRACE_LINE: {
 			int index1 = s.indexOf('(');
 			int index2 = s.indexOf(')');
-			String typeLine = s.substring(index1 + 1, index2);
+			String typeLine = s.substring(index1 + 1, index2).trim();
 			int index = typeLine.indexOf(':');
 			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
