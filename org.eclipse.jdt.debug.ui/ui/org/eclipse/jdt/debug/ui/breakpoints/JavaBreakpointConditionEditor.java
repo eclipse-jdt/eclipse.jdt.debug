@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,40 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.breakpoints;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+import java.util.StringTokenizer;
+
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
-import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
-import org.eclipse.jdt.ui.text.IJavaPartitions;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.TextViewerUndoManager;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.source.ISourceViewer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -56,13 +29,60 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IMarker;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.TextViewerUndoManager;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.source.ISourceViewer;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
+import org.eclipse.debug.internal.ui.SWTFactory;
+
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IType;
+
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
+import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
+
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 
 /**
  * Controls to edit a breakpoint's conditional expression, condition enabled state,
@@ -85,33 +105,64 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * @since 3.5
  */
 public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointEditor {
-	
+
 	private Button fConditional;
 	private Button fWhenTrue;
 	private Button fWhenChange;
+
 	private JDISourceViewer fViewer;
 	private IContentAssistProcessor fCompletionProcessor;	
 	private IJavaLineBreakpoint fBreakpoint;
 	private IHandlerService fHandlerService;
 	private IHandler fHandler;
 	private IHandlerActivation fActivation;
-    private IDocumentListener fDocumentListener;	
-    
-    /**
-     * Property id for breakpoint condition expression.
-     */
-    public static final int PROP_CONDITION = 0x1001;
-    
-    /**
-     * Property id for breakpoint condition enabled state.
-     */
-    public static final int PROP_CONDITION_ENABLED = 0x1002;
-    
-    /**
-     * Property id for breakpoint condition suspend policy.
-     */
-    public static final int PROP_CONDITION_SUSPEND_POLICY = 0x1003;
-	
+
+	private IDocumentListener fDocumentListener;
+
+	private Combo fConditionHistory;
+	private IDialogSettings fConditionHistoryDialogSettings;
+	private boolean fReplaceConditionInHistory;
+	private Map fLocalConditionHistory;
+
+	/**
+	 * Property id for breakpoint condition expression.
+	 */
+	public static final int PROP_CONDITION= 0x1001;
+
+	/**
+	 * Property id for breakpoint condition enabled state.
+	 */
+	public static final int PROP_CONDITION_ENABLED= 0x1002;
+
+	/**
+	 * Property id for breakpoint condition suspend policy.
+	 */
+	public static final int PROP_CONDITION_SUSPEND_POLICY= 0x1003;
+
+
+	private static final int MAX_HISTORY_SIZE= 10;
+	private static final String DS_SECTION_CONDITION_HISTORY= "conditionHistory"; //$NON-NLS-1$
+	private static final String DS_KEY_HISTORY_ENTRY_COUNT= "conditionHistoryEntryCount"; //$NON-NLS-1$
+	private static final String DS_KEY_HISTORY_ENTRY_PREFIX= "conditionHistoryEntry_"; //$NON-NLS-1$
+
+
+	/**
+	 * Creates a new Java breakpoint condition editor.
+	 */
+	public JavaBreakpointConditionEditor() {
+	}
+
+	/**
+	 * Creates a new Java breakpoint condition editor with a history drop-down list.
+	 * 
+	 * @param dialogSettings the dialog settings for the condition history or <code>null</code> to
+	 *            use the default settings (i.e. those used by JDT Debug)
+	 * @since 3.6
+	 */
+	public JavaBreakpointConditionEditor(IDialogSettings dialogSettings) {
+		fConditionHistoryDialogSettings= dialogSettings != null ? dialogSettings : DialogSettings.getOrCreateSection(JDIDebugUIPlugin.getDefault().getDialogSettings(), DS_SECTION_CONDITION_HISTORY);
+	}
+
 	/**
 	 * Adds the given property listener to this editor. Property changes
 	 * are reported on the breakpoint being edited. Property identifiers
@@ -140,17 +191,24 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	public void setInput(Object input) throws CoreException {
 		try {
+			boolean sameBreakpoint= fBreakpoint == input;
 			suppressPropertyChanges(true);
 			if (input instanceof IJavaLineBreakpoint) {
 				setBreakpoint((IJavaLineBreakpoint)input);
 			} else {
 				setBreakpoint(null);
 			}
+			if (hasConditionHistory()) {
+				if (!sameBreakpoint)
+					fReplaceConditionInHistory= false;
+				initializeConditionHistoryDropDown();
+			}
 		} finally {
 			suppressPropertyChanges(false);
 		}
 	}
 	
+
 	/**
 	 * Sets the breakpoint to edit. Has no effect if the breakpoint responds
 	 * <code>false</code> to {@link IJavaLineBreakpoint#supportsCondition()}.
@@ -218,12 +276,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fViewer.setUndoManager(new TextViewerUndoManager(10));
 		fViewer.getUndoManager().connect(fViewer);
 		fDocumentListener = new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {
-            }
-            public void documentChanged(DocumentEvent event) {
-            	setDirty(PROP_CONDITION);
-            }
-        };
+			public void documentAboutToBeChanged(DocumentEvent event) {
+			}
+			public void documentChanged(DocumentEvent event) {
+				setDirty(PROP_CONDITION);
+			}
+		};
 		fViewer.getDocument().addDocumentListener(fDocumentListener);
 		fConditional.setEnabled(controlsEnabled);
 		fConditional.setSelection(conditionEnabled);
@@ -270,7 +328,21 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
 		});
-				
+
+		if (fConditionHistoryDialogSettings != null) {
+			fLocalConditionHistory= new HashMap();
+			fConditionHistory= SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
+			initializeConditionHistoryDropDown();
+			fConditionHistory.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					int selectionIndex= fConditionHistory.getSelectionIndex();
+					if (selectionIndex > 0)
+						fViewer.getDocument().set(getConditionHistory()[selectionIndex - 1]);
+				}
+			});
+			fLocalConditionHistory= new HashMap(10);
+		}
+
 		fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fViewer.setEditable(false);
 		ControlDecoration decoration = new ControlDecoration(fViewer.getControl(), SWT.TOP | SWT.LEFT);
@@ -343,6 +415,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			fBreakpoint.setConditionEnabled(fConditional.getSelection());
 			fBreakpoint.setConditionSuspendOnTrue(fWhenTrue.getSelection());
 			setDirty(false);
+			if (hasConditionHistory())
+				updateConditionHistories();
 		}
 	}
 	
@@ -401,10 +475,10 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param enabled whether to enable
 	 */
 	private void setEnabled(boolean enabled, boolean focus) {
-	    fViewer.setEditable(enabled);
-	    fViewer.getTextWidget().setEnabled(enabled);
-	    fWhenChange.setEnabled(enabled);
-	    fWhenTrue.setEnabled(enabled);
+		fViewer.setEditable(enabled);
+		fViewer.getTextWidget().setEnabled(enabled);
+		fWhenChange.setEnabled(enabled);
+		fWhenTrue.setEnabled(enabled);
 		if (enabled) {
 			fViewer.updateViewerColors();
 			if (focus) {
@@ -414,6 +488,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			Color color = fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fViewer.getTextWidget().setBackground(color);			
 		}
+		if (hasConditionHistory())
+			fConditionHistory.setEnabled(enabled);
 	}
 
 	/**
@@ -424,4 +500,139 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	public Object getInput() {
 		return fBreakpoint;
 	}
+
+
+	/**
+	 * Tells whether this editor shows a condition history drop-down list.
+	 * 
+	 * @return <code>true</code> if this editor shows a condition history drop-down list,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean hasConditionHistory() {
+		return fConditionHistory != null;
+	}
+
+	/**
+	 * Initializes the condition history drop-down with values.
+	 */
+	private void initializeConditionHistoryDropDown() {
+		fConditionHistory.setItems(getConditionHistoryLabels());
+		String userHint= PropertyPageMessages.JavaBreakpointConditionEditor_choosePreviousCondition;
+		fConditionHistory.add(userHint, 0);
+		fConditionHistory.setText(userHint);
+	}
+
+	/**
+	 * Returns the condition history labels for the current breakpoint.
+	 * 
+	 * @return an array of strings containing the condition history labels
+	 */
+	private String[] getConditionHistoryLabels() {
+		String[] conditions= getConditionHistory();
+		String[] labels= new String[conditions.length];
+		for (int i= 0; i < conditions.length; i++) {
+			labels[i]= new StringTokenizer(conditions[i], "\n\r").nextToken(); //$NON-NLS-1$
+		}
+		return labels;
+	}
+
+	/**
+	 * Returns the condition history entries for the current breakpoint.
+	 * 
+	 * @return an array of strings containing the history of conditions
+	 */
+	private String[] getConditionHistory() {
+		// Get global history
+		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
+
+		// Get local history
+		Stack localHistory= (Stack)fLocalConditionHistory.get(fBreakpoint);
+		if (localHistory == null) {
+			return globalItems;
+		}
+
+		// Create combined history 
+		int size= Math.min(localHistory.size(), MAX_HISTORY_SIZE);
+		int globalStartIndex= fReplaceConditionInHistory ? 1 : 0;
+		String[] historyItems= new String[size + globalItems.length - globalStartIndex];
+		for (int i= 0; i < size; i++) {
+			historyItems[i]= (String)localHistory.get(localHistory.size() - i - 1);
+		}
+		System.arraycopy(globalItems, globalStartIndex, historyItems, size, globalItems.length - globalStartIndex);
+		return historyItems;
+	}
+
+	/**
+	 * Updates the local and global condition histories.
+	 */
+	private void updateConditionHistories() {
+		String newItem= fViewer.getDocument().get();
+
+		// Update local history
+		Stack localHistory= (Stack)fLocalConditionHistory.get(fBreakpoint);
+		if (localHistory == null) {
+			localHistory= new Stack();
+			fLocalConditionHistory.put(fBreakpoint, localHistory);
+		}
+		if (localHistory.isEmpty() || !newItem.equals(localHistory.peek()))
+			localHistory.push(newItem);
+
+		// Update global history
+		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
+		if (globalItems.length > 0 && newItem.equals(globalItems[0]))
+			return;
+
+		if (!fReplaceConditionInHistory) {
+			String[] tempItems= new String[globalItems.length + 1];
+			System.arraycopy(globalItems, 0, tempItems, 1, globalItems.length);
+			globalItems= tempItems;
+		} else if (globalItems.length == 0) {
+			globalItems= new String[1];
+		}
+		fReplaceConditionInHistory= true;
+		globalItems[0]= newItem;
+		storeConditionHistory(globalItems, fConditionHistoryDialogSettings);
+	}
+
+	/**
+	 * Reads the condition history from the given dialog settings.
+	 * 
+	 * @param dialogSettings the dialog settings
+	 * @return
+	 */
+	private static String[] readConditionHistory(IDialogSettings dialogSettings) {
+		int count= 0;
+		try {
+			count= dialogSettings.getInt(DS_KEY_HISTORY_ENTRY_COUNT);
+		} catch (NumberFormatException ex) {
+			// No history yet
+		}
+		count= Math.min(count, MAX_HISTORY_SIZE);
+		String[] conditions= new String[count];
+		for (int i= 0; i < count; i++) {
+			conditions[i]= dialogSettings.get(DS_KEY_HISTORY_ENTRY_PREFIX + i);
+		}
+		return conditions;
+	}
+
+	/**
+	 * Writes the given conditions into the given dialog settings.
+	 * 
+	 * @param conditions an array of strings containing the conditions
+	 * @param dialogSettings the dialog settings
+	 */
+	private static void storeConditionHistory(String[] conditions, IDialogSettings dialogSettings) {
+		int length= Math.min(conditions.length, MAX_HISTORY_SIZE);
+		int count= 0;
+		outer: for (int i= 0; i < length; i++) {
+			for (int j= 0; j < i; j++) {
+				if (conditions[i].equals(conditions[j]))
+					break outer;
+			}
+			dialogSettings.put(DS_KEY_HISTORY_ENTRY_PREFIX + count, conditions[i]);
+			count= count + 1;
+		}
+		dialogSettings.put(DS_KEY_HISTORY_ENTRY_COUNT, count);
+	}
+
 }
