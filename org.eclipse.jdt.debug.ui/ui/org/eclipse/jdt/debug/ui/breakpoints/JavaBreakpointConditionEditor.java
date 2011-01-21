@@ -472,7 +472,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	/**
 	 * Enables controls based on whether the breakpoint's condition is enabled.
 	 * 
-	 * @param enabled whether to enable
+	 * @param enabled <code>true</code> if enabled, <code>false</code> otherwise
+	 * @param focus <code>true</code> if focus should be set, <code>false</code> otherwise
 	 */
 	private void setEnabled(boolean enabled, boolean focus) {
 		fViewer.setEditable(enabled);
@@ -567,6 +568,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	private void updateConditionHistories() {
 		String newItem= fViewer.getDocument().get();
+		if (newItem.length() == 0)
+			return;
 
 		// Update local history
 		Stack localHistory= (Stack)fLocalConditionHistory.get(fBreakpoint);
@@ -574,8 +577,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			localHistory= new Stack();
 			fLocalConditionHistory.put(fBreakpoint, localHistory);
 		}
-		if (localHistory.isEmpty() || !newItem.equals(localHistory.peek()))
-			localHistory.push(newItem);
+
+		localHistory.remove(newItem);
+		localHistory.push(newItem);
 
 		// Update global history
 		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
@@ -598,7 +602,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Reads the condition history from the given dialog settings.
 	 * 
 	 * @param dialogSettings the dialog settings
-	 * @return
+	 * @return the condition history
 	 */
 	private static String[] readConditionHistory(IDialogSettings dialogSettings) {
 		int count= 0;
