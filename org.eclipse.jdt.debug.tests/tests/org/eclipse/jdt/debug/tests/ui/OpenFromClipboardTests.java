@@ -10,9 +10,26 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.ui;
 
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.List;
 
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Tests the Open from Clipboard action.
@@ -42,146 +59,488 @@ public class OpenFromClipboardTests extends TestCase {
 
 	private static final int METHOD_JAVADOC_REFERENCE = 9;
 
+	private IPackageFragmentRoot fSourceFolder;
+
+	private Accessor fAccessor = new Accessor(OpenFromClipboardAction.class);
+
+	private static class MyTestSetup extends TestSetup {
+
+		public static IJavaProject fJProject;
+
+		public MyTestSetup(Test test) {
+			super(test);
+		}
+
+		protected void setUp() throws Exception {
+			super.setUp();
+			fJProject = createProject("OpenFromClipboardTests");
+		}
+
+		protected void tearDown() throws Exception {
+			fJProject.getProject().delete(true, true, null);
+			super.tearDown();
+		}
+
+		private static IJavaProject createProject(String name) throws CoreException {
+			// delete any pre-existing project
+			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (pro.exists()) {
+				pro.delete(true, true, null);
+			}
+
+			// create project
+			IJavaProject javaProject = JavaProjectHelper.createJavaProject(name, "bin");
+
+			// add rt.jar
+			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+			assertNotNull("No default JRE", vm);
+			JavaProjectHelper.addContainerEntry(javaProject, new Path(JavaRuntime.JRE_CONTAINER));
+			return javaProject;
+		}
+	}
+
+	public static Test suite() {
+		return new MyTestSetup(new TestSuite(OpenFromClipboardTests.class));
+	}
+
+	public static Test setUpTest(Test someTest) {
+		return new MyTestSetup(someTest);
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		fSourceFolder = JavaProjectHelper.addSourceContainer(MyTestSetup.fJProject, "src");
+	}
+
+	protected void tearDown() throws Exception {
+		JavaProjectHelper.removeSourceContainer(MyTestSetup.fJProject, "src");
+		super.tearDown();
+	}
+
 	private int getMatachingPattern(String s) {
-		return OpenFromClipboardAction.getMatchingPattern(s);
+		Object returnValue = fAccessor.invoke("getMatchingPattern", new Object[] { s });
+		return ((Integer) returnValue).intValue();
+	}
+
+	private List getJavaElementMatches(String textData) {
+		List matches = new ArrayList();
+		fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] { textData, matches });
+		return matches;
 	}
 
 	// type tests
-	public void testClassFileLine_1() {
-		assertEquals(JAVA_FILE_LINE, getMatachingPattern("Foo.java:100"));
+	private void setupTypeTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboardTests {\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
-	public void testClassFileLine_2() {
-		assertEquals(JAVA_FILE_LINE, getMatachingPattern("Foo.java : 100"));
+	private void setupTypeWithDollarSignTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboard$Tests {\n");
+		buf.append("	void getMatching$Pattern(){\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
 	}
 
-	public void testClassFile_1() {
-		assertEquals(JAVA_FILE, getMatachingPattern("Foo.java"));
+	public void testClassFileLine_1() throws Exception {
+		String s = "OpenFromClipboardTests.java:100";
+		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testTypeLine_1() {
-		assertEquals(TYPE_LINE, getMatachingPattern("Foo:100"));
+	public void testClassFileLine_2() throws Exception {
+		String s = "OpenFromClipboardTests.java : 100";
+		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testTypeLine_2() {
-		assertEquals(TYPE_LINE, getMatachingPattern("Foo : 100"));
+	public void testClassFileLine_3() throws Exception {
+		String s = "OpenFromClipboard$Tests.java:100";
+		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
+
+		setupTypeWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testClassFile_1() throws Exception {
+		String s = "OpenFromClipboardTests.java";
+		assertEquals(JAVA_FILE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testTypeLine_1() throws Exception {
+		String s = "OpenFromClipboardTests:100";
+		assertEquals(TYPE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testTypeLine_2() throws Exception {
+		String s = "OpenFromClipboardTests : 100";
+		assertEquals(TYPE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// stack trace element tests
-	public void testStackTraceLine_1() {
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern("(OpenFromClipboardAction.java:121)"));
+	public void testStackTraceLine_1() throws Exception {
+		String s = "(OpenFromClipboardTests.java:121)";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testStackTraceLine_2() {
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern("( OpenFromClipboardAction.java : 121 )"));
+	public void testStackTraceLine_2() throws Exception {
+		String s = "( OpenFromClipboardTests.java : 121 )";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testStackTraceLine_3() {
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern("at org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction.getMatchingPattern(OpenFromClipboardAction.java:121)"));
+	public void testStackTraceLine_3() throws Exception {
+		String s = "at p.OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testStackTraceLine_4() {
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern("OpenFromClipboardAction.getMatchingPattern(OpenFromClipboardAction.java:121)"));
+	public void testStackTraceLine_4() throws Exception {
+		String s = "OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testStackTraceLine_5() {
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern("OpenFromClipboardAction.getMatchingPattern ( OpenFromClipboardAction.java : 121 )"));
+	public void testStackTraceLine_5() throws Exception {
+		String s = "OpenFromClipboardTests.getMatchingPattern ( OpenFromClipboardTests.java : 121 )";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testStackTraceLine_6() throws Exception {
+		String s = "at p.OpenFromClipboard$Tests.getMatching$Pattern(OpenFromClipboardTests.java:121)";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// method tests
-	public void testMethod_1() {
-		assertEquals(METHOD, getMatachingPattern("getBytes()"));
+	private void setupMethodTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboardTests {\n");
+		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
+		buf.append("	}\n");
+		buf.append("	private void invokeOpenFromClipboardCommand(String s) {\n");
+		buf.append("	}\n");
+		buf.append("	private void invokeOpenFromClipboardCommand(String s, int[] a, int b) {\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
-	public void testMethod_2() {
-		assertEquals(METHOD, getMatachingPattern("getBytes(String, int[], int)"));
+	public void testMethod_1() throws Exception {
+		String s = "invokeOpenFromClipboardCommand()";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_3() {
-		assertEquals(METHOD, getMatachingPattern("String.getBytes()"));
+	public void testMethod_2() throws Exception {
+		String s = "invokeOpenFromClipboardCommand(String, int[], int)";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_4() {
-		assertEquals(METHOD, getMatachingPattern("String.getBytes(String, int[], int)"));
+	public void testMethod_3() throws Exception {
+		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand()";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_5() {
-		assertEquals(METHOD, getMatachingPattern("java.lang.String.getBytes()"));
+	public void testMethod_4() throws Exception {
+		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand(String, int[], int)";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_6() {
-		assertEquals(METHOD, getMatachingPattern("java.lang.String.getBytes(String)"));
+	public void testMethod_5() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand()";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_7() {
-		assertEquals(METHOD, getMatachingPattern("java.lang.String.getBytes(String, int[], int)"));
+	public void testMethod_6() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(String)";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_8() {
-		assertEquals(METHOD, getMatachingPattern("java.util.List.containsAll(Collection<?>)"));
+	public void testMethod_7() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(String, int[], int)";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMethod_10() {
-		assertEquals(METHOD, getMatachingPattern("A$B.run()"));
+	public void testMethod_8() throws Exception {
+		String s = "java.util.List.containsAll(Collection<?>)";
+		assertEquals(METHOD, getMatachingPattern(s));
 	}
 
-	public void testMethod_11() {
-		assertEquals(METHOD, getMatachingPattern("$.$$()"));
+	private void setupMethodWithDollarSignTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboard$Tests {\n");
+		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
+		buf.append("	}\n");
+		buf.append("	private void invokeOpenFromClipboardCommand(String s) {\n");
+		buf.append("	}\n");
+		buf.append("	class Inner {\n");
+		buf.append("		private void invokeOpenFromClipboardCommand() {\n");
+		buf.append("		}\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		buf.append("class $ {\n");
+		buf.append("	void $$() {\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
+	}
+
+	public void testMethod_9() throws Exception {
+		String s = "OpenFromClipboard$Tests.invokeOpenFromClipboardCommand()";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		// TODO: This currently fails. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=333948
+		// setupMethodWithDollarSignTest();
+		// performTest(s,1);
+	}
+
+	public void testMethod_10() throws Exception {
+		String s = "OpenFromClipboard$Tests.invokeOpenFromClipboardCommand(String)";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testMethod_11() throws Exception {
+		String s = "$.$$()";
+		assertEquals(METHOD, getMatachingPattern(s));
+
+		setupMethodWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// member tests
-	public void testMember_1() {
-		assertEquals(MEMBER, getMatachingPattern("String#getBytes"));
+	private void setupMemberTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboardTests {\n");
+		buf.append("	private void invokeOpenFromClipboardCommand(String s) {\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
-	public void testMember_2() {
-		assertEquals(MEMBER, getMatachingPattern("java.lang.String#getBytes"));
+	public void testMember_1() throws Exception {
+		String s = "OpenFromClipboardTests#invokeOpenFromClipboardCommand";
+		assertEquals(MEMBER, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testMember_3() {
-		assertEquals(METHOD_JAVADOC_REFERENCE, getMatachingPattern("java.lang.String#getBytes(String)"));
+	public void testMember_2() throws Exception {
+		String s = "p.OpenFromClipboardTests#invokeOpenFromClipboardCommand";
+		assertEquals(MEMBER, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testMember_3() throws Exception {
+		String s = "p.OpenFromClipboardTests#invokeOpenFromClipboardCommand(String)";
+		assertEquals(METHOD_JAVADOC_REFERENCE, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// qualified name tests
-	public void testQualifiedName_1() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("getBytes"));
+	public void testQualifiedName_1() throws Exception {
+		String s = "invokeOpenFromClipboardCommand";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testQualifiedName_2() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("String.getBytes"));
+	public void testQualifiedName_2() throws Exception {
+		String s = "OpenFromClipboardTests.invokeOpenFromClipboardCommand";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testQualifiedName_3() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("java.lang.String.getBytes"));
+	public void testQualifiedName_3() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupMemberTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testQualifiedName_4() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("$"));
+	private void setupQualifiedNameWithDollarSignTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboard$Tests {\n");
+		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
+		buf.append("	}\n");
+		buf.append("	class Inner {\n");
+		buf.append("		private void invokeOpenFromClipboardCommand() {\n");
+		buf.append("		}\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		buf.append("class $ {\n");
+		buf.append("}\n");
+		buf.append("class $$ {\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
 	}
 
-	public void testQualifiedName_5() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("$$"));
+	public void testQualifiedName_4() throws Exception {
+		String s = "$";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupQualifiedNameWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
-	public void testQualifiedName_6() {
-		assertEquals(QUALIFIED_NAME, getMatachingPattern("A$"));
+	public void testQualifiedName_5() throws Exception {
+		String s = "$$";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupQualifiedNameWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testQualifiedName_6() throws Exception {
+		String s = "OpenFromClipboard$Tests";
+		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
+
+		setupQualifiedNameWithDollarSignTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// stack element tests
-	public void testStackElement_1() {
-		assertEquals(STACK, getMatachingPattern("java.lang.String.valueOf(char) line: 1456"));
+	private void setupStackElementTest() throws JavaModelException {
+		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf = new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class OpenFromClipboardTests {\n");
+		buf.append("	private void invokeOpenFromClipboardCommand(char ch) {\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
 	}
 
-	public void testStackElement_2() {
-		assertEquals(STACK, getMatachingPattern("java.lang.String.valueOf(char): 1456"));
+	public void testStackElement_1() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(char) line: 1456";
+		assertEquals(STACK, getMatachingPattern(s));
+
+		setupStackElementTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testStackElement_2() throws Exception {
+		String s = "p.OpenFromClipboardTests.invokeOpenFromClipboardCommand(char): 1456";
+		assertEquals(STACK, getMatachingPattern(s));
+
+		setupStackElementTest();
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
 	}
 
 	// invalid pattern tests
 	public void testInvalidPattern_1() {
-		assertEquals(INVALID, getMatachingPattern("(Collection)"));
+		String s = "(Collection)";
+		assertEquals(INVALID, getMatachingPattern(s));
 	}
 
 	public void testInvalidPattern_2() {
-		assertEquals(INVALID, getMatachingPattern("()"));
+		String s = "()";
+		assertEquals(INVALID, getMatachingPattern(s));
 	}
 }
