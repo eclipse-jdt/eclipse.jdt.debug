@@ -13,7 +13,7 @@ package org.eclipse.jdt.debug.ui.breakpoints;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
@@ -27,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -123,6 +124,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private IDialogSettings fConditionHistoryDialogSettings;
 	private boolean fReplaceConditionInHistory;
 	private Map fLocalConditionHistory;
+	private int fSeparatorIndex;
 
 	/**
 	 * Property id for breakpoint condition expression.
@@ -138,12 +140,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Property id for breakpoint condition suspend policy.
 	 */
 	public static final int PROP_CONDITION_SUSPEND_POLICY= 0x1003;
-
-
+	
 	private static final int MAX_HISTORY_SIZE= 10;
 	private static final String DS_SECTION_CONDITION_HISTORY= "conditionHistory"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_COUNT= "conditionHistoryEntryCount"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_PREFIX= "conditionHistoryEntry_"; //$NON-NLS-1$
+	private static final Pattern NEWLINE_PATTERN= Pattern.compile("\r\n|\r|\n"); //$NON-NLS-1$;
 
 
 	/**
@@ -335,11 +337,14 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			initializeConditionHistoryDropDown();
 			fConditionHistory.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					int selectionIndex= fConditionHistory.getSelectionIndex();
-					if (selectionIndex > 0)
-						fViewer.getDocument().set(getConditionHistory()[selectionIndex - 1]);
+					int historyIndex= fConditionHistory.getSelectionIndex() - 1;
+					if (historyIndex >= 0 && historyIndex != fSeparatorIndex)
+						fViewer.getDocument().set(getConditionHistory()[historyIndex]);
 				}
 			});
+			GridData data= new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint= 10;
+			fConditionHistory.setLayoutData(data);
 			fLocalConditionHistory= new HashMap(10);
 		}
 
@@ -532,7 +537,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		String[] conditions= getConditionHistory();
 		String[] labels= new String[conditions.length];
 		for (int i= 0; i < conditions.length; i++) {
-			labels[i]= new StringTokenizer(conditions[i], "\n\r").nextToken(); //$NON-NLS-1$
+			labels[i]= NEWLINE_PATTERN.matcher(conditions[i]).replaceAll(" "); //$NON-NLS-1$
 		}
 		return labels;
 	}
@@ -543,6 +548,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @return an array of strings containing the history of conditions
 	 */
 	private String[] getConditionHistory() {
+		fSeparatorIndex= -1;
+
 		// Get global history
 		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
 
@@ -553,13 +560,14 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		}
 
 		// Create combined history 
-		int size= Math.min(localHistory.size(), MAX_HISTORY_SIZE);
-		int globalStartIndex= fReplaceConditionInHistory ? 1 : 0;
-		String[] historyItems= new String[size + globalItems.length - globalStartIndex];
-		for (int i= 0; i < size; i++) {
+		int localHistorySize= Math.min(localHistory.size(), MAX_HISTORY_SIZE);
+		String[] historyItems= new String[localHistorySize + globalItems.length + 1];
+		for (int i= 0; i < localHistorySize; i++) {
 			historyItems[i]= (String)localHistory.get(localHistory.size() - i - 1);
 		}
-		System.arraycopy(globalItems, globalStartIndex, historyItems, size, globalItems.length - globalStartIndex);
+		fSeparatorIndex= localHistorySize;
+		historyItems[localHistorySize]= getSeparatorLabel();
+		System.arraycopy(globalItems, 0, historyItems, localHistorySize + 1, globalItems.length);
 		return historyItems;
 	}
 
@@ -639,4 +647,35 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		dialogSettings.put(DS_KEY_HISTORY_ENTRY_COUNT, count);
 	}
 
+	/**
+	 * Returns the label for the history separator.
+	 * 
+	 * @return the label for the history separator
+	 */
+	private String getSeparatorLabel() {
+		int borderWidth= fConditionHistory.computeTrim(0, 0, 0, 0).width;
+		Rectangle rect= fConditionHistory.getBounds();
+		int width= rect.width - borderWidth;
+
+		GC gc= new GC(fConditionHistory);
+		gc.setFont(fConditionHistory.getFont());
+
+		int fSeparatorWidth= gc.getAdvanceWidth('-');
+		String separatorLabel= PropertyPageMessages.JavaBreakpointConditionEditor_historySeparator;
+		int fMessageLength= gc.textExtent(separatorLabel).x;
+
+		gc.dispose();
+
+		StringBuffer dashes= new StringBuffer();
+		int chars= (((width - fMessageLength) / fSeparatorWidth) / 2) - 2;
+		for (int i= 0; i < chars; i++) {
+			dashes.append('-');
+		}
+
+		StringBuffer result= new StringBuffer();
+		result.append(dashes);
+		result.append(" " + separatorLabel + " "); //$NON-NLS-1$//$NON-NLS-2$
+		result.append(dashes);
+		return result.toString().trim();
+	}
 }
