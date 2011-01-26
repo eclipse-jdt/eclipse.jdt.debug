@@ -41,6 +41,7 @@ public class PropertyPageMessages extends NLS {
 	public static String JavaBreakpointConditionEditor_1;
 	public static String JavaBreakpointConditionEditor_2;
 	public static String JavaBreakpointConditionEditor_choosePreviousCondition;
+	public static String JavaBreakpointConditionEditor_historySeparator;
 
 	public static String JavaBreakpointPage_0;
 	public static String JavaBreakpointPage_10;
