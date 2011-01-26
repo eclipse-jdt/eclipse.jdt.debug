@@ -30,6 +30,7 @@ import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests the Open from Clipboard action.
@@ -122,9 +123,13 @@ public class OpenFromClipboardTests extends TestCase {
 		return ((Integer) returnValue).intValue();
 	}
 
-	private List getJavaElementMatches(String textData) {
-		List matches = new ArrayList();
-		fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] { textData, matches });
+	private List getJavaElementMatches(final String textData) {
+		final List matches = new ArrayList();
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] { textData, matches });
+			}
+		});
 		return matches;
 	}
 

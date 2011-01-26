@@ -279,8 +279,8 @@ public class AutomatedSuite extends DebugSuite {
 	// Variables View Detail Pane tests
 		addTest(new TestSuite(DetailPaneManagerTests.class));
 
-	// Open from Clipboard action tests
-		addTest(new TestSuite(OpenFromClipboardTests.class));
+	// Open from Clipboard action tests - Need to use #suite() because the test has a custom setup
+		addTest(OpenFromClipboardTests.suite());
 	}
 	
 	protected static boolean isJ2SE15Compatible() {
