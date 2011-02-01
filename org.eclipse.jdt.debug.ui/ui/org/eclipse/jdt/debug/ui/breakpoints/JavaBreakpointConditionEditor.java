@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.operations.IUndoContext;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -44,6 +45,7 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IMarker;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -56,15 +58,27 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.TextViewerUndoManager;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -115,8 +129,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private IContentAssistProcessor fCompletionProcessor;	
 	private IJavaLineBreakpoint fBreakpoint;
 	private IHandlerService fHandlerService;
-	private IHandler fHandler;
-	private IHandlerActivation fActivation;
+	private IHandler fContentAssistHandler;
+	private IHandlerActivation fContentAssistActivation;
+	private IHandler fUndoHandler;
+	private IHandlerActivation fUndoActivation;
+	private IHandler fRedoHandler;
+	private IHandlerActivation fRedoActivation;
 
 	private IDocumentListener fDocumentListener;
 
@@ -125,6 +143,13 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private boolean fReplaceConditionInHistory;
 	private Map fLocalConditionHistory;
 	private int fSeparatorIndex;
+
+	private IViewSite fBreakpointsViewSite;
+	private IAction fViewUndoAction;
+	private IAction fViewRedoAction;
+	private OperationHistoryActionHandler fViewerUndoAction;
+	private OperationHistoryActionHandler fViewerRedoAction;
+
 
 	/**
 	 * Property id for breakpoint condition expression.
@@ -269,14 +294,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			context = new TypeContext(type, position);
 		}
 		fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
+		document.set((condition == null ? "" : condition)); //$NON-NLS-1$
 		fViewer.configure(new DisplayViewerConfiguration() {
 			public IContentAssistProcessor getContentAssistantProcessor() {
 					return fCompletionProcessor;
 			}
 		});
-		document.set((condition == null ? "" : condition)); //$NON-NLS-1$
-		fViewer.setUndoManager(new TextViewerUndoManager(10));
-		fViewer.getUndoManager().connect(fViewer);
 		fDocumentListener = new IDocumentListener() {
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
@@ -291,6 +314,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fWhenChange.setSelection(!whenTrue);
 		setEnabled(conditionEnabled && breakpoint != null && breakpoint.supportsCondition(), false);
 		setDirty(false);
+		checkIfUsedInBreakpointsView();
+		registerViewerUndoRedoActions();
 	}
 	
 	/**
@@ -364,19 +389,31 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		gd.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, 40);
 		gc.dispose();
 		fViewer.getControl().setLayoutData(gd);
-		fHandler = new AbstractHandler() {
+		fContentAssistHandler= new AbstractHandler() {
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				return null;
+			}
+		};
+		fUndoHandler= new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+				fViewer.doOperation(ITextOperationTarget.UNDO);
+				return null;
+			}
+		};
+		fRedoHandler= new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+				fViewer.doOperation(ITextOperationTarget.REDO);
 				return null;
 			}
 		};
 		fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		fViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
-				activateContentAssist();
+				activateHandlers();
 			}
 			public void focusLost(FocusEvent e) {
-				deactivateContentAssist();
+				deactivateHandlers();
 			}				
 		});
 		parent.addDisposeListener(new DisposeListener() {
@@ -393,7 +430,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	protected void dispose() {
 		super.dispose();
-		deactivateContentAssist();
+		deactivateHandlers();
 		if (fDocumentListener != null) {
 			fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		}
@@ -463,17 +500,49 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		super.setMnemonics(mnemonics);
 	}
 	
-	private void activateContentAssist() {
-		fActivation = fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fHandler);
+	private void activateHandlers() {
+		fContentAssistActivation= fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fContentAssistHandler);
+		checkIfUsedInBreakpointsView();
+		if (fBreakpointsViewSite == null) {
+			fUndoActivation= fHandlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, fUndoHandler);
+			fRedoActivation= fHandlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, fRedoHandler);
+		} else
+			registerViewerUndoRedoActions();
 	}
 
-	private void deactivateContentAssist() {
-		if(fActivation != null) {
-			fHandlerService.deactivateHandler(fActivation);
-			fActivation = null;
+	private void deactivateHandlers() {
+		if (fContentAssistActivation != null) {
+			fHandlerService.deactivateHandler(fContentAssistActivation);
+			fContentAssistActivation= null;
 		}
-	}	
-	
+		if (fUndoActivation != null) {
+			fHandlerService.deactivateHandler(fUndoActivation);
+			fUndoActivation= null;
+		}
+		if (fRedoActivation != null) {
+			fHandlerService.deactivateHandler(fRedoActivation);
+			fRedoActivation= null;
+		}
+
+		if (fBreakpointsViewSite != null) {
+			fBreakpointsViewSite.getActionBars().setGlobalActionHandler(ITextEditorActionConstants.UNDO, fViewUndoAction);
+			fBreakpointsViewSite.getActionBars().setGlobalActionHandler(ITextEditorActionConstants.REDO, fViewRedoAction);
+			fBreakpointsViewSite.getActionBars().updateActionBars();
+			disposeViewerUndoRedoActions();
+		}
+	}
+
+	private void disposeViewerUndoRedoActions() {
+		if (fViewerUndoAction != null) {
+			fViewerUndoAction.dispose();
+			fViewerUndoAction= null;
+		}
+		if (fViewerRedoAction != null) {
+			fViewerRedoAction.dispose();
+			fViewerRedoAction= null;
+		}
+	}
+
 	/**
 	 * Enables controls based on whether the breakpoint's condition is enabled.
 	 * 
@@ -678,4 +747,53 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		result.append(dashes);
 		return result.toString().trim();
 	}
+
+	private void registerViewerUndoRedoActions() {
+		if (!fViewer.getTextWidget().isFocusControl())
+			return;
+
+		disposeViewerUndoRedoActions();
+		IUndoContext undoContext= getUndoContext();
+		if (undoContext != null) {
+			fViewerUndoAction= new UndoActionHandler(fBreakpointsViewSite, getUndoContext());
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewerUndoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			fViewerUndoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
+
+			fViewerRedoAction= new RedoActionHandler(fBreakpointsViewSite, getUndoContext());
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewerRedoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			fViewerRedoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
+		}
+		fBreakpointsViewSite.getActionBars().setGlobalActionHandler(ITextEditorActionConstants.UNDO, fViewerUndoAction);
+		fBreakpointsViewSite.getActionBars().setGlobalActionHandler(ITextEditorActionConstants.REDO, fViewerRedoAction);
+		fBreakpointsViewSite.getActionBars().updateActionBars();
+	}
+
+	/**
+	 * Returns this editor's viewer's undo manager undo context.
+	 * 
+	 * @return the undo context or <code>null</code> if not available
+	 * @since 3.1
+	 */
+	private IUndoContext getUndoContext() {
+		IUndoManager undoManager= ((ITextViewerExtension6)fViewer).getUndoManager();
+		if (undoManager instanceof IUndoManagerExtension)
+			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		return null;
+	}
+
+	private void checkIfUsedInBreakpointsView() {
+		if (fBreakpointsViewSite != null)
+			return;
+
+		IWorkbenchWindow activeWorkbenchWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null && activeWorkbenchWindow.getActivePage().getActivePart() != null) {
+			IWorkbenchPartSite site= activeWorkbenchWindow.getActivePage().getActivePart().getSite();
+			if ("org.eclipse.debug.ui.BreakpointView".equals(site.getId())) { //$NON-NLS-1$
+				fBreakpointsViewSite= (IViewSite)site;
+				fViewUndoAction= fBreakpointsViewSite.getActionBars().getGlobalActionHandler(ITextEditorActionConstants.UNDO);
+				fViewRedoAction= fBreakpointsViewSite.getActionBars().getGlobalActionHandler(ITextEditorActionConstants.REDO);
+			}
+		}
+	}
+
 }
