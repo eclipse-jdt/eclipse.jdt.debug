@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,11 +242,7 @@ public class VMDefinitionsContainer {
 	 * The resulting XML is compatible with the static method <code>parseXMLIntoContainer</code>.
 	 * </p>
 	 * @return String the results of flattening this object into XML
-	 * @throws IOException if this method fails. Reasons include:<ul>
-	 * <li>serialization of the XML document failed</li>
-	 * </ul>
-	 * @throws ParserConfigurationException if creation of the XML document failed
-	 * @throws TransformerException if serialization of the XML document failed
+	 * @throws CoreException if serialization of the XML document failed
 	 */
 	public String getAsXML() throws CoreException {
 		
@@ -280,6 +276,10 @@ public class VMDefinitionsContainer {
 	
 	/**
 	 * Create and return a node for the specified VM install type in the specified Document.
+	 * 
+	 * @param doc the backing {@link Document}
+	 * @param vmType the {@link IVMInstallType} to create an {@link Element} for
+	 * @return the new {@link Element}
 	 */
 	private Element vmTypeAsElement(Document doc, IVMInstallType vmType) {
 		
@@ -301,6 +301,10 @@ public class VMDefinitionsContainer {
 	
 	/**
 	 * Create and return a node for the specified VM in the specified Document.
+	 * 
+	 * @param doc the backing {@link Document}
+	 * @param vm the {@link IVMInstall} to create an {@link Element} for
+	 * @return the new {@link Element} representing the given {@link IVMInstall}
 	 */
 	private Element vmAsElement(Document doc, IVMInstall vm) {
 		
@@ -369,6 +373,10 @@ public class VMDefinitionsContainer {
 	/**
 	 * Create and return a 'libraryLocations' node.  This node owns subordinate nodes that
 	 * list individual library locations.
+	 * 
+	 * @param doc the backing {@link Document}
+	 * @param locations the array of {@link LibraryLocation}s to create an {@link Element} for
+	 * @return the new {@link Element} for the given {@link LibraryLocation}s
 	 */
 	private static Element libraryLocationsAsElement(Document doc, LibraryLocation[] locations) {
 		Element root = doc.createElement("libraryLocations");       //$NON-NLS-1$
@@ -465,8 +473,11 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * For the specified vm type node, parse all subordinate VM definitions and add them
+	 * For the specified VM type node, parse all subordinate VM definitions and add them
 	 * to the specified container.
+	 * 
+	 * @param vmTypeElement the {@link Element} to populate the {@link VMDefinitionsContainer} from
+	 * @param container the {@link VMDefinitionsContainer} to populate from the {@link Element}
 	 */
 	private static void populateVMTypes(Element vmTypeElement, VMDefinitionsContainer container) {
 		// Retrieve the 'id' attribute and the corresponding VM type object
@@ -576,7 +587,7 @@ public class VMDefinitionsContainer {
 			String externalForm = vmElement.getAttribute("javadocURL"); //$NON-NLS-1$
 			if (externalForm != null && externalForm.length() > 0) {
 				try {
-					vmStandin.setJavadocLocation(new URL(externalForm));
+						vmStandin.setJavadocLocation(new URL(externalForm));
 				} catch (MalformedURLException e) {
 					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
 							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
@@ -608,6 +619,9 @@ public class VMDefinitionsContainer {
 	/**
 	 * Create & return a LibraryLocation object populated from the attribute values
 	 * in the specified node.
+	 * 
+	 * @param libLocationElement the {@link Element} to parse the {@link LibraryLocation} from
+	 * @return the new {@link LibraryLocation} or <code>null</code> if the {@link Element} was malformed
 	 */
 	private static LibraryLocation getLibraryLocation(Element libLocationElement) {
 		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
@@ -634,6 +648,9 @@ public class VMDefinitionsContainer {
 	/**
 	 * Set the LibraryLocations on the specified VM, by extracting the subordinate
 	 * nodes from the specified 'lirbaryLocations' node.
+	 * 
+	 * @param vm the {@link IVMInstall} to populate from the given {@link Element}
+	 * @param libLocationsElement the {@link Element} to populate the {@link IVMInstall} with
 	 */
 	private static void setLibraryLocations(IVMInstall vm, Element libLocationsElement) {
 		NodeList list = libLocationsElement.getChildNodes();
