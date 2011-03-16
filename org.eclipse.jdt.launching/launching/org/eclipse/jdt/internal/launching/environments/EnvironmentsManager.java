@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -54,7 +56,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.2
  */
-public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMInstallChangedListener, IPropertyChangeListener {
+public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMInstallChangedListener, IPreferenceChangeListener {
 
 	/**
 	 * Extension configuration element name.
@@ -99,12 +101,12 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	private Map fAnalyzers = null;
 	
 	/**
-	 * <code>true</code> while updating the default settings pref
+	 * <code>true</code> while updating the default settings preferences
 	 */
 	private boolean fIsUpdatingDefaults = false;
 	
 	/**
-	 * Whether compatibile environnments have been initialized
+	 * Whether compatible environments have been initialized
 	 */
 	private boolean fInitializedCompatibilities = false;
 
@@ -145,7 +147,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 */
 	private EnvironmentsManager() {
 		JavaRuntime.addVMInstallChangedListener(this);
-		LaunchingPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+		InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).addPreferenceChangeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -178,7 +180,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/**
 	 * Returns all registered analyzers 
 	 * 
-	 * @return
+	 * @return all registered analyzers
 	 */
 	public synchronized Analyzer[] getAnalyzers() { 
 		initializeExtensions();
@@ -249,10 +251,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	}
 	
 	/**
-	 * Reads persisted default VMs from pref store
+	 * Reads persisted default VMs from the preference store
 	 */
 	private synchronized void initializeDefaultVMs() {
-		String xml = LaunchingPlugin.getDefault().getPluginPreferences().getString(PREF_DEFAULT_ENVIRONMENTS_XML);
+		String xml = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(PREF_DEFAULT_ENVIRONMENTS_XML, ""); //$NON-NLS-1$
 		try {
 			if (xml.length() > 0) {
 				DocumentBuilder parser = LaunchingPlugin.getParser();
@@ -292,6 +294,8 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/**
 	 * Returns an XML description of default VMs per environment. Returns
 	 * an empty string when there are none. 
+	 * @return an XML description of default VMs per environment. Returns
+	 * an empty string when there are none.
 	 */
 	private String getDefatulVMsAsXML() {
 		int count = 0;
@@ -321,10 +325,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	}
 	
 	/**
-	 * Analyzes and compatible execution environments for the given vm install.
+	 * Analyzes compatible execution environments for the given VM install.
 	 * 
-	 * @param vm
-	 * @param monitor
+	 * @param vm the {@link IVMInstall} to find environments for
+	 * @param monitor a progress monitor or <code>null</code>
 	 */
 	private void analyze(IVMInstall vm, IProgressMonitor monitor) {
 		Analyzer[] analyzers = getAnalyzers();
@@ -390,23 +394,22 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	synchronized void updateDefaultVMs() {
 		try {
 			fIsUpdatingDefaults = true;
-			LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_DEFAULT_ENVIRONMENTS_XML, getDefatulVMsAsXML());
+			InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).put(PREF_DEFAULT_ENVIRONMENTS_XML, getDefatulVMsAsXML());
 		} finally {
 			fIsUpdatingDefaults = false;
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public synchronized void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
+	public void preferenceChange(PreferenceChangeEvent event) {
 		// don't respond to myself
 		if (fIsUpdatingDefaults) {
 			return;
 		}
-		if (event.getProperty().equals(PREF_DEFAULT_ENVIRONMENTS_XML)) {
+		if (event.getKey().equals(PREF_DEFAULT_ENVIRONMENTS_XML)) {
 			initializeDefaultVMs();
 		}
 	}
-		
 }

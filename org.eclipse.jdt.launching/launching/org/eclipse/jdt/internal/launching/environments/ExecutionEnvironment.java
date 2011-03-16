@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -159,7 +159,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	
 	/**
 	 * Constructor
-	 * @param element
+	 * @param element the backing {@link IConfigurationElement}
 	 */
 	ExecutionEnvironment(IConfigurationElement element) {
 		fElement = element;
@@ -268,11 +268,11 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	}
 
 	/**
-	 * Adds the specified vm to the listing of compatible vms, also
-	 * adds the vm to the listing of stricly compatible ones based on
+	 * Adds the specified VM to the listing of compatible VMs, also
+	 * adds the VM to the listing of strictly compatible ones based on
 	 * the strictlyCompatible flag
-	 * @param vm
-	 * @param strictlyCompatible
+	 * @param vm the VM to add to the environment
+	 * @param strictlyCompatible if it is strictly compatible
 	 */
 	void add(IVMInstall vm, boolean strictlyCompatible) {
 		if (fCompatibleVMs.contains(vm)) {
@@ -285,8 +285,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	}
 	
 	/**
-	 * Removes the specified vm from the listings of vms
-	 * @param vm
+	 * Removes the specified VM from the listings of VMs
+	 * @param vm the VM to remove
 	 */
 	void remove(IVMInstall vm) {
 		fCompatibleVMs.remove(vm);
@@ -294,8 +294,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	}
 	
 	/**
-	 * Sets the default vm to be the one specified
-	 * @param vm
+	 * Sets the default VM to be the one specified
+	 * @param vm the VM to set as the default
 	 */
 	void initDefaultVM(IVMInstall vm) {
 		fDefault = vm;
@@ -360,10 +360,13 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	
 	/**
 	 * Returns a map of participant to the access rules for that participant for the given
-	 * vm, libraries, and project.
+	 * VM, libraries, and project.
 	 * 
-	 * @param participants
-	 * @return
+	 * @param participants access rule participants
+	 * @param vm the VM
+	 * @param libraries the {@link LibraryLocation}s 
+	 * @param project the {@link IJavaProject} context
+	 * @return the mapping of {@link IAccessRuleParticipant} to {@link IAccessRule}s
 	 */
 	private Map collectRulesByParticipant(IAccessRuleParticipant[] participants, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		Map map = new HashMap();
@@ -377,6 +380,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Adds the access rules to each list in the given collection. If the last rule in a 
 	 * given collection is the wild card pattern then no more rules are added to that collection.
+	 * 
+	 * @param accessRules the list of {@link IAccessRule}s
+	 * @param collect the array of lists to collect the {@link IAccessRule}s in
 	 */
 	private void addRules(IAccessRule[][] accessRules, List[] collect) {
 		for (int i = 0; i < accessRules.length; i++) {

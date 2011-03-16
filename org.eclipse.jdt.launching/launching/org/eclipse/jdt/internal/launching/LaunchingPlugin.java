@@ -50,10 +50,10 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -86,7 +86,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.ibm.icu.text.MessageFormat;
 
-public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
+public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPreferenceChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
 	/**
 	 * The id of the JDT launching plug-in (value <code>"org.eclipse.jdt.launching"</code>).
@@ -169,7 +169,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * Returns the JRE container id that the given VM would map to, or
 		 * <code>null</code> if none.
 		 * 
-		 * @param vm
+		 * @param vm the new path id of the {@link IVMInstall}
 		 * @return container id or <code>null</code>
 		 */
 		private IPath getContainerId(IVMInstall vm) {
@@ -266,10 +266,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		/**
 		 * Re-bind classpath variables and containers affected by the JRE
 		 * changes.
-		 * @param monitor
+		 * @param monitor a progress monitor or <code>null</code>
+		 * @param projects the list of {@link IJavaProject}s to re-bind the VM to
+		 * @throws CoreException if an exception is thrown
 		 */
 		private void rebind(IProgressMonitor monitor, IJavaProject[] projects) throws CoreException {
-			 
 			if (fDefaultChanged) {
 				// re-bind JRELIB if the default VM changed
 				JavaClasspathVariablesInitializer initializer = new JavaClasspathVariablesInitializer();
@@ -376,6 +377,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Returns the library info that corresponds to the specified JRE install
 	 * path, or <code>null</code> if none.
 	 * 
+	 * @param javaInstallPath the absolute path to the java executable
 	 * @return the library info that corresponds to the specified JRE install
 	 * path, or <code>null</code> if none
 	 */
@@ -408,6 +410,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
 	 * <code>IPath</code> in the plugin directory.
+	 * 
+	 * @param path the path to look for in the launching bundle
+	 * @return the {@link File} from the bundle or <code>null</code>
 	 */
 	public static File getFileInPlugin(IPath path) {
 		try {
@@ -422,6 +427,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
+	 * 
+	 * @return the id of the {@link LaunchingPlugin}
 	 */
 	public static String getUniqueIdentifier() {
 		return ID_PLUGIN;
@@ -440,7 +447,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Logs the specified status
-	 * @param status
+	 * @param status the status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -448,7 +455,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Logs the specified message, by creating a new <code>Status</code>
-	 * @param message
+	 * @param message the message to log as an error status
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
@@ -456,7 +463,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 	/**
 	 * Logs the specified exception by creating a new <code>Status</code>
-	 * @param e
+	 * @param e the {@link Throwable} to log as an error
 	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
@@ -464,7 +471,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Clears zip file cache.
-	 * Shutdown the launch config helper.
+	 * Shutdown the launch configuration helper.
 	 * 
 	 * @see Plugin#stop(BundleContext)
 	 */
@@ -474,37 +481,36 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 			ArchiveSourceLocation.closeArchives();
-			getPluginPreferences().removePropertyChangeListener(this);
+			InstanceScope.INSTANCE.getNode(ID_PLUGIN).removePreferenceChangeListener(this);
 			JavaRuntime.removeVMInstallChangedListener(this);
 			JavaRuntime.saveVMConfiguration();
 			fgXMLParser = null;
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(ID_PLUGIN);
 		} finally {
 			super.stop(context);
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.launching/debug"));  //$NON-NLS-1$//$NON-NLS-2$
-		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+		ResourcesPlugin.getWorkspace().addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
 			public void doneSaving(ISaveContext context1) {}
 			public void prepareToSave(ISaveContext context1)	throws CoreException {}
 			public void rollback(ISaveContext context1) {}
 			public void saving(ISaveContext context1) throws CoreException {
 				try {
-					new InstanceScope().getNode(ID_PLUGIN).flush();
+					InstanceScope.INSTANCE.getNode(ID_PLUGIN).flush();
 				} catch (BackingStoreException e) {
 					log(e);
 				}
 			}
 		});
 
-		getPluginPreferences().addPropertyChangeListener(this);
-
+		InstanceScope.INSTANCE.getNode(ID_PLUGIN).addPreferenceChangeListener(this);
 		JavaRuntime.addVMInstallChangedListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -570,10 +576,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			initializeRuntimeClasspathExtensions();
 		}
 		IConfigurationElement config = (IConfigurationElement) fClasspathEntryExtensions.get(id);
-		if (config == null) {
-			abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
+		if (config != null) {
+			return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
 		}
-		return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
+		abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
+		return null;
 	}
 	
 	/**
@@ -589,21 +596,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Save preferences whenever the connect timeout changes.
-	 * Process changes to the list of installed JREs.
-	 * 
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();
-		if (property.equals(JavaRuntime.PREF_VM_XML)) {
-			if (!isIgnoreVMDefPropertyChangeEvents()) {
-				processVMPrefsChanged((String)event.getOldValue(), (String)event.getNewValue());
-			}
-		}
-	}
-
-	/**
 	 * Check for differences between the old & new sets of installed JREs.
 	 * Differences may include additions, deletions and changes.  Take
 	 * appropriate action for each type of difference.
@@ -613,6 +605,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * old value.  Normal user changes to the preferences result in a single propertyChange
 	 * event, with both old and new values populated.  This method handles both types
 	 * of notification.
+	 * 
+	 * @param oldValue the old preference value
+	 * @param newValue the new preference value
 	 */
 	protected void processVMPrefsChanged(String oldValue, String newValue) {
 		
@@ -700,7 +695,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Parse the given xml into a VM definitions container, returning an empty
 	 * container if an exception occurs.
 	 * 
-	 * @param xml
+	 * @param xml the XML to parse for VM descriptions
 	 * @return VMDefinitionsContainer
 	 */
 	private VMDefinitionsContainer getVMDefinitions(String xml) {
@@ -714,9 +709,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		return new VMDefinitionsContainer();
 	}
-						
-	/**
-	 * @see IVMInstallChangedListener#defaultVMInstallChanged(IVMInstall, IVMInstall)
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 	 */
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		if (!fBatchingChanges) {
@@ -754,26 +749,24 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 	}
 
-	/**
-	 * Clear the archive cache when a project is about to be deleted/closed.
-	 * 
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
 	}
 
 	/**
-	 * Allows vm property change events to be ignored
-	 * @param ignore
+	 * Allows VM property change events to be ignored
+	 * @param ignore if we should ignore VM property changed events or not
 	 */
 	public void setIgnoreVMDefPropertyChangeEvents(boolean ignore) {
 		fIgnoreVMDefPropertyChangeEvents = ignore;
 	}
 
 	/**
-	 * Returns if vm property changed event should be ignored or not
-	 * @return if vm property changed event should be ignored or not
+	 * Returns if VM property changed event should be ignored or not
+	 * @return if VM property changed event should be ignored or not
 	 */
 	public boolean isIgnoreVMDefPropertyChangeEvents() {
 		return fIgnoreVMDefPropertyChangeEvents;
@@ -786,7 +779,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * The resulting XML is compatible with the static method <code>parseXMLIntoContainer</code>.
 	 * </p>
 	 * @return String the results of flattening this object into XML
-	 * @throws IOException if this method fails. Reasons include:<ul>
+	 * @throws CoreException if this method fails. Reasons include:<ul>
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
 	 */
@@ -813,8 +806,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Creates an XML element for the given info.
 	 * 
-	 * @param doc
-	 * @param info
+	 * @param doc the backing {@link Document}
+	 * @param info the {@link LibraryInfo} to add to the {@link Document}
 	 * @return Element
 	 */
 	private static Element infoAsElement(Document doc, LibraryInfo info) {
@@ -830,10 +823,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Appends path elements to the given library element, rooted by an
 	 * element of the given type.
 	 * 
-	 * @param doc
-	 * @param elementType
-	 * @param libraryElement
-	 * @param paths
+	 * @param doc the backing {@link Document}
+	 * @param elementType the kind of {@link Element} to create
+	 * @param libraryElement the {@link Element} describing a given {@link LibraryInfo} object
+	 * @param paths the paths to add
 	 */
 	private static void appendPathElements(Document doc, String elementType, Element libraryElement, String[] paths) {
 		if (paths.length > 0) {
@@ -929,14 +922,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Checks to see if the time stamp of the file describe by the given location string
 	 * has been modified since the last recorded time stamp. If there is no last recorded 
-	 * time stamp we assume it has changed.
+	 * time stamp we assume it has changed. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651 for more information
 	 * 
 	 * @param location the location of the SDK we want to check the time stamp for 
 	 * @return <code>true</code> if the time stamp has changed compared to the cached one or if there is
 	 * no recorded time stamp, <code>false</code> otherwise.
 	 * 
 	 * @since 3.7
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
 	 */
 	public static boolean timeStampChanged(String location) {
 		synchronized (installLock) {
@@ -963,10 +955,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Reads the file of saved time stamps and populates the {@link #fgInstallTimeMap}
+	 * Reads the file of saved time stamps and populates the {@link #fgInstallTimeMap}.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651 for more information
 	 * 
 	 * @since 3.7
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
 	 */
 	private static void readInstallInfo() {
 		fgInstallTimeMap = new HashMap();
@@ -1012,10 +1004,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Writes out the mappings of SDK install time stamps to disk.
+	 * Writes out the mappings of SDK install time stamps to disk. See 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651 for more information.
 	 * 
 	 * @since 3.7
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=266651
 	 */
 	private static void writeInstallInfo() {
 		if(fgInstallTimeMap != null) {
@@ -1026,12 +1018,17 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				doc.appendChild(root);
 				Entry entry = null;
 				Element e = null;
+				String key = null;
 				for(Iterator i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
 					entry = (Entry) i.next();
-					e = doc.createElement("entry"); //$NON-NLS-1$
-					root.appendChild(e);
-					e.setAttribute("loc", entry.getKey().toString()); //$NON-NLS-1$
-					e.setAttribute("stamp", entry.getValue().toString()); //$NON-NLS-1$
+					key = (String) entry.getKey();
+					if(fgLibraryInfoMap.containsKey(key)) {
+						//only persist the info if the library map also has info - prevent persisting deleted JRE infos
+						e = doc.createElement("entry"); //$NON-NLS-1$
+						root.appendChild(e);
+						e.setAttribute("loc", key); //$NON-NLS-1$
+						e.setAttribute("stamp", entry.getValue().toString()); //$NON-NLS-1$
+					}
 				}
 				String xml = DebugPlugin.serializeDocument(doc);
 				IPath libPath = getDefault().getStateLocation();
@@ -1059,8 +1056,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Returns paths stored in XML
-	 * @param lib
-	 * @param pathType
+	 * @param lib the library path in {@link Element} form
+	 * @param pathType the type of the path
 	 * @return paths stored in XML
 	 */
 	private static String[] getPathsFromXML(Element lib, String pathType) {
@@ -1096,33 +1093,27 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return (String[])paths.toArray(new String[paths.size()]);
 	}
 	
-	/**
-	 * When a launch is removed, close all source archives. Prevents file
-	 * sharing violations.
-	 * 
-	 * @see ILaunchesListener#launchesRemoved(ILaunch[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
 		ArchiveSourceLocation.closeArchives();
 	}
 	
-	/**
-	 * @see ILaunchesListener#launchesAdded(ILaunch[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesAdded(ILaunch[] launches) {
 	}
 	
-	/**
-	 * @see ILaunchesListener#launchesChanged(ILaunch[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesChanged(ILaunch[] launches) {
 	}
 	
-	/**
-	 * When a debug target or process terminates, close source archives.
-	 * Prevents file sharing violations.
-	 * 
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -1162,17 +1153,21 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * 
 	 * @param message error message
 	 * @param exception underlying exception or <code>null</code> if none
-	 * @throws CoreException
+	 * @throws CoreException if an exception occurs
 	 */
 	protected static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
 		throw new CoreException(status);
 	}
 	
-	/*
+	/**
 	 * Compares two URL for equality, but do not connect to do DNS resolution
 	 * 
+	 * @param url1 a given URL
+	 * @param url2 another given URL to compare to url1
+	 * 
 	 * @since 3.5
+	 * @return <code>true</code> if the URLs are equal, <code>false</code> otherwise
 	 */
 	public static boolean sameURL(URL url1, URL url2) {
 		if (url1 == url2) {
@@ -1200,6 +1195,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Gets the external form of this URL. In particular, it trims any white space, 
 	 * removes a trailing slash and creates a lower case string.
+	 * @param url the URL to get the {@link String} value of
+	 * @return the lower-case {@link String} form of the given URL
 	 */
 	private static String getExternalForm(URL url) {
 		String externalForm = url.toExternalForm();
@@ -1213,6 +1210,16 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return externalForm.toLowerCase();
 
 	}
-}
 
- 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+	 */
+	public void preferenceChange(PreferenceChangeEvent event) {
+		String property = event.getKey();
+		if (property.equals(JavaRuntime.PREF_VM_XML)) {
+			if (!isIgnoreVMDefPropertyChangeEvents()) {
+				processVMPrefsChanged((String)event.getOldValue(), (String)event.getNewValue());
+			}
+		}
+	}
+}
