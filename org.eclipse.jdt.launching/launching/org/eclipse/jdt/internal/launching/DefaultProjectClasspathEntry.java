@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -342,10 +342,11 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	}
 	
 	/**
-	 * Sets whether the runtime classpath computaion should only
+	 * Sets whether the runtime classpath computation should only
 	 * include exported entries in referenced projects.
 	 * 
-	 * @param exportedOnly
+	 * @param exportedOnly if the runtime classpath computation should only
+	 * include exported entries in referenced projects.
 	 * @since 3.2
 	 */
 	public void setExportedEntriesOnly(boolean exportedOnly) {
@@ -356,7 +357,8 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * Returns whether the classpath computation only includes exported
 	 * entries in referenced projects.
 	 * 
-	 * @return
+	 * @return if the classpath computation only includes exported
+	 * entries in referenced projects.
 	 * @since 3.2
 	 */
 	public boolean isExportedEntriesOnly() {
