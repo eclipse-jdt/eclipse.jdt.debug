@@ -248,7 +248,6 @@ public class EEVMPage extends AbstractVMInstallPage {
 
 	/**
 	 * Validates the entered name of the VM
-	 * @return the status of the name validation
 	 */
 	private void validateVMName() {
 		nameChanged(fVMName.getText());
