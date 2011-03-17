@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		DefaultScope scope = new DefaultScope();
-		IEclipsePreferences dnode = scope.getNode(LaunchingPlugin.ID_PLUGIN);
+		IEclipsePreferences dnode = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(dnode == null) {
 			return;
 		}
@@ -48,7 +47,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		// associated JavaCore options, as this can trigger a job to touch the project (see 
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=260445)
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
-		dnode = scope.getNode(JavaCore.PLUGIN_ID);
+		dnode = DefaultScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 		if(dnode == null) {
 			return;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,13 +152,13 @@ public class EECompilationParticipant extends CompilationParticipant {
 	private int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		List scopes = new ArrayList();
-		scopes.add(new InstanceScope());
+		scopes.add(InstanceScope.INSTANCE);
 		if(project != null) {
 			scopes.add(new ProjectScope(project));
 		}
 		String value = service.getString(LaunchingPlugin.ID_PLUGIN, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
-			value = LaunchingPlugin.getDefault().getPluginPreferences().getString(prefkey);
+			value = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(prefkey, null);
 		}
 		if (JavaCore.ERROR.equals(value)) {
 			return IMarker.SEVERITY_ERROR;
@@ -170,10 +170,10 @@ public class EECompilationParticipant extends CompilationParticipant {
 	}	
 	
 	/**
-	 * creates a problem marker for a jre container problem
-	 * @param javaProject
-	 * @param message
-	 * @param severity
+	 * creates a problem marker for a JRE container problem
+	 * @param javaProject the {@link IJavaProject}
+	 * @param message the message to set on the new problem
+	 * @param severity the severity level for the new problem
 	 */
 	private void createJREContainerProblem(IJavaProject javaProject, String message, int severity) {
 		try {

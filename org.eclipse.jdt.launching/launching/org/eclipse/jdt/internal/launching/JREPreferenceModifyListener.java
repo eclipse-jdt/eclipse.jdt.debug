@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.PreferenceModifyListener;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -42,7 +43,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 				String jresXML = node.get(JavaRuntime.PREF_VM_XML, null);
 				if (jresXML != null) {
 					VMDefinitionsContainer vms = new VMDefinitionsContainer();
-					String pref = LaunchingPlugin.getDefault().getPluginPreferences().getString(JavaRuntime.PREF_VM_XML);
+					String pref = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(JavaRuntime.PREF_VM_XML, ""); //$NON-NLS-1$
 					// names -> existing vm's
 					Map names = new HashMap();
 					Set ids = new HashSet();

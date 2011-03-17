@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,8 +94,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		 * Constructs a runnable to connect to a VM via the given connector
 		 * with the given connection arguments.
 		 * 
-		 * @param connector
-		 * @param map
+		 * @param connector the connector to use
+		 * @param map the argument map
 		 */
 		public ConnectRunnable(ListeningConnector connector, Map map) {
 			fConnector = connector;
@@ -133,6 +133,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 	/**
 	 * Creates a new launcher
+	 * @param vmInstance the backing {@link IVMInstall} to launch
 	 */
 	public StandardVMDebugger(IVMInstall vmInstance) {
 		super(vmInstance);
@@ -365,6 +366,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * 
 	 * @param env the current array of environment variables to run with
 	 * @param jdkpath the path to the executable (javaw).
+	 * @return the altered JRE path
 	 * @since 3.3
 	 */
 	protected String[] prependJREPath(String[] env, IPath jdkpath) {
@@ -429,6 +431,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @param port port the VM is connected to
 	 * @param process associated system process
 	 * @param vm JDI virtual machine
+	 * @return the {@link IDebugTarget}
 	 */
 	protected IDebugTarget createDebugTarget(VMRunnerConfiguration config, ILaunch launch, int port, IProcess process, VirtualMachine vm) {
 		return JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
@@ -468,8 +471,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 	/**
 	 * Checks and forwards an error from the specified process
-	 * @param process
-	 * @throws CoreException
+	 * @param process the process to get the error message from
+	 * @throws CoreException if a problem occurs
 	 */
 	protected void checkErrorMessage(IProcess process) throws CoreException {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
@@ -486,8 +489,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		
 	/**
 	 * Allows arguments to be specified
-	 * @param map
-	 * @param portNumber
+	 * @param map argument map
+	 * @param portNumber the port number
 	 */
 	protected void specifyArguments(Map map, int portNumber) {
 		// XXX: Revisit - allows us to put a quote (") around the classpath
@@ -496,14 +499,18 @@ public class StandardVMDebugger extends StandardVMRunner {
 		
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); //$NON-NLS-1$
 		if (timeoutArg != null) {
-			int timeout = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+			int timeout = Platform.getPreferencesService().getInt(
+					LaunchingPlugin.ID_PLUGIN, 
+					JavaRuntime.PREF_CONNECT_TIMEOUT, 
+					JavaRuntime.DEF_CONNECT_TIMEOUT, 
+					null);
 			timeoutArg.setValue(timeout);
 		}
 	}
 
 	/**
 	 * Returns the default 'com.sun.jdi.SocketListen' connector
-	 * @return
+	 * @return the {@link ListeningConnector}
 	 */
 	protected ListeningConnector getConnector() {
 		List connectors= Bootstrap.virtualMachineManager().listeningConnectors();

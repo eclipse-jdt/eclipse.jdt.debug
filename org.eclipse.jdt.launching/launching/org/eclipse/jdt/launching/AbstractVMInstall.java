@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,30 +21,26 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.xml.sax.SAXException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
-
 import org.eclipse.jdt.core.JavaCore;
-
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 /**
  * Abstract implementation of a VM install.
  * <p>
@@ -232,7 +228,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/**
 	 * Whether this VM should fire property change notifications.
 	 * 
-	 * @param notify
+	 * @param notify if this VM should fire property change notifications.
 	 * @since 2.1
 	 */
 	protected void setNotify(boolean notify) {
@@ -390,7 +386,11 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				IProcess process = processes[0];
 				try {
 					int total = 0;
-					int max = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+					int max = Platform.getPreferencesService().getInt(
+							LaunchingPlugin.ID_PLUGIN, 
+							JavaRuntime.PREF_CONNECT_TIMEOUT, 
+							JavaRuntime.DEF_CONNECT_TIMEOUT, 
+							null);
 					while (!process.isTerminated()) {
 						try {
 							if (total > max) {
