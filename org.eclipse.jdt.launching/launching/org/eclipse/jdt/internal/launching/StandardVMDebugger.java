@@ -49,7 +49,7 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
 
 /**
- * A launcher for debugging Java main classes. Uses JDI to launch a vm in debug 
+ * A launcher for debugging Java main classes. Uses JDI to launch a VM in debug 
  * mode.
  */
 public class StandardVMDebugger extends StandardVMRunner {
@@ -61,7 +61,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	protected static final String JAVA_JVM_VERSION = "JAVA_JVM_VERSION"; //$NON-NLS-1$
 	
 	/**
-	 * Jre path segment descriptor
+	 * JRE path segment descriptor
 	 * 
 	 * String equals the word: <code>jre</code>
 	 * 
@@ -373,7 +373,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			IPath jrepath = jdkpath.removeLastSegments(1);
 			if(jrepath.lastSegment().equals(BIN)) {
-				if(!jrepath.segment(jrepath.segmentCount()-2).equals(JRE)) {
+				int count = jrepath.segmentCount();
+				if(count > 1 && !jrepath.segment(count-2).equalsIgnoreCase(JRE)) {
 					jrepath = jrepath.removeLastSegments(1).append(JRE).append(BIN);
 				}
 			}
