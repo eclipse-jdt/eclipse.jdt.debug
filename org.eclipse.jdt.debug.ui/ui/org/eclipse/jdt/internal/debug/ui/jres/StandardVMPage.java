@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,12 +303,8 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	 */
 	protected void setFieldValuesToVM(VMStandin vm) {
 		File dir = new File(fJRERoot.getText());
-		try {
-			vm.setInstallLocation(dir.getCanonicalFile());
-		} 
-		catch (IOException e) {
-			vm.setInstallLocation(dir.getAbsoluteFile());
-		}
+		File file = dir.getAbsoluteFile();
+		vm.setInstallLocation(file);
 		vm.setName(fVMName.getText());
 		vm.setJavadocLocation(getURL());
 		

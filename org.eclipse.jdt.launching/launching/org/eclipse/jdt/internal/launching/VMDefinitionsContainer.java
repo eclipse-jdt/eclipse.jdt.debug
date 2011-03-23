@@ -549,57 +549,61 @@ public class VMDefinitionsContainer {
 			vmStandin.setName(name);
 			File installLocation= new File(installPath);
 			vmStandin.setInstallLocation(installLocation);
+			String install = installLocation.getAbsolutePath();
+			//only consider a VM changed it is a standard VM
+			boolean changed = StandardVMType.ID_STANDARD_VM_TYPE.equals(vmType.getId()) && 
+										LaunchingPlugin.timeStampChanged(install);
 			container.addVM(vmStandin);
 			
 			// Look for subordinate nodes.  These may be 'libraryLocation',
 			// 'libraryLocations' or 'versionInfo'.
-			NodeList list = vmElement.getChildNodes();
-			int length = list.getLength();
-			for (int i = 0; i < length; ++i) {
-				Node node = list.item(i);
-				short type = node.getNodeType();
-				if (type == Node.ELEMENT_NODE) {
-					Element subElement = (Element)node;
-					String subElementName = subElement.getNodeName();
-					if (subElementName.equals("libraryLocation")) { //$NON-NLS-1$
-						LibraryLocation loc = getLibraryLocation(subElement);
+			if(!changed) {
+				NodeList list = vmElement.getChildNodes();
+				int length = list.getLength();
+				for (int i = 0; i < length; ++i) {
+					Node node = list.item(i);
+					short type = node.getNodeType();
+					if (type == Node.ELEMENT_NODE) {
+						Element subElement = (Element)node;
+						String subElementName = subElement.getNodeName();
+						if (subElementName.equals("libraryLocation")) { //$NON-NLS-1$
+							LibraryLocation loc = getLibraryLocation(subElement);
 						vmStandin.setLibraryLocations(new LibraryLocation[]{loc});
-					} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
-						setLibraryLocations(vmStandin, subElement);
-					} else if (subElementName.equals("attributeMap")) { //$NON-NLS-1$
-						NodeList entries = subElement.getElementsByTagName("entry"); //$NON-NLS-1$
-						for (int j = 0; j < entries.getLength(); j++) {
-							Node entryNode = entries.item(j);
-							if (entryNode instanceof Element) {
-								Element entryElement = (Element) entryNode;
-								String key = entryElement.getAttribute("key"); //$NON-NLS-1$
-								String value = entryElement.getAttribute("value"); //$NON-NLS-1$
-								if (key != null && value != null) {
-									vmStandin.setAttribute(key, value);
+						} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
+							setLibraryLocations(vmStandin, subElement);
+						} else if (subElementName.equals("attributeMap")) { //$NON-NLS-1$
+							NodeList entries = subElement.getElementsByTagName("entry"); //$NON-NLS-1$
+							for (int j = 0; j < entries.getLength(); j++) {
+								Node entryNode = entries.item(j);
+								if (entryNode instanceof Element) {
+									Element entryElement = (Element) entryNode;
+									String key = entryElement.getAttribute("key"); //$NON-NLS-1$
+									String value = entryElement.getAttribute("value"); //$NON-NLS-1$
+									if (key != null && value != null) {
+										vmStandin.setAttribute(key, value);
+									}
 								}
 							}
 						}
 					}
+					
+					// javadoc URL
+					String externalForm = vmElement.getAttribute("javadocURL"); //$NON-NLS-1$
+					if (externalForm != null && externalForm.length() > 0) {
+						try {
+							vmStandin.setJavadocLocation(new URL(externalForm));
+						} catch (MalformedURLException e) {
+							container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
+									MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
+						}
+					}
 				}
 			}
-			
-			// javadoc URL
-			String externalForm = vmElement.getAttribute("javadocURL"); //$NON-NLS-1$
-			if (externalForm != null && externalForm.length() > 0) {
-				try {
-						vmStandin.setJavadocLocation(new URL(externalForm));
-				} catch (MalformedURLException e) {
-					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
-				}
-			}
-			
 			// vm Arguments
 			String vmArgs = vmElement.getAttribute("vmargs"); //$NON-NLS-1$
 			if (vmArgs != null && vmArgs.length() >0) {
 				vmStandin.setVMArgs(vmArgs);
 			}
-
 		} else {
 			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
 			String name = vmElement.getAttribute("name"); //$NON-NLS-1$

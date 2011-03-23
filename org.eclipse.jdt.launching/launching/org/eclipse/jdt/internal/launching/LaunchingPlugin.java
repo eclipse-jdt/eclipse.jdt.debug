@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +132,12 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * @since 3.7
 	 */
 	private static Map fgInstallTimeMap = null;
+	/**
+	 * List of install locations that have been detected to have changed
+	 * 
+	 * @since 3.7
+	 */
+	private static HashSet fgHasChanged = new HashSet();
 	/**
 	 * Mutex for checking the time stamp of an install location
 	 * 
@@ -404,6 +411,8 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		} else {
 			fgLibraryInfoMap.put(javaInstallPath, info);
 		}
+		//once the library info has been set we can forget it has changed
+		fgHasChanged.remove(javaInstallPath);
 		saveLibraryInfo();
 	}
 		
@@ -932,6 +941,9 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 */
 	public static boolean timeStampChanged(String location) {
 		synchronized (installLock) {
+			if(fgHasChanged.contains(location)) {
+				return true;
+			}
 			File file = new File(location);
 			if(file.exists()) {
 				if(fgInstallTimeMap == null) {
@@ -948,6 +960,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				stamp = new Long(fstamp);
 				fgInstallTimeMap.put(location, stamp);
 				writeInstallInfo();
+				fgHasChanged.add(location);
 				return true;
 			}
 		}
