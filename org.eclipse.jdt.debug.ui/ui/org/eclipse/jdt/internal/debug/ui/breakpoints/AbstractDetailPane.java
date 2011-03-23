@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2010 IBM Corporation and others.
+ *  Copyright (c) 2009, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,19 +13,19 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.ui.IDetailPane3;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -36,6 +36,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.EditorActionBarContributor;
+
+import org.eclipse.debug.internal.ui.SWTFactory;
+
+import org.eclipse.debug.ui.IDetailPane3;
+
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * Common detail pane function.
@@ -132,10 +138,10 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	}	
 	
 	/**
-	 * Adds the given auto save properties to this detail pain. Whenever one of these
-	 * properties changes, the detail pane editor is immediately saved.
+	 * Adds the given auto save properties to this detail pain. Whenever one of these properties
+	 * changes, the detail pane editor is immediately saved.
 	 * 
-	 * @param autosave
+	 * @param autosave the auto-save properties
 	 */
 	protected void addAutosaveProperties(int[] autosave) {
 		for (int i = 0; i < autosave.length; i++) {
@@ -251,9 +257,9 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
-		return fEditor.isDirty();
+		return fEditor != null && fEditor.isDirty();
 	}
-	
+
 	/**
 	 * Returns the editor associated with this detail pane.
 	 * 
