@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,6 +156,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * if the <code>createInAnInstanceMethod</code> flag is set, the method created
 	 * which contains the code snippet is an no-static method, even if <code>position</code>
 	 * is in a static method.
+	 * 
+	 * @param type the root {@link IType} 
+	 * @param createInAStaticMethod if the source should be generated 
+	 * @param localTypesNames the array of local type names
+	 * @param localVariables the listing of local variable names
+	 * @param codeSnippet the code snippet
+	 * @param sourceLevel the desired source level
 	 */
 	public SourceBasedSourceGenerator(IType type, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet, String sourceLevel) {
 		fRightTypeFound= false;
@@ -173,6 +180,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	/**
 	 * Returns the generated source or <code>null</code> if no source can be generated.
+	 * @return returns the backing source from the generator
 	 */
 	public String getSource() {
 		if (fSource == null) {
@@ -269,7 +277,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	/**
 	 * Returns if the specified {@link ASTNode} has the 'correct' parent type to match the current
 	 * type name context
-	 * @param node
+	 * @param node the {@link ASTNode} to check source ranges for
 	 * @return true if the parent type of the given node matches the current type name context,
 	 * false otherwise
 	 */
@@ -328,9 +336,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 
 	/**
-	 * @param buffer
-	 * @param list
-	 * @param source
+	 * Builds up the given buffer with the source from each of {@link BodyDeclaration}s in the 
+	 * given list
+	 * @param buffer the buffer to clone and append to
+	 * @param list the list of {@link BodyDeclaration}s
+	 * @return the new source buffer 
 	 */
 	private StringBuffer buildBody(StringBuffer buffer, List list) {
 		StringBuffer source= new StringBuffer();
@@ -610,6 +620,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * Returns a method name that will be unique in the generated source.
 	 * The generated name is baseName plus as many '_' characters as necessary
 	 * to not duplicate an existing method name.
+	 * 
+	 * @param methodName the method name to look for 
+	 * @param bodyDeclarations the listing of {@link BodyDeclaration}s to search through
+	 * @return the unique method name
 	 */
 	private String getUniqueMethodName(String methodName, List bodyDeclarations) {
 		Iterator iter= bodyDeclarations.iterator();
@@ -633,6 +647,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * Returns a field name that will be unique in the generated source.
 	 * The generated name is baseName plus as many '_' characters as necessary
 	 * to not duplicate an existing method name.
+	 * 
+	 * @param fieldName the name of the field to look for
+	 * @param bodyDeclarations the list of {@link BodyDeclaration}s to search through
+	 * @return the unique field name
 	 */
 	private String getUniqueFieldName(String fieldName, List bodyDeclarations) {
 		Iterator iter= bodyDeclarations.iterator();
@@ -755,29 +773,23 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
 				
 				ASTNode parent = node.getParent();
-				while (!(parent instanceof MethodDeclaration || parent instanceof FieldDeclaration)) {
+				while (!(parent instanceof MethodDeclaration || 
+						parent instanceof FieldDeclaration ||
+						parent instanceof Initializer) && parent != null) {
 					parent= parent.getParent();
 				}
 				
 				fSource= new StringBuffer();
 					
-				if (parent instanceof MethodDeclaration) {
+				if(parent instanceof Initializer) {
+					createAnonymousEvalMethod(true, bodyDeclarations, getTypeName(node.getType()), source);
+				}
+				else if (parent instanceof MethodDeclaration) {
 					MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
-					
-					if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-						fSource.append("static "); //$NON-NLS-1$
-					}
-						
-					fSource.append("void "); //$NON-NLS-1$
-					fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
-					fSource.append("() {\n"); //$NON-NLS-1$
-					fSource.append("new "); //$NON-NLS-1$
-					fSource.append(getTypeName(node.getType())); 
-					fSource.append("()"); //$NON-NLS-1$
-					
-					fSnippetStartPosition+= fSource.length();
-					fSource.append(source);
-					fSource.append(";}\n"); //$NON-NLS-1$
+					createAnonymousEvalMethod(Flags.isStatic(enclosingMethodDeclaration.getModifiers()), 
+							bodyDeclarations, 
+							getTypeName(node.getType()), 
+							source);
 					
 				} else if (parent instanceof FieldDeclaration) {
 					FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
@@ -805,9 +817,37 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 
 	/**
+	 * Create a <code>void ____eval()</code> method considering the given {@link BodyDeclaration}s, type name and existing
+	 * body source when an anonymous {@link ClassInstanceCreation} is visited.
+	 * <br><br>
+	 * This method adds the new <code>___eval</code> method source to the root {@link #fSource} variable directly
+	 * 
+	 * @param isstatic if the keyword <code>static</code> should be added to the method source
+	 * @param bodydecls the existing listing of {@link BodyDeclaration}s to consider when creating the <code>___eval</code> method name
+	 * @param typename the raw type name of the type to instantiate in the <code>___eval</code> method
+	 * @param body the existing body of source to append to the remainder of the new method
+	 * @since 3.7
+	 */
+	void createAnonymousEvalMethod(boolean isstatic, List bodydecls, String typename, StringBuffer body) {
+		if(isstatic) {
+			fSource.append("static "); //$NON-NLS-1$
+		}
+		fSource.append("void "); //$NON-NLS-1$
+		fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodydecls));
+		fSource.append("() {\n"); //$NON-NLS-1$
+		fSource.append("new "); //$NON-NLS-1$
+		fSource.append(typename); 
+		fSource.append("()"); //$NON-NLS-1$
+		
+		fSnippetStartPosition+= fSource.length();
+		fSource.append(body);
+		fSource.append(";}\n"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Recursively finds the parent {@link Type} from the given type, in the cases where
 	 * the type is an {@link ArrayType} or a {@link ParameterizedType}
-	 * @param type
+	 * @param type the {@link Type}
 	 * @return the parent {@link Type}
 	 */
 	private Type getParentType(Type type) {
@@ -1740,7 +1780,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * 
 	 * @param major major level - e.g. 1 from 1.4
 	 * @param minor minor level - e.g. 4 from 1.4
-	 * @return
+	 * @return <code>true</code> if the given major / minor version is less than or equal to the backing source level
 	 */
 	public boolean isSourceLevelGreaterOrEqual(int major, int minor) {
 		return (fSourceMajorLevel > major) ||
@@ -1750,8 +1790,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	/**
 	 * Appends type parameters to source.
 	 * 
-	 * @param source
-	 * @param typeParameters
+	 * @param source the current buffer of source to append to
+	 * @param typeParameters the list of {@link TypeParameter}s to add
 	 */
 	private void appendTypeParameters(StringBuffer source, List typeParameters) {
 		if (!typeParameters.isEmpty() && isSourceLevelGreaterOrEqual(1, 5)) {

@@ -106,6 +106,7 @@ import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
@@ -193,6 +194,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(TestLogicalStructures.class));
 		addTest(new TestSuite(TestInstanceRetrieval.class));
+		addTest(new TestSuite(TestAnonymousInspect.class));
 		
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));
@@ -281,6 +283,8 @@ public class AutomatedSuite extends DebugSuite {
 
 	// Open from Clipboard action tests - Need to use #suite() because the test has a custom setup
 		addTest(OpenFromClipboardTests.suite());
+		
+		//addTest(EvalTestSuite.suite());
 	}
 	
 	protected static boolean isJ2SE15Compatible() {
