@@ -408,6 +408,11 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		}
 		if (info == null) {
 			fgLibraryInfoMap.remove(javaInstallPath);
+			if(fgInstallTimeMap != null) {
+				fgInstallTimeMap.remove(javaInstallPath);
+				writeInstallInfo();
+			}
+			
 		} else {
 			fgLibraryInfoMap.put(javaInstallPath, info);
 		}
@@ -516,6 +521,8 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				} catch (BackingStoreException e) {
 					log(e);
 				}
+				//catch in case any install times are still cached for removed JREs 
+				writeInstallInfo();
 			}
 		});
 
@@ -1035,8 +1042,8 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				for(Iterator i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
 					entry = (Entry) i.next();
 					key = (String) entry.getKey();
-					if(fgLibraryInfoMap.containsKey(key)) {
-						//only persist the info if the library map also has info - prevent persisting deleted JRE infos
+					if(fgLibraryInfoMap == null || fgLibraryInfoMap.containsKey(key)) {
+						//only persist the info if the library map also has info OR is null - prevent persisting deleted JRE infos
 						e = doc.createElement("entry"); //$NON-NLS-1$
 						root.appendChild(e);
 						e.setAttribute("loc", key); //$NON-NLS-1$
