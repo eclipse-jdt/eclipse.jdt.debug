@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,11 @@ public class HeapWalkingManager{
 			IDebugTarget target = ((IDebugElement)object).getDebugTarget();
 			if (target instanceof IJavaDebugTarget){
 				return ((IJavaDebugTarget)target).supportsInstanceRetrieval();
+			} else if (target != null) {
+				Object adapter =  target.getAdapter(IJavaDebugTarget.class);
+				if (adapter instanceof IJavaDebugTarget){
+					return ((IJavaDebugTarget) adapter).supportsInstanceRetrieval();
+				}
 			}
 		}
 		return false;
