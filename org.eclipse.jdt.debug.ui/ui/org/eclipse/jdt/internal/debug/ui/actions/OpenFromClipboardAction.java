@@ -82,7 +82,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Pattern to match a simple name e.g. <code>OpenFromClipboardAction</code>
 	 */
-	private static final String SIMPLE_NAME_PATTERN = "[\\w\\$]+"; //$NON-NLS-1$
+	private static final String SIMPLE_NAME_PATTERN= "[\\p{Lo}\\w\\$]+"; //$NON-NLS-1$
 
 	/**
 	 * Pattern to match a qualified name e.g.

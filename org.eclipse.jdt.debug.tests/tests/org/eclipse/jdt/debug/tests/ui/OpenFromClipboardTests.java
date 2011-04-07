@@ -18,19 +18,26 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+
 import org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction;
+
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.swt.widgets.Display;
+
 
 /**
  * Tests the Open from Clipboard action.
@@ -154,6 +161,17 @@ public class OpenFromClipboardTests extends TestCase {
 		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
 	}
 
+	private void setupTypeWithDBCSTest() throws JavaModelException {
+		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf= new StringBuffer();
+		buf.append("package p;\n");
+		buf.append("public class 新規クラス {\n");
+		buf.append("	void getMatching$Pattern(){\n");
+		buf.append("	}\n");
+		buf.append("}\n");
+		pack.createCompilationUnit("新規クラス.java", buf.toString(), false, null);
+	}
+
 	public void testClassFileLine_1() throws Exception {
 		String s = "OpenFromClipboardTests.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
@@ -178,6 +196,16 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeWithDollarSignTest();
 		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testDBCS() throws Exception {
+		String s= "新規クラス.java:100";
+		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
+
+		setupTypeWithDBCSTest();
+
+		List matches= getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
