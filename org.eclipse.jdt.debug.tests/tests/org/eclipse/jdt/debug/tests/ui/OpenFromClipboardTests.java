@@ -199,7 +199,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
-	public void testDBCS() throws Exception {
+	public void _testDBCS() throws Exception {
 		String s= "新規クラス.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
