@@ -25,9 +25,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -140,43 +142,25 @@ public class OpenFromClipboardTests extends TestCase {
 		return matches;
 	}
 
-	// type tests
-	private void setupTypeTest() throws JavaModelException {
-		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
-		buf.append("package p;\n");
-		buf.append("public class OpenFromClipboardTests {\n");
-		buf.append("}\n");
-		pack.createCompilationUnit("OpenFromClipboardTests.java", buf.toString(), false, null);
-	}
-
-	private void setupTypeWithDollarSignTest() throws JavaModelException {
-		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
-		buf.append("package p;\n");
-		buf.append("public class OpenFromClipboard$Tests {\n");
-		buf.append("	void getMatching$Pattern(){\n");
-		buf.append("	}\n");
-		buf.append("}\n");
-		pack.createCompilationUnit("OpenFromClipboard$Tests.java", buf.toString(), false, null);
-	}
-
-	private void setupTypeWithDBCSTest() throws JavaModelException {
+	private void setupTypeTest(String typeName) throws CoreException {
 		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
+		((IContainer)pack.getUnderlyingResource()).setDefaultCharset("UTF-8", null);
 		StringBuffer buf= new StringBuffer();
 		buf.append("package p;\n");
-		buf.append("public class 新規クラス {\n");
+		buf.append("public class " + typeName + " {\n");
 		buf.append("	void getMatching$Pattern(){\n");
 		buf.append("	}\n");
 		buf.append("}\n");
-		pack.createCompilationUnit("新規クラス.java", buf.toString(), false, null);
+		ICompilationUnit x= pack.createCompilationUnit(typeName + ".java", buf.toString(), false, null);
+		x.exists();
+
 	}
 
 	public void testClassFileLine_1() throws Exception {
 		String s = "OpenFromClipboardTests.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -185,7 +169,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests.java : 100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -194,16 +178,30 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboard$Tests.java:100";
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
-		setupTypeWithDollarSignTest();
+		setupTypeTest("OpenFromClipboard$Tests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
-	public void _testDBCS() throws Exception {
-		String s= "新規クラス.java:100";
+	public void testDBCS() throws Exception {
+		String typeName= "\u65b0\u898f\u30af\u30e9\u30b9";
+		String s= typeName + ".java:100";
+
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
-		setupTypeWithDBCSTest();
+		setupTypeTest(typeName);
+
+		List matches= getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
+	public void testUmlaut() throws Exception {
+		String typeName= "\u0042\u006c\u00f6\u0064";
+		String s= typeName + ".java:100";
+
+		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
+
+		setupTypeTest(typeName);
 
 		List matches= getJavaElementMatches(s);
 		assertEquals(1, matches.size());
@@ -213,7 +211,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests.java";
 		assertEquals(JAVA_FILE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -222,7 +220,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests:100";
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -231,7 +229,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests : 100";
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -241,7 +239,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -250,7 +248,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "( OpenFromClipboardTests.java : 121 )";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -259,7 +257,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "at p.OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -268,7 +266,7 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests.getMatchingPattern(OpenFromClipboardTests.java:121)";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
@@ -277,24 +275,24 @@ public class OpenFromClipboardTests extends TestCase {
 		String s = "OpenFromClipboardTests.getMatchingPattern ( OpenFromClipboardTests.java : 121 )";
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
-		setupTypeTest();
+		setupTypeTest("OpenFromClipboardTests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
 	public void testStackTraceLine_6() throws Exception {
 		String s = "at p.OpenFromClipboard$Tests.getMatching$Pattern(OpenFromClipboardTests.java:121)";
-		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+		setupTypeTest("OpenFromClipboardTests");
 
-		setupTypeWithDollarSignTest();
+		setupTypeTest("OpenFromClipboard$Tests");
 		List matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
 	// method tests
 	private void setupMethodTest() throws JavaModelException {
-		IPackageFragment pack = fSourceFolder.createPackageFragment("p", false, null);
-		StringBuffer buf = new StringBuffer();
+		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
+		StringBuffer buf= new StringBuffer();
 		buf.append("package p;\n");
 		buf.append("public class OpenFromClipboardTests {\n");
 		buf.append("	private void invokeOpenFromClipboardCommand() {\n");
