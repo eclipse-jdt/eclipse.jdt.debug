@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContai
 import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 
 /**
- * Private source lookup utils. Translates runtime classpath entries
+ * Private source lookup utilities. Translates runtime classpath entries
  * to source containers.
  * 
  * @since 3.0
@@ -132,7 +132,7 @@ public class JavaSourceLookupUtil {
 		}
 		IPath rootPath = root.getSourceAttachmentPath();
 		if (rootPath == null) {
-			// entry has a source attachment that the pkg root does not
+			// entry has a source attachment that the package root does not
 			return false;
 		}
 		return rootPath.equals(entryPath);
@@ -149,43 +149,40 @@ public class JavaSourceLookupUtil {
 	 */
 	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry) {
 		IResource resource = entry.getResource();
-		if (resource == null) { 
-			// Check all package fragment roots for case of external archive.
-			// External jars are shared, so it does not matter which project it
-			// originates from
-			IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-			try {
-				IJavaProject[] jps = model.getJavaProjects();
-				for (int i = 0; i < jps.length; i++) {
-					IJavaProject jp = jps[i];
-					IProject p =  jp.getProject();
-					if (p.isOpen()) {
-						IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
-						for (int j = 0; j < allRoots.length; j++) {
-							IPackageFragmentRoot root = allRoots[j];
-							if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
-								if (isSourceAttachmentEqual(root, entry)) {
-									// use package fragment root
-									return root;
-								}							
-							}
-						}
-					}
-				}
-			} catch (JavaModelException e) {
-				LaunchingPlugin.log(e);
-			}
-		} else {
-			// check if the archive is a package fragment root
+		if (resource != null) {
+			// find package fragment associated with the resource
 			IProject project = resource.getProject();
 			IJavaProject jp = JavaCore.create(project);
 			try {
 				if (project.isOpen() && jp.exists()) {
-					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot(resource.getFullPath());
+					if (root != null) {
+						// ensure source attachment paths match
+						if (isSourceAttachmentEqual(root, entry)) {
+							// use package fragment root
+							return root;
+ 						}
+ 					}
+ 				}
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+		// Check all package fragment roots for case of external archive.
+		// External jars are shared, so it does not matter which project it
+		// originates from
+		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+		Path entryPath = new Path(entry.getLocation());
+		try {
+			IJavaProject[] jps = model.getJavaProjects();
+			for (int i = 0; i < jps.length; i++) {
+				IJavaProject jp = jps[i];
+				IProject p =  jp.getProject();
+				if (p.isOpen()) {
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
-						if (allRoots[j].equals(root)) {
-							// ensure source attachment paths match
+						IPackageFragmentRoot root = allRoots[j];
+						if (root.isExternal() && root.getPath().equals(entryPath)) {
 							if (isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
@@ -194,29 +191,9 @@ public class JavaSourceLookupUtil {
 					}
 
 				}
-				// check all other java projects to see if another project references
-				// the archive
-				IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-				IJavaProject[] jps = model.getJavaProjects();
-				for (int i = 0; i < jps.length; i++) {
-					IJavaProject jp1 = jps[i];
-					IProject p = jp1.getProject();
-					if (p.isOpen()) {
-						IPackageFragmentRoot[] allRoots = jp1.getPackageFragmentRoots();
-						for (int j = 0; j < allRoots.length; j++) {
-							IPackageFragmentRoot root = allRoots[j];
-							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-								if (isSourceAttachmentEqual(root, entry)) {
-									// use package fragment root
-									return root;
-								}							
-							}
-						}
-					}
-				}
-			} catch (JavaModelException e) {
-				LaunchingPlugin.log(e);
-			}		
+			}
+		} catch (JavaModelException e) {
+			LaunchingPlugin.log(e);
 		}		
 		return null;
 	}	
