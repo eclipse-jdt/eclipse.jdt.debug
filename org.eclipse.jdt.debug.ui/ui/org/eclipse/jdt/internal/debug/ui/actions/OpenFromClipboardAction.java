@@ -646,20 +646,25 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			scope = SearchEngine.createWorkspaceScope();
 		}
 		try {
+			int workPerSearch = work / noOfSearches;
 			if (searchForMethods) {
-				SearchPattern methodPattern = createSearchPattern(memberName, IJavaSearchConstants.METHOD);
-				searchEngine.search(methodPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.METHOD, scope, requestor, progress.newChild(workPerSearch));
 			}
 			if (searchForConstructors) {
-				SearchPattern constructorPattern = createSearchPattern(memberName, IJavaSearchConstants.CONSTRUCTOR);
-				searchEngine.search(constructorPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.CONSTRUCTOR, scope, requestor, progress.newChild(workPerSearch));
 			}
 			if (searchForFields) {
-				SearchPattern fieldPattern = createSearchPattern(memberName, IJavaSearchConstants.FIELD);
-				searchEngine.search(fieldPattern, createSearchParticipant(), scope, requestor, progress.newChild(work / noOfSearches));
+				doMemberSearch(searchEngine, memberName, IJavaSearchConstants.FIELD, scope, requestor, progress.newChild(workPerSearch));
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
+		}
+	}
+
+	private static void doMemberSearch(SearchEngine searchEngine, String memberName, int searchFor, IJavaSearchScope scope, SearchRequestor requestor, SubMonitor progressMonitor) throws CoreException {
+		SearchPattern pattern = createSearchPattern(memberName, searchFor);
+		if (pattern != null) {
+			searchEngine.search(pattern, createSearchParticipant(), scope, requestor, progressMonitor);
 		}
 	}
 
