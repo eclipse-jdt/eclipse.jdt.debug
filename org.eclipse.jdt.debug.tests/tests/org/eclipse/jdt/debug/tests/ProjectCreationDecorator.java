@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -378,6 +378,12 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         waitForBuild();
     }
 
+    private IJavaProject getSharedJavaProject() throws Exception  {
+    	if (fJavaProject == null)
+    		testProjectCreation();
+    	return fJavaProject;
+    }
+
     /**
      * test if builds completed successfully and output directory contains class
      * files.
@@ -385,7 +391,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
      */
     public void testOutputFolderNotEmpty() throws Exception {
         waitForBuild();
-        IPath outputLocation = fJavaProject.getOutputLocation();
+        IPath outputLocation = getSharedJavaProject().getOutputLocation();
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IResource resource = root.findMember(outputLocation);
@@ -402,7 +408,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
      */
     public void testForUnexpectedErrorsInProject() throws Exception {
         waitForBuild();
-        IProject project = fJavaProject.getProject();
+        IProject project = getSharedJavaProject().getProject();
         IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
         int errors = 0;
         for (int i = 0; i < markers.length; i++) {
@@ -420,7 +426,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
      */
     public void testClassFilesGenerated() throws Exception {
         waitForBuild();
-        IPath outputLocation = fJavaProject.getOutputLocation();
+        IPath outputLocation = getSharedJavaProject().getOutputLocation();
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkspaceRoot root = workspace.getRoot();
         IFolder folder = (IFolder) root.findMember(outputLocation);
