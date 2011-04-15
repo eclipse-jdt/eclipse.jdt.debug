@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -351,6 +351,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Adds the given breakpoint to the list of breakpoints
 	 * this thread is suspended at
+	 * @param bp the breakpoint to add to the listing
 	 */
 	protected void addCurrentBreakpoint(IBreakpoint bp) {
 		fCurrentBreakpoints.add(bp);
@@ -360,55 +361,56 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Removes the given breakpoint from the list of breakpoints
 	 * this thread is suspended at (called when a breakpoint is
 	 * deleted, in case we are suspended at that breakpoint)
+	 * @param bp the breakpoint to remove from the listing
 	 */
 	protected void removeCurrentBreakpoint(IBreakpoint bp) {
 		fCurrentBreakpoints.remove(bp);
 	}	
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
 	public synchronized IBreakpoint[] getBreakpoints() {
 		return (IBreakpoint[])fCurrentBreakpoints.toArray(new IBreakpoint[fCurrentBreakpoints.size()]);
 	}
 
-	/**
-	 * @see ISuspendResume#canResume()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
 		return isSuspended() && (!isPerformingEvaluation() || isInvokingMethod()) && !isSuspendVoteInProgress();
 	}
 
-	/**
-	 * @see ISuspendResume#canSuspend()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
 		return !isSuspended() || (isPerformingEvaluation() && !isInvokingMethod()) || isSuspendVoteInProgress();
 	}
 
-	/**
-	 * @see ITerminate#canTerminate()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
 
-	/**
-	 * @see IStep#canStepInto()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
 		return canStep();
 	}
 
-	/**
-	 * @see IStep#canStepOver()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
 		return canStep();
 	}
 
-	/**
-	 * @see IStep#canStepReturn()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
 		return canStep();
@@ -508,10 +510,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * @see computeStackFrames()
+	 * @see #computeStackFrames()
 	 * 
 	 * @param refreshChildren whether or not this method should request new stack
 	 *        frames from the VM
+	 * @return the list of stackframes
+	 * @throws DebugException if an exception occurs retrieving frames
 	 */	
 	protected synchronized List computeStackFrames(boolean refreshChildren) throws DebugException {
 		if (isSuspended()) {
@@ -532,7 +536,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					fStackFrames.add(0, new JDIStackFrame(this, (StackFrame) frames.get(i), depth));
 					depth++;
 				}
-				int numToRebind = Math.min(newSize, oldSize); // number of frames to attempt to rebind
+				int numToRebind = Math.min(newSize, oldSize); // number of frames to attempt to re-bind
 				int offset = newSize - 1;
 				for (depth = 0; depth < numToRebind; depth++) {
 					JDIStackFrame oldFrame = (JDIStackFrame) fStackFrames.get(offset);
@@ -586,13 +590,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * @see JDIThread#computeStackFrames()
-	 * 
 	 * This method differs from computeStackFrames() in that it
 	 * always requests new stack frames from the VM. As this is
 	 * an expensive operation, this method should only be used
 	 * by clients who know for certain that the stack frames
 	 * on the VM have changed.
+	 * 
+	 * @see JDIThread#computeStackFrames()
+	 * @return the listing of stackframes or an empty list, never <code>null</code>
+	 * @throws DebugException if an exception occurs retrieving the stackframes
 	 */
 	public List computeNewStackFrames() throws DebugException {
 		return computeStackFrames(true);
@@ -644,10 +650,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// return or exception will be thrown
 		return -1;
 	}
-	
-	/**
-	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int, boolean)
-	 */ 
+	 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(org.eclipse.jdt.debug.core.IEvaluationRunnable, org.eclipse.core.runtime.IProgressMonitor, int, boolean)
+	 */
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations, null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //			
@@ -734,8 +740,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}	
 	
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(Runnable)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(java.lang.Runnable)
 	 */
 	public void queueRunnable(Runnable evaluation) {
 		if (fAsyncJob == null) {
@@ -744,8 +750,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fAsyncJob.addRunnable(evaluation);
 	}
 	
-	/**
-	 * @see IJavaThread#terminateEvaluation()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#terminateEvaluation()
 	 */
 	public void terminateEvaluation() throws DebugException {
 		synchronized (fEvaluationLock) {
@@ -756,8 +762,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 	
-	/**
-	 * @see IJavaThread#canTerminateEvaluation()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#canTerminateEvaluation()
 	 */
 	public boolean canTerminateEvaluation() {
 		synchronized (fEvaluationLock) {
@@ -801,6 +807,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param method the underlying method to be invoked
 	 * @param args the arguments to invoke the method with (an empty list
 	 *  if none) 
+	 * @param invokeNonvirtual if the super-class method should be invoked
 	 * @return the result of the method, as an underlying value
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
@@ -942,7 +949,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param restoreTimeout the communication timeout value,
 	 * 	in milliseconds, that should be reset
 	 * @see #invokeComplete(int)
-	 * @exception DebugException.  Reasons include:
+	 * @exception DebugException  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -963,7 +970,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param restoreTimeout the communication timeout value,
 	 * 	in milliseconds, that should be reset
 	 * @see #invokeComplete(int)
-	 * @exception DebugException.  Reasons include:
+	 * @exception DebugException  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -985,7 +992,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @param restoreTimeout the communication timeout value,
 	 * 	in milliseconds, that should be reset
-	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
+	 * @see #invokeMethod(ClassType, ObjectReference, Method, List, boolean)
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected synchronized void invokeComplete(int restoreTimeout) {
@@ -1000,8 +1007,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 	
-	/**
-	 * @see IThread#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
 	public String getName() throws DebugException {
 		try {
@@ -1024,6 +1031,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
+	 * Returns the priority from the underlying {@link ReferenceType}, failing that the backing {@link Value}
+	 * for the underlying {@link ThreadReference} is consulted
+	 * 
+	 * @return the priority from the backing {@link ReferenceType} or {@link Value}
+	 * @throws DebugException if an exception occurs retrieving the priority
 	 * @see IThread#getPriority
 	 */
 	public int getPriority() throws DebugException {
@@ -1048,8 +1060,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return -1;
 	}
 
-	/**
-	 * @see IThread#getTopStackFrame()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
 	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		List c= computeStackFrames();
@@ -1185,22 +1197,22 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		
 	}
 
-	/**
-	 * @see IStep#isStepping()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
 	public boolean isStepping() {
 		return getPendingStepHandler() != null;
 	}
 
-	/**
-	 * @see ISuspendResume#isSuspended()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return !fRunning && !fTerminated;
 	}
 
-	/**
-	 * @see IJavaThread#isSystemThread()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#isSystemThread()
 	 */
 	public boolean isSystemThread() {
 		return fIsSystemThread;
@@ -1213,8 +1225,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return fIsDaemon;
 	}
 
-	/**
-	 * @see IJavaThread#getThreadGroupName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getThreadGroupName()
 	 */
 	public String getThreadGroupName() throws DebugException {
 		if (fThreadGroupName == null) {
@@ -1237,13 +1249,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return fThreadGroupName;
 	}
 
-	/**
-	 * @see ITerminate#isTerminated()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return fTerminated;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#isOutOfSynch()
+	 */
 	public synchronized boolean isOutOfSynch() throws DebugException {
 		if (isSuspended() && ((JDIDebugTarget)getDebugTarget()).hasHCRFailed()) {
 			List frames= computeStackFrames();
@@ -1260,6 +1275,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#mayBeOutOfSynch()
+	 */
 	public boolean mayBeOutOfSynch() {
 		if (!isSuspended()) {
 			return ((JDIDebugTarget)getDebugTarget()).hasHCRFailed();
@@ -1276,8 +1294,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fTerminated= terminated;
 	}
 
-	/**
-	 * @see ISuspendResume#resume()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public synchronized void resume() throws DebugException {
 		if (getDebugTarget().isSuspended()) {
@@ -1289,11 +1307,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * @see ISuspendResume#resume()
 	 * 
 	 * Updates the state of this thread, but only fires
 	 * notification to listeners if <code>fireNotification</code>
 	 * is <code>true</code>.
+	 * 
+	 * @see ISuspendResume#resume()
+	 * @param fireNotification if a resume event should be fired 
+	 * @throws DebugException if an exception occurs trying to resume the thread
 	 */
 	private synchronized void resumeThread(boolean fireNotification) throws DebugException {
 		if (!isSuspended() || (isPerformingEvaluation() && !isInvokingMethod())) {
@@ -1336,7 +1357,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * is resumed, when stack frames are to be re-used when it later
 	 * suspends.
 	 * 
-	 * @see computeStackFrames()
+	 * @see #computeStackFrames()
 	 */
 	protected synchronized void preserveStackFrames() {
 		fRefreshChildren = true;
@@ -1352,7 +1373,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * this thread is resumed when stack frames are not to be re-used
 	 * on the next suspend.
 	 * 
-	 * @see computeStackFrames()
+	 * @see #computeStackFrames()
 	 */
 	protected synchronized void disposeStackFrames() {
 		fStackFrames.clear();
@@ -1440,6 +1461,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * step into is necessary.  It compares the current Location to the original
 	 * Location when the user step into was initiated.  It also makes sure the stack depth
 	 * now is the same as when the step was initiated.
+	 * @param location the location to consider
+	 * @return <code>true</code> if we should do an extra step, <code>false</code> otherwise
+	 * @throws DebugException if an exception occurs
 	 */
 	protected boolean shouldDoExtraStepInto(Location location) throws DebugException {
 		if (getOriginalStepKind() != StepRequest.STEP_INTO) {
@@ -1470,7 +1494,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Determines if a user did a step into and stepped through filtered code.
 	 * In this case, do a step return if the user has requested not to 
-	 * step thru to an un-filtered location.
+	 * step thru to an unfiltered location.
+	 * @return <code>true</code> if we should do a step return
+	 * @throws DebugException if an exception occurs
 	 */
 	protected boolean shouldDoStepReturn() throws DebugException {
 		if (getOriginalStepKind() == StepRequest.STEP_INTO) {
@@ -1481,8 +1507,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return false;
 	}	
 	
-	/**
-	 * @see ISuspendResume#suspend()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
 		// prepare for the suspend request
@@ -1619,6 +1645,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Notifies this thread that is about to be resumed due
 	 * to a VM resume.
+	 * @throws DebugException if an exception occurs
 	 */
 	protected synchronized void resumedByVM() throws DebugException {
 		fClientSuspendRequest = false;
@@ -1653,6 +1680,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	/**
 	 * Drops to the given stack frame
+	 * @param frame the stack frame to try dropping to
 	 * 
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
@@ -1708,7 +1736,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			} catch (InvalidStackFrameException exception) {
 				// InvalidStackFrameException can be thrown when all but the
 				// deepest frame were popped. Fire a changed notification
-				// in case this has occured.
+				// in case this has occurred.
 				fireChangeEvent(DebugEvent.CONTENT);
 				targetRequestFailed(exception.toString(),exception); 
 			} catch (RuntimeException exception) {
@@ -1723,6 +1751,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * This method is synchronized, such that the step request
 	 * begins before a background evaluation can be performed.
 	 * 
+	 * @param frame the stack frame to try and step to
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
@@ -1750,8 +1779,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 
-	/**
-	 * @see IJavaThread#findVariable(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#findVariable(java.lang.String)
 	 */
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
@@ -1765,7 +1794,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				}
 			} catch (DebugException e) {
-				// if the thread has since reusmed, return null (no need to report error)
+				// if the thread has since resumed, return null (no need to report error)
 				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 					throw e;
 				}
@@ -1841,9 +1870,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		return fThreadGroup;
 	}
-		 	
-	/**
-	 * @see IJavaThread#isPerformingEvaluation()
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#isPerformingEvaluation()
 	 */
 	public boolean isPerformingEvaluation() {
 		return fEvaluationRunnable != null;
@@ -1852,6 +1881,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Returns whether this thread is currently performing
 	 * a method invocation 
+	 * @return if the thread is currently invoking a method
 	 */
 	public boolean isInvokingMethod() {
 		return fIsInvokingMethod;
@@ -1860,6 +1890,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Returns whether this thread is currently ignoring
 	 * breakpoints.
+	 * @return if the thread is currently ignoring breakpoints
 	 */
 	public boolean isIgnoringBreakpoints() {
 		return !fHonorBreakpoints || fSuspendVoteInProgress || hasClientRequestedSuspend();
@@ -1878,7 +1909,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Sets whether this thread is currently invoking a method. Notifies
 	 * any threads waiting for the method invocation lock
 	 * 
-	 * @param evaluating whether this thread is currently
+	 * @param invoking whether this thread is currently
 	 *  invoking a method
 	 */
 	protected void setInvokingMethod(boolean invoking) {
@@ -2012,7 +2043,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		/**
 		 * Creates and returns a step request of the specified kind.
 		 * 
-		 * @param one of <code>StepRequest.STEP_INTO</code>,
+		 * @param kind of <code>StepRequest.STEP_INTO</code>,
 		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
 		 * @return step request
 		 * @exception DebugException if this method fails.  Reasons include:
@@ -2086,21 +2117,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * and removes this handler as an event listener.
 		 */
 		protected void deleteStepRequest() {
-			removeJDIEventListener(this, getStepRequest());
 			try {
-				EventRequestManager manager = getEventRequestManager();
-				if (manager != null) {
-					manager.deleteEventRequest(getStepRequest());
-				}				
-				setStepRequest(null);
+				StepRequest req = getStepRequest();
+				if(req != null) {
+					removeJDIEventListener(this, req);
+					EventRequestManager manager = getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(req);
+					}
+				}
 			} catch (RuntimeException e) {
 				logError(e);
+			}
+			finally {
+				setStepRequest(null);
 			}
 		}
 		
 		/**
 		 * If step filters are currently switched on and the current location is not a filtered
 		 * location, set all active filters on the step request.
+		 * @param request the request to augment
 		 */
 		protected void attachFiltersToStepRequest(StepRequest request) {
 			
@@ -2148,7 +2185,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * step filter criteria (e.g., synthetic methods, static initializers),
 		 * then continue stepping.
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean, EventSet)
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			try {
@@ -2194,6 +2231,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * user has indicated (via the step filter preferences) should be 
 		 * filtered and the step was not initiated from a filtered location.
 		 * Returns <code>false</code> otherwise.
+		 * @param location the location to check
+		 * @return if the given {@link Location} should be filtered
+		 * @throws DebugException if an exception occurs
 		 */
 		protected boolean locationShouldBeFiltered(Location location) throws DebugException {
 			if (applyStepFilters()) {
@@ -2208,6 +2248,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * Returns <code>true</code> if the StepEvent's Location is a Method that the 
 		 * user has indicated (via the step filter preferences) should be 
 		 * filtered.  Returns <code>false</code> otherwise.
+		 * @param method the {@link Method} location to check
+		 * @return <code>true</code> if the {@link Method} {@link Location} should be filtered, <code>false</code> otherwise
 		 */
 		protected boolean locationIsFiltered(Method method) {
 			if (isStepFiltersEnabled()) {
@@ -2241,6 +2283,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * 		and event listener</li>
 		 * <li>A suspend event is fired</li>
 		 * </ul>
+		 * @param set the remaining {@link EventSet} to queue
 		 */
 		protected void stepEnd(EventSet set) {
 			setRunning(false);
@@ -2280,7 +2323,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * step. A pending step could be cancelled if a breakpoint
 		 * suspends execution during the step.
 		 * 
-		 * @param one of <code>StepRequest.STEP_INTO</code>,
+		 * @param kind of <code>StepRequest.STEP_INTO</code>,
 		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
 		 * @exception DebugException if this method fails.  Reasons include:
 		 * <ul>
@@ -2311,15 +2354,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Handler for step over requests.
 	 */
 	class StepOverHandler extends StepHandler {
-		/**
-		 * @see StepHandler#getStepKind()
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepKind()
 		 */
 		protected int getStepKind() {
 			return StepRequest.STEP_OVER;
 		}	
 		
-		/**
-		 * @see StepHandler#getStepDetail()
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepDetail()
 		 */
 		protected int getStepDetail() {
 			return DebugEvent.STEP_OVER;
@@ -2330,15 +2374,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Handler for step into requests.
 	 */
 	class StepIntoHandler extends StepHandler {
-		/**
-		 * @see StepHandler#getStepKind()
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepKind()
 		 */
 		protected int getStepKind() {
 			return StepRequest.STEP_INTO;
 		}	
 		
-		/**
-		 * @see StepHandler#getStepDetail()
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepDetail()
 		 */
 		protected int getStepDetail() {
 			return DebugEvent.STEP_INTO;
@@ -2361,15 +2406,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return super.locationShouldBeFiltered(location);
 		}
 
-		/**
-		 * @see StepHandler#getStepKind()
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepKind()
 		 */
 		protected int getStepKind() {
 			return StepRequest.STEP_OUT;
 		}	
 		
-		/**
-		 * @see StepHandler#getStepDetail()
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#getStepDetail()
 		 */
 		protected int getStepDetail() {
 			return DebugEvent.STEP_RETURN;
@@ -2434,12 +2479,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * another step request is created and this thread
 		 * is resumed.
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean, EventSet)
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
 			try {
 				int numFrames = getUnderlyingFrameCount();
-				// tos should not be null
+				// top of stack should not be null
 				if (numFrames <= getRemainingFrames()) {
 					stepEnd(eventSet);
 					return false;
@@ -2508,8 +2553,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * to do a return. When the frame count is less than zero, the
 		 * step being performed is a "step return", so a regular invocation
 		 * is performed. 
-		 * 
-		 * @see StepHandler#invokeThread()
+		 * @throws DebugException if an exception occurs 
 		 */
 		protected void invokeThread() throws DebugException {
 			if (getFramesToDrop() < 0) {
@@ -2532,7 +2576,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * top frame. Returns false, as this handler will resume this
 		 * thread with a special invocation (<code>doReturn</code>).
 		 * 
-		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget, boolean, EventSet)
 		 * @see #invokeThread()
 		 */		
 		public boolean handleEvent(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
@@ -2785,9 +2829,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 	}
 
-
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#stop(org.eclipse.jdt.debug.core.IJavaValue)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#stop(org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public void stop(IJavaObject exception) throws DebugException {
 		try {
