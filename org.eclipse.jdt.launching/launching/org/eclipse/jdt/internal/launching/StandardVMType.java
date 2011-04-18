@@ -25,28 +25,24 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.osgi.service.environment.Constants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
-
 import org.eclipse.jdt.core.JavaCore;
-
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.osgi.service.environment.Constants;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -54,6 +50,18 @@ import org.eclipse.jdt.launching.LibraryLocation;
  */
 public class StandardVMType extends AbstractVMInstallType {
 	
+	/**
+	 * Constants for common {@link String}s
+	 * @since 3.7 
+	 */
+	private static final String RT_JAR = "rt.jar"; //$NON-NLS-1$
+	private static final String SRC = "src"; //$NON-NLS-1$
+	private static final String SRC_ZIP = "src.zip"; //$NON-NLS-1$
+	private static final String SRC_JAR = "src.jar"; //$NON-NLS-1$
+	private static final String JRE = "jre"; //$NON-NLS-1$
+	private static final String LIB = "lib"; //$NON-NLS-1$
+	private static final String BAR = "|"; //$NON-NLS-1$
+
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
 	
 	/**
@@ -66,23 +74,29 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * the library info during this session.
 	 */
 	private static Map fgFailedInstallPath = new HashMap();
-		
-	/**
-	 * Convenience handle to the system-specific file separator character
-	 */															
-	private static final char fgSeparator = File.separatorChar;
 
+	/**
+	 * Cache for default library locations. See {@link #getDefaultLibraryLocations(File)}
+	 * <br><br>
+	 * Map&lt;{@link String}, {@link LibraryLocation}&gt;
+	 * 
+	 * @since 3.7
+	 */
+	private static Map fgDefaultLibLocs = new HashMap();
+	
 	/**
 	 * The list of locations in which to look for the java executable in candidate
 	 * VM install locations, relative to the VM install location.
 	 */
 	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-	private static final String[] fgCandidateJavaLocations = {"bin" + fgSeparator, "jre" + fgSeparator + "bin" + fgSeparator}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] fgCandidateJavaLocations = {"bin" + File.separatorChar, JRE + File.separatorChar + "bin" + File.separatorChar}; //$NON-NLS-1$ //$NON-NLS-2$ 
 	
 	/**
 	 * Starting in the specified VM install location, attempt to find the 'java' executable
 	 * file.  If found, return the corresponding <code>File</code> object, otherwise return
 	 * <code>null</code>.
+	 * @param vmInstallLocation the {@link File} location to look in
+	 * @return the {@link File} for the Java executable or <code>null</code>
 	 */
 	public static File findJavaExecutable(File vmInstallLocation) {
 		// Try each candidate in order.  The first one found wins.  Thus, the order
@@ -116,6 +130,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Return library information corresponding to the specified install
 	 * location. If the information does not exist, create it using the given Java
 	 * executable.
+	 * @param javaHome the Java home folder
+	 * @param javaExecutable the Java executable file
+	 * @return the {@link LibraryInfo} for the home and executable path or an empty object, never <code>null</code>
 	 */
 	protected synchronized LibraryInfo getLibraryInfo(File javaHome, File javaExecutable) {
 		String installPath = javaHome.getAbsolutePath();
@@ -139,6 +156,10 @@ public class StandardVMType extends AbstractVMInstallType {
 	/**
 	 * Return <code>true</code> if the appropriate system libraries can be found for the
 	 * specified java executable, <code>false</code> otherwise.
+	 * @param javaHome the Java home folder
+	 * @param javaExecutable the Java executable file
+	 * @return <code>true</code> if the default system libraries can be detected for the given install location
+	 * <code>false</code> otherwise
 	 */
 	protected boolean canDetectDefaultSystemLibraries(File javaHome, File javaExecutable) {
 		LibraryLocation[] locations = getDefaultLibraryLocations(javaHome);
@@ -150,8 +171,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Returns the version of the VM at the given location, with the given
 	 * executable.
 	 * 
-	 * @param javaHome
-	 * @param javaExecutable
+	 * @param javaHome the Java home folder
+	 * @param javaExecutable the Java executable file
 	 * @return String
 	 */
 	protected String getVMVersion(File javaHome, File javaExecutable) {
@@ -191,7 +212,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		// If the reported java home directory terminates with 'jre', first see if 
 		// the parent directory contains the required libraries
 		boolean foundLibraries = false;
-		if (javaHome.getName().equalsIgnoreCase("jre")) { //$NON-NLS-1$
+		if (javaHome.getName().equalsIgnoreCase(JRE)) { 
 			File parent= new File(javaHome.getParent());			
 			if (canDetectDefaultSystemLibraries(parent, javaExecutable)) {
 				javaHome = parent;
@@ -212,32 +233,35 @@ public class StandardVMType extends AbstractVMInstallType {
 	/**
 	 * Return an <code>IPath</code> corresponding to the single library file containing the
 	 * standard Java classes for most VMs version 1.2 and above.
+	 * 
+	 * @param javaHome the Java home folder
+	 * @return the {@link IPath} to the <code>rt.jar</code> file
 	 */
 	protected IPath getDefaultSystemLibrary(File javaHome) {
-		IPath jreLibPath= new Path(javaHome.getPath()).append("lib").append("rt.jar"); //$NON-NLS-2$ //$NON-NLS-1$
+		IPath jreLibPath= new Path(javaHome.getPath()).append(LIB).append(RT_JAR); 
 		if (jreLibPath.toFile().isFile()) {
 			return jreLibPath;
 		}
-		return new Path(javaHome.getPath()).append("jre").append("lib").append("rt.jar"); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		return new Path(javaHome.getPath()).append(JRE).append(LIB).append(RT_JAR); 
 	}
 	
 	/**
 	 * Returns a path to the source attachment for the given library, or
 	 * an empty path if none.
 	 * 
-	 * @param libLocation
+	 * @param libLocation the {@link File} location of the library to find the source for
 	 * @return a path to the source attachment for the given library, or
 	 *  an empty path if none
 	 */
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		File parent= libLocation.getParentFile();
 		while (parent != null) {
-			File parentsrc= new File(parent, "src.jar"); //$NON-NLS-1$
+			File parentsrc= new File(parent, SRC_JAR);
 			if (parentsrc.isFile()) {
-				setDefaultRootPath("src");//$NON-NLS-1$
+				setDefaultRootPath(SRC);
 				return new Path(parentsrc.getPath());
 			}
-			parentsrc= new File(parent, "src.zip"); //$NON-NLS-1$
+			parentsrc= new File(parent, SRC_ZIP);
 			if (parentsrc.isFile()) {
 				setDefaultRootPath(""); //$NON-NLS-1$
 				return new Path(parentsrc.getPath());
@@ -268,7 +292,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		return Path.EMPTY; 
 	}
 
-	// J9 has a known/fixed structure for its libs and source locations.  Here just
+	// J9 has a known/fixed structure for its libraries and source locations.  Here just
 	// look for the source associated with each lib.
 	private IPath checkForJ9LibrarySource(File libLocation) {
 		File parent= libLocation.getParentFile();
@@ -288,66 +312,74 @@ public class StandardVMType extends AbstractVMInstallType {
 		return null;
 	}
 
+	/**
+	 * Returns the package root path
+	 * 
+	 * @return the package root path
+	 */
 	protected IPath getDefaultPackageRootPath() {
 		return new Path(getDefaultRootPath());
 	}
 
-	/**
-	 * NOTE: We do not add libraries from the "endorsed" directory explicitly, as
-	 * the bootpath contains these entries already (if they exist).
-	 * 
-	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(File)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
+		//NOTE: We do not add libraries from the "endorsed" directory explicitly, as
+		//the bootpath contains these entries already (if they exist).
 		// Determine the java executable that corresponds to the specified install location
 		// and use this to generate library information.  If no java executable was found, 
 		// the 'standard' libraries will be returned.
-		File javaExecutable = findJavaExecutable(installLocation);
-		LibraryInfo libInfo;
-		if (javaExecutable == null) {
-			libInfo = getDefaultLibraryInfo(installLocation);
-		} else {
-			libInfo = getLibraryInfo(installLocation, javaExecutable);
-		}
-		
-		// Add all endorsed libraries - they are first, as they replace
-		List allLibs = new ArrayList(gatherAllLibraries(libInfo.getEndorsedDirs()));
-		
-		// next is the boot path libraries
-		String[] bootpath = libInfo.getBootpath();
-		List boot = new ArrayList(bootpath.length);
-		URL url = getDefaultJavadocLocation(installLocation);
-		for (int i = 0; i < bootpath.length; i++) {
-			IPath path = new Path(bootpath[i]);
-			File lib = path.toFile(); 
-			if (lib.exists() && lib.isFile()) {
-				LibraryLocation libraryLocation = new LibraryLocation(path,
-								getDefaultSystemLibrarySource(lib),
-								getDefaultPackageRootPath(),
-								url);
-				boot.add(libraryLocation);
+		List allLibs = (List) fgDefaultLibLocs.get(installLocation.getAbsolutePath());
+		if(allLibs == null) {
+			File javaExecutable = findJavaExecutable(installLocation);
+			LibraryInfo libInfo;
+			if (javaExecutable == null) {
+				libInfo = getDefaultLibraryInfo(installLocation);
+			} else {
+				libInfo = getLibraryInfo(installLocation, javaExecutable);
 			}
-		}
-		allLibs.addAll(boot);
-				
-		// Add all extension libraries
-		allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
-		
-		//remove duplicates
-		HashSet set = new HashSet();
-		LibraryLocation lib = null;
-		for(ListIterator liter = allLibs.listIterator(); liter.hasNext();) {
-			lib = (LibraryLocation) liter.next();
-			IPath systemLibraryPath = lib.getSystemLibraryPath();
-			String device = systemLibraryPath.getDevice();
-			if (device != null) {
-				// @see Bug 197866 - Installed JRE Wizard creates duplicate system libraries when drive letter is lower case
-				systemLibraryPath = systemLibraryPath.setDevice(device.toUpperCase());
+			
+			// Add all endorsed libraries - they are first, as they replace
+			allLibs = new ArrayList(gatherAllLibraries(libInfo.getEndorsedDirs()));
+			
+			// next is the boot path libraries
+			String[] bootpath = libInfo.getBootpath();
+			List boot = new ArrayList(bootpath.length);
+			URL url = getDefaultJavadocLocation(installLocation);
+			for (int i = 0; i < bootpath.length; i++) {
+				IPath path = new Path(bootpath[i]);
+				File lib = path.toFile(); 
+				if (lib.exists() && lib.isFile()) {
+					LibraryLocation libraryLocation = new LibraryLocation(path,
+									getDefaultSystemLibrarySource(lib),
+									getDefaultPackageRootPath(),
+									url);
+					boot.add(libraryLocation);
+				}
 			}
-			if(!set.add(systemLibraryPath.toOSString())) {
-				//did not add it, duplicate
-				liter.remove();
+			allLibs.addAll(boot);
+					
+			// Add all extension libraries
+			allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
+			
+			//remove duplicates
+			HashSet set = new HashSet();
+			LibraryLocation lib = null;
+			for(ListIterator liter = allLibs.listIterator(); liter.hasNext();) {
+				lib = (LibraryLocation) liter.next();
+				IPath systemLibraryPath = lib.getSystemLibraryPath();
+				String device = systemLibraryPath.getDevice();
+				if (device != null) {
+					// @see Bug 197866 - Installed JRE Wizard creates duplicate system libraries when drive letter is lower case
+					systemLibraryPath = systemLibraryPath.setDevice(device.toUpperCase());
+				}
+				if(!set.add(systemLibraryPath.toOSString())) {
+					//did not add it, duplicate
+					liter.remove();
+				}
 			}
+			fgDefaultLibLocs.put(installLocation.getAbsolutePath(), allLibs);
 		}
 		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
@@ -355,7 +387,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/**
 	 * Returns default library information for the given install location.
 	 * 
-	 * @param installLocation
+	 * @param installLocation the VM install location
 	 * @return LibraryInfo
 	 */
 	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
@@ -420,17 +452,17 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * install location. The resulting file may not exist, or be <code>null</code>
 	 * if an extension directory is not supported.
 	 * 
-	 * @param installLocation 
+	 * @param installLocation the VM install location
 	 * @return default extension directory or <code>null</code>
 	 */
 	protected File getDefaultExtensionDirectory(File installLocation) {
 		File jre = null;
-		if (installLocation.getName().equalsIgnoreCase("jre")) { //$NON-NLS-1$
+		if (installLocation.getName().equalsIgnoreCase(JRE)) { 
 			jre = installLocation;
 		} else {
-			jre = new File(installLocation, "jre"); //$NON-NLS-1$
+			jre = new File(installLocation, JRE); 
 		}
-		File lib = new File(jre, "lib"); //$NON-NLS-1$
+		File lib = new File(jre, LIB); 
 		File ext = new File(lib, "ext"); //$NON-NLS-1$
 		return ext;
 	}
@@ -440,11 +472,11 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * given install location. The resulting file may not exist, or be
 	 * <code>null</code> if an endorsed directory is not supported.
 	 * 
-	 * @param installLocation 
+	 * @param installLocation the VM install location
 	 * @return default endorsed directory or <code>null</code>
 	 */
 	protected File getDefaultEndorsedDirectory(File installLocation) {
-		File lib = new File(installLocation, "lib"); //$NON-NLS-1$
+		File lib = new File(installLocation, LIB); 
 		File ext = new File(lib, "endorsed"); //$NON-NLS-1$
 		return ext;
 	}
@@ -482,13 +514,16 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * and extension directories. This output is then parsed and cached for
 	 * future reference.
 	 * 
+	 * @param javaHome the Java home folder
+	 * @param javaExecutable the Java executable file
+	 * 
 	 * @return library info or <code>null</code> if none
 	 */	
 	protected LibraryInfo generateLibraryInfo(File javaHome, File javaExecutable) {
 		LibraryInfo info = null;
 		
 		// if this is 1.1.X, the properties will not exist		
-		IPath classesZip = new Path(javaHome.getAbsolutePath()).append("lib").append("classes.zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		IPath classesZip = new Path(javaHome.getAbsolutePath()).append(LIB).append("classes.zip"); //$NON-NLS-1$ 
 		if (classesZip.toFile().exists()) {
 			return new LibraryInfo("1.1.x", new String[] {classesZip.toOSString()}, new String[0], new String[0]); //$NON-NLS-1$
 		}
@@ -516,7 +551,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				p = DebugPlugin.exec(cmdLine, null, envp);
 				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "Library Detection"); //$NON-NLS-1$
 				for (int i= 0; i < 600; i++) {
-					// Wait no more than 30 seconds (600 * 50 mils)
+					// Wait no more than 30 seconds (600 * 50 milliseconds)
 					if (process.isTerminated()) {
 						break;
 					}
@@ -543,6 +578,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	
 	/**
 	 * Parses the output from 'LibraryDetector'.
+	 * 
+	 * @param process the backing {@link IProcess} that was run
+	 * @return the new {@link LibraryInfo} object or <code>null</code>
 	 */
 	protected LibraryInfo parseLibraryInfo(IProcess process) {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
@@ -551,17 +589,17 @@ public class StandardVMType extends AbstractVMInstallType {
 			text = streamsProxy.getOutputStreamMonitor().getContents();
 		}
 		if (text != null && text.length() > 0) {
-			int index = text.indexOf("|"); //$NON-NLS-1$
+			int index = text.indexOf(BAR); 
 			if (index > 0) { 
 				String version = text.substring(0, index);
 				text = text.substring(index + 1);
-				index = text.indexOf("|"); //$NON-NLS-1$	
+				index = text.indexOf(BAR); 
 				if (index > 0) {
 					String bootPaths = text.substring(0, index);
 					String[] bootPath = parsePaths(bootPaths);
 					 
 					text = text.substring(index + 1);
-					index = text.indexOf("|"); //$NON-NLS-1$
+					index = text.indexOf(BAR); 
 					
 					if (index > 0) {
 						String extDirPaths = text.substring(0, index);
@@ -602,6 +640,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			String path = vm.getInstallLocation().getAbsolutePath();
             LaunchingPlugin.setLibraryInfo(path, null);
             fgFailedInstallPath.remove(path);
+            fgDefaultLibLocs.remove(path);
 		}		
 		super.disposeVMInstall(id);
 	}
