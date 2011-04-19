@@ -251,20 +251,23 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	private static void handleSingleLineInput(String inputText) {
 		List matches = new ArrayList();
-		int line = getJavaElementMatches(inputText, matches);
-		handleMatches(matches, line, inputText);
+		try {
+			int line= getJavaElementMatches(inputText, matches);
+			handleMatches(matches, line, inputText);
+		} catch (InterruptedException ex) {
+			// Do nothing
+		}
 	}
 
 	/**
 	 * Parse the input text and search for the corresponding Java elements.
 	 * 
-	 * @param inputText
-	 *            the line number
-	 * @param matches
-	 *            matched Java elements
+	 * @param inputText the line number
+	 * @param matches matched Java elements
 	 * @return the line number
+	 * @throws InterruptedException if canceled by the user
 	 */
-	private static int getJavaElementMatches(String inputText, List matches) {
+	private static int getJavaElementMatches(String inputText, List matches) throws InterruptedException {
 		String s = inputText.trim();
 		switch (getMatchingPattern(s)) {
 		case JAVA_FILE_LINE: {
@@ -344,12 +347,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Perform a Java search for the type and return the corresponding Java elements.
 	 * 
-	 * @param typeName
-	 *            the Type name
-	 * @param matches
-	 *            matched Java elements
+	 * @param typeName the Type name
+	 * @param matches matched Java elements
+	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getTypeMatches(final String typeName, final List matches) {
+	private static void getTypeMatches(final String typeName, final List matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doTypeSearch(typeName, matches, monitor);
@@ -361,12 +363,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * Perform a Java search for methods and constructors and return the corresponding Java
 	 * elements.
 	 * 
-	 * @param s
-	 *            the method pattern
-	 * @param matches
-	 *            matched Java elements
+	 * @param s the method pattern
+	 * @param matches matched Java elements
+	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getMethodMatches(final String s, final List matches) {
+	private static void getMethodMatches(final String s, final List matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doMemberSearch(s, matches, true, true, false, monitor, 100);
@@ -378,12 +379,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * Perform a Java search for fields, methods and constructors and return the corresponding Java
 	 * elements.
 	 * 
-	 * @param s
-	 *            the member pattern
-	 * @param matches
-	 *            matched Java elements
+	 * @param s the member pattern
+	 * @param matches matched Java elements
+	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getMemberMatches(final String s, final List matches) {
+	private static void getMemberMatches(final String s, final List matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doMemberSearch(s, matches, true, true, true, monitor, 100);
@@ -395,12 +395,11 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * Perform a Java search for types, fields and methods and return the corresponding Java
 	 * elements.
 	 * 
-	 * @param s
-	 *            the qualified name pattern
-	 * @param matches
-	 *            matched Java elements
+	 * @param s the qualified name pattern
+	 * @param matches matched Java elements
+	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getNameMatches(final String s, final List matches) {
+	private static void getNameMatches(final String s, final List matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				SubMonitor progress = SubMonitor.convert(monitor, 100);
@@ -411,17 +410,23 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		});
 	}
 
-	private static void executeRunnable(IRunnableWithProgress runnableWithProgress) {
+	private static void executeRunnable(IRunnableWithProgress runnableWithProgress) throws InterruptedException {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnableWithProgress);
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
-		} catch (InterruptedException e) {
-			// Do nothing
 		}
 	}
 
-	private static void handleMatches(List matches, int line, String inputText) {
+	/**
+	 * Handles the given matches.
+	 * 
+	 * @param matches matched Java elements
+	 * @param line the line number
+	 * @param inputText the input text
+	 * @throws InterruptedException if canceled by the user
+	 */
+	private static void handleMatches(List matches, int line, String inputText) throws InterruptedException {
 		if (matches.size() > 1) {
 			int flags = JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT;
 			IWorkbenchWindow window = JDIDebugUIPlugin.getActiveWorkbenchWindow();
@@ -510,8 +515,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Opens an text input dialog to let the user refine the input text.
 	 * 
-	 * @param inputText
-	 *            the input text
+	 * @param inputText the input text
 	 */
 	private static void openInputEditDialog(String inputText) {
 		IWorkbenchWindow window = JDIDebugUIPlugin.getActiveWorkbenchWindow();
