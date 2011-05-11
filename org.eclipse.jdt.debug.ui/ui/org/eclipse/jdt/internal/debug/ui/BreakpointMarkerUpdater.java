@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,6 +100,10 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			return false;
 		}
 		CompilationUnit unit = SharedASTProvider.getAST(cunit, SharedASTProvider.WAIT_YES, null);
+		if(unit == null) {
+			//remove it - in case it would be left in a bad location
+			return false;
+		}
 		try {
 			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())+1, true, true);
 			unit.accept(loc);
