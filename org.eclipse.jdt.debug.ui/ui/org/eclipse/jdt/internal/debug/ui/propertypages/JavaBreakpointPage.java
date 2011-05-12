@@ -145,6 +145,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Stores the values configured in this page. This method
 	 * should be called from within a workspace runnable to
 	 * reduce the number of resource deltas.
+	 * @throws CoreException if an exception occurs
 	 */
 	protected void doStore() throws CoreException {
 		IJavaBreakpoint breakpoint = getBreakpoint();
@@ -216,7 +217,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	/**
 	 * Creates the labels displayed for the breakpoint.
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	protected void createLabels(Composite parent) {
 		Composite labelComposite = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -235,7 +236,7 @@ public class JavaBreakpointPage extends PropertyPage {
 
 	/**
 	 * Creates the button to toggle enablement of the breakpoint
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	protected void createEnabledButton(Composite parent) {
 		fEnabledButton = createCheckButton(parent, PropertyPageMessages.JavaBreakpointPage_5); 
@@ -258,7 +259,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	/**
 	 * Allows subclasses to add type specific labels to the common Java
 	 * breakpoint page.
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	protected void createTypeSpecificLabels(Composite parent) {
 		// Line number
@@ -302,7 +303,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	/**
 	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
-	* @param parent
+	* @param parent the parent composite
 	*/
    protected void createTypeSpecificEditors(Composite parent) {
 	   try {
@@ -323,7 +324,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		} else if (JavaMethodBreakpoint.JAVA_METHOD_BREAKPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
 			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 
-			    {new MethodBreakpointEditor(), new JavaBreakpointConditionEditor()});
+			    {new MethodBreakpointEditor(), new JavaBreakpointConditionEditor(null)});
 		} else {
 			// use standard editor for any other kind of breakpoint (@see bug 325161)
 			fEditor = new StandardJavaBreakpointEditor();
@@ -351,8 +352,8 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	/**
 	 * Creates a fully configured text editor with the given initial value
-	 * @param parent
-	 * @param initialValue
+	 * @param parent the parent composite
+	 * @param initialValue the initial {@link String} value
 	 * @return the configured text editor
 	 */
 	protected Text createText(Composite parent, String initialValue) {
@@ -391,6 +392,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	/**
 	 * Check to see if the breakpoint should be deleted.
+	 * @return <code>true</code> if the page was canceled, <code>false</code> othewise
 	 */
 	public boolean performCancel() {
 		try {
