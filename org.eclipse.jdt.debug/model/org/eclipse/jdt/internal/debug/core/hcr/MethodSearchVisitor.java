@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.TypeParameter;
+import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -99,7 +100,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
 
 /**
- * Visits an AST to find a method declartion
+ * Visits an AST to find a method declaration
  */
 public class MethodSearchVisitor extends ASTVisitor {
     
@@ -403,6 +404,9 @@ public class MethodSearchVisitor extends ASTVisitor {
     }
     public boolean visit(TypeParameter node) {
         return isSearching();
+    }
+    public boolean visit(UnionType node) {
+    	return super.visit(node);
     }
     public boolean visit(VariableDeclarationExpression node) {
         return isSearching();
