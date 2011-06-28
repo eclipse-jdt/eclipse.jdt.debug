@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -48,6 +49,18 @@ public class EqualEqualOperator extends BinaryOperator {
 				break;
 			case T_boolean :
 				equals= ((IJavaPrimitiveValue) leftOperand).getBooleanValue() == ((IJavaPrimitiveValue) rightOperand).getBooleanValue();
+				break;
+			case T_String :
+				try {
+					String lhs = leftOperand.getValueString();
+					if(lhs != null) {
+						equals = lhs.equals(rightOperand.getValueString());
+					}
+					else {
+						equals = rightOperand.getValueString() == null;
+					}
+				}
+				catch(DebugException de) {}
 				break;
 			default :
 				equals= leftOperand.equals(rightOperand);
