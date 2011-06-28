@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
@@ -35,7 +34,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContai
 import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 
 /**
- * Private source lookup utils. Translates runtime classpath entries
+ * Private source lookup utilities. Translates runtime classpath entries
  * to source containers.
  * 
  * @since 3.0
@@ -123,7 +122,7 @@ public class JavaSourceLookupUtil {
 	 * @param entry runtime classpath entry
 	 * @return whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal
-	 * @throws JavaModelException 
+	 * @throws JavaModelException if there is a problem accessing the given {@link IPackageFragmentRoot}
 	 */
 	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
 		IPath entryPath = entry.getSourceAttachmentPath();
@@ -132,7 +131,7 @@ public class JavaSourceLookupUtil {
 		}
 		IPath rootPath = root.getSourceAttachmentPath();
 		if (rootPath == null) {
-			// entry has a source attachment that the pkg root does not
+			// entry has a source attachment that the package root does not
 			return false;
 		}
 		return rootPath.equals(entryPath);
@@ -156,12 +155,9 @@ public class JavaSourceLookupUtil {
 			try {
 				if (project.isOpen() && jp.exists()) {
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(resource.getFullPath());
-					if (root != null) {
-						// ensure source attachment paths match
-						if (isSourceAttachmentEqual(root, entry)) {
-							// use package fragment root
-							return root;
-						}
+					if (root != null && isSourceAttachmentEqual(root, entry)) {
+						// use package fragment root
+						return root;
 					}
 				}
 			} catch (JavaModelException e) {
@@ -172,7 +168,7 @@ public class JavaSourceLookupUtil {
 		// External jars are shared, so it does not matter which project it
 		// originates from
 		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-		Path entryPath = new Path(entry.getLocation());
+		IPath entryPath = entry.getPath();
 		try {
 			IJavaProject[] jps = model.getJavaProjects();
 			for (int i = 0; i < jps.length; i++) {
@@ -182,11 +178,9 @@ public class JavaSourceLookupUtil {
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
 						IPackageFragmentRoot root = allRoots[j];
-						if (root.isExternal() && root.getPath().equals(entryPath)) {
-							if (isSourceAttachmentEqual(root, entry)) {
-								// use package fragment root
-								return root;
-							}							
+						if (root.getPath().equals(entryPath) && isSourceAttachmentEqual(root, entry)) {
+							// use package fragment root
+							return root;
 						}
 					}
 				}

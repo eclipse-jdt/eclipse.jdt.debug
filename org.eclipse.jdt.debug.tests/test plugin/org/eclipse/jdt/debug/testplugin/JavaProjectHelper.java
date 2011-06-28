@@ -65,6 +65,28 @@ public class JavaProjectHelper {
 	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");	
 
 	/**
+	 * Creates a new {@link IProject} with the given name unless the project already exists. If it already exists
+	 * the project is refreshed and opened (if closed)
+	 * 
+	 * @param pname the desired name for the project
+	 * @return the new {@link IProject} handle
+	 * @throws CoreException
+	 */
+	public static IProject createProject(String pname) throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(pname);
+		if (!project.exists()) {
+			project.create(null);
+		} else {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		return project;
+	}
+	
+	/**
 	 * creates a java project with the specified name and output folder
 	 * @param projectName
 	 * @param binFolderName
@@ -72,18 +94,7 @@ public class JavaProjectHelper {
 	 * @throws CoreException
 	 */
 	public static IJavaProject createJavaProject(String projectName, String binFolderName) throws CoreException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject(projectName);
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}
-		
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-		
+		IProject project = createProject(projectName);
 		IPath outputLocation;
 		if (binFolderName != null && binFolderName.length() > 0) {
 			IFolder binFolder= project.getFolder(binFolderName);
@@ -94,16 +105,12 @@ public class JavaProjectHelper {
 		} else {
 			outputLocation= project.getFullPath();
 		}
-		
 		if (!project.hasNature(JavaCore.NATURE_ID)) {
 			addNatureToProject(project, JavaCore.NATURE_ID, null);
 		}
-		
 		IJavaProject jproject= JavaCore.create(project);
-		
 		jproject.setOutputLocation(outputLocation, null);
 		jproject.setRawClasspath(new IClasspathEntry[0], null);
-		
 		return jproject;	
 	}
 		
@@ -114,26 +121,12 @@ public class JavaProjectHelper {
 	 * @throws CoreException
 	 */
 	public static IJavaProject createJavaProject(String projectName) throws CoreException {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject(projectName);
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}
-		
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-				
+		IProject project = createProject(projectName);
 		if (!project.hasNature(JavaCore.NATURE_ID)) {
 			addNatureToProject(project, JavaCore.NATURE_ID, null);
 		}
-		
 		IJavaProject jproject= JavaCore.create(project);
-		
 		jproject.setRawClasspath(new IClasspathEntry[0], null);
-		
 		return jproject;	
 	}	
 			
@@ -407,7 +400,7 @@ public class JavaProjectHelper {
 	}
 	
 	/**
-	 * Imports files form the specified root dir into the specified path
+	 * Imports files from the specified root dir into the specified path
 	 * @param rootDir
 	 * @param destPath
 	 * @param monitor

@@ -49,6 +49,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
@@ -97,6 +98,7 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -1893,6 +1895,42 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		throw e;
+	}
+	
+	/**
+	 * Perform the actual evaluation (inspect)
+	 * @param thread
+	 * @return the result of the evaluation
+	 * @throws Exception
+	 */
+	protected IValue doEval(IJavaThread thread, String snippet) throws Exception{
+		class Listener implements IEvaluationListener {
+			IEvaluationResult fResult;
+			
+			public void evaluationComplete(IEvaluationResult result) {
+				fResult= result;
+			}
+			
+			public IEvaluationResult getResult() {
+				return fResult;
+			}
+		}
+		Listener listener = new Listener();
+		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+		assertNotNull("There should be a stackframe", frame);
+		ASTEvaluationEngine engine = new ASTEvaluationEngine(getJavaProject(), (IJavaDebugTarget) thread.getDebugTarget());
+		try {
+			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+			long timeout = System.currentTimeMillis()+5000;
+			while(listener.getResult() == null && System.currentTimeMillis() < timeout) {
+				Thread.sleep(100);
+			}
+			assertFalse("The evaluation should not have errors", listener.getResult().hasErrors());
+			return listener.getResult().getValue();
+		}
+		finally {
+			engine.dispose();
+		}
 	}
 	
 }
