@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,10 +56,14 @@ import com.ibm.icu.text.MessageFormat;
  * A launch configuration tab that displays and edits the VM install 
  * launch configuration attributes.
  * <p>
+ * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
+ * creation to alter the default context help associated with this tab. 
+ * </p>
+ * <p>
  * This class may be instantiated.
  * </p>
  * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 
 public class JavaJRETab extends JavaLaunchTab {
@@ -85,8 +89,12 @@ public class JavaJRETab extends JavaLaunchTab {
 		}
 	};
 	
-	// Constants
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	/**
+	 * Constructor
+	 */
+	public JavaJRETab() {
+		setHelpContextId(IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
@@ -115,7 +123,7 @@ public class JavaJRETab extends JavaLaunchTab {
 		
 		setDynamicTabHolder(SWTFactory.createComposite(topComp, font, 1, 1, GridData.FILL_BOTH, 0, 0));
 		setControl(topComp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 	}
 
 	protected void setDynamicTabHolder(Composite tabHolder) {
