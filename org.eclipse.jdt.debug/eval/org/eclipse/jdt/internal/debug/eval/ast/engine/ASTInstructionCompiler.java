@@ -3584,7 +3584,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					statementsDefault= new ArrayList();
 				} else {
 					if(switchCase.getExpression() instanceof StringLiteral) {
-						push(new EqualEqualOperator(Instruction.T_String, Instruction.T_String, true, fCounter));
+						push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					else {
 						push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
@@ -3665,7 +3665,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 			}
 		}
-
 		return false;
 	}
 
