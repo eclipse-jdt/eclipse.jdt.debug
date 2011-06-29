@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
@@ -156,12 +155,9 @@ public class JavaSourceLookupUtil {
 			try {
 				if (project.isOpen() && jp.exists()) {
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(resource.getFullPath());
-					if (root != null) {
-						// ensure source attachment paths match
-						if (isSourceAttachmentEqual(root, entry)) {
-							// use package fragment root
-							return root;
-						}
+					if (root != null && isSourceAttachmentEqual(root, entry)) {
+						// use package fragment root
+						return root;
 					}
 				}
 			} catch (JavaModelException e) {
@@ -172,7 +168,7 @@ public class JavaSourceLookupUtil {
 		// External jars are shared, so it does not matter which project it
 		// originates from
 		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-		Path entryPath = new Path(entry.getLocation());
+		IPath entryPath = entry.getPath();
 		try {
 			IJavaProject[] jps = model.getJavaProjects();
 			for (int i = 0; i < jps.length; i++) {
@@ -182,11 +178,9 @@ public class JavaSourceLookupUtil {
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
 						IPackageFragmentRoot root = allRoots[j];
-						if (root.isExternal() && root.getPath().equals(entryPath)) {
-							if (isSourceAttachmentEqual(root, entry)) {
-								// use package fragment root
-								return root;
-							}							
+						if (root.getPath().equals(entryPath) && isSourceAttachmentEqual(root, entry)) {
+							// use package fragment root
+							return root;
 						}
 					}
 				}
