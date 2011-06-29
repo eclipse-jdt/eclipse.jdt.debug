@@ -12,10 +12,12 @@ package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import java.io.File;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
@@ -59,15 +61,31 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * 
 	 * @throws Exception
 	 */
-	void deleteProjects() throws Exception {
-		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarProject);
-        if (pro.exists()) {
-            pro.delete(true, true, null);
-        }
-        pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarRefProject);
-        if (pro.exists()) {
-            pro.delete(true, true, null);
-        }
+	void deleteProjects() {
+		try {
+			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarProject);
+	        if (pro.exists()) {
+	            pro.delete(true, true, null);
+	        }
+	        pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarRefProject);
+	        if (pro.exists()) {
+	            pro.delete(true, true, null);
+	        }
+		}
+		catch(CoreException ce) {}
+	}
+	
+	/**
+	 * Disposes all source containers after a test, ensures no containers are still holding open Jar references, which can lead to {@link ResourceException}s
+	 * when we try to delete / setup following tests
+	 * @param containers
+	 */
+	void disposeContainers(ISourceContainer[] containers) {
+		if(containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				containers[i].dispose();
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -116,18 +134,24 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, config);
 		ISourceContainer[] containers = JavaSourceLookupUtil.translate(resolved);
-		assertTrue("There must be computed containers", containers.length > 0);
-		assertEquals("There should be 11 containers returned", 11, containers.length);
-		for (int i = 0; i < containers.length; i++) {
-			if("sample.jar".equals(containers[i].getName()) &&
-					containers[i] instanceof PackageFragmentRootSourceContainer) {
-				PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) containers[i];
-				if("/JarProject/lib/sample.jar".equals(container.getPackageFragmentRoot().getPath().toString())) {
-					return;
+		try {
+			assertTrue("There must be computed containers", containers.length > 0);
+			//the number of containers is M + 2, where M is unknown across JREs, 1 for the project container and 1 for the JAR we are looking for
+			assertTrue("There should be at least 2 containers returned", containers.length >= 2);
+			for (int i = 0; i < containers.length; i++) {
+				if("sample.jar".equals(containers[i].getName()) &&
+						containers[i] instanceof PackageFragmentRootSourceContainer) {
+					PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) containers[i];
+					if("/JarProject/lib/sample.jar".equals(container.getPackageFragmentRoot().getPath().toString())) {
+						return;
+					}
 				}
 			}
+			fail("We did not find a source container that was a PackageFragmentRootSourceContainer and had the name /JarProject/lib/sample.jar");
 		}
-		fail("We did not find a source container that was a PackageFragmentRootSourceContainer and had the name /JarProject/lib/sample.jar");
+		finally {
+			disposeContainers(containers);
+		}
 	}
 	
 	/**
