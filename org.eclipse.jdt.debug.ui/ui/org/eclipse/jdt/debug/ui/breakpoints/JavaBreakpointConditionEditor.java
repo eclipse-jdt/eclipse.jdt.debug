@@ -385,7 +385,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		GC gc = new GC(fViewer.getTextWidget());
 		gc.setFont(fViewer.getTextWidget().getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
-		//gd.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics, 10);
+		gd.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics, 17);
 		gd.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, 40);
 		gc.dispose();
 		fViewer.getControl().setLayoutData(gd);
