@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.launching;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -35,6 +37,44 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		super(name);
 	}
 
+	/**
+	 * Asserts that the given array of shortcut identifiers appear in the given list of {@link LaunchShortcutExtension}s
+	 * 
+	 * @param ids the shortcut identifiers
+	 * @param shortcuts the complete list of shortcuts of type {@link LaunchShortcutExtension}
+	 */
+	void assertShortcuts(String[] ids, List shortcuts) {
+		for (int i = 0; i < ids.length; i++) {
+			boolean found = false;
+			for (Iterator iter = shortcuts.iterator(); iter.hasNext();) {
+				LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+				if(ids[i].equals(ext.getId())) {
+					found = true;
+					break;
+				}
+			}
+			assertTrue("the launch shortcut "+ids[i]+" was not found", found);
+		}
+	}
+	
+	/**
+	 * Asserts that the given list of {@link ILaunchConfigurationType} identifiers all appear in the given list of {@link ILaunchConfigurationType} identifiers
+	 * @param ids the list of {@link ILaunchConfigurationType} identifiers
+	 * @param types the list of {@link ILaunchConfigurationType} identifiers to look it
+	 */
+	void assertTypes(String[] ids, String[] types) {
+		for (int i = 0; i < ids.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < types.length; j++) {
+				if(ids[i].equals(types[j])) {
+					found = true;
+					break;
+				}
+			}
+			assertTrue("the launch configuration type "+ids[i]+" was not found", found);
+		}
+	}
+	
 	/**
 	 * tests that the singleton object returned is always the same
 	 */
@@ -60,9 +100,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		IResource resource = getResource("ThrowsNPE.java");
 		assertNotNull("The resource ThrowsNPE must exist", resource);
 		List list = fLCM.getLaunchShortcuts(resource);
-		assertTrue("Only the java shortcut should apply", list.size() == 1);
-		LaunchShortcutExtension ext = (LaunchShortcutExtension) list.get(0);
-		assertTrue("the returned shortcut should be the java one", ext.getId().equals("org.eclipse.jdt.debug.ui.localJavaShortcut"));
+		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.localJavaShortcut"}, list);
 	}
 	
 	/**
@@ -73,9 +111,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		IResource resource = getResource("AppletImpl.java");
 		assertNotNull("The resource AppletImpl must exist", resource);
 		List list = fLCM.getLaunchShortcuts(resource);
-		assertTrue("Only the applet shortcut should apply", list.size() == 1);
-		LaunchShortcutExtension ext = (LaunchShortcutExtension) list.get(0);
-		assertTrue("the returned shortcut should be the applet one", ext.getId().equals("org.eclipse.jdt.debug.ui.javaAppletShortcut"));
+		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.javaAppletShortcut"}, list);
 	}
 	
 	/**
@@ -86,11 +122,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
 		List list = fLCM.getLaunchShortcuts(resource);
-		assertTrue("The java and applet shortcuts should apply", list.size() == 2);
-		LaunchShortcutExtension ext = (LaunchShortcutExtension) list.get(0);
-		assertTrue("the shortcut should be either the applet or java one", ext.getId().equals("org.eclipse.jdt.debug.ui.localJavaShortcut") || ext.getId().equals("org.eclipse.jdt.debug.ui.javaAppletShortcut"));
-		ext = (LaunchShortcutExtension) list.get(1);
-		assertTrue("the shortcut should be either the applet or java one", ext.getId().equals("org.eclipse.jdt.debug.ui.localJavaShortcut") || ext.getId().equals("org.eclipse.jdt.debug.ui.javaAppletShortcut"));
+		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.localJavaShortcut", "org.eclipse.jdt.debug.ui.javaAppletShortcut"}, list);
 	}
 	
 	/**
@@ -166,10 +198,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
 		String[] types = fLCM.getApplicableConfigurationTypes(resource);
-		assertNotNull("this listing should never be null", types);
-		assertTrue("there should be 2 types: java and applet", types.length == 2);
-		assertTrue("The type should be either applet or local java application", types[0].equals("org.eclipse.jdt.launching.localJavaApplication") || types[0].equals("org.eclipse.jdt.launching.javaApplet"));
-		assertTrue("The type should be either applet or local java application", types[1].equals("org.eclipse.jdt.launching.localJavaApplication") || types[1].equals("org.eclipse.jdt.launching.javaApplet"));
+		assertTypes(new String[] {"org.eclipse.jdt.launching.localJavaApplication", "org.eclipse.jdt.launching.javaApplet"}, types);
 	}
 	
 	/**
