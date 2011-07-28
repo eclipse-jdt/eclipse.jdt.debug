@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					Runnable r = new Runnable() {
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS3);
+							ASTParser parser = ASTParser.newParser(AST.JLS4);
 							parser.setSource(document.get().toCharArray());
 							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3583,7 +3583,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					storeInstruction(); // jump
 					statementsDefault= new ArrayList();
 				} else {
-					push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+					if(switchCase.getExpression() instanceof StringLiteral) {
+						push(new SendMessage("equals", "(Ljava/lang/Object;)Z", 1, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					else {
+						push(new EqualEqualOperator(Instruction.T_int, Instruction.T_int, true, fCounter));
+					}
 					push(new Dup());
 					storeInstruction(); // dupe
 					switchCase.getExpression().accept(this);
@@ -3660,7 +3665,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 			}
 		}
-
 		return false;
 	}
 
