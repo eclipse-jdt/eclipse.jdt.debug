@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTInstructionCompiler;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -57,14 +58,13 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
             	protected Control createDialogArea(Composite parent) {
             		IWorkbench workbench = PlatformUI.getWorkbench();
-            		workbench.getHelpSystem().setHelp(
-            				parent,
-            				IJavaDebugHelpContextIds.DEFAULT_INPUT_DIALOG);
+            		workbench.getHelpSystem().setHelp(parent, IJavaDebugHelpContextIds.DEFAULT_INPUT_DIALOG);
             		return super.createDialogArea(parent);
             	}
             };
             if (dialog.open() == Window.OK) {
                 String stringValue = dialog.getValue();
+                stringValue = formatValue(stringValue);
                 if (stringValue.length() > 1 && stringValue.charAt(0) == '\\') {
                 	// Compute value of octal of hexadecimal escape sequence
                 	int i= validator.getEscapeValue(stringValue);
@@ -85,6 +85,26 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
      */
     public boolean saveVariable(IVariable variable, String expression, Shell shell) {
         return false;
+    }
+
+    String formatValue(String value) {
+    	try {
+	    	switch (fSignature.charAt(0)) {
+		    	case 'I':
+	    	    	return Integer.toString(ASTInstructionCompiler.parseIntValue(value));
+		    	case 'J':
+	    	    	return Long.toString(ASTInstructionCompiler.parseLongValue(value));
+		    	case 'S':
+	                return Short.toString(ASTInstructionCompiler.parseShortValue(value));
+		    	case 'F':
+		    	case 'D':
+		    		return ASTInstructionCompiler.removePrefixZerosAndUnderscores(value, false);
+		    	case 'B':
+		    		return Byte.toString(ASTInstructionCompiler.parseByteValue(value));
+		    }
+    	}
+    	catch(NumberFormatException nfe) {}
+    	return value;
     }
     
     /**
@@ -119,35 +139,35 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                break;
 	        	case 'D':
 	        	    try {
-	                    Double.parseDouble(newText);
+	                    Double.parseDouble(ASTInstructionCompiler.removePrefixZerosAndUnderscores(newText, false));
 	                } catch (NumberFormatException e) {
 	        	        type="double"; //$NON-NLS-1$
 	                }
 	                break;
 	        	case 'F':
 	        	    try {
-	                    Float.parseFloat(newText);
+	                    Float.parseFloat(ASTInstructionCompiler.removePrefixZerosAndUnderscores(newText, false));
 	                } catch (NumberFormatException e) {
 	        	        type="float"; //$NON-NLS-1$
 	                }
 	                break;
             	case 'I':
             	    try {
-                        Integer.parseInt(newText);
+            	    	ASTInstructionCompiler.parseIntValue(newText);
                     } catch (NumberFormatException e) {
 	        	        type="int"; //$NON-NLS-1$
                     }
                     break;
 	        	case 'J':
 	        	    try {
-	                    Long.parseLong(newText);
+	        	    	ASTInstructionCompiler.parseLongValue(newText);
 	                } catch (NumberFormatException e) {
 	        	        type="long"; //$NON-NLS-1$
 	                }
 	                break;
 	        	case 'S':
 	        	    try {
-	                    Short.parseShort(newText);
+	                    ASTInstructionCompiler.parseShortValue(newText);
 	                } catch (NumberFormatException e) {
 	        	        type="short"; //$NON-NLS-1$
 	                }
@@ -216,6 +236,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 				ch == '\\');
 		}
 		
+		
 		private boolean isOctalDigit(char ch) {
             return Character.digit(ch, 8) != -1;
 		}
@@ -229,15 +250,12 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 		 * represents an octal or hexadecimal escape sequence. Returns
 		 * Integer.MAX_VALUE if the given string is not a valid octal or
 		 * hexadecimal escape sequence.
+		 *
+		 * @param string
+		 * @return
 		 */
 		protected int getEscapeValue(String string) {
-			int i= Integer.MAX_VALUE;
-			if (isOctalEscape(string)) {
-				i= Integer.parseInt(string.substring(1), 8);
-			} else if (isUnicode(string)) {
-				i= Integer.parseInt(string.substring(2), 16);
-			}
-			return i;
+			return ASTInstructionCompiler.parseIntValue(string);
 		}
     }
 
