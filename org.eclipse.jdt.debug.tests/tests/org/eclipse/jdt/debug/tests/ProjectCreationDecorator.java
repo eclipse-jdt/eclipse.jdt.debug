@@ -61,6 +61,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	public static boolean fgReady = false;
 	private static boolean fgIsJ2SE15Compatible = false;
 	private static boolean fgIsJ2SE16Compatible = false;
+	private static boolean fgIsJ2SE17Compatible = false;
 	
 	{
 		String version = System.getProperty("java.specification.version");
@@ -76,6 +77,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 						}
 						if (minor >= 6) {
 							fgIsJ2SE16Compatible = true;
+						}
+						if(minor >= 7) {
+							fgIsJ2SE17Compatible = true;
 						}
 					}
 				} catch (NumberFormatException e) {
@@ -417,9 +421,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
             if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
                 errors++;
             }
-        }
+    	}
         assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors == 1);
-    }
+        }
 
     /**
      * @throws Exception
@@ -451,5 +455,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	
 	protected static boolean isJ2SE16Compatible() {
 		return fgIsJ2SE16Compatible;
+	}
+	
+	protected static boolean isJ2SE17Compatible() {
+		return fgIsJ2SE17Compatible;
 	}
 }

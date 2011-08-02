@@ -58,6 +58,7 @@ import org.eclipse.jdt.debug.tests.core.JDWPTests;
 import org.eclipse.jdt.debug.tests.core.JavaDebugTargetTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
+import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
@@ -197,6 +198,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TestLogicalStructures.class));
 		addTest(new TestSuite(TestInstanceRetrieval.class));
 		addTest(new TestSuite(TestAnonymousInspect.class));
+		if(isJ2SE17Compatible()) {
+			addTest(new TestSuite(LiteralTests17.class));
+		}
 		
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));
@@ -297,5 +301,8 @@ public class AutomatedSuite extends DebugSuite {
 		return ProjectCreationDecorator.isJ2SE16Compatible();
 	}
 	
+	protected static boolean isJ2SE17Compatible() {
+		return ProjectCreationDecorator.isJ2SE17Compatible();
+	}
 }
 
