@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.sourcelookup;
 
-import java.io.File;
-
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -29,8 +26,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
-import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
@@ -44,9 +39,9 @@ import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSour
 public class JarSourceLookupTests extends AbstractDebugTest {
 
 	public static final String A_RUN_JAR = "a.RunJar";
-	public static final String LAUNCHES_CONTAINER_NAME = "launches";
+	static IJavaProject fgJarProject = null;
 	
-	String fJarRefProject = "JarRefProject";
+	String RefPjName = "JarRefProject";
 	String fJarProject = "JarProject";
 	
 	/**
@@ -67,7 +62,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	        if (pro.exists()) {
 	            pro.delete(true, true, null);
 	        }
-	        pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarRefProject);
+	        pro = ResourcesPlugin.getWorkspace().getRoot().getProject(RefPjName);
 	        if (pro.exists()) {
 	            pro.delete(true, true, null);
 	        }
@@ -92,24 +87,16 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getJavaProject()
 	 */
 	protected IJavaProject getJavaProject() {
-		return fJavaProject;
+		return fgJarProject;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
 	 */
 	protected void setUp() throws Exception {
-		fJavaProject = JavaProjectHelper.createJavaProject(fJarRefProject);
-		IFolder folder = fJavaProject.getProject().getFolder(LAUNCHES_CONTAINER_NAME);
-        if (!folder.exists()) {
-        	folder.create(true, true, null);
-        }
 		IPath testrpath = new Path("testresources");
-		File root = JavaTestPlugin.getDefault().getFileInPlugin(testrpath.append(fJarRefProject));
-		JavaProjectHelper.importFilesFromDirectory(root, fJavaProject.getPath(), null);
-		IProject pj = JavaProjectHelper.createProject(fJarProject);
-		root = JavaTestPlugin.getDefault().getFileInPlugin(testrpath.append(fJarProject));
-		JavaProjectHelper.importFilesFromDirectory(root, pj.getFullPath(), null);
+		IProject pj = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
+		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), "J2SE-1.4", false);
 	}
 	
 	/* (non-Javadoc)
@@ -129,8 +116,8 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testTranslateContainers() throws Exception {
-		createLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
-		ILaunchConfiguration config = getLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
+		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
+		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, config);
 		ISourceContainer[] containers = JavaSourceLookupUtil.translate(resolved);
@@ -162,9 +149,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
-		createLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
+		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		createLineBreakpoint(6, A_RUN_JAR);
-		ILaunchConfiguration config = getLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
+		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {
 			 thread = launchToBreakpoint(config);
@@ -189,9 +176,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testShowClassFileFromJar() throws Exception {
-		createLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
+		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		createLineBreakpoint(6, A_RUN_JAR);
-		ILaunchConfiguration config = getLaunchConfiguration(fJavaProject, LAUNCHES_CONTAINER_NAME, A_RUN_JAR);
+		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {
 			 thread = launchToBreakpoint(config);

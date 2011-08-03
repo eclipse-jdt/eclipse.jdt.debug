@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
-import java.io.File;
-
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,7 +39,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
 	 */
 	protected void setUp() throws Exception {
-		project = createProject("OneSeven", "testprograms"+File.separator+"java7", "JavaSE-1.7", false);
+		project = createProject("OneSeven", "java7", "JavaSE-1.7", false);
 		createLaunchConfiguration(project, typename);
 	}
 	

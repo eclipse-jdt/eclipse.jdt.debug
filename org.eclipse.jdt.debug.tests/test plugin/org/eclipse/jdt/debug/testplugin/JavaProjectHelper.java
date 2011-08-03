@@ -63,7 +63,62 @@ public class JavaProjectHelper {
 	 * path to the compiler error java file
 	 */
 	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");	
+	
+	public static final String JRE_CONTAINER_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER";
 
+	/**
+	 * Returns if the currently running VM is version compatible with Java 7
+	 * 
+	 * @return <code>true</code> if a Java 7 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava7Compatible() {
+		return isCompatible(7);
+	}
+	
+	/**
+	 * Returns if the currently running VM is version compatible with Java 6
+	 * 
+	 * @return <code>true</code> if a Java 6 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava6Compatible() {
+		return isCompatible(6);
+	}
+	
+	/**
+	 * Returns if the currently running VM is version compatible with Java 5
+	 * 
+	 * @return <code>true</code> if a Java 5 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava5Compatible() {
+		return isCompatible(5);
+	}
+	
+	/**
+	 * Returns if the current running system is compatible with the given Java minor version
+	 * 
+	 * @param ver the version to test - either 4, 5, 6 or 7
+	 * @return <code>true</code> if compatible <code>false</code> otherwise
+	 */
+	static boolean isCompatible(int ver) {
+		String version = System.getProperty("java.specification.version");
+		if (version != null) {
+			String[] nums = version.split("\\.");
+			if (nums.length == 2) {
+				try {
+					int major = Integer.parseInt(nums[0]);
+					int minor = Integer.parseInt(nums[1]);
+					if (major >= 1) {
+						if (minor >= ver) {
+							return true;
+						}
+					}
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Creates a new {@link IProject} with the given name unless the project already exists. If it already exists
 	 * the project is refreshed and opened (if closed)
@@ -352,16 +407,19 @@ public class JavaProjectHelper {
 	 */
 	private static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
+		ArrayList entries = new ArrayList(oldEntries.length);
 		for (int i= 0; i < oldEntries.length; i++) {
 			if (oldEntries[i].equals(cpe)) {
 				return;
 			}
+			IPath oldpath = oldEntries[i].getPath();
+			if(JRE_CONTAINER_NAME.equals(oldpath.segment(0)) && JRE_CONTAINER_NAME.equals(cpe.getPath().segment(0))) {
+				continue;
+			}
+			entries.add(oldEntries[i]);
 		}
-		int nEntries= oldEntries.length;
-		IClasspathEntry[] newEntries= new IClasspathEntry[nEntries + 1];
-		System.arraycopy(oldEntries, 0, newEntries, 0, nEntries);
-		newEntries[nEntries]= cpe;
-		jproject.setRawClasspath(newEntries, null);
+		entries.add(cpe);
+		jproject.setRawClasspath((IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]), null);
 	}
 	
 			

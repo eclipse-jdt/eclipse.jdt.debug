@@ -304,6 +304,76 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Creates a new {@link IJavaProject} with the given name and initializes the contents from the given 
+	 * resource path from the testing bundle.
+	 * <br><br>
+	 * The project has the default <code>src</code> and <code>bin</code> folders. It is also created with a default
+	 * <code>launchConfigurations</code> folder.
+	 * 
+	 * @param name the name for the project
+	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
+	 * @param ee the level of execution environment to use
+	 * @param if an existing project should be deleted
+	 * @return the new Java project
+	 * @throws Exception
+	 */
+	protected IJavaProject createJavaProjectClone(String name, String contentpath, String ee, boolean delete) throws Exception {
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+        if (pro.exists() && delete) {
+        	try {
+        		pro.delete(true, true, null);
+        	}
+        	catch(Exception e) {}
+        }
+        // create project and import source
+        IJavaProject jp = JavaProjectHelper.createJavaProject(name, "bin");
+        JavaProjectHelper.addSourceContainer(jp, "src");
+        File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
+        JavaProjectHelper.importFilesFromDirectory(root, jp.getPath(), null);
+
+        // add the EE library
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        assertNotNull("No default JRE", vm);
+        IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(ee);
+        assertNotNull("The EE ["+ee+"] does not exist", environment);
+		IPath containerPath = JavaRuntime.newJREContainerPath(environment);
+        JavaProjectHelper.addContainerEntry(jp, containerPath);
+        pro = jp.getProject();  
+        
+        // create launch configuration folder
+        IFolder folder = pro.getFolder("launchConfigurations");
+        if (!folder.exists()) {
+        	folder.create(true, true, null);
+        }
+        return jp;
+	}
+	
+	/**
+	 * Creates a new {@link IProject} with the given name and initializes the contents from the given 
+	 * resource path from the testing bundle.
+	 * 
+	 * @param name the name for the project
+	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
+	 * @param if an existing project should be deleted
+	 * @return the new project
+	 * @throws Exception
+	 */
+	protected IProject createProjectClone(String name, String contentpath, boolean delete) throws Exception {
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+        if (pro.exists() && delete) {
+        	try {
+        		pro.delete(true, true, null);
+        	}
+        	catch(Exception e) {}
+        }
+        // create project and import source
+        IProject pj = JavaProjectHelper.createProject(name);
+        File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
+        JavaProjectHelper.importFilesFromDirectory(root, pj.getFullPath(), null);
+        return pj;
+	}
+	
+	/**
 	 * Returns the launch shortcut with the given id
 	 * @param id
 	 * @return the <code>LaunchShortcutExtension</code> with the given id, 

@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
@@ -170,7 +171,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
-		if (isJ2SE15Compatible()) {
+		if (JavaProjectHelper.isJava5Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
 		}
@@ -198,7 +199,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(TestLogicalStructures.class));
 		addTest(new TestSuite(TestInstanceRetrieval.class));
 		addTest(new TestSuite(TestAnonymousInspect.class));
-		if(isJ2SE17Compatible()) {
+		if(JavaProjectHelper.isJava7Compatible()) {
 			addTest(new TestSuite(LiteralTests17.class));
 		}
 		
@@ -206,7 +207,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StepFilterTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(InstanceFilterTests.class));
-		if (isJ2SE16Compatible()) {
+		if (JavaProjectHelper.isJava6Compatible()) {
 			addTest(new TestSuite(ForceReturnTests.class));
 		}
 		
@@ -292,17 +293,4 @@ public class AutomatedSuite extends DebugSuite {
 		
 		//addTest(EvalTestSuite.suite());
 	}
-	
-	protected static boolean isJ2SE15Compatible() {
-		return ProjectCreationDecorator.isJ2SE15Compatible();
-	}
-	
-	protected static boolean isJ2SE16Compatible() {
-		return ProjectCreationDecorator.isJ2SE16Compatible();
-	}
-	
-	protected static boolean isJ2SE17Compatible() {
-		return ProjectCreationDecorator.isJ2SE17Compatible();
-	}
 }
-

@@ -22,10 +22,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -59,34 +62,14 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class ProjectCreationDecorator extends AbstractDebugTest {
 
 	public static boolean fgReady = false;
-	private static boolean fgIsJ2SE15Compatible = false;
-	private static boolean fgIsJ2SE16Compatible = false;
-	private static boolean fgIsJ2SE17Compatible = false;
 	
-	{
-		String version = System.getProperty("java.specification.version");
-		if (version != null) {
-			String[] nums = version.split("\\.");
-			if (nums.length == 2) {
-				try {
-					int major = Integer.parseInt(nums[0]);
-					int minor = Integer.parseInt(nums[1]);
-					if (major >= 1) {
-						if (minor >= 5) {
-							fgIsJ2SE15Compatible = true;
-						}
-						if (minor >= 6) {
-							fgIsJ2SE16Compatible = true;
-						}
-						if(minor >= 7) {
-							fgIsJ2SE17Compatible = true;
-						}
-					}
-				} catch (NumberFormatException e) {
-				}
-			}
-		}
-	}	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		getSharedJavaProject();
+	}
 	
     /**
      * Constructor
@@ -124,110 +107,115 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
      * @throws Exception
      */
     public void testProjectCreation() throws Exception {
-        // delete any pre-existing project
         IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("DebugTests");
-        if (pro.exists()) {
-            pro.delete(true, true, null);
+        try {
+	        if (!pro.exists()) {
+	        	// create project and import source
+		        fJavaProject = JavaProjectHelper.createJavaProject("DebugTests", "bin");
+		        IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(fJavaProject, "src");
+		        File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_SRC_DIR);
+		        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+		
+		        // add rt.jar
+		        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		        assertNotNull("No default JRE", vm);
+		        JavaProjectHelper.addContainerEntry(fJavaProject, new Path(JavaRuntime.JRE_CONTAINER));
+		        pro = fJavaProject.getProject();
+		
+		        // add A.jar
+		        root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
+		        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+		        IPath path = src.getPath().append("A.jar");
+		        JavaProjectHelper.addLibrary(fJavaProject, path);
+		
+		        // create launch configuration folder
+		        IFolder folder = pro.getFolder("launchConfigurations");
+		        if(!folder.exists()) {
+		        	folder.create(true, true, null);
+		        }
+		
+		        // create launch configurations
+		        createLaunchConfiguration("LargeSourceFile");
+		        createLaunchConfiguration("LotsOfFields");
+		        createLaunchConfiguration("Breakpoints");
+		        createLaunchConfiguration("InstanceVariablesTests");
+		        createLaunchConfiguration("LocalVariablesTests");
+		        createLaunchConfiguration("StaticVariablesTests");
+		        createLaunchConfiguration("DropTests");
+		        createLaunchConfiguration("ThrowsNPE");
+		        createLaunchConfiguration("ThrowsException");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.Watchpoint");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.CallLoop");
+		        createLaunchConfiguration("A");
+		        createLaunchConfiguration("HitCountLooper");
+		        createLaunchConfiguration("CompileError");
+		        createLaunchConfiguration("MultiThreadedLoop");
+		        createLaunchConfiguration("HitCountException");
+		        createLaunchConfiguration("MultiThreadedException");
+		        createLaunchConfiguration("MultiThreadedList");
+		        createLaunchConfiguration("MethodLoop");
+		        createLaunchConfiguration("StepFilterOne");
+		        createLaunchConfiguration("StepFilterFour");
+		
+		        createLaunchConfiguration("EvalArrayTests");
+		        createLaunchConfiguration("EvalSimpleTests");
+		        createLaunchConfiguration("EvalTypeTests");
+		        createLaunchConfiguration("EvalNestedTypeTests");
+		        createLaunchConfiguration("EvalTypeHierarchyTests");
+		        createLaunchConfiguration("WorkingDirectoryTest");
+		        createLaunchConfiguration("OneToTen");
+		        createLaunchConfiguration("OneToTenPrint");
+		        createLaunchConfiguration("FloodConsole");
+		        createLaunchConfiguration("ConditionalStepReturn");
+		        createLaunchConfiguration("VariableChanges");
+		        createLaunchConfiguration("DefPkgReturnType");
+		        createLaunchConfiguration("InstanceFilterObject");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.CallStack");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.ThreadStack");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.HcrClass");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.StepIntoSelectionClass");
+		        createLaunchConfiguration("WatchItemTests");
+		        createLaunchConfiguration("ArrayTests");
+		        createLaunchConfiguration("ByteArrayTests");
+		        createLaunchConfiguration("PerfLoop");
+		        createLaunchConfiguration("Console80Chars");
+		        createLaunchConfiguration("ConsoleStackTrace");
+		        createLaunchConfiguration("ConsoleVariableLineLength");
+		        createLaunchConfiguration("StackTraces");
+		        createLaunchConfiguration("ConsoleInput");
+		        createLaunchConfiguration("PrintConcatenation");
+		        createLaunchConfiguration("VariableDetails");
+		        createLaunchConfiguration("org.eclipse.debug.tests.targets.ArrayDetailTests");
+		        createLaunchConfiguration("ArrayDetailTestsDef");
+		        createLaunchConfiguration("ForceReturnTests");
+		        createLaunchConfiguration("ForceReturnTestsTwo");
+		        createLaunchConfiguration("LogicalStructures");
+		        createLaunchConfiguration("BreakpointListenerTest");
+		        
+		        //launch history tests
+		        createLaunchConfiguration("LaunchHistoryTest");
+		        createLaunchConfiguration("LaunchHistoryTest2");
+		        
+		        //launch configuration manager tests
+		        createLaunchConfiguration("RunnableAppletImpl");
+		        
+		        // instance retrieval tests
+		        createLaunchConfiguration("java6.AllInstancesTests");
+	        }
         }
-        // create project and import source
-        fJavaProject = JavaProjectHelper.createJavaProject("DebugTests", "bin");
-        IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(fJavaProject, "src");
-        File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_SRC_DIR);
-        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
-
-        // add rt.jar
-        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-        assertNotNull("No default JRE", vm);
-        JavaProjectHelper.addContainerEntry(fJavaProject, new Path(JavaRuntime.JRE_CONTAINER));
-        pro = fJavaProject.getProject();
-
-        // add A.jar
-        root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
-        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
-        IPath path = src.getPath().append("A.jar");
-        JavaProjectHelper.addLibrary(fJavaProject, path);
-
-        // create launch configuration folder
-
-        IFolder folder = pro.getFolder("launchConfigurations");
-        if (folder.exists()) {
-            folder.delete(true, null);
+        catch(Exception e) {
+        	try {
+	        	pro.delete(true,  true, null);
+	        	LaunchManager mgr = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+	        	ILaunchConfiguration[] configs = mgr.getLaunchConfigurations();
+	        	for (int i = 0; i < configs.length; i++) {
+					configs[i].delete();
+				}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
         }
-        folder.create(true, true, null);
-
-        // delete any existing launch configs
-        ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
-        for (int i = 0; i < configs.length; i++) {
-            configs[i].delete();
-        }
-
-        // create launch configurations
-        createLaunchConfiguration("LargeSourceFile");
-        createLaunchConfiguration("LotsOfFields");
-        createLaunchConfiguration("Breakpoints");
-        createLaunchConfiguration("InstanceVariablesTests");
-        createLaunchConfiguration("LocalVariablesTests");
-        createLaunchConfiguration("StaticVariablesTests");
-        createLaunchConfiguration("DropTests");
-        createLaunchConfiguration("ThrowsNPE");
-        createLaunchConfiguration("ThrowsException");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.Watchpoint");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.CallLoop");
-        createLaunchConfiguration("A");
-        createLaunchConfiguration("HitCountLooper");
-        createLaunchConfiguration("CompileError");
-        createLaunchConfiguration("MultiThreadedLoop");
-        createLaunchConfiguration("HitCountException");
-        createLaunchConfiguration("MultiThreadedException");
-        createLaunchConfiguration("MultiThreadedList");
-        createLaunchConfiguration("MethodLoop");
-        createLaunchConfiguration("StepFilterOne");
-        createLaunchConfiguration("StepFilterFour");
-
-        createLaunchConfiguration("EvalArrayTests");
-        createLaunchConfiguration("EvalSimpleTests");
-        createLaunchConfiguration("EvalTypeTests");
-        createLaunchConfiguration("EvalNestedTypeTests");
-        createLaunchConfiguration("EvalTypeHierarchyTests");
-        createLaunchConfiguration("WorkingDirectoryTest");
-        createLaunchConfiguration("OneToTen");
-        createLaunchConfiguration("OneToTenPrint");
-        createLaunchConfiguration("FloodConsole");
-        createLaunchConfiguration("ConditionalStepReturn");
-        createLaunchConfiguration("VariableChanges");
-        createLaunchConfiguration("DefPkgReturnType");
-        createLaunchConfiguration("InstanceFilterObject");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.CallStack");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.ThreadStack");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.HcrClass");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.StepIntoSelectionClass");
-        createLaunchConfiguration("WatchItemTests");
-        createLaunchConfiguration("ArrayTests");
-        createLaunchConfiguration("ByteArrayTests");
-        createLaunchConfiguration("PerfLoop");
-        createLaunchConfiguration("Console80Chars");
-        createLaunchConfiguration("ConsoleStackTrace");
-        createLaunchConfiguration("ConsoleVariableLineLength");
-        createLaunchConfiguration("StackTraces");
-        createLaunchConfiguration("ConsoleInput");
-        createLaunchConfiguration("PrintConcatenation");
-        createLaunchConfiguration("VariableDetails");
-        createLaunchConfiguration("org.eclipse.debug.tests.targets.ArrayDetailTests");
-        createLaunchConfiguration("ArrayDetailTestsDef");
-        createLaunchConfiguration("ForceReturnTests");
-        createLaunchConfiguration("ForceReturnTestsTwo");
-        createLaunchConfiguration("LogicalStructures");
-        createLaunchConfiguration("BreakpointListenerTest");
-        
-        //launch history tests
-        createLaunchConfiguration("LaunchHistoryTest");
-        createLaunchConfiguration("LaunchHistoryTest2");
-        
-        //launch configuration manager tests
-        createLaunchConfiguration("RunnableAppletImpl");
-        
-        // instance retrieval tests
-        createLaunchConfiguration("java6.AllInstancesTests");
     }
 
     /**
@@ -254,7 +242,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     
     public void testJ2SE15ProjectCreation() throws Exception {
     	// create 1.5 project if there is a 1.5 runtime to compile against
-    	if (isJ2SE15Compatible()) {
+    	if (JavaProjectHelper.isJava5Compatible()) {
             IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("OneFive");
             if (pro.exists()) {
                 pro.delete(true, true, null);
@@ -423,7 +411,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
             }
     	}
         assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors == 1);
-        }
+    }
 
     /**
      * @throws Exception
@@ -448,16 +436,4 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
         }
         assertTrue("No class files exist", (classFiles > 0));
     }
-    
-	protected static boolean isJ2SE15Compatible() {
-		return fgIsJ2SE15Compatible;
-	}
-	
-	protected static boolean isJ2SE16Compatible() {
-		return fgIsJ2SE16Compatible;
-	}
-	
-	protected static boolean isJ2SE17Compatible() {
-		return fgIsJ2SE17Compatible;
-	}
 }
