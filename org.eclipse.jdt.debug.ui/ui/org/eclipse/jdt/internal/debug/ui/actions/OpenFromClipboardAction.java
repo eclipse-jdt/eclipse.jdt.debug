@@ -86,10 +86,18 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Pattern to match a qualified name e.g.
-	 * <code>org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction</code>
+	 * <code>org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction</code>, or match a
+	 * simple name e.g. <code>OpenFromClipboardAction</code>.
 	 */
 	private static final String QUALIFIED_NAME_PATTERN = "(" + SIMPLE_NAME_PATTERN //$NON-NLS-1$
 			+ "\\.)*" + SIMPLE_NAME_PATTERN; //$NON-NLS-1$
+
+	/**
+	 * Pattern to match a qualified name e.g.
+	 * <code>org.eclipse.jdt.internal.debug.ui.actions.OpenFromClipboardAction</code>.
+	 */
+	private static final String STRICT_QUALIFIED_NAME_PATTERN = "(" + SIMPLE_NAME_PATTERN //$NON-NLS-1$
+			+ "\\.)+" + SIMPLE_NAME_PATTERN; //$NON-NLS-1$
 
 	/**
 	 * Pattern to match whitespace characters.
@@ -118,7 +126,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * <code> at org.eclipse.core.runtime.Assert.isLegal(Assert.java:41)</code>
 	 */
 	private static final String STACK_TRACE_LINE_PATTERN = ".*\\(" //$NON-NLS-1$
-			+ WS + JAVA_FILE_LINE_PATTERN + WS + "\\).*"; //$NON-NLS-1$
+			+ WS + JAVA_FILE_LINE_PATTERN + WS + "\\)"; //$NON-NLS-1$
 
 	/**
 	 * Pattern to match a method e.g.
@@ -303,7 +311,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
 
-			Pattern pattern = Pattern.compile(QUALIFIED_NAME_PATTERN + WS + "\\("); //$NON-NLS-1$
+			Pattern pattern = Pattern.compile(STRICT_QUALIFIED_NAME_PATTERN + WS + "\\("); //$NON-NLS-1$
 			Matcher matcher = pattern.matcher(s);
 			if (matcher.find()) {
 				String qualifiedName = matcher.group();
