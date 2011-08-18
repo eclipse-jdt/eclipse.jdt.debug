@@ -289,6 +289,16 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(1, matches.size());
 	}
 
+	public void testStackTraceLine_7() throws Exception {
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=349933#c2
+		String s = "getMatchingPattern ( OpenFromClipboardTests.java : 121 )";
+		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
+
+		setupTypeTest("OpenFromClipboardTests");
+		List matches = getJavaElementMatches(s);
+		assertEquals(1, matches.size());
+	}
+
 	// method tests
 	private void setupMethodTest() throws JavaModelException {
 		IPackageFragment pack= fSourceFolder.createPackageFragment("p", false, null);
