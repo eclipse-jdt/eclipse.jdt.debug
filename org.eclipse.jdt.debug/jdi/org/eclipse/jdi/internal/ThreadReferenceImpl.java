@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -396,11 +396,15 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			
 			int owned = readInt("owned monitors", replyData); //$NON-NLS-1$
 			List result = new ArrayList(owned);
+			ObjectReference monitor = null;
+			int depth = -1;
 			for (int i = 0; i < owned; i++) {
-				result.add(new MonitorInfoImpl(this, 
-											  readInt("stack depth", replyData),  //$NON-NLS-1$
-											  ObjectReferenceImpl.readObjectRefWithTag(this, replyData), 
-											  virtualMachineImpl()));
+				monitor = ObjectReferenceImpl.readObjectRefWithTag(this, replyData);
+				depth = readInt("stack depth", replyData); //$NON-NLS-1$
+				result.add(new MonitorInfoImpl(this,
+						depth,
+						monitor,
+						virtualMachineImpl()));
 			}
 			return result;
 		} 
