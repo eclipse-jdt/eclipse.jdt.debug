@@ -95,7 +95,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 */
 	protected void setUp() throws Exception {
 		IPath testrpath = new Path("testresources");
-		IProject pj = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
+		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
 		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), "J2SE-1.4", false);
 	}
 	
