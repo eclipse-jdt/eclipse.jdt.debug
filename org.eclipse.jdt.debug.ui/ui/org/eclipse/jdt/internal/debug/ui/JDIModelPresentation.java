@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -444,14 +444,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if ("V".equals(signature)) { //$NON-NLS-1$
 			valueString= DebugUIMessages.JDIModelPresentation__No_explicit_return_value__30; 
 		}
-		boolean isObject= isObjectValue(signature);
+		boolean isObject= isObjectValue(signature) || value instanceof IJavaObject;
 		boolean isArray= value instanceof IJavaArray;
 		StringBuffer buffer= new StringBuffer();
 		// Always show type name for objects & arrays (but not Strings)
 		if (isObject && !isString && (refTypeName.length() > 0)) {
 			// Don't show type name for instances and references
 			if (!(value instanceof JDIReferenceListValue || value instanceof JDIAllInstancesValue)){
-				String qualTypeName= getQualifiedName(refTypeName);
+				String qualTypeName= getQualifiedName(refTypeName).trim();
 				if (isArray) {
 					qualTypeName= adjustTypeNameForArrayIndex(qualTypeName, ((IJavaArray)value).getLength());
 				}

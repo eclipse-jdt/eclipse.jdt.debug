@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,8 +261,17 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 		if (parameterStart < 0) {
 			name.append(genericTypeSignature.substring(arrayDimension + 1, genericTypeSignature.length() - 1).replace('/', '.'));
 		} else {
-			name.append(genericTypeSignature.substring(arrayDimension + 1, parameterStart).replace('/', '.'));
-			name.append(Signature.toString(genericTypeSignature).substring(parameterStart - 1 - arrayDimension).replace('/', '.'));
+			if(parameterStart != 0) {
+				name.append(genericTypeSignature.substring(arrayDimension + 1, parameterStart).replace('/', '.'));
+			}
+			try {
+				String sig = Signature.toString(genericTypeSignature).substring(Math.max(parameterStart - 1, 0) - arrayDimension);
+				name.append(sig.replace('/', '.'));
+			}
+			catch(IllegalArgumentException iae) {
+				//do nothing
+				name.append(genericTypeSignature);
+			}
 		}
 		for (int i= 0; i < arrayDimension; i++) {
 			name.append("[]"); //$NON-NLS-1$
