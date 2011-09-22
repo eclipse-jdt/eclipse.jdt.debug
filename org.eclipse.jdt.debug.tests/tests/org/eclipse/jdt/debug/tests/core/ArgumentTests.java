@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -87,10 +86,15 @@ public class ArgumentTests extends AbstractDebugTest {
 		 */
 		public String getOutput() {
 			// wait to be closed
+			String output = buffer.toString();
+			if(output != null && output.length() > 0) {
+				fLock.notifyAll();
+				return output;
+			}
 		    synchronized (fLock) {
 		    	if (!closed) {
 			        try {
-	                    fLock.wait(30000);
+	                    fLock.wait(DEFAULT_TIMEOUT);
 	                } catch (InterruptedException e) {
 	                }
 		    	}
@@ -331,11 +335,14 @@ public class ArgumentTests extends AbstractDebugTest {
 	 */
 	private void testOutput(String mainTypeName, String vmArgs, String programArgs, String outputValue) throws CoreException {
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "config1");
-		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getProject().getName());
+		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, get14Project().getProject().getName());
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		IVMInstall vm = JavaRuntime.getVMInstall(get14Project());
+		assertNotNull("shold be able to get the default VM install from the 1.4 project", vm);
+		//workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(vm).toPortableString());
 
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
 		Map map = new HashMap(1);
@@ -380,8 +387,8 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * Tests the default VM args
 	 * @throws CoreException
 	 */
-	public void testDefaultVMArgs() throws CoreException {
-	    IVMInstall install = JavaRuntime.getDefaultVMInstall();
+	/*public void testDefaultVMArgs() throws CoreException {
+	    IVMInstall install = JavaRuntime.getVMInstall(get14Project());
 	    assertTrue("should be an IVMInstall2", install instanceof IVMInstall2);
 	    IVMInstall2 vm2 = (IVMInstall2) install;
 	    String prev = vm2.getVMArgs();
@@ -391,5 +398,5 @@ public class ArgumentTests extends AbstractDebugTest {
 	    } finally {
 	        vm2.setVMArgs(prev);
 	    }
-	}
+	}*/
 }

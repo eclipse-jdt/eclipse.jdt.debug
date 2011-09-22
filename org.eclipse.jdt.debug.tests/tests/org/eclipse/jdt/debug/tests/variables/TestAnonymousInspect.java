@@ -54,7 +54,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		createLaunchConfiguration(getJavaProject(), TYPE_NAME);
+		createLaunchConfiguration(get14Project(), TYPE_NAME);
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	IValue doEval(IJavaThread thread) throws Exception{
 		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 		assertNotNull("There should be a stackframe", frame);
-		ASTEvaluationEngine engine = new ASTEvaluationEngine(getJavaProject(), (IJavaDebugTarget) thread.getDebugTarget());
+		ASTEvaluationEngine engine = new ASTEvaluationEngine(get14Project(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(SNIPPET, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 			long timeout = System.currentTimeMillis()+5000;

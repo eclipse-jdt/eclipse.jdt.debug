@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2006 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -214,7 +214,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName, String type) throws Exception {
 		
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMember target = getMember(cunit, type);
 		//if this was a non-typed test, get's it's parent type

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 	 */
 	public void testLineBreakPoint() throws Exception {
 		cleanTestFiles();
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IJavaElement type = cunit.getType("Movee").getMethod("testMethod1", Signature.getParameterTypes("()V"));
 		try {
@@ -63,7 +63,7 @@ public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 	 */	
 	public void testMethodBreakPoint() throws Exception {
 		cleanTestFiles();
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IJavaElement type = cunit.getType("Movee").getMethods()[0];
 		

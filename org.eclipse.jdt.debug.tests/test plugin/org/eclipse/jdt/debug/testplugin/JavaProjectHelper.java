@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IContainer;
@@ -49,6 +50,13 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  */
 public class JavaProjectHelper {
 	
+	public static final String SRC_DIR = "src";
+	public static final String BIN_DIR = "bin";
+	public static final String J2SE_1_4_EE_NAME = "J2SE-1.4";
+	public static final String J2SE_1_5_EE_NAME = "J2SE-1.5";
+	public static final String JAVA_SE_1_6_EE_NAME = "JavaSE-1.6";
+	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
+	
 	/**
 	 * path to the test src for 'testprograms'
 	 */
@@ -58,6 +66,10 @@ public class JavaProjectHelper {
 	 * path to the 1.5 test source
 	 */
 	public static final IPath TEST_1_5_SRC_DIR= new Path("testsource-j2se-1.5");
+	/**
+	 * path to the 1.7 test source
+	 */
+	public static final IPath TEST_1_7_SRC_DIR= new Path("java7");
 	
 	/**
 	 * path to the compiler error java file
@@ -369,6 +381,40 @@ public class JavaProjectHelper {
 	}
 	
 	/**
+	 * Sets the given compiler compliance on the given {@link IJavaProject}
+	 * <br><br>
+	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6} and 
+	 * {@link JavaCore#VERSION_1_7} for more information on accepted compliances
+	 * 
+	 * @param project
+	 * @param compliance
+	 */
+	public static void setCompliance(IJavaProject project, String compliance) {
+		Map map = JavaCore.getOptions();
+		map.put(JavaCore.COMPILER_COMPLIANCE, compliance);
+		map.put(JavaCore.COMPILER_SOURCE, compliance);
+		project.setOptions(map);
+	}
+	
+	/**
+	 * Updates the compiler compliance project setting for the given project to match the given EE. 
+	 * I.e. J2SE-1.5 will set a 1.5 compliance for the compiler and the source level.
+	 * @param project
+	 * @param ee
+	 */
+	public static void updateCompliance(IJavaProject project, String ee) {
+		if(J2SE_1_4_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_1_4);
+		}
+		else if(J2SE_1_5_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_1_5);
+		}
+		else if(JAVA_SE_1_7_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_1_7);
+		}
+	}
+	
+	/**
 	 * Adds a required project entry.
 	 * @param jproject
 	 * @param required
@@ -510,7 +556,7 @@ public class JavaProjectHelper {
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
-			} else if (files[i].isDirectory()) {
+			} else if (files[i].isDirectory() && files[i].getName().indexOf("CVS") < 0) {
 				subDirs.add(files[i]);
 			}
 		}
@@ -531,8 +577,5 @@ public class JavaProjectHelper {
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	
-	}		
-	
-	
+	}	
 }
-

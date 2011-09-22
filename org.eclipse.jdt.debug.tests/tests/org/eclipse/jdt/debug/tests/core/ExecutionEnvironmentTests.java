@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -39,7 +40,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertTrue("Should be at least one environment", executionEnvironments.length > 0);
 		for (int i = 0; i < executionEnvironments.length; i++) {
 			IExecutionEnvironment environment = executionEnvironments[i];
-			if (environment.getId().equals("J2SE-1.4")) {
+			if (environment.getId().equals(JavaProjectHelper.J2SE_1_4_EE_NAME)) {
 				return;
 			}
 		}
@@ -50,7 +51,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				
-		IExecutionEnvironment environment = manager.getEnvironment("J2SE-1.4");
+		IExecutionEnvironment environment = manager.getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
 		assertNotNull("Missing environment J2SE-1.4", environment);
 		IVMInstall[] installs = environment.getCompatibleVMs();
 		assertTrue("Should be at least one vm install for the environment", installs.length > 0);
@@ -69,7 +70,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertNotNull("Missing environment j2se14x", environment);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
-		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
@@ -88,7 +89,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertNotNull("Missing environment j2se13x", environment);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
-		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
@@ -103,7 +104,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertNotNull("Missing environment j2se15x", environment);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
-		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
@@ -118,7 +119,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 	 */
 	public void testAccessRulesPresentOnEEProject() throws Exception {
 		boolean foundLib = false;
-		IJavaProject project = getJavaProject("BoundEE");
+		IJavaProject project = getBoundEeProject();
 		assertTrue("BoundEE project does not exist", project.exists());
 		IClasspathEntry[] rawClasspath = project.getRawClasspath();
 		for (int i = 0; i < rawClasspath.length; i++) {
@@ -145,7 +146,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 	 */
 	public void testAccessRulesNotPresentOnJREProject() throws Exception {
 		boolean foundLib = false;
-		IJavaProject project = getJavaProject("BoundJRE");
+		IJavaProject project = getBoundJreProject();
 		assertTrue("BoundJRE project does not exist", project.exists());
 		IClasspathEntry[] rawClasspath = project.getRawClasspath();
 		for (int i = 0; i < rawClasspath.length; i++) {
@@ -178,7 +179,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertNotNull("Missing environment systemPackages", environment);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
-		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, getJavaProject());
+		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
@@ -200,7 +201,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		String result = manager.performStringSubstitution("${ee_home:J2SE-1.4}");
 		assertNotNull(result);
-		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
 		IVMInstall install = JavaRuntime.getVMInstall(JavaRuntime.newJREContainerPath(ee));
 		assertEquals(install.getInstallLocation().getAbsolutePath(), result);
 	}

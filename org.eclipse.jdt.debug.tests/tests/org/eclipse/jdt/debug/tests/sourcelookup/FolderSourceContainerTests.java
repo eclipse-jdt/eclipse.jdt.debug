@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2006 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class FolderSourceContainerTests extends AbstractDebugTest {
 		ISourceLookupDirector director = new JavaSourceLookupDirector();
 		director.initializeParticipants();
 		director.setFindDuplicates(duplicates);
-		IFolder folder = getJavaProject().getProject().getFolder("src");
+		IFolder folder = get14Project().getProject().getFolder("src");
 		FolderSourceContainer container = new FolderSourceContainer(folder, subfolders);
 		director.setSourceContainers(new ISourceContainer[]{container});
 		return container;
@@ -121,6 +121,6 @@ public class FolderSourceContainerTests extends AbstractDebugTest {
 		FolderSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements(".."+File.separatorChar+".classpath");
 		assertEquals("Expected a hit", 1, objects.length);
-		assertEquals("Wrong file", getJavaProject().getProject().getFile(new Path(".classpath")), objects[0]);
+		assertEquals("Wrong file", get14Project().getProject().getFile(new Path(".classpath")), objects[0]);
 	}
 }

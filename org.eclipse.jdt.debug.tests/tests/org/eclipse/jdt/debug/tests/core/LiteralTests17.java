@@ -25,8 +25,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
  */
 public class LiteralTests17 extends AbstractDebugTest {
 
-	private String typename = "Literals17";
-	private IJavaProject project = null;
+	public static final String LITERAL_TYPE_NAME = "Literals17";
 	
 	/**
 	 * Constructor
@@ -36,18 +35,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
-	protected void setUp() throws Exception {
-		project = createProject("OneSeven", "java7", "JavaSE-1.7", false);
-		createLaunchConfiguration(project, typename);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getJavaProject()
-	 */
-	protected IJavaProject getJavaProject() {
-		return project;
+	protected IJavaProject getProjectContext() {
+		return get17Project();
 	}
 	
 	/**
@@ -57,10 +48,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	IValue doEval(String snippet) throws Exception {
-		ILineBreakpoint bp = createLineBreakpoint(25, typename);
+		ILineBreakpoint bp = createLineBreakpoint(25, LITERAL_TYPE_NAME);
 		IJavaThread thread = null;
 		try {
-			thread = launchToLineBreakpoint(typename, bp);
+			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);
 			IEvaluationResult result = evaluate(snippet, thread);
 			assertNotNull("There must be an evaluation result", result);
 			assertTrue("There must be no errors in the result", !result.hasErrors());
@@ -83,10 +74,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	IValue doEval(String snippet, String snippet2) throws Exception {
-		ILineBreakpoint bp = createLineBreakpoint(25, typename);
+		ILineBreakpoint bp = createLineBreakpoint(25, LITERAL_TYPE_NAME);
 		IJavaThread thread = null;
 		try {
-			thread = launchToLineBreakpoint(typename, bp);
+			thread = launchToLineBreakpoint(LITERAL_TYPE_NAME, bp);
 			IEvaluationResult result = evaluate(snippet, thread);
 			assertNotNull("There must be an evaluation result", result);
 			assertTrue("There must be no errors in the result", !result.hasErrors());

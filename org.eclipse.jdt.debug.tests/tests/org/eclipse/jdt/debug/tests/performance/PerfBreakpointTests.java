@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -153,7 +153,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
     public void testMethodEntryBreakpointCreation() throws Exception {
         tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
-        IProject project = getJavaProject().getProject();
+        IProject project = get14Project().getProject();
         
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);

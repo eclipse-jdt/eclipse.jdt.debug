@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class MigrationDelegateTests extends AbstractDebugTest {
 			config.migrate();
 			IResource[] mappedResources = config.getMappedResources();
 			assertEquals("Wrong number of mapped resources", 1, mappedResources.length); //$NON-NLS-1$
-			assertEquals("Wrong mapped resources", getJavaProject().findType("MigrationTests").getUnderlyingResource(), mappedResources[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("Wrong mapped resources", get14Project().findType("MigrationTests").getUnderlyingResource(), mappedResources[0]); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		finally {
 			config = null;

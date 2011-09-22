@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * See Bug 53646
 	 */
 	public void testPackageFragmentRoots() throws Exception {
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = get14Project();
 		IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
 		IResource resource = javaProject.getProject().getFile("src/A.jar");
 		IPackageFragmentRoot packageFragmentRoot = javaProject.getPackageFragmentRoot(resource);
@@ -72,7 +72,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 			Object source1 = sourceLocator.getSourceElement(frame);
 			source1 = ((IAdaptable)source1).getAdapter(IJavaElement.class);
 			
-			IPackageFragment[] fragments = getJavaProject().getPackageFragments();
+			IPackageFragment[] fragments = get14Project().getPackageFragments();
 			IPackageFragment fragment = null;
 			for (int i = 0; i < fragments.length; i++) {
 				if (fragments[i].getElementName().equals("org.eclipse.debug.tests.targets")) {
@@ -104,10 +104,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in a top level type, in the default package.
 	 */
 	public void testDefTopLevelType() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints"));
@@ -117,10 +117,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in an inner type, the default package.
 	 */
 	public void testDefInnerType() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints$InnerRunnable"));
@@ -133,7 +133,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 	public void testDefAnonInnerType() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(43, typeName);
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 		
 		IJavaThread thread= null;
@@ -159,7 +159,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 	public void testDefLocalType() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(30, typeName);
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", expectedSource.exists());
 		
 		IJavaThread thread= null;
@@ -182,10 +182,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in a top level type.
 	 */
 	public void testTopLevelType() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup"));
@@ -195,10 +195,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in an inner type.
 	 */
 	public void testInnerType() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup$Inner"));
@@ -208,10 +208,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in an inner inner type.
 	 */
 	public void testInnerNestedType() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup$Inner$Nested"));
@@ -221,10 +221,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in a top level type, with a $ named class
 	 */
 	public void testTopLevel$Type() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup"));
@@ -234,10 +234,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in an inner type in a $ named class.
 	 */
 	public void testInner$Type() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup$Inner"));
@@ -247,10 +247,10 @@ public class SourceLookupTests extends AbstractDebugTest {
 	 * Tests source lookup in an inner inner type in a $ named class.
 	 */
 	public void testInnerNested$Type() throws Exception {
-		IPackageFragmentRoot root = getPackageFragmentRoot(getJavaProject(), "src");
+		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
-		ICompilationUnit expectedSource = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
+		ICompilationUnit expectedSource = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", expectedSource.exists());
 				
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup$Inner$Nested"));

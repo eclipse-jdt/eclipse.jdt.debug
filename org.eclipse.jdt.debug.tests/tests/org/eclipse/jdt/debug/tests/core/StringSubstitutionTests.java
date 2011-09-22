@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -518,7 +518,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testWorkspaceLocArg() throws CoreException {
 		String expression = "${workspace_loc:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFolder("src").getLocation().toOSString(), result);
+		assertEquals(get14Project().getProject().getFolder("src").getLocation().toOSString(), result);
 	}
 	
 	/**
@@ -527,7 +527,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectLocArgProjectName() throws CoreException {
 		String expression = "${project_loc:DebugTests}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
 	
 	/**
@@ -536,7 +536,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectLocArgFolderPath() throws CoreException {
 		String expression = "${project_loc:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
 	
 	/**
@@ -544,7 +544,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testProjectLocSelectFolder() throws CoreException {
 		String expression = "${project_loc}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getLocation().toOSString(), result);
@@ -556,7 +556,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectPathArgProjectName() throws CoreException {
 		String expression = "${project_path:DebugTests}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
 	
 	/**
@@ -564,7 +564,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testProjectPathSelectFile() throws CoreException {
 		String expression = "${project_path}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getFullPath().toOSString(), result);
@@ -576,7 +576,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectPathArgFolderPath() throws CoreException {
 		String expression = "${project_path:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
 	
 	/**
@@ -585,7 +585,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectNameArgProjectName() throws CoreException {
 		String expression = "${project_name:DebugTests}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getName(), result);
+		assertEquals(get14Project().getProject().getName(), result);
 	}
 	
 	/**
@@ -593,7 +593,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testProjectNameSelectProject() throws CoreException {
 		String expression = "${project_name}";
-		IResource resource = getJavaProject().getProject();
+		IResource resource = get14Project().getProject();
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getName(), result);
@@ -605,7 +605,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testProjectNameArgFolderPath() throws CoreException {
 		String expression = "${project_name:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getName(), result);
+		assertEquals(get14Project().getProject().getName(), result);
 	}
 	
 	/**
@@ -615,7 +615,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testContainerLocArgFolderName() throws CoreException {
 		String expression = "${container_loc:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getLocation().toOSString(), result);
+		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
 	
 	/**
@@ -624,7 +624,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testContainerLocSelectFolder() throws CoreException {
 		String expression = "${container_loc}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getLocation().toOSString(), result);
@@ -637,7 +637,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testContainerPathArgFolderName() throws CoreException {
 		String expression = "${container_path:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFullPath().toOSString(), result);
+		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
 	
 	/**
@@ -646,7 +646,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testContainerPathSelectFolder() throws CoreException {
 		String expression = "${container_path}";
-		IResource resource = getJavaProject().getProject().getFolder("src"); 
+		IResource resource = get14Project().getProject().getFolder("src"); 
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getFullPath().toOSString(), result);
@@ -659,7 +659,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testContainerNameArgFolderName() throws CoreException {
 		String expression = "${container_name:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getName(), result);
+		assertEquals(get14Project().getProject().getName(), result);
 	}
 	
 	/**
@@ -668,7 +668,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testContainerNameSelectFolder() throws CoreException {
 		String expression = "${container_name}";
-		IResource resource = getJavaProject().getProject().getFolder("src"); 
+		IResource resource = get14Project().getProject().getFolder("src"); 
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getName(), result);
@@ -680,7 +680,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testResourceLocArgFolderName() throws CoreException {
 		String expression = "${resource_loc:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFolder("src").getLocation().toOSString(), result);
+		assertEquals(get14Project().getProject().getFolder("src").getLocation().toOSString(), result);
 	}
 	
 	/**
@@ -688,7 +688,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourceLocSelectFolder() throws CoreException {
 		String expression = "${resource_loc}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getLocation().toOSString(), result);
@@ -700,7 +700,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testResourcePathArgFolderName() throws CoreException {
 		String expression = "${resource_path:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFolder("src").getFullPath().toOSString(), result);
+		assertEquals(get14Project().getProject().getFolder("src").getFullPath().toOSString(), result);
 	}
 
 	/**
@@ -708,7 +708,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourcePathSelectFile() throws CoreException {
 		String expression = "${resource_path}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath"); 
+		IResource resource = get14Project().getProject().getFile(".classpath"); 
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
@@ -720,7 +720,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testResourceNameArgFolderName() throws CoreException {
 		String expression = "${resource_name:DebugTests/src}";
 		String result = doSubs(expression);
-		assertEquals(getJavaProject().getProject().getFolder("src").getName(), result);
+		assertEquals(get14Project().getProject().getFolder("src").getName(), result);
 	}	
 
 	/**
@@ -728,7 +728,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourceNameSelectFile() throws CoreException {
 		String expression = "${resource_name}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
@@ -739,7 +739,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * application configurations.
 	 */
 	public void testLocalJavaApplicationParameters() throws CoreException {
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
@@ -796,7 +796,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testSelectedResourcePathFile() throws CoreException {
 		String expression = "${selected_resource_path}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath"); 
+		IResource resource = get14Project().getProject().getFile(".classpath"); 
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
@@ -807,7 +807,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testSelectedResourceNameFile() throws CoreException {
 		String expression = "${selected_resource_name}";
-		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
@@ -818,7 +818,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testSelectedResourceLocFolder() throws CoreException {
 		String expression = "${selected_resource_loc}";
-		IResource resource = getJavaProject().getProject().getFolder("src");
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getLocation().toOSString(), result);

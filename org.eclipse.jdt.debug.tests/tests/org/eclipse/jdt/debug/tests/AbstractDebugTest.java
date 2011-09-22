@@ -11,14 +11,13 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -56,12 +55,15 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
@@ -101,7 +103,9 @@ import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
@@ -111,6 +115,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
@@ -122,6 +127,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -129,7 +135,9 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import com.sun.jdi.InternalException;
@@ -138,6 +146,23 @@ import com.sun.jdi.InternalException;
  * Tests for launch configurations
  */
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
+	
+	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
+	public static final String BOUND_EE_PROJECT_NAME = "BoundEE";
+	public static final String ONE_FOUR_PROJECT_NAME = "DebugTests";
+	public static final String ONE_FIVE_PROJECT_NAME = "OneFive";
+	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
+	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
+
+	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "StaticVariablesTests",
+			"DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint", "org.eclipse.debug.tests.targets.CallLoop", "A",
+			"HitCountLooper", "CompileError", "MultiThreadedLoop", "HitCountException", "MultiThreadedException", "MultiThreadedList", "MethodLoop", "StepFilterOne",
+			"StepFilterFour", "EvalArrayTests", "EvalSimpleTests", "EvalTypeTests", "EvalNestedTypeTests", "EvalTypeHierarchyTests", "WorkingDirectoryTest", 
+			"OneToTen", "OneToTenPrint", "FloodConsole", "ConditionalStepReturn", "VariableChanges", "DefPkgReturnType", "InstanceFilterObject", "org.eclipse.debug.tests.targets.CallStack", 
+			"org.eclipse.debug.tests.targets.ThreadStack", "org.eclipse.debug.tests.targets.HcrClass", "org.eclipse.debug.tests.targets.StepIntoSelectionClass", 
+			"WatchItemTests", "ArrayTests", "ByteArrayTests", "PerfLoop", "Console80Chars", "ConsoleStackTrace", "ConsoleVariableLineLength", "StackTraces", 
+			"ConsoleInput", "PrintConcatenation", "VariableDetails", "org.eclipse.debug.tests.targets.ArrayDetailTests", "ArrayDetailTestsDef", "ForceReturnTests", 
+			"ForceReturnTestsTwo", "LogicalStructures", "BreakpointListenerTest", "LaunchHistoryTest", "LaunchHistoryTest2", "RunnableAppletImpl", "java6.AllInstancesTests"};
 	
 	/**
 	 * the default timeout
@@ -159,15 +184,18 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public IEvaluationResult fEvaluationResult;
 	
 	/**
-	 * the java project
-	 */
-	public static IJavaProject fJavaProject;
-	
-	/**
 	 * The last relevant event set - for example, that caused
 	 * a thread to suspend
 	 */
 	protected DebugEvent[] fEventSet;
+
+	private static boolean loadedPrefs = false;
+	private static boolean loaded14 = false;
+	private static boolean loaded15 = false;
+	private static boolean loaded17 = false;
+	private static boolean loadedEE = false;
+	private static boolean loadedJRE = false;
+	private static boolean loadedMulti = false;
 	
 	/**
 	 * Constructor
@@ -181,13 +209,267 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		if (!ProjectCreationDecorator.isReady()) {
-			new TestSuite(ProjectCreationDecorator.class).run(new TestResult());
-		}
+		setPreferences();
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_FOUR_PROJECT_NAME);
+		loaded14 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_FIVE_PROJECT_NAME);
+		loaded15 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_SEVEN_PROJECT_NAME);
+		loaded17 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_JRE_PROJECT_NAME);
+		loadedJRE = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_EE_PROJECT_NAME);
+		loadedEE = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(MULTI_OUTPUT_PROJECT_NAME);
+		loadedMulti = pro.exists();
 	}
 
+	synchronized void setPreferences() {
+		if(!loadedPrefs) {
+	        IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore();
+	        // Don't prompt for perspective switching
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.ALWAYS);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.ALWAYS);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, MessageDialogWithToggle.NEVER);
+	        
+	        String property = System.getProperty("debug.workbenchActivation");
+	        boolean activate = property != null && property.equals("on"); 
+	        debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, activate);
+	        debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, activate);
+	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate);
+	        debugUIPreferences.setValue(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, activate);
+	
+	        IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+	        // Turn off suspend on uncaught exceptions
+	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
+	        // Don't warn about HCR failures
+	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, false);
+	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, false);
+	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);
+	        // Set the timeout preference to a high value, to avoid timeouts while
+	        // testing
+	        JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
+	        // turn off monitor information
+	        jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
+	        
+	        // turn off workbench heap monitor
+	        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
+	        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+	        for (int i = 0; i < windows.length; i++) {
+	            IWorkbenchWindow window = windows[i];
+	            if(window instanceof WorkbenchWindow){
+	                ((WorkbenchWindow) window).showHeapStatus(false);
+	            }
+	        }
+	        loadedPrefs = true;
+		}
+    }
+	
+	/**
+	 * Creates the Java 1.4 compliant project
+	 */
+	synchronized void assert14Project() {
+		IJavaProject jp = null;
+		ArrayList cfgs = new ArrayList(1);
+        try {
+	        if (!loaded14) {
+	        	jp = createProject(ONE_FOUR_PROJECT_NAME, JavaProjectHelper.TEST_SRC_DIR.toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, false);
+	        	IPackageFragmentRoot src = jp.findPackageFragmentRoot(new Path(ONE_FOUR_PROJECT_NAME).append(JavaProjectHelper.SRC_DIR).makeAbsolute());
+	        	assertNotNull("The 'src' package fragment root should not be null", src);
+	        	File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
+		        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+		        IPath path = src.getPath().append("A.jar");
+		        JavaProjectHelper.addLibrary(jp, path);
+		
+		        // create launch configurations
+		        for (int i = 0; i < LAUNCH_CONFIG_NAMES_1_4.length; i++) {
+		        	cfgs.add(createLaunchConfiguration(jp, LAUNCH_CONFIG_NAMES_1_4[i]));
+				}
+		        loaded14 = true;
+		        waitForBuild();
+	        }
+        }
+        catch(Exception e) {
+        	try {
+        		if(jp != null) {
+        			jp.getProject().delete(true,  true, null);
+        		}
+	        	for (int i = 0; i < cfgs.size(); i++) {
+					((ILaunchConfiguration)cfgs.get(i)).delete();
+				}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+    }
+	
+	/**
+	 * Creates the Java 1.5 compliant project
+	 */
+	void assert15Project() {
+		IJavaProject jp = null; 
+		ArrayList cfgs = new ArrayList(1);
+        try {
+	        if (!loaded15) {
+				jp = createProject(ONE_FIVE_PROJECT_NAME, JavaProjectHelper.TEST_1_5_SRC_DIR.toString(), JavaProjectHelper.J2SE_1_5_EE_NAME, true);
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.MethodBreakpoints"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.IntegerAccess"));
+				loaded15 = true;
+				waitForBuild();
+	        }
+        }
+        catch(Exception e) {
+        	try {
+        		if(jp != null) {
+		        	jp.getProject().delete(true,  true, null);
+		        	for (int i = 0; i < cfgs.size(); i++) {
+						((ILaunchConfiguration)cfgs.get(i)).delete();
+					}
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+	}
+	
+	/**
+	 * Creates the Java 1.7 compliant project
+	 */
+	synchronized void assert17Project() {
+		IJavaProject jp = null;
+		ArrayList cfgs = new ArrayList(1);
+        try {
+	        if (!loaded17) {
+	        	jp = createProject(ONE_SEVEN_PROJECT_NAME, JavaProjectHelper.TEST_1_7_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, false);
+	    		cfgs.add(createLaunchConfiguration(jp, LiteralTests17.LITERAL_TYPE_NAME));
+	    		loaded17 = true;
+	    		waitForBuild();
+	        }
+        }
+        catch(Exception e) {
+        	try {
+        		if(jp != null) {
+		        	jp.getProject().delete(true,  true, null);
+		        	for (int i = 0; i < cfgs.size(); i++) {
+						((ILaunchConfiguration)cfgs.get(i)).delete();
+					}
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+	}
+	
+	/**
+	 * Creates the 'BoundJRE' project used for the JRE testing
+	 */
+	synchronized void assertBoundJreProject() {
+		IJavaProject jp = null; 
+		try {
+	        if (!loadedJRE) {
+		        jp =JavaProjectHelper.createJavaProject(BOUND_JRE_PROJECT_NAME);
+		        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR, JavaProjectHelper.BIN_DIR);
+		        // add VM specific JRE container
+		        IPath path = JavaRuntime.newJREContainerPath(JavaRuntime.getDefaultVMInstall());
+		        JavaProjectHelper.addContainerEntry(jp, path);
+		        loadedJRE = true;
+		        waitForBuild();
+	        }
+		}
+		catch(Exception e) {
+        	try {
+        		if(jp != null) {
+        			jp.getProject().delete(true,  true, null);
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+	}
+	
+	/**
+	 * Creates the 'BoundEE' project for EE testing
+	 */
+	void assertBoundeEeProject() {
+		IJavaProject jp = null;
+		try {
+	        if(!loadedEE) {
+		        // create project with two src folders and output locations
+		        jp = JavaProjectHelper.createJavaProject(BOUND_EE_PROJECT_NAME);
+		        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR, JavaProjectHelper.BIN_DIR);
+	
+		        // add VM specific JRE container
+		        IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
+		        assertNotNull("Missing J2SE-1.4 environment", j2se14);
+		        IPath path = JavaRuntime.newJREContainerPath(j2se14);
+		        JavaProjectHelper.addContainerEntry(jp, path);
+		        loadedEE = true;
+		        waitForBuild();
+	        }
+		}
+		catch(Exception e) {
+        	try {
+        		if(jp != null) {
+        			jp.getProject().delete(true,  true, null);
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+	}
+	
+	/**
+	 * Creates the 'MultiOutput' project for source / binary output testing
+	 */
+	synchronized void assertMultioutputProject() {
+		IJavaProject jp = null;
+		try {
+	        if(!loadedMulti) {
+		        // create project with two src folders and output locations
+		        jp = JavaProjectHelper.createJavaProject(MULTI_OUTPUT_PROJECT_NAME);
+		        JavaProjectHelper.addSourceContainer(jp, "src1", "bin1");
+		        JavaProjectHelper.addSourceContainer(jp, "src2", "bin2");
+	
+		        // add rt.jar
+		        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		        assertNotNull("No default JRE", vm);
+		        JavaProjectHelper.addContainerEntry(jp, new Path(JavaRuntime.JRE_CONTAINER));
+		        loadedMulti = true;
+		        waitForBuild();
+	        }
+		}
+		catch(Exception e) {
+        	try {
+        		if(jp != null) {
+        			jp.getProject().delete(true,  true, null);
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+        	fail(e.getMessage());
+        }
+	}
+	
 	/**
 	 * Sets the last relevant event set
 	 *
@@ -235,16 +517,71 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}	
 	
 	/**
+	 * Returns the project context for the current test - each
+	 * test must implement this method
+	 */
+	protected IJavaProject getProjectContext() {
+		return get14Project();
+	}
+	
+	/**
 	 * Returns the 'DebugTests' project.
 	 * 
 	 * @return the test project
 	 */
-	protected IJavaProject getJavaProject() {
-		return getJavaProject("DebugTests");
+	protected IJavaProject get14Project() {
+		assert14Project();
+		return getJavaProject(ONE_FOUR_PROJECT_NAME);
 	}
 	
+	/**
+	 * Returns the 'OneFive' project.
+	 * 
+	 * @return the test project
+	 */
 	protected IJavaProject get15Project() {
-		return getJavaProject("OneFive");
+		assert15Project();
+		return getJavaProject(ONE_FIVE_PROJECT_NAME);
+	}
+	
+	/**
+	 * Returns the 'OneSeven' project.
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject get17Project() {
+		assert17Project();
+		return getJavaProject(ONE_SEVEN_PROJECT_NAME);
+	}
+	
+	/**
+	 * Returns the 'BoundJRE' project
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject getBoundJreProject() {
+		assertBoundJreProject();
+		return getJavaProject(BOUND_JRE_PROJECT_NAME);
+	}
+	
+	/**
+	 * Returns the 'BoundEE' project
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject getBoundEeProject() {
+		assertBoundeEeProject();
+		return getJavaProject(BOUND_EE_PROJECT_NAME);
+	}
+	
+	/**
+	 * Returns the 'MultiOutput' project
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject getMultiOutputProject() {
+		assertMultioutputProject();
+		return getJavaProject(MULTI_OUTPUT_PROJECT_NAME);
 	}
 	
 	/**
@@ -281,8 +618,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch(Exception e) {}
         }
         // create project and import source
-        IJavaProject jp = JavaProjectHelper.createJavaProject(name, "bin");
-        IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(jp, "src");
+        IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
+        IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR);
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
 
@@ -294,6 +631,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IPath containerPath = JavaRuntime.newJREContainerPath(environment);
         JavaProjectHelper.addContainerEntry(jp, containerPath);
         pro = jp.getProject();  
+        
+        JavaProjectHelper.updateCompliance(jp, ee);
         
         // create launch configuration folder
         IFolder folder = pro.getFolder("launchConfigurations");
@@ -326,8 +665,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch(Exception e) {}
         }
         // create project and import source
-        IJavaProject jp = JavaProjectHelper.createJavaProject(name, "bin");
-        JavaProjectHelper.addSourceContainer(jp, "src");
+        IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
+        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR);
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, jp.getPath(), null);
 
@@ -539,7 +878,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				e.printStackTrace();
 				fail("Program did not suspend, and unable to terminate launch."); //$NON-NLS-1$
 			}
-			throw new TestAgainException();
+			throw new TestAgainException("Program did not suspend, launch terminated.");
 		}
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
@@ -586,7 +925,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName) throws Exception {
-		return launchToBreakpoint(getJavaProject(), mainTypeName);
+		return launchToBreakpoint(getProjectContext(), mainTypeName);
 	}
 	
 	/**
@@ -612,7 +951,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName, boolean register) throws Exception {
-		return launchToBreakpoint(getJavaProject(), mainTypeName, register);
+		return launchToBreakpoint(getProjectContext(), mainTypeName, register);
 	}
 	
 	/**
@@ -897,7 +1236,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @see ProjectCreationDecorator
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration(String mainTypeName) {
-		return getLaunchConfiguration(getJavaProject(), mainTypeName);
+		return getLaunchConfiguration(getProjectContext(), mainTypeName);
 	}
 	
 	/**
@@ -939,10 +1278,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IResource getBreakpointResource(String typeName) throws Exception {
-		IJavaElement element = getJavaProject().findElement(new Path(typeName + JAVA_EXTENSION));
+		IJavaElement element = getProjectContext().findElement(new Path(typeName + JAVA_EXTENSION));
 		IResource resource = element.getCorrespondingResource();
 		if (resource == null) {
-			resource = getJavaProject().getProject();
+			resource = getProjectContext().getProject();
 		}		
 		return resource;
 	}
@@ -956,7 +1295,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IResource getBreakpointResource(IType type) throws Exception {
 		if (type == null) {
-			return getJavaProject().getProject();
+			return getProjectContext().getProject();
 		}
 		IResource resource = type.getResource();
 		if (resource == null) {
@@ -988,7 +1327,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName, 
 			String fullTargetName) throws Exception{
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = getProjectContext();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		assertNotNull("did not find requested Compilation Unit", cunit); //$NON-NLS-1$
 		IType targetType = (IType)(new MemberParser()).getDeepest(cunit,fullTargetName);
@@ -1076,7 +1415,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IType getType(String packageName, String cuName, String typeName) throws Exception {
-		IPackageFragment[] packageFragments = getJavaProject().getPackageFragments();
+		IPackageFragment[] packageFragments = getProjectContext().getPackageFragments();
 		for (int i = 0; i < packageFragments.length; i++) {
 			IPackageFragment fragment = packageFragments[i];
 			if (fragment.getElementName().equals(packageName)) {
@@ -1145,7 +1484,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param pattern the pattern of the class file name
 	 */
 	protected IJavaPatternBreakpoint createPatternBreakpoint(int lineNumber, String sourceName, String pattern) throws Exception {
-		return JDIDebugModel.createPatternBreakpoint(getJavaProject().getProject(), sourceName, pattern, lineNumber, -1, -1, 0, true, null);
+		return JDIDebugModel.createPatternBreakpoint(getProjectContext().getProject(), sourceName, pattern, lineNumber, -1, -1, 0, true, null);
 	}
 	
 	/**
@@ -1156,7 +1495,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param sourceName name of source file
 	 */
 	protected IJavaTargetPatternBreakpoint createTargetPatternBreakpoint(int lineNumber, String sourceName) throws Exception {
-		return JDIDebugModel.createTargetPatternBreakpoint(getJavaProject().getProject(), sourceName, lineNumber, -1, -1, 0, true, null);
+		return JDIDebugModel.createTargetPatternBreakpoint(getProjectContext().getProject(), sourceName, lineNumber, -1, -1, 0, true, null);
 	}	
 	
 	/**
@@ -1168,7 +1507,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param stratum the stratum of the source file
 	 */
 	protected IJavaStratumLineBreakpoint createStratumBreakpoint(int lineNumber, String sourceName, String stratum) throws Exception {
-		return JDIDebugModel.createStratumBreakpoint(getJavaProject().getProject(), stratum, sourceName, null, null, lineNumber, -1, -1, 0, true, null);
+		return JDIDebugModel.createStratumBreakpoint(getProjectContext().getProject(), stratum, sourceName, null, null, lineNumber, -1, -1, 0, true, null);
 	}
 	
 	/**
@@ -1181,7 +1520,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param exit whether to break on exit
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
-		return createMethodBreakpoint(getJavaProject(), typeNamePattern, methodName, methodSignature, entry, exit);
+		return createMethodBreakpoint(getProjectContext(), typeNamePattern, methodName, methodSignature, entry, exit);
 	}	
 	
 	/**
@@ -1263,7 +1602,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String root, String packageName, String cuName, 
 									String fullTargetName, boolean entry, boolean exit) throws Exception {
 		
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = getProjectContext();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		assertNotNull("did not find requested Compilation Unit", cunit); //$NON-NLS-1$
 		IMethod targetMethod = (IMethod)(new MemberParser()).getDeepest(cunit,fullTargetName);
@@ -1319,7 +1658,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String root,
 			String packageName, String cuName, String fullTargetName) throws Exception {
-		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
+		ICompilationUnit cunit = getCompilationUnit(getProjectContext(), root, packageName, cuName);
 		IType type = (IType)getMember(cunit,fullTargetName);
 		assertTrue("Target type not found", type.exists()); //$NON-NLS-1$
 		return createClassPrepareBreakpoint(type);
@@ -1365,7 +1704,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IType getType(String typeName) throws Exception {
-		return getJavaProject().findType(typeName);
+		return getProjectContext().findType(typeName);
 	}
 	
 	/**
@@ -1447,7 +1786,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaWatchpoint createNestedTypeWatchPoint(String root, String packageName, String cuName, 
 			String fullTargetName, boolean access, boolean modification) throws Exception, CoreException {
 		
-		ICompilationUnit cunit = getCompilationUnit(getJavaProject(), root, packageName, cuName);
+		ICompilationUnit cunit = getCompilationUnit(getProjectContext(), root, packageName, cuName);
 		IField field = (IField)getMember(cunit,fullTargetName);
 		assertNotNull("Path to field is not valid", field); //$NON-NLS-1$
 		assertTrue("Field is not valid", field.exists()); //$NON-NLS-1$
@@ -1577,14 +1916,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(getJavaProject(), (IJavaDebugTarget)frame.getDebugTarget());
-		engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, true);
-
-		Object suspendee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
-		engine.dispose();
-		return fEvaluationResult;
+		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(getProjectContext(), (IJavaDebugTarget)frame.getDebugTarget());
+		try {
+			engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, true);
+	
+			Object suspendee= waiter.waitForEvent();
+			setEventSet(waiter.getEventSet());
+			if(suspendee == null) {
+				throw new TestAgainException("Program did not suspend evaluating: \n\n"+snippet);
+			}
+			assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
+			return fEvaluationResult;
+		}
+		finally {
+			engine.dispose();
+		}
 	}		
 	
 	/**
@@ -1605,7 +1951,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Listener listener= new Listener();
 		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 		assertNotNull("There should be a stackframe", frame);
-		ASTEvaluationEngine engine = new ASTEvaluationEngine(getJavaProject(), (IJavaDebugTarget) thread.getDebugTarget());
+		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 			long timeout = System.currentTimeMillis()+DEFAULT_TIMEOUT;
@@ -1870,14 +2216,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
     /**
      * Creates a shared launch configuration for the type with the given name.
      */
-    protected void createLaunchConfiguration(String mainTypeName) throws Exception {
-        createLaunchConfiguration(getJavaProject(), mainTypeName);
+    protected ILaunchConfiguration createLaunchConfiguration(String mainTypeName) throws Exception {
+        return createLaunchConfiguration(getProjectContext(), mainTypeName);
     }
     
     /**
      * Creates a shared launch configuration for the type with the given name.
      */
-    protected void createLaunchConfiguration(IJavaProject project, String mainTypeName) throws Exception {
+    protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String mainTypeName) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
@@ -1887,13 +2233,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         Map map = new HashMap(1);
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
-        config.doSave();
+        return config.doSave();
     }    
 
     /**
      * Creates a shared launch configuration for the type with the given name.
      */
-    protected void createLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) throws Exception {
+    protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String containername, String mainTypeName) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(containername), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
@@ -1903,7 +2249,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         Map map = new HashMap(1);
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
-        config.doSave();
+        return config.doSave();
     }
     
 	/**
@@ -1921,7 +2267,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (TestAgainException e) {
 				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				DebugPlugin.log(status);
-				if (attempts > 9) {
+				if (attempts > 5) {
 					tryAgain = false;
 				}
 			}
@@ -2045,7 +2391,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		if (cause instanceof InternalException) {
 			int code = ((InternalException)cause).errorCode();
 			if (code == 13) {
-				throw new TestAgainException();
+				throw new TestAgainException("Retest - exception during test: "+getName()+": "+e.getMessage());
 			}
 		}
 		throw e;
@@ -2072,7 +2418,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Listener listener = new Listener();
 		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 		assertNotNull("There should be a stackframe", frame);
-		ASTEvaluationEngine engine = new ASTEvaluationEngine(getJavaProject(), (IJavaDebugTarget) thread.getDebugTarget());
+		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 			long timeout = System.currentTimeMillis()+5000;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.breakpoints;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -28,6 +29,13 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 		super(name);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
+	 */
+	protected IJavaProject getProjectContext() {
+		return get15Project();
+	}	
+	
 	public void testStaticTypeParameter() throws Exception {
 		IJavaMethodBreakpoint breakpoint  = createBreakpoint(25);
 		assertEquals("Wrong method", "staticTypeParameter", breakpoint.getMethodName());

@@ -68,7 +68,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws JavaModelException
 	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String baseTypeName, String expectedTypeName) throws JavaModelException {
-		IType type= getJavaProject().findType(baseTypeName);
+		IType type= get14Project().findType(baseTypeName);
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, false);
@@ -222,7 +222,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testInnerStaticClass() throws Exception {
-		String version = getClassFileVersion();
+		String version = get14Project().getOption(JavaCore.COMPILER_COMPLIANCE, false);
 		if(JavaCore.VERSION_1_5.equals(version) || JavaCore.VERSION_1_6.equals(version)) {
 			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1StaticInnerClass");
 		}
@@ -240,7 +240,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {
-		IType type= getJavaProject().findType("BreakpointsLocation");
+		IType type= get14Project().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
 		CompilationUnit compilationUnit= parseCompilationUnit(unit);
@@ -279,7 +279,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testMethod(int line, int offsetInLine, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
-		IType type= getJavaProject().findType("BreakpointsLocation");
+		IType type= get14Project().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
 		CompilationUnit compilationUnit= parseCompilationUnit(unit);

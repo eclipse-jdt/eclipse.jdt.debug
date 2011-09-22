@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,11 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	
 	/**
 	 * Constructor 
-	 * @param name the name of the test
 	 */
 	public StepIntoSelectionTests(String name) {
 		super(name);
-	}
-
+	}	
+	
 	/**
 	 * Step into 'new StepIntoSelectionClass()'
 	 * 
@@ -49,7 +48,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
-			ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
+			ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
 			IType type = cu.getType("StepIntoSelectionClass");
 			IMethod method = type.getMethod("StepIntoSelectionClass", new String[0]);
 			assertTrue("Could not find constructor", method.exists());
@@ -85,7 +84,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
-			ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
+			ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
 			IType type = cu.getType("StepIntoSelectionClass");
 			IMethod method = type.getMethod("step", new String[0]);
 			assertTrue("Could not find method 'step'", method.exists());
@@ -121,7 +120,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
-			ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
+			ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
 			IType type = cu.getType("StepIntoSelectionClass");
 			IMethod method = type.getMethod("method1", new String[] {"[I", "[QString;"});
 			assertTrue("Could not find method 'method1'", method.exists());
@@ -157,7 +156,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
-			IType type = getJavaProject().findType("java.util.Vector");
+			IType type = get14Project().findType("java.util.Vector");
 			IMethod method = type.getMethod("addElement", new String[]{"Ljava.lang.Object;"});
 			//for 1.5 compliance, addElement has a type 'E' not an object as the param type
 			if(!method.exists()) {
@@ -196,7 +195,7 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
-			IType type = getJavaProject().findType("java.lang.Integer");
+			IType type = get14Project().findType("java.lang.Integer");
 			IMethod method = type.getMethod("Integer", new String[]{"I"});
 			assertTrue("Could not find method constructor", method.exists());
 			

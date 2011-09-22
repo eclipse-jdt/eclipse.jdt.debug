@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2006 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,14 +48,14 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testSourceContainerMemento() throws Exception {
-		ISourceContainer container = getContainer(getJavaProject(), false);
+		ISourceContainer container = getContainer(get14Project(), false);
 		String memento = container.getType().getMemento(container);
 		ISourceContainer restore = container.getType().createSourceContainer(memento);
 		assertEquals("Directory source container memento failed", container, restore);
 	}	
 
 	public void testDefaultPackageLookup() throws Exception {
-		ISourceContainer container = getContainer(getJavaProject(), false);
+		ISourceContainer container = getContainer(get14Project(), false);
 		Object[] objects = container.findSourceElements("Breakpoints.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		IFile file = (IFile) objects[0];
@@ -63,7 +63,7 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 	}
 	
 	public void testQualifiedLookup() throws Exception {
-		ISourceContainer container = getContainer(getJavaProject(), false);
+		ISourceContainer container = getContainer(get14Project(), false);
 		Object[] objects = container.findSourceElements("org/eclipse/debug/tests/targets/CallLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		IFile file = (IFile) objects[0];
@@ -71,7 +71,7 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 	}
 	
 	public void testNonJavaLookup() throws Exception {
-		ISourceContainer container = getContainer(getJavaProject(), false);
+		ISourceContainer container = getContainer(get14Project(), false);
 		Object[] objects = container.findSourceElements("debug/non-java.txt");
 		assertEquals("Expected 1 result", 1, objects.length);
 		IFile file = (IFile) objects[0];

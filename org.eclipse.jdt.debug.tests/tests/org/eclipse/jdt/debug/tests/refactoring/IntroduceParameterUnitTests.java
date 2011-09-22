@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 //////////////////////////////////////////////////////////////////////////////////////	
 	private Refactoring setupRefactor(int lineNumber, String root, String targetPackageName, String cuName) throws Exception {
 		
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, targetPackageName, cuName);
 		IDocument sourceCUnit = new Document(cunit.getSource());
 		IRegion lineInfo = sourceCUnit.getLineInformation(lineNumber-1);//-1 Document considers lineNumber different than createBreakpoint

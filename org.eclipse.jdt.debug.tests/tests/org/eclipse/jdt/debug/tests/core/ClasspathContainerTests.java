@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,7 +100,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		IVMInstall newVM = def.getVMInstallType().findVMInstall(vmId);
 		assertNotNull("Failed to create new VM", newVM);
 		
-		JREContainer container = new JREContainer(newVM, containerPath, getJavaProject());
+		JREContainer container = new JREContainer(newVM, containerPath, get14Project());
 		JREContainerInitializer initializer = new JREContainerInitializer();
 		// store the current library settings
 		LibraryLocation[] originalLibs = JavaRuntime.getLibraryLocations(newVM);
@@ -109,11 +109,11 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		assertEquals("Libraries should be same size as classpath entries", originalLibs.length, originalEntries.length);
 		
 		// ensure we can update
-		assertTrue("Initializer will not accept update", initializer.canUpdateClasspathContainer(containerPath, getJavaProject()));
+		assertTrue("Initializer will not accept update", initializer.canUpdateClasspathContainer(containerPath, get14Project()));
 		
 		// update to an empty set of libraries
 		FakeContainer fakeContainer = new FakeContainer();
-		initializer.requestClasspathContainerUpdate(containerPath, getJavaProject(), fakeContainer);
+		initializer.requestClasspathContainerUpdate(containerPath, get14Project(), fakeContainer);
 		
 		// ensure the library locations are now empty on the new VM
 		LibraryLocation[] newLibs = JavaRuntime.getLibraryLocations(newVM);
@@ -121,7 +121,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		
 		// re-set to original libraries
 		fakeContainer.setEntries(originalEntries);
-		initializer.requestClasspathContainerUpdate(containerPath, getJavaProject(), fakeContainer);
+		initializer.requestClasspathContainerUpdate(containerPath, get14Project(), fakeContainer);
 		
 		// ensure libraries are restored
 		newLibs = JavaRuntime.getLibraryLocations(newVM);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,14 +94,14 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 	 */
 	public void testSelectedProject() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-		IProject project = getJavaProject().getProject();
+		IProject project = get14Project().getProject();
 		setSelection(project);
 		String cp = manager.performStringSubstitution("${project_classpath}");
 		StringBuffer buffer = new StringBuffer();
 		// expecting default output location and A.jar
-		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(getJavaProject().getOutputLocation()).getLocation().toOSString());
+		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(get14Project().getOutputLocation()).getLocation().toOSString());
 		buffer.append(File.pathSeparatorChar);
-		buffer.append(getJavaProject().getProject().getFolder("src").getFile("A.jar").getLocation().toOSString());
+		buffer.append(get14Project().getProject().getFolder("src").getFile("A.jar").getLocation().toOSString());
 		assertEquals("Wrong classpath", buffer.toString(), cp);
 	}
 	
@@ -122,13 +122,13 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 	
 	public void testProjectClasspath() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-		String projectName = getJavaProject().getElementName();
+		String projectName = get14Project().getElementName();
 		String cp = manager.performStringSubstitution("${project_classpath:" + projectName + "}");
 		StringBuffer buffer = new StringBuffer();
 		// expecting default output location and A.jar
-		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(getJavaProject().getOutputLocation()).getLocation().toOSString());
+		buffer.append(ResourcesPlugin.getWorkspace().getRoot().getFolder(get14Project().getOutputLocation()).getLocation().toOSString());
 		buffer.append(File.pathSeparatorChar);
-		buffer.append(getJavaProject().getProject().getFolder("src").getFile("A.jar").getLocation().toOSString());
+		buffer.append(get14Project().getProject().getFolder("src").getFile("A.jar").getLocation().toOSString());
 		assertEquals("Wrong classpath", buffer.toString(), cp);
 	}
 

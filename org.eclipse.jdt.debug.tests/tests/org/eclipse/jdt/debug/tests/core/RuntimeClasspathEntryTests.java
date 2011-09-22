@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 	}
 
 	public void testProjectEntry() throws Exception {
-		IProject project = getJavaProject().getProject();
-		IRuntimeClasspathEntry entry = JavaRuntime.newProjectRuntimeClasspathEntry(getJavaProject());
+		IProject project = get14Project().getProject();
+		IRuntimeClasspathEntry entry = JavaRuntime.newProjectRuntimeClasspathEntry(get14Project());
 	
 		assertEquals("Paths should be equal", project.getFullPath(), entry.getPath());
 		assertEquals("Resources should be equal", project, entry.getResource());
@@ -74,54 +74,54 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 	 * 
 	 * XXX: test waiting for bug fix in JCORE - unable to bind container if there
 	 * is no corresponding classpath entry.
-	 */
-//	public void testJREContainerEntry() throws Exception {
-//		ILaunchConfiguration lc = getLaunchConfiguration("Breakpoints");
-//		ILaunchConfigurationWorkingCopy wc = lc.copy("Breakpoints_JRE_CONTAINER");
-//		
-//		IRuntimeClasspathEntry[] cp = JavaRuntime.computeRuntimeClasspath(lc);
-//		IRuntimeClasspathEntry removed = null;
-//		List entries = new ArrayList(cp.length);
-//		// replace JRE_LIB with JRE_CONTAINER
-//		for (int i = 0; i < cp.length; i++) {
-//			if (cp[i].getType() == IRuntimeClasspathEntry.VARIABLE) {
-//				removed = cp[i];
-//				cp[i] = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), getJavaProject().getElementName());	
-//			}
-//			entries.add(cp[i].getMemento());
-//		}
-//		
-//		assertNotNull("Did not replace entry", removed);
-//		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-//		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, entries);
-//		lc = wc.doSave();
-//		
-//		createLineBreakpoint(52, "Breakpoints");
-//		IJavaThread thread= null;
-//		try {
-//			thread = launch(lc);
-//			assertNotNull("Launch failed", thread);
-//		} finally {
-//			terminateAndRemove(thread);
-//			removeAllBreakpoints();
-//		}
-//	}	
+	 *//*
+	public void testJREContainerEntry() throws Exception {
+		ILaunchConfiguration lc = getLaunchConfiguration("Breakpoints");
+		ILaunchConfigurationWorkingCopy wc = lc.copy("Breakpoints_JRE_CONTAINER");
+		
+		IRuntimeClasspathEntry[] cp = JavaRuntime.getClasspathProvider(lc).computeUnresolvedClasspath(lc);
+		IRuntimeClasspathEntry removed = null;
+		List entries = new ArrayList(cp.length);
+		// replace JRE_LIB with JRE_CONTAINER
+		for (int i = 0; i < cp.length; i++) {
+			if (cp[i].getType() == IRuntimeClasspathEntry.VARIABLE) {
+				removed = cp[i];
+				cp[i] = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES);	
+			}
+			entries.add(cp[i].getMemento());
+		}
+		
+		assertNotNull("Did not replace entry", removed);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, entries);
+		lc = wc.doSave();
+		
+		createLineBreakpoint(52, "Breakpoints");
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(lc);
+			assertNotNull("Launch failed", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}	*/
 	
 	public void testJREContainerEquality() throws Exception {
-		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, getJavaProject());
-		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, getJavaProject("MultiOutput"));
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, get14Project());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, getMultiOutputProject());
 		assertEquals("JRE containers should be equal no matter which project", entry1, entry2);
 	}
 	
 	public void testExampleContainerEqualityNegative() throws Exception {
-		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
-		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject("MultiOutput"));
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, get14Project());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getMultiOutputProject());
 		assertFalse("Example containers should *not* be equal for different projects", entry1.equals(entry2));
 	}
 	
 	public void testExampleContainerEqualityPositive() throws Exception {
-		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
-		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, get14Project());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, get14Project());
 		assertEquals("Example containers should be equal for same project", entry1, entry2);
 	}	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,12 +35,14 @@ import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
  */
 public class SourceLocationTests extends AbstractDebugTest {
 	
+	public static final String JRE_CONTAINER_1_4_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4";
+
 	public SourceLocationTests(String name) {
 		super(name);
 	}
 
 	public void testProjectLocationMemento() throws Exception {
-		IJavaSourceLocation location = new JavaProjectSourceLocation(getJavaProject());
+		IJavaSourceLocation location = new JavaProjectSourceLocation(get14Project());
 		String memento = location.getMemento();
 		IJavaSourceLocation restored = new JavaProjectSourceLocation();
 		restored.initializeFrom(memento);
@@ -66,7 +68,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}	
 	
 	public void testJavaSourceLocatorMemento() throws Exception {
-		IJavaSourceLocation location1 = new JavaProjectSourceLocation(getJavaProject());
+		IJavaSourceLocation location1 = new JavaProjectSourceLocation(get14Project());
 		File dir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		IJavaSourceLocation location2 = new DirectorySourceLocation(dir);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
@@ -85,13 +87,13 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}
 	
 	public void testJavaUISourceLocatorMemento() throws Exception {
-		IJavaSourceLocation location1 = new JavaProjectSourceLocation(getJavaProject());
+		IJavaSourceLocation location1 = new JavaProjectSourceLocation(get14Project());
 		File dir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		IJavaSourceLocation location2 = new DirectorySourceLocation(dir);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IJavaSourceLocation location3 = new ArchiveSourceLocation(JavaRuntime.getLibraryLocations(vm)[0].getSystemLibraryPath().toOSString(), null);
 		
-		JavaUISourceLocator locator = new JavaUISourceLocator(getJavaProject());
+		JavaUISourceLocator locator = new JavaUISourceLocator(get14Project());
 		locator.setSourceLocations(new IJavaSourceLocation[] {location1, location2, location3});
 		locator.setFindAllSourceElement(true);
 		
@@ -108,8 +110,8 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}
 	
 	public void testPackageFragmentRootLocationMemento() throws Exception {
-		IResource res = getJavaProject().getProject().getFolder("src");
-		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IResource res = get14Project().getProject().getFolder("src");
+		IPackageFragmentRoot root = get14Project().getPackageFragmentRoot(res);
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		String memento = location.getMemento();
 		IJavaSourceLocation restored = new PackageFragmentRootSourceLocation();
@@ -126,8 +128,8 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}	
 		
 	public void testPositiveSourceFolderSourceLocation() throws Exception {
-		IResource res = getJavaProject().getProject().getFolder("src");
-		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IResource res = get14Project().getProject().getFolder("src");
+		IPackageFragmentRoot root = get14Project().getPackageFragmentRoot(res);
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
 		Object source = location.findSourceElement("Breakpoints");
@@ -142,8 +144,8 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}
 	
 	public void testNegativeSourceFolderSourceLocation() throws Exception {
-		IResource res = getJavaProject().getProject().getFolder("src");
-		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IResource res = get14Project().getProject().getFolder("src");
+		IPackageFragmentRoot root = get14Project().getPackageFragmentRoot(res);
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
 		
 		Object source = location.findSourceElement("DoesNotExist");
@@ -154,11 +156,11 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}	
 	
 	public void testPositiveSystemLibrarySourceLocation() throws Exception {
-		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
+		IClasspathEntry[] cpes = get14Project().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_4_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}
@@ -166,7 +168,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		}
 		assertNotNull("Could not find JRE_CONTAINER entry", lib);
 		
-		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
+		IPackageFragmentRoot[] roots = get14Project().findPackageFragmentRoots(lib);
 		Object source = null;
 		for (int i = 0; i < roots.length; i++) {
 			IPackageFragmentRoot root = roots[i];
@@ -195,11 +197,11 @@ public class SourceLocationTests extends AbstractDebugTest {
 	}
 	
 	public void testNegativeSystemLibrarySourceLocation() throws Exception {
-		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
+		IClasspathEntry[] cpes = get14Project().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRE_CONTAINER))) {
+				if (cpes[i].getPath().equals(new Path(JRE_CONTAINER_1_4_CPE_NAME))) {
 					lib = cpes[i];
 					break;
 				}
@@ -207,7 +209,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		}
 		assertNotNull("Could not find JRE_CONTAINER entry", lib);
 		
-		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
+		IPackageFragmentRoot[] roots = get14Project().findPackageFragmentRoots(lib);
 		Object source = null;
 		for (int i = 0; i < roots.length; i++) {
 			IPackageFragmentRoot root = roots[i];

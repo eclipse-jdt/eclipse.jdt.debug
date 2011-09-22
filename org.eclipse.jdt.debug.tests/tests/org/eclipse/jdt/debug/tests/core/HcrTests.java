@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class HcrTests extends AbstractDebugTest {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 		cu = cu.getPrimary();
 		if (!cu.isWorkingCopy()) {
 			cu = cu.getWorkingCopy(null);
@@ -130,7 +130,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
 				removeAllBreakpoints();
 				// now do the HCR
-				ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
 					cu = cu.getWorkingCopy(null);
@@ -158,7 +158,7 @@ public class HcrTests extends AbstractDebugTest {
 					thread.terminate();
 					buffer.setContents(originalContent);
 					cu.commitWorkingCopy(false, null);
-					throw new TestAgainException();
+					throw new TestAgainException("Retest - the correct method name was not present after HCR");
 				}
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
 				
@@ -204,7 +204,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
 				removeAllBreakpoints();
 				// now do the HCR
-				ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
 					cu = cu.getWorkingCopy(null);
@@ -257,7 +257,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
 				removeAllBreakpoints();
 				// now do the HCR
-				ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 				cu = cu.getPrimary();
 				if (!cu.isWorkingCopy()) {
 					cu = cu.getWorkingCopy(null);

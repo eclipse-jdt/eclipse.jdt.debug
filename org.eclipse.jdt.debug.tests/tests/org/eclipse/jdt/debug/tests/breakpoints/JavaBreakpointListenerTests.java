@@ -756,7 +756,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.PROJECT = get14Project();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(i);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
 			
@@ -825,7 +825,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.PROJECT = get14Project();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
@@ -878,7 +878,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.PROJECT = get14Project();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
@@ -930,7 +930,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint second = createLineBreakpoint(29, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-		EvalualtionBreakpointListener.PROJECT = getJavaProject();
+		EvalualtionBreakpointListener.PROJECT = get14Project();
 		EvalualtionBreakpointListener.EXPRESSION = "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
@@ -1227,7 +1227,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					bp.getMarker().delete();
-					getJavaProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+					get14Project().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 				}
 			};
 			ResourcesPlugin.getWorkspace().run(runnable, null);

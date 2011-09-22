@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -466,13 +466,13 @@ public abstract class Tests extends AbstractDebugTest {
 	protected void initializeFrame(String testClass, int breakPointLine, int numberFrames) throws Exception {
 		fFrame = getStackFrame(breakPointLine, numberFrames, 0, 0, testClass);
 
-		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), getJavaProject());
+		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), get14Project());
 	}
 	
 	protected void initializeFrame(String testClass, int breakPointLine, int numberFrames, int hitCount) throws Exception {
 		fFrame = getStackFrame(breakPointLine, numberFrames, 0, hitCount, testClass);
 
-		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), getJavaProject());
+		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), get14Project());
 	}
 	
 	protected void destroyFrame() throws Exception {

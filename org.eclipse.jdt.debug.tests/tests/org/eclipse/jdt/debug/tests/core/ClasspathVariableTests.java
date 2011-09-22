@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	public void testNullVariableResolution() throws CoreException {
 		String varName = "NULL_VARIABLE";
 		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, get14Project());
 		// since the variable cannot be resolved, the result should be the same before/after
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Entries should be equal", entry, resolved[0]);
@@ -56,7 +56,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	public void testJRELibResolution() throws CoreException {
 		String varName = JavaRuntime.JRELIB_VARIABLE;
 		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName));
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, get14Project());
 		assertTrue("Should be at least one resolved entry", resolved.length > 0);
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("no default JRE", vm);
@@ -71,14 +71,14 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachment() throws Exception {
-		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
-		IProject root = getJavaProject().getProject();
+		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
+		IProject root = get14Project().getProject();
 		String varName = "RELATIVE_ARCHIVE";
 		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
 
 		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
 		runtimeClasspathEntry.setSourceAttachmentPath(new Path("NULL_VARIABLE"));
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
@@ -92,14 +92,14 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testVariableExtensionWithNullSourceAttachmentWithExtension() throws Exception {
-		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
-		IProject root = getJavaProject().getProject();
+		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
+		IProject root = get14Project().getProject();
 		String varName = "RELATIVE_ARCHIVE";
 		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
 
 		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
 		runtimeClasspathEntry.setSourceAttachmentPath(new Path("NULL_VARIABLE").append("one").append("two"));
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
@@ -112,14 +112,14 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
-		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
-		IProject root = getJavaProject().getProject();
+		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
+		IProject root = get14Project().getProject();
 		String varName = "RELATIVE_ARCHIVE";
 		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
 
 		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
 		runtimeClasspathEntry.setSourceAttachmentPath(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
@@ -133,8 +133,8 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 	 */
 	public void testProjectResolutionWithVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
 		IJavaProject project = JavaProjectHelper.createJavaProject("VariableSource");
-		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
-		IProject root = getJavaProject().getProject();
+		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
+		IProject root = get14Project().getProject();
 		String varName = "RELATIVE_ARCHIVE";
 		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
 		JavaProjectHelper.addVariableEntry(project, new Path(varName).append(new Path("src")).append(new Path("A.jar")), new Path(varName).append(new Path("src")).append(new Path("A.jar")), Path.EMPTY);

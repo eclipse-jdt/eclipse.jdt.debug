@@ -12,9 +12,6 @@ package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
@@ -26,6 +23,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
@@ -50,25 +48,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	public JarSourceLookupTests() {
 		super("JarSourceLookupTests");
 	}
-
-	/**
-	 * Delete the testing projects if they exist
-	 * 
-	 * @throws Exception
-	 */
-	void deleteProjects() {
-		try {
-			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(fJarProject);
-	        if (pro.exists()) {
-	            pro.delete(true, true, null);
-	        }
-	        pro = ResourcesPlugin.getWorkspace().getRoot().getProject(RefPjName);
-	        if (pro.exists()) {
-	            pro.delete(true, true, null);
-	        }
-		}
-		catch(CoreException ce) {}
-	}
 	
 	/**
 	 * Disposes all source containers after a test, ensures no containers are still holding open Jar references, which can lead to {@link ResourceException}s
@@ -84,9 +63,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getJavaProject()
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
-	protected IJavaProject getJavaProject() {
+	protected IJavaProject getProjectContext() {
 		return fgJarProject;
 	}
 	
@@ -96,14 +75,13 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	protected void setUp() throws Exception {
 		IPath testrpath = new Path("testresources");
 		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
-		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), "J2SE-1.4", false);
+		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, false);
 	}
 	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		deleteProjects();
 		removeAllBreakpoints();
 		super.tearDown();
 	}

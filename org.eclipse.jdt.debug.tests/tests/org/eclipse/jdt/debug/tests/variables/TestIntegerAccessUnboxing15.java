@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.tests.variables;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 
 /**
  * Tests that arrays can be accessed with *big* Integers
@@ -51,7 +53,9 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 					lock.wait(DEFAULT_TIMEOUT);
 				}
 			}
-			assertNotNull("Evaluation did not complete", result);
+			if(result == null) {
+				throw new TestAgainException("Retest - evaluation did not complete");
+			}
 			return result;
 		}
 		
@@ -85,6 +89,13 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
+	 */
+	protected IJavaProject getProjectContext() {
+		return get15Project();
+	}
 	
 	/**
 	 * Test a row can be accessed

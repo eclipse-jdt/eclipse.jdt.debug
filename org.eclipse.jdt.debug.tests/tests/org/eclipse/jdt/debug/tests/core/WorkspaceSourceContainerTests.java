@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class WorkspaceSourceContainerTests extends AbstractDebugTest {
 	}		
 
 	public void testSimpleSourceLookupPositive() throws Exception {
-		IFolder folder = getJavaProject().getProject().getFolder("src");
+		IFolder folder = get14Project().getProject().getFolder("src");
 		WorkspaceSourceContainer container = getContainer(false);
 		Object[] objects = container.findSourceElements("Breakpoints.java");
 		assertEquals("Expected 1 result", 1, objects.length);
@@ -64,7 +64,7 @@ public class WorkspaceSourceContainerTests extends AbstractDebugTest {
 	}	
 	
 	public void testQualifiedSourceLookupPositive() throws Exception {
-		IFolder folder = getJavaProject().getProject().getFolder("src");
+		IFolder folder = get14Project().getProject().getFolder("src");
 		WorkspaceSourceContainer container = getContainer(false);
 		Object[] objects = container.findSourceElements("org/eclipse/debug/tests/targets/InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
@@ -78,7 +78,7 @@ public class WorkspaceSourceContainerTests extends AbstractDebugTest {
 	}	
 	
 	public void testCaseSensitiveQualifiedSourceLookup() throws Exception {
-		IFolder folder = getJavaProject().getProject().getFolder("src");
+		IFolder folder = get14Project().getProject().getFolder("src");
 		WorkspaceSourceContainer container = getContainer(false);
 		Object[] objects = container.findSourceElements("oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa");
 		if (isFileSystemCaseSensitive()) {

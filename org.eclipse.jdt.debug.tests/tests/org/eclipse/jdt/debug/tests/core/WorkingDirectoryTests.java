@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			IVariable var = thread.findVariable("dir");
 			String dir = var.getValue().getValueString();
 			IPath path = new Path(dir);
-			assertEquals("default working dir should be the project directory.", getJavaProject().getProject().getLocation(), path); 
+			assertEquals("default working dir should be the project directory.", get14Project().getProject().getLocation(), path); 
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -69,7 +69,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 	public void testWorkspaceRelativeWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
 		createLineBreakpoint(16, typeName);
-		IPath wd = getJavaProject().getProject().getFolder("src").getFullPath().makeRelative();
+		IPath wd = get14Project().getProject().getFolder("src").getFullPath().makeRelative();
 		setWorkingDirectory(wd);
 
 		IJavaThread thread= null;
@@ -81,7 +81,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			IVariable var = thread.findVariable("dir");
 			String dir = var.getValue().getValueString();
 			IPath path = new Path(dir);
-			assertEquals("working dir should be the src directory.", getJavaProject().getProject().getFolder("src").getLocation(), path);
+			assertEquals("working dir should be the src directory.", get14Project().getProject().getFolder("src").getLocation(), path);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -92,7 +92,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 	public void testAbsoluteWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
 		createLineBreakpoint(16, typeName);
-		IPath wd = getJavaProject().getProject().getFolder("src").getLocation();
+		IPath wd = get14Project().getProject().getFolder("src").getLocation();
 		setWorkingDirectory(wd);
 
 		IJavaThread thread= null;
@@ -104,7 +104,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			IVariable var = thread.findVariable("dir");
 			String dir = var.getValue().getValueString();
 			IPath path = new Path(dir);
-			assertEquals("working dir should be the src directory.", getJavaProject().getProject().getFolder("src").getLocation(), path);
+			assertEquals("working dir should be the src directory.", get14Project().getProject().getFolder("src").getLocation(), path);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

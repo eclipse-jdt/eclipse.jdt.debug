@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -205,7 +205,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			assertEquals("Should be no removes", 0, fRemoveCallbacks);
 			
 			resetCallbacks();
-			getJavaProject().getProject().close(null);
+			get14Project().getProject().close(null);
 			waitForBuild();
 			assertEquals("Should have received one remove notification", 1, fRemoveCallbacks);
 			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
@@ -213,7 +213,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			assertEquals("Should be no additions", 0, fAddCallbacks);
 			
 			resetCallbacks();
-			getJavaProject().getProject().open(null);
+			get14Project().getProject().open(null);
 			waitForBuild();
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
@@ -221,7 +221,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			assertEquals("Should be no removes", 0, fRemoveCallbacks);			
 			
 		} finally {
-			getJavaProject().getProject().open(null);
+			get14Project().getProject().open(null);
 			getBreakpointManager().removeBreakpointListener((IBreakpointsListener)this);
 			removeAllBreakpoints();
 		}
@@ -233,7 +233,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @throws Exception
 	 */
 	public void testMultiListenerMoveCompilationUnit() throws Exception {	
-		IJavaProject project = getJavaProject();
+		IJavaProject project = get14Project();
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopyA.java", false, null);
@@ -278,7 +278,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @throws Exception
 	 */
 	public void testSingleListenerMoveCompilationUnit() throws Exception {	
-		IJavaProject project = getJavaProject();
+		IJavaProject project = get14Project();
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopy.java", false, null);

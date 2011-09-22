@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class BootpathTests extends AbstractDebugTest {
 		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 		IRuntimeClasspathEntry[] classpath = JavaRuntime.computeUnresolvedRuntimeClasspath(wc);
 		IRuntimeClasspathEntry[] newpath = new IRuntimeClasspathEntry[classpath.length + 1];
-		IResource jar = getJavaProject().getProject().getFile(new Path("src/A.jar"));
+		IResource jar = get14Project().getProject().getFile(new Path("src/A.jar"));
 		IRuntimeClasspathEntry pre = JavaRuntime.newArchiveRuntimeClasspathEntry(jar);
 		pre.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 		newpath[0] = pre;
