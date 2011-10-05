@@ -64,6 +64,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
@@ -430,9 +431,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	/**
 	 * Build the text for an IJavaValue.
+	 * 
+	 * @param value the value to get the text for
+	 * @return the value string
+	 * @throws DebugException if something happens trying to compute the value string
 	 */
 	public String getValueText(IJavaValue value) throws DebugException {
-		
 		String refTypeName= value.getReferenceTypeName();
 		String valueString= value.getValueString();
 		boolean isString= refTypeName.equals(fgStringName);
@@ -444,11 +448,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if ("V".equals(signature)) { //$NON-NLS-1$
 			valueString= DebugUIMessages.JDIModelPresentation__No_explicit_return_value__30; 
 		}
-		boolean isObject= isObjectValue(signature) || value instanceof IJavaObject;
+		boolean isObject= isObjectValue(signature);
 		boolean isArray= value instanceof IJavaArray;
 		StringBuffer buffer= new StringBuffer();
-		// Always show type name for objects & arrays (but not Strings)
-		if (isObject && !isString && (refTypeName.length() > 0)) {
+		if(isUnknown(signature)) {
+			buffer.append(signature);
+		} else if (isObject && !isString && (refTypeName.length() > 0)) {
 			// Don't show type name for instances and references
 			if (!(value instanceof JDIReferenceListValue || value instanceof JDIAllInstancesValue)){
 				String qualTypeName= getQualifiedName(refTypeName).trim();
@@ -488,11 +493,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (isShowCharValues()) {
 			buffer= appendCharText(value, buffer);
 		}
-		
-		return buffer.toString();
+		return buffer.toString().trim();
 	}
 	
-
 	private StringBuffer appendUnsignedText(IJavaValue value, StringBuffer buffer) throws DebugException {
 		String unsignedText= getValueUnsignedText(value);
 		if (unsignedText != null) {
@@ -524,8 +527,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	/**
+	 * Returns <code>true</code> if the given signature is not <code>null</code> and
+	 * matches the text '&lt;unknown&gt;'
+	 * 
+	 * @param signature the signature to compare
+	 * @return <code>true</code> if the signature matches '&lt;unknown&gt;'
+	 * @since 3.6.1
+	 */
+	boolean isUnknown(String signature) {
+		if(signature == null) {
+			return false;
+		}
+		return JDIDebugModelMessages.JDIDebugElement_unknown.equals(signature);
+	}
+	
+	/**
 	 * Given a JNI-style signature String for a IJavaValue, return true
 	 * if the signature represents an Object or an array of Objects.
+	 * 
+	 * @param signature the signature to check
+	 * @return <code>true</code> if the signature represents an object <code>false</code> otherwise
 	 */
 	public static boolean isObjectValue(String signature) {
 		if (signature == null) {

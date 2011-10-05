@@ -39,13 +39,13 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	
 	// field names declared in this type
 	private String[] fDeclaredFields = null;
-	// field names declared in this type, super types, implemented interaces and superinterfaces
+	// field names declared in this type, super types, implemented interfaces and super-interfaces
 	private String[] fAllFields = null;
 
 	/**
 	 * Constructs a new reference type in the given target.
 	 * 
-	 * @param target associated vm
+	 * @param target associated VM
 	 * @param type reference type
 	 */
 	public JDIReferenceType(JDIDebugTarget target, Type type) {
@@ -79,7 +79,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
         } catch (RuntimeException e) {
             targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_1, e);
         }
-        // exectution will not reach here
+        // execution will not reach here
         return null;
 	}
 	
@@ -228,7 +228,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 				return type.name();
 			} catch (ClassNotLoadedException e) {
 				// we cannot create the generic name using the component type,
-				// just try to create one with the infos
+				// just try to create one with the information
 			}
 		}
 		String signature= type.signature();
@@ -250,8 +250,10 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	/**
 	 * Return the name from the given signature.
 	 * Keep the '$' characters.
+	 * @param genericTypeSignature the signature to derive the type name from
+	 * @return the type name
 	 */
-	static public String getTypeName(String genericTypeSignature) {
+	public static String getTypeName(String genericTypeSignature) {
 		int arrayDimension= 0;
 		while (genericTypeSignature.charAt(arrayDimension) == '[') {
 			arrayDimension++;

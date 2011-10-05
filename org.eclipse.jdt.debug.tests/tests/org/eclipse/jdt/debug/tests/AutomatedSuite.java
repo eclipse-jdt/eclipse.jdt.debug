@@ -109,6 +109,7 @@ import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewMangementTests;
+import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
@@ -287,6 +288,7 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// Variables View Detail Pane tests
 		addTest(new TestSuite(DetailPaneManagerTests.class));
+		addTest(new TestSuite(ModelPresentationTests.class));
 
 	// Open from Clipboard action tests - Need to use #suite() because the test has a custom setup
 		addTest(OpenFromClipboardTests.suite());
