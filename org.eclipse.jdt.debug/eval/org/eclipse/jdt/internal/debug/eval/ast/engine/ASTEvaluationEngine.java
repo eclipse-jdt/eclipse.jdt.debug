@@ -234,7 +234,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	
 	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
