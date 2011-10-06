@@ -2883,6 +2883,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 
 		switch (literalType) {
+			case Instruction.T_byte:
+				push(new PushInt(parseByteValue(token)));
+				break;
+			case Instruction.T_short:
+				push(new PushInt(parseShortValue(token)));
+				break;
 			case Instruction.T_int:
 				push(new PushInt(parseIntValue(token)));
 				break;
@@ -2890,13 +2896,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				push(new PushLong(parseLongValue(subToken)));
 				break;
 			case Instruction.T_float:
-				push(new PushFloat(Float.parseFloat(subToken)));
+				push(new PushFloat(Float.parseFloat(removePrefixZerosAndUnderscores(subToken, false))));
 				break;
 			case Instruction.T_double:
 				if (lastChar == 'D' || lastChar == 'd') {
-					push(new PushDouble(Double.parseDouble(subToken)));
+					push(new PushDouble(Double.parseDouble(removePrefixZerosAndUnderscores(subToken, false))));
 				} else {
-					push(new PushDouble(Double.parseDouble(token)));
+					push(new PushDouble(Double.parseDouble(removePrefixZerosAndUnderscores(token, false))));
 				}
 				break;
 		}
@@ -2905,49 +2911,81 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * Method parseIntValue.
-	 * @param token
+	 * Removes all preamble typing and underscores and returns the base integer value
+	 * 
+	 * @param token the token to parse
+	 * @return the int value of the token
 	 */
-	private int parseIntValue(String token) {
-		int tokenLength= token.length();
-		if (tokenLength < 10) {
-			// Integer.decode can handle tokens with less than 10 digits
-			return Integer.decode(token).intValue();
-		} 
+	public static int parseIntValue(String token) {
+		token = removePrefixZerosAndUnderscores(token, false);
 		switch (getBase(token)) {
 			case 8:
-				return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
-			case 10:
-				return Integer.decode(token).intValue();
+				return Integer.valueOf(token.substring(1), 8).intValue();
 			case 16:
-				return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
+				return Integer.valueOf(token.substring(2), 16).intValue();
+			case 2:
+				return Integer.valueOf(token.substring(2), 2).intValue();
 			default:
-				// getBase(String) only returns 8, 10, or 16. This code is unreachable
-				return 0;
+				return Integer.valueOf(token, 10).intValue();
 		}
 	}
 
-
 	/**
-	 * Method parseLongValue.
-	 * @param token
+	 * Removes all preamble typing and underscores and returns the base short value
+	 * 
+	 * @param token the token to parse
+	 * @return the short value of the token
 	 */
-	private long parseLongValue(String token) {
-		int tokenLength= token.length();
-		if (tokenLength < 18) {
-			// Long.decode can handle tokens with less than 18 digits
-			return Long.decode(token).longValue();
-		} 
+	public static short parseShortValue(String token) {
+		token = removePrefixZerosAndUnderscores(token, false);
 		switch (getBase(token)) {
 			case 8:
-				return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
-			case 10:
-				return Long.decode(token).longValue();
+				return Short.valueOf(token.substring(1), 8).shortValue();
 			case 16:
-				return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
+				return Short.valueOf(token.substring(2), 16).shortValue();
+			case 2:
+				return Short.valueOf(token.substring(2), 2).shortValue();
 			default:
-				// getBase(String) only returns 8, 10, or 16. This code is unreachable
-				return 0;
+				return Short.valueOf(token, 10).shortValue();
+		}
+	}
+
+	/**
+	 * Removes all preamble typing and underscores and returns the base byte value
+	 * 
+	 * @param token the token to parse
+	 * @return the byte value of the token
+	 */
+	public static byte parseByteValue(String token) {
+		token = removePrefixZerosAndUnderscores(token, false);
+		switch (getBase(token)) {
+			case 8:
+				return Byte.valueOf(token.substring(1), 8).byteValue();
+			case 16:
+				return Byte.valueOf(token.substring(2), 16).byteValue();
+			case 2:
+				return Byte.valueOf(token.substring(2), 2).byteValue();
+			default:
+				return Byte.valueOf(token, 10).byteValue();
+		}
+	}
+	
+	/**
+	 * Removes all preamble typing and underscores and returns the base long value
+	 * @param token the token to parse
+	 * @return the long value of the token
+	 */
+	public static long parseLongValue(String token) {
+		token = removePrefixZerosAndUnderscores(token, true);
+		switch (getBase(token)) {
+			case 8:
+				return Long.valueOf(token.substring(1), 8).longValue();
+			case 16:
+				return Long.valueOf(token.substring(2), 16).longValue();
+			case 2:
+				return Long.valueOf(token.substring(2), 2).longValue();
+			default:
+				return Long.valueOf(token, 10).longValue();
 		}
 	}
 
@@ -2955,13 +2993,24 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * Returns the numeric base for the given token
 	 * according to the Java specification. Returns
 	 * 8, 10, or 16.
+	 * @param token the token to get the base from
+	 * @return the numeric base for the given token
 	 */
-	private int getBase(String token) {
-		if (token.charAt(0) == '0') {
-			if (token.charAt(1) == 'x') {
-				return 16; // "0x" prefix: Hexadecimal
-			} 
-			return 8; // "0" prefix: Octal
+	public static int getBase(String token) {
+		if (token.charAt(0) == '0' && (token.length() > 1)) {
+			switch(token.charAt(1)) {
+				case 'x' :
+				case 'X' :
+					// "0x" prefix: Hexadecimal
+					return 16;
+				case 'b' :
+				case 'B' :
+					// "0b" prefix: binary
+					return 2;
+				default :
+					// "0" prefix: Octal
+					return 8;
+			}
 		} 
 		return 10; // No prefix: Decimal
 	}
@@ -3953,6 +4002,66 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return Instruction.T_undefined;
 		}
 
+	}
+
+	public static String removePrefixZerosAndUnderscores(String tokenString, boolean isLong) {
+		char[] token = tokenString.toCharArray();
+		int max = token.length;
+		int start = 0;
+		int end = max - 1;
+		if (isLong) {
+			end--; // remove the 'L' or 'l'
+		}
+		if (max > 1 && token[0] == '0') {
+			if (max > 2 && (token[1] == 'x' || token[1] == 'X')) {
+				start = 2;
+			} else if (max > 2 && (token[1] == 'b' || token[1] == 'B')) {
+				start = 2;
+			} else {
+				start = 1;
+			}
+		}
+		boolean modified = false;
+		boolean ignore = true;
+		loop: for (int i = start; i < max; i++) {
+			char currentChar = token[i];
+			switch(currentChar) {
+				case '0' :
+					// this is a prefix '0'
+					if (ignore && !modified && (i < end)) {
+						modified = true;
+					}
+					break;
+				case '_' :
+					modified = true;
+					break loop;
+				default :
+					ignore = false;
+			}
+		}
+		if (!modified) {
+			return tokenString;
+		}
+		ignore = true;
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(token, 0, start);
+		loop: for (int i = start; i < max; i++) {
+			char currentChar = token[i];
+			switch(currentChar) {
+				case '0' :
+					if (ignore && (i < end)) {
+						// this is a prefix '0'
+						continue loop;
+					}
+					break;
+				case '_' :
+					continue loop;
+				default:
+					ignore = false;
+			}
+			buffer.append(currentChar);
+		}
+		return buffer.toString();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ import org.eclipse.jdt.debug.tests.core.JDWPTests;
 import org.eclipse.jdt.debug.tests.core.JavaDebugTargetTests;
 import org.eclipse.jdt.debug.tests.core.JavaLibraryPathTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
+import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
@@ -186,6 +187,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(TestLogicalStructures.class));
 		addTest(new TestSuite(TestInstanceRetrieval.class));
+		if(isJ2SE17Compatible()) {
+			addTest(new TestSuite(LiteralTests17.class));
+		}
 		
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));
@@ -281,5 +285,8 @@ public class AutomatedSuite extends DebugSuite {
 		return ProjectCreationDecorator.isJ2SE16Compatible();
 	}
 	
+	protected static boolean isJ2SE17Compatible() {
+		return ProjectCreationDecorator.isJ2SE17Compatible();
+	}
 }
 

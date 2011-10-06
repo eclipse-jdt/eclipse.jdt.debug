@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,14 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -96,11 +98,17 @@ import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -247,6 +255,51 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject getJavaProject(String name) {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		return JavaCore.create(project);
+	}
+	
+	/**
+	 * Creates a new {@link IJavaProject} with the given name and optionally initializing it from the given 
+	 * resource path from the testing bundle.
+	 * <br><br>
+	 * The project has the default <code>src</code> and <code>bin</code> folders. It is also created with a default
+	 * <code>launchConfigurations</code> folder.
+	 * 
+	 * @param name the name for the project
+	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
+	 * @param ee the level of execution environment to use
+	 * @param if an existing project should be deleted
+	 * @return the new Java project
+	 * @throws Exception
+	 */
+	protected IJavaProject createProject(String name, String contentpath, String ee, boolean delete) throws Exception {
+		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+        if (pro.exists() && delete) {
+        	try {
+        		pro.delete(true, true, null);
+        	}
+        	catch(Exception e) {}
+        }
+        // create project and import source
+        IJavaProject jp = JavaProjectHelper.createJavaProject(name, "bin");
+        IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(jp, "src");
+        File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
+        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
+
+        // add the EE library
+        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+        assertNotNull("No default JRE", vm);
+        IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(ee);
+        assertNotNull("The EE ["+ee+"] does not exist", environment);
+		IPath containerPath = JavaRuntime.newJREContainerPath(environment);
+        JavaProjectHelper.addContainerEntry(jp, containerPath);
+        pro = jp.getProject();  
+        
+        // create launch configuration folder
+        IFolder folder = pro.getFolder("launchConfigurations");
+        if (!folder.exists()) {
+        	folder.create(true, true, null);
+        }
+        return jp;
 	}
 	
 	/**
@@ -1462,6 +1515,38 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		engine.dispose();
 		return fEvaluationResult;
 	}		
+	
+	/**
+	 * Runs an evaluation using an embedded listener and the {@link #DEFAULT_TIMEOUT} for the operation
+	 * @param snippet the snippet to evaluate
+	 * @param thread the suspended thread to run the evaluation on
+	 * @return the {@link IEvaluationResult}
+	 * @throws Exception
+	 * @since 3.1.200
+	 */
+	protected IEvaluationResult evaluate(String snippet, IJavaThread thread) throws Exception {
+		class Listener implements IEvaluationListener {
+			IEvaluationResult fResult;
+			public void evaluationComplete(IEvaluationResult result) {
+				fResult= result;
+			}
+		}
+		Listener listener= new Listener();
+		IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+		assertNotNull("There should be a stackframe", frame);
+		ASTEvaluationEngine engine = new ASTEvaluationEngine(getJavaProject(), (IJavaDebugTarget) thread.getDebugTarget());
+		try {
+			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+			long timeout = System.currentTimeMillis()+DEFAULT_TIMEOUT;
+			while(listener.fResult == null && System.currentTimeMillis() < timeout) {
+				Thread.sleep(100);
+			}
+			return listener.fResult;
+		}
+		finally {
+			engine.dispose();
+		}
+	}
 	
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
