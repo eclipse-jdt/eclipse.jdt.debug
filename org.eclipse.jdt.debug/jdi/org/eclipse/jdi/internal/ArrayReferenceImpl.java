@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.Mirror;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
@@ -168,7 +169,11 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	}
 	
 	/**
-	 * @returns Returns sequence of values of primitive type.
+	 * @param length the number of primitives to read
+	 * @param type the type
+	 * @param in the input stream
+	 * @return Returns sequence of values of primitive type.
+	 * @throws IOException if reading from the stream encounters a problem
 	 */
 	private List readPrimitiveSequence(int length, int type, DataInputStream in) throws IOException {
 		List elements = new ArrayList(length);
@@ -180,7 +185,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	}
 	
 	/**
-	 * @returns Returns the number of components in this array.
+	 * @return Returns the number of components in this array.
 	 */
 	public int length() {
 		if (fLength == -1) {
@@ -202,6 +207,11 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	
 	/**
 	 * Replaces an array component with another value.
+	 * @param index the index to set the value in
+	 * @param value the new value
+	 * @throws InvalidTypeException thrown if the types of the replacements do not match the underlying type of the {@link ArrayReference}
+	 * @throws ClassNotLoadedException thrown if the class type for the {@link ArrayReference} is not loaded or has been GC'd
+	 * @see #setValues(int, List, int, int)
 	 */
 	public void setValue(int index, Value value) throws InvalidTypeException, ClassNotLoadedException {
 		ArrayList list = new ArrayList(1);
@@ -211,6 +221,11 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	
 	/**
 	 * Replaces all array components with other values.
+	 * 
+	 * @param values the new values to set in the array
+	 * @throws InvalidTypeException thrown if the types of the replacements do not match the underlying type of the {@link ArrayReference}
+	 * @throws ClassNotLoadedException thrown if the class type for the {@link ArrayReference} is not loaded or has been GC'd
+	 * @see #setValues(int, List, int, int)
 	 */
 	public void setValues(List values) throws InvalidTypeException, ClassNotLoadedException {
 		setValues(0, values, 0, -1);
@@ -218,9 +233,19 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	
 	/**
 	 * Replaces a range of array components with other values.
+	 * 
+	 * @param index offset in this array to start replacing values at
+	 * @param values replacement values 
+	 * @param srcIndex the first offset where values are copied from the given replacement values
+	 * @param length the number of values to replace in this array
+	 * @throws InvalidTypeException thrown if the types of the replacements do not match the underlying type of the {@link ArrayReference}
+	 * @throws ClassNotLoadedException thrown if the class type for the {@link ArrayReference} is not loaded or has been GC'd
 	 */
 	public void setValues(int index, List values, int srcIndex, int length) throws InvalidTypeException, ClassNotLoadedException {
-		
+		if(values == null || values.size() == 0) {
+			//trying to set nothing should do no work
+			return;
+		}
 		int valuesSize= values.size();
 		int arrayLength= length();
 		
@@ -284,8 +309,14 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	}
 
 	/**
-	 * Check the type and the vm of the values. If the given type is a primitive type,
-	 * the values may be convert for match this type.
+	 * Check the type and the VM of the values. If the given type is a primitive type,
+	 * the values may be converted to match this type.
+	 * 
+	 * @param values the value(s) to check
+	 * @param type the type to compare the values to
+	 * @return the list of values converted to the given type
+	 * @throws InvalidTypeException if the underlying type of an object in the list is not compatible 
+	 * 
 	 * @see ValueImpl#checkValue(Value, Type, VirtualMachineImpl)
 	 */
 	private List checkValues(List values, Type type) throws InvalidTypeException {
@@ -297,8 +328,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		return checkedValues;
 	}
 	
-	/**
-	 * @return Returns description of Mirror object.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.internal.ObjectReferenceImpl#toString()
 	 */
 	public String toString() {
 		try {
@@ -317,7 +348,12 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	}
 
 	/**
+	 * Reads JDWP representation and returns new instance.
+	 * 
+	 * @param target the target {@link Mirror} object
+	 * @param in the input stream to read from
 	 * @return Reads JDWP representation and returns new instance.
+	 * @throws IOException if there is a problem reading from the stream
 	 */
 	public static ArrayReferenceImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();

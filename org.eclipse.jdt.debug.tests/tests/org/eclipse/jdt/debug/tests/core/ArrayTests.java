@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,4 +176,470 @@ public class ArrayTests extends AbstractDebugTest {
 		}	
 	}	
 	
+	/**
+	 * Sets a zero-length array as the new values
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetZeroLengthArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			IJavaArray javaArray = type.newInstance(1);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			
+			IJavaValue[] replacements = new IJavaValue[0];
+			array.setValues(replacements);
+			// the overall size of the array will never change size, and trying to set no values has not effect
+			assertEquals(1, array.getLength());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}	
+	
+	/**
+	 * Tries to set a new array with a starting index of -1
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadLowerIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			IJavaArray javaArray = type.newInstance(1);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			
+			IJavaValue[] replacements = {target.nullValue()};
+			try {
+				array.setValues(-1, 0, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use a offset of -1");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with an index greater than the total length of the source array
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadUpperIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			IJavaArray javaArray = type.newInstance(1);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite};
+			try {
+				array.setValues(3, 0, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use an offset of 3");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with an index greater than the total length of the soure array
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetExactUpperIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(3, 0, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use an offset of 3");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with a source index greater than the total length of the new values array
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadLowerSrcIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, 1, replacements, -2);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use a source offset of -2");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with a source index greater than the total length of the new values array
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadUpperSrcIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, 1, replacements, 4);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use a source offset of 4");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with a source index greater than the total length of the new values array
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetExactSrcIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, 1, replacements, 3);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use a source offset of 3");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with a length less than -1
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadLowerLengthArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, -2, replacements, 3);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to use a length less than -1");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array with a length equal to -1
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetMinus1LengthArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, -1, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				fail("should be able to set all values passing -1 as length");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array where the given length and index combined exceed the length of the array 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadLengthPlusIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			// assign a new array
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(2, 2, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to set a combined index of 4");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array where the given length and source index combined exceed the length of the array 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetBadLengthPlusSrcIndexArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite};
+			try {
+				array.setValues(0, 2, replacements, 2);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				//got the expected exception
+				return;
+			}
+			fail("Should have gotten an IndexOutOfBoundsException trying to set a combined source index of 4");
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * Tries to set an array where the source array is longer than the array to set the values into
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
+	 */
+	public void testSetLongerSrcArray() throws Exception {
+		String typeName = "ByteArrayTests";
+		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertNotNull(frame);
+			IJavaVariable v = findVariable(frame, "bytes");
+			assertNotNull(v);
+			IJavaArrayType type = (IJavaArrayType) v.getJavaType();
+			IJavaValue value = (IJavaValue) v.getValue();
+			assertNotNull(value);
+			IJavaArray javaArray = type.newInstance(3);
+			v.setValue(javaArray);
+			IJavaArray  array = (IJavaArray) v.getValue();
+			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+			IJavaValue bite = target.newValue((byte)-1);
+			IJavaValue[] replacements = {bite, bite, bite, bite, bite, bite};
+			try {
+				array.setValues(0, -1, replacements, 0);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				fail("Should not have gotten an IndexOutOfBoundsException trying to set an oversized source array");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
 }
