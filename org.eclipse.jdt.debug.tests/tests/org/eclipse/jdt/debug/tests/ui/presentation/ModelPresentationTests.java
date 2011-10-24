@@ -60,7 +60,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 		try {
 			TestIJavaType type = new TestIJavaType(null, null);
 			TestIJavaValue value = new TestIJavaValue(type, null, null, null, null);
-			String val = pres.getValueText(value);
+			pres.getValueText(value);
 			fail("did not get expected NullPointerException from passing in a null ReferenceType name");
 		}
 		catch(NullPointerException npe) {

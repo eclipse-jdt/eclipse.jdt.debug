@@ -49,7 +49,7 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint
+	}
 		
 	
 /////////////////////////////////////////
