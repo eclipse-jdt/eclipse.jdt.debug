@@ -25,7 +25,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * Tests the performance of various parts of the {@link BreakpointManager}
  * 
- * @since 3.8
+ * @since 3.7.2
  */
 public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 	
