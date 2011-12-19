@@ -189,6 +189,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 	/**
 	 * Ensure the expression view is visible
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Display display = DebugUIPlugin.getStandardDisplay();

@@ -27,6 +27,7 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Prepare to receive the event
 		VMDisconnectEventWaiter waiter =
@@ -44,6 +45,7 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// Finish the shut down
 		shutDownTarget();
@@ -62,6 +64,7 @@ public class VMDisconnectEventTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.event.VMDeathEvent";
 	}

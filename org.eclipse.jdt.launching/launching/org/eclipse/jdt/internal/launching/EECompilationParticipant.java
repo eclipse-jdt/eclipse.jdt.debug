@@ -51,6 +51,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#isActive(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public boolean isActive(IJavaProject project) {
 		return true;
 	}
@@ -58,6 +59,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#cleanStarting(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void cleanStarting(IJavaProject project) {
 		super.cleanStarting(project);
 		fCleaned.add(project);
@@ -66,6 +68,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#buildFinished(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void buildFinished(IJavaProject project) {
 		super.buildFinished(project);
 		if (fCleaned.remove(project)) {

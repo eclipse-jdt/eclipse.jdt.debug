@@ -40,6 +40,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			Object[] variables = getAllChildren(parent, context);
@@ -63,6 +64,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			int count = super.getChildCount(element, context, monitor);
@@ -82,6 +84,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context,	IViewerUpdate monitor) throws CoreException {
 		try {
 			if (displayReferencesAsChild(element)){
@@ -133,6 +136,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
 		Object[] children = super.getAllChildren(parent, context);
 		return JavaContentProviderFilter.filterVariables(children, context);

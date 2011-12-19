@@ -36,6 +36,7 @@ public class MethodTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get method useLocalVars(Thread, MainClass)
 		fMethod1 =
@@ -54,6 +55,7 @@ public class MethodTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Method";
 	}

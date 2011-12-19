@@ -61,7 +61,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
     	Control control = super.createDialogArea(parent);
     	IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getHelpSystem().setHelp(parent, IJavaDebugHelpContextIds.STRING_VALUE_INPUT_DIALOG);
@@ -71,7 +72,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createInputArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Composite createInputArea(Composite parent) {
+    @Override
+	protected Composite createInputArea(Composite parent) {
     	Composite composite = super.createInputArea(parent);
     	createRadioButtons(parent);
     	return composite;
@@ -81,7 +83,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * Override superclass method to create the appropriate viewer
      * (source viewer or simple text viewer) in the input area.
      */
-    protected void populateInputArea(Composite parent) {
+    @Override
+	protected void populateInputArea(Composite parent) {
     	super.populateInputArea(parent);
     	createTextViewer(parent);
     	
@@ -130,7 +133,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         fWrapText = SWTFactory.createCheckButton(fTextGroup, ActionMessages.StringValueInputDialog_4, null, wrap, 1);
         updateWordWrap();
         fWrapText.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 updateWordWrap();
             }
         });
@@ -157,7 +161,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     	
     	fTextButton = SWTFactory.createRadioButton(parent, ActionMessages.StringValueInputDialog_1);
         fTextButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 handleRadioSelectionChanged();
             }
         });
@@ -199,7 +204,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     /**
      * Updates the error message based on the user's input.
      */
-    protected void refreshValidState() {
+    @Override
+	protected void refreshValidState() {
         if (isUseLiteralValue()) {
         	refreshValidState(fTextViewer);
         } else {
@@ -211,7 +217,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * Override superclass method to persist user's evaluation/literal mode
      * selection.
      */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
         IDialogSettings settings= getDialogSettings();
         if (settings == null) {
         	settings= JDIDebugUIPlugin.getDefault().getDialogSettings().addNewSection(getDialogSettingsSectionName());
@@ -239,7 +246,8 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * viewer if appropriate.
      * @see ExpressionInputDialog#getText()
      */
-    protected String getText() {
+    @Override
+	protected String getText() {
         if (fTextButton.getSelection()) {
             return fTextViewer.getDocument().get();
         }
@@ -257,6 +265,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#getDialogSettingsSectionName()
 	 */
+	@Override
 	protected String getDialogSettingsSectionName() {
 		return "STRING_VALUE_INPUT_DIALOG"; //$NON-NLS-1$
 	}

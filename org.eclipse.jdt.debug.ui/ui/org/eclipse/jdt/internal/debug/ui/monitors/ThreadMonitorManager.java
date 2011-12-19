@@ -222,6 +222,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 *  look for deadlocks.
 	 */
 	class RefreshAndDetectDeadlock extends DetectDeadlock {
+		@Override
 		public void run() {
 			JavaMonitorThread[] threads= getJavaMonitorThreads();
 			for (int i = 0; i < threads.length; i++) {

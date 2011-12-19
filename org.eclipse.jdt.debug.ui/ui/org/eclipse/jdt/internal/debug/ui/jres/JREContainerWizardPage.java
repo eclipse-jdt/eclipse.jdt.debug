@@ -121,6 +121,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
 	}

@@ -80,6 +80,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
@@ -158,6 +159,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fFormatViewerContentProvider= new FormatterListViewerContentProvider(fFormatterListViewer);
 		fFormatterListViewer.setContentProvider(fFormatViewerContentProvider);
 		fFormatterListViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof DetailFormatter) {
 					return ((DetailFormatter)element).getTypeName();
@@ -183,6 +185,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 		}); 
 		table.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					removeTypes();
@@ -328,6 +331,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 	}
 	
+	@Override
 	public boolean performOk() {
 		if (fFormatViewerContentProvider != null) {
 			fFormatViewerContentProvider.saveDetailFormatters();
@@ -472,6 +476,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeViewer != null) {
 			fCodeViewer.dispose();

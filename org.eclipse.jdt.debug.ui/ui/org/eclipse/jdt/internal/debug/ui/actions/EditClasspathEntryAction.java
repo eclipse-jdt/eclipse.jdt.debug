@@ -38,6 +38,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		List targets = getOrderedSelection();
 		if (targets.size() != 1) {
@@ -79,6 +80,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();

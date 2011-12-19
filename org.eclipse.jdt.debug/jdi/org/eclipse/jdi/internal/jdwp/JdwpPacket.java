@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -18,15 +17,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
- * declared by the JDWP specification.
- *
+ * This class implements the corresponding Java Debug Wire Protocol (JDWP)
+ * packet declared by the JDWP specification.
+ * 
  */
 public abstract class JdwpPacket {
 	/** General JDWP constants. */
-	public static final byte FLAG_REPLY_PACKET = (byte)0x80;
+	public static final byte FLAG_REPLY_PACKET = (byte) 0x80;
 	protected static final int MIN_PACKET_LENGTH = 11;
-	
+
 	/** Map with Strings for flag bits. */
 	private static String[] fgFlagStrings = null;
 
@@ -34,11 +33,11 @@ public abstract class JdwpPacket {
 	protected int fId = 0;
 	protected byte fFlags = 0;
 	protected byte[] fDataBuf = null;
-	
+
 	/**
 	 * Set Id.
 	 */
-	/*package*/ void setId(int id) {
+	/* package */void setId(int id) {
 		fId = id;
 	}
 
@@ -48,14 +47,14 @@ public abstract class JdwpPacket {
 	public int getId() {
 		return fId;
 	}
-	
+
 	/**
 	 * Set Flags.
 	 */
-	/*package*/ void setFlags(byte flags) {
+	/* package */void setFlags(byte flags) {
 		fFlags = flags;
 	}
-	
+
 	/**
 	 * @return Returns Flags.
 	 */
@@ -69,14 +68,14 @@ public abstract class JdwpPacket {
 	public int getLength() {
 		return MIN_PACKET_LENGTH + getDataLength();
 	}
-	
+
 	/**
 	 * @return Returns length of data in packet.
 	 */
 	public int getDataLength() {
 		return fDataBuf == null ? 0 : fDataBuf.length;
 	}
-	
+
 	/**
 	 * @return Returns data of packet.
 	 */
@@ -85,13 +84,14 @@ public abstract class JdwpPacket {
 	}
 
 	/**
-	 * @return Returns DataInputStream with reply data, or an empty stream if there is none.
+	 * @return Returns DataInputStream with reply data, or an empty stream if
+	 *         there is none.
 	 */
 	public DataInputStream dataInStream() {
 		if (fDataBuf != null) {
 			return new DataInputStream(new ByteArrayInputStream(fDataBuf));
 		}
-		
+
 		return new DataInputStream(new ByteArrayInputStream(new byte[0]));
 	}
 
@@ -101,34 +101,36 @@ public abstract class JdwpPacket {
 	public void setData(byte[] data) {
 		fDataBuf = data;
 	}
-	
+
 	/**
 	 * Reads header fields that are specific for a type of packet.
 	 */
-	protected abstract int readSpecificHeaderFields(byte[] bytes, int index) throws IOException;
-	
+	protected abstract int readSpecificHeaderFields(byte[] bytes, int index)
+			throws IOException;
+
 	/**
 	 * Writes header fields that are specific for a type of packet.
 	 */
-	protected abstract int writeSpecificHeaderFields(byte[] bytes, int index) throws IOException;
-	
+	protected abstract int writeSpecificHeaderFields(byte[] bytes, int index)
+			throws IOException;
+
 	/**
 	 * Constructs a JdwpPacket from a byte[].
 	 */
 	public static JdwpPacket build(byte[] bytes) throws IOException {
 		// length (int)
-        int a = (bytes[0]&0xff) << 24;
-        int b = (bytes[1]&0xff) << 16;
-        int c = (bytes[2]&0xff) << 8;
-        int d = (bytes[3]&0xff) << 0;
-		int packetLength = a+b+c+d;
+		int a = (bytes[0] & 0xff) << 24;
+		int b = (bytes[1] & 0xff) << 16;
+		int c = (bytes[2] & 0xff) << 8;
+		int d = (bytes[3] & 0xff) << 0;
+		int packetLength = a + b + c + d;
 
 		// id (int)
-		a = (bytes[4]&0xff) << 24;
-		b = (bytes[5]&0xff) << 16;
-		c = (bytes[6]&0xff) << 8;
-		d = (bytes[7]&0xff) << 0;
-		int id = a+b+c+d;
+		a = (bytes[4] & 0xff) << 24;
+		b = (bytes[5] & 0xff) << 16;
+		c = (bytes[6] & 0xff) << 8;
+		d = (bytes[7] & 0xff) << 0;
+		int id = a + b + c + d;
 
 		// flags (byte)
 		byte flags = bytes[8];
@@ -139,51 +141,52 @@ public abstract class JdwpPacket {
 			packet = new JdwpReplyPacket();
 		else
 			packet = new JdwpCommandPacket();
-			
+
 		// Assign generic header fields.
 		packet.setId(id);
 		packet.setFlags(flags);
-			
+
 		// Read specific header fields and data.
 		int index = 9;
 		index += packet.readSpecificHeaderFields(bytes, 9);
 		if (packetLength - MIN_PACKET_LENGTH > 0) {
 			packet.fDataBuf = new byte[packetLength - MIN_PACKET_LENGTH];
-			System.arraycopy(bytes, index, packet.fDataBuf, 0, packet.fDataBuf.length);
+			System.arraycopy(bytes, index, packet.fDataBuf, 0,
+					packet.fDataBuf.length);
 		}
-		
+
 		return packet;
 	}
-	
+
 	public byte[] getPacketAsBytes() throws IOException {
-	    int len = getLength();
-	    byte[] bytes = new byte[len];
-	    
-	    //convert len to bytes
-        bytes[0] = (byte) (len >>> 24);
-        bytes[1] = (byte) (len >>> 16);
-        bytes[2] = (byte) (len >>>  8);
-        bytes[3] = (byte) (len >>>  0);
-        
-        //convert id to bytes
-        int id = getId();
-        bytes[4] = (byte) (id >>> 24);
-        bytes[5] = (byte) (id >>> 16);
-        bytes[6] = (byte) (id >>>  8);
-        bytes[7] = (byte) (id >>>  0);
-        
-        //flags
-        bytes[8] = getFlags();
-        
-        //convert specific header fields
-        int index = 9;
-        index += writeSpecificHeaderFields(bytes, index);
-        
-        if (index < len && fDataBuf!=null) {
-            //copy data
-            System.arraycopy(fDataBuf, 0, bytes, index, fDataBuf.length);
-        }
-        return bytes;
+		int len = getLength();
+		byte[] bytes = new byte[len];
+
+		// convert len to bytes
+		bytes[0] = (byte) (len >>> 24);
+		bytes[1] = (byte) (len >>> 16);
+		bytes[2] = (byte) (len >>> 8);
+		bytes[3] = (byte) (len >>> 0);
+
+		// convert id to bytes
+		int id = getId();
+		bytes[4] = (byte) (id >>> 24);
+		bytes[5] = (byte) (id >>> 16);
+		bytes[6] = (byte) (id >>> 8);
+		bytes[7] = (byte) (id >>> 0);
+
+		// flags
+		bytes[8] = getFlags();
+
+		// convert specific header fields
+		int index = 9;
+		index += writeSpecificHeaderFields(bytes, index);
+
+		if (index < len && fDataBuf != null) {
+			// copy data
+			System.arraycopy(fDataBuf, 0, bytes, index, fDataBuf.length);
+		}
+		return bytes;
 	}
 
 	/**
@@ -193,29 +196,30 @@ public abstract class JdwpPacket {
 		if (fgFlagStrings != null) {
 			return;
 		}
-		
+
 		Field[] fields = JdwpPacket.class.getDeclaredFields();
 		fgFlagStrings = new String[8];
-		
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
+
+		for (Field field : fields) {
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0
+					|| (field.getModifiers() & Modifier.STATIC) == 0
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
 			}
-				
+
 			String name = field.getName();
 			if (!name.startsWith("FLAG_")) {//$NON-NLS-1$
 				continue;
 			}
-				
+
 			name = name.substring(5);
-			
+
 			try {
 				byte value = field.getByte(null);
-				
+
 				for (int j = 0; j < fgFlagStrings.length; j++) {
 					if ((1 << j & value) != 0) {
-						fgFlagStrings[j]= name;
+						fgFlagStrings[j] = name;
 						break;
 					}
 				}
@@ -228,7 +232,7 @@ public abstract class JdwpPacket {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return Returns a mapping with string representations of flags.
 	 */

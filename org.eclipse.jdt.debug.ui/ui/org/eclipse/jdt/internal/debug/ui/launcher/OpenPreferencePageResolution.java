@@ -73,6 +73,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	 */
 	public void run(IMarker marker) {
 		UIJob job = new UIJob(""){ //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				SWTFactory.showPreferencePage(
 							OpenPreferencePageResolution.this.pageid, 

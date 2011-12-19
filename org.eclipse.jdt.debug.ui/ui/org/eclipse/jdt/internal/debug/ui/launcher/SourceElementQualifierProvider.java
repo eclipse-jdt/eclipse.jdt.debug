@@ -40,6 +40,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IJavaElement) {
 			IJavaElement parent = ((IJavaElement)element).getParent();
@@ -67,6 +68,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IJavaElement) {
 			IJavaElement parent = ((IJavaElement)element).getParent();
@@ -90,6 +92,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		fJavaLabels.dispose();

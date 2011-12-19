@@ -56,6 +56,7 @@ public class ShowInPackageViewAction extends Action {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		IFile file= fEditor.getFile();
 		if (file == null) {

@@ -38,6 +38,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ClasspathEntry) {
 			ClasspathEntry other= (ClasspathEntry)obj;
@@ -54,6 +55,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return entry.hashCode();
 	}
@@ -61,6 +63,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return entry.getPath().toOSString();
 	}

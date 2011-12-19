@@ -26,47 +26,60 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.event.MonitorWaitedEvent;
 
 /**
- * This class provides an implementation of MonitorContendedEnterEvent according to Sun's
- * 1.6 specs
+ * This class provides an implementation of MonitorContendedEnterEvent according
+ * to Sun's 1.6 specs
+ * 
  * @since 3.3
  */
-public class MonitorWaitedEventImpl extends LocatableEventImpl implements MonitorWaitedEvent {
+public class MonitorWaitedEventImpl extends LocatableEventImpl implements
+		MonitorWaitedEvent {
 
 	/** Jdwp event id **/
 	public static final byte EVENT_KIND = EVENT_MONITOR_WAITED;
-	
+
 	/** if the wait timed out or not **/
 	private boolean fTimedOut;
-	
+
 	/** the monitor reference **/
 	private ObjectReference fMonitor;
-	
+
 	/** Constructor **/
-	private MonitorWaitedEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
+	private MonitorWaitedEventImpl(VirtualMachineImpl vmImpl,
+			RequestID requestID) {
 		super("MonitorWaited", vmImpl, requestID); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static MonitorWaitedEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException { 
+	public static MonitorWaitedEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		MonitorWaitedEventImpl event = new MonitorWaitedEventImpl(vmImpl, requestID);
+		MonitorWaitedEventImpl event = new MonitorWaitedEventImpl(vmImpl,
+				requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
-		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target, dataInStream);
+		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target,
+				dataInStream);
 		event.fLocation = LocationImpl.read(target, dataInStream);
-		event.fTimedOut = ((BooleanValue)ValueImpl.readWithTag(target, dataInStream)).value();
+		event.fTimedOut = ((BooleanValue) ValueImpl.readWithTag(target,
+				dataInStream)).value();
 		return event;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.event.MonitorWaitedEvent#monitor()
 	 */
 	public ObjectReference monitor() {
 		return fMonitor;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.event.MonitorWaitedEvent#timedout()
 	 */
 	public boolean timedout() {

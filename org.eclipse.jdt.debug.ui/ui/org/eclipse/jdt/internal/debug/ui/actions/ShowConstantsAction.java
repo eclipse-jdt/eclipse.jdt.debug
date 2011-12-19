@@ -25,6 +25,7 @@ public class ShowConstantsAction extends ToggleBooleanPreferenceAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_CONSTANTS; 
 	}
@@ -32,6 +33,7 @@ public class ShowConstantsAction extends ToggleBooleanPreferenceAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ToggleBooleanPreferenceAction#getViewKey()
 	 */
+	@Override
 	protected String getViewKey() {
 		return getCompositeKey();
 	}

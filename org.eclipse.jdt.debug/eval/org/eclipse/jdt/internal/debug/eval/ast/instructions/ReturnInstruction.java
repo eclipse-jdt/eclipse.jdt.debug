@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
-
 public class ReturnInstruction extends CompoundInstruction {
 
 	/**
 	 * Constructor for ReturnInstruction.
+	 * 
 	 * @param start
 	 */
 	public ReturnInstruction(int start) {
@@ -25,12 +24,14 @@ public class ReturnInstruction extends CompoundInstruction {
 	/**
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() {
 		stop();
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.ReturnInstruction_return; 
+		return InstructionsEvaluationMessages.ReturnInstruction_return;
 	}
 
 }

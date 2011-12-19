@@ -136,6 +136,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		// If the breakpoint does not exist, add it.  If it does exist, make sure it is enabled.
 		if (!exists) {
 			Job job = new Job(BreakpointMessages.AddExceptionAction_0) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						JDIDebugModel.createExceptionBreakpoint(resource,
@@ -154,7 +155,8 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		} else {
 			final IJavaBreakpoint existingBreakpoint = breakpoint;
 			Job job = new Job(BreakpointMessages.AddExceptionAction_EnableExceptionBreakpoint) {
-	            protected IStatus run(IProgressMonitor monitor) {
+	            @Override
+				protected IStatus run(IProgressMonitor monitor) {
 	                try {
 	                	existingBreakpoint.setEnabled(true);
 	                    return Status.OK_STATUS;

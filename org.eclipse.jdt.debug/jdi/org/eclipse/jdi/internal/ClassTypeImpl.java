@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,126 +37,143 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
-	
+
 	/** JDWP Tag. */
 	public static final byte typeTag = JdwpID.TYPE_TAG_CLASS;
 
 	/** The following are the stored results of JDWP calls. */
 	private ClassTypeImpl fSuperclass = null;
-	
+
 	/**
 	 * Creates new ClassTypeImpl.
 	 */
 	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID) {
 		super("ClassType", vmImpl, classID); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Creates new ClassTypeImpl.
 	 */
-	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID, String signature, String genericSignature) {
+	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID,
+			String signature, String genericSignature) {
 		super("ClassType", vmImpl, classID, signature, genericSignature); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return Returns type tag.
 	 */
+	@Override
 	public byte typeTag() {
 		return typeTag;
 	}
-	
+
 	/**
 	 * @return Create a null value instance of the type.
 	 */
+	@Override
 	public Value createNullValue() {
-		return new ClassObjectReferenceImpl(virtualMachineImpl(), new JdwpClassObjectID(virtualMachineImpl()));
+		return new ClassObjectReferenceImpl(virtualMachineImpl(),
+				new JdwpClassObjectID(virtualMachineImpl()));
 	}
 
 	/**
 	 * Flushes all stored Jdwp results.
 	 */
+	@Override
 	public void flushStoredJdwpResults() {
 		super.flushStoredJdwpResults();
 
-		// For all classes that have this class cached as superclass, this cache must be undone.
-		Iterator itr = virtualMachineImpl().allCachedRefTypes();
+		// For all classes that have this class cached as superclass, this cache
+		// must be undone.
+		Iterator<Object> itr = virtualMachineImpl().allCachedRefTypes();
 		while (itr.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
+			ReferenceTypeImpl refType = (ReferenceTypeImpl) itr.next();
 			if (refType instanceof ClassTypeImpl) {
-				ClassTypeImpl classType = (ClassTypeImpl)refType;
-				if (classType.fSuperclass != null && classType.fSuperclass.equals(this)) {
+				ClassTypeImpl classType = (ClassTypeImpl) refType;
+				if (classType.fSuperclass != null
+						&& classType.fSuperclass.equals(this)) {
 					classType.flushStoredJdwpResults();
 				}
 			}
 		}
-		
+
 		fSuperclass = null;
 	}
-	
+
 	/**
 	 * @return Returns Jdwp version of given options.
 	 */
 	private int optionsToJdwpOptions(int options) {
 		int jdwpOptions = 0;
-   		if ((options & INVOKE_SINGLE_THREADED) != 0)
-   			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
-   		return jdwpOptions;
+		if ((options & INVOKE_SINGLE_THREADED) != 0)
+			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
+		return jdwpOptions;
 	}
-	
+
 	/**
-	 * @return Returns a the single non-abstract Method visible from this class that has the given name and signature.
+	 * @return Returns a the single non-abstract Method visible from this class
+	 *         that has the given name and signature.
 	 */
 	public Method concreteMethodByName(String name, String signature) {
-		/* Recursion is used to find the method:
-		 * The methods of its own (own methods() command);
-		 * The methods of it's superclass.
+		/*
+		 * Recursion is used to find the method: The methods of its own (own
+		 * methods() command); The methods of it's superclass.
 		 */
-		 
-	 	Iterator methods = methods().iterator();
-	 	MethodImpl method;
-	 	while (methods.hasNext()) {
-	 		method = (MethodImpl)methods.next();
-	 		if (method.name().equals(name) && method.signature().equals(signature)) {
-	 			if (method.isAbstract()) {
-	 				return null;
-	 			} 
-	 			return method;
-	 		}
-	 	}
-	 	
+
+		Iterator methods = methods().iterator();
+		MethodImpl method;
+		while (methods.hasNext()) {
+			method = (MethodImpl) methods.next();
+			if (method.name().equals(name)
+					&& method.signature().equals(signature)) {
+				if (method.isAbstract()) {
+					return null;
+				}
+				return method;
+			}
+		}
+
 		if (superclass() != null) {
 			return superclass().concreteMethodByName(name, signature);
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Invokes the specified static Method in the target VM.
+	 * 
 	 * @return Returns a Value mirror of the invoked method's return value.
 	 */
-	public Value invokeMethod(ThreadReference thread, Method method, List arguments, int options) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException {
+	public Value invokeMethod(ThreadReference thread, Method method,
+			List arguments, int options) throws InvalidTypeException,
+			ClassNotLoadedException, IncompatibleThreadStateException,
+			InvocationException {
 		checkVM(thread);
 		checkVM(method);
-		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
-		MethodImpl methodImpl = (MethodImpl)method;
+		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl) thread;
+		MethodImpl methodImpl = (MethodImpl) method;
 
 		// Perform some checks for IllegalArgumentException.
 		if (!visibleMethods().contains(method))
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1); 
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1);
 		if (method.argumentTypeNames().size() != arguments.size())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2); 
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2);
 		if (method.isConstructor() || method.isStaticInitializer())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3); 
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3);
 
-		// check the type and the vm of the arguments. Convert the values if needed
-		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
+		// check the type and the vm of the arguments. Convert the values if
+		// needed
+		List<ValueImpl> checkedArguments = ValueImpl.checkValues(arguments,
+				method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -166,37 +182,40 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			write(this, outData);
 			threadImpl.write(this, outData);
 			methodImpl.write(this, outData);
-			
+
 			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator iter = checkedArguments.iterator();
-			while(iter.hasNext()) {
-				ValueImpl elt = (ValueImpl)iter.next();
+			Iterator<ValueImpl> iter = checkedArguments.iterator();
+			while (iter.hasNext()) {
+				ValueImpl elt = iter.next();
 				if (elt != null) {
 					elt.writeWithTag(this, outData);
 				} else {
 					ValueImpl.writeNullWithTag(this, outData);
 				}
 			}
-			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_INVOKE_METHOD, outBytes);
+
+			writeInt(optionsToJdwpOptions(options),
+					"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CT_INVOKE_METHOD, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.INVALID_METHODID:
-					throw new IllegalArgumentException();
-				case JdwpReplyPacket.TYPE_MISMATCH:
-					throw new InvalidTypeException();
-				case JdwpReplyPacket.INVALID_CLASS:
-					throw new ClassNotLoadedException(name());
-				case JdwpReplyPacket.INVALID_THREAD:
-					throw new IncompatibleThreadStateException();
-				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.INVALID_METHODID:
+				throw new IllegalArgumentException();
+			case JdwpReplyPacket.TYPE_MISMATCH:
+				throw new InvalidTypeException();
+			case JdwpReplyPacket.INVALID_CLASS:
+				throw new ClassNotLoadedException(name());
+			case JdwpReplyPacket.INVALID_THREAD:
+				throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+				throw new IncompatibleThreadStateException();
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			ValueImpl value = ValueImpl.readWithTag(this, replyData);
-			ObjectReferenceImpl exception = ObjectReferenceImpl.readObjectRefWithTag(this, replyData);
+			ObjectReferenceImpl exception = ObjectReferenceImpl
+					.readObjectRefWithTag(this, replyData);
 			if (exception != null)
 				throw new InvocationException(exception);
 			return value;
@@ -207,26 +226,35 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
-	 * Constructs a new instance of this type, using the given constructor Method in the target VM.
+	 * Constructs a new instance of this type, using the given constructor
+	 * Method in the target VM.
+	 * 
 	 * @return Returns Mirror of this type.
 	 */
-	public ObjectReference newInstance(ThreadReference thread, Method method, List arguments, int options)  throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException {
+	public ObjectReference newInstance(ThreadReference thread, Method method,
+			List arguments, int options) throws InvalidTypeException,
+			ClassNotLoadedException, IncompatibleThreadStateException,
+			InvocationException {
 		checkVM(thread);
 		checkVM(method);
-		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
-		MethodImpl methodImpl = (MethodImpl)method;
-		
+		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl) thread;
+		MethodImpl methodImpl = (MethodImpl) method;
+
 		// Perform some checks for IllegalArgumentException.
 		if (!methods().contains(method))
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_4); 
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_4);
 		if (method.argumentTypeNames().size() != arguments.size())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_5); 
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_5);
 		if (!method.isConstructor())
-			throw new IllegalArgumentException(JDIMessages.ClassTypeImpl_Method_is_not_a_constructor_6); 
-			
-		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Method_is_not_a_constructor_6);
+
+		List<ValueImpl> checkedArguments = ValueImpl.checkValues(arguments,
+				method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -235,11 +263,11 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			write(this, outData);
 			threadImpl.write(this, outData);
 			methodImpl.write(this, outData);
-			
+
 			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator iter = checkedArguments.iterator();
-			while(iter.hasNext()) {
-				ValueImpl elt = (ValueImpl)iter.next();
+			Iterator<ValueImpl> iter = checkedArguments.iterator();
+			while (iter.hasNext()) {
+				ValueImpl elt = iter.next();
 				if (elt != null) {
 					checkVM(elt);
 					elt.writeWithTag(this, outData);
@@ -247,26 +275,30 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 					ValueImpl.writeNullWithTag(this, outData);
 				}
 			}
-			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_NEW_INSTANCE, outBytes);
+
+			writeInt(optionsToJdwpOptions(options),
+					"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CT_NEW_INSTANCE, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.INVALID_METHODID:
-					throw new IllegalArgumentException();
-				case JdwpReplyPacket.TYPE_MISMATCH:
-					throw new InvalidTypeException();
-				case JdwpReplyPacket.INVALID_CLASS:
-					throw new ClassNotLoadedException(name());
-				case JdwpReplyPacket.INVALID_THREAD:
-					throw new IncompatibleThreadStateException();
-				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.INVALID_METHODID:
+				throw new IllegalArgumentException();
+			case JdwpReplyPacket.TYPE_MISMATCH:
+				throw new InvalidTypeException();
+			case JdwpReplyPacket.INVALID_CLASS:
+				throw new ClassNotLoadedException(name());
+			case JdwpReplyPacket.INVALID_THREAD:
+				throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+				throw new IncompatibleThreadStateException();
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			ObjectReferenceImpl object = ObjectReferenceImpl.readObjectRefWithTag(this, replyData);
-			ObjectReferenceImpl exception = ObjectReferenceImpl.readObjectRefWithTag(this, replyData);
+			ObjectReferenceImpl object = ObjectReferenceImpl
+					.readObjectRefWithTag(this, replyData);
+			ObjectReferenceImpl exception = ObjectReferenceImpl
+					.readObjectRefWithTag(this, replyData);
 			if (exception != null)
 				throw new InvocationException(exception);
 			return object;
@@ -277,36 +309,40 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * Assigns a value to a static field. .
 	 */
-	public void setValue(Field field, Value value)  throws InvalidTypeException, ClassNotLoadedException {
+	public void setValue(Field field, Value value) throws InvalidTypeException,
+			ClassNotLoadedException {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(1, "size", outData);	// We only set one field //$NON-NLS-1$
+			writeInt(1, "size", outData); // We only set one field //$NON-NLS-1$
 			checkVM(field);
-			((FieldImpl)field).write(this, outData);
-			
-			// check the type and the vm of the value. Convert the value if needed
-			ValueImpl checkedValue= ValueImpl.checkValue(value, field.type(), virtualMachineImpl());
-			
+			((FieldImpl) field).write(this, outData);
+
+			// check the type and the vm of the value. Convert the value if
+			// needed
+			ValueImpl checkedValue = ValueImpl.checkValue(value, field.type(),
+					virtualMachineImpl());
+
 			if (checkedValue != null) {
 				checkedValue.write(this, outData);
 			} else {
 				ValueImpl.writeNull(this, outData);
 			}
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_SET_VALUES, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CT_SET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.TYPE_MISMATCH:
-					throw new InvalidTypeException();
-				case JdwpReplyPacket.INVALID_CLASS:
-					throw new ClassNotLoadedException(name());
+			case JdwpReplyPacket.TYPE_MISMATCH:
+				throw new InvalidTypeException();
+			case JdwpReplyPacket.INVALID_CLASS:
+				throw new ClassNotLoadedException(name());
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 		} catch (IOException e) {
@@ -315,20 +351,22 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
-	 * @return Returns the the currently loaded, direct subclasses of this class.
+	 * @return Returns the the currently loaded, direct subclasses of this
+	 *         class.
 	 */
-	public List subclasses() {
+	public List<ClassTypeImpl> subclasses() {
 		// Note that this information should not be cached.
-		List subclasses = new ArrayList();
-		Iterator itr = virtualMachineImpl().allRefTypes();
+		List<ClassTypeImpl> subclasses = new ArrayList<ClassTypeImpl>();
+		Iterator<ReferenceTypeImpl> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
+				ReferenceTypeImpl refType = itr.next();
 				if (refType instanceof ClassTypeImpl) {
-					ClassTypeImpl classType = (ClassTypeImpl)refType;
-					if (classType.superclass() != null && classType.superclass().equals(this)) {
+					ClassTypeImpl classType = (ClassTypeImpl) refType;
+					if (classType.superclass() != null
+							&& classType.superclass().equals(this)) {
 						subclasses.add(classType);
 					}
 				}
@@ -338,17 +376,18 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		}
 		return subclasses;
 	}
-	
+
 	/**
 	 * @return Returns the superclass of this class.
 	 */
 	public ClassType superclass() {
 		if (fSuperclass != null)
 			return fSuperclass;
-			
+
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_SUPERCLASS, this);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CT_SUPERCLASS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			fSuperclass = ClassTypeImpl.read(this, replyData);
@@ -360,11 +399,13 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/*
-	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
+	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if
+	 * ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static ClassTypeImpl read(MirrorImpl target, DataInputStream in) throws IOException {
+	public static ClassTypeImpl read(MirrorImpl target, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpClassID ID = new JdwpClassID(vmImpl);
 		ID.read(in);
@@ -374,18 +415,21 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		if (ID.isNull())
 			return null;
 
-		ClassTypeImpl mirror = (ClassTypeImpl)vmImpl.getCachedMirror(ID);
+		ClassTypeImpl mirror = (ClassTypeImpl) vmImpl.getCachedMirror(ID);
 		if (mirror == null) {
 			mirror = new ClassTypeImpl(vmImpl, ID);
 			vmImpl.addCachedMirror(mirror);
 		}
 		return mirror;
-	 }
-	
+	}
+
 	/*
-	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
+	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if
+	 * ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static ClassTypeImpl readWithSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
+	public static ClassTypeImpl readWithSignature(MirrorImpl target,
+			boolean withGenericSignature, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpClassID ID = new JdwpClassID(vmImpl);
 		ID.read(in);
@@ -393,14 +437,14 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			target.fVerboseWriter.println("classType", ID.value()); //$NON-NLS-1$
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		String genericSignature= null;
+		String genericSignature = null;
 		if (withGenericSignature) {
-			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+			genericSignature = target.readString("generic signature", in); //$NON-NLS-1$
 		}
 		if (ID.isNull())
 			return null;
-			
-		ClassTypeImpl mirror = (ClassTypeImpl)vmImpl.getCachedMirror(ID);
+
+		ClassTypeImpl mirror = (ClassTypeImpl) vmImpl.getCachedMirror(ID);
 		if (mirror == null) {
 			mirror = new ClassTypeImpl(vmImpl, ID);
 			vmImpl.addCachedMirror(mirror);
@@ -408,16 +452,17 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		mirror.setSignature(signature);
 		mirror.setGenericSignature(genericSignature);
 		return mirror;
-	 }
-	
+	}
+
 	public boolean isEnum() {
 		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5)) {
 			// there is no modifier for this ... :(
 			ClassType superClass = superclass();
-			return superClass != null && "<E:Ljava/lang/Enum<TE;>;>Ljava/lang/Object;Ljava/lang/Comparable<TE;>;Ljava/io/Serializable;".equals(superClass.genericSignature()); //$NON-NLS-1$
-		} 
+			return superClass != null
+					&& "<E:Ljava/lang/Enum<TE;>;>Ljava/lang/Object;Ljava/lang/Comparable<TE;>;Ljava/io/Serializable;".equals(superClass.genericSignature()); //$NON-NLS-1$
+		}
 		// jdwp 1.5 only option
 		return false;
 	}
-	
+
 }

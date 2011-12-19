@@ -57,6 +57,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *  <code>org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class PackageFragmentRootSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	
 	/**
@@ -206,6 +207,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {		
 		if (object instanceof PackageFragmentRootSourceLocation) {
 			 PackageFragmentRootSourceLocation root = (PackageFragmentRootSourceLocation)object;
@@ -220,6 +222,7 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (getPackageFragmentRoot() == null) {
 			return getClass().hashCode();

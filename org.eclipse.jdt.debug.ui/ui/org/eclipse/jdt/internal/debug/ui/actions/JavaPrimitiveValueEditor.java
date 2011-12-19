@@ -56,7 +56,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
-            	protected Control createDialogArea(Composite parent) {
+            	@Override
+				protected Control createDialogArea(Composite parent) {
             		IWorkbench workbench = PlatformUI.getWorkbench();
             		workbench.getHelpSystem().setHelp(parent, IJavaDebugHelpContextIds.DEFAULT_INPUT_DIALOG);
             		return super.createDialogArea(parent);

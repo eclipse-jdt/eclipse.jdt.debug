@@ -70,6 +70,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
+	@Override
 	public Object getModifiedElement() {
 		return fLaunchConfiguration;
 	}
@@ -77,6 +78,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
 			return MessageFormat.format(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); 
@@ -93,11 +95,13 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fLaunchConfiguration.exists()) {
 			String typeName = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
@@ -125,6 +129,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {    
 		final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
         if (fNewConfigContainerName != null) {

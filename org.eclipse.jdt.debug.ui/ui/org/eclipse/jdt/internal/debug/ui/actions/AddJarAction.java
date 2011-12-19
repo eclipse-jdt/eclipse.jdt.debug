@@ -38,6 +38,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 		
 		IPath[] paths = BuildPathDialogAccess.chooseJAREntries(getShell(), null, getSelectedJars());
@@ -71,6 +72,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 		return (IPath[]) jars.toArray(new IPath[jars.size()]);
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

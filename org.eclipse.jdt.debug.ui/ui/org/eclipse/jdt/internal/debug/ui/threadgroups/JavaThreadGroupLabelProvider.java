@@ -30,6 +30,7 @@ public class JavaThreadGroupLabelProvider extends ElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
+	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		IJavaThreadGroup group = (IJavaThreadGroup) elementPath.getLastSegment();
 		return MessageFormat.format(ThreadGroupMessages.AsyncThreadGroupLabelAdapter_0, new String[]{group.getName()});
@@ -38,6 +39,7 @@ public class JavaThreadGroupLabelProvider extends ElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
+	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return fgImage;
 	}

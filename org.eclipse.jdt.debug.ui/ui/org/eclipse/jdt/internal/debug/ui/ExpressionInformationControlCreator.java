@@ -100,12 +100,14 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 			 */
+			@Override
 			protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return 1;
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 			 */
+			@Override
 			protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return new Object[] { fVariable };
 			}
@@ -113,6 +115,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 			 */
+			@Override
 			protected boolean supportsContextId(String id) {
 				return true;
 			}
@@ -184,6 +187,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
 		 */
+		@Override
 		public Point computeSizeHint() {
 			IDialogSettings settings = getDialogSettings(false);
 			if (settings != null) {
@@ -230,6 +234,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#dispose()
 		 */
+		@Override
 		public void dispose() {
 			persistSettings(getShell());
             fContext.dispose();
@@ -258,6 +263,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setVisible(boolean)
 		 */
+		@Override
 		public void setVisible(boolean visible) {
 			if (!visible) {		
 				persistSettings(getShell());
@@ -268,6 +274,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createContent(Composite parent) {
 
 	        fSashForm = new SashForm(parent, parent.getStyle());
@@ -384,6 +391,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setBackgroundColor(org.eclipse.swt.graphics.Color)
 		 */
+		@Override
 		public void setBackgroundColor(Color background) {
 			super.setBackgroundColor(background);
 			fDetailPaneComposite.setBackground(background);
@@ -393,6 +401,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setFocus()
 		 */
+		@Override
 		public void setFocus() {
 			super.setFocus();
 			fTree.setFocus();
@@ -418,11 +427,13 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#getInformationPresenterControlCreator()
 		 */
+		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			return new ExpressionInformationControlCreator() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
+				@Override
 				public IInformationControl createInformationControl(Shell shell) {
 					return new ExpressionInformationControl(shell, true);
 				}

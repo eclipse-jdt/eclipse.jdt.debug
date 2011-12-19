@@ -39,6 +39,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		return MessageFormat.format(RefactoringMessages.MethodBreakpointMethodChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestMethod.getElementName()});
@@ -47,6 +48,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestMethod);

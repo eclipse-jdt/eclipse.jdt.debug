@@ -12,9 +12,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public abstract class UnaryOperator extends CompoundInstruction {
 	protected int fExpressionTypeId;
-	
+
 	public UnaryOperator(int expressionTypeId, int start) {
 		super(start);
-		fExpressionTypeId= expressionTypeId;
+		fExpressionTypeId = expressionTypeId;
 	}
 }

@@ -10,30 +10,27 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 import org.eclipse.core.runtime.CoreException;
- 
+
 /**
  * Pushes a reference type onto the stack.
  */
 public class PushType extends SimpleInstruction {
-	
+
 	private String fTypeName;
-	
-	
+
 	public PushType(String signature) {
-		fTypeName= signature;
+		fTypeName = signature;
 	}
-	
+
+	@Override
 	public void execute() throws CoreException {
 		push(getType(fTypeName));
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushType_push_type__1 + fTypeName; 
+		return InstructionsEvaluationMessages.PushType_push_type__1 + fTypeName;
 	}
 
-	
-	
 }
-

@@ -157,7 +157,8 @@ public class VMStandin extends AbstractVMInstall {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
      */
-    public String getJavaVersion() {
+    @Override
+	public String getJavaVersion() {
         return fJavaVersion;
     }
 }

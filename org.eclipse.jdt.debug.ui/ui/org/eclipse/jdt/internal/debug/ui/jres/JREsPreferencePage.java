@@ -101,6 +101,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite ancestor) {
 		initializeDialogUnits(ancestor);
 		
@@ -164,6 +165,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		String compliance = getCurrentCompilerCompliance();
 		if(!supportsCurrentCompliance(getCurrentDefaultVM(), compliance)) {
@@ -231,6 +233,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		final boolean[] canceled = new boolean[] {false};
 		BusyIndicator.showWhile(null, new Runnable() {

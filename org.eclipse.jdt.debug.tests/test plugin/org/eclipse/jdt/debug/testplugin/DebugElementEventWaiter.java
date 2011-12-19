@@ -32,6 +32,7 @@ public class DebugElementEventWaiter extends DebugEventWaiter {
 	/**
 	 * @see org.eclipse.jdt.debug.testplugin.DebugEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fElement == event.getSource();
 	}

@@ -73,6 +73,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getValueText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		if (value instanceof IJavaValue) {
 			return fLabelProvider.getFormattedValueText((IJavaValue) value);
@@ -83,6 +84,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getValueTypeName(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	protected String getValueTypeName(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
@@ -97,6 +99,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getVariableTypeName(org.eclipse.debug.core.model.IVariable)
 	 */
+	@Override
 	protected String getVariableTypeName(IVariable variable, IPresentationContext context) throws CoreException {
 		String typeName= DebugUIMessages.JDIModelPresentation_unknown_type__2;
 		try {
@@ -125,6 +128,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getColumnText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue, java.lang.String, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected String getColumnText(IVariable variable, IValue value, IPresentationContext context, String columnId) throws CoreException {
 		if (JavaVariableColumnPresentation.COLUMN_INSTANCE_ID.equals(columnId)) {
 			if (value instanceof JDIObjectValue) {
@@ -163,6 +167,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/**
 	 * Sets qualified name setting before building label
 	 */
+	@Override
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
 		Boolean showQ = isShowQualfiiedNames(update.getPresentationContext());
 		fQualifiedNames = showQ.booleanValue();
@@ -199,6 +204,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
+	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null) {
 			// when no columns, handle special escaping ourselves
@@ -213,6 +219,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 	 */
+	@Override
 	protected ISchedulingRule getRule(ILabelUpdate update) {
 		IJavaStackFrame frame = null;
 		switch (fSerializeMode) {

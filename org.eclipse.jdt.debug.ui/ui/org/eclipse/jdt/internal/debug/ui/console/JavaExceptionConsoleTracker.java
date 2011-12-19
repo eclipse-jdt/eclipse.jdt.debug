@@ -25,7 +25,8 @@ public class JavaExceptionConsoleTracker extends JavaConsoleTracker {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         try {
             int offset = event.getOffset();
             int length = event.getLength();

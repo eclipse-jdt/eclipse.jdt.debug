@@ -20,20 +20,22 @@ public class PushClassLiteralValue extends CompoundInstruction {
 	public PushClassLiteralValue(int start) {
 		super(start);
 	}
-	
+
 	/**
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		IJavaType type = (IJavaType)pop();
+		IJavaType type = (IJavaType) pop();
 		push(getClassObject(type));
 	}
 
 	/*
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushClassLiteralValue_push_class_literal_value_1; 
+		return InstructionsEvaluationMessages.PushClassLiteralValue_push_class_literal_value_1;
 	}
 
 }

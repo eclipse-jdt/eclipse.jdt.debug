@@ -36,6 +36,7 @@ public class CompositeId {
 		return new CompositeId(result);
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < fParts.length; i++) {

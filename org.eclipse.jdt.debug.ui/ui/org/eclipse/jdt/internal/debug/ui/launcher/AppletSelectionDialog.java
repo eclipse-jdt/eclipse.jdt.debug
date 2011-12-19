@@ -48,10 +48,12 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 			super(JavaElementLabelProvider.SHOW_PARAMETERS | JavaElementLabelProvider.SHOW_POST_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return super.getImage(((IType) element).getPackageFragment());
 		}
 
+		@Override
 		public String getText(Object element) {
 			return super.getText(((IType) element).getPackageFragment());
 		}
@@ -69,6 +71,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 	}
@@ -76,6 +79,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
+	@Override
 	public int open() {
 		IType[] types = getAppletTypes();
 		if (types == null) {
@@ -139,6 +143,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 		applyDialogFont(control);

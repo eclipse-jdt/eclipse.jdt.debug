@@ -37,6 +37,7 @@ public class ObjectFilter extends ViewerFilter {
 	/**
 	 * @see ViewerFilter#select(Viewer, Object, Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return !fFilter.contains(element);
 	}

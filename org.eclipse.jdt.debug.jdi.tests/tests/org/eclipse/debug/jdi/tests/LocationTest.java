@@ -30,6 +30,7 @@ public class LocationTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Ensure we're in a good state
 		fVM.resume();
@@ -50,6 +51,7 @@ public class LocationTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Location";
 	}

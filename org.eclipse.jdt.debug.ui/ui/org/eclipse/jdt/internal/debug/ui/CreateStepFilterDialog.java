@@ -59,12 +59,14 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return createStepFilterDialog.filter;		
 	}
 	
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		okButton.setEnabled(false);		
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
 
@@ -175,6 +177,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		if (!okClicked) {
 			filterValid = false;
@@ -186,7 +189,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
@@ -195,6 +199,7 @@ public class CreateStepFilterDialog extends StatusDialog {
          return section;
     }
 
+	@Override
 	protected void okPressed() {
 		okClicked = true;
 		super.okPressed();

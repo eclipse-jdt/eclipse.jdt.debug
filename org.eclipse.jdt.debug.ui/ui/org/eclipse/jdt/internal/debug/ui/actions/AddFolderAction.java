@@ -50,6 +50,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 *
 	 */
 	class FileFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if(element instanceof IProject) {
 				return true;
@@ -71,6 +72,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 		
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
@@ -130,6 +132,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		return folders;
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

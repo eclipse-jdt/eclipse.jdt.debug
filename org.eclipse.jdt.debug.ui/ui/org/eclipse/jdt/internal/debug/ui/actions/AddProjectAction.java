@@ -83,6 +83,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 		List projects = getPossibleAdditions();
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects);
@@ -131,10 +132,12 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return getViewer().updateSelection(getActionType(), selection) && !getPossibleAdditions().isEmpty();
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

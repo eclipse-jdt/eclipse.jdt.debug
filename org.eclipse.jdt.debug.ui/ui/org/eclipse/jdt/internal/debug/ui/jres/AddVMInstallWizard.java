@@ -38,6 +38,7 @@ public class AddVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fTypePage = new VMTypePage();
 		addPage(fTypePage);
@@ -46,6 +47,7 @@ public class AddVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.VMInstallWizard#getResult()
 	 */
+	@Override
 	protected VMStandin getResult() {
 		return fResult;
 	}
@@ -53,6 +55,7 @@ public class AddVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.VMInstallWizard#canFinish()
 	 */
+	@Override
 	public boolean canFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
 		return currentPage != fTypePage && super.canFinish() && currentPage.isPageComplete();
@@ -61,6 +64,7 @@ public class AddVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.VMInstallWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
 		if (currentPage instanceof AbstractVMInstallPage) {

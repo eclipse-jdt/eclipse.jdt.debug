@@ -10,25 +10,24 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.spy;
 
-
 /**
  * Exception throws when the spy have not enough information form correctly
  * parse the data.
  */
 public class UnableToParseDataException extends Exception {
 
-    /**
-     * All serializable objects should have a stable serialVersionUID
-     */
-    private static final long serialVersionUID = 1L;
-    
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private byte[] fRemainingData;
 
 	public UnableToParseDataException(String message, byte[] remainingData) {
 		super(message);
-		fRemainingData= remainingData;
+		fRemainingData = remainingData;
 	}
-	
+
 	public byte[] getRemainingData() {
 		return fRemainingData;
 	}

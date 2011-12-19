@@ -35,6 +35,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		IJavaThread thread = (IJavaThread)element;
 		if (!thread.isSuspended()) {
@@ -58,6 +59,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		IJavaThread thread = (IJavaThread)parent;
 		if (!thread.isSuspended()) {
@@ -116,6 +118,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (element instanceof JDIThread) {
 			JDIThread jThread = (JDIThread) element;
@@ -132,6 +135,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
+	@Override
 	protected ISchedulingRule getRule(IChildrenCountUpdate[] updates) {
 		return getThreadRule(updates);
 	}
@@ -139,6 +143,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
 	 */
+	@Override
 	protected ISchedulingRule getRule(IChildrenUpdate[] updates) {
 		return getThreadRule(updates);
 	}
@@ -146,6 +151,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
+	@Override
 	protected ISchedulingRule getRule(IHasChildrenUpdate[] updates) {
 		return getThreadRule(updates);
 	}

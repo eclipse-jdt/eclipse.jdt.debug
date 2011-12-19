@@ -265,6 +265,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -324,6 +325,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		String[] imports= null;
 		Object[] results= fImportContentProvider.getElements(null);
@@ -343,6 +345,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SnippetMessages.getString("SelectImportsDialog.Java_Snippet_Imports_18")); //$NON-NLS-1$

@@ -65,6 +65,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
+	@Override
 	protected IJavaProject getProjectContext() {
 		return fgJarProject;
 	}
@@ -72,6 +73,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		IPath testrpath = new Path("testresources");
 		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
@@ -81,6 +83,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		removeAllBreakpoints();
 		super.tearDown();

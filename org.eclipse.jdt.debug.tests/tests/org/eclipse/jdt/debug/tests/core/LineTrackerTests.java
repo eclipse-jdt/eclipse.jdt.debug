@@ -59,13 +59,15 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 		super(name);
 	}
 	
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;
     }
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         // delete references and gc to free memory.
         fConsole = null;

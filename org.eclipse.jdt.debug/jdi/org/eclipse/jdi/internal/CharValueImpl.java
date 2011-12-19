@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,10 +20,9 @@ import com.sun.jdi.CharValue;
 import com.sun.jdi.Type;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	/** JDWP Tag. */
@@ -36,17 +34,19 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	public CharValueImpl(VirtualMachineImpl vmImpl, Character value) {
 		super("CharValue", vmImpl, value); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @returns tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
 
 	/**
 	 * @returns type of value.
-   	 */
+	 */
+	@Override
 	public Type type() {
 		return virtualMachineImpl().getCharType();
 	}
@@ -57,20 +57,23 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	public char value() {
 		return charValue();
 	}
-	
+
 	/**
 	 * @return Reads and returns new instance.
 	 */
-	public static CharValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
+	public static CharValueImpl read(MirrorImpl target, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		char value = target.readChar("charValue", in); //$NON-NLS-1$
 		return new CharValueImpl(vmImpl, new Character(value));
 	}
-	
+
 	/**
 	 * Writes value without value tag.
 	 */
-	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeChar(((Character)fValue).charValue(), "charValue", out); //$NON-NLS-1$
+	@Override
+	public void write(MirrorImpl target, DataOutputStream out)
+			throws IOException {
+		target.writeChar(((Character) fValue).charValue(), "charValue", out); //$NON-NLS-1$
 	}
 }

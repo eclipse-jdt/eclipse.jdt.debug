@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 public class FilterViewerComparator extends WorkbenchViewerComparator {
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		ILabelProvider lprov =
 			(ILabelProvider) ((ContentViewer) viewer).getLabelProvider();

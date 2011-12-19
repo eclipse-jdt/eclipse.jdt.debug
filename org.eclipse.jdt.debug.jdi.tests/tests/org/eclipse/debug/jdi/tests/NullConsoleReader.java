@@ -34,6 +34,7 @@ public class NullConsoleReader extends AbstractReader {
 	/**
 	 * Continuously reads events that are coming from the event queue.
 	 */
+	@Override
 	protected void readerLoop() {
 		java.io.BufferedReader input =
 			new BufferedReader(new InputStreamReader(fInput));

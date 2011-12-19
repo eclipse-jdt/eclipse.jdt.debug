@@ -52,6 +52,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		createLaunchConfiguration(get14Project(), TYPE_NAME);

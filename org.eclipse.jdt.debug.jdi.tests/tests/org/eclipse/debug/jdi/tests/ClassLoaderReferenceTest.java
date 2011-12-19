@@ -32,6 +32,7 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get the class loader of org.eclipse.debug.jdi.tests.program.MainClass
 		fClassLoader = getClassLoaderReference();
@@ -47,6 +48,7 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ClassLoaderReference";
 	}

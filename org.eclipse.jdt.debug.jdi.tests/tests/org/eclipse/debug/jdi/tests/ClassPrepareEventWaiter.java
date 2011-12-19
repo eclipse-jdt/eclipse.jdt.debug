@@ -33,6 +33,7 @@ public class ClassPrepareEventWaiter extends EventWaiter {
 	/**
 	 * @see org.eclipse.debug.jdi.tests.EventWaiter#classPrepare(com.sun.jdi.event.ClassPrepareEvent)
 	 */
+	@Override
 	public boolean classPrepare(ClassPrepareEvent event) {
 		if (event.referenceType().name().equals(fClassName)) {
 			notifyEvent(event);

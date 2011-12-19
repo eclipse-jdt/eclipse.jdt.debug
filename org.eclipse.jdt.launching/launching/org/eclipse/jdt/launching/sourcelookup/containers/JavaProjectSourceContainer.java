@@ -101,6 +101,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		List containers = new ArrayList();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -129,6 +130,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JavaProjectSourceContainer) {
 			return getJavaProject().equals(((JavaProjectSourceContainer)obj).getJavaProject());
@@ -138,12 +140,14 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		// force container initialization
 		getSourceContainers();
@@ -174,6 +178,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		// look elsewhere if not a java like file
 		return findSourceElements(name, fOthers);
 	}
+	@Override
 	public void dispose() {
 		fSourceFolders = null;
 		fOthers = null;

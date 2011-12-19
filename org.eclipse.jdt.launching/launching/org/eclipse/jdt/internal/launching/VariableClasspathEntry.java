@@ -41,6 +41,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
+	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		memento.setAttribute("variableString", variableString); //$NON-NLS-1$
 		memento.setAttribute("path", Integer.toString(getClasspathProperty())); //$NON-NLS-1$
@@ -104,6 +105,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (variableString != null) {
 			return variableString.hashCode();
@@ -114,6 +116,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof VariableClasspathEntry) {
 			VariableClasspathEntry other= (VariableClasspathEntry)obj;

@@ -239,6 +239,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see java.lang.Object#equals(java.lang.Object)
      * @since 2.1
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IVMInstall) {
 			IVMInstall vm = (IVMInstall)object;
@@ -252,6 +253,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see java.lang.Object#hashCode()
 	 * @since 2.1
 	 */
+	@Override
 	public int hashCode() {
 		return getVMInstallType().hashCode() + getId().hashCode();
 	}

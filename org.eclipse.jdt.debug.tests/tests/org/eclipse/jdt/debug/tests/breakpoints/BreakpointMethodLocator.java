@@ -139,6 +139,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CompilationUnit)
 	 */
+	@Override
 	public boolean visit(CompilationUnit node) {
 		// visit only the type declarations
 		List types = node.types();
@@ -151,6 +152,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
 	 */
+	@Override
 	public boolean visit(MethodDeclaration node) {
 		if (containsPosition(node)) {
 			if (node.isConstructor()) {
@@ -168,6 +170,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
 	 */
+	@Override
 	public boolean visit(TypeDeclaration node) {
 		if (containsPosition(node)) {
 			// visit the methode declarations

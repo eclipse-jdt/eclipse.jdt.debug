@@ -55,6 +55,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.dialogs.TypeSelectionExtension#createContentArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createContentArea(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		fCaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_15, null, fCaught, 1);
@@ -77,6 +78,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.dialogs.TypeSelectionExtension#getSelectionValidator()
 	 */
+	@Override
 	public ISelectionStatusValidator getSelectionValidator() {
 		return new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {

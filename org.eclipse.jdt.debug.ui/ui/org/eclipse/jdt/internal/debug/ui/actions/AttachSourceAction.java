@@ -42,6 +42,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() { 
 		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry()); 
 		if (classpathEntry != null) {
@@ -58,6 +59,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		fEntries = new IRuntimeClasspathEntry[selection.size()];
 		Iterator iterator = selection.iterator();

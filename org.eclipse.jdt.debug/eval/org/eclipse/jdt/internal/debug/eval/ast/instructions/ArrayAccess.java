@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -20,49 +19,62 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.ibm.icu.text.MessageFormat;
- 
+
 /**
- * Resolves an array access - the top of the stack is
- * the position, and the second from top is the array
- * object.
+ * Resolves an array access - the top of the stack is the position, and the
+ * second from top is the array object.
  */
 public class ArrayAccess extends ArrayInstruction {
-	
+
 	public ArrayAccess(int start) {
 		super(start);
 	}
-	
+
+	@Override
 	public void execute() throws CoreException {
-		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
+		int index = ((IJavaPrimitiveValue) popValue()).getIntValue();
 		IJavaArray array = popArray();
 		if (index >= array.getLength() || index < 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index, new Object[] {new Integer(index)}), null)); 
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							JDIDebugPlugin.getUniqueIdentifier(),
+							IStatus.OK,
+							MessageFormat
+									.format(InstructionsEvaluationMessages.ArrayAccess_illegal_index,
+											new Object[] { new Integer(index) }),
+							null));
 		}
 		push(array.getVariable(index));
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.ArrayAccess_array_access_1; 
+		return InstructionsEvaluationMessages.ArrayAccess_array_access_1;
 	}
-	
+
 	/**
-	 * Pops an array object off the top of the stack. Throws an exception if not an array
-	 * object or <code>null</code>.
+	 * Pops an array object off the top of the stack. Throws an exception if not
+	 * an array object or <code>null</code>.
 	 * 
 	 * @return array object on top of the stack
-	 * @throws CoreException if not available
+	 * @throws CoreException
+	 *             if not available
 	 */
 	protected IJavaArray popArray() throws CoreException {
 		IJavaValue value = popValue();
 		if (value instanceof IJavaArray) {
-			return (IJavaArray)value;
+			return (IJavaArray) value;
 		} else if (value.isNull()) {
 			// null pointer
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.ArrayAccess_0, null));
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					InstructionsEvaluationMessages.ArrayAccess_0, null));
 		} else {
 			// internal error
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, "Internal error: attempt to access non-array object", null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					"Internal error: attempt to access non-array object", null)); //$NON-NLS-1$
 		}
 	}
 }
-

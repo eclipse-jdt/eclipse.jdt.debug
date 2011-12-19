@@ -38,7 +38,8 @@ public class CurrentFrameContext extends TypeContext {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#getType()
      */
-    public IType getType() throws CoreException {
+    @Override
+	public IType getType() throws CoreException {
         IJavaStackFrame frame = getStackFrame();
         if (frame != null) {
             IType type = JavaDebugUtils.resolveDeclaringType(frame);
@@ -52,7 +53,8 @@ public class CurrentFrameContext extends TypeContext {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#getLocalVariables()
      */
-    public String[][] getLocalVariables() throws CoreException {
+    @Override
+	public String[][] getLocalVariables() throws CoreException {
         IJavaStackFrame frame = getStackFrame();
         if (frame != null) {
             IVariable[] variables = frame.getVariables();
@@ -75,7 +77,8 @@ public class CurrentFrameContext extends TypeContext {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#isStatic()
      */
-    public boolean isStatic() throws CoreException {
+    @Override
+	public boolean isStatic() throws CoreException {
         IJavaStackFrame frame = getStackFrame();
         if (frame != null) {
             return frame.isStatic();

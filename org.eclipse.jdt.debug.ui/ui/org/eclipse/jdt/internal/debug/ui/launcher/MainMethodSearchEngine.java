@@ -52,6 +52,7 @@ public class MainMethodSearchEngine{
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
 		 */
+		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			Object enclosingElement = match.getElement();
 			if (enclosingElement instanceof IMethod) { // defensive code

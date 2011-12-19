@@ -41,6 +41,7 @@ public class JavaWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.WorkingDirectoryBlock#getProject(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected IProject getProject(ILaunchConfiguration configuration)
 			throws CoreException {
 		IJavaProject project = JavaRuntime.getJavaProject(configuration);
@@ -50,6 +51,7 @@ public class JavaWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.WorkingDirectoryBlock#log(org.eclipse.core.runtime.CoreException)
 	 */
+	@Override
 	protected void log(CoreException e) {
 		setErrorMessage(e.getMessage());
 	}

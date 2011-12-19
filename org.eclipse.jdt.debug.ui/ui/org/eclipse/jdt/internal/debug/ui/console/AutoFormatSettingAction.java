@@ -37,6 +37,7 @@ public class AutoFormatSettingAction extends Action {
 		setChecked(checked);
 	}
 
+	@Override
 	public void run() {
 		boolean checked = isChecked();
 		JavaStackTraceConsoleViewer viewer = (JavaStackTraceConsoleViewer) fPage.getViewer();

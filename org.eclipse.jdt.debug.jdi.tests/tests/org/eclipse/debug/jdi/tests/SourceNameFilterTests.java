@@ -23,6 +23,7 @@ import com.sun.jdi.request.EventRequestManager;
 public class SourceNameFilterTests extends AbstractJDITest {
 
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {}
 	
 	/**

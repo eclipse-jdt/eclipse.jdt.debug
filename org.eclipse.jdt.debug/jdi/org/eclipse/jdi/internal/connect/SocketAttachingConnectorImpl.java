@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
+import org.eclipse.jdi.internal.connect.ConnectorImpl.ArgumentImpl;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;
@@ -25,97 +25,117 @@ import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.spi.Connection;
 
-public class SocketAttachingConnectorImpl extends ConnectorImpl implements AttachingConnector {
+public class SocketAttachingConnectorImpl extends ConnectorImpl implements
+		AttachingConnector {
 	/** Hostname to which is attached. */
 	private String fHostname;
 	/** Port to which is attached. */
 	private int fPort;
-    private int fTimeout;
-	
+	private int fTimeout;
+
 	/**
 	 * Creates new SocketAttachingConnectorImpl.
 	 */
-	public SocketAttachingConnectorImpl(VirtualMachineManagerImpl virtualMachineManager) {
+	public SocketAttachingConnectorImpl(
+			VirtualMachineManagerImpl virtualMachineManager) {
 		super(virtualMachineManager);
-		
+
 		// Create communication protocol specific transport.
 		SocketTransportImpl transport = new SocketTransportImpl();
 		setTransport(transport);
 	}
-	
+
 	/**
 	 * @return Returns the default arguments.
-	 */	
-	public Map defaultArguments() {
-		HashMap arguments = new HashMap(2);
-		
+	 */
+	public Map<String, ArgumentImpl> defaultArguments() {
+		HashMap<String, ArgumentImpl> arguments = new HashMap<String, ArgumentImpl>(2);
+
 		// Hostname
-		StringArgumentImpl strArg = new StringArgumentImpl("hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$  
+		StringArgumentImpl strArg = new StringArgumentImpl(
+				"hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$  
 		strArg.setValue("localhost"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
-		
+
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.SocketAttachingConnectorImpl_Port_number_to_which_to_attach_for_VM_connections_3, ConnectMessages.SocketAttachingConnectorImpl_Port_4, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$  
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl(
+				"port", ConnectMessages.SocketAttachingConnectorImpl_Port_number_to_which_to_attach_for_VM_connections_3, ConnectMessages.SocketAttachingConnectorImpl_Port_4, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$  
 		arguments.put(intArg.name(), intArg);
-		
-        // Timeout
-        IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl("timeout", ConnectMessages.SocketAttachingConnectorImpl_1, ConnectMessages.SocketAttachingConnectorImpl_2, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$  
-        timeoutArg.setValue(0); // by default wait forever
-        arguments.put(timeoutArg.name(), timeoutArg);
-        
+
+		// Timeout
+		IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl(
+				"timeout", ConnectMessages.SocketAttachingConnectorImpl_1, ConnectMessages.SocketAttachingConnectorImpl_2, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$  
+		timeoutArg.setValue(0); // by default wait forever
+		arguments.put(timeoutArg.name(), timeoutArg);
+
 		return arguments;
 	}
-	
+
 	/**
 	 * @return Returns a short identifier for the connector.
-	 */	
+	 */
+	@Override
 	public String name() {
 		return "com.sun.jdi.SocketAttach"; //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * @return Returns a human-readable description of this connector and its purpose.
-	 */	
+	 * @return Returns a human-readable description of this connector and its
+	 *         purpose.
+	 */
+	@Override
 	public String description() {
-		return ConnectMessages.SocketAttachingConnectorImpl_Attaches_by_socket_to_other_VMs_5; 
+		return ConnectMessages.SocketAttachingConnectorImpl_Attaches_by_socket_to_other_VMs_5;
 	}
-	
- 	/**
- 	 * Retrieves connection arguments.
- 	 */
-	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
+
+	/**
+	 * Retrieves connection arguments.
+	 */
+	private void getConnectionArguments(Map connectionArgs)
+			throws IllegalConnectorArgumentsException {
 		String attribute = ""; //$NON-NLS-1$
 		try {
 			attribute = "hostname"; //$NON-NLS-1$
-		 	fHostname = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
-		 	attribute = "port"; //$NON-NLS-1$
-		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
-		 	attribute = "timeout"; //$NON-NLS-1$
-		 	Object object = connectionArgs.get(attribute);
-		 	if (object != null) {
-               Connector.IntegerArgument timeoutArg = (IntegerArgument) object;
-               if (timeoutArg.value() != null) {
-		 	    fTimeout = timeoutArg.intValue();
-               }
-		 	} 
+			fHostname = ((Connector.StringArgument) connectionArgs
+					.get(attribute)).value();
+			attribute = "port"; //$NON-NLS-1$
+			fPort = ((Connector.IntegerArgument) connectionArgs.get(attribute))
+					.intValue();
+			attribute = "timeout"; //$NON-NLS-1$
+			Object object = connectionArgs.get(attribute);
+			if (object != null) {
+				Connector.IntegerArgument timeoutArg = (IntegerArgument) object;
+				if (timeoutArg.value() != null) {
+					fTimeout = timeoutArg.intValue();
+				}
+			}
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_of_the_right_type_6, attribute); 
+			throw new IllegalConnectorArgumentsException(
+					ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_of_the_right_type_6,
+					attribute);
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Necessary_connection_argument_is_null_7, attribute); 
+			throw new IllegalConnectorArgumentsException(
+					ConnectMessages.SocketAttachingConnectorImpl_Necessary_connection_argument_is_null_7,
+					attribute);
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_a_number_8, attribute); 
+			throw new IllegalConnectorArgumentsException(
+					ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_a_number_8,
+					attribute);
 		}
 	}
-	
+
 	/**
 	 * Establishes a connection to a virtual machine.
+	 * 
 	 * @return Returns a connected Virtual Machine.
 	 */
-	public VirtualMachine attach(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
+	public VirtualMachine attach(Map connectionArgs) throws IOException,
+			IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		Connection connection = null;
 		try {
-			connection = ((SocketTransportImpl)fTransport).attach(fHostname, fPort, fTimeout, 0);
+			connection = ((SocketTransportImpl) fTransport).attach(fHostname,
+					fPort, fTimeout, 0);
 		} catch (IllegalArgumentException e) {
 			List args = new ArrayList();
 			args.add("hostname"); //$NON-NLS-1$

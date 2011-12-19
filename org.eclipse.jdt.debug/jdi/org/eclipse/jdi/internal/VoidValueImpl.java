@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.DataOutputStream;
 
 import org.eclipse.jdi.internal.jdwp.JdwpID;
@@ -19,10 +18,9 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VoidValue;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class VoidValueImpl extends ValueImpl implements VoidValue {
 	/** JDWP Tag. */
@@ -34,17 +32,19 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	public VoidValueImpl(VirtualMachineImpl vmImpl) {
 		super("VoidValue", vmImpl); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @returns tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
 	 * @returns type of value.
-   	 */
+	 */
+	@Override
 	public Type type() {
 		return new VoidTypeImpl(virtualMachineImpl());
 	}
@@ -53,21 +53,24 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	 * @return Returns true if two values are equal.
 	 * @see java.lang.Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		return object != null && object.getClass().equals(this.getClass());
 	}
-	
+
 	/**
 	 * @return Returns a has code for this object.
 	 * @see java.lang.Object#hashCode
 	 */
+	@Override
 	public int hashCode() {
 		return 0;
 	}
-	
+
 	/**
 	 * Writes value without value tag.
 	 */
+	@Override
 	public void write(MirrorImpl target, DataOutputStream out) {
 		// Nothing to write.
 	}
@@ -75,6 +78,7 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	/**
 	 * @return Returns description of Mirror object.
 	 */
+	@Override
 	public String toString() {
 		return "(void)"; //$NON-NLS-1$
 	}

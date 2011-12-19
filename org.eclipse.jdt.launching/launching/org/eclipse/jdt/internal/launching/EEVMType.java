@@ -114,6 +114,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
 	 */
+	@Override
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new EEVMInstall(this, id);
 	}

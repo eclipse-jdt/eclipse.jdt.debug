@@ -48,6 +48,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	 * (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(new BundleWizardPage1(fBundleDescription));
@@ -58,6 +59,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {		
 		try {
 			BundleBuilder bb= new BundleBuilder();

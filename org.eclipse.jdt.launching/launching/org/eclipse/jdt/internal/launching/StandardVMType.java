@@ -122,6 +122,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
 	 */
+	@Override
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new StandardVM(this, id);
 	}
@@ -634,6 +635,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#disposeVMInstall(java.lang.String)
 	 */
+	@Override
 	public void disposeVMInstall(String id) {
 		IVMInstall vm = findVMInstall(id);
 		if (vm != null) {
@@ -648,6 +650,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
+	@Override
 	public URL getDefaultJavadocLocation(File installLocation) {
 		File javaExecutable = findJavaExecutable(installLocation);
 		if (javaExecutable != null) {

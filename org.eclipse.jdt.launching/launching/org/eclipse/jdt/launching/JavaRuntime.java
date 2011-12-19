@@ -254,6 +254,7 @@ public final class JavaRuntime {
 	 * 
 	 * @deprecated - use <code>IProcess.ATTR_CMDLINE</code>
 	 */
+	@Deprecated
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 	
 	/**

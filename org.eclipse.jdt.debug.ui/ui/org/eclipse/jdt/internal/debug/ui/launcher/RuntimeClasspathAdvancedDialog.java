@@ -62,6 +62,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	/**
 	 * @see Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite inner= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -113,6 +114,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		fVariablesButton.setLayoutData(gd);
 		
 		fVariablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -124,6 +126,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		});
 		
 		fAddVariableStringButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fAddVariableStringButton.getSelection();
 				fVariableString.setEnabled(enabled);
@@ -139,6 +142,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	/**
 	 * @see Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		if (fAddVariableStringButton.getSelection()) {
 			String varString = fVariableString.getText().trim();
@@ -168,7 +172,8 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

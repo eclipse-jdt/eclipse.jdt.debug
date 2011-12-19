@@ -124,6 +124,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		return refs;
 	}
 			
+	@Override
 	public void run() {
 		if (fEditor == null) {
 			return;
@@ -146,6 +147,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	/**
 	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
 	 */
+	@Override
 	public void selectionChanged(ITextSelection selection) {
 		setEnabled(fEditor != null);
 	}

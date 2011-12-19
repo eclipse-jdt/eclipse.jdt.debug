@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 import com.sun.jdi.PrimitiveValue;
@@ -24,20 +23,22 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/**
 	 * Constructs a new primitive value.
 	 * 
-	 * @param target the Java debug target
-	 * @param value the underlying JDI primitive value
+	 * @param target
+	 *            the Java debug target
+	 * @param value
+	 *            the underlying JDI primitive value
 	 */
 	public JDIPrimitiveValue(JDIDebugTarget target, Value value) {
 		super(target, value);
 	}
-	
+
 	/**
 	 * Returns this value's underlying primtive value
 	 * 
 	 * @return underlying primtive value
 	 */
 	protected PrimitiveValue getUnderlyingPrimitiveValue() {
-		return (PrimitiveValue)getUnderlyingValue();
+		return (PrimitiveValue) getUnderlyingValue();
 	}
 
 	/*
@@ -97,4 +98,3 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	}
 
 }
-

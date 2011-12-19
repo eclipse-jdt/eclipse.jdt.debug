@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +24,12 @@ import org.eclipse.jdi.internal.jdwp.JdwpThreadGroupID;
 import com.sun.jdi.ThreadGroupReference;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements ThreadGroupReference {
+public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
+		ThreadGroupReference {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.THREAD_GROUP_TAG;
 	/**
@@ -39,25 +38,29 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	 */
 	private String fName;
 	/**
-	 * The cached parent of this thread group. Once set, this value cannot be changed
+	 * The cached parent of this thread group. Once set, this value cannot be
+	 * changed
 	 */
-	private ThreadGroupReference fParent= fgUnsetParent;
-	private static ThreadGroupReferenceImpl fgUnsetParent= new ThreadGroupReferenceImpl(null, null);
-	
+	private ThreadGroupReference fParent = fgUnsetParent;
+	private static ThreadGroupReferenceImpl fgUnsetParent = new ThreadGroupReferenceImpl(
+			null, null);
+
 	/**
 	 * Creates new ThreadGroupReferenceImpl.
 	 */
-	public ThreadGroupReferenceImpl(VirtualMachineImpl vmImpl, JdwpThreadGroupID threadGroupID) {
+	public ThreadGroupReferenceImpl(VirtualMachineImpl vmImpl,
+			JdwpThreadGroupID threadGroupID) {
 		super("ThreadGroupReference", vmImpl, threadGroupID); //$NON-NLS-1$
 	}
 
 	/**
 	 * @returns Value tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
 	 * @return Returns the name of this thread group.
 	 */
@@ -67,10 +70,11 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 		}
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_NAME, this);
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_NAME,
+					this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fName= readString("name", replyData); //$NON-NLS-1$
+			fName = readString("name", replyData); //$NON-NLS-1$
 			return fName;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -79,7 +83,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Returns the parent of this thread group., or null if there isn't.
 	 */
@@ -89,10 +93,11 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 		}
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_PARENT, this);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.TGR_PARENT, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fParent= ThreadGroupReferenceImpl.read(this, replyData);
+			fParent = ThreadGroupReferenceImpl.read(this, replyData);
 			return fParent;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -101,56 +106,60 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 			handledJdwpRequest();
 		}
 	}
-		
+
 	/**
 	 * Resumes all threads in this thread group (including subgroups).
 	 */
 	public void resume() {
-		Iterator iter = allThreads().iterator();
+		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
 		while (iter.hasNext()) {
-			ThreadReferenceImpl thr = (ThreadReferenceImpl)iter.next();
+			ThreadReferenceImpl thr = iter.next();
 			thr.resume();
 		}
 	}
-	
+
 	/**
 	 * Suspends all threads in this thread group (including subgroups).
 	 */
-	public void suspend()  {
-		Iterator iter = allThreads().iterator();
+	public void suspend() {
+		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
 		while (iter.hasNext()) {
-			ThreadReferenceImpl thr = (ThreadReferenceImpl)iter.next();
+			ThreadReferenceImpl thr = iter.next();
 			thr.suspend();
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Inner class used to return children info.
 	 */
 	private class ChildrenInfo {
-		List childThreads;
-		List childThreadGroups;
+		List<ThreadReferenceImpl> childThreads;
+		List<ThreadGroupReferenceImpl> childThreadGroups;
 	}
-		
+
 	/**
-	 * @return Returns a List containing each ThreadReference in this thread group. 
+	 * @return Returns a List containing each ThreadReference in this thread
+	 *         group.
 	 */
 	public ChildrenInfo childrenInfo() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_CHILDREN, this);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.TGR_CHILDREN, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			ChildrenInfo result = new ChildrenInfo();
 			int nrThreads = readInt("nr threads", replyData); //$NON-NLS-1$
-			result.childThreads = new ArrayList(nrThreads);
+			result.childThreads = new ArrayList<ThreadReferenceImpl>(nrThreads);
 			for (int i = 0; i < nrThreads; i++)
-				result.childThreads.add(ThreadReferenceImpl.read(this, replyData));
+				result.childThreads.add(ThreadReferenceImpl.read(this,
+						replyData));
 			int nrThreadGroups = readInt("nr thread groups", replyData); //$NON-NLS-1$
-			result.childThreadGroups = new ArrayList(nrThreadGroups);
+			result.childThreadGroups = new ArrayList<ThreadGroupReferenceImpl>(nrThreadGroups);
 			for (int i = 0; i < nrThreadGroups; i++)
-				result.childThreadGroups.add(ThreadGroupReferenceImpl.read(this, replyData));
+				result.childThreadGroups.add(ThreadGroupReferenceImpl.read(
+						this, replyData));
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -161,37 +170,41 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	}
 
 	/**
-	 * @return Returns a List containing each ThreadGroupReference in this thread group. 
+	 * @return Returns a List containing each ThreadGroupReference in this
+	 *         thread group.
 	 */
-	public List threadGroups() {
+	public List<ThreadGroupReferenceImpl> threadGroups() {
 		return childrenInfo().childThreadGroups;
 	}
-	
+
 	/**
-	 * @return Returns a List containing each ThreadReference in this thread group. 
+	 * @return Returns a List containing each ThreadReference in this thread
+	 *         group.
 	 */
-	public List threads() {
+	public List<ThreadReferenceImpl> threads() {
 		return childrenInfo().childThreads;
 	}
-		
+
 	/**
-	 * @return Returns a List containing each ThreadGroupReference in this thread group and all of
-	 * its subgroups.
+	 * @return Returns a List containing each ThreadGroupReference in this
+	 *         thread group and all of its subgroups.
 	 */
-	private List allThreads() {
+	private List<ThreadReferenceImpl> allThreads() {
 		ChildrenInfo info = childrenInfo();
-		List result = info.childThreads;
-		Iterator iter = info.childThreadGroups.iterator();
+		List<ThreadReferenceImpl> result = info.childThreads;
+		Iterator<ThreadGroupReferenceImpl> iter = info.childThreadGroups.iterator();
 		while (iter.hasNext()) {
-			ThreadGroupReferenceImpl tg = (ThreadGroupReferenceImpl)iter.next();
+			ThreadGroupReferenceImpl tg = iter
+					.next();
 			result.addAll(tg.allThreads());
 		}
 		return result;
 	}
-	
+
 	/**
 	 * @return Returns description of Mirror object.
 	 */
+	@Override
 	public String toString() {
 		try {
 			return name();
@@ -203,7 +216,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	public static ThreadGroupReferenceImpl read(MirrorImpl target, DataInputStream in)  throws IOException {
+	public static ThreadGroupReferenceImpl read(MirrorImpl target,
+			DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpThreadGroupID ID = new JdwpThreadGroupID(vmImpl);
 		ID.read(in);
@@ -212,8 +226,9 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 
 		if (ID.isNull())
 			return null;
-			
-		ThreadGroupReferenceImpl mirror = (ThreadGroupReferenceImpl)vmImpl.getCachedMirror(ID);
+
+		ThreadGroupReferenceImpl mirror = (ThreadGroupReferenceImpl) vmImpl
+				.getCachedMirror(ID);
 		if (mirror == null) {
 			mirror = new ThreadGroupReferenceImpl(vmImpl, ID);
 			vmImpl.addCachedMirror(mirror);

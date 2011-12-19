@@ -59,6 +59,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setText(DebugUIMessages.HotCodeReplaceErrorDialog_0); 
@@ -80,6 +81,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite, int, java.lang.String, boolean)
 	 * @since 3.6
 	 */
+	@Override
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		Button button= super.createButton(parent, id, label, defaultButton);
 		blockMnemonicWithoutModifier(button);
@@ -105,6 +107,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(final int id) {
 		if (id == TERMINATE_ID || id == DISCONNECT_ID || id == RESTART_ID) {
 			final DebugException[] ex = new DebugException[1];

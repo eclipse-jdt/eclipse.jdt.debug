@@ -146,6 +146,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fJavaLabelProvider != null) {
@@ -204,6 +205,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
+	@Override
 	public String getText(Object item) {
 		try {
 			boolean showQualified= isShowQualifiedNames();
@@ -665,6 +667,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * 
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object item) {
 		
 		initImageRegistries();

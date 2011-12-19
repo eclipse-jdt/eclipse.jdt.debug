@@ -54,6 +54,7 @@ import com.ibm.icu.text.MessageFormat;
  *  <code>org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class DirectorySourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
@@ -135,6 +136,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {		
 		return object instanceof DirectorySourceLocation &&
 			 getDirectory().equals(((DirectorySourceLocation)object).getDirectory());
@@ -143,6 +145,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}	

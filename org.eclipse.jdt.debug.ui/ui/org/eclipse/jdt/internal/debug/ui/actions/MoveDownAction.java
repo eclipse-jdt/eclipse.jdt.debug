@@ -27,6 +27,7 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		List targets = getOrderedSelection();
 		if (targets.isEmpty()) {
@@ -56,6 +57,7 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
@@ -66,6 +68,7 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
 	 */
+	@Override
 	protected int getActionType() {
 		return MOVE;
 	}

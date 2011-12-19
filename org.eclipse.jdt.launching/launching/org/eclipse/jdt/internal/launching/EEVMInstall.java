@@ -59,6 +59,7 @@ public class EEVMInstall extends StandardVM {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVM#getJavaVersion()
 	 */
+	@Override
 	public String getJavaVersion() {
     	return getAttribute(ATTR_JAVA_VERSION);
 	}
@@ -66,6 +67,7 @@ public class EEVMInstall extends StandardVM {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVM#getJavaExecutable()
 	 */
+	@Override
 	File getJavaExecutable() {
 		String exe = getAttribute(ATTR_JAVA_EXE);
 		if (exe != null) {
@@ -77,6 +79,7 @@ public class EEVMInstall extends StandardVM {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVM#getDebugArgs()
 	 */
+	@Override
 	public String getDebugArgs() {
 		return getAttribute(ATTR_DEBUG_ARGS);
 	}

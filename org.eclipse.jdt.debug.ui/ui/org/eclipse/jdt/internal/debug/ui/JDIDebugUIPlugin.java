@@ -245,6 +245,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return JavaDebugImages.getImageRegistry();
 	}	
@@ -354,6 +355,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		IAdapterManager manager= Platform.getAdapterManager();
@@ -419,6 +421,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			setShuttingDown(true);
@@ -629,6 +632,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param page pref page
 	 * @deprecated use <code>JDIDebugUIPlugin#showPreferencePage(String pageId)</code>, which uses the <code>PreferenceUtils</code> framework for opening pages.
 	 */
+	@Deprecated
 	public static void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
 		

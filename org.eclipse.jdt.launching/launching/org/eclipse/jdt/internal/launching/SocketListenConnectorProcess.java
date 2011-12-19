@@ -98,9 +98,11 @@ public class SocketListenConnectorProcess implements IProcess {
 		fWaitForConnectionJob = new WaitForConnectionJob(this,connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);
 		fWaitForConnectionJob.addJobChangeListener(new JobChangeAdapter(){
+			@Override
 			public void running(IJobChangeEvent event) {
 				fireReadyToAcceptEvent();
 			}
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getResult().equals(Status.CANCEL_STATUS)){
 					try{
@@ -247,6 +249,7 @@ public class SocketListenConnectorProcess implements IProcess {
 			fArguments = arguments;
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try{
 				// The following code sets a timeout (not officially supported in Sun's spec).
@@ -302,6 +305,7 @@ public class SocketListenConnectorProcess implements IProcess {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 		 */
+		@Override
 		protected void canceling() {
 			stopListening();
 		}

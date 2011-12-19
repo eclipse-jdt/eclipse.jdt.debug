@@ -30,8 +30,9 @@ public class ThrowInstruction extends CompoundInstruction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		IJavaObject exception= (IJavaObject)popValue();
+		IJavaObject exception = (IJavaObject) popValue();
 		final IJavaThread javaThread = getContext().getThread();
 		javaThread.stop(exception);
 		javaThread.queueRunnable(new Runnable() {

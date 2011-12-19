@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID
  * declared by the JDWP specification.
- *
+ * 
  */
 public class JdwpClassObjectID extends JdwpObjectID {
 	/**

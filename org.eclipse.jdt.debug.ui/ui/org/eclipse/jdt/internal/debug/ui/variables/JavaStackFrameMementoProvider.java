@@ -27,6 +27,7 @@ public class JavaStackFrameMementoProvider extends DebugElementMementoProvider i
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#getElementName(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IJavaStackFrame) {
 			StringBuffer buf = new StringBuffer();

@@ -82,7 +82,7 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         manager.addConsoles(new IConsole[] { console });
         
-        final IOConsoleOutputStream out = console.newOutputStream(); //$NON-NLS-1$
+        final IOConsoleOutputStream out = console.newOutputStream(); 
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));     

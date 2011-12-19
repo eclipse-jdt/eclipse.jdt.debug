@@ -222,6 +222,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	 */
 	public void detailComputed(IValue value, final String result){
 		WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				fText.setDocument(new Document(result));
 				return Status.OK_STATUS;

@@ -23,6 +23,7 @@ import org.eclipse.jdt.launching.StandardSourcePathProvider;
  */
 public class ScrapbookSourcepathProvider extends StandardSourcePathProvider {
 
+	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 		IRuntimeClasspathEntry[] entries = null;

@@ -31,6 +31,7 @@ public class AppletArgumentsTab extends JavaArgumentsTab {
 	/**
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab#createWorkingDirBlock()
 	 */
+	@Override
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
 		return new AppletWorkingDirectoryBlock();
 	}
@@ -38,6 +39,7 @@ public class AppletArgumentsTab extends JavaArgumentsTab {
 	/**
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab#setHelpContextId()
 	 */
+	@Override
 	protected void setHelpContextId() {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB);		
 	}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.spy;
 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -20,9 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
- * declared by the JDWP specification.
- *
+ * This class implements the corresponding Java Debug Wire Protocol (JDWP)
+ * packet declared by the JDWP specification.
+ * 
  */
 public class JdwpReplyPacket extends JdwpPacket {
 	/** Error code constants. */
@@ -82,27 +81,28 @@ public class JdwpReplyPacket extends JdwpPacket {
 	public static final short TRANSPORT_INIT = 510;
 	public static final short NATIVE_METHOD = 511;
 	public static final short INVALID_COUNT = 512;
-	public static final short HCR_OPERATION_REFUSED = 900;	// HCR specific.
-	
+	public static final short HCR_OPERATION_REFUSED = 900; // HCR specific.
+
 	/** Mapping of error codes to strings. */
-	private static HashMap fErrorMap = null;
+	private static HashMap<Integer, String> fErrorMap = null;
 
 	/** JDWP Error code. */
 	private short fErrorCode;
+
 	/**
 	 * Creates new JdwpReplyPacket.
 	 */
 	public JdwpReplyPacket() {
 		setFlags(FLAG_REPLY_PACKET);
 	}
-	
+
 	/**
 	 * @return Returns JDWP Error code.
 	 */
 	public short errorCode() {
 		return fErrorCode;
 	}
-	
+
 	/**
 	 * Assigns JDWP Error code.
 	 */
@@ -113,14 +113,18 @@ public class JdwpReplyPacket extends JdwpPacket {
 	/**
 	 * Reads header fields that are specific for this type of packet.
 	 */
-	protected void readSpecificHeaderFields(DataInputStream dataInStream) throws IOException {
+	@Override
+	protected void readSpecificHeaderFields(DataInputStream dataInStream)
+			throws IOException {
 		fErrorCode = dataInStream.readShort();
 	}
 
 	/**
 	 * Writes header fields that are specific for this type of packet.
 	 */
-	protected void writeSpecificHeaderFields(DataOutputStream dataOutStream) throws IOException {
+	@Override
+	protected void writeSpecificHeaderFields(DataOutputStream dataOutStream)
+			throws IOException {
 		dataOutStream.writeShort(fErrorCode);
 	}
 
@@ -131,14 +135,15 @@ public class JdwpReplyPacket extends JdwpPacket {
 		if (fErrorMap != null) {
 			return;
 		}
-		
+
 		Field[] fields = JdwpReplyPacket.class.getDeclaredFields();
-		fErrorMap = new HashMap(fields.length);
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
+		fErrorMap = new HashMap<Integer, String>(fields.length);
+		for (Field field : fields) {
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0
+					|| (field.getModifiers() & Modifier.STATIC) == 0
+					|| (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
-				
+
 			try {
 				Integer intValue = new Integer(field.getInt(null));
 				fErrorMap.put(intValue, field.getName());
@@ -155,7 +160,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 	/**
 	 * @return Returns a map with string representations of error codes.
 	 */
-	public static Map errorMap() {
+	public static Map<Integer, String> errorMap() {
 		getConstantMaps();
 		return fErrorMap;
 	}

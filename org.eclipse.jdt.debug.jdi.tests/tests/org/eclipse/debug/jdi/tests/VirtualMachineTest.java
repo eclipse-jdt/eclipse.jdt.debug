@@ -48,6 +48,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 	}
 	/**
@@ -61,12 +62,14 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.VirtualMachine";
 	}
 	/**
 	 * Don't start the program yet, so that the testNotStarted* tests can run before.
 	 */
+	@Override
 	protected void setUp() {
 		launchTargetAndConnectToVM();
 	}
@@ -75,12 +78,14 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * NB: This method is copied in this class only so that it can be invoked
 	 *     dynamically.
 	 */
+	@Override
 	public void startProgram() {
 		super.startProgram();
 	}
 	/**
 	 * Returns all tests 
 	 */
+	@Override
 	protected Test suite() {
 		JDITestSuite suite = new JDITestSuite(this);
 

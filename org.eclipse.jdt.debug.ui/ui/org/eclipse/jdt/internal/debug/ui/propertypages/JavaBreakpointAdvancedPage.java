@@ -34,6 +34,7 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 	/**
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		doStore();
 		return super.performOk();
@@ -52,6 +53,7 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Composite mainComposite = new Composite(parent, SWT.NONE);
@@ -96,6 +98,7 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_BREAKPOINT_ADVANCED_PROPERTY_PAGE);

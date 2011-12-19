@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class WatchAction extends InspectAction {
 		
+	@Override
 	public void run() {
 		Object selectedObject= getSelectedObject();
 		if (selectedObject instanceof IStructuredSelection) {

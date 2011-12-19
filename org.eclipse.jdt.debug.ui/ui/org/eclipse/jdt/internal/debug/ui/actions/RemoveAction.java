@@ -29,6 +29,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		List targets = getOrderedSelection();
 		List list = getEntriesAsList();
@@ -39,6 +40,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
@@ -46,6 +48,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 		return getViewer().updateSelection(getActionType(), selection);
 	}
 	
+	@Override
 	protected int getActionType() {
 		return REMOVE;
 	}

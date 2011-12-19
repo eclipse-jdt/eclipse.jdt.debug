@@ -24,6 +24,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 	ReferenceType fClass;
 	
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {}
 	
 	/**

@@ -63,10 +63,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			super(name, labelText, parent);
 		}
 
+		@Override
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
 
+		@Override
 		protected void clearErrorMessage() {
 			if (canClearErrorMessage()) {
 				super.clearErrorMessage();
@@ -102,6 +104,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
@@ -110,6 +113,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		//The main composite
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, GridData.FILL);
@@ -177,6 +181,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		Preferences coreStore = JDIDebugModel.getPreferences();
@@ -209,6 +214,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		Preferences coreStore= JDIDebugModel.getPreferences();

@@ -34,6 +34,7 @@ public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IPackageFragment && getArguments().getDestination() instanceof IPackageFragmentRoot;
 	}
@@ -41,6 +42,7 @@ public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List)
 	 */
+	@Override
 	protected void gatherChanges(IMarker[] markers, List changes) throws CoreException, OperationCanceledException {
 		IPackageFragmentRoot destRoot = (IPackageFragmentRoot)getDestination();
 		for (int i = 0; i < markers.length; i++) {

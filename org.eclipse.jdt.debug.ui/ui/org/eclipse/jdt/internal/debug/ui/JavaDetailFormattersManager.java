@@ -526,6 +526,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fDebugTarget= debugTarget;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Key) {
 				Key key= (Key) obj;
@@ -534,6 +535,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			return false;
 		}
 		
+		@Override
 		public int hashCode() {
 			return fTypeName.hashCode() / 2 + fDebugTarget.hashCode() / 2;
 		}

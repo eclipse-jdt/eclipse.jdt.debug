@@ -76,6 +76,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		final ScrollPain scomp = new ScrollPain(parent);
@@ -159,6 +160,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.VMCAPABILITIES_PROPERTY_PAGE);
@@ -211,6 +213,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private ExpandableComposite createExpandibleComposite(Composite parent, int style, String label, int hspan, int fill) {
 		ExpandableComposite ex = SWTFactory.createExpandibleComposite(parent, style, label, hspan, fill);
 		ex.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ScrollPain sp = getParentScrollPane((ExpandableComposite) e.getSource());
 				if(sp != null) {
@@ -224,6 +227,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#doGetPreferenceStore()
 	 */
+	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -260,6 +264,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean ok = super.performOk();
 		persistExpansionState();

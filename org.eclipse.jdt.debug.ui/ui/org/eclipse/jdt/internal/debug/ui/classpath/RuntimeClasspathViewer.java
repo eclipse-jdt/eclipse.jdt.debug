@@ -59,6 +59,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		getTree().setLayoutData(data);
 		
 		getTree().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (updateSelection(RuntimeClasspathAction.REMOVE, (IStructuredSelection)getSelection()) && event.character == SWT.DEL && event.stateMask == 0) {
 					List selection= getSelectionFromWidget();

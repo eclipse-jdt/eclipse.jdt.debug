@@ -29,6 +29,7 @@ public class FieldTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get static field "fObject"
 		fField = getField();
@@ -44,6 +45,7 @@ public class FieldTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Field";
 	}

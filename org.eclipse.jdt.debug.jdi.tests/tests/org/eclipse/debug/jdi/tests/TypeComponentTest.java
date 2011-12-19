@@ -28,6 +28,7 @@ public class TypeComponentTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get field fObject in org.eclipse.debug.jdi.tests.program.MainClass
 		fField = getField();
@@ -46,6 +47,7 @@ public class TypeComponentTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.TypeComponent";
 	}

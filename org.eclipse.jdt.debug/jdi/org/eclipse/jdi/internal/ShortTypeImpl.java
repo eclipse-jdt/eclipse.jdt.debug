@@ -10,35 +10,35 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import com.sun.jdi.ShortType;
 import com.sun.jdi.Value;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class ShortTypeImpl extends PrimitiveTypeImpl implements ShortType {
 	/**
 	 * Creates new instance.
 	 */
 	public ShortTypeImpl(VirtualMachineImpl vmImpl) {
-		super("ShortType", vmImpl, "short" , "S"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super("ShortType", vmImpl, "short", "S"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	/**
 	 * @returns primitive type tag.
 	 */
+	@Override
 	public byte tag() {
 		return ShortValueImpl.tag;
 	}
-	
+
 	/**
 	 * @return Create a null value instance of the type.
 	 */
+	@Override
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((short)0);
+		return virtualMachineImpl().mirrorOf((short) 0);
 	}
 }

@@ -123,6 +123,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
@@ -180,6 +181,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		fWorkingDirBlock.setDefaults(fWorkingCopy);
@@ -193,6 +195,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return fWorkingDirBlock.isValid(fConfig);
 	}
@@ -200,6 +203,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		String message = fWorkingDirBlock.getErrorMessage();
 		if (message == null) {
@@ -211,6 +215,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		String message = fWorkingDirBlock.getMessage();
 		if (message == null) {
@@ -222,6 +227,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fWorkingDirBlock.performApply(fWorkingCopy);
 		fJRETab.performApply(fWorkingCopy);

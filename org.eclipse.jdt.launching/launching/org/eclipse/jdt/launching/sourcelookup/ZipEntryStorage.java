@@ -27,6 +27,7 @@ import java.util.zip.ZipFile;
  *  <code>org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class ZipEntryStorage extends org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage {
 		
 	/**

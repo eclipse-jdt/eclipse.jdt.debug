@@ -53,6 +53,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		// TODO: Help must be updated
@@ -62,6 +63,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
@@ -111,6 +113,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean result = super.performOk();
 		if (result){
@@ -169,6 +172,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		HeapWalkingManager.getDefault().resetToDefaultSettings();
 		fAllReferencesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount()));
@@ -179,6 +183,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		fErrorMessages.clear();

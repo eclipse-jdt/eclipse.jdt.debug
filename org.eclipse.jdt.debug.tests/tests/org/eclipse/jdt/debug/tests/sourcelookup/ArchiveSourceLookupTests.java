@@ -21,6 +21,7 @@ import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
 /**
  * Tests source lookup in archives
  */
+@SuppressWarnings("deprecation")
 public class ArchiveSourceLookupTests extends AbstractDebugTest {
 	
 	public ArchiveSourceLookupTests(String name) {

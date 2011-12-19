@@ -35,6 +35,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
+	@Override
 	public void addPropertyListener(IPropertyListener listener) {
 		for (int i = 0; i < fEditors.length; i++) {
 			fEditors[i].addPropertyListener(listener);
@@ -44,6 +45,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#removePropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
+	@Override
 	public void removePropertyListener(IPropertyListener listener) {
 		for (int i = 0; i < fEditors.length; i++) {
 			fEditors[i].removePropertyListener(listener);
@@ -53,6 +55,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#dispose()
 	 */
+	@Override
 	protected void dispose() {
 		for (int i = 0; i < fEditors.length; i++) {
 			fEditors[i].dispose();
@@ -63,6 +66,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 		for (int i = 0; i < fEditors.length; i++) {
@@ -74,6 +78,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fEditors[0].setFocus();
 	}
@@ -81,6 +86,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#doSave()
 	 */
+	@Override
 	public void doSave() throws CoreException {
 		for (int i = 0; i < fEditors.length; i++) {
 			fEditors[i].doSave();
@@ -90,6 +96,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		for (int i = 0; i < fEditors.length; i++) {
 			if (fEditors[i].isDirty()) {
@@ -102,6 +109,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#getStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		for (int i = 0; i < fEditors.length; i++) {
 			IStatus status = fEditors[i].getStatus();
@@ -115,6 +123,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#getInput()
 	 */
+	@Override
 	public Object getInput() {
 		return fEditors[0].getInput();
 	}
@@ -122,6 +131,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setInput(java.lang.Object)
 	 */
+	@Override
 	public void setInput(Object breakpoint) throws CoreException {
 		for (int i = 0; i < fEditors.length; i++) {
 			fEditors[i].setInput(breakpoint);
@@ -131,6 +141,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setMnemonics(boolean)
 	 */
+	@Override
 	public void setMnemonics(boolean mnemonics) {
 		super.setMnemonics(mnemonics);
 		for (int i = 0; i < fEditors.length; i++) {

@@ -38,6 +38,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IJavaProject;
 	}
@@ -45,6 +46,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
+	@Override
 	protected void gatherChanges(IMarker[] markers, List changes, String destProjectName) throws CoreException, OperationCanceledException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destProjectName);
 		IJavaProject destProject = JavaCore.create(project);

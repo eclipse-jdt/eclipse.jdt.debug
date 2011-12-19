@@ -38,6 +38,7 @@ public class LineBreakpointDetailPane extends AbstractDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractDetailPane#createEditor(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected AbstractJavaBreakpointEditor createEditor(Composite parent) {
 		return new CompositeBreakpointEditor(
 			new AbstractJavaBreakpointEditor[] {new StandardJavaBreakpointEditor(), new JavaBreakpointConditionEditor(null)});

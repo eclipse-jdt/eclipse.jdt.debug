@@ -38,6 +38,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		
 		if (fStopAction == null) {
@@ -52,6 +53,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void contributeToMenu(IMenuManager menu) {
 		if (fOpenOnSelectionAction == null) {
 			return;
@@ -69,6 +71,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		
 		super.setActiveEditor(part);

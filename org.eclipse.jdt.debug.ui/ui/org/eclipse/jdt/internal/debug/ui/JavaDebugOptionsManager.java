@@ -146,6 +146,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			super(DebugUIMessages.JavaDebugOptionsManager_0); 
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Java debug options failed to initialize", null);  //$NON-NLS-1$
 			// compilation error breakpoint 

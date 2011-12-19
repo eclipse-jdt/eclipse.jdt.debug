@@ -12,12 +12,14 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public class RightShiftAssignmentOperator extends RightShiftOperator {
 
-	public RightShiftAssignmentOperator(int variableTypeId, int valueTypeId, int start) {
+	public RightShiftAssignmentOperator(int variableTypeId, int valueTypeId,
+			int start) {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.RightShiftAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.RightShiftAssignmentOperator_operator_1;
 	}
 
 }

@@ -150,6 +150,7 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
@@ -167,6 +168,7 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();

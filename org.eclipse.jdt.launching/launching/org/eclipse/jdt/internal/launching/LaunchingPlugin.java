@@ -361,6 +361,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				fChanges.doit(monitor);
@@ -489,6 +490,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * 
 	 * @see Plugin#stop(BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
@@ -508,6 +510,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.launching/debug"));  //$NON-NLS-1$//$NON-NLS-2$

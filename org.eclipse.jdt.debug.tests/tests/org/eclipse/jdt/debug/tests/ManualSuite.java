@@ -59,6 +59,7 @@ public class ManualSuite extends TestSuite {
 	 * waiter blocks the UI when a resource changes.
 	 * @see junit.framework.TestSuite#run(junit.framework.TestResult)
 	 */
+	@Override
 	public void run(final TestResult result) {
 		final Display display = Display.getCurrent();
 		Thread thread = null;

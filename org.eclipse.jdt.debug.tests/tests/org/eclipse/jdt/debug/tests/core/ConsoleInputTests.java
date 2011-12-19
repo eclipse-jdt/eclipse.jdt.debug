@@ -48,7 +48,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		super(name);
 	}
 	
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;

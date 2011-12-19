@@ -58,6 +58,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *  <code>org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer</code>. 
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class JavaProjectSourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
@@ -141,6 +142,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {		
 		return object instanceof JavaProjectSourceLocation &&
 			 getJavaProject().equals(((JavaProjectSourceLocation)object).getJavaProject());
@@ -149,6 +151,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}

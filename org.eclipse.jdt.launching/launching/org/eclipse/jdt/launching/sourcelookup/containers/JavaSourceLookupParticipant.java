@@ -63,6 +63,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#dispose()
 	 */
+	@Override
 	public void dispose() {
 		Iterator iterator = fDelegateContainers.values().iterator();
 		while (iterator.hasNext()) {
@@ -77,6 +78,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupParticipant#getDelegateContainer(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	protected ISourceContainer getDelegateContainer(ISourceContainer container) {
 		ISourceContainer delegate = (ISourceContainer) fDelegateContainers.get(container);
 		if (delegate == null) {
@@ -87,6 +89,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
 		fDelegateContainers = new HashMap();
@@ -94,6 +97,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 		// use package fragment roots in place of local archives, where they exist
 		fDelegateContainers.clear();

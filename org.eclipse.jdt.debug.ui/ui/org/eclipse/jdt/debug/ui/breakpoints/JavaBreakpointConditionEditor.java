@@ -197,6 +197,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void addPropertyListener(IPropertyListener listener) {
 		super.addPropertyListener(listener);
 	}
@@ -206,6 +207,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void removePropertyListener(IPropertyListener listener) {
 		super.removePropertyListener(listener);
 	}
@@ -216,6 +218,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param input breakpoint or <code>null</code>
 	 * @throws CoreException if unable to access breakpoint attributes
 	 */
+	@Override
 	public void setInput(Object input) throws CoreException {
 		try {
 			boolean sameBreakpoint= fBreakpoint == input;
@@ -296,6 +299,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
 		document.set((condition == null ? "" : condition)); //$NON-NLS-1$
 		fViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 					return fCompletionProcessor;
 			}
@@ -325,6 +329,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param parent composite to embed the editor controls in
 	 * @return top level control
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = SWTFactory.createCheckButton(controls, 
@@ -334,6 +339,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				1);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		fConditional.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean checked = fConditional.getSelection();
 				setEnabled(checked, true);
@@ -346,11 +352,13 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fWhenChange = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_2));
 		fWhenChange.setLayoutData(new GridData());
 		fWhenTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
 		});
 		fWhenChange.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
@@ -361,6 +369,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			fConditionHistory= SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			initializeConditionHistoryDropDown();
 			fConditionHistory.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int historyIndex= fConditionHistory.getSelectionIndex() - 1;
 					if (historyIndex >= 0 && historyIndex != fSeparatorIndex)
@@ -409,9 +418,11 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		};
 		fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		fViewer.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				activateHandlers();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				deactivateHandlers();
 			}				
@@ -428,6 +439,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Disposes this editor and its controls. Once disposed, the editor can no
 	 * longer be used.
 	 */
+	@Override
 	protected void dispose() {
 		super.dispose();
 		deactivateHandlers();
@@ -440,6 +452,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	/**
 	 * Gives focus to an appropriate control in the editor.
 	 */
+	@Override
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
@@ -451,6 +464,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @exception CoreException if unable to update the breakpoint.
 	 */
+	@Override
 	public void doSave() throws CoreException {
 		if (fBreakpoint != null && isDirty()) {
 			fBreakpoint.setCondition(fViewer.getDocument().get().trim());
@@ -469,6 +483,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @return editor status.
 	 */
+	@Override
 	public IStatus getStatus() {
 		if (fBreakpoint != null && fBreakpoint.supportsCondition()) {
 			if (fConditional.getSelection()) {
@@ -485,6 +500,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 *  
 	 * @return whether the editor needs saving
 	 */
+	@Override
 	public boolean isDirty() {
 		return super.isDirty();
 	}
@@ -496,6 +512,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param mnemonics whether to display mnemonics
 	 */
+	@Override
 	public void setMnemonics(boolean mnemonics) {
 		super.setMnemonics(mnemonics);
 	}
@@ -572,6 +589,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @return breakpoint or <code>null</code>
 	 */
+	@Override
 	public Object getInput() {
 		return fBreakpoint;
 	}

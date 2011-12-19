@@ -165,6 +165,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	}
 	
 	public class AttributesLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((String[])element)[0];
 		}
@@ -210,6 +211,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getHelpSystem().setHelp(
@@ -308,6 +310,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		tools.setupJavaDocumentPartitioner(fSnippetDocument, IJavaPartitions.JAVA_PARTITIONING);
 		if (fViewerConfiguration == null) {
 			fViewerConfiguration= new DisplayViewerConfiguration() {
+				@Override
 				public IContentAssistProcessor getContentAssistantProcessor() {
 					return new JavaDebugContentAssistProcessor(new DynamicTypeContext(EditLogicalStructureDialog.this));
 				}
@@ -648,6 +651,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		// save the new data in the logical structure
 		fLogicalStructure.setType(fQualifiedTypeNameText.getText().trim());
@@ -683,10 +687,12 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
+			@Override
 			public void endReporting() {
 				checkValues();
 			}
 
+			@Override
 			public void acceptSearchMatch(SearchMatch match) throws CoreException {
 				Object enclosingElement = match.getElement();
 				if (!fFirst) {
@@ -726,6 +732,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
+	@Override
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);

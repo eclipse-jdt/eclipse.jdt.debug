@@ -51,6 +51,7 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fFont != null) {
 			fFont.dispose();
@@ -63,6 +64,7 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.JREsLabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		String label = super.getText(element);
 		if (isStrictlyCompatible(element)) {

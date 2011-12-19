@@ -64,6 +64,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
+	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		memento.setAttribute("project", getJavaProject().getElementName()); //$NON-NLS-1$
 		memento.setAttribute("exportedEntriesOnly", Boolean.toString(fExportedEntriesOnly)); //$NON-NLS-1$
@@ -106,6 +107,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return getProject().getLocation().toOSString();
 	}
@@ -113,6 +115,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return getProject().getFullPath();
 	}
@@ -120,6 +123,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return getProject();
 	}
@@ -311,6 +315,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
@@ -326,6 +331,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DefaultProjectClasspathEntry) {
 			DefaultProjectClasspathEntry entry = (DefaultProjectClasspathEntry) obj;
@@ -337,6 +343,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}

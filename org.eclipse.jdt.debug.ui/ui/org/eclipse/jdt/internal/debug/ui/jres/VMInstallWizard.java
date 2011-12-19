@@ -71,6 +71,7 @@ public abstract class VMInstallWizard extends Wizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return getResult() != null;
 	}

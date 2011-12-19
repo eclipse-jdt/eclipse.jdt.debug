@@ -155,6 +155,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
@@ -233,6 +234,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		IDocument document= new Document();
 		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fSnippetViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 				return new JavaDebugContentAssistProcessor(new DynamicTypeContext(DetailFormatterDialog.this));
 			}
@@ -281,6 +283,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fDetailFormatter.setEnabled(fCheckBox.getSelection());
 		fDetailFormatter.setTypeName(fTypeNameText.getText().trim());
@@ -337,10 +340,12 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
+			@Override
 			public void endReporting() {
 				checkValues();
 			}
 
+			@Override
 			public void acceptSearchMatch(SearchMatch match) throws CoreException {
 				Object enclosingElement = match.getElement();
 				if (!fFirst) {
@@ -380,6 +385,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);

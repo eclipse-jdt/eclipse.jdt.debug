@@ -68,6 +68,7 @@ import com.ibm.icu.text.MessageFormat;
  * @noextend This class is not intended to be subclassed by clients.
  */
 
+@Deprecated
 public class JavaUISourceLocator implements IPersistableSourceLocator {
 
 	/**

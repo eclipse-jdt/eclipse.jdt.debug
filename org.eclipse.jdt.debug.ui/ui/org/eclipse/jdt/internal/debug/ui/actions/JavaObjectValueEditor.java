@@ -109,6 +109,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
      */
     protected void setValue(final IVariable variable, final String expression){
         UIJob job = new UIJob("Setting Variable Value"){ //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
 					IValue newValue = evaluate(expression);

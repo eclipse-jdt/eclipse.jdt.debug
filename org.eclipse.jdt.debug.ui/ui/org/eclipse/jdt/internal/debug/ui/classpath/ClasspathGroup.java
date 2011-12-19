@@ -46,6 +46,7 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 		return childEntries.contains(entry);
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -49,6 +49,7 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IJavaElement && accepts((IJavaElement)element)) {
 			fElement = (IJavaElement) element;
@@ -78,6 +79,7 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
+	@Override
 	public String getName() {
 		return RefactoringMessages.BreakpointRenameParticipant_0;
 	}
@@ -85,6 +87,7 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
@@ -92,6 +95,7 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		List changes = new ArrayList();
 		IResource resource = getBreakpointContainer();

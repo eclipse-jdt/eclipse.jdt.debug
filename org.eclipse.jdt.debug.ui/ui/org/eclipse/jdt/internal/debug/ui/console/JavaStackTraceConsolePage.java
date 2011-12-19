@@ -27,6 +27,7 @@ public class JavaStackTraceConsolePage extends TextConsolePage {
 		super(console, view);
 	}
 
+	@Override
 	protected void createActions() {
 		super.createActions();
 		
@@ -36,6 +37,7 @@ public class JavaStackTraceConsolePage extends TextConsolePage {
 		toolBarManager.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fAutoFormat);
 	}
 
+	@Override
 	protected TextConsoleViewer createViewer(Composite parent) {
 		return new JavaStackTraceConsoleViewer(parent, (JavaStackTraceConsole) getConsole());
 	}

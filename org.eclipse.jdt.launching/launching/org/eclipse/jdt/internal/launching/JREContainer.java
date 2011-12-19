@@ -95,6 +95,7 @@ public class JREContainer implements IClasspathContainer {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof RuleKey) {
 				RuleKey key = (RuleKey) obj;
@@ -106,6 +107,7 @@ public class JREContainer implements IClasspathContainer {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return fEnvironmentId.hashCode() + fInstall.hashCode();
 		}
@@ -141,6 +143,7 @@ public class JREContainer implements IClasspathContainer {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			IAccessRule[][] rules = null;
 			if(obj instanceof RuleEntry) {

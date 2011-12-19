@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -43,8 +42,10 @@ import com.sun.jdi.FloatValue;
 import com.sun.jdi.IntegerValue;
 import com.sun.jdi.LongValue;
 import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VoidValue;
@@ -53,60 +54,62 @@ import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
- * This class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * This class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, org.eclipse.jdi.hcr.VirtualMachine, org.eclipse.jdi.VirtualMachine {
+public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
+		org.eclipse.jdi.hcr.VirtualMachine, org.eclipse.jdi.VirtualMachine {
 	/** Result flags for Classes Have Changed command. */
 	public static final byte HCR_RELOAD_SUCCESS = 0;
 	public static final byte HCR_RELOAD_FAILURE = 1;
 	public static final byte HCR_RELOAD_IGNORED = 2;
 
-	/* Indexes in HCR capabilities list.*/
+	/* Indexes in HCR capabilities list. */
 	private static final int HCR_CAN_RELOAD_CLASSES = 0;
 	private static final int HCR_CAN_GET_CLASS_VERSION = 1;
 	private static final int HCR_CAN_DO_RETURN = 2;
 	private static final int HCR_CAN_REENTER_ON_EXIT = 3;
-	
-	protected static final String JAVA_STRATUM_NAME= "Java"; //$NON-NLS-1$
-	
+
+	protected static final String JAVA_STRATUM_NAME = "Java"; //$NON-NLS-1$
+
 	/** Timeout value for requests to VM if not overriden for a particular VM. */
 	private int fRequestTimeout;
 	/** Mapping of command codes to strings. */
-	
-	private static Map fgHCRResultMap = null;
+
+	private static Map<Integer, String> fgHCRResultMap = null;
 
 	/** EventRequestManager that creates event objects on request. */
 	private EventRequestManagerImpl fEventReqMgr;
 	/** EventQueue that returns EventSets from the Virtual Manager. */
 	private EventQueueImpl fEventQueue;
-	
+
 	/** If a launchingconnector is used, we store the process. */
 	private Process fLaunchedProcess;
-	
+
 	/**
-	 * The following field contains cached Mirrors.
-	 * Note that these are optional: their only purpose is to speed up the debugger by
-	 * being able to use the stored results of JDWP calls.
+	 * The following field contains cached Mirrors. Note that these are
+	 * optional: their only purpose is to speed up the debugger by being able to
+	 * use the stored results of JDWP calls.
 	 */
 	private ValueCache fCachedReftypes = new ValueCache();
-	private ValueCache fCachedObjects =  new ValueCache();
+	private ValueCache fCachedObjects = new ValueCache();
 
 	/** The following are the stored results of JDWP calls. */
-	private String fVersionDescription = null;	// Text information on the VM version.
+	private String fVersionDescription = null; // Text information on the VM
+												// version.
 	private int fJdwpMajorVersion;
 	private int fJdwpMinorVersion;
-	private String fVMVersion;	// Target VM JRE version, as in the java.version property.
-	private String fVMName;		// Target VM name, as in the java.vm.name property.
+	private String fVMVersion; // Target VM JRE version, as in the java.version
+								// property.
+	private String fVMName; // Target VM name, as in the java.vm.name property.
 	private boolean fGotIDSizes = false;
 	private int fFieldIDSize;
 	private int fMethodIDSize;
 	private int fObjectIDSize;
 	private int fReferenceTypeIDSize;
 	private int fFrameIDSize;
-       
+
 	private boolean fGotCapabilities = false;
 	private boolean fCanWatchFieldModification;
 	private boolean fCanWatchFieldAccess;
@@ -130,7 +133,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanRequestMonitorEvents;
 	private boolean fCanGetMonitorFrameInfo;
 	private boolean[] fHcrCapabilities = null;
-	
+
 	/*
 	 * singletons for primitive types
 	 */
@@ -142,7 +145,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private IntegerTypeImpl fIntegerType;
 	private LongTypeImpl fLongType;
 	private ShortTypeImpl fShortType;
-	
+
 	/**
 	 * Disconnected flag
 	 */
@@ -150,83 +153,86 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 
 	/**
 	 * The name of the current default stratum.
-	 */	
+	 */
 	private String fDefaultStratum;
-    private PacketReceiveManager fPacketReceiveManager;
-    private PacketSendManager fPacketSendManager;
-	
-	/** 
+	private PacketReceiveManager fPacketReceiveManager;
+	private PacketSendManager fPacketSendManager;
+
+	/**
 	 * Creates a new Virtual Machine.
 	 */
 	public VirtualMachineImpl(Connection connection) {
 		super("VirtualMachine"); //$NON-NLS-1$
 		fEventReqMgr = new EventRequestManagerImpl(this);
 		fEventQueue = new EventQueueImpl(this);
-		fRequestTimeout = ((VirtualMachineManagerImpl) Bootstrap.virtualMachineManager()).getGlobalRequestTimeout();
-		
+		fRequestTimeout = ((VirtualMachineManagerImpl) Bootstrap
+				.virtualMachineManager()).getGlobalRequestTimeout();
+
 		fPacketReceiveManager = new PacketReceiveManager(connection, this);
-		Thread receiveThread = new Thread(fPacketReceiveManager, JDIMessages.VirtualMachineImpl_0);  
-        receiveThread.setDaemon(true);
+		Thread receiveThread = new Thread(fPacketReceiveManager,
+				JDIMessages.VirtualMachineImpl_0);
+		receiveThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(receiveThread);
 		receiveThread.start();
-		
+
 		fPacketSendManager = new PacketSendManager(connection);
-		Thread sendThread = new Thread(fPacketSendManager, JDIMessages.VirtualMachineImpl_1); 
-        sendThread.setDaemon(true);
+		Thread sendThread = new Thread(fPacketSendManager,
+				JDIMessages.VirtualMachineImpl_1);
+		sendThread.setDaemon(true);
 		fPacketReceiveManager.setPartnerThread(sendThread);
 		sendThread.start();
 	}
 
-	/** 
+	/**
 	 * @return Returns size of JDWP ID.
 	 */
 	public final int fieldIDSize() {
 		return fFieldIDSize;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns size of JDWP ID.
 	 */
 	public final int methodIDSize() {
 		return fMethodIDSize;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns size of JDWP ID.
 	 */
 	public final int objectIDSize() {
 		return fObjectIDSize;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns size of JDWP ID.
 	 */
 	public final int referenceTypeIDSize() {
 		return fReferenceTypeIDSize;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns size of JDWP ID.
 	 */
 	public final int frameIDSize() {
 		return fFrameIDSize;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns cached mirror object, or null if method is not in cache.
 	 */
 	public ReferenceTypeImpl getCachedMirror(JdwpReferenceTypeID ID) {
-		return (ReferenceTypeImpl)fCachedReftypes.get(ID);
+		return (ReferenceTypeImpl) fCachedReftypes.get(ID);
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns cached mirror object, or null if method is not in cache.
 	 */
 	public ObjectReferenceImpl getCachedMirror(JdwpObjectID ID) {
-		return (ObjectReferenceImpl)fCachedObjects.get(ID);
+		return (ObjectReferenceImpl) fCachedObjects.get(ID);
 	}
-	
-	/** 
+
+	/**
 	 * Adds mirror object to cache.
 	 */
 	public void addCachedMirror(ReferenceTypeImpl mirror) {
@@ -235,56 +241,58 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		// classes that we know of due to a limitation in the J9 VM.
 		// eventRequestManagerImpl().enableInternalClasUnloadEvent(mirror);
 	}
-	
-	/** 
+
+	/**
 	 * Adds mirror object to cache.
 	 */
 	public void addCachedMirror(ObjectReferenceImpl mirror) {
 		fCachedObjects.put(mirror.getObjectID(), mirror);
 	}
-	
+
 	/**
 	 * Flushes all stored Jdwp results.
 	 */
 	public void flushStoredJdwpResults() {
 		// All known classes also become invalid.
-		Iterator iter = fCachedReftypes.values().iterator();
+		Iterator<Object> iter = fCachedReftypes.values().iterator();
 		while (iter.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)iter.next();
+			ReferenceTypeImpl refType = (ReferenceTypeImpl) iter.next();
 			refType.flushStoredJdwpResults();
 		}
-			
+
 		fVersionDescription = null;
 		fGotIDSizes = false;
 		fHcrCapabilities = null;
 	}
 
 	/*
-	 * Removes a known class.
-	 * A class/interface is known if we have ever received its ReferenceTypeID and we have
-	 * not received an unload event for it.
+	 * Removes a known class. A class/interface is known if we have ever
+	 * received its ReferenceTypeID and we have not received an unload event for
+	 * it.
 	 */
 	public final void removeKnownRefType(String signature) {
 		List refTypeList = classesBySignature(signature);
 		if (refTypeList.isEmpty())
 			return;
 
-		// If we have only one known class for this signature, we known that this is the class
+		// If we have only one known class for this signature, we known that
+		// this is the class
 		// to be removed.
 		if (refTypeList.size() == 1) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)refTypeList.get(0);
+			ReferenceTypeImpl refType = (ReferenceTypeImpl) refTypeList.get(0);
 			refType.flushStoredJdwpResults();
 			fCachedReftypes.remove(refType.getRefTypeID());
 			return;
 		}
-		
-		// We have more than one known class for the signature, let's find the unloaded one(s).
+
+		// We have more than one known class for the signature, let's find the
+		// unloaded one(s).
 		Iterator iter = refTypeList.iterator();
 		while (iter.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)iter.next();
-			boolean prepared= false;
+			ReferenceTypeImpl refType = (ReferenceTypeImpl) iter.next();
+			boolean prepared = false;
 			try {
-				prepared= refType.isPrepared();
+				prepared = refType.isPrepared();
 			} catch (ObjectCollectedException exception) {
 				// The type is unloaded. Fall through
 			}
@@ -297,19 +305,23 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 
 	/*
-	 * @exception Throws UnsupportedOperationException if VM does not support J9 HCR.
+	 * @exception Throws UnsupportedOperationException if VM does not support J9
+	 * HCR.
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
 		if (!isHCRSupported())
-			throw new UnsupportedOperationException(MessageFormat.format(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[]{name()})); 
+			throw new UnsupportedOperationException(
+					MessageFormat
+							.format(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1,
+									new String[] { name() }));
 	}
-	
+
 	/*
 	 * Returns whether J9 HCR is supported
 	 */
 	public boolean isHCRSupported() throws UnsupportedOperationException {
 		return name().equals("j9"); //$NON-NLS-1$
-	}	
+	}
 
 	/*
 	 * @return Returns Manager for receiving packets from the Virtual Machine.
@@ -323,18 +335,21 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	public final PacketSendManager packetSendManager() {
 		/*
-		 * Before we send out first bytes to the VM by JDI calls, we need some initial requests:
-		 * - Get the sizes of the IDs (fieldID, method ID etc.) that the VM uses;
-		 * - Request class prepare and unload events. We used these to cache classes/interfaces and map their signatures.
+		 * Before we send out first bytes to the VM by JDI calls, we need some
+		 * initial requests: - Get the sizes of the IDs (fieldID, method ID
+		 * etc.) that the VM uses; - Request class prepare and unload events. We
+		 * used these to cache classes/interfaces and map their signatures.
 		 */
 		if (!fGotIDSizes) {
 			getIDSizes();
-			if (!fGotIDSizes) {	// We can't do much without them.
+			if (!fGotIDSizes) { // We can't do much without them.
 				disconnectVM();
-				throw new VMDisconnectedException(JDIMessages.VirtualMachineImpl_Failed_to_get_ID_sizes_2); 
+				throw new VMDisconnectedException(
+						JDIMessages.VirtualMachineImpl_Failed_to_get_ID_sizes_2);
 			}
 
-			// tbd: This call should be moved to addKnownRefType() when it can be made specific
+			// tbd: This call should be moved to addKnownRefType() when it can
+			// be made specific
 			// for a referencetype.
 			eventRequestManagerImpl().enableInternalClasUnloadEvent();
 		}
@@ -343,22 +358,27 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 
 	/**
-	 * Returns all loaded types (classes, interfaces, and array types).
-	 * For each loaded type in the target VM a ReferenceType will be placed in the returned list.
+	 * Returns all loaded types (classes, interfaces, and array types). For each
+	 * loaded type in the target VM a ReferenceType will be placed in the
+	 * returned list.
 	 */
-	public List allClasses() {
+	public List<ReferenceType> allClasses() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
-			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.VM_ALL_CLASSES_WITH_GENERIC : JdwpCommandPacket.VM_ALL_CLASSES;
-		 	JdwpReplyPacket replyPacket = requestVM(jdwpCommand);
+			boolean withGenericSignature = virtualMachineImpl()
+					.isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand = withGenericSignature ? JdwpCommandPacket.VM_ALL_CLASSES_WITH_GENERIC
+					: JdwpCommandPacket.VM_ALL_CLASSES;
+			JdwpReplyPacket replyPacket = requestVM(jdwpCommand);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List elements = new ArrayList(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, withGenericSignature, replyData);
+				ReferenceTypeImpl elt = ReferenceTypeImpl
+						.readWithTypeTagAndSignature(this,
+								withGenericSignature, replyData);
 				if (elt == null) {
 					continue;
 				}
@@ -378,22 +398,23 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/**
 	 * @return Returns an iterator over all loaded classes.
 	 */
-	protected final Iterator allRefTypes() {
+	protected final Iterator<ReferenceType> allRefTypes() {
 		return allClasses().iterator();
 	}
 
 	/**
 	 * @return Returns an iterator over all cached classes.
 	 */
-	protected final Iterator allCachedRefTypes() {
+	protected final Iterator<Object> allCachedRefTypes() {
 		return fCachedReftypes.values().iterator();
 	}
 
 	/**
-	 * Returns a list of the currently running threads.
-	 * For each running thread in the target VM, a ThreadReference that mirrors it is placed in the list.
+	 * Returns a list of the currently running threads. For each running thread
+	 * in the target VM, a ThreadReference that mirrors it is placed in the
+	 * list.
 	 */
-	public List allThreads() {
+	public List<ThreadReferenceImpl> allThreads() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -401,9 +422,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List elements = new ArrayList(nrOfElements);
+			List<ThreadReferenceImpl> elements = new ArrayList<ThreadReferenceImpl>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this, replyData);
+				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this,
+						replyData);
 				if (elt == null) {
 					continue;
 				}
@@ -417,57 +439,69 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-			
+
 	/**
-	 * Retrieve this VM's capabilities. 
+	 * Retrieve this VM's capabilities.
 	 */
 	public void getCapabilities() {
 		if (fGotCapabilities)
 			return;
-		
-		int command =  JdwpCommandPacket.VM_CAPABILITIES;
+
+		int command = JdwpCommandPacket.VM_CAPABILITIES;
 		if (isJdwpVersionGreaterOrEqual(1, 4)) {
 			command = JdwpCommandPacket.VM_CAPABILITIES_NEW;
 		}
-		
+
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(command);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-		
-			fCanWatchFieldModification = readBoolean("watch field modification", replyData); //$NON-NLS-1$
+
+			fCanWatchFieldModification = readBoolean(
+					"watch field modification", replyData); //$NON-NLS-1$
 			fCanWatchFieldAccess = readBoolean("watch field access", replyData); //$NON-NLS-1$
 			fCanGetBytecodes = readBoolean("get bytecodes", replyData); //$NON-NLS-1$
 			fCanGetSyntheticAttribute = readBoolean("synth. attr", replyData); //$NON-NLS-1$
-			fCanGetOwnedMonitorInfo = readBoolean("owned monitor info", replyData); //$NON-NLS-1$
-			fCanGetCurrentContendedMonitor = readBoolean("curr. contended monitor", replyData); //$NON-NLS-1$
+			fCanGetOwnedMonitorInfo = readBoolean(
+					"owned monitor info", replyData); //$NON-NLS-1$
+			fCanGetCurrentContendedMonitor = readBoolean(
+					"curr. contended monitor", replyData); //$NON-NLS-1$
 			fCanGetMonitorInfo = readBoolean("monitor info", replyData); //$NON-NLS-1$
 			if (command == JdwpCommandPacket.VM_CAPABILITIES_NEW) {
 				// extended capabilities
 				fCanRedefineClasses = readBoolean("redefine classes", replyData); //$NON-NLS-1$
 				fCanAddMethod = readBoolean("add method", replyData); //$NON-NLS-1$
-				fCanUnrestrictedlyRedefineClasses = readBoolean("unrestrictedly redefine classes", replyData); //$NON-NLS-1$
+				fCanUnrestrictedlyRedefineClasses = readBoolean(
+						"unrestrictedly redefine classes", replyData); //$NON-NLS-1$
 				fCanPopFrames = readBoolean("pop frames", replyData); //$NON-NLS-1$
-				fCanUseInstanceFilters = readBoolean("use instance filters", replyData); //$NON-NLS-1$
-				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData); //$NON-NLS-1$
-				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData); //$NON-NLS-1$
-				fCanSetDefaultStratum= readBoolean("set default stratum", replyData); //$NON-NLS-1$
+				fCanUseInstanceFilters = readBoolean(
+						"use instance filters", replyData); //$NON-NLS-1$
+				fCanGetSourceDebugExtension = readBoolean(
+						"get source debug extension", replyData); //$NON-NLS-1$
+				fCanRequestVMDeathEvent = readBoolean(
+						"request vm death", replyData); //$NON-NLS-1$
+				fCanSetDefaultStratum = readBoolean(
+						"set default stratum", replyData); //$NON-NLS-1$
 				fCanGetInstanceInfo = readBoolean("instance info", replyData); //$NON-NLS-1$
-				fCanRequestMonitorEvents = readBoolean("request monitor events", replyData); //$NON-NLS-1$
-				fCanGetMonitorFrameInfo = readBoolean("monitor frame info", replyData); //$NON-NLS-1$
-				fCanUseSourceNameFilters = readBoolean("source name filters", replyData); //$NON-NLS-1$
+				fCanRequestMonitorEvents = readBoolean(
+						"request monitor events", replyData); //$NON-NLS-1$
+				fCanGetMonitorFrameInfo = readBoolean(
+						"monitor frame info", replyData); //$NON-NLS-1$
+				fCanUseSourceNameFilters = readBoolean(
+						"source name filters", replyData); //$NON-NLS-1$
 				fCanGetConstantPool = readBoolean("constant pool", replyData); //$NON-NLS-1$
-				fCanForceEarlyReturn = readBoolean("force early return", replyData); //$NON-NLS-1$
+				fCanForceEarlyReturn = readBoolean(
+						"force early return", replyData); //$NON-NLS-1$
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
 				fCanUnrestrictedlyRedefineClasses = false;
-				fCanPopFrames = false;			
+				fCanPopFrames = false;
 				fCanUseInstanceFilters = false;
 				fCanGetSourceDebugExtension = false;
 				fCanRequestVMDeathEvent = false;
-				fCanSetDefaultStratum= false;
+				fCanSetDefaultStratum = false;
 				fCanGetInstanceInfo = false;
 				fCanGetConstantPool = false;
 				fCanUseSourceNameFilters = false;
@@ -483,7 +517,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canForceEarlyReturn()
 	 * @since 3.3
@@ -492,23 +526,25 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanForceEarlyReturn;
 	}
-	
+
 	/**
-	 * @return Returns true if this implementation supports the retrieval of a method's bytecodes.
+	 * @return Returns true if this implementation supports the retrieval of a
+	 *         method's bytecodes.
 	 */
 	public boolean canGetBytecodes() {
 		getCapabilities();
 		return fCanGetBytecodes;
 	}
-		
+
 	/**
-	 * @return Returns true if this implementation supports the retrieval of the monitor for which a thread is currently waiting.
+	 * @return Returns true if this implementation supports the retrieval of the
+	 *         monitor for which a thread is currently waiting.
 	 */
 	public boolean canGetCurrentContendedMonitor() {
 		getCapabilities();
 		return fCanGetCurrentContendedMonitor;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canGetInstanceInfo()
 	 * @since 3.3
@@ -517,7 +553,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanGetInstanceInfo;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canGetMethodReturnValues()
 	 * @since 3.3
@@ -525,15 +561,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	public boolean canGetMethodReturnValues() {
 		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
-	
+
 	/**
-	 * @return Returns true if this implementation supports the retrieval of the monitor information for an object.
+	 * @return Returns true if this implementation supports the retrieval of the
+	 *         monitor information for an object.
 	 */
 	public boolean canGetMonitorInfo() {
 		getCapabilities();
 		return fCanGetMonitorInfo;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canGetMonitorFrameInfo()
 	 * @since 3.3
@@ -542,24 +579,25 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanGetMonitorFrameInfo;
 	}
-	
+
 	/**
-	 * @return Returns true if this implementation supports the retrieval of the monitors owned by a thread.
+	 * @return Returns true if this implementation supports the retrieval of the
+	 *         monitors owned by a thread.
 	 */
 	public boolean canGetOwnedMonitorInfo() {
 		getCapabilities();
 		return fCanGetOwnedMonitorInfo;
 	}
-	
-	/**
-	 * @return Returns true if this implementation supports the query of the synthetic attribute of a method or field.
 
+	/**
+	 * @return Returns true if this implementation supports the query of the
+	 *         synthetic attribute of a method or field.
 	 */
 	public boolean canGetSyntheticAttribute() {
 		getCapabilities();
 		return fCanGetSyntheticAttribute;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canRequestMonitorEvents()
 	 * @since 3.3
@@ -568,23 +606,25 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanRequestMonitorEvents;
 	}
-	
+
 	/**
-	 * @return Returns true if this implementation supports watchpoints for field access.
+	 * @return Returns true if this implementation supports watchpoints for
+	 *         field access.
 	 */
 	public boolean canWatchFieldAccess() {
 		getCapabilities();
 		return fCanWatchFieldAccess;
 	}
-	
+
 	/**
-	 * @return Returns true if this implementation supports watchpoints for field modification.
+	 * @return Returns true if this implementation supports watchpoints for
+	 *         field modification.
 	 */
 	public boolean canWatchFieldModification() {
 		getCapabilities();
 		return fCanWatchFieldModification;
 	}
-	
+
 	/**
 	 * @return Returns the loaded reference types that match a given signature.
 	 */
@@ -596,13 +636,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeString(signature, "signature", outData); //$NON-NLS-1$
 
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CLASSES_BY_SIGNATURE, outBytes);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.VM_CLASSES_BY_SIGNATURE, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
+				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this,
+						replyData);
 				readInt("status", ReferenceTypeImpl.classStatusStrings(), replyData); //$NON-NLS-1$
 				if (elt == null) {
 					continue;
@@ -617,7 +659,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Returns the loaded reference types that match a given name.
 	 */
@@ -625,7 +667,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		String signature = TypeImpl.classNameToSignature(name);
 		return classesBySignature(signature);
 	}
-	
+
 	/**
 	 * Invalidates this virtual machine mirror.
 	 */
@@ -640,30 +682,33 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
-	 * @return Returns EventQueue that returns EventSets from the Virtual Manager.
+	 * @return Returns EventQueue that returns EventSets from the Virtual
+	 *         Manager.
 	 */
 	public EventQueue eventQueue() {
 		return fEventQueue;
 	}
 
 	/**
-	 * @return Returns EventRequestManager that creates all event objects on request.
+	 * @return Returns EventRequestManager that creates all event objects on
+	 *         request.
 	 */
 	public EventRequestManager eventRequestManager() {
 		return fEventReqMgr;
 	}
-	
+
 	/**
-	 * @return Returns EventRequestManagerImpl that creates all event objects on request.
+	 * @return Returns EventRequestManagerImpl that creates all event objects on
+	 *         request.
 	 */
 	public EventRequestManagerImpl eventRequestManagerImpl() {
 		return fEventReqMgr;
 	}
 
 	/**
-	 * Causes the mirrored VM to terminate with the given error code. 
+	 * Causes the mirrored VM to terminate with the given error code.
 	 */
 	public void exit(int exitCode) {
 		initJdwpRequest();
@@ -683,63 +728,64 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 
 	/**
-	 * @return Returns newly created ByteValue for the given value. 
+	 * @return Returns newly created ByteValue for the given value.
 	 */
 	public ByteValue mirrorOf(byte value) {
 		return new ByteValueImpl(virtualMachineImpl(), new Byte(value));
 	}
 
 	/**
-	 * @return Returns newly created CharValue for the given value. 
+	 * @return Returns newly created CharValue for the given value.
 	 */
 	public CharValue mirrorOf(char value) {
 		return new CharValueImpl(virtualMachineImpl(), new Character(value));
 	}
 
 	/**
-	 * @return Returns newly created DoubleValue for the given value. 
+	 * @return Returns newly created DoubleValue for the given value.
 	 */
 	public DoubleValue mirrorOf(double value) {
 		return new DoubleValueImpl(virtualMachineImpl(), new Double(value));
 	}
 
 	/**
-	 * @return Returns newly created FloatValue for the given value. 
+	 * @return Returns newly created FloatValue for the given value.
 	 */
 	public FloatValue mirrorOf(float value) {
 		return new FloatValueImpl(virtualMachineImpl(), new Float(value));
 	}
 
 	/**
-	 * @return Returns newly created IntegerValue for the given value. 
+	 * @return Returns newly created IntegerValue for the given value.
 	 */
 	public IntegerValue mirrorOf(int value) {
 		return new IntegerValueImpl(virtualMachineImpl(), new Integer(value));
 	}
 
 	/**
-	 * @return Returns newly created LongValue for the given value. 
+	 * @return Returns newly created LongValue for the given value.
 	 */
 	public LongValue mirrorOf(long value) {
 		return new LongValueImpl(virtualMachineImpl(), new Long(value));
 	}
 
 	/**
-	 * @return Returns newly created ShortValue for the given value. 
+	 * @return Returns newly created ShortValue for the given value.
 	 */
 	public ShortValue mirrorOf(short value) {
 		return new ShortValueImpl(virtualMachineImpl(), new Short(value));
 	}
 
 	/**
-	 * @return Returns newly created BooleanValue for the given value. 
+	 * @return Returns newly created BooleanValue for the given value.
 	 */
 	public BooleanValue mirrorOf(boolean value) {
-		return new BooleanValueImpl(virtualMachineImpl(), Boolean.valueOf(value));
+		return new BooleanValueImpl(virtualMachineImpl(),
+				Boolean.valueOf(value));
 	}
-		
+
 	/**
-	 * @return Returns newly created StringReference for the given value. 
+	 * @return Returns newly created StringReference for the given value.
 	 */
 	public StringReference mirrorOf(String value) {
 		initJdwpRequest();
@@ -747,10 +793,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeString(value, "string value", outData); //$NON-NLS-1$
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CREATE_STRING, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.VM_CREATE_STRING, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			StringReference result = StringReferenceImpl.read(this, replyData);
 			return result;
@@ -761,7 +808,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * Returns a void value from the VM.
 	 * 
@@ -772,21 +819,24 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 
 	/**
-	 * @return Returns the Process object for this virtual machine if launched by a LaunchingConnector.
+	 * @return Returns the Process object for this virtual machine if launched
+	 *         by a LaunchingConnector.
 	 */
 	public Process process() {
-	 	return fLaunchedProcess;
+		return fLaunchedProcess;
 	}
-	 	
+
 	/**
-	 * Sets Process object for this virtual machine if launched by a LaunchingConnector.
+	 * Sets Process object for this virtual machine if launched by a
+	 * LaunchingConnector.
 	 */
 	public void setLaunchedProcess(Process proc) {
 		fLaunchedProcess = proc;
 	}
-	
-	/** 
-	 * Continues the execution of the application running in this virtual machine. 
+
+	/**
+	 * Continues the execution of the application running in this virtual
+	 * machine.
 	 */
 	public void resume() {
 		initJdwpRequest();
@@ -798,12 +848,12 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-		
+
 	public void setDebugTraceMode(int traceFlags) {
 		// We don't have trace info.
 	}
 
-	/** 
+	/**
 	 * Suspends all threads.
 	 */
 	public void suspend() {
@@ -815,19 +865,20 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-		
-	public List topLevelThreadGroups() {
+
+	public List<ThreadGroupReferenceImpl> topLevelThreadGroups() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_TOP_LEVEL_THREAD_GROUPS);
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrGroups = readInt("nr of groups", replyData); //$NON-NLS-1$
-			ArrayList result = new ArrayList(nrGroups);
+			ArrayList<ThreadGroupReferenceImpl> result = new ArrayList<ThreadGroupReferenceImpl>(nrGroups);
 			for (int i = 0; i < nrGroups; i++) {
-				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl.read(this, replyData);
+				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl
+						.read(this, replyData);
 				result.add(threadGroup);
 			}
 			return result;
@@ -839,38 +890,41 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		}
 	}
 
-	/** 
-	 * @return Returns the name of the target VM as reported by the property java.vm.name.
+	/**
+	 * @return Returns the name of the target VM as reported by the property
+	 *         java.vm.name.
 	 */
 	public String name() {
 		getVersionInfo();
 		return fVMName;
 	}
-		
-	/** 
-	 * @return Returns the version of the Java Runtime Environment in the target VM as reported by the property java.version.
+
+	/**
+	 * @return Returns the version of the Java Runtime Environment in the target
+	 *         VM as reported by the property java.version.
 	 */
 	public String version() {
 		getVersionInfo();
 		return fVMVersion;
 	}
-			
-	/** 
-	 * @return Returns text information on the target VM and the debugger support that mirrors it. 
+
+	/**
+	 * @return Returns text information on the target VM and the debugger
+	 *         support that mirrors it.
 	 */
 	public String description() {
 		getVersionInfo();
 		return fVersionDescription;
 	}
-			
+
 	/**
 	 * Reset event flags of all threads.
 	 */
 	private void resetThreadEventFlags() {
-		Iterator iter = allThreads().iterator();
+		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
 		ThreadReferenceImpl thread;
 		while (iter.hasNext()) {
-			thread = (ThreadReferenceImpl)iter.next();
+			thread = iter.next();
 			thread.resetEventFlags();
 		}
 	}
@@ -887,16 +941,18 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		 * because getIDSizes() calls requestVM which calls packetSendManager.
 		 */
 		fGotIDSizes = true;
-		 
-		// We use a different mirror to avoid having verbose output mixed with the initiating command.
+
+		// We use a different mirror to avoid having verbose output mixed with
+		// the initiating command.
 		MirrorImpl mirror = new VoidValueImpl(this);
-		
+
 		mirror.initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = mirror.requestVM(JdwpCommandPacket.VM_ID_SIZES);
+			JdwpReplyPacket replyPacket = mirror
+					.requestVM(JdwpCommandPacket.VM_ID_SIZES);
 			mirror.defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-		
+
 			fFieldIDSize = mirror.readInt("field ID size", replyData); //$NON-NLS-1$
 			fMethodIDSize = mirror.readInt("method ID size", replyData); //$NON-NLS-1$
 			fObjectIDSize = mirror.readInt("object ID size", replyData); //$NON-NLS-1$
@@ -909,40 +965,40 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			mirror.handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * Retrieves version info of the VM.
 	 */
 	public void getVersionInfo() {
 		if (fVersionDescription != null)
 			return;
-			
+
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_VERSION);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-		
+
 			fVersionDescription = readString("version descr.", replyData); //$NON-NLS-1$
 			fJdwpMajorVersion = readInt("major version", replyData); //$NON-NLS-1$
 			fJdwpMinorVersion = readInt("minor version", replyData); //$NON-NLS-1$
 			fVMVersion = readString("version", replyData); //$NON-NLS-1$
 			fVMName = readString("name", replyData); //$NON-NLS-1$
-			
+
 			if ((fVMName != null) && fVMName.equals("KVM")) { //$NON-NLS-1$
 				// KVM requires class preparation events in order
 				// to resolve things correctly
 				eventRequestManagerImpl().enableInternalClassPrepareEvent();
 			}
 
-		} catch (IOException e) {	    
+		} catch (IOException e) {
 			fVersionDescription = null;
 			defaultIOExceptionHandler(e);
 		} finally {
 			handledJdwpRequest();
 		}
 	}
-		
+
 	/**
 	 * Retrieves the HCR capabilities of the VM.
 	 */
@@ -950,18 +1006,22 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		if (fHcrCapabilities != null)
 			return;
 		fHcrCapabilities = new boolean[HCR_CAN_REENTER_ON_EXIT + 1];
-		
+
 		if (isHCRSupported()) {
 			initJdwpRequest();
 			try {
 				JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_CAPABILITIES);
 				defaultReplyErrorHandler(replyPacket.errorCode());
 				DataInputStream replyData = replyPacket.dataInStream();
-			
-				fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean("reload classes", replyData); //$NON-NLS-1$
-				fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean("get class version", replyData); //$NON-NLS-1$
-				fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean("do return", replyData); //$NON-NLS-1$
-				fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean("reenter on exit", replyData); //$NON-NLS-1$
+
+				fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean(
+						"reload classes", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean(
+						"get class version", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean(
+						"do return", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean(
+						"reenter on exit", replyData); //$NON-NLS-1$
 			} catch (IOException e) {
 				fHcrCapabilities = null;
 				defaultIOExceptionHandler(e);
@@ -974,15 +1034,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			}
 		}
 	}
-	
+
 	/**
-	 * @return Returns Whether VM can deal with the 'Classes have Changed' command.
+	 * @return Returns Whether VM can deal with the 'Classes have Changed'
+	 *         command.
 	 */
 	public boolean canReloadClasses() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_RELOAD_CLASSES];
 	}
-	
+
 	/**
 	 * @return Returns Whether VM can get the version of a given class file.
 	 */
@@ -990,7 +1051,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION];
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canGetClassFileVersion()
 	 * @since 3.3
@@ -998,7 +1059,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	public boolean canGetClassFileVersion() {
 		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#canGetConstantPool()
 	 * @since 3.3
@@ -1007,15 +1068,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanGetConstantPool;
 	}
-	
+
 	/**
-	 * @return Returns Whether VM can do a return in the middle of executing a method.
+	 * @return Returns Whether VM can do a return in the middle of executing a
+	 *         method.
 	 */
 	public boolean canDoReturn() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_DO_RETURN];
 	}
-	
+
 	/**
 	 * @return Returns Whether VM can reenter a method on exit.
 	 */
@@ -1023,16 +1085,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT];
 	}
-	
+
 	/**
 	 * Notify the VM that classes have changed due to Hot Code Replacement.
+	 * 
 	 * @return Returns RELOAD_SUCCESS, RELOAD_FAILURE or RELOAD_IGNORED.
 	 */
 	public int classesHaveChanged(String[] names) {
 		checkHCRSupported();
 		// We convert the class/interface names to signatures.
 		String[] signatures = new String[names.length];
-		
+
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -1042,21 +1105,24 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				signatures[i] = TypeImpl.classNameToSignature(names[i]);
 				writeString(signatures[i], "signature", outData); //$NON-NLS-1$
 			}
-		
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_CLASSES_HAVE_CHANGED, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.HCR_CLASSES_HAVE_CHANGED, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-		
+
 			byte resultFlag = readByte("result", resultHCRMap(), replyData); //$NON-NLS-1$
 			switch (resultFlag) {
-				case HCR_RELOAD_SUCCESS:
-					return RELOAD_SUCCESS;
-				case HCR_RELOAD_FAILURE:
-					return RELOAD_FAILURE;
-				case HCR_RELOAD_IGNORED:
-					return RELOAD_IGNORED;
+			case HCR_RELOAD_SUCCESS:
+				return RELOAD_SUCCESS;
+			case HCR_RELOAD_FAILURE:
+				return RELOAD_FAILURE;
+			case HCR_RELOAD_IGNORED:
+				return RELOAD_IGNORED;
 			}
-			throw new InternalError(JDIMessages.VirtualMachineImpl_Invalid_result_flag_in_Classes_Have_Changed_response___3 + resultFlag + JDIMessages.VirtualMachineImpl__4); // 
+			throw new InternalError(
+					JDIMessages.VirtualMachineImpl_Invalid_result_flag_in_Classes_Have_Changed_response___3
+							+ resultFlag + JDIMessages.VirtualMachineImpl__4); //
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return 0;
@@ -1068,6 +1134,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/**
 	 * @return Returns description of Mirror object.
 	 */
+	@Override
 	public String toString() {
 		try {
 			return name();
@@ -1083,15 +1150,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		if (fgHCRResultMap != null) {
 			return;
 		}
-		
+
 		Field[] fields = VirtualMachineImpl.class.getDeclaredFields();
-		fgHCRResultMap = new HashMap();
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
+		fgHCRResultMap = new HashMap<Integer, String>();
+		for (Field field : fields) {
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0
+					|| (field.getModifiers() & Modifier.STATIC) == 0
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
 			}
-				
+
 			try {
 				String name = field.getName();
 				if (name.startsWith("HCR_RELOAD_")) { //$NON-NLS-1$
@@ -1108,94 +1176,102 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			}
 		}
 	}
-	
+
 	/**
 	 * @return Returns a map with string representations of tags.
 	 */
-	 public static Map resultHCRMap() {
-	 	getConstantMaps();
-	 	return fgHCRResultMap;
-	 }
-	 
+	public static Map<Integer, String> resultHCRMap() {
+		getConstantMaps();
+		return fgHCRResultMap;
+	}
+
 	/**
 	 * Sets request timeout in ms.
 	 */
 	public void setRequestTimeout(int timeout) {
 		fRequestTimeout = timeout;
 	}
-	
+
 	/**
 	 * @return Returns request timeout in ms.
 	 */
 	public int getRequestTimeout() {
 		return fRequestTimeout;
 	}
-	
+
 	/**
-	 * Returns whether the JDWP version is greater
-	 * than or equal to the specified major/minor
-	 * version numbers.
+	 * Returns whether the JDWP version is greater than or equal to the
+	 * specified major/minor version numbers.
 	 * 
-	 * @return whether the JDWP version is greater
-	 * than or equal to the specified major/minor
-	 * version numbers
+	 * @return whether the JDWP version is greater than or equal to the
+	 *         specified major/minor version numbers
 	 */
 	public boolean isJdwpVersionGreaterOrEqual(int major, int minor) {
 		getVersionInfo();
-		return (fJdwpMajorVersion > major) ||
-			(fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
+		return (fJdwpMajorVersion > major)
+				|| (fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
 	}
-	
-	public void redefineClasses(Map typesToBytes) {
+
+	public void redefineClasses(Map<ReferenceType, byte[]> typesToBytes) {
 		if (!canRedefineClasses()) {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeInt(typesToBytes.size(), "classes", outData); //$NON-NLS-1$
-			
-			Set types = typesToBytes.keySet();
-			Iterator iter = types.iterator();
+
+			Set<ReferenceType> types = typesToBytes.keySet();
+			Iterator<ReferenceType> iter = types.iterator();
 			while (iter.hasNext()) {
 				ReferenceTypeImpl type = (ReferenceTypeImpl) iter.next();
 				type.write(this, outData);
-				byte[] bytes = (byte[]) typesToBytes.get(type);
+				byte[] bytes = typesToBytes.get(type);
 				writeInt(bytes.length, "classfile", outData); //$NON-NLS-1$
-				for (int i=0; i < bytes.length; i++) {
-					writeByte(bytes[i], "classByte", outData); //$NON-NLS-1$
+				for (byte b : bytes) {
+					writeByte(b, "classByte", outData); //$NON-NLS-1$
 				}
-				fCachedReftypes.remove(type.getRefTypeID()); // flush local cache of redefined types
+				fCachedReftypes.remove(type.getRefTypeID()); // flush local
+																// cache of
+																// redefined
+																// types
 			}
-			
-			JdwpReplyPacket reply = requestVM(JdwpCommandPacket.VM_REDEFINE_CLASSES, outBytes);
+
+			JdwpReplyPacket reply = requestVM(
+					JdwpCommandPacket.VM_REDEFINE_CLASSES, outBytes);
 			switch (reply.errorCode()) {
-				case JdwpReplyPacket.UNSUPPORTED_VERSION:
-					throw new UnsupportedClassVersionError();
-				case JdwpReplyPacket.INVALID_CLASS_FORMAT:
-					throw new ClassFormatError();
-				case JdwpReplyPacket.CIRCULAR_CLASS_DEFINITION:
-					throw new ClassCircularityError();
-				case JdwpReplyPacket.FAILS_VERIFICATION:
-					throw new VerifyError();
-				case JdwpReplyPacket.NAMES_DONT_MATCH:
-					throw new NoClassDefFoundError();
-				case JdwpReplyPacket.ADD_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Add_method_not_implemented_1); 
-				case JdwpReplyPacket.SCHEMA_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Scheme_change_not_implemented_2); 
-				case JdwpReplyPacket.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Hierarchy_change_not_implemented_3); 
-				case JdwpReplyPacket.DELETE_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Delete_method_not_implemented_4); 
-				case JdwpReplyPacket.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Class_modifiers_change_not_implemented_5); 
-				case JdwpReplyPacket.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.VirtualMachineImpl_Method_modifiers_change_not_implemented_6); 
-				default:
-					defaultReplyErrorHandler(reply.errorCode());
+			case JdwpReplyPacket.UNSUPPORTED_VERSION:
+				throw new UnsupportedClassVersionError();
+			case JdwpReplyPacket.INVALID_CLASS_FORMAT:
+				throw new ClassFormatError();
+			case JdwpReplyPacket.CIRCULAR_CLASS_DEFINITION:
+				throw new ClassCircularityError();
+			case JdwpReplyPacket.FAILS_VERIFICATION:
+				throw new VerifyError();
+			case JdwpReplyPacket.NAMES_DONT_MATCH:
+				throw new NoClassDefFoundError();
+			case JdwpReplyPacket.ADD_METHOD_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Add_method_not_implemented_1);
+			case JdwpReplyPacket.SCHEMA_CHANGE_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Scheme_change_not_implemented_2);
+			case JdwpReplyPacket.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Hierarchy_change_not_implemented_3);
+			case JdwpReplyPacket.DELETE_METHOD_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Delete_method_not_implemented_4);
+			case JdwpReplyPacket.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Class_modifiers_change_not_implemented_5);
+			case JdwpReplyPacket.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.VirtualMachineImpl_Method_modifiers_change_not_implemented_6);
+			default:
+				defaultReplyErrorHandler(reply.errorCode());
 			}
 		} catch (IOException ioe) {
 			defaultIOExceptionHandler(ioe);
@@ -1245,7 +1321,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanUseSourceNameFilters;
 	}
-	
+
 	/*
 	 * @see VirtualMachine#canPopFrames()
 	 */
@@ -1269,7 +1345,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		getCapabilities();
 		return fCanRequestVMDeathEvent;
 	}
-	
+
 	public boolean canSetDefaultStratum() {
 		getCapabilities();
 		return fCanSetDefaultStratum;
@@ -1279,94 +1355,101 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @see VirtualMachine#setDefaultStratum(String)
 	 */
 	public void setDefaultStratum(String stratum) {
-		fDefaultStratum= stratum;
-		
+		fDefaultStratum = stratum;
+
 		if (!canSetDefaultStratum()) {
-			// TODO: how to inform the user that the VM doesn't manage setDefaultStartum ?
+			// TODO: how to inform the user that the VM doesn't manage
+			// setDefaultStartum ?
 			return;
 		}
 		if (stratum == null) {
-			stratum= ""; //$NON-NLS-1$
+			stratum = ""; //$NON-NLS-1$
 		}
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeString(stratum, "stratum ID", outData); //$NON-NLS-1$
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_SET_DEFAULT_STRATUM, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.VM_SET_DEFAULT_STRATUM, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 		} finally {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/*
 	 * @see VirtualMachine#getDefaultStratum()
 	 */
 	public String getDefaultStratum() {
 		return fDefaultStratum;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.VirtualMachine#instanceCounts(java.util.List)
 	 * @since 3.3
 	 */
-	public long[] instanceCounts(List refTypes) {
-		if(refTypes == null) {
+	public long[] instanceCounts(List<Type> refTypes) {
+		if (refTypes == null) {
 			throw new NullPointerException(JDIMessages.VirtualMachineImpl_2);
 		}
 		int size = refTypes.size();
-		if(size == 0) {
+		if (size == 0) {
 			if (isJdwpVersionGreaterOrEqual(1, 6)) {
 				return new long[0];
 			} else {
-				throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
+				throw new UnsupportedOperationException(
+						JDIMessages.ReferenceTypeImpl_27);
 			}
 		}
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeInt(size, "size", outData); //$NON-NLS-1$
-			for(int i = 0; i < size; i++) {
-				((ReferenceTypeImpl)refTypes.get(i)).getRefTypeID().write(outData); 
+			for (int i = 0; i < size; i++) {
+				((ReferenceTypeImpl) refTypes.get(i)).getRefTypeID().write(
+						outData);
 			}
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_INSTANCE_COUNTS, outBytes);
-			switch(replyPacket.errorCode()) {
-				case JdwpReplyPacket.INVALID_CLASS:
-				case JdwpReplyPacket.INVALID_OBJECT:
-					throw new ObjectCollectedException(JDIMessages.class_or_object_not_known);
-				case JdwpReplyPacket.ILLEGAL_ARGUMENT:
-					throw new IllegalArgumentException(JDIMessages.VirtualMachineImpl_count_less_than_zero);
-				case JdwpReplyPacket.NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
-				case JdwpReplyPacket.VM_DEAD:
-					throw new VMDisconnectedException(JDIMessages.vm_dead);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.VM_INSTANCE_COUNTS, outBytes);
+			switch (replyPacket.errorCode()) {
+			case JdwpReplyPacket.INVALID_CLASS:
+			case JdwpReplyPacket.INVALID_OBJECT:
+				throw new ObjectCollectedException(
+						JDIMessages.class_or_object_not_known);
+			case JdwpReplyPacket.ILLEGAL_ARGUMENT:
+				throw new IllegalArgumentException(
+						JDIMessages.VirtualMachineImpl_count_less_than_zero);
+			case JdwpReplyPacket.NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(
+						JDIMessages.ReferenceTypeImpl_27);
+			case JdwpReplyPacket.VM_DEAD:
+				throw new VMDisconnectedException(JDIMessages.vm_dead);
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			int counts = readInt("counts", replyData); //$NON-NLS-1$
-			if(counts != size) {
+			if (counts != size) {
 				throw new InternalError(JDIMessages.VirtualMachineImpl_3);
 			}
 			long[] ret = new long[counts];
-			for(int i = 0; i < counts; i++) {
+			for (int i = 0; i < counts; i++) {
 				ret[i] = readLong("ref count", replyData); //$NON-NLS-1$
 			}
 			return ret;
-		}
-		catch(IOException e) {
+		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
 		} finally {
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * Returns whether this VM is disconnected.
 	 * 
@@ -1379,18 +1462,19 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/**
 	 * Sets whether this VM is disconnected.
 	 * 
-	 * @param disconected whether this VM is disconnected
+	 * @param disconected
+	 *            whether this VM is disconnected
 	 */
 	public synchronized void setDisconnected(boolean disconnected) {
 		fIsDisconnected = disconnected;
 	}
-	
+
 	/**
 	 * Return the boolean type for this VM.
 	 */
 	protected BooleanTypeImpl getBooleanType() {
 		if (fBooleanType == null) {
-			fBooleanType= new BooleanTypeImpl(this);
+			fBooleanType = new BooleanTypeImpl(this);
 		}
 		return fBooleanType;
 	}
@@ -1400,7 +1484,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected ByteTypeImpl getByteType() {
 		if (fByteType == null) {
-			fByteType= new ByteTypeImpl(this);
+			fByteType = new ByteTypeImpl(this);
 		}
 		return fByteType;
 	}
@@ -1410,7 +1494,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected CharTypeImpl getCharType() {
 		if (fCharType == null) {
-			fCharType= new CharTypeImpl(this);
+			fCharType = new CharTypeImpl(this);
 		}
 		return fCharType;
 	}
@@ -1420,7 +1504,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected DoubleTypeImpl getDoubleType() {
 		if (fDoubleType == null) {
-			fDoubleType= new DoubleTypeImpl(this);
+			fDoubleType = new DoubleTypeImpl(this);
 		}
 		return fDoubleType;
 	}
@@ -1430,7 +1514,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected FloatTypeImpl getFloatType() {
 		if (fFloatType == null) {
-			fFloatType= new FloatTypeImpl(this);
+			fFloatType = new FloatTypeImpl(this);
 		}
 		return fFloatType;
 	}
@@ -1440,7 +1524,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected IntegerTypeImpl getIntegerType() {
 		if (fIntegerType == null) {
-			fIntegerType= new IntegerTypeImpl(this);
+			fIntegerType = new IntegerTypeImpl(this);
 		}
 		return fIntegerType;
 	}
@@ -1450,7 +1534,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected LongTypeImpl getLongType() {
 		if (fLongType == null) {
-			fLongType= new LongTypeImpl(this);
+			fLongType = new LongTypeImpl(this);
 		}
 		return fLongType;
 	}
@@ -1460,13 +1544,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	protected ShortTypeImpl getShortType() {
 		if (fShortType == null) {
-			fShortType= new ShortTypeImpl(this);
+			fShortType = new ShortTypeImpl(this);
 		}
 		return fShortType;
 	}
-	
+
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.VirtualMachine#canBeModified()
 	 */
 	public boolean canBeModified() {

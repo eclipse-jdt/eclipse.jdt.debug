@@ -174,6 +174,7 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		return null;
 	}

@@ -33,6 +33,7 @@ public class StandardVM extends AbstractVMInstall {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#getVMRunner(java.lang.String)
 	 */
+	@Override
 	public IVMRunner getVMRunner(String mode) {
 		if (ILaunchManager.RUN_MODE.equals(mode)) {
 			return new StandardVMRunner(this);
@@ -45,7 +46,8 @@ public class StandardVM extends AbstractVMInstall {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
      */
-    public String getJavaVersion() {
+    @Override
+	public String getJavaVersion() {
         StandardVMType installType = (StandardVMType) getVMInstallType();
         File installLocation = getInstallLocation();
         if (installLocation != null) {

@@ -32,6 +32,7 @@ import com.sun.jdi.request.EventRequest;
 public class ProvideArgumentsTests extends AbstractJDITest {
 
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {}
 	
 	/**

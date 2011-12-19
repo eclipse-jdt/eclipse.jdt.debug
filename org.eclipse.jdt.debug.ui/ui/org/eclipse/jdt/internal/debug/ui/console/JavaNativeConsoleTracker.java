@@ -21,7 +21,8 @@ import org.eclipse.ui.console.TextConsole;
  * @since 3.1
  */
 public class JavaNativeConsoleTracker extends JavaConsoleTracker {
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         try {
             int offset = event.getOffset();
             int length = event.getLength();

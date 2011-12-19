@@ -33,6 +33,7 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IMethod;
 	}
@@ -40,6 +41,7 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
+	@Override
 	protected void gatherChanges(IMarker[] markers, List changes, String destMethodName) throws CoreException, OperationCanceledException {
 		IMethod originalMethod = (IMethod) getOriginalElement();
 		for (int i = 0; i < markers.length; i++) {

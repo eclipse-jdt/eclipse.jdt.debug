@@ -94,6 +94,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	protected void startSourceSearch(final String typeName, final int lineNumber) {
 		Job search = new Job(ConsoleMessages.JavaStackTraceHyperlink_2) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				ILaunch launch = getLaunch();
 				Object result = null;
@@ -118,6 +119,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	
 	protected void searchCompleted(final Object source, final String typeName, final int lineNumber, final IStatus status) {
 		UIJob job = new UIJob("link search complete") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (source == null) {
 					if (status == null) {

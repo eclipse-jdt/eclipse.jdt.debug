@@ -17,16 +17,18 @@ import org.eclipse.jdt.debug.core.IJavaArrayType;
 public class ArrayInitializerInstruction extends ArrayInstruction {
 
 	private String fTypeSignature;
-	
+
 	private int fDimensions;
-	
+
 	private int fLength;
 
 	/**
 	 * Constructor for ArrayInitializerInstruction.
+	 * 
 	 * @param start
 	 */
-	public ArrayInitializerInstruction(String typeSignature, int length, int dimensions, int start) {
+	public ArrayInitializerInstruction(String typeSignature, int length,
+			int dimensions, int start) {
 		super(start);
 		fTypeSignature = typeSignature;
 		fDimensions = dimensions;
@@ -36,21 +38,24 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		
-		IJavaArrayType arrayType = getArrayType(fTypeSignature.replace('/','.'), fDimensions);
+
+		IJavaArrayType arrayType = getArrayType(
+				fTypeSignature.replace('/', '.'), fDimensions);
 		IJavaArray array = arrayType.newInstance(fLength);
-		
+
 		for (int i = fLength - 1; i >= 0; i--) {
 			array.setValue(i, popValue());
 		}
-		
+
 		push(array);
-		
+
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.ArrayInitializerInstruction_array_initializer_1; 
+		return InstructionsEvaluationMessages.ArrayInitializerInstruction_array_initializer_1;
 	}
 
 }

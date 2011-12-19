@@ -28,6 +28,7 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayInstaces(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.internal.debug.core.model.JDIReferenceType)
 	 */
+	@Override
 	protected void displayInstaces(IJavaDebugTarget target, JDIReferenceType rtype) {
 		try {
 			displayNumInstances(rtype.getName(), rtype.getInstanceCount());
@@ -40,6 +41,7 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayNoInstances(org.eclipse.jdt.debug.core.IJavaDebugTarget, java.lang.String)
 	 */
+	@Override
 	protected void displayNoInstances(IJavaDebugTarget target, String typeName) {
 		displayNumInstances(typeName, 0);
 	}

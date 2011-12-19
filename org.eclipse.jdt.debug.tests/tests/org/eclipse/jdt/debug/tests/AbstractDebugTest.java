@@ -145,6 +145,7 @@ import com.sun.jdi.InternalException;
 /**
  * Tests for launch configurations
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
 	
 	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
@@ -212,6 +213,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		setPreferences();
@@ -2256,6 +2258,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * When a test throws the 'try again' exception, try it again.
 	 * @see junit.framework.TestCase#runBare()
 	 */
+	@Override
 	public void runBare() throws Throwable {
 		boolean tryAgain = true;
 		int attempts = 0;
@@ -2289,6 +2292,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		} else {
 			final IEditorPart[] parts = new IEditorPart[1];
 			WorkbenchJob job = new WorkbenchJob(display, "open editor") {
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 					try {
@@ -2317,6 +2321,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IBreakpoint toggleBreakpoint(final IEditorPart editor, int lineNumber) throws InterruptedException {
 		final IVerticalRulerInfo info = new VerticalRulerInfoStub(lineNumber-1); // sub 1, as the doc lines start at 0
 		WorkbenchJob job = new WorkbenchJob(DebugUIPlugin.getStandardDisplay(), "toggle breakpoint") {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				ToggleBreakpointAction action = new ToggleBreakpointAction(editor, null, info);
 				action.run();

@@ -91,7 +91,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
     	IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getHelpSystem().setHelp(
 				parent,
@@ -183,6 +184,7 @@ public class ExpressionInputDialog extends TrayDialog {
         IDocument document= new Document();
         tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fSourceViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 				return getCompletionProcessor();
 			}
@@ -328,7 +330,8 @@ public class ExpressionInputDialog extends TrayDialog {
 	/**
 	 * Persist the dialog size and store the user's input on OK is pressed.
 	 */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
         fResult= getText();
         super.okPressed();
     }
@@ -375,7 +378,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /**
      * Initializes the dialog shell with a title.
      */
-    protected void configureShell(Shell newShell) {
+    @Override
+	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(ActionMessages.ExpressionInputDialog_2); 
     }
@@ -384,7 +388,8 @@ public class ExpressionInputDialog extends TrayDialog {
      * Override method to initialize the enablement of the OK button after
      * it is created.
      */
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
         super.createButtonsForButtonBar(parent);
         //do this here because setting the text will set enablement on the ok
         // button
@@ -394,7 +399,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#close()
      */
-    public boolean close() {
+    @Override
+	public boolean close() {
         dispose();
         return super.close();
     }
@@ -402,7 +408,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

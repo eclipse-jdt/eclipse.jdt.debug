@@ -204,6 +204,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		refresh(configuration);
 		fClasspathViewer.expandToLevel(2);
@@ -212,6 +213,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		try {
 			boolean useDefault= workingCopy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
@@ -387,6 +389,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaClasspathTab"; //$NON-NLS-1$
 	}
@@ -415,6 +418,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
@@ -425,6 +429,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return getClasspathImage();
 	}
@@ -432,6 +437,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);

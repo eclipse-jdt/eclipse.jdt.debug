@@ -35,6 +35,7 @@ public class DisplayAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
+	@Override
 	protected void displayResult(final IEvaluationResult evaluationResult) {
 		if (evaluationResult.hasErrors()) {
 			final Display display = JDIDebugUIPlugin.getStandardDisplay();
@@ -97,6 +98,7 @@ public class DisplayAction extends EvaluateAction {
 		});
 	}
 
+	@Override
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
 		if (part instanceof JavaSnippetEditor) {

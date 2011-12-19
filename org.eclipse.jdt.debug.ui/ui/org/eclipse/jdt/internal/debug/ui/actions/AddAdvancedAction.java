@@ -34,6 +34,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 		Dialog dialog = new RuntimeClasspathAdvancedDialog(getShell(), fActions, getViewer());
 		dialog.open();			
@@ -42,6 +43,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 	/**
 	 * @see RuntimeClasspathAction#setViewer(RuntimeClasspathViewer)
 	 */
+	@Override
 	public void setViewer(IClasspathViewer viewer) {
 		super.setViewer(viewer);
 		if (fActions != null) {
@@ -53,6 +55,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 		}
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

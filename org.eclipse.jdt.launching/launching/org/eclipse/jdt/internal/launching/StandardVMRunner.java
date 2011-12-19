@@ -148,6 +148,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	/**
 	 * @see VMRunner#getPluginIdentifier()
 	 */
+	@Override
 	protected String getPluginIdentifier() {
 		return LaunchingPlugin.getUniqueIdentifier();
 	}

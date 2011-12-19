@@ -39,6 +39,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 		IRuntimeClasspathEntry[] entries = null;
@@ -56,6 +57,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List all = new UniqueList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
@@ -157,54 +159,64 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
             set = new HashSet(length);
         }
 
-        public void add(int index, Object element) {
+        @Override
+		public void add(int index, Object element) {
             if (set.add(element))
                 super.add(index, element);
         }
 
-        public boolean add(Object o) {
+        @Override
+		public boolean add(Object o) {
             if (set.add(o))
                 return super.add(o);
             return false;
         }
 
-        public boolean addAll(Collection c) {
+        @Override
+		public boolean addAll(Collection c) {
             if (set.addAll(c))
                 return super.addAll(c);
             return false;
         }
 
-        public boolean addAll(int index, Collection c) {
+        @Override
+		public boolean addAll(int index, Collection c) {
             if (set.addAll(c))
                 return super.addAll(index, c);
             return false;
         }
 
-        public void clear() {
+        @Override
+		public void clear() {
             set.clear();
             super.clear();
         }
 
-        public boolean contains(Object elem) {
+        @Override
+		public boolean contains(Object elem) {
             return set.contains(elem);
         }
 
-        public void ensureCapacity(int minCapacity) {
+        @Override
+		public void ensureCapacity(int minCapacity) {
             super.ensureCapacity(minCapacity);
         }
 
-        public Object remove(int index) {
+        @Override
+		public Object remove(int index) {
             Object object = super.remove(index);
             set.remove(object);
             return object;
         }
 
-        protected void removeRange(int fromIndex, int toIndex) {
+        @Override
+		protected void removeRange(int fromIndex, int toIndex) {
             for (int index = fromIndex; index<=toIndex; index++)
                 remove(index);
         }
 
-        public Object set(int index, Object element) {
+        @Override
+		public Object set(int index, Object element) {
             set.remove(element);
             if (set.add(element))
                 return super.set(index, element);

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -41,7 +40,6 @@ import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.Type;
 
-
 /**
  * Implementation of com.sun.jdi.Method.
  */
@@ -49,36 +47,40 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/** InvokeOptions Constants. */
 	public static final int INVOKE_SINGLE_THREADED_JDWP = 0x01;
 	public static final int INVOKE_NONVIRTUAL_JDWP = 0x02;
-	
+
 	/** Map with Strings for flag bits. */
 	private static String[] fgInvokeOptions = null;
-	
+
 	/** MethodTypeID that corresponds to this reference. */
 	private JdwpMethodID fMethodID;
-	
+
 	/** The following are the stored results of JDWP calls. */
-	private List fVariables = null;
+	private List<LocalVariableImpl> fVariables = null;
 	private long fLowestValidCodeIndex = -1;
 	private long fHighestValidCodeIndex = -1;
-	private Map fCodeIndexToLine = null;
-	private Map fLineToCodeIndexes = null;
-	private Map fStratumAllLineLocations = null;
+	private Map<Long, Integer> fCodeIndexToLine = null;
+	private Map<Integer, List> fLineToCodeIndexes = null;
+	private Map<String, Map> fStratumAllLineLocations = null;
 	private int fArgumentSlotsCount = -1;
-	private List fArguments = null;
-	private List fArgumentTypes = null;
-	private List fArgumentTypeNames = null;
+	private List<LocalVariableImpl> fArguments = null;
+	private List<TypeImpl> fArgumentTypes = null;
+	private List<String> fArgumentTypeNames = null;
 	private List fArgumentTypeSignatures = null;
 	private byte[] fByteCodes = null;
 	private long[] fCodeIndexTable;
 	private int[] fJavaStratumLineNumberTable;
-	
-	private String fReturnTypeName= null;
-	
+
+	private String fReturnTypeName = null;
+
 	/**
 	 * Creates new MethodImpl.
 	 */
-	public MethodImpl(VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, JdwpMethodID methodID, String name, String signature, String genericSignature, int modifierBits) {
-		super("Method", vmImpl, declaringType, name, signature, genericSignature, modifierBits); //$NON-NLS-1$
+	public MethodImpl(VirtualMachineImpl vmImpl,
+			ReferenceTypeImpl declaringType, JdwpMethodID methodID,
+			String name, String signature, String genericSignature,
+			int modifierBits) {
+		super(
+				"Method", vmImpl, declaringType, name, signature, genericSignature, modifierBits); //$NON-NLS-1$
 		fMethodID = methodID;
 	}
 
@@ -92,8 +94,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		fCodeIndexToLine = null;
 		fLineToCodeIndexes = null;
 		fStratumAllLineLocations = null;
-		fCodeIndexTable= null;
-		fJavaStratumLineNumberTable= null;
+		fCodeIndexTable = null;
+		fJavaStratumLineNumberTable = null;
 		fArgumentSlotsCount = -1;
 		fArguments = null;
 		fArgumentTypes = null;
@@ -101,38 +103,40 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		fArgumentTypeSignatures = null;
 		fByteCodes = null;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns methodID of method.
 	 */
 	protected JdwpMethodID getMethodID() {
 		return fMethodID;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns map of location to line number.
 	 */
-	protected Map javaStratumCodeIndexToLine() throws AbsentInformationException {
+	protected Map<Long, Integer> javaStratumCodeIndexToLine()
+			throws AbsentInformationException {
 		if (isAbstract()) {
 			return Collections.EMPTY_MAP;
 		}
 		getLineTable();
 		return fCodeIndexToLine;
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns map of line number to locations.
 	 */
-	protected List javaStratumLineToCodeIndexes(int line) throws AbsentInformationException {
+	protected List javaStratumLineToCodeIndexes(int line)
+			throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return null;
 		}
 		getLineTable();
-		
-		return (List)fLineToCodeIndexes.get(new Integer(line));
+
+		return fLineToCodeIndexes.get(new Integer(line));
 	}
-	
-	/** 
+
+	/**
 	 * Gets line table from VM.
 	 */
 	private void getLineTable() throws AbsentInformationException {
@@ -141,7 +145,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		if (fCodeIndexToLine != null) {
 			if (fCodeIndexToLine.isEmpty()) {
-				throw new AbsentInformationException(JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_1); 
+				throw new AbsentInformationException(
+						JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_1);
 			}
 			return;
 		}
@@ -151,42 +156,46 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithReferenceType(this, outData);
-	
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_LINE_TABLE, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.M_LINE_TABLE, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.ABSENT_INFORMATION:
-					throw new AbsentInformationException(JDIMessages.MethodImpl_No_line_number_information_available_2); 
-				case JdwpReplyPacket.NATIVE_METHOD:
-					throw new AbsentInformationException(JDIMessages.MethodImpl_No_line_number_information_available_2); 
+			case JdwpReplyPacket.ABSENT_INFORMATION:
+				throw new AbsentInformationException(
+						JDIMessages.MethodImpl_No_line_number_information_available_2);
+			case JdwpReplyPacket.NATIVE_METHOD:
+				throw new AbsentInformationException(
+						JDIMessages.MethodImpl_No_line_number_information_available_2);
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			fLowestValidCodeIndex = readLong("lowest index", replyData); //$NON-NLS-1$
 			fHighestValidCodeIndex = readLong("highest index", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			fCodeIndexToLine = new HashMap();
-			fLineToCodeIndexes = new HashMap();
+			fCodeIndexToLine = new HashMap<Long, Integer>();
+			fLineToCodeIndexes = new HashMap<Integer, List>();
 			if (nrOfElements == 0) {
-				throw new AbsentInformationException(JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_3); 
+				throw new AbsentInformationException(
+						JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_3);
 			}
-			fCodeIndexTable= new long[nrOfElements];
-			fJavaStratumLineNumberTable= new int[nrOfElements];
+			fCodeIndexTable = new long[nrOfElements];
+			fJavaStratumLineNumberTable = new int[nrOfElements];
 			for (int i = 0; i < nrOfElements; i++) {
 				long lineCodeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				Long lineCodeIndexLong = new Long(lineCodeIndex);
 				int lineNr = readInt("line nr", replyData); //$NON-NLS-1$
 				Integer lineNrInt = new Integer(lineNr);
-				
+
 				// Add entry to code-index to line mapping.
 				fCodeIndexToLine.put(lineCodeIndexLong, lineNrInt);
-				
-				fCodeIndexTable[i]= lineCodeIndex;
-				fJavaStratumLineNumberTable[i]= lineNr;
-				
-				List lineNrEntry = (List)fLineToCodeIndexes.get(lineNrInt);
+
+				fCodeIndexTable[i] = lineCodeIndex;
+				fJavaStratumLineNumberTable[i] = lineNr;
+
+				List<Long> lineNrEntry = fLineToCodeIndexes.get(lineNrInt);
 				if (lineNrEntry == null) {
-					lineNrEntry= new ArrayList();
+					lineNrEntry = new ArrayList<Long>();
 					fLineToCodeIndexes.put(lineNrInt, lineNrEntry);
 				}
 				lineNrEntry.add(lineCodeIndexLong);
@@ -198,126 +207,135 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		} finally {
 			handledJdwpRequest();
 		}
-	}	
-	
-	/** 
-	 * @return Returns the line number that corresponds to the given lineCodeIndex.
+	}
+
+	/**
+	 * @return Returns the line number that corresponds to the given
+	 *         lineCodeIndex.
 	 */
-	protected int javaStratumLineNumber(long lineCodeIndex) throws AbsentInformationException {
+	protected int javaStratumLineNumber(long lineCodeIndex)
+			throws AbsentInformationException {
 		if (isAbstract() || isNative() || isObsolete()) {
 			return -1;
 		}
 		getLineTable();
 		if (lineCodeIndex > fHighestValidCodeIndex) {
-            throw new AbsentInformationException(JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
+			throw new AbsentInformationException(
+					JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
 		}
 
 		Long lineCodeIndexObj;
 		Integer lineNrObj;
-		long index= lineCodeIndex;
+		long index = lineCodeIndex;
 		// Search for the line where this code index is located.
 		do {
 			lineCodeIndexObj = new Long(index);
-			lineNrObj = (Integer)javaStratumCodeIndexToLine().get(lineCodeIndexObj);
+			lineNrObj = javaStratumCodeIndexToLine().get(
+					lineCodeIndexObj);
 		} while (lineNrObj == null && --index >= fLowestValidCodeIndex);
 		if (lineNrObj == null) {
 			if (lineCodeIndex >= fLowestValidCodeIndex) {
-				index= lineCodeIndex;
+				index = lineCodeIndex;
 				do {
 					lineCodeIndexObj = new Long(index);
-					lineNrObj = (Integer)javaStratumCodeIndexToLine().get(lineCodeIndexObj);
+					lineNrObj = javaStratumCodeIndexToLine().get(
+							lineCodeIndexObj);
 				} while (lineNrObj == null && ++index <= fHighestValidCodeIndex);
 				if (lineNrObj != null) {
 					return lineNrObj.intValue();
 				}
 			}
-			throw new AbsentInformationException (JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4); 
+			throw new AbsentInformationException(
+					JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
 		}
 		return lineNrObj.intValue();
 	}
 
-	
 	/**
 	 * @see com.sun.jdi.Method#allLineLocations()
 	 */
 	public List allLineLocations() throws AbsentInformationException {
 		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#arguments()
 	 */
-	public List arguments() throws AbsentInformationException {
+	public List<LocalVariableImpl> arguments() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
-			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9); 
+			throw new AbsentInformationException(
+					JDIMessages.MethodImpl_No_local_variable_information_available_9);
 		}
 		if (fArguments != null) {
 			return fArguments;
 		}
-		
-		List result = new ArrayList();	
-		Iterator iter = variables().iterator();
+
+		List<LocalVariableImpl> result = new ArrayList<LocalVariableImpl>();
+		Iterator<LocalVariableImpl> iter = variables().iterator();
 		while (iter.hasNext()) {
-			LocalVariableImpl var = (LocalVariableImpl)iter.next();
+			LocalVariableImpl var = iter.next();
 			if (var.isArgument())
 				result.add(var);
 		}
 		fArguments = result;
 		return fArguments;
 	}
-	
-	/** 
-	 * @return Returns a text representation of all declared argument types of this method. 
+
+	/**
+	 * @return Returns a text representation of all declared argument types of
+	 *         this method.
 	 */
-	public List argumentTypeNames() {
+	public List<String> argumentTypeNames() {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
 		}
-		List argumentTypeSignatures= argumentTypeSignatures();
-		List result= new ArrayList();
-		for (Iterator iter= argumentTypeSignatures.iterator(); iter.hasNext();) {
+		List argumentTypeSignatures = argumentTypeSignatures();
+		List<String> result = new ArrayList<String>();
+		for (Iterator iter = argumentTypeSignatures.iterator(); iter.hasNext();) {
 			result.add(TypeImpl.signatureToName((String) iter.next()));
 		}
-		
-		fArgumentTypeNames= result;
+
+		fArgumentTypeNames = result;
 		return fArgumentTypeNames;
 	}
 
-
-	/** 
-	 * @return Returns a signatures of all declared argument types of this method. 
+	/**
+	 * @return Returns a signatures of all declared argument types of this
+	 *         method.
 	 */
 	private List argumentTypeSignatures() {
 		if (fArgumentTypeSignatures != null) {
 			return fArgumentTypeSignatures;
 		}
-		
-		fArgumentTypeSignatures= GenericSignature.getParameterTypes(signature());
+
+		fArgumentTypeSignatures = GenericSignature
+				.getParameterTypes(signature());
 		return fArgumentTypeSignatures;
 	}
 
-	/** 
-	 * @return Returns the list containing the type of each argument. 
+	/**
+	 * @return Returns the list containing the type of each argument.
 	 */
-	public List argumentTypes() throws ClassNotLoadedException {
+	public List<TypeImpl> argumentTypes() throws ClassNotLoadedException {
 		if (fArgumentTypes != null) {
 			return fArgumentTypes;
 		}
 
-		List result = new ArrayList();
+		List<TypeImpl> result = new ArrayList<TypeImpl>();
 		Iterator iter = argumentTypeSignatures().iterator();
-		ClassLoaderReference classLoaderRef= declaringType().classLoader();
-		VirtualMachineImpl vm= virtualMachineImpl();
+		ClassLoaderReference classLoaderRef = declaringType().classLoader();
+		VirtualMachineImpl vm = virtualMachineImpl();
 		while (iter.hasNext()) {
-			String argumentTypeSignature = (String)iter.next();
-			result.add(TypeImpl.create(vm, argumentTypeSignature, classLoaderRef));
+			String argumentTypeSignature = (String) iter.next();
+			result.add(TypeImpl.create(vm, argumentTypeSignature,
+					classLoaderRef));
 		}
 		fArgumentTypes = result;
 		return fArgumentTypes;
 	}
 
-	/** 
-	 * @return Returns an array containing the bytecodes for this method. 
+	/**
+	 * @return Returns an array containing the bytecodes for this method.
 	 */
 	public byte[] bytecodes() {
 		if (fByteCodes != null) {
@@ -329,10 +347,11 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithReferenceType(this, outData);
-			
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_BYTECODES, outBytes);
+
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.M_BYTECODES, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			int length = readInt("length", replyData); //$NON-NLS-1$
 			fByteCodes = readByteArray(length, "bytecodes", replyData); //$NON-NLS-1$
@@ -346,36 +365,44 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 	}
 
-	/** 
+	/**
 	 * @return Returns the hash code value.
 	 */
+	@Override
 	public int hashCode() {
 		return fMethodID.hashCode();
 	}
-	
+
 	/**
-	 * @return Returns true if two mirrors refer to the same entity in the target VM.
+	 * @return Returns true if two mirrors refer to the same entity in the
+	 *         target VM.
 	 * @see java.lang.Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		return object != null
-			&& object.getClass().equals(this.getClass())
-			&& fMethodID.equals(((MethodImpl)object).fMethodID)
-			&& referenceTypeImpl().equals(((MethodImpl)object).referenceTypeImpl());
+				&& object.getClass().equals(this.getClass())
+				&& fMethodID.equals(((MethodImpl) object).fMethodID)
+				&& referenceTypeImpl().equals(
+						((MethodImpl) object).referenceTypeImpl());
 	}
 
 	/**
-	 * @return Returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 * @return Returns a negative integer, zero, or a positive integer as this
+	 *         object is less than, equal to, or greater than the specified
+	 *         object.
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException(JDIMessages.MethodImpl_Can__t_compare_method_to_given_object_6); 
-		
-		// See if declaring types are the same, if not return comparison between declaring types.
-		Method type2 = (Method)object;
+			throw new ClassCastException(
+					JDIMessages.MethodImpl_Can__t_compare_method_to_given_object_6);
+
+		// See if declaring types are the same, if not return comparison between
+		// declaring types.
+		Method type2 = (Method) object;
 		if (!declaringType().equals(type2.declaringType()))
 			return declaringType().compareTo(type2.declaringType());
-		
+
 		// Return comparison of position within declaring type.
 		int index1 = declaringType().methods().indexOf(this);
 		int index2 = type2.declaringType().methods().indexOf(type2);
@@ -387,44 +414,42 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return 0;
 		}
 	}
-	
-	
+
 	/**
 	 * @see com.sun.jdi.Method#isAbstract()
 	 */
 	public boolean isAbstract() {
 		return (fModifierBits & MODIFIER_ACC_ABSTRACT) != 0;
 	}
-	
-	
+
 	/**
 	 * @see com.sun.jdi.Method#isConstructor()
 	 */
 	public boolean isConstructor() {
 		return name().equals("<init>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#isNative()
 	 */
 	public boolean isNative() {
 		return (fModifierBits & MODIFIER_ACC_NATIVE) != 0;
 	}
-		
+
 	/**
 	 * @see com.sun.jdi.Method#isStaticInitializer()
 	 */
 	public boolean isStaticInitializer() {
 		return name().equals("<clinit>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#isSynchronized()
 	 */
 	public boolean isSynchronized() {
 		return (fModifierBits & MODIFIER_ACC_SYNCHRONIZED) != 0;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#locationOfCodeIndex(long)
 	 */
@@ -433,31 +458,38 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return null;
 		}
 		try {
-			Integer lineNrInt = (Integer)javaStratumCodeIndexToLine().get(new Long(index));
+			Integer lineNrInt = javaStratumCodeIndexToLine().get(
+					new Long(index));
 			if (lineNrInt == null) {
-				throw new AbsentInformationException(MessageFormat.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2, new Object[]{Long.toString(index)})); 
+				throw new AbsentInformationException(
+						MessageFormat
+								.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2,
+										new Object[] { Long.toString(index) }));
 			}
-		} catch (AbsentInformationException e ) {
+		} catch (AbsentInformationException e) {
 		}
 		return new LocationImpl(virtualMachineImpl(), this, index);
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#locationsOfLine(int)
 	 */
 	public List locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.Method#returnType()
 	 */
 	public Type returnType() throws ClassNotLoadedException {
-		int startIndex = signature().lastIndexOf(')') + 1;	// Signature position is just after ending brace.
-		return TypeImpl.create(virtualMachineImpl(), signature().substring(startIndex), declaringType().classLoader());
+		int startIndex = signature().lastIndexOf(')') + 1; // Signature position
+															// is just after
+															// ending brace.
+		return TypeImpl.create(virtualMachineImpl(),
+				signature().substring(startIndex), declaringType()
+						.classLoader());
 	}
 
-	
 	/**
 	 * @see com.sun.jdi.Method#returnTypeName()
 	 */
@@ -465,20 +497,23 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
 		}
-		int startIndex = signature().lastIndexOf(')') + 1;	// Signature position is just after ending brace.
-		fReturnTypeName= TypeImpl.signatureToName(signature().substring(startIndex));
+		int startIndex = signature().lastIndexOf(')') + 1; // Signature position
+															// is just after
+															// ending brace.
+		fReturnTypeName = TypeImpl.signatureToName(signature().substring(
+				startIndex));
 		return fReturnTypeName;
-	}	
-	
-	
+	}
+
 	/**
 	 * @see com.sun.jdi.Method#variables()
 	 */
-	public List variables() throws AbsentInformationException {
+	public List<LocalVariableImpl> variables() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
-			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9); 
+			throw new AbsentInformationException(
+					JDIMessages.MethodImpl_No_local_variable_information_available_9);
 		}
-		
+
 		if (fVariables != null) {
 			return fVariables;
 		}
@@ -488,43 +523,50 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithReferenceType(this, outData);
-			
-			boolean withGenericSignature= virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5);
-			int jdwpCommand= withGenericSignature ? JdwpCommandPacket.M_VARIABLE_TABLE_WITH_GENERIC : JdwpCommandPacket.M_VARIABLE_TABLE;
+
+			boolean withGenericSignature = virtualMachineImpl()
+					.isJdwpVersionGreaterOrEqual(1, 5);
+			int jdwpCommand = withGenericSignature ? JdwpCommandPacket.M_VARIABLE_TABLE_WITH_GENERIC
+					: JdwpCommandPacket.M_VARIABLE_TABLE;
 			JdwpReplyPacket replyPacket = requestVM(jdwpCommand, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.ABSENT_INFORMATION:
-					return inferArguments();
+			case JdwpReplyPacket.ABSENT_INFORMATION:
+				return inferArguments();
 			}
-			
+
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			fArgumentSlotsCount = readInt("arg count", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List variables = new ArrayList(nrOfElements);
+			List<LocalVariableImpl> variables = new ArrayList<LocalVariableImpl>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				long codeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				String name = readString("name", replyData); //$NON-NLS-1$
 				String signature = readString("signature", replyData); //$NON-NLS-1$
-				String genericSignature= null;
+				String genericSignature = null;
 				if (withGenericSignature) {
-					genericSignature= readString("generic signature", replyData); //$NON-NLS-1$
+					genericSignature = readString(
+							"generic signature", replyData); //$NON-NLS-1$
 					if ("".equals(genericSignature)) { //$NON-NLS-1$
-						genericSignature= null;
+						genericSignature = null;
 					}
 				}
 				int length = readInt("length", replyData); //$NON-NLS-1$
 				int slot = readInt("slot", replyData); //$NON-NLS-1$
 				boolean isArgument = slot < fArgumentSlotsCount;
 
-				// Note that for instance methods, the first slot contains the this reference.
+				// Note that for instance methods, the first slot contains the
+				// this reference.
 				if (isStatic() || slot > 0) {
-					LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, codeIndex, name, signature, genericSignature, length, slot, isArgument);
+					LocalVariableImpl localVar = new LocalVariableImpl(
+							virtualMachineImpl(), this, codeIndex, name,
+							signature, genericSignature, length, slot,
+							isArgument);
 					variables.add(localVar);
 				}
 			}
-			fVariables= variables;
+			fVariables = variables;
 			return fVariables;
 		} catch (IOException e) {
 			fArgumentSlotsCount = -1;
@@ -535,56 +577,60 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			handledJdwpRequest();
 		}
 	}
-	
-	
+
 	/**
 	 * @throws AbsentInformationException
 	 */
-	private List inferArguments() throws AbsentInformationException {
+	private List<LocalVariableImpl> inferArguments() throws AbsentInformationException {
 		// infer arguments, if possible
-		
+
 		// try to generate the right generic signature for each argument
-		String genericSignature= genericSignature();
-		String[] signatures= (String[]) argumentTypeSignatures().toArray(new String[0]);
+		String genericSignature = genericSignature();
+		String[] signatures = (String[]) argumentTypeSignatures().toArray(
+				new String[0]);
 		String[] genericSignatures;
 		if (genericSignature == null) {
-			genericSignatures= new String[signatures.length];
+			genericSignatures = new String[signatures.length];
 		} else {
-			genericSignatures= (String[]) GenericSignature.getParameterTypes(genericSignature).toArray(new String[0]);
-			for (int i= 0; i < genericSignatures.length; i++) {
+			genericSignatures = (String[]) GenericSignature.getParameterTypes(
+					genericSignature).toArray(new String[0]);
+			for (int i = 0; i < genericSignatures.length; i++) {
 				if (genericSignatures[i].equals(signatures[i])) {
-					genericSignatures[i]= null;
+					genericSignatures[i] = null;
 				}
 			}
 		}
-		
+
 		int slot = 0;
 		if (!isStatic()) {
 			slot++;
 		}
-		if (signatures.length >0) {
+		if (signatures.length > 0) {
 			fArgumentSlotsCount = signatures.length;
-			fVariables = new ArrayList(fArgumentSlotsCount);
+			fVariables = new ArrayList<LocalVariableImpl>(fArgumentSlotsCount);
 			for (int i = 0; i < signatures.length; i++) {
 				String name = "arg" + i; //$NON-NLS-1$
-				LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signatures[i], genericSignatures[i], -1, slot, true);
+				LocalVariableImpl localVar = new LocalVariableImpl(
+						virtualMachineImpl(), this, 0, name, signatures[i],
+						genericSignatures[i], -1, slot, true);
 				fVariables.add(localVar);
 				slot++;
 			}
 			return fVariables;
 		}
-		throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9); 
+		throw new AbsentInformationException(
+				JDIMessages.MethodImpl_No_local_variable_information_available_9);
 
 	}
 
 	/**
 	 * @see com.sun.jdi.Method#variablesByName(String)
 	 */
-	public List variablesByName(String name) throws AbsentInformationException {
-		Iterator iter = variables().iterator();
-		List result = new ArrayList();
+	public List<LocalVariableImpl> variablesByName(String name) throws AbsentInformationException {
+		Iterator<LocalVariableImpl> iter = variables().iterator();
+		List<LocalVariableImpl> result = new ArrayList<LocalVariableImpl>();
 		while (iter.hasNext()) {
-			LocalVariableImpl var = (LocalVariableImpl)iter.next();
+			LocalVariableImpl var = iter.next();
 			if (var.name().equals(name)) {
 				result.add(var);
 			}
@@ -603,30 +649,33 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return new LocationImpl(virtualMachineImpl(), this, -1);
 		}
 		// First retrieve line code table.
-   		try {
+		try {
 			getLineTable();
 		} catch (AbsentInformationException e) {
 			return new LocationImpl(virtualMachineImpl(), this, -1);
 		}
 
 		// Return location with Lowest Valid Code Index.
-		return new LocationImpl(virtualMachineImpl(), this, fLowestValidCodeIndex);
+		return new LocationImpl(virtualMachineImpl(), this,
+				fLowestValidCodeIndex);
 	}
-	
+
 	/**
 	 * Writes JDWP representation.
 	 */
-	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
+	public void write(MirrorImpl target, DataOutputStream out)
+			throws IOException {
 		fMethodID.write(out);
 		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("method", fMethodID.value()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Writes JDWP representation, including ReferenceType.
 	 */
-	protected void writeWithReferenceType(MirrorImpl target, DataOutputStream out) throws IOException {
+	protected void writeWithReferenceType(MirrorImpl target,
+			DataOutputStream out) throws IOException {
 		referenceTypeImpl().write(target, out);
 		write(target, out);
 	}
@@ -634,7 +683,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * Writes JDWP representation, including ReferenceType with Tag.
 	 */
-	protected void writeWithReferenceTypeWithTag(MirrorImpl target, DataOutputStream out) throws IOException {
+	protected void writeWithReferenceTypeWithTag(MirrorImpl target,
+			DataOutputStream out) throws IOException {
 		referenceTypeImpl().writeWithTag(target, out);
 		write(target, out);
 	}
@@ -642,10 +692,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	protected static MethodImpl readWithReferenceTypeWithTag(MirrorImpl target, DataInputStream in) throws IOException {
+	protected static MethodImpl readWithReferenceTypeWithTag(MirrorImpl target,
+			DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-	  	// See Location.
-		ReferenceTypeImpl referenceType = ReferenceTypeImpl.readWithTypeTag(target, in);
+		// See Location.
+		ReferenceTypeImpl referenceType = ReferenceTypeImpl.readWithTypeTag(
+				target, in);
 		if (referenceType == null)
 			return null;
 
@@ -658,19 +710,23 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (ID.isNull()) {
 			return null;
 		}
-			
+
 		// The method must be part of a known reference type.
 		MethodImpl method = referenceType.findMethod(ID);
 		if (method == null) {
-			throw new InternalError(JDIMessages.MethodImpl_Got_MethodID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_10); 
+			throw new InternalError(
+					JDIMessages.MethodImpl_Got_MethodID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_10);
 		}
 		return method;
 	}
-	
+
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	protected static MethodImpl readWithNameSignatureModifiers(ReferenceTypeImpl target, ReferenceTypeImpl referenceType, boolean withGenericSignature, DataInputStream in)  throws IOException {
+	protected static MethodImpl readWithNameSignatureModifiers(
+			ReferenceTypeImpl target, ReferenceTypeImpl referenceType,
+			boolean withGenericSignature, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpMethodID ID = new JdwpMethodID(vmImpl);
 		ID.read(in);
@@ -683,16 +739,18 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		String name = target.readString("name", in); //$NON-NLS-1$
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		String genericSignature= null;
+		String genericSignature = null;
 		if (withGenericSignature) {
-			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+			genericSignature = target.readString("generic signature", in); //$NON-NLS-1$
 			if ("".equals(genericSignature)) { //$NON-NLS-1$
-				genericSignature= null;
+				genericSignature = null;
 			}
 		}
-		int modifierBits= target.readInt("modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
+		int modifierBits = target.readInt(
+				"modifiers", AccessibleImpl.getModifierStrings(), in); //$NON-NLS-1$
 
-		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name, signature, genericSignature, modifierBits);
+		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name,
+				signature, genericSignature, modifierBits);
 		return mirror;
 	}
 
@@ -703,16 +761,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fgInvokeOptions != null) {
 			return;
 		}
-		
+
 		Field[] fields = MethodImpl.class.getDeclaredFields();
 		fgInvokeOptions = new String[32];
 
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0) {
+		for (Field field : fields) {
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0
+					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0
+					|| (field.getModifiers() & Modifier.FINAL) == 0) {
 				continue;
 			}
-				
+
 			try {
 				String name = field.getName();
 
@@ -720,7 +779,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 					int value = field.getInt(null);
 					for (int j = 0; j < fgInvokeOptions.length; j++) {
 						if ((1 << j & value) != 0) {
-							fgInvokeOptions[j]= name;
+							fgInvokeOptions[j] = name;
 							break;
 						}
 					}
@@ -734,22 +793,23 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return Returns a map with string representations of tags.
 	 */
-	 protected static String[] getInvokeOptions() {
-	 	getConstantMaps();
-	 	return fgInvokeOptions;
-	 }
+	protected static String[] getInvokeOptions() {
+		getConstantMaps();
+		return fgInvokeOptions;
+	}
+
 	/**
 	 * @see Method#isObsolete()
 	 * 
-	 * The JDK 1.4.0 specification states that obsolete methods
-	 * are given an ID of zero. It also states that when a method
-	 * is redefined, the new method gets the ID of the old method.
-	 * Thus, the JDWP query for isObsolete on JDK 1.4 will never return true
-	 * for a non-zero method ID. The query is therefore not needed
+	 *      The JDK 1.4.0 specification states that obsolete methods are given
+	 *      an ID of zero. It also states that when a method is redefined, the
+	 *      new method gets the ID of the old method. Thus, the JDWP query for
+	 *      isObsolete on JDK 1.4 will never return true for a non-zero method
+	 *      ID. The query is therefore not needed
 	 */
 	public boolean isObsolete() {
 		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 4)) {
@@ -761,31 +821,40 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @see Method#allLineLocations(String, String)
 	 */
-	public List allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
+	public List allLineLocations(String stratum, String sourceName)
+			throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return Collections.EMPTY_LIST;
 		}
-		if (stratum == null) { // if stratum not defined use the default stratum for the declaring type
-			stratum= declaringType().defaultStratum();
+		if (stratum == null) { // if stratum not defined use the default stratum
+								// for the declaring type
+			stratum = declaringType().defaultStratum();
 		}
-		List allLineLocations= null;
-		Map sourceNameAllLineLocations= null;
-		if (fStratumAllLineLocations == null) { // the stratum map doesn't exist, create it
-			fStratumAllLineLocations= new HashMap();
+		List allLineLocations = null;
+		Map<String, List> sourceNameAllLineLocations = null;
+		if (fStratumAllLineLocations == null) { // the stratum map doesn't
+												// exist, create it
+			fStratumAllLineLocations = new HashMap<String, Map>();
 		} else {
 			// get the source name map
-			sourceNameAllLineLocations= (Map)fStratumAllLineLocations.get(stratum);
+			sourceNameAllLineLocations = fStratumAllLineLocations
+					.get(stratum);
 		}
-		if (sourceNameAllLineLocations == null) { // the source name map doesn't exist, create it
-			sourceNameAllLineLocations= new HashMap();
+		if (sourceNameAllLineLocations == null) { // the source name map doesn't
+													// exist, create it
+			sourceNameAllLineLocations = new HashMap<String, List>();
 			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
 		} else {
 			// get the line locations
-			allLineLocations= (List)sourceNameAllLineLocations.get(sourceName);
+			allLineLocations = sourceNameAllLineLocations
+					.get(sourceName);
 		}
-		if (allLineLocations == null) { // the line locations are not know, compute and store them
+		if (allLineLocations == null) { // the line locations are not know,
+										// compute and store them
 			getLineTable();
-			allLineLocations= referenceTypeImpl().allLineLocations(stratum, sourceName, this, fCodeIndexTable, fJavaStratumLineNumberTable);
+			allLineLocations = referenceTypeImpl().allLineLocations(stratum,
+					sourceName, this, fCodeIndexTable,
+					fJavaStratumLineNumberTable);
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}
 		return allLineLocations;
@@ -794,38 +863,45 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @see Method#locationsOfLine(String, String, int)
 	 */
-	public List locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
+	public List locationsOfLine(String stratum, String sourceName,
+			int lineNumber) throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return Collections.EMPTY_LIST;
 		}
-		return referenceTypeImpl().locationsOfLine(stratum, sourceName, lineNumber, this);
+		return referenceTypeImpl().locationsOfLine(stratum, sourceName,
+				lineNumber, this);
 	}
 
 	/**
-	 * Return a list which contains a location for the each disjoin range of code indice
-	 * that have bean assigned to the given lines (by the compiler or/and the VM).
-	 * Return an empty list if there is not executable code at the specified lines.
+	 * Return a list which contains a location for the each disjoin range of
+	 * code indice that have bean assigned to the given lines (by the compiler
+	 * or/and the VM). Return an empty list if there is not executable code at
+	 * the specified lines.
 	 */
-	protected List javaStratumLocationsOfLines(List javaLines) throws AbsentInformationException {
-		Set	tmpLocations= new TreeSet();
-		for (Iterator iter = javaLines.iterator(); iter.hasNext();) {
-			Integer key = (Integer)iter.next();
-			List indexes= javaStratumLineToCodeIndexes(key.intValue());
+	protected List javaStratumLocationsOfLines(List<Integer> javaLines)
+			throws AbsentInformationException {
+		Set tmpLocations = new TreeSet();
+		for (Iterator<Integer> iter = javaLines.iterator(); iter.hasNext();) {
+			Integer key = iter.next();
+			List indexes = javaStratumLineToCodeIndexes(key.intValue());
 			if (indexes != null) {
 				tmpLocations.addAll(indexes);
 			}
 		}
 		List locations = new ArrayList();
 		for (Iterator iter = tmpLocations.iterator(); iter.hasNext();) {
-			long index = ((Long)iter.next()).longValue();
-			int position= Arrays.binarySearch(fCodeIndexTable, index);
-			if (position == 0 || !tmpLocations.contains(new Long(fCodeIndexTable[position - 1]))) {
-				locations.add(new LocationImpl(virtualMachineImpl(), this, index));
+			long index = ((Long) iter.next()).longValue();
+			int position = Arrays.binarySearch(fCodeIndexTable, index);
+			if (position == 0
+					|| !tmpLocations.contains(new Long(
+							fCodeIndexTable[position - 1]))) {
+				locations.add(new LocationImpl(virtualMachineImpl(), this,
+						index));
 			}
 		}
 		return locations;
 	}
-	
+
 	public boolean isBridge() {
 		return (fModifierBits & MODIFIER_ACC_BRIDGE) != 0;
 	}

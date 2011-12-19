@@ -211,7 +211,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     public void toggleLineBreakpoints(final IWorkbenchPart part, final ISelection selection, final boolean bestMatch, final ValidBreakpointLocationLocator locator) {
         Job job = new Job("Toggle Line Breakpoint") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor monitor) {
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
             	ITextEditor editor = getTextEditor(part);
                 if (editor != null && selection instanceof ITextSelection) {
                     if (monitor.isCanceled()) {
@@ -305,7 +306,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     public void toggleMethodBreakpoints(final IWorkbenchPart part, final ISelection finalSelection) {
         Job job = new Job("Toggle Method Breakpoints") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor monitor) {
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }
@@ -388,6 +390,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     public void toggleClassBreakpoints(final IWorkbenchPart part, final ISelection selection) {
     	Job job = new Job("Toggle Class Load Breakpoints") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
@@ -824,7 +827,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     public void toggleWatchpoints(final IWorkbenchPart part, final ISelection finalSelection) {
         Job job = new Job("Toggle Watchpoints") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor monitor) {
+            @Override
+			protected IStatus run(IProgressMonitor monitor) {
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 }

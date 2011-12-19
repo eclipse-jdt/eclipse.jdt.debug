@@ -42,6 +42,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * 
  * @since 3.1
  */
+@SuppressWarnings("deprecation")
 public class JavaLibraryPathTests extends AbstractDebugTest {
 	
 	public JavaLibraryPathTests(String name) {
@@ -51,12 +52,14 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 	/**
 	 * Create test projects "PathTests1/2/3"
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		createProject("PathTests1");
 		createProject("PathTests2");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		deleteProject("PathTests1");

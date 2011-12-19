@@ -38,6 +38,7 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		fArguments = arguments;
 	}
 	
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IField originalField = getOriginalType().getField(getFieldName());
 		IField destinationField = null;

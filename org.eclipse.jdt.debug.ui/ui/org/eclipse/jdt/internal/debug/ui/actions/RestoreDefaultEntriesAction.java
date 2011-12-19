@@ -42,6 +42,7 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		try {
 			ILaunchConfiguration config = fTab.getLaunchConfiguration();
@@ -63,6 +64,7 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}

@@ -32,6 +32,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);

@@ -18,68 +18,71 @@ import java.util.List;
  * Utility class to perform operations on generic signatures
  */
 public class GenericSignature {
-	
-	private static final char C_CLASS_TYPE= 'L';
-	private static final char C_TYPE_VARIABLE= 'T';
-	private static final char C_ARRAY= '[';
-	private static final char C_WILDCARD_PLUS= '+';
-	private static final char C_WILDCARD_MINUS= '-';
-	
-	private static final char C_TYPE_END= ';';
-	private static final char C_PARAMETERS_START= '(';
-	private static final char C_PARAMETERS_END= ')';
-	private static final char C_TYPE_ARGUMENTS_START= '<';
-	private static final char C_TYPE_ARGUMENTS_END= '>';
-	
+
+	private static final char C_CLASS_TYPE = 'L';
+	private static final char C_TYPE_VARIABLE = 'T';
+	private static final char C_ARRAY = '[';
+	private static final char C_WILDCARD_PLUS = '+';
+	private static final char C_WILDCARD_MINUS = '-';
+
+	private static final char C_TYPE_END = ';';
+	private static final char C_PARAMETERS_START = '(';
+	private static final char C_PARAMETERS_END = ')';
+	private static final char C_TYPE_ARGUMENTS_START = '<';
+	private static final char C_TYPE_ARGUMENTS_END = '>';
+
 	public static List getParameterTypes(String methodSignature) {
-		int parameterStart= methodSignature.indexOf(C_PARAMETERS_START);
-		int parametersEnd= methodSignature.lastIndexOf(C_PARAMETERS_END);
+		int parameterStart = methodSignature.indexOf(C_PARAMETERS_START);
+		int parametersEnd = methodSignature.lastIndexOf(C_PARAMETERS_END);
 		if (parameterStart == -1 || parametersEnd == -1) {
-			// used to throw illegal argument exception, but now return empty list if we can't parse it
+			// used to throw illegal argument exception, but now return empty
+			// list if we can't parse it
 			return Collections.EMPTY_LIST;
 		}
-		return getTypeSignatureList(methodSignature.substring(parameterStart + 1, parametersEnd));
+		return getTypeSignatureList(methodSignature.substring(
+				parameterStart + 1, parametersEnd));
 	}
-	
+
 	private static List getTypeSignatureList(String typeSignatureList) {
-		List list= new ArrayList();
-		int pos= 0;
+		List list = new ArrayList();
+		int pos = 0;
 		while (pos < typeSignatureList.length()) {
-			int signatureLength= nextTypeSignatureLength(typeSignatureList, pos);
-			list.add(typeSignatureList.substring(pos, pos+= signatureLength));
+			int signatureLength = nextTypeSignatureLength(typeSignatureList,
+					pos);
+			list.add(typeSignatureList.substring(pos, pos += signatureLength));
 		}
 		return list;
 	}
-	
+
 	private static int nextTypeSignatureLength(String signature, int startPos) {
-		int inclusionLevel= 0;
-		for (int i= startPos, length= signature.length(); i < length; i++) {
+		int inclusionLevel = 0;
+		for (int i = startPos, length = signature.length(); i < length; i++) {
 			if (inclusionLevel == 0) {
 				switch (signature.charAt(i)) {
-					case C_CLASS_TYPE:
-					case C_TYPE_VARIABLE:
-					case C_WILDCARD_PLUS:
-					case C_WILDCARD_MINUS:
-						inclusionLevel= 1;
-						break;
-					case C_ARRAY:
-						break;
-					default:
-						return i - startPos + 1;
+				case C_CLASS_TYPE:
+				case C_TYPE_VARIABLE:
+				case C_WILDCARD_PLUS:
+				case C_WILDCARD_MINUS:
+					inclusionLevel = 1;
+					break;
+				case C_ARRAY:
+					break;
+				default:
+					return i - startPos + 1;
 				}
 			} else {
 				switch (signature.charAt(i)) {
-					case C_TYPE_END:
-						if (inclusionLevel == 1) {
-							return i - startPos + 1;
-						}
-						break;
-					case C_TYPE_ARGUMENTS_START:
-						inclusionLevel++;
-						break;
-					case C_TYPE_ARGUMENTS_END:
-						inclusionLevel--;
-						break;
+				case C_TYPE_END:
+					if (inclusionLevel == 1) {
+						return i - startPos + 1;
+					}
+					break;
+				case C_TYPE_ARGUMENTS_START:
+					inclusionLevel++;
+					break;
+				case C_TYPE_ARGUMENTS_END:
+					inclusionLevel--;
+					break;
 				}
 			}
 		}

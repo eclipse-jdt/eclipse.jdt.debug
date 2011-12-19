@@ -29,6 +29,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 	EventRequestManager erm = null;
 	
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {
 		erm = fVM.eventRequestManager();
 	}

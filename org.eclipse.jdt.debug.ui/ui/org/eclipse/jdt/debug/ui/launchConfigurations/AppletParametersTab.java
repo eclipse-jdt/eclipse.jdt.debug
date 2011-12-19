@@ -80,6 +80,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
 			if (source == fViewer.getTable() || source == fViewer) {
@@ -167,6 +168,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		ptable.setLinesVisible(true);
 		ptable.addSelectionListener(fListener);
 		ptable.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				setParametersButtonsEnableState();
 				if (fParametersEditButton.isEnabled()) {
@@ -234,6 +236,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		try {
@@ -370,6 +373,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fWidthText.setText(Integer.toString(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, DEFAULT_APPLET_WIDTH))); 
@@ -410,6 +414,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.appletParametersTab"; //$NON-NLS-1$
 	}
@@ -417,6 +422,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}	
@@ -424,6 +430,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
 	}
@@ -431,6 +438,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when de-activated
 	}	

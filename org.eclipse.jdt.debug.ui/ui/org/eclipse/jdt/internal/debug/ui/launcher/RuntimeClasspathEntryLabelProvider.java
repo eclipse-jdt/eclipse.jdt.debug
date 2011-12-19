@@ -58,6 +58,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)element;
 		IResource resource = entry.getResource();
@@ -124,6 +125,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)element;
 		switch (entry.getType()) {
@@ -229,6 +231,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		lp.dispose();

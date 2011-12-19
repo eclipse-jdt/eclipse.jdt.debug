@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -20,44 +17,54 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
- 
+
+import com.ibm.icu.text.MessageFormat;
+
 /**
- * Sends an message to an instance. The arguments are on the
- * stack in reverse order, followed by the receiver.
- * Pushes the result, if any, onto the stack
+ * Sends an message to an instance. The arguments are on the stack in reverse
+ * order, followed by the receiver. Pushes the result, if any, onto the stack
  */
 public class SendMessage extends CompoundInstruction {
-	
+
 	private int fArgCount;
 	private String fSelector;
 	private String fSignature;
 	private String fDeclaringType;
-	
-	public SendMessage(String selector, String signature, int argCount, String declaringType, int start) {
+
+	public SendMessage(String selector, String signature, int argCount,
+			String declaringType, int start) {
 		super(start);
-		fArgCount= argCount;
-		fSelector= selector;
-		fSignature= signature;
-		fDeclaringType= declaringType;
+		fArgCount = argCount;
+		fSelector = selector;
+		fSignature = signature;
+		fDeclaringType = declaringType;
 	}
-	
+
+	@Override
 	public void execute() throws CoreException {
 		IJavaValue[] args = new IJavaValue[fArgCount];
 		// args are in reverse order
-		for (int i= fArgCount - 1; i >= 0; i--) {
+		for (int i = fArgCount - 1; i >= 0; i--) {
 			args[i] = popValue();
 		}
 		Object receiver = pop();
 		IJavaValue result = null;
-		
+
 		if (receiver instanceof IJavaVariable) {
-			receiver = ((IJavaVariable) receiver).getValue();	
+			receiver = ((IJavaVariable) receiver).getValue();
 		}
-		
+
 		if (receiver instanceof IJavaObject) {
-			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fDeclaringType);
+			result = ((IJavaObject) receiver).sendMessage(fSelector,
+					fSignature, args, getContext().getThread(), fDeclaringType);
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.SendMessage_Attempt_to_send_a_message_to_a_non_object_value_1, null)); 
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							JDIDebugPlugin.getUniqueIdentifier(),
+							IStatus.OK,
+							InstructionsEvaluationMessages.SendMessage_Attempt_to_send_a_message_to_a_non_object_value_1,
+							null));
 		}
 		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
@@ -65,9 +72,11 @@ public class SendMessage extends CompoundInstruction {
 			push(result);
 		}
 	}
-	
+
+	@Override
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.SendMessage_send_message__0___1__2, new String[]{fSelector,fSignature}); 
+		return MessageFormat
+				.format(InstructionsEvaluationMessages.SendMessage_send_message__0___1__2,
+						new String[] { fSelector, fSignature });
 	}
 }
-

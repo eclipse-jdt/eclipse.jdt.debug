@@ -40,6 +40,7 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		return MessageFormat.format(RefactoringMessages.ExceptionBreakpointTypeChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
@@ -48,6 +49,7 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		Map map = new HashMap();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);

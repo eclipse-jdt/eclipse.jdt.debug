@@ -133,6 +133,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	public void setButton(Button button) {
 		fButton = button;
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				run();
 			}
@@ -142,6 +143,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * @see IAction#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (fButton != null) {
@@ -177,6 +179,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return getViewer().updateSelection(getActionType(), selection);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,26 @@
  *******************************************************************************/
 package com.sun.jdi.request;
 
-
 import java.util.List;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.Location;
 import com.sun.jdi.Mirror;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
-
+/**
+ * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/request/EventRequestManager.html
+ */
 public interface EventRequestManager extends Mirror {
-	public List accessWatchpointRequests();
-	public List breakpointRequests();
-	public List classPrepareRequests();
-	public List classUnloadRequests();
+	public List<AccessWatchpointRequest> accessWatchpointRequests();
+	public List<BreakpointRequest> breakpointRequests();
+	public List<ClassPrepareRequest> classPrepareRequests();
+	public List<ClassUnloadRequest> classUnloadRequests();
 	public AccessWatchpointRequest createAccessWatchpointRequest(Field arg1);
 	public BreakpointRequest createBreakpointRequest(Location arg1);
 	public ClassPrepareRequest createClassPrepareRequest();
 	public ClassUnloadRequest createClassUnloadRequest();
-	public ExceptionRequest createExceptionRequest(com.sun.jdi.ReferenceType arg1, boolean arg2, boolean arg3);
+	public ExceptionRequest createExceptionRequest(ReferenceType arg1, boolean arg2, boolean arg3);
 	public MethodEntryRequest createMethodEntryRequest();
 	public MethodExitRequest createMethodExitRequest();
 	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest();
@@ -41,17 +43,17 @@ public interface EventRequestManager extends Mirror {
 	public VMDeathRequest createVMDeathRequest();
 	public void deleteAllBreakpoints();
 	public void deleteEventRequest(EventRequest arg1);
-	public void deleteEventRequests(List arg1);
-	public List exceptionRequests();
-	public List methodEntryRequests();
-	public List methodExitRequests();
-	public List modificationWatchpointRequests();
-	public List stepRequests();
-	public List threadDeathRequests();
-	public List threadStartRequests();
-	public List vmDeathRequests();
-	public List monitorContendedEnterRequests();
-    public List monitorContendedEnteredRequests();
-    public List monitorWaitRequests();
-    public List monitorWaitedRequests();
+	public void deleteEventRequests(List<? extends EventRequest> arg1);
+	public List<ExceptionRequest> exceptionRequests();
+	public List<MethodEntryRequest> methodEntryRequests();
+	public List<MethodExitRequest> methodExitRequests();
+	public List<ModificationWatchpointRequest> modificationWatchpointRequests();
+	public List<StepRequest> stepRequests();
+	public List<ThreadDeathRequest> threadDeathRequests();
+	public List<ThreadStartRequest> threadStartRequests();
+	public List<VMDeathRequest> vmDeathRequests();
+	public List<MonitorContendedEnterRequest> monitorContendedEnterRequests();
+	public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests();
+	public List<MonitorWaitRequest> monitorWaitRequests();
+	public List<MonitorWaitedRequest> monitorWaitedRequests();
 }

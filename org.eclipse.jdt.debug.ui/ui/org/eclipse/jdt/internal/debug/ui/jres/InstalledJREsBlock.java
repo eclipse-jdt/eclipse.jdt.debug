@@ -252,6 +252,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		TableColumn column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_0); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
 			}
@@ -262,6 +263,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_1); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
 			}
@@ -271,6 +273,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_2); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
@@ -307,6 +310,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					if (fRemoveButton.isEnabled()){
@@ -437,6 +441,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByType() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -452,6 +457,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -464,6 +470,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByName() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -473,6 +480,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -485,6 +493,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByLocation() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -494,6 +503,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -715,7 +725,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
                  * More accurately reflects action taken when button pressed.
                  * Bug [162902]
                  */
-                protected void createCancelButton(Composite parent) {
+                @Override
+				protected void createCancelButton(Composite parent) {
                     cancel = createButton(parent, IDialogConstants.CANCEL_ID,
                             IDialogConstants.STOP_LABEL, true);
                     if (arrowCursor == null) {

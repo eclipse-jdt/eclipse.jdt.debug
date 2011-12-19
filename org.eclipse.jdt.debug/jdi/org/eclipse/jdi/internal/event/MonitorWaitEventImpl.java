@@ -25,43 +25,53 @@ import com.sun.jdi.LongValue;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.event.MonitorWaitEvent;
 
-public class MonitorWaitEventImpl extends LocatableEventImpl implements MonitorWaitEvent {
+public class MonitorWaitEventImpl extends LocatableEventImpl implements
+		MonitorWaitEvent {
 
 	/** Jdwp event kind id **/
 	public static final byte EVENT_KIND = EVENT_MONITOR_WAIT;
-	
+
 	/** howl ong the timeout is **/
 	private long fTimeOut;
-	
+
 	/** the monitor reference **/
 	private ObjectReference fMonitor;
-	
+
 	/** Constructor **/
 	private MonitorWaitEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
 		super("MonitorWait", vmImpl, requestID); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static MonitorWaitEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException { 
+	public static MonitorWaitEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		MonitorWaitEventImpl event = new MonitorWaitEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
-		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target, dataInStream);
+		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target,
+				dataInStream);
 		event.fLocation = LocationImpl.read(target, dataInStream);
-		event.fTimeOut = ((LongValue)ValueImpl.readWithTag(target, dataInStream)).value();
+		event.fTimeOut = ((LongValue) ValueImpl.readWithTag(target,
+				dataInStream)).value();
 		return event;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.event.MonitorWaitedEvent#monitor()
 	 */
 	public ObjectReference monitor() {
 		return fMonitor;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.event.MonitorWaitEvent#timeout()
 	 */
 	public long timeout() {

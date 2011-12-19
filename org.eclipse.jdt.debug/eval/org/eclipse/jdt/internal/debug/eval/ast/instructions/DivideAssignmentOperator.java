@@ -12,12 +12,14 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public class DivideAssignmentOperator extends DivideOperator {
 
-	public DivideAssignmentOperator(int variableTypeId, int valueTypeId, int start) {
+	public DivideAssignmentOperator(int variableTypeId, int valueTypeId,
+			int start) {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.DivideAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.DivideAssignmentOperator_operator_1;
 	}
 
 }

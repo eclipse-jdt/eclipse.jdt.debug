@@ -35,6 +35,7 @@ public class EditVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fEditPage = getPage(getVMInstall().getVMInstallType());
 		fEditPage.setSelection(new VMStandin(getVMInstall()));
@@ -44,6 +45,7 @@ public class EditVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		if (fEditPage.finish()) {
 			return super.performFinish();
@@ -54,6 +56,7 @@ public class EditVMInstallWizard extends VMInstallWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.VMInstallWizard#getResult()
 	 */
+	@Override
 	protected VMStandin getResult() {
 		return fEditPage.getSelection();
 	}

@@ -31,6 +31,7 @@ public class ExpressionWaiter extends DebugElementEventWaiter {
 	/**
 	 * @see org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	public boolean accept(DebugEvent event) {
 		if (event.getDetail() == DebugEvent.STATE) {
 			return false;

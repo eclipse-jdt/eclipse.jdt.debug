@@ -33,6 +33,7 @@ public class MirrorTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get all kinds of concrete mirror that can be found in the VM
 		// in alphabetical order.
@@ -80,6 +81,7 @@ public class MirrorTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		ListIterator iterator = fMirrors.listIterator();
 		while (iterator.hasNext()) {
@@ -112,6 +114,7 @@ public class MirrorTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Mirror";
 	}

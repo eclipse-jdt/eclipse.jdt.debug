@@ -106,6 +106,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite ancestor) {
 		initializeDialogUnits(ancestor);
 		noDefaultAndApplyButton();
@@ -225,6 +226,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();

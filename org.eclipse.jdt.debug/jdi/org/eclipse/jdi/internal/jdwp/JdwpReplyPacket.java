@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -18,9 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
- * declared by the JDWP specification.
- *
+ * This class implements the corresponding Java Debug Wire Protocol (JDWP)
+ * packet declared by the JDWP specification.
+ * 
  */
 public class JdwpReplyPacket extends JdwpPacket {
 	/** Error code constants. */
@@ -30,7 +29,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 	public static final short INVALID_PRIORITY = 12;
 	public static final short THREAD_NOT_SUSPENDED = 13;
 	public static final short THREAD_SUSPENDED = 14;
-	public static final short THREAD_NOT_ALIVE = 15;  
+	public static final short THREAD_NOT_ALIVE = 15;
 	public static final short INVALID_OBJECT = 20;
 	public static final short INVALID_CLASS = 21;
 	public static final short CLASS_NOT_PREPARED = 22;
@@ -81,27 +80,28 @@ public class JdwpReplyPacket extends JdwpPacket {
 	public static final short TRANSPORT_INIT = 510;
 	public static final short NATIVE_METHOD = 511;
 	public static final short INVALID_COUNT = 512;
-	public static final short HCR_OPERATION_REFUSED = 900;	// HCR specific.
-	
+	public static final short HCR_OPERATION_REFUSED = 900; // HCR specific.
+
 	/** Mapping of error codes to strings. */
-	private static HashMap fErrorMap = null;
+	private static HashMap<Integer, String> fErrorMap = null;
 
 	/** JDWP Error code. */
 	private short fErrorCode;
+
 	/**
 	 * Creates new JdwpReplyPacket.
 	 */
 	public JdwpReplyPacket() {
 		setFlags(FLAG_REPLY_PACKET);
 	}
-	
+
 	/**
 	 * @return Returns JDWP Error code.
 	 */
 	public short errorCode() {
 		return fErrorCode;
 	}
-	
+
 	/**
 	 * Assigns JDWP Error code.
 	 */
@@ -112,18 +112,22 @@ public class JdwpReplyPacket extends JdwpPacket {
 	/**
 	 * Reads header fields that are specific for this type of packet.
 	 */
-	protected int readSpecificHeaderFields(byte[] bytes, int index) throws IOException {
-		fErrorCode =  (short)(((bytes[index] & 0xFF) << 8) + ((bytes[index+1] & 0xFF) << 0));
+	@Override
+	protected int readSpecificHeaderFields(byte[] bytes, int index)
+			throws IOException {
+		fErrorCode = (short) (((bytes[index] & 0xFF) << 8) + ((bytes[index + 1] & 0xFF) << 0));
 		return 2;
 	}
 
 	/**
 	 * Writes header fields that are specific for this type of packet.
 	 */
-	protected int writeSpecificHeaderFields(byte[] bytes, int index) throws IOException {
-        bytes[index] = (byte) ((fErrorCode >>> 8) & 0xFF);
-        bytes[index+1] = (byte) ((fErrorCode >>> 0) & 0xFF);
-        return 2;
+	@Override
+	protected int writeSpecificHeaderFields(byte[] bytes, int index)
+			throws IOException {
+		bytes[index] = (byte) ((fErrorCode >>> 8) & 0xFF);
+		bytes[index + 1] = (byte) ((fErrorCode >>> 0) & 0xFF);
+		return 2;
 	}
 
 	/**
@@ -133,14 +137,15 @@ public class JdwpReplyPacket extends JdwpPacket {
 		if (fErrorMap != null) {
 			return;
 		}
-		
+
 		Field[] fields = JdwpReplyPacket.class.getDeclaredFields();
-		fErrorMap = new HashMap(fields.length);
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
+		fErrorMap = new HashMap<Integer, String>(fields.length);
+		for (Field field : fields) {
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0
+					|| (field.getModifiers() & Modifier.STATIC) == 0
+					|| (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
-				
+
 			try {
 				Integer intValue = new Integer(field.getInt(null));
 				fErrorMap.put(intValue, field.getName());
@@ -157,14 +162,17 @@ public class JdwpReplyPacket extends JdwpPacket {
 	/**
 	 * @return Returns a map with string representations of error codes.
 	 */
-	public static Map errorMap() {
+	public static Map<Integer, String> errorMap() {
 		getConstantMaps();
 		return fErrorMap;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("["); //$NON-NLS-1$

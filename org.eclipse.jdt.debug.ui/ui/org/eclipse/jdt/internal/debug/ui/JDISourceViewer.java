@@ -300,6 +300,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
 	 */
+	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 		super.configure(configuration);
 		if (fStore != null) {

@@ -31,6 +31,7 @@ public class AddVariableAction extends RuntimeClasspathAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() {
 		
 		IPath[] paths = BuildPathDialogAccess.chooseVariableEntries(getShell(), new IPath[0]);
@@ -43,6 +44,7 @@ public class AddVariableAction extends RuntimeClasspathAction {
 		}				
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

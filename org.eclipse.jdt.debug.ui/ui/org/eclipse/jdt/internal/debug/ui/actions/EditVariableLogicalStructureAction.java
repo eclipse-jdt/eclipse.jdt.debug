@@ -51,7 +51,8 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
      * Prompt the user to edit the logical structure associated with the currently
      * selected variable.
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         if (fStructure == null) {
             return;
         }
@@ -67,7 +68,8 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
     /**
      * @see ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         fStructure= null;
         Object element = ((IStructuredSelection) selection).getFirstElement();
         if (element instanceof IJavaVariable) {

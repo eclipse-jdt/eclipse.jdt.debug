@@ -54,6 +54,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		super.dispose();
@@ -100,6 +101,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 		fAlternateModeCheckBox = new Button(parent, SWT.CHECK);
 		fAlternateModeCheckBox.setText("Check &me for 'alternate' mode");
 		fAlternateModeCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -111,6 +113,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.tests.javaAlternateModeTab";
 	}

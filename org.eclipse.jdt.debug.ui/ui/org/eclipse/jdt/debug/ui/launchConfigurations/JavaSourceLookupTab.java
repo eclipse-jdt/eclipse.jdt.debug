@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be subclassed by clients.
  */
 
+@Deprecated
 public class JavaSourceLookupTab extends JavaLaunchTab {
 
 	protected SourceLookupBlock fSourceLookupBlock;
@@ -87,6 +88,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupBlock.initializeFrom(configuration);
 	}
@@ -104,6 +106,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaSourceLookupTab"; //$NON-NLS-1$
 	}
@@ -118,6 +121,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}	

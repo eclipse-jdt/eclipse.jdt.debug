@@ -73,6 +73,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		fDefaultButton.setText(MessageFormat.format(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()})); 
 		
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSelection();
 			}
@@ -85,6 +86,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		fSpecificButton.setText(JREMessages.AbstractJavaCommandTab_4); 
 		
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSelection();
 			}
@@ -172,6 +174,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.standardVMCommandTab"; //$NON-NLS-1$
 	}
@@ -179,6 +182,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		boolean valid= fDefaultButton.getSelection() || fJavaCommandText.getText().length() != 0;
 		if (valid) {

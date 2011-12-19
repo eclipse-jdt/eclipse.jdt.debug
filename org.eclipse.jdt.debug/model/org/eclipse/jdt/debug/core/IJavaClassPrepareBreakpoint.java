@@ -13,31 +13,32 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A breakpoint that suspends execution when a class is prepared in
- * a target VM.
+ * A breakpoint that suspends execution when a class is prepared in a target VM.
+ * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IJavaClassPrepareBreakpoint extends IJavaBreakpoint {
-	
+
 	/**
-	 * Constant indicating a class prepare breakpoint is associated with a
-	 * class type. 
+	 * Constant indicating a class prepare breakpoint is associated with a class
+	 * type.
 	 */
 	public static final int TYPE_CLASS = 0;
 	/**
 	 * Constant indicating a class prepare breakpoint is associated with an
-	 * interface type. 
-	 */	
+	 * interface type.
+	 */
 	public static final int TYPE_INTERFACE = 1;
-	
+
 	/**
-	 * Returns a constant indicating what kind of type this breakpoint
-	 * is associated with.
+	 * Returns a constant indicating what kind of type this breakpoint is
+	 * associated with.
 	 * 
 	 * @return one of <code>TYPE_CLASS</code> or <code>TYPE_INTERFACE</code>
-	 * @throws CoreException if unable to retrieve the attribute
+	 * @throws CoreException
+	 *             if unable to retrieve the attribute
 	 */
 	public int getMemberType() throws CoreException;
 }

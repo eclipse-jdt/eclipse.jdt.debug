@@ -26,6 +26,7 @@ public class ExceptionUncaughtToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
+	@Override
 	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
 		//will only be called after isEnabledFor so cast is safe
 		IJavaExceptionBreakpoint exception= (IJavaExceptionBreakpoint)breakpoint;
@@ -35,6 +36,7 @@ public class ExceptionUncaughtToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
+	@Override
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
 		//will only be called after isEnabledFor so cast is safe
 		IJavaExceptionBreakpoint exception= (IJavaExceptionBreakpoint)breakpoint;
@@ -44,6 +46,7 @@ public class ExceptionUncaughtToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(IStructuredSelection)
 	 */
+	@Override
 	public boolean isEnabledFor(IStructuredSelection selection) {
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {

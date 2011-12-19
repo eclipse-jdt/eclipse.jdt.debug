@@ -171,6 +171,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		super.initializeFrom(config);

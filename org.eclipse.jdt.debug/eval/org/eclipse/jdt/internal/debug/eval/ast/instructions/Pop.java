@@ -10,21 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 public class Pop extends Instruction {
 
 	private int fSize;
-	
+
 	/**
 	 * @param start
 	 */
 	public Pop(int size) {
-		fSize= size;
+		fSize = size;
 	}
 
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() {
 		pop();
 	}
@@ -32,13 +32,19 @@ public class Pop extends Instruction {
 	/*
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.Pop_pop_1; 
+		return InstructionsEvaluationMessages.Pop_pop_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#getSize()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#getSize
+	 * ()
 	 */
+	@Override
 	public int getSize() {
 		return fSize;
 	}

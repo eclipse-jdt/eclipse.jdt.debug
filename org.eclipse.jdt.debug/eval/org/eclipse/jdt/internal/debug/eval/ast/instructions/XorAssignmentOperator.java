@@ -16,8 +16,9 @@ public class XorAssignmentOperator extends XorOperator {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.XorAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.XorAssignmentOperator_operator_1;
 	}
 
 }

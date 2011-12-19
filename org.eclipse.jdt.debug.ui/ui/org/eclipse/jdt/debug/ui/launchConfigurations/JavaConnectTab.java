@@ -99,6 +99,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		}
 		fConnectorCombo = SWTFactory.createCombo(group, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names); 
 		fConnectorCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleConnectorComboModified();
 			}
@@ -188,6 +189,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 /* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		updateAllowTerminateFromConfig(config);
@@ -333,6 +335,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 /* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {	
 		setErrorMessage(null);
 		setMessage(null);	
@@ -369,6 +372,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
 	}
@@ -378,6 +382,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaConnectTab"; //$NON-NLS-1$
 	}

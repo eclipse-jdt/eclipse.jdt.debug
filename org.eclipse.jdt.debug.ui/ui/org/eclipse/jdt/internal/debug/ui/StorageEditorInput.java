@@ -71,6 +71,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		return object instanceof StorageEditorInput &&
 		 getStorage().equals(((StorageEditorInput)object).getStorage());
@@ -79,6 +80,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getStorage().hashCode();
 	}

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
-
 import java.io.IOException;
 import java.util.List;
 
@@ -25,12 +24,10 @@ import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.Transport;
 import com.sun.jdi.connect.spi.Connection;
 
-
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public abstract class ConnectorImpl implements Connector {
 	/** Virtual machine manager that created this connector. */
@@ -40,10 +37,10 @@ public abstract class ConnectorImpl implements Connector {
 	protected Transport fTransport;
 	/** Virtual Machine that is connected. */
 	protected VirtualMachineImpl fVirtualMachine;
-	
+
 	/**
 	 * Creates a new Connector.
-	 */	
+	 */
 	public ConnectorImpl(VirtualMachineManagerImpl virtualMachineManager) {
 		fVirtualMachineManager = virtualMachineManager;
 	}
@@ -54,7 +51,7 @@ public abstract class ConnectorImpl implements Connector {
 	public VirtualMachineManagerImpl virtualMachineManager() {
 		return fVirtualMachineManager;
 	}
-	
+
 	/**
 	 * @return Returns Virtual Machine Manager.
 	 */
@@ -63,134 +60,155 @@ public abstract class ConnectorImpl implements Connector {
 	}
 
 	/**
-	 * @return Returns a human-readable description of this connector and its purpose.
-	 */	
+	 * @return Returns a human-readable description of this connector and its
+	 *         purpose.
+	 */
 	public abstract String description();
-	
+
 	/**
 	 * @return Returns a short identifier for the connector.
-	 */	
+	 */
 	public abstract String name();
-	
+
 	/**
 	 * Assigns Transport.
-	 */	
-	/*package*/ void setTransport(Transport transport) {
+	 */
+	/* package */void setTransport(Transport transport) {
 		fTransport = transport;
 	}
 
 	/**
-	 * @return Returns the transport mechanism used by this connector to establish connections with a target VM.
-	 */	
+	 * @return Returns the transport mechanism used by this connector to
+	 *         establish connections with a target VM.
+	 */
 	public Transport transport() {
 		return fTransport;
 	}
-	
+
 	/**
 	 * Closes connection with Virtual Machine.
-	 */	
-	/*package*/ synchronized void close() {
+	 */
+	/* package */synchronized void close() {
 		virtualMachineManager().removeConnectedVM(fVirtualMachine);
 	}
-	
+
 	/**
 	 * @return Returns a connected Virtual Machine.
-	 */	
-	protected VirtualMachine establishedConnection(Connection connection) throws IOException {
-	    fVirtualMachine = (VirtualMachineImpl) Bootstrap.virtualMachineManager().createVirtualMachine(connection);
+	 */
+	protected VirtualMachine establishedConnection(Connection connection)
+			throws IOException {
+		fVirtualMachine = (VirtualMachineImpl) Bootstrap
+				.virtualMachineManager().createVirtualMachine(connection);
 		return fVirtualMachine;
 	}
-	
+
 	/**
 	 * Argument class for arguments that are used to establish a connection.
 	 */
-	public abstract class ArgumentImpl implements com.sun.jdi.connect.Connector.Argument {
+	public abstract class ArgumentImpl implements
+			com.sun.jdi.connect.Connector.Argument {
 		/**
-		 * Serial version id. 
+		 * Serial version id.
 		 */
 		private static final long serialVersionUID = 8850533280769854833L;
-		
+
 		private String fName;
 		private String fDescription;
 		private String fLabel;
 		private boolean fMustSpecify;
 
-	 	protected ArgumentImpl(String name, String description, String label, boolean mustSpecify) {
-	 		fName = name;
-	 		fLabel = label;
-	 		fDescription = description;
-	 		fMustSpecify = mustSpecify;
-	 	}
+		protected ArgumentImpl(String name, String description, String label,
+				boolean mustSpecify) {
+			fName = name;
+			fLabel = label;
+			fDescription = description;
+			fMustSpecify = mustSpecify;
+		}
 
-		public String name() { 
+		public String name() {
 			return fName;
 		}
-		
+
 		public String description() {
 			return fDescription;
 		}
-		
+
 		public String label() {
 			return fLabel;
 		}
-		
+
 		public boolean mustSpecify() {
 			return fMustSpecify;
 		}
-		
+
 		public abstract String value();
+
 		public abstract void setValue(String value);
+
 		public abstract boolean isValid(String value);
+
+		@Override
 		public abstract String toString();
 	}
-	
-	public class StringArgumentImpl extends ArgumentImpl implements com.sun.jdi.connect.Connector.StringArgument {
-        private static final long serialVersionUID = 6009335074727417445L;
 
-        private String fValue;
+	public class StringArgumentImpl extends ArgumentImpl implements
+			com.sun.jdi.connect.Connector.StringArgument {
+		private static final long serialVersionUID = 6009335074727417445L;
 
-	 	protected StringArgumentImpl(String name, String description, String label, boolean mustSpecify) {
-	 		super(name, description, label, mustSpecify);
-	 	}
-	 	
+		private String fValue;
+
+		protected StringArgumentImpl(String name, String description,
+				String label, boolean mustSpecify) {
+			super(name, description, label, mustSpecify);
+		}
+
+		@Override
 		public String value() {
 			return fValue;
 		}
-		
+
+		@Override
 		public void setValue(String value) {
 			fValue = value;
 		}
 
+		@Override
 		public boolean isValid(String value) {
 			return true;
 		}
 
+		@Override
 		public String toString() {
 			return fValue;
 		}
 
 	}
-	
-	public class IntegerArgumentImpl extends ArgumentImpl implements com.sun.jdi.connect.Connector.IntegerArgument {
-        private static final long serialVersionUID = 6009335074727417445L;
-        private Integer fValue;
+
+	public class IntegerArgumentImpl extends ArgumentImpl implements
+			com.sun.jdi.connect.Connector.IntegerArgument {
+		private static final long serialVersionUID = 6009335074727417445L;
+		private Integer fValue;
 		private int fMin;
 		private int fMax;
 
-	 	protected IntegerArgumentImpl(String name, String description, String label, boolean mustSpecify, int min, int max) {
-	 		super(name, description, label, mustSpecify);
-	 		fMin = min;
-	 		fMax = max;
-	 	}
-	 	
+		protected IntegerArgumentImpl(String name, String description,
+				String label, boolean mustSpecify, int min, int max) {
+			super(name, description, label, mustSpecify);
+			fMin = min;
+			fMax = max;
+		}
+
+		@Override
 		public String value() {
 			return (fValue == null) ? null : fValue.toString();
 		}
-		
+
+		@Override
 		public void setValue(String value) {
 			fValue = new Integer(value);
 		}
 
+		@Override
 		public boolean isValid(String value) {
 			Integer val;
 			try {
@@ -201,6 +219,7 @@ public abstract class ConnectorImpl implements Connector {
 			return isValid(val.intValue());
 		}
 
+		@Override
 		public String toString() {
 			return value();
 		}
@@ -208,7 +227,7 @@ public abstract class ConnectorImpl implements Connector {
 		public int intValue() {
 			return fValue.intValue();
 		}
-		
+
 		public void setValue(int value) {
 			fValue = new Integer(value);
 		}
@@ -216,11 +235,11 @@ public abstract class ConnectorImpl implements Connector {
 		public int min() {
 			return fMin;
 		}
-		
+
 		public int max() {
 			return fMax;
 		}
-		
+
 		public boolean isValid(int value) {
 			return fMin <= value && value <= fMax;
 		}
@@ -229,27 +248,33 @@ public abstract class ConnectorImpl implements Connector {
 			return new Integer(value).toString();
 		}
 	}
-	
-	public class BooleanArgumentImpl extends ArgumentImpl implements com.sun.jdi.connect.Connector.BooleanArgument {
-	    private static final long serialVersionUID = 6009335074727417445L;
-        private Boolean fValue;
-		
-	 	protected BooleanArgumentImpl(String name, String description, String label, boolean mustSpecify) {
-	 		super(name, description, label, mustSpecify);
-	 	}
-	 	
+
+	public class BooleanArgumentImpl extends ArgumentImpl implements
+			com.sun.jdi.connect.Connector.BooleanArgument {
+		private static final long serialVersionUID = 6009335074727417445L;
+		private Boolean fValue;
+
+		protected BooleanArgumentImpl(String name, String description,
+				String label, boolean mustSpecify) {
+			super(name, description, label, mustSpecify);
+		}
+
+		@Override
 		public String value() {
 			return (fValue == null) ? null : fValue.toString();
 		}
-		
+
+		@Override
 		public void setValue(String value) {
 			fValue = Boolean.valueOf(value);
 		}
 
+		@Override
 		public boolean isValid(String value) {
 			return true;
 		}
-		
+
+		@Override
 		public String toString() {
 			return value();
 		}
@@ -261,25 +286,28 @@ public abstract class ConnectorImpl implements Connector {
 		public void setValue(boolean value) {
 			fValue = Boolean.valueOf(value);
 		}
-		
+
 		public String stringValueOf(boolean value) {
 			return Boolean.valueOf(value).toString();
 		}
 	}
-	
-	public class SelectedArgumentImpl extends StringArgumentImpl implements com.sun.jdi.connect.Connector.SelectedArgument {
-        private static final long serialVersionUID = 6009335074727417445L;
-        private List fChoices;
-		
-	 	protected SelectedArgumentImpl(String name, String description, String label, boolean mustSpecify, List choices) {
-	 		super(name, description, label, mustSpecify);
-	 		fChoices = choices;
-	 	}
-	 	
+
+	public class SelectedArgumentImpl extends StringArgumentImpl implements
+			com.sun.jdi.connect.Connector.SelectedArgument {
+		private static final long serialVersionUID = 6009335074727417445L;
+		private List fChoices;
+
+		protected SelectedArgumentImpl(String name, String description,
+				String label, boolean mustSpecify, List choices) {
+			super(name, description, label, mustSpecify);
+			fChoices = choices;
+		}
+
 		public List choices() {
 			return fChoices;
 		}
-		
+
+		@Override
 		public boolean isValid(java.lang.String value) {
 			return fChoices.contains(value);
 		}

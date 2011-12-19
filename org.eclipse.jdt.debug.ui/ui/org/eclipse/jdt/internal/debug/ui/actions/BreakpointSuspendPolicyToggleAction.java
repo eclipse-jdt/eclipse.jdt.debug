@@ -35,6 +35,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
+	@Override
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
 		if(breakpoint.getSuspendPolicy() != fCurrentPolicy) {
 			breakpoint.setSuspendPolicy(fCurrentPolicy);
@@ -44,6 +45,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
+	@Override
 	protected boolean getToggleState(IJavaBreakpoint breakpoint) {
 		return false;
 	}
@@ -51,6 +53,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(IStructuredSelection)
 	 */
+	@Override
 	public boolean isEnabledFor(IStructuredSelection selection) {
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
@@ -66,6 +69,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		if (action.isEnabled()) {
@@ -77,6 +81,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.BreakpointToggleAction#isToggleAction()
 	 */
+	@Override
 	protected boolean isToggleAction() {
 		return false;
 	}

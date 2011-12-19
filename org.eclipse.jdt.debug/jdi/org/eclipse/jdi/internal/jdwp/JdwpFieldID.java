@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID
  * declared by the JDWP specification.
- *
+ * 
  */
 public class JdwpFieldID extends JdwpID {
 	/**
@@ -25,10 +24,11 @@ public class JdwpFieldID extends JdwpID {
 	public JdwpFieldID(VirtualMachineImpl vmImpl) {
 		super(vmImpl);
 	}
-	
+
 	/**
 	 * @return Returns VM specific size of ID.
 	 */
+	@Override
 	public int getSize() {
 		return fVirtualMachine.fieldIDSize();
 	}
@@ -36,7 +36,8 @@ public class JdwpFieldID extends JdwpID {
 	/**
 	 * @return Returns true if ID is null.
 	 */
+	@Override
 	public boolean isNull() {
 		return false;
- 	}
+	}
 }

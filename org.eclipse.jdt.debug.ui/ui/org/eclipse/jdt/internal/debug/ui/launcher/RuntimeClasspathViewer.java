@@ -84,6 +84,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		setInput(fEntries);
 		
 		getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
 					List selection= getSelectionFromWidget();

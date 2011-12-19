@@ -34,6 +34,7 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() {
 
 		IClasspathEntry[] newEntries = BuildPathDialogAccess.chooseContainerEntries(getShell(), null, new IClasspathEntry[0]);
@@ -52,6 +53,7 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 		}								
 	}
 		
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

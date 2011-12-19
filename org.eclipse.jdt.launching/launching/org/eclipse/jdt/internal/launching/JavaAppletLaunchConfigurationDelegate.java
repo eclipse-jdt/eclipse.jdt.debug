@@ -56,6 +56,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public synchronized void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
 			fLaunch = launch;
@@ -163,6 +164,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -290,6 +292,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		File workingDir = verifyWorkingDirectory(configuration);
 		// Construct the HTML file and set its name as a program argument
@@ -309,6 +312,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		StringBuffer arguments = new StringBuffer(super.getVMArguments(configuration));
 		File workingDir = verifyWorkingDirectory(configuration);
@@ -321,6 +325,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
 	}
@@ -339,6 +344,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getDefaultWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected File getDefaultWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		// default working dir for applets is the project's output directory
 		String outputDir = JavaRuntime.getProjectOutputDirectory(configuration);

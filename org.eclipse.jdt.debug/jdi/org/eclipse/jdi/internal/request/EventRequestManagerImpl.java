@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,250 +70,258 @@ import com.sun.jdi.request.ThreadStartRequest;
 import com.sun.jdi.request.VMDeathRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager, org.eclipse.jdi.hcr.EventRequestManager {
-	/** Indexes used in arrays of request types. */
-	private static final int ACCESS_WATCHPOINT_INDEX = 0;
-	private static final int BREAKPOINT_INDEX = 1;
-	private static final int CLASS_PREPARE_INDEX = 2;
-	private static final int CLASS_UNLOAD_INDEX = 3;
-	private static final int EXCEPTION_INDEX = 4;
-	private static final int METHOD_ENTRY_INDEX = 5;
-	private static final int METHOD_EXIT_INDEX = 6;
-	private static final int MODIFICATION_WATCHPOINT_INDEX = 7;
-	private static final int STEP_INDEX = 8;
-	private static final int THREAD_DEATH_INDEX = 9;
-	private static final int THREAD_START_INDEX = 10;
-	private static final int VM_DEATH_INDEX = 11;
-	private static final int MONITOR_CONTENDED_ENTERED_INDEX = 12;
-	private static final int MONITOR_CONTENDED_ENTER_INDEX = 13;
-	private static final int MONITOR_WAITED_INDEX = 14;
-	private static final int MONITOR_WAIT_INDEX = 15;
+	private final HashSet<AccessWatchpointRequest> accesswpReqs = new HashSet<AccessWatchpointRequest>(8);
+	private final HashSet<BreakpointRequest> bpReqs = new HashSet<BreakpointRequest>(8);
+	private final HashSet<ClassPrepareRequest> cpReqs = new HashSet<ClassPrepareRequest>(8);
+	private final HashSet<ClassUnloadRequest> cuReqs = new HashSet<ClassUnloadRequest>(8);
+	private final HashSet<ExceptionRequest> exReqs = new HashSet<ExceptionRequest>(8);
+	private final HashSet<MethodEntryRequest> menReqs = new HashSet<MethodEntryRequest>(8);
+	private final HashSet<MethodExitRequest> mexReqs = new HashSet<MethodExitRequest>(8);
+	private final HashSet<ModificationWatchpointRequest> mwpReqs = new HashSet<ModificationWatchpointRequest>(8);
+	private final HashSet<StepRequest> stepReqs = new HashSet<StepRequest>(8);
+	private final HashSet<ThreadDeathRequest> tdReqs = new HashSet<ThreadDeathRequest>(8);
+	private final HashSet<ThreadStartRequest> tsReqs = new HashSet<ThreadStartRequest>(8);
+	private final HashSet<VMDeathRequest> vmdReqs = new HashSet<VMDeathRequest>(8);
+	private final HashSet<MonitorContendedEnteredRequest> mcenteredReqs = new HashSet<MonitorContendedEnteredRequest>(8);
+	private final HashSet<MonitorContendedEnterRequest> mcenterReqs = new HashSet<MonitorContendedEnterRequest>(8);
+	private final HashSet<MonitorWaitedRequest> mwaitedReqs = new HashSet<MonitorWaitedRequest>(8);
+	private final HashSet<MonitorWaitRequest> mwaitReqs = new HashSet<MonitorWaitRequest>(8);
 
-	/** Set of all existing requests per request type. */
-	private HashSet[] fRequests;
-
-	/** Maps per request type of requestIDs to enabled requests. */
-	private Hashtable[] fEnabledRequests;
+	HashMap<Class<?>, HashSet<? extends EventRequest>> requests = null;
+	HashMap<Class<?>, HashMap<RequestID, EventRequest>> enabled = null;
 	
 	/**
 	 * Creates new EventRequestManager.
 	 */
 	public EventRequestManagerImpl(VirtualMachineImpl vmImpl) {
 		super("EventRequestManager", vmImpl); //$NON-NLS-1$
-		
-		// Initialize list of requests.
-		fRequests = new HashSet[MONITOR_WAIT_INDEX + 1];
-		for (int i = 0; i < fRequests.length; i++)
-			fRequests[i] = new HashSet();
-			
-		// Initialize map of request IDs to enabled requests.
-		fEnabledRequests = new Hashtable[MONITOR_WAIT_INDEX + 1];
-		for (int i = 0; i < fEnabledRequests.length; i++)
-			fEnabledRequests[i] = new Hashtable();
+		requests = new HashMap<Class<?>, HashSet<? extends EventRequest>>();
+		requests.put(AccessWatchpointRequestImpl.class, accesswpReqs);
+		requests.put(BreakpointRequestImpl.class, bpReqs);
+		requests.put(ClassPrepareRequestImpl.class, cpReqs);
+		requests.put(ClassUnloadRequestImpl.class, cuReqs);
+		requests.put(ExceptionRequestImpl.class, exReqs);
+		requests.put(MethodEntryRequestImpl.class, menReqs);
+		requests.put(MethodExitRequestImpl.class, mexReqs);
+		requests.put(ModificationWatchpointRequestImpl.class, mwpReqs);
+		requests.put(StepRequestImpl.class, stepReqs);
+		requests.put(ThreadDeathRequestImpl.class, tdReqs);
+		requests.put(ThreadStartRequestImpl.class, tsReqs);
+		requests.put(VMDeathRequestImpl.class, vmdReqs);
+		requests.put(MonitorContendedEnteredRequestImpl.class, mcenteredReqs);
+		requests.put(MonitorContendedEnterRequestImpl.class, mcenterReqs);
+		requests.put(MonitorWaitedRequestImpl.class, mwaitedReqs);
+		requests.put(MonitorWaitRequestImpl.class, mwaitReqs);
+		enabled = new HashMap<Class<?>, HashMap<RequestID,EventRequest>>();
 	}
 
 	/**
 	 * Creates AccessWatchpointRequest.
-	 */ 
+	 */
 	public AccessWatchpointRequest createAccessWatchpointRequest(Field field) {
-		FieldImpl fieldImpl = (FieldImpl)field;
+		FieldImpl fieldImpl = (FieldImpl) field;
 		AccessWatchpointRequestImpl req = new AccessWatchpointRequestImpl(virtualMachineImpl());
 		req.addFieldFilter(fieldImpl);
-		addEventRequest(ACCESS_WATCHPOINT_INDEX, req);
+		accesswpReqs.add(req);
 		return req;
 	}
 
 	/**
 	 * Creates BreakpointRequest.
-	 */ 
+	 */
 	public BreakpointRequest createBreakpointRequest(Location location) throws VMMismatchException {
-		LocationImpl locImpl = (LocationImpl)location;
+		LocationImpl locImpl = (LocationImpl) location;
 		BreakpointRequestImpl req = new BreakpointRequestImpl(virtualMachineImpl());
 		req.addLocationFilter(locImpl);
-		addEventRequest(BREAKPOINT_INDEX, req);
+		bpReqs.add(req);
 		return req;
 	}
 
 	/**
 	 * Creates ClassPrepareRequest.
-	 */ 
+	 */
 	public ClassPrepareRequest createClassPrepareRequest() {
 		ClassPrepareRequestImpl req = new ClassPrepareRequestImpl(virtualMachineImpl());
-		addEventRequest(CLASS_PREPARE_INDEX, req);
+		cpReqs.add(req);
 		return req;
-	} 
-	
+	}
+
 	/**
 	 * Creates ClassUnloadRequest.
-	 */ 
+	 */
 	public ClassUnloadRequest createClassUnloadRequest() {
 		ClassUnloadRequestImpl req = new ClassUnloadRequestImpl(virtualMachineImpl());
-		addEventRequest(CLASS_UNLOAD_INDEX, req);
+		cuReqs.add(req);
 		return req;
-	} 
+	}
 
 	/**
 	 * Creates ExceptionRequest.
-	 */ 	 
+	 */
 	public ExceptionRequest createExceptionRequest(ReferenceType refType, boolean notifyCaught, boolean notifyUncaught) {
-		ReferenceTypeImpl refTypeImpl = (ReferenceTypeImpl)refType;
+		ReferenceTypeImpl refTypeImpl = (ReferenceTypeImpl) refType;
 		ExceptionRequestImpl req = new ExceptionRequestImpl(virtualMachineImpl());
 		req.addExceptionFilter(refTypeImpl, notifyCaught, notifyUncaught);
-		addEventRequest(EXCEPTION_INDEX, req);
+		exReqs.add(req);
 		return req;
-	} 
+	}
 
 	/**
 	 * Creates MethodEntryRequest.
-	 */ 
+	 */
 	public MethodEntryRequest createMethodEntryRequest() {
 		MethodEntryRequestImpl req = new MethodEntryRequestImpl(virtualMachineImpl());
-		addEventRequest(METHOD_ENTRY_INDEX, req);
+		menReqs.add(req);
 		return req;
-	} 
+	}
 
 	/**
 	 * Creates MethodExitRequest.
 	 */
 	public MethodExitRequest createMethodExitRequest() {
 		MethodExitRequestImpl req = new MethodExitRequestImpl(virtualMachineImpl());
-		addEventRequest(METHOD_EXIT_INDEX, req);
+		mexReqs.add(req);
 		return req;
-	} 
-	
+	}
+
 	/**
 	 * Creates a MonitorContendedEnteredRequest
+	 * 
 	 * @since 3.3
 	 */
 	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
 		MonitorContendedEnteredRequestImpl req = new MonitorContendedEnteredRequestImpl(virtualMachineImpl());
-		addEventRequest(MONITOR_CONTENDED_ENTERED_INDEX, req);
+		mcenteredReqs.add(req);
 		return req;
 	}
-	
+
 	/**
 	 * Creates a MonitorContendedEnterRequest
+	 * 
 	 * @since 3.3
 	 */
 	public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
 		MonitorContendedEnterRequestImpl req = new MonitorContendedEnterRequestImpl(virtualMachineImpl());
-		addEventRequest(MONITOR_CONTENDED_ENTER_INDEX, req);
+		mcenterReqs.add(req);
 		return req;
 	}
-	
+
 	/**
 	 * Creates a MonitorWaitedRequest
+	 * 
 	 * @since 3.3
 	 */
 	public MonitorWaitedRequest createMonitorWaitedRequest() {
 		MonitorWaitedRequestImpl req = new MonitorWaitedRequestImpl(virtualMachineImpl());
-		addEventRequest(MONITOR_WAITED_INDEX, req);
+		mwaitedReqs.add(req);
 		return req;
 	}
-	
+
 	/**
 	 * Creates a MonitorWaitRequest
+	 * 
 	 * @since 3.3
 	 */
 	public MonitorWaitRequest createMonitorWaitRequest() {
 		MonitorWaitRequestImpl req = new MonitorWaitRequestImpl(virtualMachineImpl());
-		addEventRequest(MONITOR_WAIT_INDEX, req);
+		mwaitReqs.add(req);
 		return req;
 	}
-	
+
 	/**
 	 * Creates ModificationWatchpointRequest.
-	 */ 
+	 */
 	public ModificationWatchpointRequest createModificationWatchpointRequest(Field field) {
-		FieldImpl fieldImpl = (FieldImpl)field;
+		FieldImpl fieldImpl = (FieldImpl) field;
 		ModificationWatchpointRequestImpl req = new ModificationWatchpointRequestImpl(virtualMachineImpl());
 		req.addFieldFilter(fieldImpl);
-		addEventRequest(MODIFICATION_WATCHPOINT_INDEX, req);
+		mwpReqs.add(req);
 		return req;
-	} 
-	
+	}
+
 	/**
 	 * Creates StepRequest.
-	 */ 
-	public StepRequest createStepRequest(ThreadReference thread, int size, int depth) throws DuplicateRequestException, ObjectCollectedException {
-	   	ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
-		StepRequestImpl req = new StepRequestImpl(virtualMachineImpl());		
+	 */
+	public StepRequest createStepRequest(ThreadReference thread, int size, int depth) throws DuplicateRequestException,	ObjectCollectedException {
+		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl) thread;
+		StepRequestImpl req = new StepRequestImpl(virtualMachineImpl());
 		req.addStepFilter(threadImpl, size, depth);
-		addEventRequest(STEP_INDEX, req);
+		stepReqs.add(req);
 		return req;
-	} 
+	}
 
 	/**
 	 * Creates ThreadDeathRequest.
-	 */ 
+	 */
 	public ThreadDeathRequest createThreadDeathRequest() {
 		ThreadDeathRequestImpl req = new ThreadDeathRequestImpl(virtualMachineImpl());
-		addEventRequest(THREAD_DEATH_INDEX, req);
+		tdReqs.add(req);
 		return req;
-	} 
+	}
 
 	/**
 	 * Creates ThreadStartRequest.
-	 */ 
+	 */
 	public ThreadStartRequest createThreadStartRequest() {
 		ThreadStartRequestImpl req = new ThreadStartRequestImpl(virtualMachineImpl());
-		addEventRequest(THREAD_START_INDEX, req);
+		tsReqs.add(req);
 		return req;
 	}
-	
 
 	/*
 	 * @see EventRequestManager#createVMDeathRequest()
 	 */
 	public VMDeathRequest createVMDeathRequest() {
 		VMDeathRequestImpl req = new VMDeathRequestImpl(virtualMachineImpl());
-		addEventRequest(VM_DEATH_INDEX, req);
+		vmdReqs.add(req);
 		return req;
-	}	
+	}
 
 	/**
 	 * Creates ReenterStepRequest (for OTI specific Hot Code Replacement).
-	 */ 
+	 */
 	public org.eclipse.jdi.hcr.ReenterStepRequest createReenterStepRequest(ThreadReference thread) {
 		virtualMachineImpl().checkHCRSupported();
-	   	ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
+		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl) thread;
 		ReenterStepRequestImpl req = new ReenterStepRequestImpl(virtualMachineImpl());
 		// Note that the StepFilter is only used to specify the thread.
-		// The size is ignored and the depth will always be writter as HCR_STEP_DEPTH_REENTER_JDWP.
+		// The size is ignored and the depth will always be writter as
+		// HCR_STEP_DEPTH_REENTER_JDWP.
 		req.addStepFilter(threadImpl, StepRequest.STEP_MIN, 0);
-		// Since this is a special case of a step request, we use the same request list.
-		addEventRequest(STEP_INDEX, req);
+		// Since this is a special case of a step request, we use the same
+		// request list.
+		stepReqs.add(req);
 		return req;
 	}
-	
+
 	/**
-	 * Enables class prepare requests for all loaded classes.  This is
-	 * necessary for current versions of the KVM to function correctly.
-	 * This method is only called when the remote VM is determined to be
-	 * the KVM.
+	 * Enables class prepare requests for all loaded classes. This is necessary
+	 * for current versions of the KVM to function correctly. This method is
+	 * only called when the remote VM is determined to be the KVM.
 	 */
 	public void enableInternalClassPrepareEvent() {
-		// Note that these requests are not stored in the set of outstanding requests because
+		// Note that these requests are not stored in the set of outstanding
+		// requests because
 		// they must be invisible from outside.
-		ClassPrepareRequestImpl requestPrepare =
-			new ClassPrepareRequestImpl(virtualMachineImpl());
+		ClassPrepareRequestImpl requestPrepare = new ClassPrepareRequestImpl(virtualMachineImpl());
 		requestPrepare.setGeneratedInside();
 		requestPrepare.setSuspendPolicy(EventRequest.SUSPEND_NONE);
 
 		requestPrepare.enable();
 	}
-	
+
 	/**
-	 * Creates ClassUnloadRequest for maintaining class information for within JDI.
-	 * Needed to known when to flush the cache.
-	 */ 
-	public void enableInternalClasUnloadEvent(/* tbd: ReferenceTypeImpl refType*/) {
-		// Note that these requests are not stored in the set of outstanding requests because
+	 * Creates ClassUnloadRequest for maintaining class information for within
+	 * JDI. Needed to known when to flush the cache.
+	 */
+	public void enableInternalClasUnloadEvent(/* tbd: ReferenceTypeImpl refType */) {
+		// Note that these requests are not stored in the set of outstanding
+		// requests because
 		// they must be invisible from outside.
 		ClassUnloadRequestImpl reqUnload = new ClassUnloadRequestImpl(virtualMachineImpl());
 		reqUnload.setGeneratedInside();
@@ -327,354 +334,241 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 
 	/**
 	 * Checks if a steprequest is for the given thread is already enabled.
-	 */ 
+	 */
 	boolean existsEnabledStepRequest(ThreadReferenceImpl threadImpl) {
-		Enumeration enumeration = fEnabledRequests[STEP_INDEX].elements();
-		StepRequestImpl step;
-		while (enumeration.hasMoreElements()) {
-			step = (StepRequestImpl)enumeration.nextElement();
-			if (step.thread() == threadImpl)
+		Collection<EventRequest> reqs = enabled.get(StepRequestImpl.class).values();
+		StepRequest step;
+		for (EventRequest req : reqs) {
+			step = (StepRequest) req;
+			if (step.thread() == threadImpl) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	/**
 	 * Deletes all Breakpoints.
-	 */ 
+	 */
 	public void deleteAllBreakpoints() {
 		EventRequestImpl.clearAllBreakpoints(this);
-		fRequests[BREAKPOINT_INDEX].clear();
-		fEnabledRequests[BREAKPOINT_INDEX].clear();
+		bpReqs.clear();
+		enabled.get(BreakpointRequestImpl.class).clear();
 	}
 
-	/**
-	 * Adds an EventRequests to the given list.
-	 */ 
-	public void addEventRequest(int index, EventRequest req) {
-		fRequests[index].add(req);
-	}
-
-	/**
-	 * Deletes an EventRequest.
-	 */ 
-	private void deleteEventRequest(int index, EventRequest req) throws VMMismatchException {
-		// Remove request from list of requests and from the mapping of requestIDs to requests.
-		checkVM(req);
-		EventRequestImpl requestImpl = (EventRequestImpl)req;
-		fRequests[index].remove(requestImpl);
-		if (requestImpl.requestID() != null)
-			fEnabledRequests[index].remove(requestImpl.requestID());
-	}
-
-	/**
-	 * Deletes an EventRequest.
-	 */ 
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#deleteEventRequest(com.sun.jdi.request.EventRequest)
+	 */
 	public void deleteEventRequest(EventRequest req) {
-		// Disable request, note that this also causes the event request to be removed from fEnabledRequests.
+		// Disable request, note that this also causes the event request to be
+		// removed from fEnabledRequests.
 		try {
 			req.disable();
 		} catch (InvalidRequestStateException exception) {
 			// The event has already been removed from the VM.
 		}
-		
-		// Remove request from list.
-		if (req instanceof AccessWatchpointRequestImpl)
-			deleteEventRequest(ACCESS_WATCHPOINT_INDEX, req);
-		else if (req instanceof BreakpointRequestImpl)
-			deleteEventRequest(BREAKPOINT_INDEX, req);
-		else if (req instanceof ClassPrepareRequestImpl)
-			deleteEventRequest(CLASS_PREPARE_INDEX, req);
-		else if (req instanceof ClassUnloadRequestImpl)
-			deleteEventRequest(CLASS_UNLOAD_INDEX, req);
-		else if (req instanceof ExceptionRequestImpl)
-			deleteEventRequest(EXCEPTION_INDEX, req);
-		else if (req instanceof MethodEntryRequestImpl)
-			deleteEventRequest(METHOD_ENTRY_INDEX, req);
-		else if (req instanceof MethodExitRequestImpl)
-			deleteEventRequest(METHOD_EXIT_INDEX, req);
-		else if (req instanceof ModificationWatchpointRequestImpl)
-			deleteEventRequest(MODIFICATION_WATCHPOINT_INDEX, req);
-		else if (req instanceof StepRequestImpl)
-			deleteEventRequest(STEP_INDEX, req);
-		else if (req instanceof ThreadDeathRequestImpl)
-			deleteEventRequest(THREAD_DEATH_INDEX, req);
-		else if (req instanceof ThreadStartRequestImpl)
-			deleteEventRequest(THREAD_START_INDEX, req);
-		else if(req instanceof MonitorContendedEnterRequestImpl) {
-			deleteEventRequest(MONITOR_CONTENDED_ENTER_INDEX, req);
+		EventRequestImpl reqimpl = (EventRequestImpl) req;
+		boolean removed = requests.get(req.getClass()).remove(req);
+		removed |= (enabled.get(req.getClass()).remove(reqimpl.requestID()) != null);
+		if(!removed) {
+			throw new InternalError(
+					MessageFormat
+							.format(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1,
+									new Object[] { req.toString() }));
 		}
-		else if(req instanceof MonitorContendedEnteredRequestImpl) {
-			deleteEventRequest(MONITOR_CONTENDED_ENTERED_INDEX, req);
-		}
-		else if(req instanceof MonitorWaitRequestImpl) {
-			deleteEventRequest(MONITOR_WAIT_INDEX, req);
-		}
-		else if(req instanceof MonitorWaitedRequestImpl) {
-			deleteEventRequest(MONITOR_WAITED_INDEX, req);
-		}
-		else
-		
-		throw new InternalError(MessageFormat.format(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, new String[]{req.toString()})); 
 	}
 
-	/**
-	 * Deletes all EventRequests from the given list.
-	 */ 
-	public void deleteEventRequests(List requests) throws VMMismatchException {
-		Iterator iter = requests.iterator();
-		while(iter.hasNext()) {
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#deleteEventRequests(java.util.List)
+	 */
+	public void deleteEventRequests(List<? extends EventRequest> requests) throws VMMismatchException {
+		Iterator<? extends EventRequest> iter = requests.iterator();
+		while (iter.hasNext()) {
 			Object obj = iter.next();
-			deleteEventRequest((EventRequest)obj);
+			deleteEventRequest((EventRequest) obj);
 		}
 	}
 
-	/**
-	 * @return Returns list of AccessWatchpointRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#accessWatchpointRequests()
 	 */
-	public List accessWatchpointRequests() {
-		return new ArrayList(fRequests[ACCESS_WATCHPOINT_INDEX]);
+	public List<AccessWatchpointRequest> accessWatchpointRequests() {
+		return new ArrayList<AccessWatchpointRequest>(accesswpReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#breakpointRequests()
+	 */
+	public List<BreakpointRequest> breakpointRequests() {
+		return new ArrayList<BreakpointRequest>(bpReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#classPrepareRequests()
+	 */
+	public List<ClassPrepareRequest> classPrepareRequests() {
+		return new ArrayList<ClassPrepareRequest>(cpReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#classUnloadRequests()
+	 */
+	public List<ClassUnloadRequest> classUnloadRequests() {
+		return new ArrayList<ClassUnloadRequest>(cuReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#exceptionRequests()
+	 */
+	public List<ExceptionRequest> exceptionRequests() {
+		return new ArrayList<ExceptionRequest>(exReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#methodEntryRequests()
+	 */
+	public List<MethodEntryRequest> methodEntryRequests() {
+		return new ArrayList<MethodEntryRequest>(menReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#methodExitRequests()
+	 */
+	public List<MethodExitRequest> methodExitRequests() {
+		return new ArrayList<MethodExitRequest>(mexReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#modificationWatchpointRequests()
+	 */
+	public List<ModificationWatchpointRequest> modificationWatchpointRequests() {
+		return new ArrayList<ModificationWatchpointRequest>(mwpReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#stepRequests()
+	 */
+	public List<StepRequest> stepRequests() {
+		return new ArrayList<StepRequest>(stepReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#threadDeathRequests()
+	 */
+	public List<ThreadDeathRequest> threadDeathRequests() {
+		return new ArrayList<ThreadDeathRequest>(tdReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#threadStartRequests()
+	 */
+	public List<ThreadStartRequest> threadStartRequests() {
+		return new ArrayList<ThreadStartRequest>(tsReqs);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.request.EventRequestManager#vmDeathRequests()
+	 */
+	public List<VMDeathRequest> vmDeathRequests() {
+		return new ArrayList<VMDeathRequest>(vmdReqs);
 	}
 
 	/**
-	 * @return Returns list of BreakpointRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
+	 * @param req
 	 */
-	public List breakpointRequests() {
-		return new ArrayList(fRequests[BREAKPOINT_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of ClassPrepareRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List classPrepareRequests() {
-		return new ArrayList(fRequests[CLASS_PREPARE_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of ClassUnloadRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List classUnloadRequests() {
-		return new ArrayList(fRequests[CLASS_UNLOAD_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of ExceptionRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List exceptionRequests() {
-		return new ArrayList(fRequests[EXCEPTION_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of MethodEntryRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List methodEntryRequests() {
-		return new ArrayList(fRequests[METHOD_ENTRY_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of MethodExitRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List methodExitRequests() {
-		return new ArrayList(fRequests[METHOD_EXIT_INDEX]);
-	}
-	
-	/**
-	 * @return Returns list of ModificationWatchpointRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List modificationWatchpointRequests() {
-		return new ArrayList(fRequests[MODIFICATION_WATCHPOINT_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of StepRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List stepRequests() {
-		return new ArrayList(fRequests[STEP_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of ThreadDeathRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List threadDeathRequests() {
-		return new ArrayList(fRequests[THREAD_DEATH_INDEX]);
-	}
-
-	/**
-	 * @return Returns list of ThreadStartRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List threadStartRequests() {
-		return new ArrayList(fRequests[THREAD_START_INDEX]);
-	}
-	
-	/**
-	 * @return Returns list of VMDeathRequests.
-	 * For changes, the appropriate EventRequestManager methods should be used.
-	 */
-	public List vmDeathRequests() {
-		return new ArrayList(fRequests[VM_DEATH_INDEX]);
-	}
-
 	public void removeRequestIDMapping(EventRequestImpl req) {
-		if (req instanceof AccessWatchpointRequestImpl)
-			fEnabledRequests[ACCESS_WATCHPOINT_INDEX].remove(req.requestID());
-		else if (req instanceof BreakpointRequestImpl)
-			fEnabledRequests[BREAKPOINT_INDEX].remove(req.requestID());
-		else if (req instanceof ClassPrepareRequestImpl)
-			fEnabledRequests[CLASS_PREPARE_INDEX].remove(req.requestID());
-		else if (req instanceof ClassUnloadRequestImpl)
-			fEnabledRequests[CLASS_UNLOAD_INDEX].remove(req.requestID());
-		else if (req instanceof ExceptionRequestImpl)
-			fEnabledRequests[EXCEPTION_INDEX].remove(req.requestID());
-		else if (req instanceof MethodEntryRequestImpl)
-			fEnabledRequests[METHOD_ENTRY_INDEX].remove(req.requestID());
-		else if (req instanceof MethodExitRequestImpl)
-			fEnabledRequests[METHOD_EXIT_INDEX].remove(req.requestID());
-		else if (req instanceof ModificationWatchpointRequestImpl)
-			fEnabledRequests[MODIFICATION_WATCHPOINT_INDEX].remove(req.requestID());
-		else if (req instanceof StepRequestImpl)
-			fEnabledRequests[STEP_INDEX].remove(req.requestID());
-		else if (req instanceof ThreadDeathRequestImpl)
-			fEnabledRequests[THREAD_DEATH_INDEX].remove(req.requestID());
-		else if (req instanceof ThreadStartRequestImpl)
-			fEnabledRequests[THREAD_START_INDEX].remove(req.requestID());
-		else if(req instanceof MonitorContendedEnterRequestImpl) {
-			fEnabledRequests[MONITOR_CONTENDED_ENTER_INDEX].remove(req.requestID());
-		}
-		else if(req instanceof MonitorContendedEnteredRequestImpl) {
-			fEnabledRequests[MONITOR_CONTENDED_ENTERED_INDEX].remove(req.requestID());
-		}
-		else if(req instanceof MonitorWaitRequestImpl) {
-			fEnabledRequests[MONITOR_WAIT_INDEX].remove(req.requestID());
-		}
-		else if(req instanceof MonitorWaitedRequestImpl) {
-			fEnabledRequests[MONITOR_WAITED_INDEX].remove(req.requestID());
-		}
+		enabled.get(req.getClass()).remove(req.requestID());
 	}
-	
+
 	/**
 	 * Maps a request ID to requests.
-	 */ 
+	 */
 	public void addRequestIDMapping(EventRequestImpl req) {
-		if (req instanceof AccessWatchpointRequestImpl)
-			fEnabledRequests[ACCESS_WATCHPOINT_INDEX].put(req.requestID(), req);
-		else if (req instanceof BreakpointRequestImpl)
-			fEnabledRequests[BREAKPOINT_INDEX].put(req.requestID(), req);
-		else if (req instanceof ClassPrepareRequestImpl)
-			fEnabledRequests[CLASS_PREPARE_INDEX].put(req.requestID(), req);
-		else if (req instanceof ClassUnloadRequestImpl)
-			fEnabledRequests[CLASS_UNLOAD_INDEX].put(req.requestID(), req);
-		else if (req instanceof ExceptionRequestImpl)
-			fEnabledRequests[EXCEPTION_INDEX].put(req.requestID(), req);
-		else if (req instanceof MethodEntryRequestImpl)
-			fEnabledRequests[METHOD_ENTRY_INDEX].put(req.requestID(), req);
-		else if (req instanceof MethodExitRequestImpl)
-			fEnabledRequests[METHOD_EXIT_INDEX].put(req.requestID(), req);
-		else if (req instanceof ModificationWatchpointRequestImpl)
-			fEnabledRequests[MODIFICATION_WATCHPOINT_INDEX].put(req.requestID(), req);
-		else if (req instanceof StepRequestImpl)
-			fEnabledRequests[STEP_INDEX].put(req.requestID(), req);
-		else if (req instanceof ThreadDeathRequestImpl)
-			fEnabledRequests[THREAD_DEATH_INDEX].put(req.requestID(), req);
-		else if (req instanceof ThreadStartRequestImpl)
-			fEnabledRequests[THREAD_START_INDEX].put(req.requestID(), req);
-		else if(req instanceof MonitorWaitRequestImpl) {
-			fEnabledRequests[MONITOR_WAIT_INDEX].put(req.requestID(), req);
-		}
-		else if(req instanceof MonitorWaitedRequestImpl) {
-			fEnabledRequests[MONITOR_WAITED_INDEX].put(req.requestID(), req);
-		}
-		else if(req instanceof MonitorContendedEnterRequestImpl) {
-			fEnabledRequests[MONITOR_CONTENDED_ENTER_INDEX].put(req.requestID(), req);
-		}
-		else if(req instanceof MonitorContendedEnteredRequestImpl) {
-			fEnabledRequests[MONITOR_CONTENDED_ENTERED_INDEX].put(req.requestID(), req);
-		}
+		enabled.get(req.getClass()).put(req.requestID(), req);
 	}
 
 	/**
 	 * Find Request that matches event.
-	 */ 
+	 */
 	public EventRequestImpl findRequest(EventImpl event) {
-		if (event instanceof AccessWatchpointEventImpl)
-			return (EventRequestImpl)fEnabledRequests[ACCESS_WATCHPOINT_INDEX].get(event.requestID());
-		else if (event instanceof BreakpointEventImpl)
-			return (EventRequestImpl)fEnabledRequests[BREAKPOINT_INDEX].get(event.requestID());
-		else if (event instanceof ClassPrepareEventImpl)
-			return (ClassPrepareRequestImpl)fEnabledRequests[CLASS_PREPARE_INDEX].get(event.requestID());
-		else if (event instanceof ClassUnloadEventImpl)
-			return (EventRequestImpl)fEnabledRequests[CLASS_UNLOAD_INDEX].get(event.requestID());
-		else if (event instanceof ExceptionEventImpl)
-			return (EventRequestImpl)fEnabledRequests[EXCEPTION_INDEX].get(event.requestID());
-		else if (event instanceof MethodEntryEventImpl)
-			return (EventRequestImpl)fEnabledRequests[METHOD_ENTRY_INDEX].get(event.requestID());
-		else if (event instanceof MethodExitEventImpl)
-			return (EventRequestImpl)fEnabledRequests[METHOD_EXIT_INDEX].get(event.requestID());
-		else if (event instanceof ModificationWatchpointEventImpl)
-			return (EventRequestImpl)fEnabledRequests[MODIFICATION_WATCHPOINT_INDEX].get(event.requestID());
-		else if (event instanceof StepEventImpl)
-			return (EventRequestImpl)fEnabledRequests[STEP_INDEX].get(event.requestID());
-		else if (event instanceof ThreadDeathEventImpl)
-			return (EventRequestImpl)fEnabledRequests[THREAD_DEATH_INDEX].get(event.requestID());
-		else if (event instanceof ThreadStartEventImpl)
-			return (EventRequestImpl)fEnabledRequests[THREAD_START_INDEX].get(event.requestID());
-		else if (event instanceof VMDeathEventImpl)
-			return (EventRequestImpl)fEnabledRequests[VM_DEATH_INDEX].get(event.requestID());
-		else if(event instanceof MonitorWaitEventImpl) {
-			return (EventRequestImpl)fEnabledRequests[MONITOR_WAIT_INDEX].get(event.requestID());
+		if (event instanceof AccessWatchpointEventImpl) {
+			return (EventRequestImpl) enabled.get(AccessWatchpointRequestImpl.class).get(event.requestID());
 		}
-		else if(event instanceof MonitorWaitedEventImpl) {
-			return (EventRequestImpl)fEnabledRequests[MONITOR_WAITED_INDEX].get(event.requestID());
+		else if (event instanceof BreakpointEventImpl) {
+			return (EventRequestImpl) enabled.get(BreakpointRequestImpl.class).get(event.requestID());
 		}
-		else if(event instanceof MonitorContendedEnterEventImpl) {
-			return (EventRequestImpl)fEnabledRequests[MONITOR_CONTENDED_ENTER_INDEX].get(event.requestID());
+		else if (event instanceof ClassPrepareEventImpl) {
+			return (EventRequestImpl) enabled.get(ClassPrepareRequestImpl.class).get(event.requestID());
 		}
-		else if(event instanceof MonitorContendedEnteredEventImpl) {
-			return (EventRequestImpl)fEnabledRequests[MONITOR_CONTENDED_ENTERED_INDEX].get(event.requestID());
+		else if (event instanceof ClassUnloadEventImpl) {
+			return (EventRequestImpl) enabled.get(ClassUnloadRequestImpl.class).get(event.requestID());
 		}
-		else
-			throw new InternalError(RequestMessages.EventRequestManagerImpl_Got_event_of_unknown_type_2); 
+		else if (event instanceof ExceptionEventImpl) {
+			return (EventRequestImpl) enabled.get(ExceptionRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof MethodEntryEventImpl) {
+			return (EventRequestImpl) enabled.get(MethodEntryRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof MethodExitEventImpl) {
+			return (EventRequestImpl) enabled.get(MethodExitRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof ModificationWatchpointEventImpl) {
+			return (EventRequestImpl) enabled.get(ModificationWatchpointRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof StepEventImpl) {
+			return (EventRequestImpl) enabled.get(StepRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof ThreadDeathEventImpl) {
+			return (EventRequestImpl) enabled.get(ThreadDeathRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof ThreadStartEventImpl) {
+			return (EventRequestImpl) enabled.get(ThreadStartRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof VMDeathEventImpl) {
+			return (EventRequestImpl) enabled.get(VMDeathRequestImpl.class).get(event.requestID());
+		}
+		else if (event instanceof MonitorWaitEventImpl) {
+			return (EventRequestImpl) enabled.get(MonitorWaitRequestImpl.class).get(event.requestID());
+		} else if (event instanceof MonitorWaitedEventImpl) {
+			return (EventRequestImpl) enabled.get(MonitorWaitedRequestImpl.class).get(event.requestID());
+		} else if (event instanceof MonitorContendedEnterEventImpl) {
+			return (EventRequestImpl) enabled.get(MonitorContendedEnterRequestImpl.class).get(event.requestID());
+		} else if (event instanceof MonitorContendedEnteredEventImpl) {
+			return (EventRequestImpl) enabled.get(MonitorContendedEnteredRequestImpl.class).get(event.requestID());
+		} else
+			throw new InternalError(
+					RequestMessages.EventRequestManagerImpl_Got_event_of_unknown_type_2);
 	}
 
 	/**
 	 * @see com.sun.jdi.request.EventRequestManager#monitorContendedEnterRequests()
 	 * @since 3.3
 	 */
-	public List monitorContendedEnterRequests() {
-		return new ArrayList(fRequests[MONITOR_CONTENDED_ENTER_INDEX]);
+	public List<MonitorContendedEnterRequest> monitorContendedEnterRequests() {
+		return new ArrayList<MonitorContendedEnterRequest>(mcenterReqs);
 	}
-	
-    /**
-     * @see com.sun.jdi.request.EventRequestManager#monitorContendedEnteredRequests()
-     * @since 3.3
-     */
-    public List monitorContendedEnteredRequests() {
-    	return new ArrayList(fRequests[MONITOR_CONTENDED_ENTERED_INDEX]);
-    }
-    
-    /**
-     * @see com.sun.jdi.request.EventRequestManager#monitorWaitRequests()
-     * @since 3.3
-     */
-    public List monitorWaitRequests() {
-    	return new ArrayList(fRequests[MONITOR_WAIT_INDEX]);
-    }
-    
-    /**
-     * @see com.sun.jdi.request.EventRequestManager#monitorWaitedRequests()
-     * @since 3.3
-     */
-    public List monitorWaitedRequests() {
-    	return new ArrayList(fRequests[MONITOR_WAITED_INDEX]);
-    }
+
+	/**
+	 * @see com.sun.jdi.request.EventRequestManager#monitorContendedEnteredRequests()
+	 * @since 3.3
+	 */
+	public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
+		return new ArrayList<MonitorContendedEnteredRequest>(mcenteredReqs);
+	}
+
+	/**
+	 * @see com.sun.jdi.request.EventRequestManager#monitorWaitRequests()
+	 * @since 3.3
+	 */
+	public List<MonitorWaitRequest> monitorWaitRequests() {
+		return new ArrayList<MonitorWaitRequest>(mwaitReqs);
+	}
+
+	/**
+	 * @see com.sun.jdi.request.EventRequestManager#monitorWaitedRequests()
+	 * @since 3.3
+	 */
+	public List<MonitorWaitedRequest> monitorWaitedRequests() {
+		return new ArrayList<MonitorWaitedRequest>(mwaitedReqs);
+	}
 }

@@ -22,14 +22,17 @@ public class MacOSXVMRunner extends StandardVMRunner {
 		super(vmInstance);
 	}
 	
+	@Override
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
 		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine), workingDirectory);
 	}
 
+	@Override
 	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine), workingDirectory, envp);
 	}
 	
+	@Override
 	protected String renderCommandLine(String[] commandLine) {
 		return super.renderCommandLine(MacOSXLaunchingPlugin.wrap(getClass(), commandLine));
 	}

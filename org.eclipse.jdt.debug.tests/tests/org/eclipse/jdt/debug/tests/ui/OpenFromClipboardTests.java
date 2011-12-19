@@ -81,11 +81,13 @@ public class OpenFromClipboardTests extends TestCase {
 			super(test);
 		}
 
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			fJProject = createProject("OpenFromClipboardTests");
 		}
 
+		@Override
 		protected void tearDown() throws Exception {
 			fJProject.getProject().delete(true, true, null);
 			super.tearDown();
@@ -117,11 +119,13 @@ public class OpenFromClipboardTests extends TestCase {
 		return new MyTestSetup(someTest);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fSourceFolder = JavaProjectHelper.addSourceContainer(MyTestSetup.fJProject, "src");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		JavaProjectHelper.removeSourceContainer(MyTestSetup.fJProject, "src");
 		super.tearDown();

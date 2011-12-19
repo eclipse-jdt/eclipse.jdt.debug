@@ -40,6 +40,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 	/**
 	 * @see ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return ((Filter) element).getName();
 	}

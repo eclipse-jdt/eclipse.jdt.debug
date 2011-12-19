@@ -33,6 +33,7 @@ public class AddExternalFolderAction extends OpenDialogAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 							
 		String lastUsedPath= getDialogSetting(LAST_PATH_SETTING);

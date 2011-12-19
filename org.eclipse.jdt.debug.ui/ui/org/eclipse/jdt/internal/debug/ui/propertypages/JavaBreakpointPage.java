@@ -86,6 +86,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Store the breakpoint properties.
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -169,6 +170,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Creates the labels and editors displayed for the breakpoint.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Composite mainComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -394,6 +396,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Check to see if the breakpoint should be deleted.
 	 * @return <code>true</code> if the page was canceled, <code>false</code> othewise
 	 */
+	@Override
 	public boolean performCancel() {
 		try {
 			if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
@@ -409,6 +412,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_BREAKPOINT_PROPERTY_PAGE);

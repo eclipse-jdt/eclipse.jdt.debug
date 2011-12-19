@@ -45,6 +45,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/**
 	 * @see ClasspathContainerInitializer#initialize(IPath, IJavaProject)
 	 */
+	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
 		if (JREContainer.DEBUG_JRE_CONTAINER) {
 			System.out.println("<JRE_CONTAINER> initialize()"); //$NON-NLS-1$
@@ -267,6 +268,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 * 
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#canUpdateClasspathContainer(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
 		if (containerPath != null && containerPath.segmentCount() > 0) {
 			if (JavaRuntime.JRE_CONTAINER.equals(containerPath.segment(0))) {
@@ -282,6 +284,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAccessRulesStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public IStatus getAccessRulesStatus(IPath containerPath, IJavaProject project) {
 		return READ_ONLY;
 	}
@@ -289,6 +292,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getSourceAttachmentStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public IStatus getSourceAttachmentStatus(IPath containerPath, IJavaProject project) {
 		return Status.OK_STATUS;
 	}
@@ -296,6 +300,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAttributeStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject, java.lang.String)
 	 */
+	@Override
 	public IStatus getAttributeStatus(IPath containerPath, IJavaProject project, String attributeKey) {
 		if (attributeKey.equals(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME)) {
 			return Status.OK_STATUS;
@@ -309,6 +314,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#requestClasspathContainerUpdate(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject, org.eclipse.jdt.core.IClasspathContainer)
 	 */
+	@Override
 	public void requestClasspathContainerUpdate(IPath containerPath, IJavaProject project, IClasspathContainer containerSuggestion) throws CoreException {
 		IVMInstall vm = resolveVM(containerPath);
 		if (vm == null) { 
@@ -367,6 +373,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getDescription(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public String getDescription(IPath containerPath, IJavaProject project) {
 		String tag = getExecutionEnvironmentId(containerPath);
 		if (tag == null && containerPath.segmentCount() > 2) {

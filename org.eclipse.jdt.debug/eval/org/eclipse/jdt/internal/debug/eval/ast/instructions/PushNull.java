@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
-
- 
 /**
  * Pushes the 'null' onto the stack.
  */
 public class PushNull extends SimpleInstruction {
-	
+
+	@Override
 	public void execute() {
 		pushNullValue();
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushNull_push___null__1; 
+		return InstructionsEvaluationMessages.PushNull_push___null__1;
 	}
 }
-

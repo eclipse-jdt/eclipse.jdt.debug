@@ -37,6 +37,7 @@ public class StopAction extends SnippetAction {
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		getEditor().shutDownVM();
 	}

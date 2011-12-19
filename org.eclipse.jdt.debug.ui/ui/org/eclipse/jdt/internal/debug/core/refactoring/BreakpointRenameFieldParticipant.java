@@ -38,6 +38,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IField;
 	}
@@ -45,6 +46,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		List changes = new ArrayList();
 		IResource resource = getBreakpointContainer();
@@ -61,6 +63,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
+	@Override
 	protected void gatherChanges(IMarker[] markers, List changes, String destFieldName) throws CoreException, OperationCanceledException {
 		IField originalField = (IField) getOriginalElement();
 		for (int i = 0; i < markers.length; i++) {

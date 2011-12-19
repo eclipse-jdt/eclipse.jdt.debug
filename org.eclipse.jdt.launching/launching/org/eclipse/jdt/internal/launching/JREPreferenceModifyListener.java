@@ -121,6 +121,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 		
 	}
 
+	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		try {
 			// force VMs to be initialized before we import the new VMs

@@ -43,6 +43,7 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 	/**
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		if (getBreakpoint() != null) {
 			PropertyDialogAction action= 

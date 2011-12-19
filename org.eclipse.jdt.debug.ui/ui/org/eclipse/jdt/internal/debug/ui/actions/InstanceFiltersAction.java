@@ -69,6 +69,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
 		 */
+		@Override
 		protected boolean isValid() {
 			return true;
 		}
@@ -76,6 +77,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
+		@Override
 		protected String getDialogSettingsId() {
 			return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
 		}
@@ -83,6 +85,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
+		@Override
 		protected String getHelpContextId() {
 			return IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG;
 		}
@@ -90,6 +93,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 		 */
+		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
@@ -97,6 +101,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 		 */
+		@Override
 		protected String getViewerLabel() {
 			return fMessage;
 		}
@@ -104,6 +109,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
+		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return fLabelProvider;
 		}
@@ -135,6 +141,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					}
 					
 					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
+						@Override
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
 							Object[] checkBreakpoint= getCheckBoxTableViewer().getCheckedElements();

@@ -163,6 +163,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		fSourceViewer= new JDISourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.LEFT_TO_RIGHT);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
@@ -225,6 +226,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fSourceViewer != null) {
 			fSourceViewer.getControl().setFocus();
@@ -375,6 +377,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 			
 		if (ITextOperationTarget.class.equals(required)) {
@@ -410,6 +413,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * 
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (fSourceViewer != null) {
 		    String contents= getContents();
@@ -426,6 +430,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * 
 	 * @see org.eclipse.ui.IViewPart#init(IViewSite, IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
 		if (fgMemento != null) {
@@ -446,7 +451,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
     	DragSource ds = new DragSource(fSourceViewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
     	ds.setTransfer(new Transfer[] {TextTransfer.getInstance()});
     	ds.addDragListener(new DragSourceAdapter() {
-        	public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
+        	@Override
+			public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
         		event.data = fSourceViewer.getTextWidget().getSelectionText();
         	}
         });
@@ -505,6 +511,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		if (fSourceViewer != null) {

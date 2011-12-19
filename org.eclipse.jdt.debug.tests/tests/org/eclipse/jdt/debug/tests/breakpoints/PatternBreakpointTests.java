@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 /**
  * Tests deferred pattern breakpoints.
  */
+@SuppressWarnings("deprecation")
 public class PatternBreakpointTests extends AbstractDebugTest {
 	
 	/**

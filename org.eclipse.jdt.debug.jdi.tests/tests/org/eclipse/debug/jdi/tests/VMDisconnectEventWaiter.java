@@ -27,6 +27,7 @@ public class VMDisconnectEventWaiter extends EventWaiter {
 	/**
 	 * @see org.eclipse.debug.jdi.tests.EventWaiter#vmDisconnect(com.sun.jdi.event.VMDisconnectEvent)
 	 */
+	@Override
 	public boolean vmDisconnect(VMDisconnectEvent event) {
 		notifyEvent(event);
 		return fShouldGo;

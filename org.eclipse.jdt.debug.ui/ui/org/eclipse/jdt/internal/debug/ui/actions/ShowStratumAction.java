@@ -80,6 +80,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
 		//Create the new menu. The menu will get filled when it is about to be shown. see fillMenu(Menu).
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
@@ -126,7 +127,8 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
             item.setText(stratum);
         }
         item.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 if (((MenuItem)e.getSource()).getSelection()) {
                     target.setDefaultStratum(stratum);
                 } else {

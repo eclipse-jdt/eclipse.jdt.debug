@@ -87,6 +87,7 @@ public class ExceptionFilterEditor {
 	private FilterContentProvider fFilterContentProvider;
 	
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fAddTypeButton) {
@@ -161,6 +162,7 @@ public class ExceptionFilterEditor {
 			}
 		});
 		fFilterViewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					removeFilters();
@@ -291,6 +293,7 @@ public class ExceptionFilterEditor {
 	private void setEditorListeners(Text text) {
 		// CR means commit the changes, ESC means abort and don't commit
 		text.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent event) {
 				if (event.character == SWT.CR) {
 					if (fInvalidEditorText != null) {
@@ -307,6 +310,7 @@ public class ExceptionFilterEditor {
 		});
 		// Consider loss of focus on the editor to mean the same as CR
 		text.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent event) {
 				if (fInvalidEditorText != null) {
 					fEditorText.setText(fInvalidEditorText);

@@ -40,6 +40,7 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getAvailableColumns()
 	 */
+	@Override
 	public String[] getAvailableColumns() {
 		if (fgAllColumns == null) {
 			String[] basic = super.getAvailableColumns();
@@ -54,6 +55,7 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getHeader(java.lang.String)
 	 */
+	@Override
 	public String getHeader(String id) {
 		if (COLUMN_INSTANCE_ID.equals(id)) {
 			return VariableMessages.JavaVariableColumnPresentation_0;
@@ -67,6 +69,7 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getId()
 	 */
+	@Override
 	public String getId() {
 		return JAVA_VARIABLE_COLUMN_PRESENTATION;
 	}

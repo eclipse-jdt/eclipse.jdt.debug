@@ -164,6 +164,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			}
 		}
 		TypeNameMatchRequestor requestor= new TypeNameMatchRequestor() {
+			@Override
 			public void acceptTypeNameMatch(TypeNameMatch match) {
 				throw new ResultException(match.getType());
 			}

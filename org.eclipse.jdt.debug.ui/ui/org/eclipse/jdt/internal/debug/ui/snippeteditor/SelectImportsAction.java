@@ -31,6 +31,7 @@ public class SelectImportsAction extends SnippetAction {
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		if (!getEditor().isInJavaProject()) {
 			getEditor().reportNotInJavaProjectError();

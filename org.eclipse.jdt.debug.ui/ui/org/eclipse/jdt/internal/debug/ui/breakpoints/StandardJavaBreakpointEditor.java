@@ -59,6 +59,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		return createStandardControls(parent);
 	}
@@ -68,6 +69,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fHitCountButton = SWTFactory.createCheckButton(composite, processMnemonics(PropertyPageMessages.JavaBreakpointPage_4), null, false, 1);
 		fHitCountButton.setLayoutData(new GridData());
 		fHitCountButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				boolean enabled = fHitCountButton.getSelection();
 				fHitCountText.setEnabled(enabled);
@@ -92,11 +94,13 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendVM = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointPage_8), 1);
 		fSuspendVM.setLayoutData(new GridData());
 		fSuspendThread.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_SUSPEND_POLICY);
 			}
 		});	
 		fSuspendVM.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_SUSPEND_POLICY);
 			}
@@ -112,6 +116,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setInput(java.lang.Object)
 	 */
+	@Override
 	public void setInput(Object breakpoint) throws CoreException {
 		try {
 			suppressPropertyChanges(true);
@@ -128,6 +133,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#getInput()
 	 */
+	@Override
 	public Object getInput() {
 		return fBreakpoint;
 	}
@@ -176,6 +182,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		// do nothing
 	}
@@ -183,6 +190,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#doSave()
 	 */
+	@Override
 	public void doSave() throws CoreException {
 		if (fBreakpoint != null) {
 			int suspendPolicy = IJavaBreakpoint.SUSPEND_THREAD;
@@ -207,6 +215,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#getStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		if (fHitCountButton.getSelection()) {
 			String hitCountText= fHitCountText.getText();
@@ -238,6 +247,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		GridData gd = new GridData(SWT.BEGINNING);
 		button.setLayoutData(gd);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(propId);
 			}

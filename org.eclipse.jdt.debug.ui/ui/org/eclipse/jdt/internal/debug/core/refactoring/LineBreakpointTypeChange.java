@@ -40,6 +40,7 @@ public class LineBreakpointTypeChange extends LineBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		String msg =  MessageFormat.format(RefactoringMessages.LineBreakpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
@@ -52,6 +53,7 @@ public class LineBreakpointTypeChange extends LineBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
 		Map map = new HashMap();

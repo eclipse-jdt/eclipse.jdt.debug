@@ -45,6 +45,7 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
 	 */
+	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return !fFilteredTypes.contains(type.getId());
 	}

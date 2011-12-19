@@ -24,6 +24,7 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 		super(type, id);
 	}
 
+	@Override
 	public IVMRunner getVMRunner(String mode) {
 		if (ILaunchManager.RUN_MODE.equals(mode))
 			return new MacOSXVMRunner(this);
@@ -34,7 +35,8 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 		return null;
 	}
 
-    public String getJavaVersion() {
+    @Override
+	public String getJavaVersion() {
         File installLocation= getInstallLocation();
         if (installLocation != null) {
             File executable= StandardVMType.findJavaExecutable(installLocation);

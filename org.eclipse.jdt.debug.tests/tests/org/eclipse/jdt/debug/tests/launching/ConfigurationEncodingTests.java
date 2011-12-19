@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * scenarios
  * @since 3.4
  */
+@SuppressWarnings("deprecation")
 public class ConfigurationEncodingTests extends AbstractDebugTest {
 
 	/**

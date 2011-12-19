@@ -190,6 +190,7 @@ public class JREsComboBlock {
 	private void createEEControls(Composite comp) {
 		fEnvironmentsButton = SWTFactory.createRadioButton(comp, JREMessages.JREsComboBlock_4);
 		fEnvironmentsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fEnvironmentsButton.getSelection()) {
 					fCombo.setEnabled(false);
@@ -209,6 +210,7 @@ public class JREsComboBlock {
 		
 		fEnvironmentsCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
 				firePropertyChange();
@@ -232,6 +234,7 @@ public class JREsComboBlock {
 		}
 		fSpecificButton = SWTFactory.createRadioButton(comp, text, 1);
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fSpecificButton.getSelection()) {
 					fCombo.setEnabled(true);
@@ -251,6 +254,7 @@ public class JREsComboBlock {
 		fCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		ControlAccessibleListener.addListener(fCombo, fSpecificButton.getText());
 		fCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setStatus(OK_STATUS);
 				firePropertyChange();
@@ -270,6 +274,7 @@ public class JREsComboBlock {
 		if (fDefaultDescriptor != null) {
 			fDefaultButton = SWTFactory.createRadioButton(comp, fDefaultDescriptor.getDescription(), 3);
 			fDefaultButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fDefaultButton.getSelection()) {
 						setUseDefaultJRE();
@@ -342,6 +347,7 @@ public class JREsComboBlock {
 				return left.getName().compareToIgnoreCase(right.getName());
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				return obj == this;
 			}
@@ -464,6 +470,7 @@ public class JREsComboBlock {
 				return left.getId().compareToIgnoreCase(right.getId());
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				return obj == this;
 			}

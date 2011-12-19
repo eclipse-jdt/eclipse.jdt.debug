@@ -26,6 +26,7 @@ import java.io.File;
  *  <code>org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage</code>
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class LocalFileStorage extends org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage {
 	
 	/**

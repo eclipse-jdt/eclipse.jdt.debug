@@ -72,7 +72,7 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
      */
     private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
         //set a status to go to the classpath tab
-	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, IInternalDebugCoreConstants.EMPTY_STRING, null); //$NON-NLS-1$
+	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, IInternalDebugCoreConstants.EMPTY_STRING, null); 
 		LaunchConfigurationsDialog dialog= new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
 		dialog.setBlockOnOpen(false);
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);

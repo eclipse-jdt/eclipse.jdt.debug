@@ -877,6 +877,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
+	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
 		return fOrderedProjects;
@@ -887,6 +888,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
+	@Override
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
@@ -896,6 +898,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#isLaunchProblem(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		return super.isLaunchProblem(problemMarker) && problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
 	}
@@ -905,6 +908,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
@@ -924,7 +928,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
      /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBreakpoints(org.eclipse.debug.core.ILaunchConfiguration)
      */
-    protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
+    @Override
+	protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
          IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
          if (!breakpointManager.isEnabled()) {
              // no need to check breakpoints individually.

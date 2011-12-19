@@ -107,6 +107,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
 	 */
+	@Override
 	protected IWorkbenchPart getPart() {
 		IWorkbenchPart part = super.getPart();
 		if (part != null){

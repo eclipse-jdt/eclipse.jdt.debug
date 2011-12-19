@@ -28,6 +28,7 @@ public class ByteValueTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get byte value for 1
 		fValue = fVM.mirrorOf((byte) 1);
@@ -43,6 +44,7 @@ public class ByteValueTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ByteValue";
 	}

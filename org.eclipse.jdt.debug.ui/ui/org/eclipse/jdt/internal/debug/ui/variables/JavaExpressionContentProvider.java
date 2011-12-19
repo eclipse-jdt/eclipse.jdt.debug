@@ -36,6 +36,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		Object[] variables = getAllChildren(parent, context);
         if (JavaVariableContentProvider.displayReferencesAsChild(parent)){
@@ -53,6 +54,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		int count = super.getChildCount(element, context, monitor);
 		if (JavaVariableContentProvider.displayReferencesAsChild(element)){
@@ -67,6 +69,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context,	IViewerUpdate monitor) throws CoreException {
 		if (JavaVariableContentProvider.displayReferencesAsChild(element)){
 			return true;
@@ -77,6 +80,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
 		Object[] children = super.getAllChildren(parent, context);
 		return JavaContentProviderFilter.filterVariables(children, context);

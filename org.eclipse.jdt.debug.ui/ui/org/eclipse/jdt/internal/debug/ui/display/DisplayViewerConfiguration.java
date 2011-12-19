@@ -58,6 +58,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		ContentAssistant assistant = new ContentAssistant();
@@ -77,6 +78,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
+	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		ITextDoubleClickStrategy clickStrat = new ITextDoubleClickStrategy() {
 			// Highlight the whole line when double clicked. See Bug#45481 

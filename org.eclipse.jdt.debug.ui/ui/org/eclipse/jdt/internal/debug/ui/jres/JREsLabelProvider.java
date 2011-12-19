@@ -25,6 +25,7 @@ public class JREsLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
         return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}
@@ -32,6 +33,7 @@ public class JREsLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return ((IVMInstall)element).getName();
 	}

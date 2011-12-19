@@ -41,6 +41,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		String msg = MessageFormat.format(RefactoringMessages.MethodBreakpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
@@ -53,6 +54,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		String[] parameterTypes = Signature.getParameterTypes(getSignature());
 		for (int i = 0; i < parameterTypes.length; i++) {

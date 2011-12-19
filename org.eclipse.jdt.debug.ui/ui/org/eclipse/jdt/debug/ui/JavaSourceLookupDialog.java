@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupDialog</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class JavaSourceLookupDialog extends Dialog {
 		
 	private SourceLookupBlock fSourceLookupBlock;
@@ -90,6 +91,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
@@ -127,6 +129,7 @@ public class JavaSourceLookupDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		try {
 			if (fAskAgainCheckBox != null) {

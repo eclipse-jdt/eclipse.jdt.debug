@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -24,46 +23,53 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.event.ClassPrepareEvent;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEvent {
+public class ClassPrepareEventImpl extends EventImpl implements
+		ClassPrepareEvent {
 	/** Jdwp Event Kind. */
 	public static final byte EVENT_KIND = EVENT_CLASS_PREPARE;
 
 	/** Reference type for which this event was generated. */
 	private ReferenceTypeImpl fReferenceType;
-	
+
 	/**
 	 * Creates new BreakpointEventImpl.
 	 */
 	private ClassPrepareEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
 		super("ClassPrepareEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
-		
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static ClassPrepareEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static ClassPrepareEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl, requestID);
+		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl,
+				requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
-		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, false, dataInStream);
-		target.readInt("class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
+		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(
+				target, false, dataInStream);
+		target.readInt(
+				"class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
 		return event;
-   	}
-   	
+	}
+
 	/**
 	 * @return Returns the reference type for which this event was generated.
 	 */
 	public ReferenceType referenceType() {
 		return fReferenceType;
 	}
-	
+
 	/**
-	 * @return Returns the JNI-style signature of the class that has been unloaded.
+	 * @return Returns the JNI-style signature of the class that has been
+	 *         unloaded.
 	 */
 	public String classSignature() {
 		return referenceType().signature();

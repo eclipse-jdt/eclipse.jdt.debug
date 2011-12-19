@@ -26,11 +26,13 @@ public class MethodExitRequestTest extends AbstractJDITest {
 	/**
 	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localSetUp()
 	 */
+	@Override
 	public void localSetUp() {
 	}
 	/**
 	 * @see org.eclipse.debug.jdi.tests.AbstractJDITest#localTearDown()
 	 */
+	@Override
 	public void localTearDown() {
 		fVM.resume();
 		waitUntilReady();
@@ -47,6 +49,7 @@ public class MethodExitRequestTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.MethodExitRequest";
 	}

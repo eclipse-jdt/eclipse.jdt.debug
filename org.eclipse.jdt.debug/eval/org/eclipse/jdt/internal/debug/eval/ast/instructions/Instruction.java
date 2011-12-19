@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,7 +39,7 @@ public abstract class Instruction {
 	public abstract int getSize();
 
 	public void setInterpreter(Interpreter interpreter) {
-		fInterpreter= interpreter;
+		fInterpreter = interpreter;
 	}
 
 	public void setLastValue(IJavaValue value) {
@@ -54,6 +53,7 @@ public abstract class Instruction {
 	public static int getBinaryPromotionType(int left, int right) {
 		return fTypeTable[left][right];
 	}
+
 	public abstract void execute() throws CoreException;
 
 	protected IRuntimeContext getContext() {
@@ -66,7 +66,7 @@ public abstract class Instruction {
 
 	/**
 	 * Return the internal variable with the given name.
-	 *
+	 * 
 	 * @see Interpreter#getInternalVariable(String)
 	 */
 	protected IVariable getInternalVariable(String name) {
@@ -74,22 +74,22 @@ public abstract class Instruction {
 	}
 
 	/**
-	 * Create and return a new internal variable with the given name
-	 * and the given type.
-	 *
+	 * Create and return a new internal variable with the given name and the
+	 * given type.
+	 * 
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
-	protected IVariable createInternalVariable(String name, IJavaType referencType) {
+	protected IVariable createInternalVariable(String name,
+			IJavaType referencType) {
 		return fInterpreter.createInternalVariable(name, referencType);
 	}
-
 
 	/**
 	 * Answers the instance of Class that the given type represents.
 	 */
 	protected IJavaObject getClassObject(IJavaType type) throws CoreException {
 		if (type instanceof IJavaReferenceType) {
-			return ((IJavaReferenceType)type).getClassObject();
+			return ((IJavaReferenceType) type).getClassObject();
 		}
 		return null;
 	}
@@ -109,9 +109,9 @@ public abstract class Instruction {
 	protected IJavaValue popValue() throws CoreException {
 		Object element = fInterpreter.pop();
 		if (element instanceof IJavaVariable) {
-			return (IJavaValue)((IJavaVariable)element).getValue();
+			return (IJavaValue) ((IJavaVariable) element).getValue();
 		}
-		return (IJavaValue)element;
+		return (IJavaValue) element;
 	}
 
 	protected void pushNewValue(boolean value) {
@@ -198,54 +198,65 @@ public abstract class Instruction {
 		return fTypeTable[typeId][T_int];
 	}
 
-    protected IJavaType getType(String qualifiedName) throws CoreException {
-        // Force the class to be loaded, and record the class reference
-        // for later use if there are multiple classes with the same name.
-        IJavaClassObject classReference= getContext().classForName(qualifiedName);
-        // Found many classes, look for the right one for this scope.
-        if (classReference == null) {
-            throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); 
-        }
-        return classReference.getInstanceType();
-    }
-    
-    /**
-     * Returns the primitive type with the given name.
-     * 
-     * @param name type name, for example - "int"
-     * @return primitive type
-     * @throws CoreException
-     */
-    protected IJavaType getPrimitiveType(String name) throws CoreException {
-    	IJavaReferenceType type = null;
-    	if ("boolean".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Boolean"); //$NON-NLS-1$
-    	} else if ("byte".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Byte"); //$NON-NLS-1$
-    	} else if ("char".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Character"); //$NON-NLS-1$
-    	} else if ("double".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Double"); //$NON-NLS-1$
-    	} else if ("float".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Float"); //$NON-NLS-1$
-    	} else if ("int".equals(name)) { //$NON-NLS-1$
+	protected IJavaType getType(String qualifiedName) throws CoreException {
+		// Force the class to be loaded, and record the class reference
+		// for later use if there are multiple classes with the same name.
+		IJavaClassObject classReference = getContext().classForName(
+				qualifiedName);
+		// Found many classes, look for the right one for this scope.
+		if (classReference == null) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					MessageFormat.format(
+							InstructionsEvaluationMessages.Instruction_No_type,
+							new String[] { qualifiedName }), null));
+		}
+		return classReference.getInstanceType();
+	}
+
+	/**
+	 * Returns the primitive type with the given name.
+	 * 
+	 * @param name
+	 *            type name, for example - "int"
+	 * @return primitive type
+	 * @throws CoreException
+	 */
+	protected IJavaType getPrimitiveType(String name) throws CoreException {
+		IJavaReferenceType type = null;
+		if ("boolean".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Boolean"); //$NON-NLS-1$
+		} else if ("byte".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Byte"); //$NON-NLS-1$
+		} else if ("char".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Character"); //$NON-NLS-1$
+		} else if ("double".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Double"); //$NON-NLS-1$
+		} else if ("float".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Float"); //$NON-NLS-1$
+		} else if ("int".equals(name)) { //$NON-NLS-1$
 			type = (IJavaReferenceType) getType("java.lang.Integer"); //$NON-NLS-1$
 		} else if ("long".equals(name)) { //$NON-NLS-1$
 			type = (IJavaReferenceType) getType("java.lang.Long"); //$NON-NLS-1$
 		} else if ("short".equals(name)) { //$NON-NLS-1$
 			type = (IJavaReferenceType) getType("java.lang.Short"); //$NON-NLS-1$
-    	} else if ("void".equals(name)) { //$NON-NLS-1$
-    		type = (IJavaReferenceType) getType("java.lang.Void"); //$NON-NLS-1$
-    	}
-    	if (type != null) {
-			IJavaFieldVariable field = type.getField("TYPE");  //$NON-NLS-1$
+		} else if ("void".equals(name)) { //$NON-NLS-1$
+			type = (IJavaReferenceType) getType("java.lang.Void"); //$NON-NLS-1$
+		}
+		if (type != null) {
+			IJavaFieldVariable field = type.getField("TYPE"); //$NON-NLS-1$
 			IJavaClassObject clazz = (IJavaClassObject) field.getValue();
 			return clazz.getInstanceType();
-    	}
-        throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{name}), null)); 
-    }    
+		}
+		throw new CoreException(new Status(IStatus.ERROR,
+				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+				MessageFormat.format(
+						InstructionsEvaluationMessages.Instruction_No_type,
+						new String[] { name }), null));
+	}
 
-	protected IJavaArrayType getArrayType(String typeSignature, int dimension) throws CoreException {
+	protected IJavaArrayType getArrayType(String typeSignature, int dimension)
+			throws CoreException {
 		String qualifiedName = RuntimeSignature.toString(typeSignature);
 		String braces = ""; //$NON-NLS-1$
 		for (int i = 0; i < dimension; i++) {
@@ -255,21 +266,24 @@ public abstract class Instruction {
 		String signature = braces + typeSignature;
 		// Force the class to be loaded, and record the class reference
 		// for later use if there are multiple classes with the same name.
-		IJavaObject classReference= getContext().classForName(signature);
+		IJavaObject classReference = getContext().classForName(signature);
 		if (classReference == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); 
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					MessageFormat.format(
+							InstructionsEvaluationMessages.Instruction_No_type,
+							new String[] { qualifiedName }), null));
 		}
-		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
+		IJavaType[] types = getVM().getJavaTypes(qualifiedName);
 		checkTypes(types, qualifiedName);
 		if (types.length == 1) {
 			// Found only one class.
-			return (IJavaArrayType)types[0];
+			return (IJavaArrayType) types[0];
 		}
 		// Found many classes, look for the right one for this scope.
-		for(int i= 0, length= types.length; i < length; i++) {
-			IJavaType type= types[i];
+		for (IJavaType type : types) {
 			if (classReference.equals(getClassObject(type))) {
-				return (IJavaArrayType)type;
+				return (IJavaArrayType) type;
 			}
 		}
 
@@ -278,43 +292,81 @@ public abstract class Instruction {
 		// call, but none of them were the class that was returned in
 		// the classForName call.
 
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); 
+		throw new CoreException(new Status(IStatus.ERROR,
+				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+				MessageFormat.format(
+						InstructionsEvaluationMessages.Instruction_No_type,
+						new String[] { qualifiedName }), null));
 	}
 
-	protected void checkTypes(IJavaType[] types, String qualifiedName) throws CoreException {
+	protected void checkTypes(IJavaType[] types, String qualifiedName)
+			throws CoreException {
 		if (types == null || types.length == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Instruction_No_type, new String[]{qualifiedName}), null)); 
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					MessageFormat.format(
+							InstructionsEvaluationMessages.Instruction_No_type,
+							new String[] { qualifiedName }), null));
 		}
 	}
 
-	static public final int T_undefined =0;
-	static public final int T_Object =1;
-	static public final int T_char =2;
-	static public final int T_byte =3;
-	static public final int T_short =4;
-	static public final int T_boolean =5;
-	static public final int T_void =6;
-	static public final int T_long =7;
-	static public final int T_double =8;
-	static public final int T_float =9;
-	static public final int T_int =10;
-	static public final int T_String =11;
-	static public final int T_null =12;
+	static public final int T_undefined = 0;
+	static public final int T_Object = 1;
+	static public final int T_char = 2;
+	static public final int T_byte = 3;
+	static public final int T_short = 4;
+	static public final int T_boolean = 5;
+	static public final int T_void = 6;
+	static public final int T_long = 7;
+	static public final int T_double = 8;
+	static public final int T_float = 9;
+	static public final int T_int = 10;
+	static public final int T_String = 11;
+	static public final int T_null = 12;
 
-	private static final int[][] fTypeTable= {
-/* undefined */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined},
-/* object */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
-/* char */		{T_undefined, T_undefined, T_int, T_int, T_int, T_undefined, T_undefined, T_long, T_double, T_float, T_int, T_String, T_undefined},
-/* byte */		{T_undefined, T_undefined, T_int, T_int, T_int, T_undefined, T_undefined, T_long, T_double, T_float, T_int, T_String, T_undefined},
-/* short */		{T_undefined, T_undefined, T_int, T_int, T_int, T_undefined, T_undefined, T_long, T_double, T_float, T_int, T_String, T_undefined},
-/* boolean */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_boolean, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
-/* void */		{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined},
-/* long */		{T_undefined, T_undefined, T_long, T_long, T_long, T_undefined, T_undefined, T_long, T_double, T_float, T_long, T_String, T_undefined},
-/* double */	{T_undefined, T_undefined, T_double, T_double, T_double, T_undefined, T_undefined, T_double, T_double, T_double, T_double, T_String, T_undefined},
-/* float */		{T_undefined, T_undefined, T_float, T_float, T_float, T_undefined, T_undefined, T_float, T_double, T_float, T_float, T_String, T_undefined},
-/* int */		{T_undefined, T_undefined, T_int, T_int, T_int, T_undefined, T_undefined, T_long, T_double, T_float, T_int, T_String, T_undefined},
-/* String */	{T_undefined, T_String, T_String, T_String, T_String, T_String, T_undefined, T_String, T_String, T_String, T_String, T_String, T_String},
-/* null */		{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
-	};
+	private static final int[][] fTypeTable = {
+			/* undefined */{ T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined },
+			/* object */{ T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_String,
+					T_undefined },
+			/* char */{ T_undefined, T_undefined, T_int, T_int, T_int,
+					T_undefined, T_undefined, T_long, T_double, T_float, T_int,
+					T_String, T_undefined },
+			/* byte */{ T_undefined, T_undefined, T_int, T_int, T_int,
+					T_undefined, T_undefined, T_long, T_double, T_float, T_int,
+					T_String, T_undefined },
+			/* short */{ T_undefined, T_undefined, T_int, T_int, T_int,
+					T_undefined, T_undefined, T_long, T_double, T_float, T_int,
+					T_String, T_undefined },
+			/* boolean */{ T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_boolean, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_String,
+					T_undefined },
+			/* void */{ T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined },
+			/* long */{ T_undefined, T_undefined, T_long, T_long, T_long,
+					T_undefined, T_undefined, T_long, T_double, T_float,
+					T_long, T_String, T_undefined },
+			/* double */{ T_undefined, T_undefined, T_double, T_double,
+					T_double, T_undefined, T_undefined, T_double, T_double,
+					T_double, T_double, T_String, T_undefined },
+			/* float */{ T_undefined, T_undefined, T_float, T_float, T_float,
+					T_undefined, T_undefined, T_float, T_double, T_float,
+					T_float, T_String, T_undefined },
+			/* int */{ T_undefined, T_undefined, T_int, T_int, T_int,
+					T_undefined, T_undefined, T_long, T_double, T_float, T_int,
+					T_String, T_undefined },
+			/* String */{ T_undefined, T_String, T_String, T_String, T_String,
+					T_String, T_undefined, T_String, T_String, T_String,
+					T_String, T_String, T_String },
+			/* null */{ T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_undefined,
+					T_undefined, T_undefined, T_undefined, T_String,
+					T_undefined }, };
 }
-

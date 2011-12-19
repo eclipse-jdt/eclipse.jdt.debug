@@ -37,6 +37,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
 		// add standard controls
@@ -50,6 +51,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#setBreakpoint(org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
+	@Override
 	protected void setBreakpoint(IJavaBreakpoint breakpoint) throws CoreException {
 		super.setBreakpoint(breakpoint);
 		if (breakpoint instanceof IJavaWatchpoint) {
@@ -69,6 +71,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#doSave()
 	 */
+	@Override
 	public void doSave() throws CoreException {
 		super.doSave();
 		IJavaBreakpoint breakpoint = getBreakpoint();

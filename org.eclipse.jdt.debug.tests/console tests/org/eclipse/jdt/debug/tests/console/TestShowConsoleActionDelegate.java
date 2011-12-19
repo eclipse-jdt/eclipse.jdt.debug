@@ -99,7 +99,7 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 	}
 	
 	private void writeToStream(final MessageConsoleStream stream, final String str) {
-		stream.print(str); //$NON-NLS-1$
+		stream.print(str); 
 	}
 	
 	/**

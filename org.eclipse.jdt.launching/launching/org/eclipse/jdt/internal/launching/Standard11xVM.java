@@ -28,6 +28,7 @@ public class Standard11xVM extends StandardVM {
 	/**
 	 * @see org.eclipse.jdt.launching.IVMInstall#getVMRunner(String)
 	 */
+	@Override
 	public IVMRunner getVMRunner(String mode) {
 		if (ILaunchManager.RUN_MODE.equals(mode)) {
 			return new Standard11xVMRunner(this);

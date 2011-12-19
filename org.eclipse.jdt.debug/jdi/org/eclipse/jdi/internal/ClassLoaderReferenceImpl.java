@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,42 +26,47 @@ import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ReferenceType;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements ClassLoaderReference {
+public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements
+		ClassLoaderReference {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.CLASS_LOADER_TAG;
 
 	/**
 	 * Creates new ClassLoaderReferenceImpl.
 	 */
-	public ClassLoaderReferenceImpl(VirtualMachineImpl vmImpl, JdwpClassLoaderID classLoaderID) {
+	public ClassLoaderReferenceImpl(VirtualMachineImpl vmImpl,
+			JdwpClassLoaderID classLoaderID) {
 		super("ClassLoaderReference", vmImpl, classLoaderID); //$NON-NLS-1$
 	}
 
 	/**
 	 * @returns Value tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
-	 * @returns Returns a list of all loaded classes that were defined by this class loader.
+	 * @returns Returns a list of all loaded classes that were defined by this
+	 *          class loader.
 	 */
-	public List definedClasses() {
+	public List<ReferenceType> definedClasses() {
 		// Note that this information should not be cached.
-		List visibleClasses= visibleClasses();
-		List result = new ArrayList(visibleClasses.size());
-		Iterator iter = visibleClasses.iterator();
+		List<ReferenceTypeImpl> visibleClasses = visibleClasses();
+		List<ReferenceType> result = new ArrayList<ReferenceType>(visibleClasses.size());
+		Iterator<ReferenceTypeImpl> iter = visibleClasses.iterator();
 		while (iter.hasNext()) {
 			try {
-				ReferenceType type = (ReferenceType)iter.next();
-				// Note that classLoader() is null for the bootstrap classloader.
-				if (type.classLoader() != null && type.classLoader().equals(this))
+				ReferenceType type = iter.next();
+				// Note that classLoader() is null for the bootstrap
+				// classloader.
+				if (type.classLoader() != null
+						&& type.classLoader().equals(this))
 					result.add(type);
 			} catch (ClassNotPreparedException e) {
 				continue;
@@ -72,19 +76,22 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 	}
 
 	/**
-	 * @returns Returns a list of all loaded classes that are visible by this class loader.
+	 * @returns Returns a list of all loaded classes that are visible by this
+	 *          class loader.
 	 */
-	public List visibleClasses() {
+	public List<ReferenceTypeImpl> visibleClasses() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CLR_VISIBLE_CLASSES, this);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CLR_VISIBLE_CLASSES, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List elements = new ArrayList(nrOfElements);
+			List<ReferenceTypeImpl> elements = new ArrayList<ReferenceTypeImpl>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
+				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this,
+						replyData);
 				if (elt == null)
 					continue;
 				elements.add(elt);
@@ -97,11 +104,12 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	public static ClassLoaderReferenceImpl read(MirrorImpl target, DataInputStream in)  throws IOException {
+	public static ClassLoaderReferenceImpl read(MirrorImpl target,
+			DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpClassLoaderID ID = new JdwpClassLoaderID(vmImpl);
 		ID.read(in);
@@ -111,7 +119,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 		if (ID.isNull())
 			return null;
 
-		ClassLoaderReferenceImpl mirror = new ClassLoaderReferenceImpl(vmImpl, ID);
+		ClassLoaderReferenceImpl mirror = new ClassLoaderReferenceImpl(vmImpl,
+				ID);
 		return mirror;
 	}
 }

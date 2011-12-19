@@ -32,6 +32,7 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get value of "fThread"
 		ThreadReference thread = getThread();
@@ -42,6 +43,7 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// The test has resumed the thread group, and so the test thread, so suspend it
 		waitUntilReady();
@@ -57,6 +59,7 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ThreadGroupReference";
 	}

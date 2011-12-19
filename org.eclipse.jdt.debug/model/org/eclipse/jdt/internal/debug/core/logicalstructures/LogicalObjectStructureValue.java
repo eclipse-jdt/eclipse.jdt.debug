@@ -25,177 +25,240 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  * A proxy to an object representing the logical structure of that object.
  */
 public class LogicalObjectStructureValue implements IJavaObject {
-	
+
 	private IJavaObject fObject;
 	private IJavaVariable[] fVariables;
-	
+
 	/**
-	 * Constructs a proxy to the given object, with the given variables
-	 * as children.
+	 * Constructs a proxy to the given object, with the given variables as
+	 * children.
 	 * 
-	 * @param object original object
-	 * @param variables java variables to add as children to this object
+	 * @param object
+	 *            original object
+	 * @param variables
+	 *            java variables to add as children to this object
 	 */
-	public LogicalObjectStructureValue(IJavaObject object, IJavaVariable[] variables) {
+	public LogicalObjectStructureValue(IJavaObject object,
+			IJavaVariable[] variables) {
 		fObject = object;
 		fVariables = variables;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
+	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
+	 * org.eclipse.jdt.debug.core.IJavaThread, boolean)
 	 */
-	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException {
-		return fObject.sendMessage(selector, signature, args, thread, superSend);
+	public IJavaValue sendMessage(String selector, String signature,
+			IJavaValue[] args, IJavaThread thread, boolean superSend)
+			throws DebugException {
+		return fObject
+				.sendMessage(selector, signature, args, thread, superSend);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
+	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
+	 * org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
 	 */
-	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, String typeSignature) throws DebugException {
-		return fObject.sendMessage(selector, signature, args, thread, typeSignature);
+	public IJavaValue sendMessage(String selector, String signature,
+			IJavaValue[] args, IJavaThread thread, String typeSignature)
+			throws DebugException {
+		return fObject.sendMessage(selector, signature, args, thread,
+				typeSignature);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
+	 * boolean)
 	 */
-	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException {
+	public IJavaFieldVariable getField(String name, boolean superField)
+			throws DebugException {
 		return fObject.getField(name, superField);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
+	 * java.lang.String)
 	 */
-	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException {
+	public IJavaFieldVariable getField(String name, String typeSignature)
+			throws DebugException {
 		return fObject.getField(name, typeSignature);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		return fObject.getSignature();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
 	public String getGenericSignature() throws DebugException {
 		return fObject.getGenericSignature();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
 		return fObject.getJavaType();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		return fObject.getReferenceTypeName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
 		return fObject.getValueString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
 	public boolean isAllocated() throws DebugException {
 		return fObject.isAllocated();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	public IVariable[] getVariables() {
 		return fVariables;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
 	public boolean hasVariables() {
 		return fVariables.length > 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
 		return fObject.getModelIdentifier();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
 		return fObject.getDebugTarget();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
 		return fObject.getLaunch();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		return fObject.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
 	public IJavaThread[] getWaitingThreads() throws DebugException {
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
 	 */
 	public IJavaThread getOwningThread() throws DebugException {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
 	public IJavaObject[] getReferringObjects(long max) throws DebugException {
 		return fObject.getReferringObjects(max);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
 	 */
 	public void disableCollection() throws DebugException {
 		fObject.disableCollection();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
 	public void enableCollection() throws DebugException {
 		fObject.enableCollection();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
 	public long getUniqueId() throws DebugException {
 		return fObject.getUniqueId();
-	}	
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
 	public boolean isNull() {

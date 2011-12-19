@@ -241,6 +241,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
@@ -249,6 +250,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
         Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 2);
         createTable(comp);
@@ -343,14 +345,16 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
             }
         });
         table.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent event) {
+            @Override
+			public void keyPressed(KeyEvent event) {
                 if (event.character == SWT.DEL && event.stateMask == 0 && fRemoveLogicalStructureButton.isEnabled()) {
                 	removeLogicalStrutures();
                 }
             }
         }); 
         fLogicalStructuresViewer.setComparator(new ViewerComparator() {
-            public int compare(Viewer iViewer, Object e1, Object e2) {
+            @Override
+			public int compare(Viewer iViewer, Object e1, Object e2) {
                 if (e1 == null) {
                     return -1;
                 } else if (e2 == null) {
@@ -510,6 +514,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (fCodeViewer != null) {
 			fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
@@ -521,6 +526,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeViewer != null) {
 			fCodeViewer.dispose();

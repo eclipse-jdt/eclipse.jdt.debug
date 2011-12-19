@@ -33,6 +33,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * Overridden to create a default performance meter for this test case.
 	 * @throws Exception
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Performance performance= Performance.getDefault();
@@ -43,6 +44,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * Overridden to dispose of the performance meter.
 	 * @throws Exception
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		fPerformanceMeter.dispose();

@@ -41,6 +41,7 @@ public class JavaStackTraceConsoleViewer extends TextConsoleViewer {
 	/**
 	 * @see org.eclipse.jface.text.source.SourceViewer#doOperation(int)
 	 */
+	@Override
 	public void doOperation(int operation) {
 		super.doOperation(operation);
 

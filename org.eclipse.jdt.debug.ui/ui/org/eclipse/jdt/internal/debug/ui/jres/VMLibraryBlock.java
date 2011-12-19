@@ -398,6 +398,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#finish()
 	 */
+	@Override
 	public boolean finish() {
 		if (fVmInstall != null) {
 			if (isDefaultLocations(fVmInstall)) {
@@ -413,6 +414,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getSelection()
 	 */
+	@Override
 	public VMStandin getSelection() {
 		return fVmInstall;
 	}
@@ -420,6 +422,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#setSelection(org.eclipse.jdt.launching.VMStandin)
 	 */
+	@Override
 	public void setSelection(VMStandin vm) {
 		super.setSelection(vm);
 		LibraryLocation[] libraryLocations = null;
@@ -435,6 +438,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getVMStatus()
 	 */
+	@Override
 	protected IStatus[] getVMStatus() {
 		return fLibStatus;
 	}	

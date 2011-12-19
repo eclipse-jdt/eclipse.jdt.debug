@@ -25,6 +25,7 @@ public class TextTestResult extends TestResult {
 	/**
 	 * @see junit.framework.TestResult#addError(junit.framework.Test, java.lang.Throwable)
 	 */
+	@Override
 	public synchronized void addError(Test test, Throwable t) {
 		super.addError(test, t);
 		System.out.println("E");
@@ -32,6 +33,7 @@ public class TextTestResult extends TestResult {
 	/**
 	 * @see junit.framework.TestResult#addFailure(junit.framework.Test, junit.framework.AssertionFailedError)
 	 */
+	@Override
 	public synchronized void addFailure(Test test, AssertionFailedError t) {
 		super.addFailure(test, t);
 		System.out.print("F");
@@ -113,6 +115,7 @@ public class TextTestResult extends TestResult {
 	/**
 	 * @see junit.framework.TestResult#startTest(junit.framework.Test)
 	 */
+	@Override
 	public synchronized void startTest(Test test) {
 		super.startTest(test);
 		System.out.print(".");

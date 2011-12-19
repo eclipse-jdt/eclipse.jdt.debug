@@ -49,12 +49,14 @@ public class VMDetailsDialog extends Dialog {
 	/**
 	 * @see Windows#configureShell
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(JREMessages.VMDetailsDialog_0); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaDebugHelpContextIds.JRE_DETAILS_DIALOG);
 	}		
 			
+	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		GridLayout layout = new GridLayout(2, false);
@@ -134,7 +136,8 @@ public class VMDetailsDialog extends Dialog {
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
@@ -146,6 +149,7 @@ public class VMDetailsDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,

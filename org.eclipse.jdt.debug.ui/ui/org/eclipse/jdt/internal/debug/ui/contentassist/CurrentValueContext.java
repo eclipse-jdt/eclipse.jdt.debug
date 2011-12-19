@@ -37,7 +37,8 @@ public class CurrentValueContext extends CurrentFrameContext {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#getType()
      */
-    public IType getType() throws CoreException {
+    @Override
+	public IType getType() throws CoreException {
     	IJavaValue value = resolveValue();
     	if (value == null || value instanceof IJavaPrimitiveValue) {
     		// no object selected, use the frame
@@ -110,6 +111,7 @@ public class CurrentValueContext extends CurrentFrameContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#getLocalVariables()
 	 */
+	@Override
 	public String[][] getLocalVariables() throws CoreException {
 		IJavaValue value = resolveValue();
 		if (value instanceof IJavaArray) {
@@ -124,6 +126,7 @@ public class CurrentValueContext extends CurrentFrameContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext#getSnippet(java.lang.String)
 	 */
+	@Override
 	public String getSnippet(String snippet) throws CoreException {
 		IJavaValue value = resolveValue();
 		if (value instanceof IJavaArray) {
@@ -135,6 +138,7 @@ public class CurrentValueContext extends CurrentFrameContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext#isStatic()
 	 */
+	@Override
 	public boolean isStatic() throws CoreException {
 		IJavaValue value = resolveValue();
 		if (value instanceof IJavaObject) {

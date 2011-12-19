@@ -34,6 +34,7 @@ public class ArrayTypeTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get array type
 		fType = getArrayType();
@@ -49,6 +50,7 @@ public class ArrayTypeTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ArrayType";
 	}

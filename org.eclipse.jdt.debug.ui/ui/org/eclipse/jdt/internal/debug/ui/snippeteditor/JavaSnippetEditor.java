@@ -196,6 +196,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			fDisplay = display;
 			fLock= lock;
 		}
+		@Override
 		public void run() {
 			try {
 				synchronized (fLock) {
@@ -286,6 +287,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		IFile file= getFile();
@@ -297,6 +299,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 	}
 		
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
 		site.getWorkbenchWindow().getPartService().addPartListener(fActivationListener);
@@ -305,6 +308,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		shutDownVM();
 		fPresentation.dispose();
@@ -321,6 +325,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * Actions for the editor popup menu
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 		if (getFile() != null) {
@@ -336,6 +341,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);		
@@ -1111,6 +1117,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
         JavaSourceViewerConfiguration sourceViewerConfiguration = (JavaSourceViewerConfiguration) getSourceViewerConfiguration();
         return sourceViewerConfiguration.affectsTextPresentation(event);
@@ -1119,6 +1126,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		JDISourceViewer isv= (JDISourceViewer) getSourceViewer();
 		if (isv != null) {
@@ -1179,6 +1187,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateSelectionDependentActions()
 	 */
+	@Override
 	protected void updateSelectionDependentActions() {
 		super.updateSelectionDependentActions();
 		fireEvalStateChanged();
@@ -1187,6 +1196,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/**
      * Terminates existing VM on a rename of the editor
  	 */
+	@Override
 	protected void setPartName(String title) {
 		cleanupOnRenameOrMove();
 		super.setPartName(title);
@@ -1248,6 +1258,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 * of a file resource and saves the document there.
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performSaveAs(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
 		Shell shell= getSite().getShell();
 		SaveAsDialog dialog= new SaveAsDialog(shell);
@@ -1265,6 +1276,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		final IEditorInput newInput= new FileEditorInput(file);
 		
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+			@Override
 			public void execute(final IProgressMonitor monitor) throws CoreException {
 				IDocumentProvider dp= getDocumentProvider();
 				dp.saveDocument(monitor, newInput, dp.getDocument(getEditorInput()), true);
@@ -1297,6 +1309,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -1318,6 +1331,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		fAnnotationAccess= getAnnotationAccess();
 		fOverviewRuler= createOverviewRuler(getSharedColors());
@@ -1401,6 +1415,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (required == IShowInTargetList.class) {
 			return new IShowInTargetList() {

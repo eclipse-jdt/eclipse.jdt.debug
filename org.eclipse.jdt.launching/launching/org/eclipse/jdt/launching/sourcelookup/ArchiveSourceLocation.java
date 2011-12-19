@@ -60,6 +60,7 @@ import com.ibm.icu.text.MessageFormat;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	
 	/**
@@ -293,6 +294,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {		
 		return object instanceof ArchiveSourceLocation &&
 			 getName().equals(((ArchiveSourceLocation)object).getName());
@@ -301,6 +303,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}	

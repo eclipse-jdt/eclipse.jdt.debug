@@ -66,6 +66,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		fDialogMessage= message;
 	}
 	
+	@Override
 	public void run() {
 		if (fEditor == null) {
 			return;

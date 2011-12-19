@@ -78,6 +78,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
+	@Override
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
 		ILaunchConfigurationWorkingCopy wc = null;
@@ -97,6 +98,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
 	 */
+	@Override
 	protected ILaunchConfigurationType getConfigurationType() {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
 	}
@@ -113,6 +115,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
 	 */
+	@Override
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
 			if(elements.length == 1) {
@@ -157,6 +160,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */
+	@Override
 	protected String getTypeSelectionTitle() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_0;
 	}
@@ -164,6 +168,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getEditorEmptyMessage()
 	 */
+	@Override
 	protected String getEditorEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_1;
 	}
@@ -171,6 +176,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getSelectionEmptyMessage()
 	 */
+	@Override
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
 	}

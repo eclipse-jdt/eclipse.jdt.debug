@@ -54,6 +54,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		/**
 		 * @see Dialog#createDialogArea(Composite)
 		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite area= (Composite)super.createDialogArea(parent);
 			

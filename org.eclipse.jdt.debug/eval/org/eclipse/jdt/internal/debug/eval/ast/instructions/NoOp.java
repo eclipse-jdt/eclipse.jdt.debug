@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 public class NoOp extends CompoundInstruction {
 
 	public NoOp(int start) {
@@ -20,14 +19,16 @@ public class NoOp extends CompoundInstruction {
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() {
 	}
-	
+
 	/*
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.NoOp_no_op_1; 
+		return InstructionsEvaluationMessages.NoOp_no_op_1;
 	}
 
 }

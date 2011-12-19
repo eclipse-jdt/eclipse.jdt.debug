@@ -15,21 +15,21 @@ import org.eclipse.core.runtime.CoreException;
 public class PushArrayType extends ArrayInstruction {
 
 	private String fTypeSignature;
-	
+
 	private int fDimension;
-	
+
 	public PushArrayType(String typeSignature, int dimension, int start) {
 		super(start);
 		fTypeSignature = typeSignature;
 		fDimension = dimension;
 	}
 
-
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		push(getArrayType(fTypeSignature.replace('/','.'), fDimension));
+		push(getArrayType(fTypeSignature.replace('/', '.'), fDimension));
 	}
 
 }

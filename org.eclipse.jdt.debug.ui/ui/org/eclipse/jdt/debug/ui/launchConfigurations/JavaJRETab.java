@@ -99,6 +99,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fJREBlock != null) {
@@ -156,6 +157,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fIsInitializing = true;
 		getControl().setRedraw(false);
@@ -200,6 +202,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		
 		setErrorMessage(null);
@@ -316,6 +319,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}	
@@ -325,6 +329,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaJRETab"; //$NON-NLS-1$
 	}
@@ -465,6 +470,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	 * 
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		ILaunchConfigurationTab tab = getDynamicTab();
 		if ((super.getErrorMessage() != null) || (tab == null)) {
@@ -506,6 +512,7 @@ public class JavaJRETab extends JavaLaunchTab {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDescription()
 			 */
+			@Override
 			public String getDescription() {
 				IJavaProject project = getJavaProject();
 				String name = LauncherMessages.JavaJRETab_7; 
@@ -578,6 +585,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// update the default JRE description, in case it has changed
 		// based on the selected project
@@ -587,6 +595,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}	

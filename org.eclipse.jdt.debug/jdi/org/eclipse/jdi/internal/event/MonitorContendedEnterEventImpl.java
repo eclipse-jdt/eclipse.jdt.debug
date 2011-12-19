@@ -24,36 +24,46 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.event.MonitorContendedEnterEvent;
 
 /**
- * This class provides an implementation of MonitorContendedEnterEvent according to Sun's
- * 1.6 specs
+ * This class provides an implementation of MonitorContendedEnterEvent according
+ * to Sun's 1.6 specs
+ * 
  * @since 3.3
  */
-public class MonitorContendedEnterEventImpl extends LocatableEventImpl implements MonitorContendedEnterEvent {
+public class MonitorContendedEnterEventImpl extends LocatableEventImpl
+		implements MonitorContendedEnterEvent {
 
 	/** event kind iod **/
 	public static final byte EVENT_KIND = EVENT_MONITOR_CONTENDED_ENTER;
-	
+
 	/** the monitor information **/
 	private ObjectReference fMonitor;
 
 	/** Constructor **/
-	private MonitorContendedEnterEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
+	private MonitorContendedEnterEventImpl(VirtualMachineImpl vmImpl,
+			RequestID requestID) {
 		super("MonitorContendedEnter", vmImpl, requestID); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static MonitorContendedEnterEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException { 
+	public static MonitorContendedEnterEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		MonitorContendedEnterEventImpl event = new MonitorContendedEnterEventImpl(vmImpl, requestID);
+		MonitorContendedEnterEventImpl event = new MonitorContendedEnterEventImpl(
+				vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
-		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target, dataInStream);
+		event.fMonitor = ObjectReferenceImpl.readObjectRefWithTag(target,
+				dataInStream);
 		event.fLocation = LocationImpl.read(target, dataInStream);
 		return event;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.sun.jdi.event.MonitorContendedEnterEvent#monitor()
 	 */
 	public ObjectReference monitor() {

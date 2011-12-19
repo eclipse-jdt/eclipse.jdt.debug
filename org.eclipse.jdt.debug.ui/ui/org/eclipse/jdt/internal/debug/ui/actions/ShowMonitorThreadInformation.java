@@ -20,6 +20,7 @@ public class ShowMonitorThreadInformation extends ToggleBooleanPreferenceAction 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO;
 	}
@@ -27,6 +28,7 @@ public class ShowMonitorThreadInformation extends ToggleBooleanPreferenceAction 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getCompositeKey()
 	 */
+	@Override
 	protected String getCompositeKey() {
 		return getPreferenceKey();
 	}	

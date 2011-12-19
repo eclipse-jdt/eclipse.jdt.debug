@@ -97,6 +97,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
@@ -124,6 +125,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	/**
 	 * Show a dialog that lists all main types
 	 */
+	@Override
 	protected void handleSearchButtonSelected() {
 		IJavaElement[] scope= null;
 		IJavaProject project = getJavaProject();
@@ -180,6 +182,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		updateMainTypeFromConfig(config);
@@ -196,6 +199,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -284,6 +288,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.appletMainTab"; //$NON-NLS-1$
 	}

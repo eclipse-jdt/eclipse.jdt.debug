@@ -55,6 +55,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkActivated()
 	 */
+	@Override
 	public void linkActivated() {
 		try {
 			// check for an existing breakpoint
@@ -91,6 +92,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#processSearchResult(java.lang.Object, java.lang.String, int)
 	 */
+	@Override
 	protected void processSearchResult(Object source, String typeName, int lineNumber) {
 		try {
 			source = JavaDebugUtils.getJavaElement(source);

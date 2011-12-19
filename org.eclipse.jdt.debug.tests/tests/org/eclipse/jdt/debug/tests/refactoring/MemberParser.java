@@ -422,7 +422,7 @@ public class MemberParser{
 			}
 			
 		}
-		return IInternalDebugCoreConstants.EMPTY_STRING;//entire thing is a number //$NON-NLS-1$
+		return IInternalDebugCoreConstants.EMPTY_STRING;//entire thing is a number 
 	}
 	
 	/**

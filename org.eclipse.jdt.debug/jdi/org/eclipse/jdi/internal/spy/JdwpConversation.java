@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jdi.internal.spy;
 
 import com.ibm.icu.text.MessageFormat;
 
-
 public class JdwpConversation {
 	private int fId;
 	private JdwpCommandPacket fCommand;
@@ -24,14 +23,18 @@ public class JdwpConversation {
 
 	void setCommand(JdwpCommandPacket command) {
 		if (fCommand != null) {
-			throw new IllegalArgumentException(MessageFormat.format("Attempt to overwrite command with {0}", new String[] {command.toString()}));  //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					MessageFormat
+							.format("Attempt to overwrite command with {0}", new Object[] { command.toString() })); //$NON-NLS-1$
 		}
 		fCommand = command;
 	}
 
 	void setReply(JdwpReplyPacket reply) {
 		if (fReply != null) {
-			throw new IllegalArgumentException(MessageFormat.format("Attempt to overwrite reply with {0}", new String[] {reply.toString()}));  //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					MessageFormat
+							.format("Attempt to overwrite reply with {0}", new Object[] { reply.toString() })); //$NON-NLS-1$
 		}
 		fReply = reply;
 	}
@@ -43,7 +46,7 @@ public class JdwpConversation {
 	public JdwpReplyPacket getReply() {
 		return fReply;
 	}
-	
+
 	public int getId() {
 		return fId;
 	}

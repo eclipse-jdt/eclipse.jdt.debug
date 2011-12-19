@@ -150,6 +150,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		/**
 		 * @see org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests.SuspendVoter#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
+		@Override
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			if (breakpoint.equals(fTheBreakpoint)) {
 				return fVote;

@@ -28,6 +28,7 @@ import com.sun.jdi.request.EventRequest;
 public class MonitorFrameInfoTests extends AbstractJDITest {
 
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {}
 
 	/**

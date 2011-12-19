@@ -41,6 +41,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		return MessageFormat.format(RefactoringMessages.ClassPrepareBreakpointTypeChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
@@ -49,6 +50,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
 		Map map = new HashMap();

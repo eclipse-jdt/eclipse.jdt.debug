@@ -94,6 +94,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AccessRuleParticipant) {
 			AccessRuleParticipant participant = (AccessRuleParticipant) obj;
@@ -105,6 +106,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getDelegateClassName().hashCode();
 	}
@@ -112,6 +114,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getDelegateClassName();
 	}

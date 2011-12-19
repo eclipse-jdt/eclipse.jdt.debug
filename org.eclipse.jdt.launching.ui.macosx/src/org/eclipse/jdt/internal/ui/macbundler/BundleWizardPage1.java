@@ -56,6 +56,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		super("page1", bd); //$NON-NLS-1$
 	}
 
+	@Override
 	public void createContents(Composite c) {
 		
 		final Shell shell= c.getShell();
@@ -67,6 +68,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			fillCombo(fLaunchConfigs);
 			fLaunchConfigs.addSelectionListener(
 				new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						int ix= fLaunchConfigs.getSelectionIndex();
 						if (ix > 0 && ix < fConfigurations.length) {
@@ -85,6 +87,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				fMainClass= createText(c7a, MAINCLASS, 1);
 				Button b1= createButton(c7a, SWT.NONE, Util.getString("page1.mainClass.chooseButton.label")); //$NON-NLS-1$
 				b1.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						MessageBox mb= new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setMessage(Util.getString("page1.mainClass.dialog.message")); //$NON-NLS-1$
@@ -107,6 +110,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				
 				final Button browse= createButton(c3a, SWT.NONE, Util.getString("page1.appFolder.browseButton.label")); //$NON-NLS-1$
 				browse.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						DirectoryDialog dd= new DirectoryDialog(browse.getShell(), SWT.SAVE);
 						dd.setMessage(Util.getString("page1.appFolder.browseDialog.message")); //$NON-NLS-1$
@@ -138,6 +142,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				fIconFileName= createText(c7, ICONFILE, 1);
 				final Button b= createButton(c7, SWT.NONE, Util.getString("page1.appIcon.chooseButton.label")); //$NON-NLS-1$
 				b.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						FileDialog fd= new FileDialog(b.getShell(), SWT.OPEN);
 						fd.setText(Util.getString("page1.appIcon.chooseDialog.title")); //$NON-NLS-1$
@@ -150,6 +155,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			
 	}
 	
+	@Override
 	void enterPage() {
 		super.enterPage();
 		initCombo(fLaunchConfigs);
@@ -194,6 +200,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				return lc1.getName().compareTo(lc2.getName());
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				return false;
 			}

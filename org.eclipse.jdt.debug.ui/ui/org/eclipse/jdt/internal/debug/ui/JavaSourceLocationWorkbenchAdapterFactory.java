@@ -31,6 +31,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * @deprecated
  */
+@Deprecated
 /*package*/ class JavaSourceLocationWorkbenchAdapterFactory implements IAdapterFactory {
 
 	class SourceLocationPropertiesAdapter implements IWorkbenchAdapter {

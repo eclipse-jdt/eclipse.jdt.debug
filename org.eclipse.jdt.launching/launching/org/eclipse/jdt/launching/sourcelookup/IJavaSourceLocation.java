@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IAdaptable;
  *  has been replaced by
  *  <code>org.eclipse.debug.core.sourcelookup.ISourceContainer</code>.
  */
+@Deprecated
 public interface IJavaSourceLocation extends IAdaptable {
 	
 	/**

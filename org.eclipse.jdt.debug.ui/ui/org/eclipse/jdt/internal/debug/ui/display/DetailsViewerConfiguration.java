@@ -28,6 +28,7 @@ public class DetailsViewerConfiguration extends TextSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new JavaDebugContentAssistProcessor(new CurrentValueContext()),IDocument.DEFAULT_CONTENT_TYPE);

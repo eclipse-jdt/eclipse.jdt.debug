@@ -110,6 +110,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		fDefaultButton.setLayoutData(gd);
 		fDefaultButton.setFont(font);
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
 			}
@@ -122,6 +123,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		fDuplicatesButton.setLayoutData(gd);
 		fDuplicatesButton.setFont(font);
 		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
@@ -236,6 +238,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		boolean useDefault = true;
 		setErrorMessage(null);
@@ -348,6 +351,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
 			super.updateLaunchConfigurationDialog();
@@ -357,6 +361,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fPathViewer.removeEntriesChangedListener(this);
 		super.dispose();

@@ -40,6 +40,7 @@ public class Filter {
 		fChecked = checked;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Filter) {
 			Filter other = (Filter) o;
@@ -50,6 +51,7 @@ public class Filter {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}

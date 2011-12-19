@@ -23,6 +23,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * 
  * @since 3.3
  */
+@SuppressWarnings("deprecation")
 public class LaunchShortcutTests extends AbstractDebugTest {
 
 	private static String TESTING = "testing"; //$NON-NLS-1$

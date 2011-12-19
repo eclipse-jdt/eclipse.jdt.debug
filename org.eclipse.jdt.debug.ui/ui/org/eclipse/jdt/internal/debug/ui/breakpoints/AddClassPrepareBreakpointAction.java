@@ -88,7 +88,8 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	                final int finalStart = start;
 	                final int finalEnd = end;
 	                new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) { 
-	                    protected IStatus run(IProgressMonitor monitor) {
+	                    @Override
+						protected IStatus run(IProgressMonitor monitor) {
 	                        try {
 	                            JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);
 	                            return Status.OK_STATUS;

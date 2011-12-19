@@ -11,15 +11,14 @@
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
 /**
- * Listener which can be notified when the Java logical
- * structures are changed in some way.
+ * Listener which can be notified when the Java logical structures are changed
+ * in some way.
  */
 public interface IJavaStructuresListener {
 
-    /**
-     * Notifies this listener that the Java logical structures
-     * have changed.
-     */
-    public void logicalStructuresChanged();
-    
+	/**
+	 * Notifies this listener that the Java logical structures have changed.
+	 */
+	public void logicalStructuresChanged();
+
 }

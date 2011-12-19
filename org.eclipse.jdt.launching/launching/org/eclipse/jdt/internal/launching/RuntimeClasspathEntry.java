@@ -483,6 +483,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IRuntimeClasspathEntry) {
 			IRuntimeClasspathEntry r = (IRuntimeClasspathEntry)obj;
@@ -524,6 +525,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (getType() == CONTAINER) {
 			return getPath().segment(0).hashCode() + getType();
@@ -607,6 +609,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		return string == null || string.length() == 0;
 	}
 	
+	@Override
 	public String toString() {
 		if (fClasspathEntry != null) {
 			return fClasspathEntry.toString();

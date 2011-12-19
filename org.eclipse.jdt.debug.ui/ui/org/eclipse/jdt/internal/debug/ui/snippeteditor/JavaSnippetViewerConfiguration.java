@@ -42,6 +42,7 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 	/**
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		ContentAssistant assistant = new ContentAssistant();
@@ -61,6 +62,7 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		return null;
 	}

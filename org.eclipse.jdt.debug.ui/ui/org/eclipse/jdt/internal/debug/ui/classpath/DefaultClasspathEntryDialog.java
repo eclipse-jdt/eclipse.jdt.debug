@@ -38,6 +38,7 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 		fEntry = (DefaultProjectClasspathEntry) entry;
 	}
 
+	@Override
 	protected Control createCustomArea(Composite parent) {
 		fButton = new Button(parent, SWT.CHECK);
 		fButton.setText(ClasspathMessages.DefaultClasspathEntryDialog_4);
@@ -45,6 +46,7 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 		return fButton;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == 0) {
 			fEntry.setExportedEntriesOnly(fButton.getSelection());

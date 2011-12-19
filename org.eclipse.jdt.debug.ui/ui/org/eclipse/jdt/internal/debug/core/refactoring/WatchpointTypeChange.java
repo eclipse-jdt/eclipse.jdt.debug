@@ -42,6 +42,7 @@ public class WatchpointTypeChange extends WatchpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
 		String msg = MessageFormat.format(RefactoringMessages.WatchpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
@@ -54,6 +55,7 @@ public class WatchpointTypeChange extends WatchpointChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IField destField = fDestType.getField(getFieldName());
 		Map map = new HashMap();

@@ -33,6 +33,7 @@ import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
 /**
  * Tests source location creation/restoration.
  */
+@SuppressWarnings("deprecation")
 public class SourceLocationTests extends AbstractDebugTest {
 	
 	public static final String JRE_CONTAINER_1_4_CPE_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4";

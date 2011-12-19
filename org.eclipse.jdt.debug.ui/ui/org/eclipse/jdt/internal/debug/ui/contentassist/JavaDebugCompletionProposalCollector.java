@@ -39,6 +39,7 @@ public class JavaDebugCompletionProposalCollector extends CompletionProposalColl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.CompletionProposalCollector#isFiltered(org.eclipse.jdt.core.CompletionProposal)
 	 */
+	@Override
 	protected boolean isFiltered(CompletionProposal proposal) {
 		if (proposal.getKind() == CompletionProposal.LOCAL_VARIABLE_REF) {
 			if (Arrays.equals(proposal.getName(), fgHiddenLocal)) {

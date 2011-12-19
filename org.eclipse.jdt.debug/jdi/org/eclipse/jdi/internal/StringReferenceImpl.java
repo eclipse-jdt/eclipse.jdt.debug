@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -23,12 +22,12 @@ import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.StringReference;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class StringReferenceImpl extends ObjectReferenceImpl implements StringReference {
+public class StringReferenceImpl extends ObjectReferenceImpl implements
+		StringReference {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.STRING_TAG;
 
@@ -42,20 +41,22 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 	/**
 	 * @returns Value tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
-	 * @returns Returns the StringReference as a String. 
+	 * @returns Returns the StringReference as a String.
 	 */
 	public String value() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SR_VALUE, this);
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SR_VALUE,
+					this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
 			String result = readString("value", replyData); //$NON-NLS-1$
 			return result;
@@ -66,11 +67,12 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	public static StringReferenceImpl read(MirrorImpl target, DataInputStream in)  throws IOException {
+	public static StringReferenceImpl read(MirrorImpl target, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpStringID ID = new JdwpStringID(vmImpl);
 		ID.read(in);
@@ -83,15 +85,17 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 		StringReferenceImpl mirror = new StringReferenceImpl(vmImpl, ID);
 		return mirror;
 	}
-	
+
 	/**
 	 * @return Returns description of Mirror object.
 	 */
+	@Override
 	public String toString() {
 		try {
 			return "\"" + value() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (ObjectCollectedException e) {
-			return JDIMessages.StringReferenceImpl__Garbage_Collected__StringReference__3 + idString(); 
+			return JDIMessages.StringReferenceImpl__Garbage_Collected__StringReference__3
+					+ idString();
 		} catch (Exception e) {
 			return fDescription;
 		}

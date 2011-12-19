@@ -70,10 +70,12 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
 	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
 				
+	@Override
 	public String getName() {
 		return MacOSXLaunchingPlugin.getString("MacOSXVMType.name"); //$NON-NLS-1$
 	}
 	
+	@Override
 	public IVMInstall doCreateVMInstall(String id) {
 		return new MacOSXVMInstall(this, id);
 	}
@@ -81,6 +83,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/*
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
+	@Override
 	public File detectInstallLocation() {
 		try {
 			// find all installed VMs
@@ -217,6 +220,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * @param installLocation
 	 * @return LibraryInfo
 	 */
+	@Override
 	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
 
 		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
@@ -243,6 +247,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
 	
+	@Override
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		File parent= libLocation.getParentFile();
 		while (parent != null) {
@@ -266,6 +271,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
+	@Override
 	public IStatus validateInstallLocation(File javaHome) {
 		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
 		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
@@ -277,6 +283,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
+	@Override
 	public URL getDefaultJavadocLocation(File installLocation) {
 		
 		// try in local filesystem
@@ -314,6 +321,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/*
 	 * Overridden to make it visible.
 	 */
+	@Override
 	protected String getVMVersion(File javaHome, File javaExecutable) {
 		return super.getVMVersion(javaHome, javaExecutable);
 	}

@@ -23,6 +23,7 @@ public class EntryToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
+	@Override
 	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
 		return ((IJavaMethodBreakpoint)breakpoint).isEntry();
 	}
@@ -30,6 +31,7 @@ public class EntryToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
+	@Override
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
 		((IJavaMethodBreakpoint)breakpoint).setEntry(!((IJavaMethodBreakpoint)breakpoint).isEntry());
 	}
@@ -37,6 +39,7 @@ public class EntryToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(IStructuredSelection)
 	 */
+	@Override
 	public boolean isEnabledFor(IStructuredSelection selection) {
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {

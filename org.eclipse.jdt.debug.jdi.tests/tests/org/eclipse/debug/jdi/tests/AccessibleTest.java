@@ -28,6 +28,7 @@ public class AccessibleTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get the all kinds of accessible
 
@@ -51,6 +52,7 @@ public class AccessibleTest extends AbstractJDITest {
 	/**
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Accessible";
 	}

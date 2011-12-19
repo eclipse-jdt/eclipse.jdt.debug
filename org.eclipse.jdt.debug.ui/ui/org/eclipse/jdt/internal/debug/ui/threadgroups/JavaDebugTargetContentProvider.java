@@ -26,6 +26,7 @@ public class JavaDebugTargetContentProvider extends DebugTargetContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (JavaElementContentProvider.isDisplayThreadGroups()) {
@@ -42,6 +43,7 @@ public class JavaDebugTargetContentProvider extends DebugTargetContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (JavaElementContentProvider.isDisplayThreadGroups()) {

@@ -29,6 +29,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	 * Moves all selected entries up one position (if possible).
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		List targets = getOrderedSelection();
 		if (targets.isEmpty()) {
@@ -59,6 +60,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
@@ -69,6 +71,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
 	 */
+	@Override
 	protected int getActionType() {
 		return MOVE;
 	}

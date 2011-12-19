@@ -88,6 +88,7 @@ public class MacInstalledJREs {
 			return fVersion;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof JREDescriptor) {
 				JREDescriptor jre = (JREDescriptor) obj;
@@ -96,6 +97,7 @@ public class MacInstalledJREs {
 			return false;
 		}
 		
+		@Override
 		public int hashCode() {
 			return fHome.hashCode() + fName.hashCode() + fVersion.hashCode();
 		}

@@ -33,6 +33,7 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 		super("page3", bd); //$NON-NLS-1$
 	}
 
+	@Override
 	public void createContents(Composite c) {
 
 		Composite c1= createComposite(c, 4);
@@ -51,6 +52,7 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 		fProperties.setHeaderVisible(true);
 		fProperties.setLinesVisible(true);
 		fProperties.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				//
 			}

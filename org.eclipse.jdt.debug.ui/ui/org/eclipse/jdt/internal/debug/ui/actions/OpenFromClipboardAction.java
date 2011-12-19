@@ -551,6 +551,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	private static SearchRequestor createSearchRequestor(final List matches) {
 		return new SearchRequestor() {
+			@Override
 			public void acceptSearchMatch(SearchMatch match) {
 				if (match.getAccuracy() == SearchMatch.A_ACCURATE)
 					matches.add(match.getElement());
@@ -591,6 +592,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		try {
 			searchEngine.searchAllTypeNames(packageName == null ? null : packageName.toCharArray(), packageName == null ? SearchPattern.R_EXACT_MATCH : getSearchFlags(), typeName.toCharArray(),
 					getSearchFlags(), IJavaSearchConstants.TYPE, scope, new TypeNameMatchRequestor() {
+						@Override
 						public void acceptTypeNameMatch(TypeNameMatch match) {
 							matches.add(match.getType());
 						}

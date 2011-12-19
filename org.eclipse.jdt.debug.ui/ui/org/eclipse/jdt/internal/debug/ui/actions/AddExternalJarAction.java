@@ -38,6 +38,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 							
 		String lastUsedPath = getDialogSetting(LAST_PATH_SETTING);
