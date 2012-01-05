@@ -18,5 +18,5 @@ import com.sun.jdi.VirtualMachine;
  * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/connect/AttachingConnector.html
  */
 public interface AttachingConnector extends Connector {
-	public VirtualMachine attach(Map<String,? extends Connector.Argument> arguments) throws IOException,	IllegalConnectorArgumentsException;
+	public VirtualMachine attach(Map<String,? extends Connector.Argument> arguments) throws IOException, IllegalConnectorArgumentsException;
 }
