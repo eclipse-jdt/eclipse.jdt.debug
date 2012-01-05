@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@
 package org.eclipse.jdt.internal.ui.macbundler;
 
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -179,7 +177,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 	// private stuff
 	
 	private void collectLaunchConfigs() {
-		ArrayList configs= new ArrayList();
+		ArrayList<ILaunchConfiguration> configs= new ArrayList<ILaunchConfiguration>();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		try {
@@ -192,8 +190,8 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		} catch (CoreException e) {
 			//
 		}
-		fConfigurations= (ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]);
-		Arrays.sort(fConfigurations, new Comparator() {
+		fConfigurations= configs.toArray(new ILaunchConfiguration[configs.size()]);
+		Arrays.sort(fConfigurations, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				ILaunchConfiguration lc1= (ILaunchConfiguration) o1;
 				ILaunchConfiguration lc2= (ILaunchConfiguration) o2;

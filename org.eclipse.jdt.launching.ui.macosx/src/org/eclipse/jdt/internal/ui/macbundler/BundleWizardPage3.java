@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 
 		fProperties.removeAll();
 		if (fBundleDescription.fProperties2 != null && fBundleDescription.fProperties2.size() > 0) {
-			Enumeration iter= fBundleDescription.fProperties2.keys();
+			Enumeration<?> iter= fBundleDescription.fProperties2.keys();
 			while (iter.hasMoreElements()) {
 				String key= (String) iter.nextElement();
 				String value= (String) fBundleDescription.fProperties2.get(key);
