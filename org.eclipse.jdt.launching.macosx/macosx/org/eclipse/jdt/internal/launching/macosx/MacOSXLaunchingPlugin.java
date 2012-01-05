@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,19 +43,19 @@ public class MacOSXLaunchingPlugin extends Plugin {
 	}
 
 	/*
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	static String getUniqueIdentifier() {
 		if (getDefault() == null) {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
+			// match the plug-in id defined in plugin.xml
 			return "org.eclipse.jdt.launching.macosx"; //$NON-NLS-1$
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	static String[] wrap(Class clazz, String[] cmdLine) {
+	static String[] wrap(Class<?> clazz, String[] cmdLine) {
 		
 		for (int i= 0; i < cmdLine.length; i++) {
 			// test whether we depend on SWT
@@ -74,10 +74,15 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			   "-ws".equals(arg);	//$NON-NLS-1$
 	}
 	
-	/*
+	/**
 	 * Returns path to executable.
+	 * @param clazz the class
+	 * @param cmdLine the old command line
+	 * @param vmVersion the version of the VM
+	 * @return the new command line
+	 * 
 	 */
-	static String[] createSWTlauncher(Class clazz, String[] cmdLine, String vmVersion) {
+	static String[] createSWTlauncher(Class<?> clazz, String[] cmdLine, String vmVersion) {
 		
 		// the following property is defined if Eclipse is started via java_swt
 		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$

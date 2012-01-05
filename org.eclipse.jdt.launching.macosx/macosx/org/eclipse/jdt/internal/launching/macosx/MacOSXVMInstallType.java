@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * This plugins into the org.eclipse.jdt.launching.vmInstallTypes extension point
+ * This plug-ins into the org.eclipse.jdt.launching.vmInstallTypes extension point
  */
 public class MacOSXVMInstallType extends StandardVMType {
 	
@@ -217,7 +217,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/**
 	 * Returns default library info for the given install location.
 	 * 
-	 * @param installLocation
+	 * @param installLocation the installed location of the VM
 	 * @return LibraryInfo
 	 */
 	@Override
