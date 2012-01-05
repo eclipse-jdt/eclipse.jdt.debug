@@ -52,10 +52,10 @@ public class VMInstallTests extends AbstractDebugTest {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		assertTrue("should be an IVMInstall3", def instanceof IVMInstall3);
 		IVMInstall3 vm3 = (IVMInstall3)def;
-		Map<String, Object> map = vm3.evaluateSystemProperties(new String[]{"user.home"}, new NullProgressMonitor());
+		Map<String, String> map = vm3.evaluateSystemProperties(new String[]{"user.home"}, new NullProgressMonitor());
 		assertNotNull("No system properties returned", map);
 		assertEquals("Wrong number of properties", 1, map.size());
-		String value = (String) map.get("user.home");
+		String value = map.get("user.home");
 		assertNotNull("missing user.home", value);
 	}
 	
