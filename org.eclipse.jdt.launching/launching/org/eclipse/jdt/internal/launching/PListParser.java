@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class PListParser {
 	 * 
 	 * @param stream XML plist input stream
 	 * @return Object(s) in the stream
-	 * @throws CoreException
+	 * @throws CoreException if an error occurs
 	 */
 	public Object parse(InputStream stream) throws CoreException {
 		try {
@@ -88,6 +88,12 @@ public class PListParser {
 	 * the specified stream.  Simply pass out any exceptions encountered so that
 	 * caller can deal with them.  This is important since caller may need access to the
 	 * actual exception.
+	 * @param stream the stream
+	 * @return the result of the parse
+	 * @throws CoreException if an error occurs
+	 * @throws ParserConfigurationException if the parser set-up fails
+	 * @throws IOException if reading the stream fails
+	 * @throws SAXException if parsing itself fails
 	 */
 	private Object parseXML(InputStream stream) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
@@ -125,7 +131,7 @@ public class PListParser {
 	 * 
 	 * @param element the root node from the XML document
 	 * @return parsed object or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException if an error occurs
 	 */
 	private Object parseObject(Element element) throws CoreException {
 		String nodeName = element.getNodeName();
@@ -160,10 +166,10 @@ public class PListParser {
 	 * 
 	 * @param root the root array node from the XML document
 	 * @return parsed array or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException if an error occurs
 	 */
 	private Object[] parseArray(Element root) throws CoreException {
-		List collection = new ArrayList();
+		List<Object> collection = new ArrayList<Object>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -186,10 +192,10 @@ public class PListParser {
 	 * 
 	 * @param root the root dictionary node from the XML document
 	 * @return parsed map or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException if an error occurs
 	 */
-	private Map parseDictionary(Element root) throws CoreException {
-		Map dict = new HashMap();
+	private Map<String, Object> parseDictionary(Element root) throws CoreException {
+		Map<String, Object> dict = new HashMap<String, Object>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -215,7 +221,7 @@ public class PListParser {
 	 * Returns the value of the first child text node from the given element,
 	 * or <code>null</code>.
 	 * 
-	 * @param root
+	 * @param root the root element
 	 * @return its text or <code>null</code> if none
 	 */
 	private String getText(Element root) {

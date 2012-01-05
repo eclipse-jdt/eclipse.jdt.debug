@@ -75,6 +75,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
@@ -85,8 +86,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.ibm.icu.text.MessageFormat;
-
+@SuppressWarnings("deprecation")
 public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPreferenceChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
 	/**
@@ -106,12 +106,12 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	
 	private static LaunchingPlugin fgLaunchingPlugin;
 	
-	private HashMap fVMConnectors = null;
+	private HashMap<String, IVMConnector> fVMConnectors = null;
 	
 	/**
 	 * Runtime classpath extensions
 	 */
-	private HashMap fClasspathEntryExtensions = null;
+	private HashMap<String, IConfigurationElement> fClasspathEntryExtensions = null;
 
 	private String fOldVMPrefString = EMPTY_STRING;
 	
@@ -123,7 +123,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * Mapping of top-level VM installation directories to library info for that
 	 * VM.
 	 */
-	private static Map fgLibraryInfoMap = null;
+	private static Map<String, LibraryInfo> fgLibraryInfoMap = null;
 	
 	/**
 	 * Mapping of the last time the directory of a given SDK was modified.
@@ -131,13 +131,13 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * Mapping: <code>Map&lt;String,Long&gt;</code>
 	 * @since 3.7
 	 */
-	private static Map fgInstallTimeMap = null;
+	private static Map<String, Long> fgInstallTimeMap = null;
 	/**
 	 * List of install locations that have been detected to have changed
 	 * 
 	 * @since 3.7
 	 */
-	private static HashSet fgHasChanged = new HashSet();
+	private static HashSet<String> fgHasChanged = new HashSet<String>();
 	/**
 	 * Mutex for checking the time stamp of an install location
 	 * 
@@ -170,7 +170,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		private boolean fDefaultChanged = false;
 		
 		// old container ids to new
-		private HashMap fRenamedContainerIds = new HashMap();
+		private HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<IPath, IPath>();
 		
 		/**
 		 * Returns the JRE container id that the given VM would map to, or
@@ -289,7 +289,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 														
 			// re-bind all container entries
 			int length = projects.length;
-			Map projectsMap = new HashMap();
+			Map<IPath, List<IJavaProject>> projectsMap = new HashMap<IPath, List<IJavaProject>>();
 			for (int i = 0; i < length; i++) {
 				IJavaProject project = projects[i];
 				IClasspathEntry[] entries = project.getRawClasspath();
@@ -303,7 +303,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 							String firstSegment = reference.segment(0);
 							if (JavaRuntime.JRE_CONTAINER.equals(firstSegment)) {
 								if (reference.segmentCount() > 1) {
-									IPath renamed = (IPath)fRenamedContainerIds.get(reference);
+									IPath renamed = fRenamedContainerIds.get(reference);
 									if (renamed != null) {
 										// The JRE was re-named. This changes the identifier of
 										// the container entry.
@@ -313,9 +313,9 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 								if (newBinding == null){
 									// re-bind old path
 									// @see bug 310789 - batch updates by common container paths
-									List projectsList = (List) projectsMap.get(reference);
+									List<IJavaProject> projectsList = projectsMap.get(reference);
 									if (projectsList == null) {
-										projectsMap.put(reference, projectsList = new ArrayList(length));
+										projectsMap.put(reference, projectsList = new ArrayList<IJavaProject>(length));
 									}
 									projectsList.add(project);
 								} else {
@@ -335,10 +335,10 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				}
 				monitor.worked(1);
 			}
-			Iterator references = projectsMap.keySet().iterator();
+			Iterator<IPath> references = projectsMap.keySet().iterator();
 			while (references.hasNext()) {
-				IPath reference = (IPath) references.next();
-				List projectsList = (List) projectsMap.get(reference);
+				IPath reference = references.next();
+				List<IJavaProject> projectsList = projectsMap.get(reference);
 				IJavaProject[] referenceProjects = new IJavaProject[projectsList.size()];
 				projectsList.toArray(referenceProjects);
 				// re-bind old path
@@ -393,7 +393,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		if (fgLibraryInfoMap == null) {
 			restoreLibraryInfo();
 		}
-		return (LibraryInfo) fgLibraryInfoMap.get(javaInstallPath);
+		return fgLibraryInfoMap.get(javaInstallPath);
 	}
 	
 	/**
@@ -424,7 +424,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
-	 * <code>IPath</code> in the plugin directory.
+	 * <code>IPath</code> in the plug-in directory.
 	 * 
 	 * @param path the path to look for in the launching bundle
 	 * @return the {@link File} from the bundle or <code>null</code>
@@ -441,7 +441,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	}
 		
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 * 
 	 * @return the id of the {@link LaunchingPlugin}
 	 */
@@ -547,7 +547,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		if (fVMConnectors == null) {
 			initializeVMConnectors();
 		}
-		return (IVMConnector)fVMConnectors.get(id);
+		return fVMConnectors.get(id);
 	}
 	
 	/**
@@ -559,7 +559,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		if (fVMConnectors == null) {
 			initializeVMConnectors();
 		}
-		return (IVMConnector[])fVMConnectors.values().toArray(new IVMConnector[fVMConnectors.size()]);
+		return fVMConnectors.values().toArray(new IVMConnector[fVMConnectors.size()]);
 	}
 	
 	/**
@@ -569,7 +569,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, "Exception occurred reading vmConnectors extensions.", null);  //$NON-NLS-1$
-		fVMConnectors = new HashMap(configs.length);
+		fVMConnectors = new HashMap<String, IVMConnector>(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {
 				IVMConnector vmConnector= (IVMConnector)configs[i].createExecutableExtension("class"); //$NON-NLS-1$
@@ -594,11 +594,11 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		if (fClasspathEntryExtensions == null) {
 			initializeRuntimeClasspathExtensions();
 		}
-		IConfigurationElement config = (IConfigurationElement) fClasspathEntryExtensions.get(id);
+		IConfigurationElement config = fClasspathEntryExtensions.get(id);
 		if (config != null) {
 			return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
 		}
-		abort(MessageFormat.format(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
+		abort(NLS.bind(LaunchingMessages.LaunchingPlugin_32, new String[]{id}), null);
 		return null;
 	}
 	
@@ -608,7 +608,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	private void initializeRuntimeClasspathExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-		fClasspathEntryExtensions = new HashMap(configs.length);
+		fClasspathEntryExtensions = new HashMap<String, IConfigurationElement>(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			fClasspathEntryExtensions.put(configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
 		}
@@ -644,7 +644,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				return;
 			}
 			// An empty old value signals the second notification in the import preferences
-			// sequence.  Now that we have both old & new prefs, we can parse and compare them.
+			// sequence.  Now that we have both old & new preferences, we can parse and compare them.
 			else if (oldValue == null || oldValue.equals(EMPTY_STRING)) {
 				oldPrefString = fOldVMPrefString;
 				newPrefString = newValue;
@@ -665,13 +665,13 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 			VMDefinitionsContainer newResults = getVMDefinitions(newPrefString);
 			
 			// Determine the deleted VMs
-			List deleted = oldResults.getVMList();
-			List current = newResults.getValidVMList();
+			List<IVMInstall> deleted = oldResults.getVMList();
+			List<IVMInstall> current = newResults.getValidVMList();
 			deleted.removeAll(current);
 			
 			// Dispose deleted VMs.  The 'disposeVMInstall' method fires notification of the
 			// deletion.
-			Iterator deletedIterator = deleted.iterator();
+			Iterator<IVMInstall> deletedIterator = deleted.iterator();
 			while (deletedIterator.hasNext()) {
 				VMStandin deletedVMStandin = (VMStandin) deletedIterator.next();
 				deletedVMStandin.getVMInstallType().disposeVMInstall(deletedVMStandin.getId());
@@ -679,7 +679,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 			
 			// Fire change notification for added and changed VMs. The 'convertToRealVM'
 			// fires the appropriate notification.
-			Iterator iter = current.iterator();
+			Iterator<IVMInstall> iter = current.iterator();
 			while (iter.hasNext()) {
 				VMStandin standin = (VMStandin)iter.next();
 				standin.convertToRealVM();
@@ -711,7 +711,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	}
 	
 	/**
-	 * Parse the given xml into a VM definitions container, returning an empty
+	 * Parse the given XML into a VM definitions container, returning an empty
 	 * container if an exception occurs.
 	 * 
 	 * @param xml the XML to parse for VM descriptions
@@ -809,10 +809,10 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		doc.appendChild(config);
 						
 		// Create a node for each info in the table
-		Iterator locations = fgLibraryInfoMap.keySet().iterator();
+		Iterator<String> locations = fgLibraryInfoMap.keySet().iterator();
 		while (locations.hasNext()) {
-			String home = (String)locations.next();
-			LibraryInfo info = (LibraryInfo) fgLibraryInfoMap.get(home);
+			String home = locations.next();
+			LibraryInfo info = fgLibraryInfoMap.get(home);
 			Element locationElemnet = infoAsElement(doc, info);
 			locationElemnet.setAttribute("home", home); //$NON-NLS-1$
 			config.appendChild(locationElemnet);
@@ -893,7 +893,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * Restores library information for VMs
 	 */
 	private static void restoreLibraryInfo() {
-		fgLibraryInfoMap = new HashMap(10);
+		fgLibraryInfoMap = new HashMap<String, LibraryInfo>(10);
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -959,7 +959,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				if(fgInstallTimeMap == null) {
 					readInstallInfo();
 				}
-				Long stamp = (Long) fgInstallTimeMap.get(location);
+				Long stamp = fgInstallTimeMap.get(location);
 				long fstamp = file.lastModified();
 				if(stamp != null) {
 					if(stamp.longValue() == fstamp) {
@@ -984,7 +984,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * @since 3.7
 	 */
 	private static void readInstallInfo() {
-		fgInstallTimeMap = new HashMap();
+		fgInstallTimeMap = new HashMap<String, Long>();
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append(".install.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -1039,14 +1039,14 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				Document doc = DebugPlugin.newDocument();
 				Element root = doc.createElement("dirs");    //$NON-NLS-1$
 				doc.appendChild(root);
-				Entry entry = null;
+				Entry<String, Long> entry = null;
 				Element e = null;
 				String key = null;
-				for(Iterator i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
-					entry = (Entry) i.next();
-					key = (String) entry.getKey();
+				for(Iterator<Entry<String, Long>> i = fgInstallTimeMap.entrySet().iterator(); i.hasNext();) {
+					entry = i.next();
+					key = entry.getKey();
 					if(fgLibraryInfoMap == null || fgLibraryInfoMap.containsKey(key)) {
-						//only persist the info if the library map also has info OR is null - prevent persisting deleted JRE infos
+						//only persist the info if the library map also has info OR is null - prevent persisting deleted JRE information
 						e = doc.createElement("entry"); //$NON-NLS-1$
 						root.appendChild(e);
 						e.setAttribute("loc", key); //$NON-NLS-1$
@@ -1084,7 +1084,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * @return paths stored in XML
 	 */
 	private static String[] getPathsFromXML(Element lib, String pathType) {
-		List paths = new ArrayList();
+		List<String> paths = new ArrayList<String>();
 		NodeList list = lib.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -1113,7 +1113,7 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				}
 			}
 		}
-		return (String[])paths.toArray(new String[paths.size()]);
+		return paths.toArray(new String[paths.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -1201,14 +1201,16 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 		}
 		// check if URL are file: URL as we may have two URL pointing to the same doc location
 		// but with different representation - (i.e. file:/C;/ and file:C:/)
+		@SuppressWarnings("null")
 		final boolean isFile1 = "file".equalsIgnoreCase(url1.getProtocol());//$NON-NLS-1$
+		@SuppressWarnings("null")
 		final boolean isFile2 = "file".equalsIgnoreCase(url2.getProtocol());//$NON-NLS-1$
 		if (isFile1 && isFile2) {
 			File file1 = new File(url1.getFile());
 			File file2 = new File(url2.getFile());
 			return file1.equals(file2);
 		}
-		// URL1 xor URL2 is a file, return false. (They either both need to be files, or neither)
+		// URL1 XOR URL2 is a file, return false. (They either both need to be files, or neither)
 		if (isFile1 ^ isFile2) {
 			return false;
 		}

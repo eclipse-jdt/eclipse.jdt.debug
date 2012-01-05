@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,12 +54,12 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * 
+	/** 
 	 * Default implementation returns an empty collection.
 	 * Subclasses should override if required.
-	 * 
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries()
+	 * @return the array of entries
+	 * @throws CoreException if computing the entries fails
+	 * @see IRuntimeClasspathEntry2
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries() throws CoreException {
 		return new IRuntimeClasspathEntry[0];
@@ -70,7 +70,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @param message error message
 	 * @param exception underlying exception or <code>null</code> if none
-	 * @throws CoreException
+	 * @throws CoreException the new {@link CoreException}
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, exception);
@@ -225,7 +225,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	/**
 	 * Sets the Java project associated with this entry.
 	 * 
-	 * @param javaProject
+	 * @param javaProject the Java project context
 	 */
 	protected void setJavaProject(IJavaProject javaProject) {
 		fJavaProject = javaProject;

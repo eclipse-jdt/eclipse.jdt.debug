@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,12 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	protected abstract String getPluginIdentifier();
 	
 	/**
+	 * Executes the given command line using the given working directory
+	 * 
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory
+	 * @return the {@link Process}
+	 * @throws CoreException if the execution fails
 	 * @see DebugPlugin#exec(String[], File)
 	 */
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
@@ -66,6 +72,13 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	}
 	
 	/**
+	 * Executes the given command line using the given working directory and environment
+	 * 
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory
+	 * @param envp the environment
+	 * @return the {@link Process}
+	 * @throws CoreException is the execution fails
 	 * @since 3.0
 	 * @see DebugPlugin#exec(String[], File, String[])
 	 */
@@ -93,8 +106,8 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * 
 	 * @return default process attribute map for Java processes
 	 */
-	protected Map getDefaultProcessMap() {
-		Map map = new HashMap();
+	protected Map<String, String> getDefaultProcessMap() {
+		Map<String, String> map = new HashMap<String, String>();
 		map.put(IProcess.ATTR_PROCESS_TYPE, IJavaLaunchConfigurationConstants.ID_JAVA_PROCESS_TYPE);
 		return map;
 	}
@@ -109,7 +122,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @throws CoreException problems occurred creating the process
 	 * @since 3.0
 	 */
-	protected IProcess newProcess(ILaunch launch, Process p, String label, Map attributes) throws CoreException {
+	protected IProcess newProcess(ILaunch launch, Process p, String label, Map<String, String> attributes) throws CoreException {
 		IProcess process= DebugPlugin.newProcess(launch, p, label, attributes);
 		if (process == null) {
 			p.destroy();
@@ -123,7 +136,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * with those specified by the VM install, if any.
 	 * 
 	 * @param configuration runner configuration
-	 * @param vmInstall vm install
+	 * @param vmInstall VM install
 	 * @return combined VM arguments specified by the runner configuration
 	 *  and VM install
 	 * @since 3.0

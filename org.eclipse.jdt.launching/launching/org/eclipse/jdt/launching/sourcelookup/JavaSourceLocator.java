@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,8 +58,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 
 /**
@@ -91,7 +90,7 @@ import com.ibm.icu.text.MessageFormat;
  *  runtime classpath. This class has been replaced by the Java source lookup
  *  director which is an internal class, but can be used via the
  *  <code>sourceLocatorId</code> attribute on a launch configuration type extension.  
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 @Deprecated
 public class JavaSourceLocator implements IPersistableSourceLocator {
@@ -122,9 +121,10 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param projects the projects in which to look for source
 	 * @param includeRequired whether to look in required projects
 	 * 	as well
+	 * @throws CoreException if a new locator fails to be created
 	 */
 	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws CoreException {
-		ArrayList requiredProjects = new ArrayList();
+		ArrayList<IJavaProject> requiredProjects = new ArrayList<IJavaProject>();
 		for (int i= 0; i < projects.length; i++) {
 			if (includeRequired) {
 				collectRequiredProjects(projects[i], requiredProjects);
@@ -136,12 +136,12 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		}
 		
 		// only add external entries with the same location once
-		HashMap external = new HashMap();
-		ArrayList list = new ArrayList();
+		HashMap<IPath, IPath> external = new HashMap<IPath, IPath>();
+		ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<PackageFragmentRootSourceLocation>();
 		// compute the default locations for each project, and add unique ones
-		Iterator iter = requiredProjects.iterator();
+		Iterator<IJavaProject> iter = requiredProjects.iterator();
 		while (iter.hasNext()) {
-			IJavaProject p = (IJavaProject)iter.next();
+			IJavaProject p = iter.next();
 			IPackageFragmentRoot[] roots = p.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].isExternal()) {
@@ -155,7 +155,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				}
 			}
 		}
-		IJavaSourceLocation[] locations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);
+		IJavaSourceLocation[] locations = list.toArray(new IJavaSourceLocation[list.size()]);
 		setSourceLocations(locations);
 	}	
 	
@@ -229,7 +229,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				}
 				return null;
 			}
-			List list = new ArrayList();
+			List<Object> list = new ArrayList<Object>();
 			IJavaSourceLocation[] locations = getSourceLocations();
 			for (int i = 0; i < locations.length; i++) {
 				try {
@@ -327,8 +327,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param proj the project for which to compute required
 	 *  projects
 	 * @param res the list to add all required projects too
+	 * @throws JavaModelException if there is a problem with the backing Java model
 	 */
-	protected static void collectRequiredProjects(IJavaProject proj, ArrayList res) throws JavaModelException {
+	protected static void collectRequiredProjects(IJavaProject proj, ArrayList<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
 			
@@ -398,6 +399,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@SuppressWarnings("null")
 	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;
 		try {
@@ -413,7 +415,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__6, null); 
 			}
 	
-			List sourceLocations = new ArrayList();
+			List<IJavaSourceLocation> sourceLocations = new ArrayList<IJavaSourceLocation>();
 			ClassLoader classLoader = LaunchingPlugin.getDefault().getDescriptor().getPluginClassLoader(); 
 			
 			NodeList list = root.getChildNodes();
@@ -429,11 +431,11 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 						if (isEmpty(className)) {
 							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__10, null); 
 						}
-						Class clazz  = null;
+						Class<?> clazz  = null;
 						try {
 							clazz = classLoader.loadClass(className);
 						} catch (ClassNotFoundException e) {
-							abort(MessageFormat.format(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location___class_not_found___0__11, new String[] {className}), e); 
+							abort(NLS.bind(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location___class_not_found___0__11, new String[] {className}), e); 
 						}
 						
 						IJavaSourceLocation location = null;
@@ -451,7 +453,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 				}
 			}
-			setSourceLocations((IJavaSourceLocation[])sourceLocations.toArray(new IJavaSourceLocation[sourceLocations.size()]));
+			setSourceLocations(sourceLocations.toArray(new IJavaSourceLocation[sourceLocations.size()]));
 			return;
 		} catch (ParserConfigurationException e) {
 			ex = e;			
@@ -466,9 +468,11 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns source locations that are associated with the given runtime classpath
 	 * entries.
+	 * @param entries the entries to compute source locations for
+	 * @return the array of {@link IJavaSourceLocation}
 	 */
 	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {
-		List locations = new ArrayList(entries.length);
+		List<IJavaSourceLocation> locations = new ArrayList<IJavaSourceLocation>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			IJavaSourceLocation location = null;
@@ -513,7 +517,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				locations.add(location);
 			}
 		}
-		return (IJavaSourceLocation[])locations.toArray(new IJavaSourceLocation[locations.size()]);		
+		return locations.toArray(new IJavaSourceLocation[locations.size()]);		
 	}
 	
 	private boolean isEmpty(String string) {
@@ -522,6 +526,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	
 	/**
 	 * Throws an internal error exception
+	 * @param message the message
+	 * @param e the error
+	 * @throws CoreException the new {@link CoreException} 
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
@@ -532,8 +539,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * Returns whether the given objects are equal, allowing
 	 * for <code>null</code>.
 	 * 
-	 * @param a
-	 * @param b
+	 * @param a the first item
+	 * @param b the item to compare
 	 * @return whether the given objects are equal, allowing
 	 *   for <code>null</code>
 	 */
@@ -555,7 +562,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @param entry runtime classpath entry
 	 * @return whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal
-	 * @throws JavaModelException 
+	 * @throws JavaModelException if there is a problem with the backing Java model
 	 */
 	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
 		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath());

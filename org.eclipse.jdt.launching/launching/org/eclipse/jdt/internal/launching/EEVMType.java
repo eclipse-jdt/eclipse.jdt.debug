@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,11 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Utility class for Standard VM type. Used to generate/retrieve information for
- * VMs defined by .ee property file.
+ * VMs defined by EE property file.
  * 
  * @since 3.4
  */
@@ -57,7 +56,7 @@ public class EEVMType extends AbstractVMInstallType {
 	 * @param properties properties map
 	 * @return javadoc location specified in the properties or <code>null</code> if none
 	 */
-	public static URL getJavadocLocation(Map properties) {
+	public static URL getJavadocLocation(Map<String, String> properties) {
 		String javadoc = getProperty(ExecutionEnvironmentDescription.JAVADOC_LOC, properties); 
 		if (javadoc != null && javadoc.length() > 0){
 			try{
@@ -85,7 +84,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/**
 	 * Returns a status indicating if the given definition file is valid.
 	 * 
-	 * @param eeFile definition file
+	 * @param description definition file
 	 * @return status indicating if the given definition file is valid
 	 */
 	public static IStatus validateDefinitionFile(ExecutionEnvironmentDescription description) {
@@ -94,7 +93,7 @@ public class EEVMType extends AbstractVMInstallType {
 			String key = REQUIRED_PROPERTIES[i];
 			String property = description.getProperty(key);
 			if (property == null) {
-				return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), MessageFormat.format(LaunchingMessages.EEVMType_1, new String[]{key} ));
+				return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), NLS.bind(LaunchingMessages.EEVMType_1, new String[]{key} ));
 			}
 		}
 		return Status.OK_STATUS;
@@ -104,11 +103,12 @@ public class EEVMType extends AbstractVMInstallType {
 	 * Returns the specified property value from the given map, as a {@link String},
 	 * or <code>null</code> if none.
 	 * 
+	 * @param property the name of the property
 	 * @param properties property map
 	 * @return value or <code>null</code>
 	 */
-	private static String getProperty(String property, Map properties) {
-		return (String)properties.get(property);
+	private static String getProperty(String property, Map<String, String> properties) {
+		return properties.get(property);
 	}
 	
 	/* (non-Javadoc)
@@ -147,7 +147,7 @@ public class EEVMType extends AbstractVMInstallType {
 		if (installLocation.exists()) {
 			return new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.EEVMType_4);
 		}
-		return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(LaunchingMessages.EEVMType_3, new String[]{installLocation.getPath()}));
+		return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.EEVMType_3, new String[]{installLocation.getPath()}));
 	}
 	
 }

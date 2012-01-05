@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -42,14 +43,14 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate implements IDebugEventSetListener {
 		
 	/**
-	 * Mapping of ILaunch objects to File objects that represent the .html file
-	 * used to initiate the applet launch.  This is used to delete the .html
+	 * Mapping of ILaunch objects to File objects that represent the HTML file
+	 * used to initiate the applet launch.  This is used to delete the HTML
 	 * file when the launch terminates.
 	 */
-	private static Map fgLaunchToFileMap = new HashMap();
+	private static Map<ILaunch, File> fgLaunchToFileMap = new HashMap<ILaunch, File>();
 	
 	/**
-	 * Used to map temp file to launch obejct.
+	 * Used to map temporary file to launch object.
 	 */
 	private ILaunch fLaunch;
 	
@@ -102,7 +103,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * Using the specified launch configuration, build an HTML file that specifies the
 	 * applet to launch.  Return the name of the HTML file.
 	 * 
+	 * @param configuration the launch config
 	 * @param dir the directory in which to make the file
+	 * @return the new HTML file
 	 */
 	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
 		FileWriter writer = null;
@@ -125,15 +128,15 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			writer.write("\" height=\""); //$NON-NLS-1$
 			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200))); 
 			writer.write("\" >\n"); //$NON-NLS-1$
-			Map parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap());
+			Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<String, String>());
 			if (parameters.size() != 0) {
-				Iterator iterator= parameters.entrySet().iterator();
+				Iterator<Entry<String, String>> iterator= parameters.entrySet().iterator();
 				while(iterator.hasNext()) {
-		 			Map.Entry next = (Map.Entry) iterator.next();
+		 			Entry<String, String> next = iterator.next();
 					writer.write("<param name="); //$NON-NLS-1$
-					writer.write(getQuotedString((String)next.getKey()));
+					writer.write(getQuotedString(next.getKey()));
 					writer.write(" value="); //$NON-NLS-1$
-					writer.write(getQuotedString((String)next.getValue()));
+					writer.write(getQuotedString(next.getValue()));
 					writer.write(">\n"); //$NON-NLS-1$
 				}
 			}
@@ -192,12 +195,12 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	}
 	
 	/**
-	 * Cleans up event listener and temp file for the launch.
+	 * Cleans up event listener and temporary file for the launch.
 	 * 
-	 * @param launch
+	 * @param launch the launch
 	 */
 	private void cleanup(ILaunch launch) {
-		File temp = (File) fgLaunchToFileMap.get(launch);
+		File temp = fgLaunchToFileMap.get(launch);
 		if (temp != null) {
 			try {
 				fgLaunchToFileMap.remove(launch);
@@ -212,6 +215,8 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 	/**
 	 * Returns the contents of the given file as a byte array.
+	 * @param file the file
+	 * @return the byte array form the file
 	 * @throws IOException if a problem occurred reading the file.
 	 */
 	protected static byte[] getFileByteContent(File file) throws IOException {
@@ -234,6 +239,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * If a length is specified (ie. if length != -1), only length bytes
 	 * are returned. Otherwise all bytes in the stream are returned.
 	 * Note this doesn't close the stream.
+	 * @param stream the stream
+	 * @param length the length to read
+	 * @return the byte array from the stream
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
 	protected static byte[] getInputStreamAsByteArray(InputStream stream, int length)
@@ -292,6 +300,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@SuppressWarnings("null")
 	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		File workingDir = verifyWorkingDirectory(configuration);
@@ -333,9 +342,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	/**
 	 * Returns the applet's main type name.
 	 * 
-	 * @param configuration
-	 * @return
-	 * @throws CoreException
+	 * @param configuration the config
+	 * @return the main type name
+	 * @throws CoreException if a problem occurs
 	 */
 	protected String getAppletMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		return super.getMainTypeName(configuration);

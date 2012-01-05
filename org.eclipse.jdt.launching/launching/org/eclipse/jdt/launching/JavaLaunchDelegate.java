@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.jdt.launching;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A launch delegate for launching local Java applications.
@@ -39,7 +39,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			monitor = new NullProgressMonitor();
 		}
 		
-		monitor.beginTask(MessageFormat.format("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
+		monitor.beginTask(NLS.bind("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -65,7 +65,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 			
 			// VM-specific attributes
-			Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
+			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 			
 			// Classpath
 			String[] classpath = getClasspath(configuration);

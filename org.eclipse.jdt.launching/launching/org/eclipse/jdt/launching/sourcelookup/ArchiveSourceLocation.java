@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,13 +33,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
  
 /**
  * Locates source elements in an archive (zip) in the local file system. Returns
@@ -58,7 +57,7 @@ import com.ibm.icu.text.MessageFormat;
  *  has been replaced by the following classes:
  *  <code>org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer</code>
  *  and <code>org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer</code>.
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 @Deprecated
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
@@ -67,7 +66,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Cache of shared zip files. Zip files are closed
 	 * when the launching plug-in is shutdown.
 	 */
-	private static HashMap fZipFileCache = new HashMap(5);
+	private static HashMap<String, ZipFile> fZipFileCache = new HashMap<String, ZipFile>(5);
 
 	/**
 	 * Returns a zip file with the given name
@@ -79,7 +78,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 */
 	private static ZipFile getZipFile(String name) throws IOException {
 		synchronized (fZipFileCache) {
-			ZipFile zip = (ZipFile)fZipFileCache.get(name);
+			ZipFile zip = fZipFileCache.get(name);
 			if (zip == null) {
 				zip = new ZipFile(name);
 				fZipFileCache.put(name, zip);
@@ -96,9 +95,9 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 */
 	public static void closeArchives() {
 		synchronized (fZipFileCache) {
-			Iterator iter = fZipFileCache.values().iterator();
+			Iterator<ZipFile> iter = fZipFileCache.values().iterator();
 			while (iter.hasNext()) {
-				ZipFile file = (ZipFile)iter.next();
+				ZipFile file = iter.next();
 				synchronized (file) {
 					try {
 						file.close();
@@ -182,7 +181,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			return null;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-				MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e)); 
+				NLS.bind(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e)); 
 		}
 	}
 	
@@ -199,14 +198,14 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				zip = getArchive();
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-					MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e)); 
+					NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e)); 
 			}
 			synchronized (zip) {
-				Enumeration entries = zip.entries();
+				Enumeration<? extends ZipEntry> entries = zip.entries();
 				String fileName = path.toString();
 				try {
 					while (entries.hasMoreElements()) {
-						ZipEntry entry = (ZipEntry)entries.nextElement();
+						ZipEntry entry = entries.nextElement();
 						String entryName = entry.getName();
 						if (entryName.endsWith(fileName)) {
 							int rootLength = entryName.length() - fileName.length();
@@ -220,7 +219,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 					}
 				} catch (IllegalStateException e) {
 					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-						MessageFormat.format(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e)); 
+						NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e)); 
 				}
 			}
 		}
@@ -330,8 +329,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser =
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

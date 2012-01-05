@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class MacInstalledJREs {
 			p = DebugPlugin.exec(cmdLine, null);
 			IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "JRE Install Detection"); //$NON-NLS-1$
 			for (int i= 0; i < 600; i++) {
-				// Wait no more than 30 seconds (600 * 50 ms)
+				// Wait no more than 30 seconds (600 * 50 milliseconds)
 				if (process.isTerminated()) {
 					break;
 				}
@@ -158,11 +158,11 @@ public class MacInstalledJREs {
 			Object result = new PListParser().parse(stream);
 			if (result instanceof Object[]) {
 				Object[] maps = (Object[]) result;
-				List jres= new ArrayList();
+				List<JREDescriptor> jres= new ArrayList<JREDescriptor>();
 				for (int i = 0; i < maps.length; i++) {
 					Object object = maps[i];
 					if (object instanceof Map) {
-						Map map = (Map) object;
+						Map<?, ?> map = (Map<?, ?>) object;
 						Object home = map.get(PLIST_JVM_HOME_PATH);
 						Object name = map.get(PLIST_JVM_NAME);
 						Object version = map.get(PLIST_JVM_VERSION);
@@ -178,7 +178,7 @@ public class MacInstalledJREs {
 						unexpectedFormat();
 					}
 				}
-				return (JREDescriptor[]) jres.toArray(new JREDescriptor[jres.size()]);
+				return jres.toArray(new JREDescriptor[jres.size()]);
 			}
 			unexpectedFormat();
 		}

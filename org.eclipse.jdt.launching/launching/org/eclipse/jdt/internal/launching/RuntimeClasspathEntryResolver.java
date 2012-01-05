@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	
 	/**
 	 * Constructs a new resolver on the given configuration element
+	 * @param element the element
 	 */
 	public RuntimeClasspathEntryResolver(IConfigurationElement element) {
 		fConfigurationElement = element;
@@ -46,6 +47,8 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	
 	/**
 	 * Returns the resolver delegate (and creates if required) 
+	 * @return the resolver
+	 * @throws CoreException if an error occurs 
 	 */
 	protected IRuntimeClasspathEntryResolver getResolver() throws CoreException {
 		if (fDelegate == null) {
@@ -56,6 +59,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	
 	/**
 	 * Returns the variable name this resolver is registered for, or <code>null</code>
+	 * @return the variable name or <code>null</code>
 	 */
 	public String getVariableName() {
 		return fConfigurationElement.getAttribute("variable"); //$NON-NLS-1$
@@ -63,6 +67,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	
 	/**
 	 * Returns the container id this resolver is registered for, or <code>null</code>
+	 * @return the id or <code>null</code>
 	 */
 	public String getContainerId() {
 		return fConfigurationElement.getAttribute("container"); //$NON-NLS-1$
@@ -71,6 +76,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	/**
 	 * Returns the runtime classpath entry id this resolver is registered
 	 * for,or <code>null</code> if none.
+	 * @return the entry id or <code>null</code>
 	 */
 	public String getRuntimeClasspathEntryId() {
 		return fConfigurationElement.getAttribute("runtimeClasspathEntryId"); //$NON-NLS-1$

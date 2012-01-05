@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,13 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
-import org.eclipse.jdt.launching.sourcelookup.containers.*;
+import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
 
 /**
  * Java source lookup director.
@@ -26,10 +27,10 @@ import org.eclipse.jdt.launching.sourcelookup.containers.*;
  */
 public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	
-	private static Set fFilteredTypes;
+	private static Set<String> fFilteredTypes;
 	
 	static {
-		fFilteredTypes = new HashSet();
+		fFilteredTypes = new HashSet<String>();
 		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		// can't reference UI constant

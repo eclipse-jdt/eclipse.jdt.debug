@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +43,7 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,8 +51,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This is a container for VM definitions such as the VM definitions that are
@@ -75,17 +74,17 @@ public class VMDefinitionsContainer {
 	/**
 	 * Map of VMInstallTypes to Lists of corresponding VMInstalls.
 	 */
-	private Map fVMTypeToVMMap;
+	private Map<IVMInstallType, List<IVMInstall>> fVMTypeToVMMap;
 	
 	/**
 	 * Cached list of VMs in this container
 	 */
-	private List fVMList;
+	private List<IVMInstall> fVMList;
 	
 	/**
 	 * VMs managed by this container whose install locations don't actually exist.
 	 */
-	private List fInvalidVMList;
+	private List<IVMInstall> fInvalidVMList;
 			
 	/**
 	 * The composite identifier of the default VM.  This consists of the install type ID
@@ -107,9 +106,9 @@ public class VMDefinitionsContainer {
 	 * Constructs an empty VM container 
 	 */
 	public VMDefinitionsContainer() {
-		fVMTypeToVMMap = new HashMap(10);
-		fInvalidVMList = new ArrayList(10);	
-		fVMList = new ArrayList(10);		
+		fVMTypeToVMMap = new HashMap<IVMInstallType, List<IVMInstall>>(10);
+		fInvalidVMList = new ArrayList<IVMInstall>(10);	
+		fVMList = new ArrayList<IVMInstall>(10);		
 	}
 		
 	/**
@@ -125,9 +124,9 @@ public class VMDefinitionsContainer {
 	public void addVM(IVMInstall vm) {
 		if (!fVMList.contains(vm)) {	
 			IVMInstallType vmInstallType = vm.getVMInstallType();
-			List vmList = (List) fVMTypeToVMMap.get(vmInstallType);
+			List<IVMInstall> vmList = fVMTypeToVMMap.get(vmInstallType);
 			if (vmList == null) {
-				vmList = new ArrayList(3);
+				vmList = new ArrayList<IVMInstall>(3);
 				fVMTypeToVMMap.put(vmInstallType, vmList);			
 			}
 			vmList.add(vm);
@@ -149,11 +148,10 @@ public class VMDefinitionsContainer {
 	 * 
 	 * @param vmList a list of VMs to be added to this container
 	 */
-	public void addVMList(List vmList) {
-		Iterator iterator = vmList.iterator();
+	public void addVMList(List<IVMInstall> vmList) {
+		Iterator<IVMInstall> iterator = vmList.iterator();
 		while (iterator.hasNext()) {
-			IVMInstall vm = (IVMInstall) iterator.next();
-			addVM(vm);
+			addVM(iterator.next());
 		}
 	}
 
@@ -164,7 +162,7 @@ public class VMDefinitionsContainer {
 	 * 
 	 * @return Map the mapping of VM install types to lists of VMs
 	 */
-	public Map getVMTypeToVMMap() {
+	public Map<IVMInstallType, List<IVMInstall>> getVMTypeToVMMap() {
 		return fVMTypeToVMMap;
 	}
 	
@@ -175,7 +173,7 @@ public class VMDefinitionsContainer {
 	 * 
 	 * @return List the data structure containing all VMs managed by this container
 	 */
-	public List getVMList() {
+	public List<IVMInstall> getVMList() {
 		return fVMList;
 	}
 	
@@ -185,9 +183,9 @@ public class VMDefinitionsContainer {
 	 * 
 	 * @return List 
 	 */
-	public List getValidVMList() {
-		List vms = getVMList();
-		List resultList = new ArrayList(vms.size());
+	public List<IVMInstall> getValidVMList() {
+		List<IVMInstall> vms = getVMList();
+		List<IVMInstall> resultList = new ArrayList<IVMInstall>(vms.size());
 		resultList.addAll(vms);
 		resultList.removeAll(fInvalidVMList);
 		return resultList;
@@ -262,10 +260,10 @@ public class VMDefinitionsContainer {
 		}
 				
 		// Create a node for each install type represented in this container
-		Set vmInstallTypeSet = getVMTypeToVMMap().keySet();
-		Iterator keyIterator = vmInstallTypeSet.iterator();
+		Set<IVMInstallType> vmInstallTypeSet = getVMTypeToVMMap().keySet();
+		Iterator<IVMInstallType> keyIterator = vmInstallTypeSet.iterator();
 		while (keyIterator.hasNext()) {
-			IVMInstallType vmInstallType = (IVMInstallType) keyIterator.next();
+			IVMInstallType vmInstallType = keyIterator.next();
 			Element vmTypeElement = vmTypeAsElement(doc, vmInstallType);
 			config.appendChild(vmTypeElement);
 		}
@@ -283,15 +281,15 @@ public class VMDefinitionsContainer {
 	 */
 	private Element vmTypeAsElement(Document doc, IVMInstallType vmType) {
 		
-		// Create a node for the vm type and set its 'id' attribute
+		// Create a node for the VM type and set its 'id' attribute
 		Element element= doc.createElement("vmType");   //$NON-NLS-1$
 		element.setAttribute("id", vmType.getId());     //$NON-NLS-1$
 		
-		// For each vm of the specified type, create a subordinate node for it
-		List vmList = (List) getVMTypeToVMMap().get(vmType);
-		Iterator vmIterator = vmList.iterator();
+		// For each VM of the specified type, create a subordinate node for it
+		List<IVMInstall> vmList = getVMTypeToVMMap().get(vmType);
+		Iterator<IVMInstall> vmIterator = vmList.iterator();
 		while (vmIterator.hasNext()) {
-			IVMInstall vm = (IVMInstall) vmIterator.next();
+			IVMInstall vm = vmIterator.next();
 			Element vmElement = vmAsElement(doc, vm);
 			element.appendChild(vmElement);
 		}
@@ -350,17 +348,17 @@ public class VMDefinitionsContainer {
 			}
 		}
 		
-		// vm attributes
+		// VM attributes
 		if (vm instanceof AbstractVMInstall) {
-			Map attributes = ((AbstractVMInstall)vm).getAttributes();
+			Map<String, String> attributes = ((AbstractVMInstall)vm).getAttributes();
 			if (!attributes.isEmpty()) {
 				Element attrElement = doc.createElement("attributeMap"); //$NON-NLS-1$
-				Iterator iterator = attributes.entrySet().iterator();
+				Iterator<Entry<String, String>> iterator = attributes.entrySet().iterator();
 				while (iterator.hasNext()) {
-					Entry entry = (Entry) iterator.next();
+					Entry<String, String> entry = iterator.next();
 					Element entryElement = doc.createElement("entry"); //$NON-NLS-1$
-					entryElement.setAttribute("key", (String)entry.getKey()); //$NON-NLS-1$
-					entryElement.setAttribute("value", (String)entry.getValue()); //$NON-NLS-1$
+					entryElement.setAttribute("key", entry.getKey()); //$NON-NLS-1$
+					entryElement.setAttribute("value", entry.getValue()); //$NON-NLS-1$
 					attrElement.appendChild(entryElement);
 				}
 				element.appendChild(attrElement);
@@ -499,13 +497,13 @@ public class VMDefinitionsContainer {
 				IStatus status = null;
 				if (name != null) {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_0, new String[]{name}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, new String[]{name}));
 				} else if (installPath != null) {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_0, new String[]{installPath}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_0, new String[]{installPath}));
 				} else {
 					status = new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_2, new String[]{id}));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_2, new String[]{id}));
 				}
 				container.addStatus(status);
 			}
@@ -516,7 +514,7 @@ public class VMDefinitionsContainer {
 	 * Parse the specified VM node, create a VMStandin for it, and add this to the 
 	 * specified container.
 	 * 
-	 * @param vmType vm type
+	 * @param vmType VM type
 	 * @param vmElement XML element
 	 * @param container container to add VM to
 	 */
@@ -530,17 +528,17 @@ public class VMDefinitionsContainer {
 			if (name == null) {
 				if (installPath == null) {
 					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_3, new String[]{vmType.getName()})));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_3, new String[]{vmType.getName()})));
 					return;
 				} else {
 					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-							MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
+							NLS.bind(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
 					return;
 				}
 			}
 			if (installPath == null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_5, new String[]{name})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_5, new String[]{name})));
 				return;
 			}
 						
@@ -594,12 +592,12 @@ public class VMDefinitionsContainer {
 							vmStandin.setJavadocLocation(new URL(externalForm));
 						} catch (MalformedURLException e) {
 							container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-									MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
+									NLS.bind(LaunchingMessages.VMDefinitionsContainer_6, new String[]{name}), e));
 						}
 					}
 				}
 			}
-			// vm Arguments
+			// VM Arguments
 			String vmArgs = vmElement.getAttribute("vmargs"); //$NON-NLS-1$
 			if (vmArgs != null && vmArgs.length() >0) {
 				vmStandin.setVMArgs(vmArgs);
@@ -609,13 +607,13 @@ public class VMDefinitionsContainer {
 			String name = vmElement.getAttribute("name"); //$NON-NLS-1$
 			if (name != null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_7, new String[]{name})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, new String[]{name})));
 			} else if (installPath != null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-						MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_7, new String[]{installPath})));
+						NLS.bind(LaunchingMessages.VMDefinitionsContainer_7, new String[]{installPath})));
 			} else {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-					MessageFormat.format(LaunchingMessages.VMDefinitionsContainer_9, new String[]{vmType.getName()})));
+					NLS.bind(LaunchingMessages.VMDefinitionsContainer_9, new String[]{vmType.getName()})));
 			}
 		}
 	}	
@@ -659,7 +657,7 @@ public class VMDefinitionsContainer {
 	private static void setLibraryLocations(IVMInstall vm, Element libLocationsElement) {
 		NodeList list = libLocationsElement.getChildNodes();
 		int length = list.getLength();
-		List locations = new ArrayList(length);
+		List<LibraryLocation> locations = new ArrayList<LibraryLocation>(length);
 		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
 			short type = node.getNodeType();
@@ -670,18 +668,18 @@ public class VMDefinitionsContainer {
 				}
 			}
 		}	
-		vm.setLibraryLocations((LibraryLocation[])locations.toArray(new LibraryLocation[locations.size()]));
+		vm.setLibraryLocations(locations.toArray(new LibraryLocation[locations.size()]));
 	}
 	
 	/**
 	 * Removes the VM from this container.
 	 * 
-	 * @param vm vm install
+	 * @param vm VM install
 	 */
 	public void removeVM(IVMInstall vm) {
 		fVMList.remove(vm);
 		fInvalidVMList.remove(vm);
-		List list = (List) fVMTypeToVMMap.get(vm.getVMInstallType());
+		List<IVMInstall> list = fVMTypeToVMMap.get(vm.getVMInstallType());
 		if (list != null) {
 			list.remove(vm);
 		}

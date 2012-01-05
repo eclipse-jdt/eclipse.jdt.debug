@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	
 	private static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION, JAVA_VERSION};
 	private static final String FOUNDATION = "foundation"; //$NON-NLS-1$
-	private static final Map mappings = new HashMap();
+	private static final Map<String, String[]> mappings = new HashMap<String, String[]>();
 
 	static {
 		// table where the key is the EE and the value is an array of EEs that it is a super-set of
@@ -72,11 +72,11 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
 	}
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		ArrayList result = new ArrayList();
+		ArrayList<CompatibleEnvironment> result = new ArrayList<CompatibleEnvironment>();
 		if (!(vm instanceof IVMInstall2))
 			return new CompatibleEnvironment[0];
 		IVMInstall2 vm2 = (IVMInstall2) vm;
-		List types = null;
+		List<String> types = null;
 		if (EEVMType.ID_EE_VM_TYPE.equals(vm.getVMInstallType().getId())) {
 			String eeId = ((EEVMInstall)vm).getAttribute(EEVMInstall.ATTR_EXECUTION_ENVIRONMENT_ID);
 			if (eeId != null) {
@@ -118,17 +118,17 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 		if (types != null) {
 			for (int i=0; i < types.size(); i++)
-				addEnvironment(result, (String) types.get(i), i ==0);
+				addEnvironment(result, types.get(i), i ==0);
 		}
-		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
+		return result.toArray(new CompatibleEnvironment[result.size()]);
 	}
 
 	/*
 	 * Check a couple of known system properties for the word "foundation".
 	 */
-	private boolean isFoundation(Map properties) {
+	private boolean isFoundation(Map<String, String> properties) {
 		for (int i=0; i < VM_PROPERTIES.length; i++) {
-			String value = (String) properties.get(VM_PROPERTIES[i]);
+			String value = properties.get(VM_PROPERTIES[i]);
 			if (value == null)
 				continue;
 			for (StringTokenizer tokenizer = new StringTokenizer(value); tokenizer.hasMoreTokens(); )
@@ -139,16 +139,16 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	}
 
 	private boolean isFoundation1_0(IVMInstall3 vm) throws CoreException {
-		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
+		Map<String, String> map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
 		return isFoundation(map) ? "1.0".equals(map.get(JAVA_SPEC_VERSION)) : false; //$NON-NLS-1$
 	}
 
 	private boolean isFoundation1_1(IVMInstall3 vm) throws CoreException {
-		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
+		Map<String, String> map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
 		return isFoundation(map) ? "1.1".equals(map.get(JAVA_SPEC_VERSION)) : false; //$NON-NLS-1$
 	}
 
-	private void addEnvironment(ArrayList result, String id, boolean strict) {
+	private void addEnvironment(ArrayList<CompatibleEnvironment> result, String id, boolean strict) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(id);
 		if (env != null)
@@ -156,10 +156,10 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	}
 	
 	// first entry in the list is the perfect match
-	private List getTypes(String type) {
-		List result = new ArrayList();
+	private List<String> getTypes(String type) {
+		List<String> result = new ArrayList<String>();
 		result.add(type);
-		String[] values = (String[]) mappings.get(type);
+		String[] values = mappings.get(type);
 		if (values != null) {
 			for (int i=0; i<values.length; i++)
 				result.addAll(getTypes(values[i]));

@@ -87,7 +87,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		
 		private VirtualMachine fVirtualMachine = null;
 		private ListeningConnector fConnector = null;
-		private Map fConnectionMap = null;
+		private Map<String, Connector.Argument> fConnectionMap = null;
 		private Exception fException = null;
 		
 		/**
@@ -97,7 +97,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		 * @param connector the connector to use
 		 * @param map the argument map
 		 */
-		public ConnectRunnable(ListeningConnector connector, Map map) {
+		public ConnectRunnable(ListeningConnector connector, Map<String, Connector.Argument> map) {
 			fConnector = connector;
 			fConnectionMap = map;
 		}
@@ -169,7 +169,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				
 		String program= constructProgramString(config);
 		
-		List arguments= new ArrayList(12);
+		List<String> arguments= new ArrayList<String>(12);
 
 		arguments.add(program);
 		
@@ -234,7 +234,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (connector == null) {
 			abort(LaunchingMessages.StandardVMDebugger_Couldn__t_find_an_appropriate_debug_connector_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); 
 		}
-		Map map= connector.defaultArguments();
+		@SuppressWarnings("null")
+		Map<String, Connector.Argument> map= connector.defaultArguments();
 		
 		specifyArguments(map, port);
 		Process p= null;
@@ -385,13 +386,13 @@ public class StandardVMDebugger extends StandardVMRunner {
 			if(jrepath.toFile().exists()) {
 				String jrestr = jrepath.toOSString();
 				if(env == null){
-					Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+					Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
 					env = new String[map.size()];
 					String var = null;
 					int index = 0;
-					for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-						var = (String) iter.next();
-						String value = (String) map.get(var);
+					for(Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
+						var = iter.next();
+						String value = map.get(var);
 						if (value == null) {
 							value = ""; //$NON-NLS-1$
 						}
@@ -494,7 +495,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @param map argument map
 	 * @param portNumber the port number
 	 */
-	protected void specifyArguments(Map map, int portNumber) {
+	protected void specifyArguments(Map<String, Connector.Argument> map, int portNumber) {
 		// XXX: Revisit - allows us to put a quote (") around the classpath
 		Connector.IntegerArgument port= (Connector.IntegerArgument) map.get("port"); //$NON-NLS-1$
 		port.setValue(portNumber);
@@ -515,9 +516,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * @return the {@link ListeningConnector}
 	 */
 	protected ListeningConnector getConnector() {
-		List connectors= Bootstrap.virtualMachineManager().listeningConnectors();
+		List<ListeningConnector> connectors= Bootstrap.virtualMachineManager().listeningConnectors();
 		for (int i= 0; i < connectors.size(); i++) {
-			ListeningConnector c= (ListeningConnector) connectors.get(i);
+			ListeningConnector c= connectors.get(i);
 			if ("com.sun.jdi.SocketListen".equals(c.name())) //$NON-NLS-1$
 				return c;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,8 @@ public class SystemProperties {
 	 * 
 	 * @param doc document to serialize
 	 * @return the document as a string
+	 * @throws IOException if the document cannot be created
+	 * @throws TransformerException if here is an exception reading the XML
 	 */
 	private static String serializeDocument(Document doc) throws IOException, TransformerException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();

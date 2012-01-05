@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import java.io.File;
  * @deprecated In 3.0 this class is now provided by the debug platform. Clients
  *  should use the replacement class
  *  <code>org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage</code>
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 @Deprecated
 public class LocalFileStorage extends org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -79,14 +80,17 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	}
 
 	/**
-	 * Resolves libray locations for the given VM install
+	 * Resolves library locations for the given VM install
+	 * @param vm the VM
+	 * @param kind the entry kind
+	 * @return the array of {@link IRuntimeClasspathEntry}s
 	 */
 	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm, int kind) {
 		LibraryLocation[] libs = vm.getLibraryLocations();
 		LibraryLocation[] defaultLibs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		boolean overrideJavadoc = false;
 		if (libs == null) {
-			// default system libs
+			// default system libraries
 			libs = defaultLibs;
 			overrideJavadoc = true;
 		} else if (!isSameArchives(libs, defaultLibs)) {
@@ -99,13 +103,13 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 				LibraryInfo libraryInfo= LaunchingPlugin.getLibraryInfo(vmInstallLocation.getAbsolutePath());
 				if (libraryInfo != null) {
 					// only return endorsed and bootstrap classpath entries if we have the info
-					// libs in the ext dirs are not loaded by the boot class loader
+					// libraries in the 'ext' directories are not loaded by the boot class loader
 					String[] extensionDirsArray = libraryInfo.getExtensionDirs();
-					Set extensionDirsSet = new HashSet();
+					Set<String> extensionDirsSet = new HashSet<String>();
 					for (int i = 0; i < extensionDirsArray.length; i++) {
 						extensionDirsSet.add(extensionDirsArray[i]);
 					}
-					List resolvedEntries = new ArrayList(libs.length);
+					List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<IRuntimeClasspathEntry>(libs.length);
 					for (int i = 0; i < libs.length; i++) {
 						LibraryLocation location = libs[i];
 						IPath libraryPath = location.getSystemLibraryPath();
@@ -115,26 +119,26 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 							resolvedEntries.add(resolveLibraryLocation(vm, location, kind, overrideJavadoc));
 						}
 					}
-					return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
+					return resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
 				}
 			}
 		}
-		List resolvedEntries = new ArrayList(libs.length);
+		List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<IRuntimeClasspathEntry>(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			IPath systemLibraryPath = libs[i].getSystemLibraryPath();
 			if (systemLibraryPath.toFile().exists()) {
 				resolvedEntries.add(resolveLibraryLocation(vm, libs[i], kind, overrideJavadoc));
 			}
 		}
-		return (IRuntimeClasspathEntry[]) resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
+		return resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
 	}
 		
 	/**
 	 * Return whether the given list of libraries refer to the same archives in the same
 	 * order. Only considers the binary archive (not source or javadoc locations). 
 	 *  
-	 * @param libs
-	 * @param defaultLibs
+	 * @param libs the locations
+	 * @param defaultLibs the default locations
 	 * @return whether the given list of libraries refer to the same archives in the same
 	 * order
 	 */
@@ -147,7 +151,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 			dpath = defaultLibs[i].getSystemLibraryPath();
 			lpath = libs[i].getSystemLibraryPath();
 			if(Platform.getOS().equals(Platform.OS_WIN32)) {
-				//the .equals method of IPath ignores trailing seperators so we must as well
+				//the .equals method of IPath ignores trailing separators so we must as well
 				if (!dpath.removeTrailingSeparator().toOSString().equalsIgnoreCase(lpath.removeTrailingSeparator().toOSString())) {
 					return false;
 				}
@@ -203,9 +207,10 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * Returns a runtime classpath entry for the given library in the specified VM.
 	 * 
-	 * @param vm
-	 * @param location
-	 * @param kind
+	 * @param vm the VM
+	 * @param location the location
+	 * @param kind the classpath entry kind
+	 * @param overrideJavaDoc if the JavaDoc location should be overridden or not
 	 * @return runtime classpath entry
 	 * @since 3.2
 	 */

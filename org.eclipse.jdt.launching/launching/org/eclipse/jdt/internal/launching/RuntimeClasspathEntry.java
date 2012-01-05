@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * An entry on the runtime classpath that the user can manipulate
@@ -94,7 +93,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			default:
-				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
 		}
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
@@ -112,7 +111,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(CONTAINER);
 				break;
 			default:
-				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
@@ -214,6 +213,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	
 	/**
 	 * Throws an internal error exception
+	 * @param message the message
+	 * @param e the error
+	 * @throws CoreException the new {@link CoreException}
 	 */
 	protected void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
@@ -314,7 +316,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 	
 	/**
-	 * Returns the resource in the workspace assciated with the given
+	 * Returns the resource in the workspace associated with the given
 	 * absolute path, or <code>null</code> if none. The path may have
 	 * a device.
 	 * 
@@ -325,10 +327,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (path != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			// look for files or folders with the given path
+			@SuppressWarnings("deprecation")
 			IFile[] files = root.findFilesForLocation(path);
 			if (files.length > 0) {
 				return files[0];
 			}
+			@SuppressWarnings("deprecation")
 			IContainer[] containers = root.findContainersForLocation(path);
 			if (containers.length > 0) {
 				return containers[0];
@@ -371,8 +375,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		return path;
 	}
 
-	/**
-	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentRootPath(org.eclipse.core.runtime.IPath)
 	 */
 	public void setSourceAttachmentRootPath(IPath path) {
 		if (path != null && path.isEmpty()) {
@@ -382,7 +386,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 	
 	/**
-	 * Initlaizes the classpath property based on this entry's type.
+	 * Initializes the classpath property based on this entry's type.
 	 */
 	private void initializeClasspathProperty() {
 		switch (getType()) {
@@ -410,8 +414,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		fClasspathProperty = location;
 	}
 
-	/**
-	 * @see IRuntimeClasspathEntry#getClasspathProperty(int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathProperty()
 	 */
 	public int getClasspathProperty() {
 		return fClasspathProperty;
@@ -450,7 +454,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 	
 	/**
-	 * Returns the OS path for the given aboslute or workspace relative path
+	 * Returns the OS path for the given absolute or workspace relative path
+	 * @param path the path
+	 * @return the OS path
 	 */
 	protected String resolveToOSPath(IPath path) {
 		if (path != null) {
@@ -514,6 +520,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 
 	/**
 	 * Returns whether the given objects are equal, accounting for null
+	 * @param one the object to compare
+	 * @param two the object to compare to
+	 * @return the equality of the objects
 	 */
 	protected boolean equal(Object one, Object two) {
 		if (one == null) {
@@ -577,6 +586,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * Creates a new underlying classpath entry for this runtime classpath entry
 	 * with the given paths, due to a change in source attachment.
+	 * @param path the path
+	 * @param sourcePath the source path
+	 * @param rootPath the root path
 	 */
 	protected void updateClasspathEntry(IPath path, IPath sourcePath, IPath rootPath) {
 		IClasspathEntry entry = null;
@@ -597,6 +609,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * Returns the resolved classpath entry associated with this runtime
 	 * entry, resolving if required.
+	 * @return the resolved {@link IClasspathEntry}
 	 */
 	protected IClasspathEntry getResolvedClasspathEntry() {
 		if (fResolvedEntry == null) {

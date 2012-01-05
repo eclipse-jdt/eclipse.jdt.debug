@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,39 +53,39 @@ public interface IExecutionEnvironment {
 	public String getDescription();
 	
 	/**
-	 * Returns a collection of vm installs compatible with this environment,
+	 * Returns a collection of VM installs compatible with this environment,
 	 * possibly empty.
 	 * 
-	 * @return a collection of vm installs compatible with this environment,
+	 * @return a collection of VM installs compatible with this environment,
 	 *  possibly empty.
 	 */
 	public IVMInstall[] getCompatibleVMs();
 	
 	/**
-	 * Returns whether the specified vm install is strictly compatible with 
-	 * this environment. Returns <code>true</code> to indicate the vm install
+	 * Returns whether the specified VM install is strictly compatible with 
+	 * this environment. Returns <code>true</code> to indicate the VM install
 	 * is strictly compatible with this environment and <code>false</code> to indicate
-	 * the vm install represents a superset of this environment.
+	 * the VM install represents a superset of this environment.
 	 * 
-	 * @param vm vm install
-	 * @return whether the vm install is strictly compatible with this environment
+	 * @param vm VM install
+	 * @return whether the VM install is strictly compatible with this environment
 	 */
 	public boolean isStrictlyCompatible(IVMInstall vm);
 	
 	/**
-	 * Returns the vm that is used by default for this execution environment,
+	 * Returns the VM that is used by default for this execution environment,
 	 * or <code>null</code> if none.
 	 * 
-	 * @return default vm for this environment or <code>null</code> if none
+	 * @return default VM for this environment or <code>null</code> if none
 	 */
 	public IVMInstall getDefaultVM();
 	
 	/**
-	 * Sets the vm to use by default for this execution environment.
+	 * Sets the VM to use by default for this execution environment.
 	 * 
-	 * @param vm vm to use by default for this execution environment,
+	 * @param vm VM to use by default for this execution environment,
 	 *  or <code>null</code> to clear the default setting
-	 * @exception IllegalArgumentException if the given vm is not compatible with
+	 * @exception IllegalArgumentException if the given VM is not compatible with
 	 *  this environment
 	 */
 	public void setDefaultVM(IVMInstall vm);
@@ -100,7 +100,7 @@ public interface IExecutionEnvironment {
 	 * contributed in a <code>org.eclipse.jdt.launching.executionEnvironments</code>
 	 * extension.
 	 * </p>
-	 * @param vm the vm that access rules are requested for
+	 * @param vm the VM that access rules are requested for
 	 * @param libraries the libraries that access rules are requested for 
 	 * @param project the project the access rules are requested for or <code>null</code> if none
 	 * @return a collection of arrays of access rules - one array per library
@@ -135,5 +135,5 @@ public interface IExecutionEnvironment {
 	 * 	<code>null</code>
 	 * @since 3.5
 	 */
-	public Map getComplianceOptions();
+	public Map<String, String> getComplianceOptions();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Resolves variables of the form ${ee_home:<id>}
@@ -39,12 +38,12 @@ public class ExecutionEnvironmentVariableResolver implements IDynamicVariableRes
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(argument);
 		if (env == null) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(EnvironmentMessages.ExecutionEnvironmentVariableResolver_1, new String[]{argument})));
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(EnvironmentMessages.ExecutionEnvironmentVariableResolver_1, new String[]{argument})));
 		}
 		IPath path = JavaRuntime.newJREContainerPath(env);
 		IVMInstall jre = JavaRuntime.getVMInstall(path);
 		if (jre == null) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(EnvironmentMessages.ExecutionEnvironmentVariableResolver_2, new String[]{argument})));
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(EnvironmentMessages.ExecutionEnvironmentVariableResolver_2, new String[]{argument})));
 		}
 		return jre.getInstallLocation().getAbsolutePath();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Abstract implementation of a VM install type.
@@ -36,14 +35,14 @@ import com.ibm.icu.text.MessageFormat;
  */
 
 public abstract class AbstractVMInstallType implements IVMInstallType, IExecutableExtension {
-	private List fVMs;
+	private List<IVMInstall> fVMs;
 	private String fId;
 	
 	/**
 	 * Constructs a new VM install type.
 	 */
 	protected AbstractVMInstallType() {
-		fVMs= new ArrayList(10);
+		fVMs= new ArrayList<IVMInstall>(10);
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +51,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	public IVMInstall[] getVMInstalls() {
 		IVMInstall[] vms= new IVMInstall[fVMs.size()];
-		return (IVMInstall[])fVMs.toArray(vms);
+		return fVMs.toArray(vms);
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +60,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	public void disposeVMInstall(String id) {
 		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= (IVMInstall)fVMs.get(i);
+			IVMInstall vm= fVMs.get(i);
 			if (vm.getId().equals(id)) {
 				fVMs.remove(i);
 				JavaRuntime.fireVMRemoved(vm);
@@ -76,7 +75,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	public IVMInstall findVMInstall(String id) {
 		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= (IVMInstall)fVMs.get(i);
+			IVMInstall vm= fVMs.get(i);
 			if (vm.getId().equals(id)) {
 				return vm;
 			}
@@ -91,7 +90,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	public IVMInstall createVMInstall(String id) throws IllegalArgumentException {
 		if (findVMInstall(id) != null) {
 			String format= LaunchingMessages.vmInstallType_duplicateVM; 
-			throw new IllegalArgumentException(MessageFormat.format(format, new String[] { id }));
+			throw new IllegalArgumentException(NLS.bind(format, new String[] { id }));
 		}
 		IVMInstall vm= doCreateVMInstall(id);
 		fVMs.add(vm);
@@ -108,9 +107,6 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	protected abstract IVMInstall doCreateVMInstall(String id);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	/**
 	 * Initializes the id parameter from the "id" attribute
 	 * in the configuration markup.
@@ -143,7 +139,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	public IVMInstall findVMInstallByName(String name) {
 		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= (IVMInstall)fVMs.get(i);
+			IVMInstall vm= fVMs.get(i);
 			if (vm.getName().equals(name)) {
 				return vm;
 			}

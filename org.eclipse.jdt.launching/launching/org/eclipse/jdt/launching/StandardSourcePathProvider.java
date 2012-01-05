@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 /**
  * Default implementation of source lookup path computation and resolution.
  * <p>
- * This class may be subclassed.
+ * This class may be sub-classed.
  * </p>
  * @since 2.0
  */
@@ -59,7 +59,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 	 */
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List all = new UniqueList(entries.length);
+		List<IRuntimeClasspathEntry> all = new UniqueList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			switch (entries[i].getType()) {
 				case IRuntimeClasspathEntry.PROJECT:
@@ -96,7 +96,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					break;
 			}
 		}
-		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
+		return all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
 
     /**
@@ -105,7 +105,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
      * @param entry runtime classpath entry
      * @param all list to add references to
      */
-    protected void addManifestReferences(IRuntimeClasspathEntry entry, List all) {
+    protected void addManifestReferences(IRuntimeClasspathEntry entry, List<IRuntimeClasspathEntry> all) {
         if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
             String location = entry.getLocation();
             if (location != null) {
@@ -150,37 +150,37 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
      * An ArrayList that acts like a set -i.e. does not allow duplicate items.
      * hack for bug 112774
      */
-    class UniqueList extends ArrayList {
+    class UniqueList extends ArrayList<IRuntimeClasspathEntry> {
         private static final long serialVersionUID = -7402160651027036270L;
-        HashSet set;
+        HashSet<IRuntimeClasspathEntry> set;
         
         public UniqueList(int length) {
             super(length);
-            set = new HashSet(length);
+            set = new HashSet<IRuntimeClasspathEntry>(length);
         }
 
         @Override
-		public void add(int index, Object element) {
+		public void add(int index, IRuntimeClasspathEntry element) {
             if (set.add(element))
                 super.add(index, element);
         }
 
         @Override
-		public boolean add(Object o) {
+		public boolean add(IRuntimeClasspathEntry o) {
             if (set.add(o))
                 return super.add(o);
             return false;
         }
 
         @Override
-		public boolean addAll(Collection c) {
-            if (set.addAll(c))
+        public boolean addAll(Collection<? extends IRuntimeClasspathEntry> c) {
+        	if (set.addAll(c))
                 return super.addAll(c);
             return false;
         }
 
         @Override
-		public boolean addAll(int index, Collection c) {
+		public boolean addAll(int index, Collection<? extends IRuntimeClasspathEntry> c) {
             if (set.addAll(c))
                 return super.addAll(index, c);
             return false;
@@ -203,8 +203,8 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
         }
 
         @Override
-		public Object remove(int index) {
-            Object object = super.remove(index);
+		public IRuntimeClasspathEntry remove(int index) {
+            IRuntimeClasspathEntry object = super.remove(index);
             set.remove(object);
             return object;
         }
@@ -216,7 +216,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
         }
 
         @Override
-		public Object set(int index, Object element) {
+		public IRuntimeClasspathEntry set(int index, IRuntimeClasspathEntry element) {
             set.remove(element);
             if (set.add(element))
                 return super.set(index, element);

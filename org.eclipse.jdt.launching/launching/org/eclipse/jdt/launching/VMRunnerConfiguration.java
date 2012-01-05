@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * <p>
  * Clients may instantiate this class.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class VMRunnerConfiguration {
 	private String fClassToLaunch;
@@ -32,7 +32,7 @@ public class VMRunnerConfiguration {
 	private String[] fClassPath;
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
-	private Map fVMSpecificAttributesMap;
+	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
 	
 	private static final String[] fgEmpty= new String[0];
@@ -62,7 +62,7 @@ public class VMRunnerConfiguration {
 	 * @param map the <code>Map</code> of VM-specific attributes.
 	 * @since 2.0
 	 */
-	public void setVMSpecificAttributesMap(Map map) {
+	public void setVMSpecificAttributesMap(Map<String, Object> map) {
 		fVMSpecificAttributesMap = map;
 	}
 
@@ -136,7 +136,7 @@ public class VMRunnerConfiguration {
 	 * @return The <code>Map</code> of VM-specific attributes or <code>null</code>.
 	 * @since 2.0
 	 */
-	public Map getVMSpecificAttributesMap() {
+	public Map<String, Object> getVMSpecificAttributesMap() {
 		return fVMSpecificAttributesMap;
 	}
 	

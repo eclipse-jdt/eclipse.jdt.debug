@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,14 +37,14 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 	/**
 	 * Cache of access rules per environment. Re-use rules between projects.
 	 */
-	private static Map fgRules = new HashMap();
+	private static Map<String, IAccessRule[][]> fgRules = new HashMap<String, IAccessRule[][]>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
 	 */
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		IAccessRule[][] allRules = null;
-		allRules = (IAccessRule[][]) fgRules.get(environment.getId());
+		allRules = fgRules.get(environment.getId());
 		if (allRules == null || allRules.length != libraries.length) {
 			// if a different number of libraries, create a new set of rules
 			String[] packages = retrieveSystemPackages(environment);

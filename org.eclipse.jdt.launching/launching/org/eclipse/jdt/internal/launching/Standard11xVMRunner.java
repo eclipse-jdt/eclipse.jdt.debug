@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,10 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		
 		String program= constructProgramString(config);
 		
-		List arguments= new ArrayList();
+		List<String> arguments= new ArrayList<String>();
 		arguments.add(program);
 				
-		// VM args are the first thing after the java program so that users can specify
+		// VM arguments are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first option
 		String[] vmArgs= combineVmArgs(config, fVMInstance);
 		addArguments(vmArgs, arguments);
