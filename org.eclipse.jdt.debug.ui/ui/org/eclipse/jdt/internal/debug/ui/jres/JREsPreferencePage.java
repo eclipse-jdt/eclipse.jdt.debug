@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
@@ -47,8 +48,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Installed JREs preference page.
@@ -146,7 +145,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 					//generated class files
 					String compliance = getCurrentCompilerCompliance();
 					if(!supportsCurrentCompliance(install, compliance)) {
-						setMessage(MessageFormat.format(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
+						setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
 						fCompliance.setVisible(true);
 					}
 					else {
@@ -169,7 +168,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	public boolean isValid() {
 		String compliance = getCurrentCompilerCompliance();
 		if(!supportsCurrentCompliance(getCurrentDefaultVM(), compliance)) {
-			setMessage(MessageFormat.format(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
+			setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
 			fCompliance.setVisible(true);
 		}
 		else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated.
  * </p>
  * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaArgumentsTab extends JavaLaunchTab {
 		
@@ -81,6 +81,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * Creates a control to specify a working directory.
 	 * 
+	 * @return the new {@link WorkingDirectoryBlock}
 	 * @since 3.4
 	 */
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
@@ -227,6 +228,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
+	 * @param text the widget to get the value from
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {

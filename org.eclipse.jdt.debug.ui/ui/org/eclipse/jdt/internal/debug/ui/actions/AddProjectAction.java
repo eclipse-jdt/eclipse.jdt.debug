@@ -32,10 +32,12 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Adds a project to the runtime class path.
@@ -44,9 +46,9 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	
 	class ContentProvider implements IStructuredContentProvider {
 		
-		private List fProjects;
+		private List<?> fProjects;
 		
-		public ContentProvider(List projects) {
+		public ContentProvider(List<?> projects) {
 			fProjects = projects;
 		}
 		
@@ -85,7 +87,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 */	
 	@Override
 	public void run() {
-		List projects = getPossibleAdditions();
+		List<IJavaProject> projects = getPossibleAdditions();
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects);
 		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); 
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "One or more exceptions occurred while adding projects.", null);  //$NON-NLS-1$
@@ -93,7 +95,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		if (dialog.open() == Window.OK) {			
 			Object[] selections = dialog.getResult();
 			
-			List additions = new ArrayList(selections.length);
+			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -107,8 +109,8 @@ public class AddProjectAction extends RuntimeClasspathAction {
 				status.add(e.getStatus());
 			}
 			
-			List runtimeEntries = new ArrayList(additions.size());
-			Iterator iter = additions.iterator();
+			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<IRuntimeClasspathEntry>(additions.size());
+			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
 				IJavaProject jp = (IJavaProject)iter.next();
 				runtimeEntries.add(JavaRuntime.newProjectRuntimeClasspathEntry(jp));
@@ -145,7 +147,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	/**
 	 * Returns the possible projects that can be added
 	 */
-	protected List getPossibleAdditions() {
+	protected List<IJavaProject> getPossibleAdditions() {
 		IJavaProject[] projects;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
@@ -154,11 +156,11 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List remaining = new ArrayList();
+		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List alreadySelected = new ArrayList();
+		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
@@ -179,7 +181,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 *  projects
 	 * @param res the list to add all required projects too
 	 */
-	protected void collectRequiredProjects(IJavaProject proj, List res) throws JavaModelException {
+	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
 			
@@ -206,7 +208,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * @param runtimeEntries
 	 * @throws JavaModelException
 	 */
-	protected void collectExportedEntries(IJavaProject proj, List runtimeEntries) throws CoreException {
+	protected void collectExportedEntries(IJavaProject proj, List<IRuntimeClasspathEntry> runtimeEntries) throws CoreException {
 		IClasspathEntry[] entries = proj.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];

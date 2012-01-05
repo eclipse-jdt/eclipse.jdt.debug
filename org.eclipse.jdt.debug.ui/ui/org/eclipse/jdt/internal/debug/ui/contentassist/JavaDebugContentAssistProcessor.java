@@ -146,7 +146,7 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 				 localVariableTypeNames, localVariableNames,
 				 localModifiers, fContext.isStatic(), fCollector);
 			
-			List total = new ArrayList();
+			List<IJavaCompletionProposal> total = new ArrayList<IJavaCompletionProposal>();
 			total.addAll(Arrays.asList(fCollector.getJavaCompletionProposals()));
 			
 			if (fJavaEngine != null) {

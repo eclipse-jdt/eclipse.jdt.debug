@@ -37,7 +37,7 @@ public class ProjectClasspathArgumentSelector implements IArgumentSelector {
 		dialog.setTitle(LauncherMessages.ProjectClasspathArugumentSelector_0);
 		dialog.setMultipleSelection(false);
 		dialog.setMessage(LauncherMessages.ProjectClasspathArugumentSelector_1);
-		List javaProjects = new ArrayList();
+		List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IJavaProject jp = JavaCore.create(projects[i]);

@@ -12,14 +12,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
 

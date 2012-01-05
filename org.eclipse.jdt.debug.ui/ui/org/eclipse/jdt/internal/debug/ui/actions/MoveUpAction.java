@@ -31,14 +31,14 @@ public class MoveUpAction extends RuntimeClasspathAction {
 	 */
 	@Override
 	public void run() {
-		List targets = getOrderedSelection();
+		List<?> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
 		int top = 0;
 		int index = 0;
-		List list = getEntriesAsList();
-		Iterator entries = targets.iterator();
+		List<Object> list = getEntriesAsList();
+		Iterator<?> entries = targets.iterator();
 		while (entries.hasNext()) {
 			Object target = entries.next();
 			index = list.indexOf(target);

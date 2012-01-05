@@ -53,8 +53,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Support for launching scrapbook using launch configurations.
@@ -75,9 +74,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		
 	private IJavaLineBreakpoint fMagicBreakpoint;
 	
-	private HashMap fScrapbookToVMs = new HashMap(10);
-	private HashMap fVMsToBreakpoints = new HashMap(10);
-	private HashMap fVMsToScrapbooks = new HashMap(10);
+	private HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<IFile, IDebugTarget>(10);
+	private HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<IDebugTarget, IBreakpoint>(10);
+	private HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<IDebugTarget, IFile>(10);
 	
 	private static ScrapbookLauncher fgDefault = null;
 	
@@ -129,7 +128,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return null;
 		}
 		
-		List cp = new ArrayList(3);
+		List<IRuntimeClasspathEntry> cp = new ArrayList<IRuntimeClasspathEntry>(3);
 		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarURL.getFile()));
 		cp.add(supportEntry);
 		// get bootpath entries
@@ -195,7 +194,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 			
 			// convert to mementos 
-			List classpathList= new ArrayList(classPath.length);
+			List<String> classpathList= new ArrayList<String>(classPath.length);
 			for (int i = 0; i < classPath.length; i++) {
 				classpathList.add(classPath[i].getMemento());
 			}
@@ -344,7 +343,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 */
 	public static ILaunchConfiguration createLaunchConfigurationTemplate(IFile page) throws CoreException {
 		ILaunchConfigurationType lcType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		String name = MessageFormat.format(SnippetMessages.getString("ScrapbookLauncher.17"), new String[]{page.getName()}); //$NON-NLS-1$
+		String name = NLS.bind(SnippetMessages.getString("ScrapbookLauncher.17"), new String[]{page.getName()}); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 		wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$			

@@ -22,8 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
@@ -43,7 +42,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	 */
 	@Override
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.ClassPrepareBreakpointTypeChange_0,
+		return NLS.bind(RefactoringMessages.ClassPrepareBreakpointTypeChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 	}
 
@@ -53,7 +52,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
 		// TODO - start/end should be adjusted, but can access new CU from model yet
 		ISourceRange range = fDestType.getNameRange();

@@ -52,7 +52,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	/**
 	 * Map of view id to qualified name setting
 	 */
-	private Map fQualifiedNameSettings = new HashMap();
+	private Map<String, Boolean> fQualifiedNameSettings = new HashMap<String, Boolean>();
 	private boolean fQualifiedNames = false;
 	
 	/**

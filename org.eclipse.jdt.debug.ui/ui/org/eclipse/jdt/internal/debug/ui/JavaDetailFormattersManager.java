@@ -57,10 +57,12 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
+import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.Expression;
+import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.Key;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 
 /**
@@ -88,13 +90,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * Map of types to the associated formatter (code snippet).
 	 * (<code>String</code> -> <code>String</code>)
 	 */
-	private HashMap fDetailFormattersMap;
+	private HashMap<String, DetailFormatter> fDetailFormattersMap;
 	
 	/**
 	 * Cache of compiled expressions.
 	 * Associate a pair type name/debug target to a compiled expression.
 	 */
-	private HashMap fCacheMap;
+	private HashMap<Key, Expression> fCacheMap;
 	
 	/**
 	 * JavaDetailFormattersManager constructor.
@@ -105,7 +107,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
-		fCacheMap= new HashMap();
+		fCacheMap= new HashMap<Key, Expression>();
 	}
 	
 	/**
@@ -113,7 +115,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	private void populateDetailFormattersMap() {
 		String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-		fDetailFormattersMap= new HashMap(detailFormattersList.length / 3);
+		fDetailFormattersMap= new HashMap<String, DetailFormatter>(detailFormattersList.length / 3);
 		for (int i= 0, length= detailFormattersList.length; i < length;) {
 			String typeName= detailFormattersList[i++];
 			String snippet= detailFormattersList[i++].replace('\u0000', ',');
@@ -317,10 +319,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	
 	
 	private void savePreference() {
-		Collection valuesList= fDetailFormattersMap.values();
+		Collection<DetailFormatter> valuesList= fDetailFormattersMap.values();
 		String[] values= new String[valuesList.size() * 3];
 		int i= 0;
-		for (Iterator iter= valuesList.iterator(); iter.hasNext();) {
+		for (Iterator<DetailFormatter> iter= valuesList.iterator(); iter.hasNext();) {
 			DetailFormatter detailFormatter= (DetailFormatter) iter.next();
 			values[i++]= detailFormatter.getTypeName();
 			values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
@@ -505,7 +507,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @param debugTarget 
 	 */
 	private synchronized void deleteCacheForTarget(IJavaDebugTarget debugTarget) {
-		for (Iterator iter= fCacheMap.keySet().iterator(); iter.hasNext();) {
+		for (Iterator<Key> iter= fCacheMap.keySet().iterator(); iter.hasNext();) {
 			Key key= (Key) iter.next();
 			if ((key).fDebugTarget == debugTarget) {
 				iter.remove();
@@ -604,7 +606,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					Throwable throwable= exception.getStatus().getException();
 					error.append("\n\t\t"); //$NON-NLS-1$
 					if (throwable instanceof InvocationException) {
-						error.append(MessageFormat.format(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
+						error.append(NLS.bind(DebugUIMessages.JavaDetailFormattersManager_An_exception_occurred___0__3, new String[] {((InvocationException) throwable).exception().referenceType().name()}));
 					} else if (throwable instanceof UnsupportedOperationException) {
 						error = new StringBuffer();
 						error.append(DebugUIMessages.JavaDetailFormattersManager_7);

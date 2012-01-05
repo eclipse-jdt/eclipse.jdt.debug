@@ -100,7 +100,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			Object[] launchChildren = launch.getChildren();
 			delta = delta.addNode(launch, indexOf(launches, launch), IModelDelta.NO_CHANGE, launchChildren.length);
 			IJavaDebugTarget debugTarget = (IJavaDebugTarget) thread.getDebugTarget();
-			List groups = new ArrayList();
+			List<IJavaThreadGroup> groups = new ArrayList<IJavaThreadGroup>();
 			try{
 				delta = delta.addNode(debugTarget, indexOf(launchChildren, debugTarget), IModelDelta.NO_CHANGE, debugTarget.getRootThreadGroups().length);
 				IJavaThread javaThread = (IJavaThread) thread;
@@ -109,7 +109,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					groups.add(0, threadGroup);
 					threadGroup = threadGroup.getThreadGroup();
 				}
-				Iterator iterator = groups.iterator();
+				Iterator<IJavaThreadGroup> iterator = groups.iterator();
 				while (iterator.hasNext()) {
 					IJavaThreadGroup group = (IJavaThreadGroup) iterator.next();
 					int index = -1;

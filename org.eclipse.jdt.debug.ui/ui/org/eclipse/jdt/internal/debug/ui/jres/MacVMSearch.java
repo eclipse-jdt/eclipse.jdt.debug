@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.File;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Searches for installed JREs on the MAC, in known location.
@@ -50,7 +50,7 @@ public class MacVMSearch {
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, descriptors.length);
 		IVMInstallType macVMType = JavaRuntime.getVMInstallType(InstalledJREsBlock.MACOSX_VM_TYPE_ID);
-		List vms = new ArrayList();
+		List<VMStandin> vms = new ArrayList<VMStandin>();
 		if (macVMType != null) {
 			for (int i = 0; i < descriptors.length; i++) {
 				JREDescriptor descriptor = descriptors[i];
@@ -64,7 +64,7 @@ public class MacVMSearch {
 						VMStandin vm= new VMStandin(macVMType, id);
 						vm.setInstallLocation(home);
 						String format= isDefault ? JREMessages.MacVMSearch_1 : JREMessages.MacVMSearch_2;
-						vm.setName(MessageFormat.format(format, new Object[] { name } ));
+						vm.setName(NLS.bind(format, new Object[] { name } ));
 						vm.setLibraryLocations(macVMType.getDefaultLibraryLocations(home));
 						URL doc= ((AbstractVMInstallType)macVMType).getDefaultJavadocLocation(home);
 						if (doc != null) {

@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adds an external jar to the runtime class path.
@@ -57,7 +57,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 		int nChosen = fileNames.length;
 			
 		IPath filterPath = new Path(dialog.getFilterPath());
-		ArrayList list = new ArrayList();
+		ArrayList<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>();
 		IPath path = null;
 		for (int i= 0; i < nChosen; i++) {
 			path = filterPath.append(fileNames[i]).makeAbsolute();	
@@ -65,7 +65,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 				list.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
 			}
 			else {
-				MessageDialog.openError(getShell(), ActionMessages.AddExternalJarAction_error_box_title, MessageFormat.format(ActionMessages.AddExternalJarAction_error_box_message, new String[] {path.makeAbsolute().toOSString()}));
+				MessageDialog.openError(getShell(), ActionMessages.AddExternalJarAction_error_box_title, NLS.bind(ActionMessages.AddExternalJarAction_error_box_message, new String[] {path.makeAbsolute().toOSString()}));
 			}
 		}
 		if(list.size() > 0) {

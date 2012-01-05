@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
 
-	protected List childEntries = new ArrayList();
+	protected List<Object> childEntries = new ArrayList<Object>();
 	protected IClasspathEntry parent = null;
 
 	/* (non-Javadoc)

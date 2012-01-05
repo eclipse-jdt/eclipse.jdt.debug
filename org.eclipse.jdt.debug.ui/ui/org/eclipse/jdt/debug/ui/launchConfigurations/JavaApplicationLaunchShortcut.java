@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 /**
  * Launch shortcut for local Java applications.
  * <p>
- * This class may be instantiated or subclassed.
+ * This class may be instantiated or sub-classed.
  * </p>
  * @since 3.3
  */
@@ -55,7 +55,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	 * @since 3.5
 	 */
 	protected IJavaElement[] getJavaElements(Object[] objects) {
-		List list= new ArrayList(objects.length);
+		List<IJavaElement> list= new ArrayList<IJavaElement>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IAdaptable) {
@@ -72,7 +72,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 				}
 			}
 		}
-		return (IJavaElement[]) list.toArray(new IJavaElement[list.size()]);
+		return list.toArray(new IJavaElement[list.size()]);
 	}
 	
 	/* (non-Javadoc)

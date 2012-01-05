@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * JRE Descriptor used for the JRE container wizard page.
@@ -24,7 +23,7 @@ public class BuildJREDescriptor extends JREDescriptor {
 	 */
 	@Override
 	public String getDescription() {
-		return MessageFormat.format(JREMessages.BuildJREDescriptor_0, new String[]{JavaRuntime.getDefaultVMInstall().getName()}); 
+		return NLS.bind(JREMessages.BuildJREDescriptor_0, new String[]{JavaRuntime.getDefaultVMInstall().getName()}); 
 	}
 
 }

@@ -62,7 +62,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 			@Override
 			public void keyPressed(KeyEvent event) {
 				if (updateSelection(RuntimeClasspathAction.REMOVE, (IStructuredSelection)getSelection()) && event.character == SWT.DEL && event.stateMask == 0) {
-					List selection= getSelectionFromWidget();
+					List<?> selection= getSelectionFromWidget();
 					getClasspathContentProvider().removeAll(selection);
 					notifyChanged();
 				}
@@ -97,7 +97,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		IStructuredSelection sel = (IStructuredSelection) getSelection();
 		Object beforeElement = sel.getFirstElement();
 		resolveCurrentParent(getSelection());
-		List existingEntries= Arrays.asList(fCurrentParent.getEntries());
+		List<IClasspathEntry> existingEntries= Arrays.asList(fCurrentParent.getEntries());
 		for (int i = 0; i < entries.length; i++) {
 			if (!existingEntries.contains(entries[i])) {
 				getClasspathContentProvider().add(fCurrentParent, entries[i], beforeElement);
@@ -109,7 +109,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	
 	private boolean resolveCurrentParent(ISelection selection) {
 		fCurrentParent= null;
-		Iterator selected= ((IStructuredSelection)selection).iterator();
+		Iterator<?> selected= ((IStructuredSelection)selection).iterator();
 		
 		while (selected.hasNext()) {
 			Object element = selected.next();
@@ -213,7 +213,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		}
 		switch (actionType) {
 			case RuntimeClasspathAction.ADD :
-				Iterator selected= selection.iterator();
+				Iterator<?> selected= selection.iterator();
 				while (selected.hasNext()) {
 					IClasspathEntry entry = (IClasspathEntry)selected.next();
 					if (!entry.isEditable() && entry instanceof ClasspathEntry) {
@@ -243,8 +243,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 */
 	public ISelection getSelectedEntries() {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
-		List entries= new ArrayList(selection.size() * 2);
-		Iterator itr= selection.iterator();
+		List<IClasspathEntry> entries= new ArrayList<IClasspathEntry>(selection.size() * 2);
+		Iterator<?> itr= selection.iterator();
 		while (itr.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) itr.next();
 			if (element.hasEntries()) {

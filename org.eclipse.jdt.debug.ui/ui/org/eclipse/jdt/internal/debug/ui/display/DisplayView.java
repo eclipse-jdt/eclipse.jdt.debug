@@ -82,7 +82,6 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
-
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -147,8 +146,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected IAction fClearDisplayAction;
 	protected DisplayViewAction fContentAssistAction;
 
-	protected Map fGlobalActions= new HashMap(4);
-	protected List fSelectionActions= new ArrayList(3);
+	protected Map<String, IAction> fGlobalActions= new HashMap<String, IAction>(4);
+	protected List<String> fSelectionActions= new ArrayList<String>(3);
 
 	protected String fRestoredContents= null;
 	/**
@@ -399,7 +398,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	}
 	
 	protected void updateActions() {
-		Iterator iterator = fSelectionActions.iterator();
+		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
 			IAction action = (IAction) fGlobalActions.get(iterator.next());
 			if (action instanceof IUpdate) {
@@ -484,7 +483,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	}
 	
 	protected void updateSelectionDependentActions() {
-		Iterator iterator= fSelectionActions.iterator();
+		Iterator<String> iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
 			updateAction((String)iterator.next());
 	}

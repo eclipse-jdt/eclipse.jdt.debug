@@ -36,10 +36,10 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
@@ -213,9 +213,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
+		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
 		if (exception.getMessage() != null) {
-			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
+			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
 		}
 		return message;
 	}
@@ -226,7 +226,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
+			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
 	}
     
 	/**

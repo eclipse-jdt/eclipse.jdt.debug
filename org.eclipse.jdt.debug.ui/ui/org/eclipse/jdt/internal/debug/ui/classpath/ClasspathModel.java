@@ -32,7 +32,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			return null;
 		}
 		ClasspathEntry newEntry= createEntry((IRuntimeClasspathEntry)entry, null);
-		Iterator entries= childEntries.iterator();
+		Iterator<Object> entries= childEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof ClasspathGroup) {
@@ -61,7 +61,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 			
 		ClasspathEntry newEntry= createEntry(entry, entryParent);
-		Iterator entries= childEntries.iterator();
+		Iterator<Object> entries= childEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof ClasspathGroup) {

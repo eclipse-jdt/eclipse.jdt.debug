@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -74,9 +75,9 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 * 
 	 * @return targets for an action
 	 */
-	protected List getOrderedSelection() {
-		List targets = new ArrayList();
-		List selection = ((IStructuredSelection)getViewer().getSelection()).toList();
+	protected List<IRuntimeClasspathEntry> getOrderedSelection() {
+		List<IRuntimeClasspathEntry> targets = new ArrayList<IRuntimeClasspathEntry>();
+		List<?> selection = ((IStructuredSelection)getViewer().getSelection()).toList();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry target = entries[i];
@@ -90,9 +91,9 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * Returns a list (copy) of the entries in the viewer
 	 */
-	protected List getEntriesAsList() {
+	protected List<IRuntimeClasspathEntry> getEntriesAsList() {
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
-		List list = new ArrayList(entries.length);
+		List<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
@@ -102,7 +103,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * Updates the entries to the entries in the given list
 	 */
-	protected void setEntries(List list) {
+	protected void setEntries(List<?> list) {
 		getViewer().setEntries((IRuntimeClasspathEntry[])list.toArray(new IRuntimeClasspathEntry[list.size()]));
 		// update all selection listeners
 		getViewer().setSelection(getViewer().getSelection());
@@ -116,8 +117,8 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 		if (selection.isEmpty()) {
 			return false;
 		}
-		Iterator entries = selection.iterator();
-		List list = getEntriesAsList();
+		Iterator<?> entries = selection.iterator();
+		List<IRuntimeClasspathEntry> list = getEntriesAsList();
 		while (entries.hasNext()) {
 			Object next = entries.next();
 			if (list.indexOf(next) == index) {

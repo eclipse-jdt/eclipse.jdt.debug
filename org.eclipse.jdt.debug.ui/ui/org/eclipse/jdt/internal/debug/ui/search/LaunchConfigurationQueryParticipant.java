@@ -288,11 +288,11 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 				if (activate) {
 					try {
 						ILaunchConfiguration config = (ILaunchConfiguration) o;
-						Set modes =  config.getType().getSupportedModeCombinations();
+						Set<?> modes =  config.getType().getSupportedModeCombinations();
 						ILaunchGroup group = null;
-						Set mode = null;
-						for (Iterator iter = modes.iterator(); iter.hasNext();) {
-							mode = (Set) iter.next();
+						Set<?> mode = null;
+						for (Iterator<?> iter = modes.iterator(); iter.hasNext();) {
+							mode = (Set<?>) iter.next();
 							if(mode.size() == 1) {
 								group = DebugUITools.getLaunchGroup(config, (String) mode.iterator().next());
 								if (group != null) {

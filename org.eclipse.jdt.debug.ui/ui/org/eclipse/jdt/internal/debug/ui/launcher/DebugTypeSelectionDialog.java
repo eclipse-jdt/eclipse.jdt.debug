@@ -52,7 +52,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Main list label provider
 	 */
 	public class DebugTypeLabelProvider implements ILabelProvider {
-		HashMap fImageMap = new HashMap();
+		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<ImageDescriptor, Image>();
 
 		public Image getImage(Object element) {
 			if(element instanceof IAdaptable) {
@@ -239,7 +239,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 */
 	@Override
 	protected Comparator getItemsComparator() {
-		Comparator comp = new Comparator() {
+		Comparator<?> comp = new Comparator<Object>() {
             public int compare(Object o1, Object o2) {
             	if(o1 instanceof IType && o2 instanceof IType) {
             		return ((IType)o1).getElementName().compareTo(((IType)o2).getElementName());

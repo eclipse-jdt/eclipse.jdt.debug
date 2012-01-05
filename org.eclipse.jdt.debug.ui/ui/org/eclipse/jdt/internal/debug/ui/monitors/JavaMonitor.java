@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -53,7 +54,7 @@ public class JavaMonitor {
 	 * The List of JavaContendedMonitor and JavaOwnedMonitor associated with this
 	 * monitor.
 	 */
-	private List fElements= new ArrayList();
+	private List<PlatformObject> fElements= new ArrayList<PlatformObject>();
 	
 	public JavaMonitor(IJavaObject monitor) {
 		fMonitor= monitor;

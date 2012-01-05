@@ -95,9 +95,9 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 	 * Filters out source references from the given code resolve results.
 	 * A utility method that can be called by subclassers. 
 	 */
-	protected List filterResolveResults(IJavaElement[] codeResolveResults) {
+	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
-		List refs= new ArrayList(nResults);
+		List<IJavaElement> refs= new ArrayList<IJavaElement>(nResults);
 		for (int i= 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference) {
 				refs.add(codeResolveResults[i]);
@@ -111,7 +111,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 	 * Shows a dialog for resolving an ambigous Java element.
 	 * Utility method that can be called by subclassers.
 	 */
-	protected IJavaElement selectJavaElement(List elements, Shell shell, String title, String message) {
+	protected IJavaElement selectJavaElement(List<IJavaElement> elements, Shell shell, String title, String message) {
 		
 		int nResults= elements.size();
 		

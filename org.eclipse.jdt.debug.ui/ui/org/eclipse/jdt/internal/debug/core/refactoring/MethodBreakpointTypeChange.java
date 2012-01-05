@@ -23,8 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
@@ -43,9 +42,9 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 	 */
 	@Override
 	public String getName() {
-		String msg = MessageFormat.format(RefactoringMessages.MethodBreakpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
+		String msg = NLS.bind(RefactoringMessages.MethodBreakpointTypeChange_1, new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 		if(!"".equals(fDestType.getElementName())) { //$NON-NLS-1$
-			msg = MessageFormat.format(RefactoringMessages.MethodBreakpointTypeChange_0,
+			msg = NLS.bind(RefactoringMessages.MethodBreakpointTypeChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestType.getElementName()});
 		}
 		return msg;
@@ -72,7 +71,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 				}
 			}
 		}
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destMethod);
 		IResource resource = BreakpointUtils.getBreakpointResource(destMethod);
 		int[] range = getNewLineNumberAndRange(destMethod);

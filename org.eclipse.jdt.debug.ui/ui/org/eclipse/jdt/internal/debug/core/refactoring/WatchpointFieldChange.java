@@ -21,8 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 3.2
@@ -42,7 +41,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 	 */
 	@Override
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.WatchpointFieldChange_0,
+		return NLS.bind(RefactoringMessages.WatchpointFieldChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint()), fDestField.getElementName()});
 	}
 
@@ -51,7 +50,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestField);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestField);
 		int[] range = getNewLineNumberAndRange(fDestField);

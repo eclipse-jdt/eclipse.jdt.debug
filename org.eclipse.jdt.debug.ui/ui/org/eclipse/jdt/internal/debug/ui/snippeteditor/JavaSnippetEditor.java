@@ -144,7 +144,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private String fLaunchedWorkingDir;
 	private String fLaunchedVMArgs;
 	private IVMInstall fLaunchedVM;
-	private List fSnippetStateListeners;	
+	private List<ISnippetStateChangedListener> fSnippetStateListeners;	
 	
 	private boolean fEvaluating;
 	private IJavaThread fThread;
@@ -278,7 +278,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				PreferenceConstants.getPreferenceStore(),
 				EditorsUI.getPreferenceStore()});
 		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), store, this));		
-		fSnippetStateListeners= new ArrayList(4);
+		fSnippetStateListeners= new ArrayList<ISnippetStateChangedListener>(4);
 		setPreferenceStore(store);
 		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
@@ -613,7 +613,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			public void run() {
 				Shell shell= getShell();
 				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
-					List v= new ArrayList(fSnippetStateListeners);
+					List<ISnippetStateChangedListener> v= new ArrayList<ISnippetStateChangedListener>(fSnippetStateListeners);
 					for (int i= 0; i < v.size(); i++) {
 						ISnippetStateChangedListener l= (ISnippetStateChangedListener) v.get(i);
 						l.snippetStateChanged(JavaSnippetEditor.this);

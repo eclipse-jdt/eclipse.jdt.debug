@@ -36,12 +36,11 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Label provider for runtime classpath entries.
@@ -141,10 +140,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.ARCHIVE:
 				IPath path = entry.getPath();
 				if (path == null) {
-                    return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{"null"}); //$NON-NLS-1$
+                    return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{"null"}); //$NON-NLS-1$
                 }
                 if (!path.isAbsolute() || !path.isValidPath(path.toString())) {
-					return MessageFormat.format(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
+					return NLS.bind(LauncherMessages.RuntimeClasspathEntryLabelProvider_Invalid_path, new String[]{path.toOSString()});
 				}
 				String[] segments = path.segments();
 				StringBuffer displayPath = new StringBuffer();

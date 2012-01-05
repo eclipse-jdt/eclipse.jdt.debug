@@ -65,7 +65,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	/**
 	 * Working copy "EE Profile -> Default JRE" 
 	 */
-	private Map fDefaults = new HashMap();
+	private Map<Object, Object> fDefaults = new HashMap<Object, Object>();
 	
 	class JREsContentProvider implements IStructuredContentProvider {
 

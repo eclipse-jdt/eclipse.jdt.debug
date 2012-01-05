@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -59,7 +60,7 @@ public class JavaMonitorThread extends PlatformObject {
 	/**
 	 * List of JavaOwningThread and JavaWaitingThread associated with this thread.
 	 */
-	private List fElements= new ArrayList();
+	private List<IDebugElement> fElements= new ArrayList<IDebugElement>();
 
 	/**
 	 * JavaWaitingThread object used to return the JavaOwnedMonitor for this
@@ -238,7 +239,7 @@ public class JavaMonitorThread extends PlatformObject {
 	 */
 	private void fireChangeEvent(int detail) {
 		Object[] elements= fElements.toArray();
-		List changedElement= new ArrayList();
+		List<Object> changedElement= new ArrayList<Object>();
 		if (fOriginalThread != null) {
 			changedElement.add(fOriginalThread);
 		}
@@ -252,7 +253,7 @@ public class JavaMonitorThread extends PlatformObject {
 		}
 		DebugEvent[] changeEvents= new DebugEvent[changedElement.size()];
 		int i= 0;
-		for (Iterator iter= changedElement.iterator(); iter.hasNext();) {
+		for (Iterator<Object> iter= changedElement.iterator(); iter.hasNext();) {
 		    changeEvents[i++]= new DebugEvent(iter.next(), DebugEvent.CHANGE, detail);
         }
 		DebugPlugin.getDefault().fireDebugEventSet(changeEvents);

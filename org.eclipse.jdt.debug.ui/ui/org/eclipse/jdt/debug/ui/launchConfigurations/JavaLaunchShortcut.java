@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Common behavior for Java launch shortcuts
  * <p>
- * This class may be subclassed.
+ * This class may be sub-classed.
  * </p>
  * @since 3.3
  */
@@ -168,13 +168,16 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * Finds and returns an <b>existing</b> configuration to re-launch for the given type,
 	 * or <code>null</code> if there is no existing configuration.
 	 * 
+	 * @param type the {@link IType} to try and find the {@link ILaunchConfiguration} for
+	 * @param configType the {@link ILaunchConfigurationType} to try and narrow down the search
+	 * 
 	 * @return a configuration to use for launching the given type or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IType type, ILaunchConfigurationType configType) {
-		List candidateConfigs = Collections.EMPTY_LIST;
+		List<ILaunchConfiguration> candidateConfigs = Collections.EMPTY_LIST;
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
-			candidateConfigs = new ArrayList(configs.length);
+			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
 				if (config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "").equals(type.getFullyQualifiedName())) { //$NON-NLS-1$
@@ -188,7 +191,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		}
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount == 1) {
-			return (ILaunchConfiguration) candidateConfigs.get(0);
+			return candidateConfigs.get(0);
 		} else if (candidateCount > 1) {
 			return chooseConfiguration(candidateConfigs);
 		}
@@ -204,7 +207,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * @param configList list of configurations to choose from
 	 * @return configuration to launch or <code>null</code> to cancel
 	 */
-	protected ILaunchConfiguration chooseConfiguration(List configList) {
+	protected ILaunchConfiguration chooseConfiguration(List<ILaunchConfiguration> configList) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());

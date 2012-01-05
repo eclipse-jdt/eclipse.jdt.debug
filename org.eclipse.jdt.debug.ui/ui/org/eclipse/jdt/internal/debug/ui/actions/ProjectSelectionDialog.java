@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A dialog for selecting projects to add to a classpath or source
@@ -32,12 +33,12 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
 	
-	private List fProjects;
+	private List<?> fProjects;
 
 	/**
 	 * @see ListSelectionDialog
 	 */
-	public ProjectSelectionDialog(Shell parentShell, List projects){
+	public ProjectSelectionDialog(Shell parentShell, List<?> projects){
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setShowSelectAllButtons(true);

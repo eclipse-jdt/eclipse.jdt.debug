@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.SWTFactory;
-
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -41,8 +40,8 @@ import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.MethodBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.WatchpointEditor;
-
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
@@ -58,8 +57,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Property page for configuring IJavaBreakpoints.
  */
@@ -67,7 +64,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
-	protected List fErrorMessages= new ArrayList();
+	protected List<String> fErrorMessages= new ArrayList<String>();
 	protected String fPrevMessage = null;
 	private AbstractJavaBreakpointEditor fEditor;
 	
@@ -185,7 +182,7 @@ public class JavaBreakpointPage extends PropertyPage {
             	getShell().addShellListener(new ShellListener() {
                     public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
+                        shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
                         shell.removeShellListener(this);
                     }
                     public void shellClosed(ShellEvent e) {

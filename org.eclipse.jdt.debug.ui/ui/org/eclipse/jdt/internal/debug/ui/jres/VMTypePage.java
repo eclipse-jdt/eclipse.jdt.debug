@@ -53,7 +53,7 @@ public class VMTypePage extends WizardPage {
 	/**
 	 * Keep track of pages created, so we can dispose of them.
 	 */
-	private Set fPages = new HashSet();
+	private Set<AbstractVMInstallPage> fPages = new HashSet<AbstractVMInstallPage>();
 	
 	/**
 	 * Label provider for VM types
@@ -90,7 +90,7 @@ public class VMTypePage extends WizardPage {
 	@Override
 	public void dispose() {
 		super.dispose();
-		Iterator iterator = fPages.iterator();
+		Iterator<AbstractVMInstallPage> iterator = fPages.iterator();
 		while (iterator.hasNext()) {
 			AbstractVMInstallPage page = (AbstractVMInstallPage)iterator.next();
 			page.dispose();

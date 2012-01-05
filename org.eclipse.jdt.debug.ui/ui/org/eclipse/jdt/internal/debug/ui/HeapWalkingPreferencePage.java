@@ -41,13 +41,13 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	private Button fShowReferencesInVarView;
 	private Text fAllReferencesMaxCount;
 	private Text fAllInstancesMaxCount;
-	private Map fErrorMessages;
+	private Map<Object, String> fErrorMessages;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		fErrorMessages = new HashMap();
+		fErrorMessages = new HashMap<Object, String>();
 	}
 	
 	/* (non-Javadoc)
@@ -160,7 +160,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	private void clearErrorMessage(Object cause){
 		fErrorMessages.remove(cause);
-		Iterator iter = fErrorMessages.values().iterator();
+		Iterator<String> iter = fErrorMessages.values().iterator();
 		if (iter.hasNext()){
 			setErrorMessage((String)iter.next());
 		} else {

@@ -52,7 +52,7 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 	}
 
 	public void removeAll() {
-		Iterator iter= childEntries.iterator();
+		Iterator<IClasspathEntry> iter= childEntries.iterator();
 		while (iter.hasNext()) {
 			Object entry = iter.next();
 			if (entry instanceof ClasspathGroup) {

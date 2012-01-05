@@ -15,8 +15,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Action to display the instance count for a selected type.
@@ -55,11 +54,11 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	protected void displayNumInstances(String typeName, long instanceCount) {
 		String message = null;
 		if (instanceCount == 0L) {
-			message = MessageFormat.format(Messages.InstanceCountActionDelegate_0, new String[]{typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_0, new String[]{typeName});
 		} else if (instanceCount == 1L) {
-			message = MessageFormat.format(Messages.InstanceCountActionDelegate_1, new String[]{typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_1, new String[]{typeName});
 		} else {
-			message = MessageFormat.format(Messages.InstanceCountActionDelegate_2, new String[]{Long.toString(instanceCount), typeName});
+			message = NLS.bind(Messages.InstanceCountActionDelegate_2, new String[]{Long.toString(instanceCount), typeName});
 		}
 		MessageDialog.openInformation(getShell(), Messages.InstanceCountActionDelegate_3, message);
 	}

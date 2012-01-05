@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.TraverseEvent;
@@ -21,15 +26,6 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.ui.DebugUITools;
 
 /**
  * An error dialog reporting a problem with a debug
@@ -138,7 +134,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			};
 			BusyIndicator.showWhile(getShell().getDisplay(), r);
 			if (ex[0] != null) {
-				JDIDebugUIPlugin.statusDialog(MessageFormat.format(DebugUIMessages.HotCodeReplaceErrorDialog_2, operation), ex[0].getStatus()); 
+				JDIDebugUIPlugin.statusDialog(NLS.bind(DebugUIMessages.HotCodeReplaceErrorDialog_2, operation), ex[0].getStatus()); 
 			}
 			okPressed();
 		} else {

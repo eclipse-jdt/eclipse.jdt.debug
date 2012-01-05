@@ -15,8 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A change to delete a breakpoint. Currently used for undo.
@@ -38,7 +37,7 @@ public class DeleteBreakpointChange extends BreakpointChange {
 	 */
 	@Override
 	public String getName() {
-		return MessageFormat.format(RefactoringMessages.DeleteBreakpointChange_0,
+		return NLS.bind(RefactoringMessages.DeleteBreakpointChange_0,
 				new String[] {getBreakpointLabel(getOriginalBreakpoint())});
 	}
 

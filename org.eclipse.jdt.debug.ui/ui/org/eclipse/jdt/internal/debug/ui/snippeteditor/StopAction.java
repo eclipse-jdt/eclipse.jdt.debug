@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.PlatformUI;
 
 /**

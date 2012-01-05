@@ -33,6 +33,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,8 +46,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A composite that displays installed JREs in a combo box, with a 'manage...'
@@ -69,7 +68,7 @@ public class JREsComboBlock {
 	/**
 	 * VMs being displayed
 	 */
-	private List fVMs = new ArrayList(); 
+	private List<Object> fVMs = new ArrayList<Object>(); 
 	
 	/**
 	 * The main control
@@ -132,7 +131,7 @@ public class JREsComboBlock {
 	/**
 	 * List of execution environments
 	 */
-	private List fEnvironments = new ArrayList();
+	private List<Object> fEnvironments = new ArrayList<Object>();
 	
 	private IStatus fStatus = OK_STATUS;
 	
@@ -310,7 +309,7 @@ public class JREsComboBlock {
 		firePropertyChange();		
 	}
 	
-	private void restoreCombo(List elements, Object element, Combo combo) {
+	private void restoreCombo(List<Object> elements, Object element, Combo combo) {
 		int index = -1;
 		if (element != null) {
 			index = elements.indexOf(element);
@@ -336,11 +335,11 @@ public class JREsComboBlock {
 	 * 
 	 * @param vms JREs to be displayed
 	 */
-	protected void setJREs(List jres) {
+	protected void setJREs(List<VMStandin> jres) {
 		fVMs.clear();
 		fVMs.addAll(jres);
 		// sort by name
-		Collections.sort(fVMs, new Comparator() {
+		Collections.sort(fVMs, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				IVMInstall left = (IVMInstall)o1;
 				IVMInstall right = (IVMInstall)o2;
@@ -354,7 +353,7 @@ public class JREsComboBlock {
 		});
 		// now make an array of names
 		String[] names = new String[fVMs.size()];
-		Iterator iter = fVMs.iterator();
+		Iterator<Object> iter = fVMs.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			IVMInstall vm = (IVMInstall)iter.next();
@@ -440,7 +439,7 @@ public class JREsComboBlock {
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List standins = new ArrayList();
+		List<VMStandin> standins = new ArrayList<VMStandin>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];
@@ -463,7 +462,7 @@ public class JREsComboBlock {
 			fEnvironments.add(environments[i]);
 		}
 		// sort by name
-		Collections.sort(fEnvironments, new Comparator() {
+		Collections.sort(fEnvironments, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				IExecutionEnvironment left = (IExecutionEnvironment)o1;
 				IExecutionEnvironment right = (IExecutionEnvironment)o2;
@@ -477,16 +476,16 @@ public class JREsComboBlock {
 		});
 		// now make an array of names
 		String[] names = new String[fEnvironments.size()];
-		Iterator iter = fEnvironments.iterator();
+		Iterator<Object> iter = fEnvironments.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			IExecutionEnvironment env = (IExecutionEnvironment)iter.next();
 			IPath path = JavaRuntime.newJREContainerPath(env);
 			IVMInstall install = JavaRuntime.getVMInstall(path);
 			if (install != null) {
-				names[i] = MessageFormat.format(JREMessages.JREsComboBlock_15, new String[]{env.getId(), install.getName()});
+				names[i] = NLS.bind(JREMessages.JREsComboBlock_15, new String[]{env.getId(), install.getName()});
 			} else {
-				names[i] = MessageFormat.format(JREMessages.JREsComboBlock_16, new String[]{env.getId()});
+				names[i] = NLS.bind(JREMessages.JREsComboBlock_16, new String[]{env.getId()});
 			}
 			i++;
 		}
@@ -617,12 +616,12 @@ public class JREsComboBlock {
 				if (environment == null) {
 					fErrorPath = containerPath;
 					selectEnvironment(environment);
-					setError(MessageFormat.format(JREMessages.JREsComboBlock_6, new String[]{envId}));
+					setError(NLS.bind(JREMessages.JREsComboBlock_6, new String[]{envId}));
 				} else {
 					selectEnvironment(environment);
 					IVMInstall[] installs = environment.getCompatibleVMs();
 					if (installs.length == 0) {
-						setError(MessageFormat.format(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
+						setError(NLS.bind(JREMessages.JREsComboBlock_7, new String[]{environment.getId()}));
 					}
 				}
 			} else {
@@ -636,13 +635,13 @@ public class JREsComboBlock {
 					} else {
 						IVMInstallType installType = JavaRuntime.getVMInstallType(installTypeId);
 						if (installType == null) {
-							setError(MessageFormat.format(JREMessages.JREsComboBlock_9, new String[]{installTypeId}));
+							setError(NLS.bind(JREMessages.JREsComboBlock_9, new String[]{installTypeId}));
 						} else {
 							String installName = JavaRuntime.getVMInstallName(containerPath);
 							if (installName == null) {
-								setError(MessageFormat.format(JREMessages.JREsComboBlock_10, new String[]{installType.getName()}));
+								setError(NLS.bind(JREMessages.JREsComboBlock_10, new String[]{installType.getName()}));
 							} else {
-								setError(MessageFormat.format(JREMessages.JREsComboBlock_11, new String[]{installName, installType.getName()}));
+								setError(NLS.bind(JREMessages.JREsComboBlock_11, new String[]{installName, installType.getName()}));
 							}
 						}
 					}

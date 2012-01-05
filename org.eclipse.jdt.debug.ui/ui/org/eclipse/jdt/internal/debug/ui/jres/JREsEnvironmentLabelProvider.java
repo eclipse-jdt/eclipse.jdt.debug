@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -68,7 +67,7 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	public String getText(Object element) {
 		String label = super.getText(element);
 		if (isStrictlyCompatible(element)) {
-			label = MessageFormat.format(JREMessages.JREsEnvironmentLabelProvider_0, new String[]{label, JREMessages.JREsEnvironmentLabelProvider_1});
+			label = NLS.bind(JREMessages.JREsEnvironmentLabelProvider_0, new String[]{label, JREMessages.JREsEnvironmentLabelProvider_1});
 		}		
 		return label;
 	}

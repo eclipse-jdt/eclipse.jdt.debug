@@ -52,7 +52,7 @@ public abstract class JREResolution implements IMarkerResolution {
 	 */
 	protected static IVMInstall[] getAllVMs() {
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		List vms = new ArrayList();
+		List<IVMInstall> vms = new ArrayList<IVMInstall>();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];
 			IVMInstall[] installs = type.getVMInstalls();

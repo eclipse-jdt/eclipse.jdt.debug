@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JavaPrimitivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	private List fEdtiors = new ArrayList();
+	private List<BooleanFieldEditor> fEdtiors = new ArrayList<BooleanFieldEditor>();
 
 	public JavaPrimitivesPreferencePage() {
 		super(DebugUIMessages.JavaPrimitivesPreferencePage_0);
@@ -105,7 +105,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 */
 	@Override
 	protected void performDefaults() {
-		Iterator iterator = fEdtiors.iterator();
+		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
 			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
 			editor.loadDefault();
@@ -118,7 +118,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 * values in the preference store
 	 */
 	private void loadValues() {
-		Iterator iterator = fEdtiors.iterator();
+		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
 			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
 			editor.load();
@@ -130,7 +130,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	 * component widgets
 	 */
 	private void storeValues() {
-		Iterator iterator = fEdtiors.iterator();
+		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
 			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
 			editor.store();

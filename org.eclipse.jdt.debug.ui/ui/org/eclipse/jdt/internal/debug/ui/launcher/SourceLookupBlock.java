@@ -130,7 +130,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 			}
 		});		
 		
-		List advancedActions = new ArrayList(5);
+		List<RuntimeClasspathAction> advancedActions = new ArrayList<RuntimeClasspathAction>(5);
 		
 		GC gc = new GC(parent);
 		gc.setFont(parent.getFont());
@@ -282,12 +282,12 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 			boolean def = fDefaultButton.getSelection();		
 			if (def) {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List<String>)null);
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
 				try {
 					IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
-					List mementos = new ArrayList(entries.length);
+					List<String> mementos = new ArrayList<String>(entries.length);
 					for (int i = 0; i < entries.length; i++) {
 						mementos.add(entries[i].getMemento());
 					}
@@ -344,7 +344,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List<String>)null);
 		configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
 	}
 

@@ -83,7 +83,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), r);
 					if (validLine[0] == lineNumber[0]) {
 						IBreakpoint breakpoint= null;
-						Map attributes = new HashMap(4);
+						Map<String, Object> attributes = new HashMap<String, Object>(4);
 						BreakpointUtils.addRunToLineAttributes(attributes);
 						breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
 						errorMessage = "Unable to locate debug target";  //$NON-NLS-1$

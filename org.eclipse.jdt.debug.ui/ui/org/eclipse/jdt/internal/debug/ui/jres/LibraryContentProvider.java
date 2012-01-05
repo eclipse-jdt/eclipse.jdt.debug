@@ -75,7 +75,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	private HashMap fChildren= new HashMap();
+	private HashMap<LibraryStandin, Object[]> fChildren= new HashMap<LibraryStandin, Object[]>();
 
 	private LibraryStandin[] fLibraries= new LibraryStandin[0];
 
@@ -169,9 +169,9 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @return the current set of selected <code>LibraryStandin</code>s from
 	 * the current viewer selection, or an empty set, never <code>null</code>
 	 */
-	private Set getSelectedLibraries(IStructuredSelection selection) {
-		Set libraries= new HashSet();
-		for (Iterator iter= selection.iterator(); iter.hasNext();) {
+	private Set<Object> getSelectedLibraries(IStructuredSelection selection) {
+		Set<Object> libraries= new HashSet<Object>();
+		for (Iterator<?> iter= selection.iterator(); iter.hasNext();) {
 			Object element= iter.next();
 			if (element instanceof LibraryStandin) {
 				libraries.add(element);
@@ -187,7 +187,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the current viewer selection
 	 */
 	public void up(IStructuredSelection selection) {
-		Set libraries= getSelectedLibraries(selection);
+		Set<Object> libraries= getSelectedLibraries(selection);
 		for (int i= 0; i < fLibraries.length - 1; i++) {
 			if (libraries.contains(fLibraries[i + 1])) {
 				LibraryStandin temp= fLibraries[i];
@@ -204,7 +204,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the current viewer selection
 	 */
 	public void down(IStructuredSelection selection) {
-		Set libraries= getSelectedLibraries(selection);
+		Set<Object> libraries= getSelectedLibraries(selection);
 		for (int i= fLibraries.length - 1; i > 0; i--) {
 			if (libraries.contains(fLibraries[i - 1])) {
 				LibraryStandin temp= fLibraries[i];
@@ -221,11 +221,11 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the current viewer selection
 	 */
 	public void remove(IStructuredSelection selection) {
-		List newLibraries = new ArrayList();
+		List<?> newLibraries = new ArrayList<Object>();
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
-		Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
 		while (iterator.hasNext()) {
 			Object element = iterator.next();
 			if (element instanceof LibraryStandin) {
@@ -247,11 +247,11 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * is empty.
 	 */
 	public void add(LibraryLocation[] libs, IStructuredSelection selection) {
-		List newLibraries = new ArrayList(fLibraries.length + libs.length);
+		List<?> newLibraries = new ArrayList<Object>(fLibraries.length + libs.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
-		List toAdd = new ArrayList(libs.length);
+		List<LibraryStandin> toAdd = new ArrayList<LibraryStandin>(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			toAdd.add(new LibraryStandin(libs[i]));
 		}
@@ -280,8 +280,8 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the selection of libraries to set the new javadoc location for 
 	 */
 	public void setJavadoc(URL javadocLocation, IStructuredSelection selection) {
-		Set libraries= getSelectedLibraries(selection);
-		Iterator iterator = libraries.iterator();
+		Set<Object> libraries= getSelectedLibraries(selection);
+		Iterator<Object> iterator = libraries.iterator();
 		while (iterator.hasNext()) {
 			LibraryStandin standin = (LibraryStandin) iterator.next();
 			standin.setJavadocLocation(javadocLocation);
@@ -297,14 +297,14 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the selection of libraries to set the new paths in
 	 */
 	public void setSourcePath(IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IStructuredSelection selection) {
-		Set libraries= getSelectedLibraries(selection);
+		Set<Object> libraries= getSelectedLibraries(selection);
 		if (sourceAttachmentPath == null) {
 			sourceAttachmentPath = Path.EMPTY;
 		}
 		if (sourceAttachmentRootPath == null) {
 			sourceAttachmentRootPath = Path.EMPTY;
 		}
-		Iterator iterator = libraries.iterator();
+		Iterator<Object> iterator = libraries.iterator();
 		while (iterator.hasNext()) {
 			LibraryStandin standin = (LibraryStandin) iterator.next();
 			standin.setSystemLibrarySourcePath(sourceAttachmentPath);

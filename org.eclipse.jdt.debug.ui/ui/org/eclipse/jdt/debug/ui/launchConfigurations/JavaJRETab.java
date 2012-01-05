@@ -43,14 +43,13 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration tab that displays and edits the VM install 
@@ -175,6 +174,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
+	@SuppressWarnings("deprecation")
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fJREBlock.isDefaultJRE()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
@@ -193,7 +193,7 @@ public class JavaJRETab extends JavaLaunchTab {
 		// Handle any attributes in the VM-specific area
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab == null) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 		} else {
 			dynamicTab.performApply(configuration);
 		}
@@ -231,7 +231,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * Returns if the specified <code>ILaunchConfiguration</code> is an ant or external tool
 	 * type.
-	 * @param configuration
+	 * @param configuration the {@link ILaunchConfiguration}
 	 * @return true if the specified <code>ILaunchConfiguration</code> is an ant or external tools
 	 * type configuration
 	 * 
@@ -254,6 +254,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * Checks to make sure the class file compliance level and the selected VM are compatible
 	 * i.e. such that the selected JRE can run the currently compiled code
+	 * @return the status of the check
 	 * @since 3.3
 	 */
 	private IStatus checkCompliance() {
@@ -299,7 +300,7 @@ public class JavaJRETab extends JavaLaunchTab {
 						} else {
 							setting = LauncherMessages.JavaJRETab_1;
 						}
-						return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, MessageFormat.format(LauncherMessages.JavaJRETab_0, new String[] {setting, source, compliance}), null); 
+						return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IStatus.ERROR, NLS.bind(LauncherMessages.JavaJRETab_0, new String[] {setting, source, compliance}), null); 
 					}
 				}
 			}
@@ -338,6 +339,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	 * This method updates the jre selection from the <code>ILaunchConfiguration</code>
 	 * @param config the config to update from 
 	 */
+	@SuppressWarnings("deprecation")
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
 		try {
 			String path = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
@@ -376,7 +378,7 @@ public class JavaJRETab extends JavaLaunchTab {
 			}
 			if (!fIsInitializing) {
 				if (wc != null) {
-					wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+					wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 				}
 			}
 		} else {
@@ -419,6 +421,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * Return the class that implements <code>ILaunchConfigurationTab</code>
 	 * that is registered against the install type of the currently selected VM.
+	 * @return the backing {@link ILaunchConfigurationTab}
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentJRE() {
 		if (!fJREBlock.isDefaultJRE()) {
@@ -521,7 +524,7 @@ public class JavaJRETab extends JavaLaunchTab {
 					if (vm != null) {
 						name = vm.getName();
 					}
-					return MessageFormat.format(LauncherMessages.JavaJRETab_8, new String[]{name}); 
+					return NLS.bind(LauncherMessages.JavaJRETab_8, new String[]{name}); 
 				}
 				try {
 					String eeName = null;
@@ -546,11 +549,11 @@ public class JavaJRETab extends JavaLaunchTab {
 						name = vm.getName();
 					}
 					if (eeName != null) {
-						return MessageFormat.format(LauncherMessages.JavaJRETab_5, new String[]{eeName, name});
+						return NLS.bind(LauncherMessages.JavaJRETab_5, new String[]{eeName, name});
 					}
 				} catch (CoreException e) {
 				}
-				return MessageFormat.format(LauncherMessages.JavaJRETab_9, new String[]{name}); 
+				return NLS.bind(LauncherMessages.JavaJRETab_9, new String[]{name}); 
 			}
 		};
 	}

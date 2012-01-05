@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -56,8 +57,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class SelectImportsDialog extends TitleAreaDialog {
 
@@ -77,7 +76,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	protected class ImportsContentProvider implements IStructuredContentProvider {
 		
 		private TableViewer fViewer;
-		private List fImportNames;
+		private List<Filter> fImportNames;
 		
 		public ImportsContentProvider(TableViewer viewer) {
 			fViewer = viewer;
@@ -85,7 +84,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		}
 		
 		protected void populateImports() {
-			fImportNames= new ArrayList(1);
+			fImportNames= new ArrayList<Filter>(1);
 			if (fImports != null) {
 				for (int i = 0; i < fImports.length; i++) {
 					String name = fImports[i];
@@ -202,7 +201,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		ElementListSelectionDialog dialog = null;
 		try {
 			IJavaProject project= fEditor.getJavaProject();
-			List projects= new ArrayList();
+			List<IJavaElement> projects= new ArrayList<IJavaElement>();
 			projects.add(project);
 			IPackageFragmentRoot[] roots= project.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -277,7 +276,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		outer.setLayout(topLayout);
 		outer.setFont(font);
 		
-		setTitle(MessageFormat.format(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getEditorInput().getName()})); //$NON-NLS-1$
+		setTitle(NLS.bind(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getEditorInput().getName()})); //$NON-NLS-1$
 		
 		GridData gd = new GridData();
 		gd.verticalAlignment = GridData.FILL;

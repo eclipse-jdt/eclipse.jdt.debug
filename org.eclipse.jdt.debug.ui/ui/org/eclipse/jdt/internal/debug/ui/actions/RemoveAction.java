@@ -14,7 +14,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Removes selected enries in a runtime classpath viewer.
@@ -31,8 +33,8 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 */
 	@Override
 	public void run() {
-		List targets = getOrderedSelection();
-		List list = getEntriesAsList();
+		List<?> targets = getOrderedSelection();
+		List<?> list = getEntriesAsList();
 		list.removeAll(targets);
 		setEntries(list);
 	}

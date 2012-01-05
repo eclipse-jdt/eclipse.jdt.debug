@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -175,8 +176,8 @@ public class ExceptionFilterEditor {
 
 	protected void doStore() {
 		Object[] filters = fFilterContentProvider.getElements(null);
-		List inclusionFilters = new ArrayList(filters.length);
-		List exclusionFilters = new ArrayList(filters.length);
+		List<String> inclusionFilters = new ArrayList<String>(filters.length);
+		List<String> exclusionFilters = new ArrayList<String>(filters.length);
 		for (int i = 0; i < filters.length; i++) {
 			Filter filter = (Filter) filters[i];
 			String name = filter.getName();
@@ -488,7 +489,7 @@ public class ExceptionFilterEditor {
 	protected class FilterContentProvider implements IStructuredContentProvider {
 
 		private CheckboxTableViewer fViewer;
-		private List fFilters;
+		private List<Filter> fFilters;
 
 		public FilterContentProvider(CheckboxTableViewer viewer) {
 			fViewer = viewer;
@@ -508,7 +509,7 @@ public class ExceptionFilterEditor {
 				eFilters = new String[] {
 				};
 			}
-			fFilters = new ArrayList();
+			fFilters = new ArrayList<Filter>();
 			populateFilters(iFilters, true);
 			populateFilters(eFilters, false);
 

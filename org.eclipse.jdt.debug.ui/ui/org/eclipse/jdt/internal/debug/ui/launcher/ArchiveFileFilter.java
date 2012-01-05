@@ -31,7 +31,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 
 	private static final String[] fgArchiveExtensions= { "jar", "zip" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private List fExcludes;
+	private List<IFile> fExcludes;
 	
 	/**
 	 * @param excludedFiles Excluded files will not pass the filter.

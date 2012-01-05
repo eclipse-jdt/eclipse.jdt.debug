@@ -16,39 +16,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ISelection;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -63,14 +33,36 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
-
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsole;
 import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory;
-
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action delegate for Open from Clipboard action.
@@ -258,7 +250,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static void handleSingleLineInput(String inputText) {
-		List matches = new ArrayList();
+		List<Object> matches = new ArrayList<Object>();
 		try {
 			int line= getJavaElementMatches(inputText, matches);
 			handleMatches(matches, line, inputText);
@@ -275,7 +267,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @return the line number
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static int getJavaElementMatches(String inputText, List matches) throws InterruptedException {
+	private static int getJavaElementMatches(String inputText, List<Object> matches) throws InterruptedException {
 		String s = inputText.trim();
 		switch (getMatchingPattern(s)) {
 		case JAVA_FILE_LINE: {
@@ -359,7 +351,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getTypeMatches(final String typeName, final List matches) throws InterruptedException {
+	private static void getTypeMatches(final String typeName, final List<Object> matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doTypeSearch(typeName, matches, monitor);
@@ -375,7 +367,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getMethodMatches(final String s, final List matches) throws InterruptedException {
+	private static void getMethodMatches(final String s, final List<Object> matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doMemberSearch(s, matches, true, true, false, monitor, 100);
@@ -391,7 +383,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getMemberMatches(final String s, final List matches) throws InterruptedException {
+	private static void getMemberMatches(final String s, final List<Object> matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				doMemberSearch(s, matches, true, true, true, monitor, 100);
@@ -407,7 +399,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void getNameMatches(final String s, final List matches) throws InterruptedException {
+	private static void getNameMatches(final String s, final List<Object> matches) throws InterruptedException {
 		executeRunnable(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				SubMonitor progress = SubMonitor.convert(monitor, 100);
@@ -434,7 +426,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param inputText the input text
 	 * @throws InterruptedException if canceled by the user
 	 */
-	private static void handleMatches(List matches, int line, String inputText) throws InterruptedException {
+	private static void handleMatches(List<Object> matches, int line, String inputText) throws InterruptedException {
 		if (matches.size() > 1) {
 			int flags = JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT;
 			IWorkbenchWindow window = JDIDebugUIPlugin.getActiveWorkbenchWindow();
@@ -549,7 +541,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		return SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH;
 	}
 
-	private static SearchRequestor createSearchRequestor(final List matches) {
+	private static SearchRequestor createSearchRequestor(final List<Object> matches) {
 		return new SearchRequestor() {
 			@Override
 			public void acceptSearchMatch(SearchMatch match) {
@@ -579,7 +571,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param monitor
 	 *            the Progress Monitor
 	 */
-	private static void doTypeSearch(String typeName, final List matches, IProgressMonitor monitor) {
+	private static void doTypeSearch(String typeName, final List<Object> matches, IProgressMonitor monitor) {
 		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
 		SearchEngine searchEngine = new SearchEngine();
 
@@ -627,7 +619,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	 * @param work
 	 *            the remaining Work
 	 */
-	private static void doMemberSearch(String memberName, final List matches, boolean searchForMethods, boolean searchForConstructors, boolean searchForFields, IProgressMonitor monitor, int work) {
+	private static void doMemberSearch(String memberName, final List<Object> matches, boolean searchForMethods, boolean searchForConstructors, boolean searchForFields, IProgressMonitor monitor, int work) {
 		int noOfSearches = 0;
 		noOfSearches = searchForMethods ? noOfSearches + 1 : noOfSearches;
 		noOfSearches = searchForConstructors ? noOfSearches + 1 : noOfSearches;
@@ -648,7 +640,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		if (index != -1) {
 			typeName = memberName.substring(0, index);
 			memberName = memberName.substring(index + 1);
-			final List typeMatches = new ArrayList();
+			final List<Object> typeMatches = new ArrayList<Object>();
 			noOfSearches++;
 			doTypeSearch(typeName, typeMatches, progress.newChild(work / noOfSearches));
 			IType[] types = new IType[typeMatches.size()];

@@ -62,7 +62,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		fEntries = new IRuntimeClasspathEntry[selection.size()];
-		Iterator iterator = selection.iterator();
+		Iterator<?> iterator = selection.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			Object selected= iterator.next();

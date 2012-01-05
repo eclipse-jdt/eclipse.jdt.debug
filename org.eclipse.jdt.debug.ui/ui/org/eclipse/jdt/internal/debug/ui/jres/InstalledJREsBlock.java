@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -74,8 +75,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -96,7 +95,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * VMs being displayed
 	 */
-	private List fVMs = new ArrayList(); 
+	private List<Object> fVMs = new ArrayList<Object>(); 
 	
 	/**
 	 * The main list control
@@ -161,7 +160,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				switch(columnIndex) {
 					case 0:
 						if (isContributed(vm)) {
-							return MessageFormat.format(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
+							return NLS.bind(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
 						}
 						return vm.getName();
 					case 1:
@@ -370,9 +369,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void copyVM() {
         IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
-        Iterator it = selection.iterator();
+        Iterator<?> it = selection.iterator();
 
-        ArrayList newEntries = new ArrayList();
+        ArrayList<VMStandin> newEntries = new ArrayList<VMStandin>();
         while (it.hasNext()) {
             IVMInstall selectedVM = (IVMInstall) it.next();
             // duplicate & add vm
@@ -520,7 +519,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fEditButton.setEnabled(selectionCount == 1);
 		fCopyButton.setEnabled(selectionCount > 0);
 		if (selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount()) {
-			Iterator iterator = selection.iterator();
+			Iterator<?> iterator = selection.iterator();
 			while (iterator.hasNext()) {
 				IVMInstall install = (IVMInstall)iterator.next();
 				if (isContributed(install)) {
@@ -649,7 +648,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void removeVMs() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
 		IVMInstall[] vms = new IVMInstall[selection.size()];
-		Iterator iter = selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			vms[i] = (IVMInstall)iter.next();
@@ -699,16 +698,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 		
 		// ignore installed locations
-		final Set exstingLocations = new HashSet();
-		Iterator iter = fVMs.iterator();
+		final Set<File> exstingLocations = new HashSet<File>();
+		Iterator<Object> iter = fVMs.iterator();
 		while (iter.hasNext()) {
 			exstingLocations.add(((IVMInstall)iter.next()).getInstallLocation());
 		}
 		
 		// search
 		final File rootDir = new File(path);
-		final List locations = new ArrayList();
-		final List types = new ArrayList();
+		final List<Object> locations = new ArrayList<Object>();
+		final List<IVMInstallType> types = new ArrayList<IVMInstallType>();
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -746,10 +745,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		if (locations.isEmpty()) {
 			String messagePath = path.replaceAll("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
-			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, MessageFormat.format(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); // 
+			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); // 
 		} else {
 			iter = locations.iterator();
-			Iterator iter2 = types.iterator();
+			Iterator<IVMInstallType> iter2 = types.iterator();
 			while (iter.hasNext()) {
 				File location = (File)iter.next();
 				IVMInstallType type = (IVMInstallType)iter2.next();
@@ -779,11 +778,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Mac OS location
 	 */
 	private void doMacSearch() {
-		final List added = new ArrayList();
+		final List<VMStandin> added = new ArrayList<VMStandin>();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				Set exists = new HashSet();
-				Iterator iterator = fVMs.iterator();
+				Set<String> exists = new HashSet<String>();
+				Iterator<Object> iterator = fVMs.iterator();
 				while (iterator.hasNext()) {
 					IVMInstall vm = (IVMInstall) iterator.next();
 					exists.add(vm.getId());
@@ -808,7 +807,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return;
 		}
 		
-		Iterator iterator = added.iterator();
+		Iterator<VMStandin> iterator = added.iterator();
 		while (iterator.hasNext()) {
 			IVMInstall vm = (IVMInstall) iterator.next();
 			vmAdded(vm);
@@ -843,7 +842,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param types
 	 * @param ignore
 	 */
-	protected void search(File directory, List found, List types, Set ignore, IProgressMonitor monitor) {
+	protected void search(File directory, List<Object> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -852,14 +851,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		if (names == null) {
 			return;
 		}
-		List subDirs = new ArrayList();
+		List<File> subDirs = new ArrayList<File>();
 		for (int i = 0; i < names.length; i++) {
 			if (monitor.isCanceled()) {
 				return;
 			}
 			File file = new File(directory, names[i]);
 			try {
-				monitor.subTask(MessageFormat.format(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
+				monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
 						file.getCanonicalPath().replaceAll("&", "&&")}));   // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
 			}		
@@ -995,7 +994,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List standins = new ArrayList();
+		List<VMStandin> standins = new ArrayList<VMStandin>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];

@@ -364,7 +364,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		} else {
 			Object first = libraries[0];
 			Object last = libraries[libraries.length - 1];
-			for (Iterator iter= selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter= selection.iterator(); iter.hasNext();) {
 				Object element= iter.next();
 				Object lib;
 				if (element instanceof SubElement) {

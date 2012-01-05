@@ -24,8 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Handles stepping into a selected method, for a specific thread.
@@ -282,7 +281,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 				} catch (JavaModelException e) {
 					methodName = getMethod().getElementName();
 				}
-				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, MessageFormat.format(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();    
+				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, NLS.bind(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();    
 			}
 		};
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);		

@@ -50,9 +50,9 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	
 	class ContentProvider implements IStructuredContentProvider {
 		
-		private List fProjects;
+		private List<?> fProjects;
 		
-		public ContentProvider(List projects) {
+		public ContentProvider(List<?> projects) {
 			fProjects = projects;
 		}
 		
@@ -81,15 +81,15 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		List projects = getPossibleAdditions(director);
+		List<IJavaProject> projects = getPossibleAdditions(director);
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects);
 		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); 
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Failed to add project(s)", null);  //$NON-NLS-1$
 				
-		List sourceContainers = new ArrayList();
+		List<ISourceContainer> sourceContainers = new ArrayList<ISourceContainer>();
 		if (dialog.open() == Window.OK) {			
 			Object[] selections = dialog.getResult();
-			List additions = new ArrayList(selections.length);
+			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -103,7 +103,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 				status.add(e.getStatus());
 			}
 			
-			Iterator iter = additions.iterator();
+			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
 				IJavaProject jp = (IJavaProject)iter.next();
 				sourceContainers.add(new JavaProjectSourceContainer(jp));
@@ -128,7 +128,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * 
 	 * @param director the source lookup director currently being edited
 	 */
-	protected List getPossibleAdditions(ISourceLookupDirector director) {
+	protected List<IJavaProject> getPossibleAdditions(ISourceLookupDirector director) {
 		IJavaProject[] projects;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
@@ -137,11 +137,11 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List remaining = new ArrayList();
+		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List alreadySelected = new ArrayList();
+		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
 		ISourceContainer[] containers = director.getSourceContainers();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
@@ -161,7 +161,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 *  projects
 	 * @param res the list to add all required projects too
 	 */
-	protected void collectRequiredProjects(IJavaProject proj, List res) throws JavaModelException {
+	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
 			
@@ -188,7 +188,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * @param list
 	 * @throws JavaModelException
 	 */
-	protected void collectExportedEntries(IJavaProject proj, List list) throws CoreException {
+	protected void collectExportedEntries(IJavaProject proj, List<ISourceContainer> list) throws CoreException {
 		IClasspathEntry[] entries = proj.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];

@@ -44,7 +44,7 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		}
 
 		// For each selected stack frame, add a corresponding active step filter
-		Iterator itr = selection.iterator();
+		Iterator<?> itr = selection.iterator();
 		while (itr.hasNext()) {
 			IJavaStackFrame frame = (IJavaStackFrame)itr.next();
 			String pattern = generateStepFilterPattern(frame);
@@ -63,8 +63,8 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		IPreferenceStore prefStore = getPreferenceStore();
 		String[] activeArray = JavaDebugOptionsManager.parseList(prefStore.getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
 		String[] inactiveArray = JavaDebugOptionsManager.parseList(prefStore.getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST));
-		List activeList = new ArrayList(Arrays.asList(activeArray));
-		List inactiveList = new ArrayList(Arrays.asList(inactiveArray));
+		List<String> activeList = new ArrayList<String>(Arrays.asList(activeArray));
+		List<String> inactiveList = new ArrayList<String>(Arrays.asList(inactiveArray));
 		
 		// If the pattern is already in the active list, there's nothing to do
 		// (it can't/shouldn't be in the inactive list)

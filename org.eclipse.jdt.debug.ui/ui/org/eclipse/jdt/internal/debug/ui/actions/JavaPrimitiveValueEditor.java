@@ -19,13 +19,12 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A variable value editor that prompts the user to set a primitive's value.
@@ -52,7 +51,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
         try {
             String name= variable.getName();
             String title= ActionMessages.JavaPrimitiveValueEditor_0; 
-            String message= MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); 
+            String message= NLS.bind(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); 
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
@@ -180,7 +179,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                break;
             }
             if (type != null) {
-                return MessageFormat.format(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type }); 
+                return NLS.bind(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type }); 
             }
             return null;
         }

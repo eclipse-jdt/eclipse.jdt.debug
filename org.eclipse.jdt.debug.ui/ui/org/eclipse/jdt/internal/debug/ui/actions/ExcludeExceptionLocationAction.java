@@ -22,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
 
 public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 
@@ -33,7 +34,7 @@ public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator itr= selection.iterator();
+		Iterator<?> itr= selection.iterator();
 		
 		while (itr.hasNext()) {
 			IJavaThread thread= (IJavaThread)itr.next();

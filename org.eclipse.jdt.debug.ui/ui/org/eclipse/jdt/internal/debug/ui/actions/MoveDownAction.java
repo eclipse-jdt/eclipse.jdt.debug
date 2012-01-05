@@ -29,11 +29,11 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	 */
 	@Override
 	public void run() {
-		List targets = getOrderedSelection();
+		List<?> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
-		List list = getEntriesAsList();
+		List<Object> list = getEntriesAsList();
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {

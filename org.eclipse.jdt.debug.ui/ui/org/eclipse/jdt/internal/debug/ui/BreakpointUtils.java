@@ -205,7 +205,7 @@ public class BreakpointUtils {
 	 * @exception CoreException if an exception occurs configuring
 	 *  the marker
 	 */
-	public static void addJavaBreakpointAttributes(Map attributes, IJavaElement element) {
+	public static void addJavaBreakpointAttributes(Map<String, Comparable> attributes, IJavaElement element) {
 		String handleId = element.getHandleIdentifier();
 		attributes.put(HANDLE_ID, handleId);
 		JavaCore.addJavaElementMarkerAttributes(attributes, element);		
@@ -226,7 +226,7 @@ public class BreakpointUtils {
 	 * @exception CoreException if an exception occurs configuring
 	 *  the marker
 	 */
-	public static void addJavaBreakpointAttributesWithMemberDetails(Map attributes, IJavaElement element, int memberStart, int memberEnd) {
+	public static void addJavaBreakpointAttributesWithMemberDetails(Map<String, Comparable> attributes, IJavaElement element, int memberStart, int memberEnd) {
 		addJavaBreakpointAttributes(attributes, element);
 		attributes.put(MEMBER_START, new Integer(memberStart));
 		attributes.put(MEMBER_END, new Integer(memberEnd));
@@ -244,7 +244,7 @@ public class BreakpointUtils {
 	 * @exception CoreException if an exception occurs configuring
 	 *  the marker
 	 */
-	public static void addRunToLineAttributes(Map attributes) {
+	public static void addRunToLineAttributes(Map<String, Boolean> attributes) {
 		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
 		attributes.put(RUN_TO_LINE, Boolean.TRUE);
 	}	

@@ -91,7 +91,7 @@ public class InspectAction extends EvaluateAction {
 		}
 		
 		//inspecting from the context of the variables view
-		Iterator variables = ((IStructuredSelection)selection).iterator();
+		Iterator<?> variables = ((IStructuredSelection)selection).iterator();
 		while (variables.hasNext()) {
 			IJavaVariable var = (IJavaVariable)variables.next();
 			try {

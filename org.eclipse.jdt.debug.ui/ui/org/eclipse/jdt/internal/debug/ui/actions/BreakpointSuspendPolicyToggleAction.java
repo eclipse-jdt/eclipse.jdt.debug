@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
  
 /**
  * Toggles whether a breakpoint suspends a VM or only
@@ -55,7 +56,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	 */
 	@Override
 	public boolean isEnabledFor(IStructuredSelection selection) {
-		Iterator iter= selection.iterator();
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object element = iter.next();
 			if (!(element instanceof IJavaBreakpoint)) {

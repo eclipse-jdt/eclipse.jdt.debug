@@ -60,7 +60,7 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 			destinationField = getDestinationType().getField(getFieldName());
 		}
 		
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destinationField);
 		IResource resource = BreakpointUtils.getBreakpointResource(destinationField);
 		int[] range = getNewLineNumberAndRange(destinationField);

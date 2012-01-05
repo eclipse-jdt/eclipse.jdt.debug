@@ -112,7 +112,7 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List changes = new ArrayList();
+		List<?> changes = new ArrayList<Object>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes);
@@ -133,7 +133,7 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	 * @throws CoreException
 	 * @throws OperationCanceledException
 	 */
-	protected abstract void gatherChanges(IMarker[] markers, List changes) throws CoreException, OperationCanceledException;
+	protected abstract void gatherChanges(IMarker[] markers, List<?> changes) throws CoreException, OperationCanceledException;
 	
 	/**
 	 * Returns the resource that should be considered when searching for affected breakpoints.

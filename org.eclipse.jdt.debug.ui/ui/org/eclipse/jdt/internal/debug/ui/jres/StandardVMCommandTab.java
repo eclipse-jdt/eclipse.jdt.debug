@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +18,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -41,7 +42,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	protected Button fDefaultButton;
 	protected Button fSpecificButton;
 	
-	protected static final Map EMPTY_MAP = new HashMap(1);
+	protected static final Map<?, ?> EMPTY_MAP = new HashMap<Object, Object>(1);
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -70,7 +71,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setText(MessageFormat.format(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()})); 
+		fDefaultButton.setText(NLS.bind(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()})); 
 		
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -130,7 +131,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		String javaCommand= null;
 		try {
-			Map attributeMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			Map<?, ?> attributeMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<?, ?>)null);
 			if (attributeMap != null) {
 				javaCommand = (String) attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 			}
@@ -155,10 +156,10 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fDefaultButton.getSelection()) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 		} else {
 			String javaCommand = fJavaCommandText.getText();
-			Map attributeMap = new HashMap(1);
+			Map<String, String> attributeMap = new HashMap<String, String>(1);
 			attributeMap.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, attributeMap);		
 		}		 
@@ -168,7 +169,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 	}	
 
 	/**

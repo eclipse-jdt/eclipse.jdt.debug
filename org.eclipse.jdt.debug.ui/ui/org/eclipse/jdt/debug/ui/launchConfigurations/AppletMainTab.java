@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated.
  * </p>
  * @since 2.1
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class AppletMainTab extends SharedJavaMainTab {
 	
@@ -164,6 +164,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 
 	/**
 	 * Initialize the applet viewer class name attribute.
+	 * @param config the configuration
 	 */
 	private void initializeAppletViewerClass(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
@@ -172,6 +173,8 @@ public class AppletMainTab extends SharedJavaMainTab {
 	/**
 	 * Initialize default attribute values based on the
 	 * given Java element.
+	 * @param javaElement the Java element
+	 * @param config the configuration
 	 */
 	private void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		initializeJavaProject(javaElement, config);
@@ -191,6 +194,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	
 	/**
 	 * Returns whether the default applet viewer is to be used
+	 * @return if the viewer should be used
 	 */
 	private boolean isDefaultAppletViewerClassName() {
 		return fAppletViewerClassDefaultButton.getSelection();

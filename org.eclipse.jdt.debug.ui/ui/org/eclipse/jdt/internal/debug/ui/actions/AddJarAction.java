@@ -23,6 +23,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
+import org.eclipse.jface.action.IAction;
 
 /**
  * Adds an internal jar to the runtime class path.
@@ -57,9 +58,9 @@ public class AddJarAction extends RuntimeClasspathAction {
 	 * Returns a list of resources of currently selected jars
 	 */
 	protected IPath[] getSelectedJars() {
-		List list = getEntriesAsList();
-		List jars = new ArrayList();
-		Iterator iter = list.iterator();
+		List<?> list = getEntriesAsList();
+		List<IPath> jars = new ArrayList<IPath>();
+		Iterator<?> iter = list.iterator();
 		while (iter.hasNext()) {
 			IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {

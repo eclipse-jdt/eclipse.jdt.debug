@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -46,7 +47,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/**
 	 * The runtime classpath entries displayed in this viewer
 	 */
-	protected List fEntries = new ArrayList();
+	protected List<IRuntimeClasspathEntry> fEntries = new ArrayList<IRuntimeClasspathEntry>();
 	
 	class ContentProvider implements IStructuredContentProvider {
 			
@@ -87,7 +88,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 			@Override
 			public void keyPressed(KeyEvent event) {
 				if (isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
-					List selection= getSelectionFromWidget();
+					List<?> selection= getSelectionFromWidget();
 					fEntries.removeAll(selection);
 					setInput(fEntries);
 					notifyChanged();

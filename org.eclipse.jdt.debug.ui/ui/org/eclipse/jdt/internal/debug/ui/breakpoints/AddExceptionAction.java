@@ -118,7 +118,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	 */
 	private void createBreakpoint(final boolean caught, final boolean uncaught, final IType type) throws CoreException {
 		final IResource resource = BreakpointUtils.getBreakpointResource(type);
-		final Map map = new HashMap(10);
+		final Map<String, Object> map = new HashMap<String, Object>(10);
 		BreakpointUtils.addJavaBreakpointAttributes(map, type);
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(
 						JDIDebugModel.getPluginIdentifier());

@@ -17,18 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -37,39 +28,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IEditorStatusLine;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -94,17 +58,41 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
-
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.DebugWorkingCopyManager;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Toggles a line breakpoint in a Java editor.
@@ -251,7 +239,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								deleteBreakpoint(existingBreakpoint, editor, monitor);
 								return Status.OK_STATUS;
 							}
-							Map attributes = new HashMap(10);
+							Map<String, Object> attributes = new HashMap<String, Object>(10);
 							IDocumentProvider documentProvider = editor.getDocumentProvider();
 							if (documentProvider == null) {
 							    return Status.CANCEL_STATUS;
@@ -329,7 +317,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                         }
                         IJavaBreakpoint breakpoint = null;
                         ISourceRange range = null;
-                        Map attributes = null;
+                        Map<String, Object> attributes = null;
                         IType type = null;
                         String signature = null;
                         String mname = null;
@@ -343,7 +331,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     start = range.getOffset();
                                     end = start + range.getLength();
                                 }
-                                attributes = new HashMap(10);
+                                attributes = new HashMap<String, Object>(10);
                                 BreakpointUtils.addJavaBreakpointAttributes(attributes, members[i]);
                                 type = members[i].getDeclaringType();
                                 signature = members[i].getSignature();
@@ -414,7 +402,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							return Status.OK_STATUS;
 						}
 						else {
-							HashMap map = new HashMap(10);
+							HashMap<String, Object> map = new HashMap<String, Object>(10);
 							BreakpointUtils.addJavaBreakpointAttributes(map, type);
 							ISourceRange range= type.getNameRange();
 							int start = -1;
@@ -659,8 +647,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         if (selection.isEmpty()) {
             return new IMethod[0];
         }
-        List methods = new ArrayList(selection.size());
-        Iterator iterator = selection.iterator();
+        List<IMethod> methods = new ArrayList<IMethod>(selection.size());
+        Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object thing = iterator.next();
             try {
@@ -711,12 +699,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return list of <code>IField</code> and <code>IJavaFieldVariable</code>, possibly empty
      * @throws CoreException
      */
-    protected List getFields(IStructuredSelection selection) throws CoreException {
+    protected List<Object> getFields(IStructuredSelection selection) throws CoreException {
         if (selection.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        List fields = new ArrayList(selection.size());
-        Iterator iterator = selection.iterator();
+        List<Object> fields = new ArrayList<Object>(selection.size());
+        Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object thing = iterator.next();
             if (thing instanceof IField) {
@@ -800,7 +788,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     private boolean isFields(IStructuredSelection selection) {
         if (!selection.isEmpty()) {
         	try {
-	            Iterator iterator = selection.iterator();
+	            Iterator<?> iterator = selection.iterator();
 	            while (iterator.hasNext()) {
 	                Object thing = iterator.next();
 	                if (thing instanceof IField) {
@@ -844,18 +832,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 	}
                     boolean allowed = false;
 	                if (selection instanceof IStructuredSelection) {
-	                	List fields = getFields((IStructuredSelection) selection);
+	                	List<Object> fields = getFields((IStructuredSelection) selection);
 	                    if (fields.isEmpty()) {
 	                        report(ActionMessages.ToggleBreakpointAdapter_10, part); 
 	                        return Status.OK_STATUS;
 	                    }
-	                    Iterator theFields = fields.iterator();
+	                    Iterator<Object> theFields = fields.iterator();
 	                    IField javaField = null;
 	                    IResource resource = null;
                         String typeName = null;
                         String fieldName = null;
                         Object element = null;
-                        Map attributes = null;
+                        Map<String, Object> attributes = null;
                         IJavaBreakpoint breakpoint = null;
 	                    while (theFields.hasNext()) {
 	                        element = theFields.next();
@@ -882,7 +870,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        	}
 	                        	int start = -1;
 	                            int end = -1;
-	                            attributes = new HashMap(10);
+	                            attributes = new HashMap<String, Object>(10);
 	                            if (javaField == null) {
 	                            	resource = ResourcesPlugin.getWorkspace().getRoot();
 	                            } else {
