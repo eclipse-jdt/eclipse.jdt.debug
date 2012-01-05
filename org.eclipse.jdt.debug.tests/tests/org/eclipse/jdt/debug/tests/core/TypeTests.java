@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -34,7 +35,7 @@ public class TypeTests extends AbstractDebugTest {
 		IJavaType[] types = new IJavaType[3];
 		int index = 0;
 		String typeName = "Breakpoints";
-		List bps = new ArrayList();
+		List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
 		// main
 		bps.add(createLineBreakpoint(52, typeName));
 		// threading
@@ -81,7 +82,7 @@ public class TypeTests extends AbstractDebugTest {
     
     public void testClassLoader() throws Exception {
         String typeName = "Breakpoints";
-        List bps = new ArrayList();
+        List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
         // instance method
         bps.add(createLineBreakpoint(81, typeName));
         bps.add(createLineBreakpoint(88, typeName));

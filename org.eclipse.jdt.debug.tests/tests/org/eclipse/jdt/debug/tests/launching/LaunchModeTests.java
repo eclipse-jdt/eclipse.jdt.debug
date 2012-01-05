@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,22 +176,32 @@ public class LaunchModeTests extends AbstractDebugTest {
 		testGroup.createTabs(dialog, "TEST_MODE"); //$NON-NLS-1$
 		
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
-		HashSet tabset = new HashSet();
+		HashSet<Class<?>> tabset = new HashSet<Class<?>>();
 		for(int i = 0; i< tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
-		Class[] classes = new Class[] {JavaMainTab.class, JavaArgumentsTab.class, JavaJRETab.class, JavaClasspathTab.class,
-				SourceLookupTab.class, EnvironmentTab.class, CommonTab.class};
-		assertTrue("Tab set does not contain all default java tabs", tabset.containsAll(new HashSet(Arrays.asList(classes)))); //$NON-NLS-1$
+		Class<?>[] classes = new Class<?>[] {
+				JavaMainTab.class, 
+				JavaArgumentsTab.class, 
+				JavaJRETab.class, 
+				JavaClasspathTab.class,
+				SourceLookupTab.class, 
+				EnvironmentTab.class, 
+				CommonTab.class};
+		assertTrue("Tab set does not contain all default java tabs", tabset.containsAll(new HashSet<Class<?>>(Arrays.asList(classes)))); //$NON-NLS-1$
 		
 		tabs = testGroup.getTabs();
 		assertEquals("Wrong number of tabs in the test group", 4, tabs.length); //$NON-NLS-1$
-		tabset = new HashSet();
+		tabset = new HashSet<Class<?>>();
 		for(int i = 0; i< tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
-		classes = new Class[] {JavaMainTab.class, JavaArgumentsTab.class, JavaJRETab.class, JavaClasspathTab.class};
-		assertTrue("Test tab set does not contain all default tabs", tabset.containsAll(new HashSet(Arrays.asList(classes)))); //$NON-NLS-1$
+		classes = new Class<?>[] {
+				JavaMainTab.class, 
+				JavaArgumentsTab.class, 
+				JavaJRETab.class, 
+				JavaClasspathTab.class};
+		assertTrue("Test tab set does not contain all default tabs", tabset.containsAll(new HashSet<Class<?>>(Arrays.asList(classes)))); //$NON-NLS-1$
 		standardGroup.dispose();
 		testGroup.dispose();
 	}
@@ -213,7 +223,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testDefaultDebugLaunchPerspective2() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes =  new HashSet();
+		HashSet<String> modes =  new HashSet<String>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		assertEquals("Java debug perspective should be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 	}
@@ -235,7 +245,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testDefaultRunLaunchPerspective2() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.RUN_MODE);
 		assertNull("Java run perspective should be null", DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 	}
@@ -267,7 +277,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testResetDebugLaunchPerspective2() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		assertEquals("Java debug perspective should be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 		// set to NONE
@@ -288,7 +298,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testResetDebugPerspectiveJavaLaunchDelegate() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		ILaunchDelegate delegate = ((LaunchManager)getLaunchManager()).getLaunchDelegate("org.eclipse.jdt.launching.localJavaApplication"); //$NON-NLS-1$
 		assertNotNull("Java launch delegate should not be null", delegate); //$NON-NLS-1$
@@ -327,7 +337,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testResetRunLaunchPerspective2() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.RUN_MODE);
 		assertNull("Java run perspective should be null", DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 		// set to Java perspective
@@ -347,7 +357,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testResetRunPerspectiveJavaLaunchDelegate() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.RUN_MODE);
 		ILaunchDelegate delegate = ((LaunchManager)getLaunchManager()).getLaunchDelegate("org.eclipse.jdt.launching.localJavaApplication"); //$NON-NLS-1$
 		assertNotNull("Java launch delegate should not be null", delegate); //$NON-NLS-1$
@@ -368,7 +378,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testDefaultDebugPerspectiveJavaLaunchDelegate() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		ILaunchDelegate delegate = ((LaunchManager)getLaunchManager()).getLaunchDelegate("org.eclipse.jdt.launching.localJavaApplication"); //$NON-NLS-1$
 		assertNotNull("Java launch delegate should not be null", delegate); //$NON-NLS-1$
@@ -384,7 +394,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 */
 	public void testDefaultRunPerspectiveJavaLaunchDelegate() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.RUN_MODE);
 		ILaunchDelegate delegate = ((LaunchManager)getLaunchManager()).getLaunchDelegate("org.eclipse.jdt.launching.localJavaApplication"); //$NON-NLS-1$
 		assertNotNull("Java launch delegate should not be null", delegate); //$NON-NLS-1$

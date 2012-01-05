@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.jdt.debug.testplugin.AlternateDelegate;
 import org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate1;
@@ -84,7 +85,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add("alternate"); //$NON-NLS-1$
 		modes.add(ILaunchManager.DEBUG_MODE);
 		assertTrue("Should support mixed mode (alternate/debug)", type.supportsModeCombination(modes)); //$NON-NLS-1$
@@ -102,7 +103,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		assertTrue("Should support mode (debug)", type.supportsModeCombination(modes)); //$NON-NLS-1$
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
@@ -125,7 +126,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add("alternate"); //$NON-NLS-1$
 		assertTrue("Should support mode (alternate)", type.supportsModeCombination(modes)); //$NON-NLS-1$
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
@@ -144,9 +145,9 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
 		String[][] modesavail = {{"alternate"}, {"debug", "alternate"}, {"debug", "alternate2"}}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		HashSet modes = null;
+		HashSet<String> modes = null;
 		for(int i = 0; i < modesavail.length; i++) {
-			modes = new HashSet(Arrays.asList(modesavail[i]));
+			modes = new HashSet<String>(Arrays.asList(modesavail[i]));
 			assertTrue("Should support modes "+modes.toString(), type.supportsModeCombination(modes)); //$NON-NLS-1$
 			ILaunchDelegate[] delegates = type.getDelegates(modes);
 			assertTrue("missing delegate", delegates.length > 0); //$NON-NLS-1$
@@ -163,17 +164,17 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add("alternate2"); //$NON-NLS-1$
 		assertTrue("Should support mode 'alternate2'", type.supportsModeCombination(modes)); //$NON-NLS-1$
 		ILaunchDelegate[] delegates = type.getDelegates(modes);
 		assertTrue("missing delegate", delegates.length > 0); //$NON-NLS-1$
 		assertEquals("Wrong number of delegates, should be 2 only "+delegates.length+" found", 2, delegates.length); //$NON-NLS-1$ //$NON-NLS-2$
-		HashSet dels = new HashSet();
+		HashSet<Class<? extends ILaunchConfigurationDelegate>> dels = new HashSet<Class<? extends ILaunchConfigurationDelegate>>();
 		for(int i = 0; i < delegates.length; i++) {
 			dels.add(delegates[i].getDelegate().getClass());
 		}
-		HashSet ds = new HashSet(Arrays.asList(new Object[] {TestLaunchDelegate1.class, TestLaunchDelegate2.class}));
+		HashSet<Object> ds = new HashSet<Object>(Arrays.asList(new Object[] {TestLaunchDelegate1.class, TestLaunchDelegate2.class}));
 		assertTrue("There must be only TestLaunchDelegate1 and TestLaunchDelegate2 as registered delegates for the mode alternate2 and the local java type", ds.containsAll(dels)); //$NON-NLS-1$
 	}
 	
@@ -184,7 +185,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunchManager manager = getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
-		HashSet modes = new HashSet();
+		HashSet<String> modes = new HashSet<String>();
 		modes.add("alternate2"); //$NON-NLS-1$
 		modes.add("foo"); //$NON-NLS-1$
 		assertTrue("Should not support modes: "+modes.toString(), !type.supportsModeCombination(modes)); //$NON-NLS-1$

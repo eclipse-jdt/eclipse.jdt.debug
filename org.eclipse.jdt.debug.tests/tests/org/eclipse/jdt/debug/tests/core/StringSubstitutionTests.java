@@ -393,7 +393,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testAddNotificaiton() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-		List vars = new ArrayList();
+		List<IValueVariable> vars = new ArrayList<IValueVariable>();
 		IValueVariable one = manager.newValueVariable("var_one", null);
 		IValueVariable two = manager.newValueVariable("var_two", null);
 		vars.add(one);
@@ -441,7 +441,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testRemoveNotificaiton() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-		List vars = new ArrayList();
+		List<IValueVariable> vars = new ArrayList<IValueVariable>();
 		IValueVariable one = manager.newValueVariable("var_one", null);
 		IValueVariable two = manager.newValueVariable("var_two", null);
 		vars.add(one);

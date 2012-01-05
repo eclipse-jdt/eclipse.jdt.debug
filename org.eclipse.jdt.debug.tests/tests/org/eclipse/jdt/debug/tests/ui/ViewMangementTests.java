@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,12 +50,12 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	/**
 	 * List of view ids expecting to open.
 	 */
-	private List fExpectingOpenEvents = new ArrayList();
+	private List<String> fExpectingOpenEvents = new ArrayList<String>();
 	
 	/**
 	 * List of view ids expecting to close.
 	 */
-	private List fExpectingCloseEvents = new ArrayList();	
+	private List<String> fExpectingCloseEvents = new ArrayList<String>();	
 	
 	// prefs to restore
 	private String switch_on_launch;
@@ -330,8 +330,8 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 		return buffer.toString();
 	}
 	
-	private void partsMessage(String header, List partIds, StringBuffer buffer) {
-		String[] ids = (String[]) partIds.toArray(new String[partIds.size()]);
+	private void partsMessage(String header, List<String> partIds, StringBuffer buffer) {
+		String[] ids = partIds.toArray(new String[partIds.size()]);
 		if (ids.length > 0) {
 			buffer.append(header);
 			for (int i = 0; i < ids.length; i++) {

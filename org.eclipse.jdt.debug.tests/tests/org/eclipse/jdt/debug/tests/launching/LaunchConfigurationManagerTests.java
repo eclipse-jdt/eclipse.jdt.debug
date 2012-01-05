@@ -43,11 +43,11 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 * @param ids the shortcut identifiers
 	 * @param shortcuts the complete list of shortcuts of type {@link LaunchShortcutExtension}
 	 */
-	void assertShortcuts(String[] ids, List shortcuts) {
+	void assertShortcuts(String[] ids, List<LaunchShortcutExtension> shortcuts) {
 		for (int i = 0; i < ids.length; i++) {
 			boolean found = false;
-			for (Iterator iter = shortcuts.iterator(); iter.hasNext();) {
-				LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			for (Iterator<LaunchShortcutExtension> iter = shortcuts.iterator(); iter.hasNext();) {
+				LaunchShortcutExtension ext = iter.next();
 				if(ids[i].equals(ext.getId())) {
 					found = true;
 					break;
@@ -88,7 +88,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetLaunchShortcuts() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
-		List list = fLCM.getLaunchShortcuts();
+		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts();
 		assertTrue("The listing of shortcuts cannot be empty", list.size() > 2);
 	}
 	
@@ -99,7 +99,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("ThrowsNPE.java");
 		assertNotNull("The resource ThrowsNPE must exist", resource);
-		List list = fLCM.getLaunchShortcuts(resource);
+		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts(resource);
 		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.localJavaShortcut"}, list);
 	}
 	
@@ -110,7 +110,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("AppletImpl.java");
 		assertNotNull("The resource AppletImpl must exist", resource);
-		List list = fLCM.getLaunchShortcuts(resource);
+		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts(resource);
 		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.javaAppletShortcut"}, list);
 	}
 	
@@ -121,7 +121,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
 		IResource resource = getResource("RunnableAppletImpl.java");
 		assertNotNull("The resource RunnableAppletImpl must exist", resource);
-		List list = fLCM.getLaunchShortcuts(resource);
+		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts(resource);
 		assertShortcuts(new String[] {"org.eclipse.jdt.debug.ui.localJavaShortcut", "org.eclipse.jdt.debug.ui.javaAppletShortcut"}, list);
 	}
 	
@@ -130,7 +130,7 @@ public class LaunchConfigurationManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetLaunchShortcutsForCategory() {
 		assertNotNull("The launch configuration manager cannot be null", fLCM);
-		List list = fLCM.getLaunchShortcuts("testing");
+		List<LaunchShortcutExtension> list = fLCM.getLaunchShortcuts("testing");
 		assertTrue("there should be the testing shortcut", list.size() == 1);
 	}
 	

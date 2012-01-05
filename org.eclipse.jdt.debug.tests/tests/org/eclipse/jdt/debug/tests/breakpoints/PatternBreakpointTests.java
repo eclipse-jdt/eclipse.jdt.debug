@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	public void testPatternBreakpoints() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";
-		List bps = new ArrayList();
+		List<IJavaPatternBreakpoint> bps = new ArrayList<IJavaPatternBreakpoint>();
 		// anonymous class
 		bps.add(createPatternBreakpoint(43, sourceName, pattern));
 		// blocks
@@ -176,7 +176,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 	public void testSkipPatternBreakpoint() throws Exception {
 		String sourceName = "Breakpoints.java";
 		String pattern = "Break";
-		List bps = new ArrayList();
+		List<IJavaPatternBreakpoint> bps = new ArrayList<IJavaPatternBreakpoint>();
 		// anonymous class
 		bps.add(createPatternBreakpoint(43, sourceName, pattern));
 		// blocks

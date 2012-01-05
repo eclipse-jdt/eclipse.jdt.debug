@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,11 +59,11 @@ public class MemberParser{
 	 * @param typeQualifiedName
 	 * @return
 	 */
-	private static ArrayList createTypeList(String typeQualifiedName) {
+	private static ArrayList<String> createTypeList(String typeQualifiedName) {
 		typeQualifiedName = typeQualifiedName.replace('$','.');//ensure proper format was used.
 		String parsed[] = typeQualifiedName.split("\\."); //$NON-NLS-1$
 		//make list of types to find
-		ArrayList typeList = new ArrayList();
+		ArrayList<String> typeList = new ArrayList<String>();
 		for (int splitNum = 0; splitNum < parsed.length; splitNum++) {
 			typeList.add(parsed[splitNum]);
 		}
@@ -77,7 +77,7 @@ public class MemberParser{
 	private static ICompilationUnit[] getAllCompilationUnits(IPackageFragment[] fragments) throws JavaModelException {
 		if(fragments == null)
 			return null;
-		final Set results = new HashSet();
+		final Set<ICompilationUnit> results = new HashSet<ICompilationUnit>();
 		for (int fragmentNum = 0; fragmentNum < fragments.length; fragmentNum++) {
 			if(fragments[fragmentNum].containsJavaResources()){
 				ICompilationUnit cunits[] = fragments[fragmentNum].getCompilationUnits();
@@ -88,7 +88,7 @@ public class MemberParser{
 		}
 		if(results.isEmpty())
 			return null;
-		return (ICompilationUnit[])results.toArray(new ICompilationUnit[results.size()]);
+		return results.toArray(new ICompilationUnit[results.size()]);
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class MemberParser{
 		if(types==null)
 			return null;
 		
-		final Set results = new HashSet();
+		final Set<IMethod> results = new HashSet<IMethod>();
 		for (int typeNum = 0; typeNum < types.length; typeNum++) {
 			IMethod[] methods = types[typeNum].getMethods();
 			for (int methodNum = 0; methodNum < methods.length; methodNum++) {
@@ -122,7 +122,7 @@ public class MemberParser{
 		}
 		if(results.isEmpty())
 			return null;
-		return (IMethod[])results.toArray(new SourceMethod[results.size()]);
+		return results.toArray(new SourceMethod[results.size()]);
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class MemberParser{
 	 * @throws JavaModelException
 	 */
 	private static IPackageFragment[] getAllPackageFragments(IProject[] projects) throws JavaModelException {
-		final Set results = new HashSet();
+		final Set<IPackageFragment> results = new HashSet<IPackageFragment>();
 		for (int projectNum = 0; projectNum < projects.length; projectNum++) {
 			IJavaProject javaProj = JavaCore.create(projects[projectNum]);
 			if(javaProj!= null && javaProj.exists() && javaProj.hasChildren()){
@@ -143,7 +143,7 @@ public class MemberParser{
 		}
 		if(results.isEmpty())
 			return null;
-		return (IPackageFragment[])results.toArray(new IPackageFragment[results.size()]);
+		return results.toArray(new IPackageFragment[results.size()]);
 	}
 	/**
 	 * @return all projects in the workspace
@@ -161,7 +161,7 @@ public class MemberParser{
 		if(cunits == null)
 			return null;
 		
-		final Set results = new HashSet();
+		final Set<IType> results = new HashSet<IType>();
 		for (int cunitNum = 0; cunitNum < cunits.length; cunitNum++) {
 			IType types[] = cunits[cunitNum].getTypes(); //get all topLevel types
 			for (int typeNum = 0; typeNum < types.length; typeNum++) {
@@ -170,7 +170,7 @@ public class MemberParser{
 		}
 		if(results.isEmpty())
 			return null;	   
-		return (IType[])results.toArray(new IType[results.size()]);
+		return results.toArray(new IType[results.size()]);
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public class MemberParser{
 	private static IType[] getAllTypes(IMethod[] methods) throws JavaModelException {
 		if(methods==null)
 			return null;
-		final Set results = new HashSet();
+		final Set<IJavaElement> results = new HashSet<IJavaElement>();
 		for (int methodNum = 0; methodNum < methods.length; methodNum++) {
 			IJavaElement[] children = methods[methodNum].getChildren();
 			for (int childNum = 0; childNum < children.length; childNum++) {
@@ -191,7 +191,7 @@ public class MemberParser{
 		}
 		if(results.isEmpty())
 			return null;
-		return (IType[])results.toArray(new SourceType[results.size()]);
+		return results.toArray(new SourceType[results.size()]);
 	}
 	
 	/**Will search within the given type and all of it's children - including methods 
@@ -204,7 +204,7 @@ public class MemberParser{
 		if(types == null)
 			return null;
 		
-		final Set results = new HashSet();
+		final Set<IType> results = new HashSet<IType>();
 		//get all the obvious type declarations
 		for (int mainTypeNum = 0; mainTypeNum < types.length; mainTypeNum++) {
 			IType declaredTypes[] = types[mainTypeNum].getTypes();
@@ -220,7 +220,7 @@ public class MemberParser{
 		if(results.isEmpty())
 			return null;
 		//else
-		return (IType[])results.toArray(new SourceType[results.size()]);//possibly change to new IType
+		return results.toArray(new SourceType[results.size()]);//possibly change to new IType
 	}
 	
 	
@@ -242,7 +242,7 @@ public class MemberParser{
 	 * @throws JavaModelException
 	 */
 	private static IPackageFragment[] getAllPackageFragments(String packageName, IProject[] projects) throws JavaModelException{
-		final Set results = new HashSet();
+		final Set<IPackageFragment> results = new HashSet<IPackageFragment>();
 		for (int projectNum = 0; projectNum < projects.length; projectNum++) {
 			IJavaProject javaProj = JavaCore.create(projects[projectNum]);
 			if(javaProj!= null && javaProj.exists() && javaProj.hasChildren()){
@@ -256,14 +256,14 @@ public class MemberParser{
 		if(results.isEmpty())
 			return null;
 		//else
-		return (IPackageFragment[])results.toArray(new IPackageFragment[results.size()]);
+		return results.toArray(new IPackageFragment[results.size()]);
 	}
 	
 	private static IProject getProject(String projectName){
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 	}
 	
-	private static IType getType(ArrayList typeList, ICompilationUnit[] cunits) throws JavaModelException{
+	private static IType getType(ArrayList<String> typeList, ICompilationUnit[] cunits) throws JavaModelException{
 		IType[] types = getAllTypes(cunits);
 		//if 1st letter is a number, it's anonymous
 		boolean targetIsAnonymous = Character.isDigit(typeList.get(0).toString().charAt(0));
@@ -317,7 +317,7 @@ public class MemberParser{
 		if(typeName == null)
 			return null;
 		//make list of types to find, in order
-		ArrayList typeList = createTypeList(typeName);
+		ArrayList<String> typeList = createTypeList(typeName);
 		//get the proper project(s)
 		IProject[] projects=null;
 		if(projectName!=null && projectName.length()>0){

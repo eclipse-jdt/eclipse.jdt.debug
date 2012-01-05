@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -238,10 +238,10 @@ public class EvalTestSuite extends TestSuite {
 		try {
 			Runnable r = new Runnable() {
 				public void run() {
-					for (Enumeration e= tests(); e.hasMoreElements(); ) {
+					for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
 				  		if (result.shouldStop() )
 				  			break;
-						runTest((Test)e.nextElement(), result);
+						runTest(e.nextElement(), result);
 					}					
 					fTesting = false;
 					display.wake();

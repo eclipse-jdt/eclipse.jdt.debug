@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManage
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
 import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -47,7 +48,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportFile() throws Exception {
 		try {
-			ArrayList breakpoints = new ArrayList();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));
@@ -58,7 +59,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
 			Path path = new Path("exbkptA.bkpt");
 			assertNotNull("Invalid path", path);
-			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
 			op.run(new NullProgressMonitor());
 			removeAllBreakpoints();
 			File file = path.toFile();
@@ -87,7 +88,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportBuffer() throws Exception {
 		try {
-			ArrayList breakpoints = new ArrayList();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));
@@ -96,7 +97,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			breakpoints.add(createExceptionBreakpoint("Exception", true, false));
 			breakpoints.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
-			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]));
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]));
 			op.run(new NullProgressMonitor());
 			StringBuffer buffer = op.getBuffer();
 			assertNotNull("Missing buffer", buffer);
@@ -116,7 +117,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	 */
 	public void testBreakpointImportOverwrite() throws Exception {
 		try {
-			ArrayList breakpoints = new ArrayList();
+			ArrayList<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
 			String typeName = "DropTests";
 			breakpoints.add(createClassPrepareBreakpoint(typeName));
 			breakpoints.add(createLineBreakpoint(32, typeName));
@@ -127,7 +128,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertEquals("manager does not contain 6 breakpoints for exporting", getBreakpointManager().getBreakpoints().length, 6);
 			Path path = new Path("exbkptB.bkpt");
 			assertNotNull("Invalid path", path);
-			ExportBreakpointsOperation op = new ExportBreakpointsOperation((IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
+			ExportBreakpointsOperation op = new ExportBreakpointsOperation(breakpoints.toArray(new IBreakpoint[breakpoints.size()]), path.toOSString());
 			op.run(new NullProgressMonitor());
 			File file = path.toFile();
 			assertNotNull(file);

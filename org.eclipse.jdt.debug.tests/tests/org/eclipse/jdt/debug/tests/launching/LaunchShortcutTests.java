@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,9 +109,9 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	public void testGetGeneralShortcutDescription() {
 		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
 		assertNotNull("launch configuration manager cannot be null", lcm); //$NON-NLS-1$
-		List list = lcm.getLaunchShortcuts(TESTING);
+		List<LaunchShortcutExtension> list = lcm.getLaunchShortcuts(TESTING);
 		assertTrue("There must be at least one testing shortcut", list.size() > 0); //$NON-NLS-1$
-		LaunchShortcutExtension ext = (LaunchShortcutExtension) list.get(0);
+		LaunchShortcutExtension ext = list.get(0);
 		String descr = ext.getShortcutDescription("debug"); //$NON-NLS-1$
 		assertNotNull("The description should not be null for debug mode", descr); //$NON-NLS-1$
 		assertTrue("The description should match the general one: General Description", descr.equals("General Description")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -126,9 +126,9 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	public void testGetRunShortcutDescription() {
 		LaunchConfigurationManager lcm = getLaunchConfigurationManager();
 		assertNotNull("launch configuration manager cannot be null", lcm); //$NON-NLS-1$
-		List list = lcm.getLaunchShortcuts(TESTING);
+		List<LaunchShortcutExtension> list = lcm.getLaunchShortcuts(TESTING);
 		assertTrue("There must be at least one testing shortcut", list.size() > 0); //$NON-NLS-1$
-		LaunchShortcutExtension ext = (LaunchShortcutExtension) list.get(0);
+		LaunchShortcutExtension ext = list.get(0);
 		String descr = ext.getShortcutDescription("run"); //$NON-NLS-1$
 		assertNotNull("The description should not be null for run mode", descr); //$NON-NLS-1$
 		assertTrue("The description should match the specific run one: Run Description", descr.equals("Run Description")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -143,12 +143,12 @@ public class LaunchShortcutTests extends AbstractDebugTest {
 	 * 
 	 * @since 3.3
 	 */
-	public List getApplicableLaunchShortcuts(String typeid) {
-		List list = new ArrayList();
+	public List<LaunchShortcutExtension> getApplicableLaunchShortcuts(String typeid) {
+		List<LaunchShortcutExtension> list = new ArrayList<LaunchShortcutExtension>();
 		LaunchShortcutExtension ext = null;
-		List shortcuts = getLaunchConfigurationManager().getLaunchShortcuts();
+		List<LaunchShortcutExtension> shortcuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		for(int i = 0; i < shortcuts.size(); i++) {
-			ext = (LaunchShortcutExtension) shortcuts.get(i);
+			ext = shortcuts.get(i);
 			if(ext.getAssociatedConfigurationTypes().contains(typeid) && !WorkbenchActivityHelper.filterItem(ext)) {
 				list.add(ext);
 			}

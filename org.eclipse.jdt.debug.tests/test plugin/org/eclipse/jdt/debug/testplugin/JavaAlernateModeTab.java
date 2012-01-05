@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2007 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,8 +38,8 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/** Returns the set of modes this tab supports
 	 * @return the set of modes this tab supports
 	 */
-	public Set getModes() {
-		HashSet modes = new HashSet();
+	public Set<String> getModes() {
+		HashSet<String> modes = new HashSet<String>();
 		modes.add("alternate");
 		return modes;
 	}
@@ -142,7 +142,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	 */
 	private void setWidget(ILaunchConfiguration configuration) {
 		try {
-			Set modes = configuration.getModes();
+			Set<String> modes = configuration.getModes();
 			modes.add(getLaunchConfigurationDialog().getMode());
 			if(!fAlternateModeCheckBox.isDisposed()) {
 				fAlternateModeCheckBox.setSelection(modes.contains("alternate"));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,8 +45,8 @@ public class TestToggleBreakpointsTarget extends AbstractDebugTest {
 	
 	class Listener implements IBreakpointListener {
 		
-		List added = new ArrayList();
-		List removed = new ArrayList();
+		List<IBreakpoint> added = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> removed = new ArrayList<IBreakpoint>();
 
 		public void breakpointAdded(IBreakpoint breakpoint) {
 			synchronized (added) {
@@ -72,7 +72,7 @@ public class TestToggleBreakpointsTarget extends AbstractDebugTest {
 				}
 			}
 			assertFalse("Breakpoint not added", added.isEmpty());
-			return (IBreakpoint) added.get(0);
+			return added.get(0);
 		}
 		
 		public IBreakpoint getRemoved() throws Exception {
@@ -82,7 +82,7 @@ public class TestToggleBreakpointsTarget extends AbstractDebugTest {
 				}
 			}
 			assertFalse("Breakpoint not removed", removed.isEmpty());
-			return (IBreakpoint) removed.get(0);
+			return removed.get(0);
 		}
 		
 		

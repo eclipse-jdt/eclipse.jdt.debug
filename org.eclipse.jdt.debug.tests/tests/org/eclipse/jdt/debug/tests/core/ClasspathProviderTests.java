@@ -462,7 +462,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		String location1 = bin1.getLocation().toOSString();
 		String location2 = bin2.getLocation().toOSString();
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
@@ -485,7 +485,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		IFolder bin = ResourcesPlugin.getWorkspace().getRoot().getFolder(project.getOutputLocation());
 		String location = bin.getLocation().toOSString();
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
@@ -517,7 +517,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
         // test runtime class path resolution
         String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
         String jarPath = get14Project().getProject().getLocation().append("src").append("A.jar").toOSString();
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
@@ -553,7 +553,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
         // test runtime class path resolution
         String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
         String jarPath = get14Project().getProject().getLocation().append("src").append("A.jar").toOSString();
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	private MyPerspectiveListener fPerspectiveListener;
 	private MyAnnotationListener fAnnotationListener;
 	private IPartListener2 fPartListener;
-	private Set fAnnotationModelsWithListeners = new HashSet();
+	private Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<IAnnotationModel>();
 	
 	private static final String typeThreadStack = "org.eclipse.debug.tests.targets.ThreadStack";
 	private static final String typeClassOne = "org.eclipse.debug.tests.targets.ClassOne";
@@ -98,9 +98,9 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			if (target2 != null){
 				terminateAndRemove(target2);
 			}
-			Iterator annModels = fAnnotationModelsWithListeners.iterator();
+			Iterator<IAnnotationModel> annModels = fAnnotationModelsWithListeners.iterator();
 			while (annModels.hasNext()) {
-				IAnnotationModel currentModel = (IAnnotationModel) annModels.next();
+				IAnnotationModel currentModel = annModels.next();
 				currentModel.removeAnnotationModelListener(getAnnotationListener());
 			}
 			removeAllBreakpoints();
@@ -129,9 +129,9 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			if (target2 != null){
 				terminateAndRemove(target2);
 			}
-			Iterator annModels = fAnnotationModelsWithListeners.iterator();
+			Iterator<IAnnotationModel> annModels = fAnnotationModelsWithListeners.iterator();
 			while (annModels.hasNext()) {
-				IAnnotationModel currentModel = (IAnnotationModel) annModels.next();
+				IAnnotationModel currentModel = annModels.next();
 				currentModel.removeAnnotationModelListener(getAnnotationListener());
 			}
 			removeAllBreakpoints();

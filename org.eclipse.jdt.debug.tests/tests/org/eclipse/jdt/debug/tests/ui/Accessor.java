@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Assert;
 public class Accessor {
 
 	/** The class to access. */
-	private Class fClass;
+	private Class<?> fClass;
 	/** The instance to access. */
 	private Object fInstance;
 
@@ -39,7 +39,7 @@ public class Accessor {
 	 * @param clazz
 	 *            the class
 	 */
-	public Accessor(Object instance, Class clazz) {
+	public Accessor(Object instance, Class<?> clazz) {
 		org.eclipse.core.runtime.Assert.isNotNull(instance);
 		Assert.isNotNull(clazz);
 		fInstance = instance;
@@ -102,7 +102,7 @@ public class Accessor {
 	 * @param constructorArgs
 	 *            the constructor arguments
 	 */
-	public Accessor(String className, ClassLoader classLoader, Class[] constructorTypes, Object[] constructorArgs) {
+	public Accessor(String className, ClassLoader classLoader, Class<?>[] constructorTypes, Object[] constructorArgs) {
 		try {
 			fClass = Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException e) {
@@ -110,7 +110,7 @@ public class Accessor {
 		} catch (ExceptionInInitializerError e) {
 			fail();
 		}
-		Constructor constructor = null;
+		Constructor<?> constructor = null;
 		try {
 			constructor = fClass.getDeclaredConstructor(constructorTypes);
 		} catch (SecurityException e2) {
@@ -163,7 +163,7 @@ public class Accessor {
 	 * @param clazz
 	 *            the class
 	 */
-	public Accessor(Class clazz) {
+	public Accessor(Class<?> clazz) {
 		Assert.isNotNull(clazz);
 		fClass = clazz;
 	}
@@ -196,7 +196,7 @@ public class Accessor {
 	 *            the method arguments
 	 * @return the method return value
 	 */
-	public Object invoke(String methodName, Class[] types, Object[] arguments) {
+	public Object invoke(String methodName, Class<?>[] types, Object[] arguments) {
 		Method method = null;
 		try {
 			method = fClass.getDeclaredMethod(methodName, types);
@@ -349,12 +349,12 @@ public class Accessor {
 		return field;
 	}
 
-	private static Class[] getTypes(Object[] objects) {
+	private static Class<?>[] getTypes(Object[] objects) {
 		if (objects == null)
 			return null;
 
 		int length = objects.length;
-		Class[] classes = new Class[length];
+		Class<?>[] classes = new Class[length];
 		for (int i = 0; i < length; i++) {
 			Assert.isNotNull(objects[i]);
 			classes[i] = objects[i].getClass();

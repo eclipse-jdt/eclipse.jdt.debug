@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testEntryAndExitBreakpoints() throws Exception {
 		String typeName = "DropTests";
-		List bps = new ArrayList();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method 4 - entry
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit
@@ -133,7 +133,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testInnerClassNotHit() throws Exception {
 		String typeNamePattern = "A";
-		List bps = new ArrayList();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
 		
@@ -162,7 +162,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testInnerClassesHit() throws Exception {
 		String typeNamePattern = "A*";
-		List bps = new ArrayList();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
 		
@@ -408,7 +408,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testSkipMethodBreakpoint() throws Exception {
 		String typeName = "DropTests";
-		List bps = new ArrayList();
+		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method 4 - entry
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit

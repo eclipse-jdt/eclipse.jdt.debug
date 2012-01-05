@@ -78,8 +78,8 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * 
 	 * @return List
 	 */
-	protected List createBreakpoints(String typeName) throws Exception {
-		List bps = new ArrayList();
+	protected List<IJavaLineBreakpoint> createBreakpoints(String typeName) throws Exception {
+		List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
 		// anonymous class
 		bps.add(createUnregisteredLineBreakpoint(43, typeName));
 		// blocks
@@ -127,20 +127,20 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @throws Exception
 	 */
 	public void testSingleListener() throws Exception {		
-		List bps = createBreakpoints("Breakpoints");
+		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
 		
 		try {
 			getBreakpointManager().addBreakpointListener((IBreakpointListener)this);		
 			
 			resetCallbacks();
-			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			getBreakpointManager().addBreakpoints(bps.toArray(new IBreakpoint[bps.size()]));
 			assertEquals("Should have received individual add notifications", bps.size(), fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			//assertEquals("Should be change callbacks for IMarker.MESSAGE updates", bps.size(), fChangeCallabcks);
 			assertEquals("Should be no removes", 0, fRemoveCallbacks);
 			
 			resetCallbacks();
-			getBreakpointManager().removeBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]), true);
+			getBreakpointManager().removeBreakpoints(bps.toArray(new IBreakpoint[bps.size()]), true);
 			assertEquals("Should have received individual remove notifications", bps.size(), fRemoveCallbacks);
 			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
@@ -158,20 +158,20 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @throws Exception
 	 */
 	public void testMultiListener() throws Exception {		
-		List bps = createBreakpoints("Breakpoints");
+		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
 		
 		try {
 			getBreakpointManager().addBreakpointListener((IBreakpointsListener)this);		
 			
 			resetCallbacks();
-			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			getBreakpointManager().addBreakpoints(bps.toArray(new IBreakpoint[bps.size()]));
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			//assertEquals("Should be 1 change for IMarker.MESSAGE update", 1, fChangeCallabcks);
 			assertEquals("Should be no removes", 0, fRemoveCallbacks);
 			
 			resetCallbacks();
-			getBreakpointManager().removeBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]), true);
+			getBreakpointManager().removeBreakpoints(bps.toArray(new IBreakpoint[bps.size()]), true);
 			assertEquals("Should have received one remove notification", 1, fRemoveCallbacks);
 			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
@@ -189,7 +189,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	 * @throws Exception
 	 */
 	public void testMultiListenerProjectCloseOpen() throws Exception {		
-		List bps = createBreakpoints("Breakpoints");
+		List<IJavaLineBreakpoint> bps = createBreakpoints("Breakpoints");
 		
 		try {
 			// close all editors before closing project: @see bug 204023
@@ -198,7 +198,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			getBreakpointManager().addBreakpointListener((IBreakpointsListener)this);		
 			
 			resetCallbacks();
-			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			getBreakpointManager().addBreakpoints(bps.toArray(new IBreakpoint[bps.size()]));
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			//assertEquals("Should be 1 change for IMarker.MESSAGE update", 1, fChangeCallabcks);
@@ -238,7 +238,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopyA.java", false, null);
 		waitForBuild();
-		List bps = createBreakpoints("BreakpointsCopyA");
+		List<IJavaLineBreakpoint> bps = createBreakpoints("BreakpointsCopyA");
 		cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopyA.java"));
 		assertNotNull("Did not find compilation unit copy", cu);
 		
@@ -246,7 +246,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			getBreakpointManager().addBreakpointListener((IBreakpointsListener)this);		
 			
 			resetCallbacks();
-			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			getBreakpointManager().addBreakpoints(bps.toArray(new IBreakpoint[bps.size()]));
 			waitForBuild();
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
@@ -283,7 +283,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopy.java", false, null);
 		waitForBuild();
-		List bps = createBreakpoints("BreakpointsCopy");
+		List<IJavaLineBreakpoint> bps = createBreakpoints("BreakpointsCopy");
 		cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopy.java"));
 		assertNotNull("Did not find compilation unit copy", cu);
 		
@@ -291,7 +291,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			getBreakpointManager().addBreakpointListener((IBreakpointListener)this);		
 			
 			resetCallbacks();
-			getBreakpointManager().addBreakpoints((IBreakpoint[])bps.toArray(new IBreakpoint[bps.size()]));
+			getBreakpointManager().addBreakpoints(bps.toArray(new IBreakpoint[bps.size()]));
 			waitForBuild();
 			assertEquals("Should have received one add notification", bps.size(), fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);

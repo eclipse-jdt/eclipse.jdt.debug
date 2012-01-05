@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,9 +75,9 @@ public class BreakpointFieldLocator extends ASTVisitor {
 	@Override
 	public boolean visit(CompilationUnit node) {
 		// visit only the type declarations
-		List types = node.types();
-		for (Iterator iter = types.iterator(); iter.hasNext() && !fFound;) {
-			((TypeDeclaration) iter.next()).accept(this);
+		List<TypeDeclaration> types = node.types();
+		for (Iterator<TypeDeclaration> iter = types.iterator(); iter.hasNext() && !fFound;) {
+			iter.next().accept(this);
 		}
 		return false;
 	}
@@ -89,15 +89,15 @@ public class BreakpointFieldLocator extends ASTVisitor {
 	public boolean visit(FieldDeclaration node) {
 		if (containsPosition(node)) {
 			// visit only the variable declaration fragments
-			List fragments = node.fragments();
+			List<VariableDeclarationFragment> fragments = node.fragments();
 			if (fragments.size() == 1) {
-				fFieldName= ((VariableDeclarationFragment)fragments.get(0)).getName().getIdentifier();
+				fFieldName= fragments.get(0).getName().getIdentifier();
 				fTypeName= computeTypeName(node);
 				fFound= true;
 				return false;
 			}
-			for (Iterator iter = fragments.iterator(); iter.hasNext() && !fFound;) {
-				((VariableDeclarationFragment) iter.next()).accept(this);
+			for (Iterator<VariableDeclarationFragment> iter = fragments.iterator(); iter.hasNext() && !fFound;) {
+				iter.next().accept(this);
 			}
 		}
 		return false;

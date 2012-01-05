@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class PListParserTests extends AbstractDebugTest {
 			Object[] jres = (Object[]) obj;
 			assertEquals("Should be 3 entries in the array", 3, jres.length);
 			// the first map
-			HashMap map = new HashMap();
+			HashMap<String, Comparable<?>> map = new HashMap<String, Comparable<?>>();
 			map.put("JVMArch", "i386");
 			map.put("JVMBundleID", "com.apple.javajdk15");
 			map.put("JVMEnabled", Boolean.TRUE);
@@ -60,7 +60,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("testint", new Integer(42));
 			assertEquals("Incorrect values parsed", map, jres[0]);
 			
-			map = new HashMap();
+			map = new HashMap<String, Comparable<?>>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk16");
 			map.put("JVMEnabled", Boolean.TRUE);
@@ -71,7 +71,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("JVMVersion", "1.6.0_20");
 			assertEquals("Incorrect values parsed", map, jres[1]);
 			
-			map = new HashMap();
+			map = new HashMap<String, Comparable<?>>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk15");
 			map.put("JVMEnabled", Boolean.TRUE);
