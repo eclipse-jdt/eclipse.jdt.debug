@@ -2702,8 +2702,8 @@ public final class JavaRuntime {
 						fgDefaultVMConnectorId = vmDefs.getDefaultVMInstallConnectorTypeID();
 						
 						// Create the underlying VMs for each valid VM
-						List<?> vmList = vmDefs.getValidVMList();
-						Iterator<?> vmListIterator = vmList.iterator();
+						List<IVMInstall> vmList = vmDefs.getValidVMList();
+						Iterator<IVMInstall> vmListIterator = vmList.iterator();
 						while (vmListIterator.hasNext()) {
 							VMStandin vmStandin = (VMStandin) vmListIterator.next();
 							vmStandin.convertToRealVM();
