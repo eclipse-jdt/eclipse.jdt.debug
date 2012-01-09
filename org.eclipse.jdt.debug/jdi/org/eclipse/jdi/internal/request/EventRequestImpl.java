@@ -256,8 +256,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			fRequestID = RequestID.read(this, replyData);
-			virtualMachineImpl().eventRequestManagerImpl().addRequestIDMapping(
-					this);
+			virtualMachineImpl().eventRequestManagerImpl().addRequestIDMapping(this);
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 		} finally {

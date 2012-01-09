@@ -309,8 +309,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		synchronized (this) {
 			Map<IAccessRuleParticipant, IAccessRule[][]> cachedRules = fParticipantMap.get(vm);
 			if (cachedRules == null || !cachedRules.equals(rulesByParticipant)) {
-				ArrayList<List<IAccessRule>> libLists = new ArrayList<List<IAccessRule>>(libraries.length); // array of lists of access rules
-				for (int i = 0; i < libLists.size(); i++) {
+				ArrayList<List<IAccessRule>> libLists = new ArrayList<List<IAccessRule>>(); // array of lists of access rules
+				for (int i = 0; i < libraries.length; i++) {
 					libLists.add(new ArrayList<IAccessRule>());
 				}
 				for (int i = 0; i < participants.length; i++) {

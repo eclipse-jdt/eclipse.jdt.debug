@@ -189,8 +189,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 
 		// Find and store original request.
 		if (!requestID.isNull())
-			result.fRequest = target.virtualMachineImpl()
-					.eventRequestManagerImpl().findRequest(result);
+			result.fRequest = target.virtualMachineImpl().eventRequestManagerImpl().findRequest(result);
 
 		return result;
 	}
