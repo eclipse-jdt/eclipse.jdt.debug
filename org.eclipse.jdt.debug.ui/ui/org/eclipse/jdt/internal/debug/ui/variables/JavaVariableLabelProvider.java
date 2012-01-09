@@ -117,7 +117,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	 * @return true if the presentation context is showing qualified names, false otherwise
 	 */
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {
-		Boolean qualified = (Boolean) fQualifiedNameSettings.get(context.getId());
+		Boolean qualified = fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
 			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + '.' + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 			fQualifiedNameSettings.put(context.getId(), qualified);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
@@ -95,8 +96,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			ReferenceTypeImpl refType = (ReferenceTypeImpl) itr.next();
 			if (refType instanceof ClassTypeImpl) {
 				ClassTypeImpl classType = (ClassTypeImpl) refType;
-				if (classType.fSuperclass != null
-						&& classType.fSuperclass.equals(this)) {
+				if (classType.fSuperclass != null && classType.fSuperclass.equals(this)) {
 					classType.flushStoredJdwpResults();
 				}
 			}
@@ -125,12 +125,11 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		 * methods() command); The methods of it's superclass.
 		 */
 
-		Iterator methods = methods().iterator();
-		MethodImpl method;
+		Iterator<Method> methods = methods().iterator();
+		Method method;
 		while (methods.hasNext()) {
-			method = (MethodImpl) methods.next();
-			if (method.name().equals(name)
-					&& method.signature().equals(signature)) {
+			method = methods.next();
+			if (method.name().equals(name) && method.signature().equals(signature)) {
 				if (method.isAbstract()) {
 					return null;
 				}
@@ -145,13 +144,10 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		return null;
 	}
 
-	/**
-	 * Invokes the specified static Method in the target VM.
-	 * 
-	 * @return Returns a Value mirror of the invoked method's return value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassType#invokeMethod(com.sun.jdi.ThreadReference, com.sun.jdi.Method, java.util.List, int)
 	 */
-	public Value invokeMethod(ThreadReference thread, Method method,
-			List arguments, int options) throws InvalidTypeException,
+	public Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException {
 		checkVM(thread);
@@ -170,10 +166,9 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			throw new IllegalArgumentException(
 					JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3);
 
-		// check the type and the vm of the arguments. Convert the values if
+		// check the type and the VM of the arguments. Convert the values if
 		// needed
-		List<ValueImpl> checkedArguments = ValueImpl.checkValues(arguments,
-				method.argumentTypes(), virtualMachineImpl());
+		List<Value> checkedArguments = ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -184,11 +179,11 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			methodImpl.write(this, outData);
 
 			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator<ValueImpl> iter = checkedArguments.iterator();
+			Iterator<Value> iter = checkedArguments.iterator();
 			while (iter.hasNext()) {
-				ValueImpl elt = iter.next();
-				if (elt != null) {
-					elt.writeWithTag(this, outData);
+				Value elt = iter.next();
+				if (elt instanceof ValueImpl) {
+					((ValueImpl)elt).writeWithTag(this, outData);
 				} else {
 					ValueImpl.writeNullWithTag(this, outData);
 				}
@@ -227,14 +222,10 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		}
 	}
 
-	/**
-	 * Constructs a new instance of this type, using the given constructor
-	 * Method in the target VM.
-	 * 
-	 * @return Returns Mirror of this type.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassType#newInstance(com.sun.jdi.ThreadReference, com.sun.jdi.Method, java.util.List, int)
 	 */
-	public ObjectReference newInstance(ThreadReference thread, Method method,
-			List arguments, int options) throws InvalidTypeException,
+	public ObjectReference newInstance(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException {
 		checkVM(thread);
@@ -253,8 +244,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			throw new IllegalArgumentException(
 					JDIMessages.ClassTypeImpl_Method_is_not_a_constructor_6);
 
-		List<ValueImpl> checkedArguments = ValueImpl.checkValues(arguments,
-				method.argumentTypes(), virtualMachineImpl());
+		List<Value> checkedArguments = ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -265,12 +255,12 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			methodImpl.write(this, outData);
 
 			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator<ValueImpl> iter = checkedArguments.iterator();
+			Iterator<Value> iter = checkedArguments.iterator();
 			while (iter.hasNext()) {
-				ValueImpl elt = iter.next();
-				if (elt != null) {
+				Value elt = iter.next();
+				if (elt instanceof ValueImpl) {
 					checkVM(elt);
-					elt.writeWithTag(this, outData);
+					((ValueImpl)elt).writeWithTag(this, outData);
 				} else {
 					ValueImpl.writeNullWithTag(this, outData);
 				}
@@ -325,7 +315,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			checkVM(field);
 			((FieldImpl) field).write(this, outData);
 
-			// check the type and the vm of the value. Convert the value if
+			// check the type and the VM of the value. Convert the value if
 			// needed
 			ValueImpl checkedValue = ValueImpl.checkValue(value, field.type(),
 					virtualMachineImpl());
@@ -352,17 +342,16 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		}
 	}
 
-	/**
-	 * @return Returns the the currently loaded, direct subclasses of this
-	 *         class.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassType#subclasses()
 	 */
-	public List<ClassTypeImpl> subclasses() {
+	public List<ClassType> subclasses() {
 		// Note that this information should not be cached.
-		List<ClassTypeImpl> subclasses = new ArrayList<ClassTypeImpl>();
-		Iterator<ReferenceTypeImpl> itr = virtualMachineImpl().allRefTypes();
+		List<ClassType> subclasses = new ArrayList<ClassType>();
+		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = itr.next();
+				ReferenceType refType = itr.next();
 				if (refType instanceof ClassTypeImpl) {
 					ClassTypeImpl classType = (ClassTypeImpl) refType;
 					if (classType.superclass() != null
@@ -377,8 +366,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		return subclasses;
 	}
 
-	/**
-	 * @return Returns the superclass of this class.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassType#superclass()
 	 */
 	public ClassType superclass() {
 		if (fSuperclass != null)

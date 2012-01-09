@@ -74,14 +74,14 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		
 		// Add the pattern to the active list and update the preference store
 		activeList.add(pattern);
-		String activePref = JavaDebugOptionsManager.serializeList((String[])activeList.toArray(new String[activeList.size()]));
+		String activePref = JavaDebugOptionsManager.serializeList(activeList.toArray(new String[activeList.size()]));
 		prefStore.setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, activePref);
 	
 		// If the pattern was present in the inactive list, remove it since we just
 		// added it to the active list
 		if (inactiveList.contains(pattern)) {
 			inactiveList.remove(pattern);
-			String inactivePref = JavaDebugOptionsManager.serializeList((String[])inactiveList.toArray(new String[inactiveList.size()]));
+			String inactivePref = JavaDebugOptionsManager.serializeList(inactiveList.toArray(new String[inactiveList.size()]));
 			prefStore.setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, inactivePref);			
 		}
 	}

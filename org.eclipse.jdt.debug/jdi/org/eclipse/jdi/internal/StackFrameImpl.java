@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,21 +63,21 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		fLocation = location;
 	}
 
-	/**
-	 * @return Returns the Value of a LocalVariable in this frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#getValue(com.sun.jdi.LocalVariable)
 	 */
 	public Value getValue(LocalVariable variable)
 			throws IllegalArgumentException, InvalidStackFrameException,
 			VMMismatchException {
 		ArrayList<LocalVariable> list = new ArrayList<LocalVariable>(1);
 		list.add(variable);
-		return (ValueImpl) getValues(list).get(variable);
+		return getValues(list).get(variable);
 	}
 
-	/**
-	 * @return Returns the values of multiple local variables in this frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#getValues(java.util.List)
 	 */
-	public Map<LocalVariable, Value> getValues(List<LocalVariable> variables) throws IllegalArgumentException,
+	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) throws IllegalArgumentException,
 			InvalidStackFrameException, VMMismatchException {
 		// Note that this information should not be cached.
 		Map<LocalVariable, Value> map = new HashMap<LocalVariable, Value>(variables.size());
@@ -156,9 +156,8 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#getArgumentValues()
-	 * @since 3.3
 	 */
 	public List<Value> getArgumentValues() throws InvalidStackFrameException {
 		if (!thread().isSuspended()) {
@@ -166,10 +165,10 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 					JDIMessages.StackFrameImpl_no_argument_values_available);
 		}
 		try {
-			List<LocalVariableImpl> list = location().method().variables();
+			List<LocalVariable> list = location().method().variables();
 			ArrayList<Value> ret = new ArrayList<Value>();
 			LocalVariable var = null;
-			for (Iterator<LocalVariableImpl> iter = list.iterator(); iter.hasNext();) {
+			for (Iterator<LocalVariable> iter = list.iterator(); iter.hasNext();) {
 				var = iter.next();
 				if (var.isArgument()) {
 					ret.add(getValue(var));
@@ -182,15 +181,15 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 	}
 
-	/**
-	 * @return Returns the Location of the current instruction in the frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#location()
 	 */
 	public Location location() {
 		return fLocation;
 	}
 
-	/**
-	 * Sets the Value of a LocalVariable in this frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#setValue(com.sun.jdi.LocalVariable, com.sun.jdi.Value)
 	 */
 	public void setValue(LocalVariable var, Value value)
 			throws InvalidTypeException, ClassNotLoadedException {
@@ -205,7 +204,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			checkVM(var);
 			writeInt(((LocalVariableImpl) var).slot(), "slot", outData); //$NON-NLS-1$
 
-			// check the type and the vm of the value, convert the value if
+			// check the type and the VM of the value, convert the value if
 			// needed.
 			ValueImpl checkedValue = ValueImpl.checkValue(value, var.type(),
 					virtualMachineImpl());
@@ -230,8 +229,8 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 	}
 
-	/**
-	 * @return Returns the value of 'this' for the current frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#thisObject()
 	 */
 	public ObjectReference thisObject() throws InvalidStackFrameException {
 		// Note that this information should not be cached.
@@ -257,20 +256,19 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 	}
 
-	/**
-	 * @return Returns the thread under which this frame's method is running.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#thread()
 	 */
 	public ThreadReference thread() {
 		return fThread;
 	}
 
-	/**
-	 * @return Returns a LocalVariable that matches the given name and is
-	 *         visible at the current frame location.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#visibleVariableByName(java.lang.String)
 	 */
 	public LocalVariable visibleVariableByName(String name)
 			throws AbsentInformationException {
-		Iterator iter = visibleVariables().iterator();
+		Iterator<LocalVariable> iter = visibleVariables().iterator();
 		while (iter.hasNext()) {
 			LocalVariableImpl var = (LocalVariableImpl) iter.next();
 			if (var.name().equals(name)) {
@@ -281,15 +279,15 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		return null;
 	}
 
-	/**
-	 * @return Returns the values of multiple local variables in this frame.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.StackFrame#visibleVariables()
 	 */
-	public List visibleVariables() throws AbsentInformationException {
-		List<LocalVariableImpl> variables = fLocation.method().variables();
-		Iterator<LocalVariableImpl> iter = variables.iterator();
-		List visibleVars = new ArrayList(variables.size());
+	public List<LocalVariable> visibleVariables() throws AbsentInformationException {
+		List<LocalVariable> variables = fLocation.method().variables();
+		Iterator<LocalVariable> iter = variables.iterator();
+		List<LocalVariable> visibleVars = new ArrayList<LocalVariable>(variables.size());
 		while (iter.hasNext()) {
-			LocalVariableImpl var = iter.next();
+			LocalVariableImpl var = (LocalVariableImpl) iter.next();
 			// Only return local variables other than the this pointer.
 			if (var.isVisible(this) && !var.isThis()) {
 				visibleVars.add(var);

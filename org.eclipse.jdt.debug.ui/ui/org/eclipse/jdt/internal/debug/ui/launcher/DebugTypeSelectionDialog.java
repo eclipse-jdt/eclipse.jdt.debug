@@ -59,7 +59,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 				IWorkbenchAdapter adapter = (IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
 				if(adapter != null) {
 					ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-					Image image = (Image) fImageMap.get(descriptor);
+					Image image = fImageMap.get(descriptor);
 					if(image == null) {
 						image = descriptor.createImage();
 						fImageMap.put(descriptor, image);

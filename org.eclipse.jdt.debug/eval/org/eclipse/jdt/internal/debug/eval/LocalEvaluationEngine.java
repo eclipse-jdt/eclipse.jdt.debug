@@ -717,7 +717,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 		List<File> snippetFiles = getSnippetFiles();
 		Iterator<File> iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
-			File file = (File) iter.next();
+			File file = iter.next();
 			if (file.exists()) {
 				if (CODE_SNIPPET_NAME.equals(file.getName())
 						&& ENGINE_COUNT > 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 public class Cast extends CompoundInstruction {
 
@@ -34,7 +33,7 @@ public class Cast extends CompoundInstruction {
 	private int fDimension;
 
 	/**
-	 * Cast intruction constructor.
+	 * Cast instruction constructor.
 	 * 
 	 * @param typeTypeId
 	 *            the id of the type to cast into.
@@ -103,8 +102,7 @@ public class Cast extends CompoundInstruction {
 								IStatus.ERROR,
 								JDIDebugPlugin.getUniqueIdentifier(),
 								IStatus.OK,
-								MessageFormat
-										.format(InstructionsEvaluationMessages.Cast_No_class_object,
+								NLS.bind(InstructionsEvaluationMessages.Cast_No_class_object,
 												new String[] { typeName() }),
 								null));
 			}
@@ -118,8 +116,7 @@ public class Cast extends CompoundInstruction {
 								IStatus.ERROR,
 								JDIDebugPlugin.getUniqueIdentifier(),
 								IStatus.OK,
-								MessageFormat
-										.format(InstructionsEvaluationMessages.Cast_ClassCastException__Cannot_cast__0__as__1___1,
+								NLS.bind(InstructionsEvaluationMessages.Cast_ClassCastException__Cannot_cast__0__as__1___1,
 												new String[] {
 														value.toString(),
 														typeName() }), null));

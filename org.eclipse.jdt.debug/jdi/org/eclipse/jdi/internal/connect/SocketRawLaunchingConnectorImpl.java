@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,8 @@ import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.ArgumentImpl;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
@@ -54,8 +53,8 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 	/**
 	 * @return Returns the default arguments.
 	 */
-	public Map<String, ArgumentImpl> defaultArguments() {
-		HashMap<String, ArgumentImpl> arguments = new HashMap<String, ArgumentImpl>(3);
+	public Map<String, Connector.Argument> defaultArguments() {
+		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(3);
 
 		// Command
 		StringArgumentImpl strArg = new StringArgumentImpl(
@@ -96,7 +95,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 	/**
 	 * Retrieves connection arguments.
 	 */
-	private void getConnectionArguments(Map connectionArgs)
+	private void getConnectionArguments(Map<String,? extends Connector.Argument> connectionArgs)
 			throws IllegalConnectorArgumentsException {
 		String attribute = ""; //$NON-NLS-1$
 		try {
@@ -123,12 +122,10 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 		}
 	}
 
-	/**
-	 * Launches an application and connects to its VM.
-	 * 
-	 * @return Returns a connected Virtual Machine.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.connect.LaunchingConnector#launch(java.util.Map)
 	 */
-	public VirtualMachine launch(Map connectionArgs) throws IOException,
+	public VirtualMachine launch(Map<String,? extends Connector.Argument> connectionArgs) throws IOException,
 			IllegalConnectorArgumentsException, VMStartException {
 		getConnectionArguments(connectionArgs);
 
@@ -137,7 +134,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 		// Note that port number zero means that a free port is chosen.
 		SocketListeningConnectorImpl listenConnector = new SocketListeningConnectorImpl(
 				virtualMachineManager());
-		Map<String, ArgumentImpl> args = listenConnector.defaultArguments();
+		Map<String, Connector.Argument> args = listenConnector.defaultArguments();
 		((Connector.IntegerArgument) args.get("port")).setValue(fAddress); //$NON-NLS-1$
 		((Connector.IntegerArgument) args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
 		listenConnector.startListening(args);
@@ -151,8 +148,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 			virtualMachine = (VirtualMachineImpl) listenConnector.accept(args);
 		} catch (InterruptedIOException e) {
 			proc.destroy();
-			String message = MessageFormat
-					.format(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
+			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
 							new String[] { ((Connector.IntegerArgument) args
 									.get("timeout")).value() }); //$NON-NLS-1$ 
 			throw new VMStartException(message, proc);

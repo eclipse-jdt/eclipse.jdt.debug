@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpInterfaceID;
 
 import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.ClassType;
 import com.sun.jdi.InterfaceType;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
 /**
@@ -75,7 +77,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	public void flushStoredJdwpResults() {
 		super.flushStoredJdwpResults();
 
-		// For all reftypes that have this interface cached, this cache must be
+		// For all reference types that have this interface cached, this cache must be
 		// undone.
 		Iterator<Object> itr = virtualMachineImpl().allCachedRefTypes();
 		while (itr.hasNext()) {
@@ -88,20 +90,19 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 
 	}
 
-	/**
-	 * @return Returns the currently prepared classes which directly implement
-	 *         this interface.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#implementors()
 	 */
-	public List<ClassTypeImpl> implementors() {
+	public List<ClassType> implementors() {
 		// Note that this information should not be cached.
-		List<ClassTypeImpl> implementors = new ArrayList<ClassTypeImpl>();
-		Iterator<ReferenceTypeImpl> itr = virtualMachineImpl().allRefTypes();
+		List<ClassType> implementors = new ArrayList<ClassType>();
+		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
-			ReferenceTypeImpl refType = itr.next();
+			ReferenceType refType = itr.next();
 			if (refType instanceof ClassTypeImpl) {
 				try {
 					ClassTypeImpl classType = (ClassTypeImpl) refType;
-					List interfaces = classType.interfaces();
+					List<InterfaceType> interfaces = classType.interfaces();
 					if (interfaces.contains(this)) {
 						implementors.add(classType);
 					}
@@ -113,20 +114,19 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		return implementors;
 	}
 
-	/**
-	 * @return Returns the currently prepared interfaces which directly extend
-	 *         this interface.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#subinterfaces()
 	 */
-	public List<InterfaceTypeImpl> subinterfaces() {
+	public List<InterfaceType> subinterfaces() {
 		// Note that this information should not be cached.
-		List<InterfaceTypeImpl> implementors = new ArrayList<InterfaceTypeImpl>();
-		Iterator<ReferenceTypeImpl> itr = virtualMachineImpl().allRefTypes();
+		List<InterfaceType> implementors = new ArrayList<InterfaceType>();
+		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = itr.next();
+				ReferenceType refType = itr.next();
 				if (refType instanceof InterfaceTypeImpl) {
 					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl) refType;
-					List interfaces = interFaceType.superinterfaces();
+					List<InterfaceType> interfaces = interFaceType.superinterfaces();
 					if (interfaces.contains(this)) {
 						implementors.add(interFaceType);
 					}
@@ -138,10 +138,10 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		return implementors;
 	}
 
-	/**
-	 * @return Returns the interfaces directly extended by this interface.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#superinterfaces()
 	 */
-	public List superinterfaces() {
+	public List<InterfaceType> superinterfaces() {
 		return interfaces();
 	}
 

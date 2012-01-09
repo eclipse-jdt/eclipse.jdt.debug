@@ -111,7 +111,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 				}
 				Iterator<IJavaThreadGroup> iterator = groups.iterator();
 				while (iterator.hasNext()) {
-					IJavaThreadGroup group = (IJavaThreadGroup) iterator.next();
+					IJavaThreadGroup group = iterator.next();
 					int index = -1;
 					IJavaThreadGroup parent = group.getThreadGroup();
 					if (parent != null) {

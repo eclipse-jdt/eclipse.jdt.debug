@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	/**
 	 * Returns the element this refactoring is operating on.
 	 * 
-	 * @return
+	 * @return the original element
 	 */
 	protected IJavaElement getOriginalElement() {
 		return fElement;
@@ -77,7 +77,7 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	/**
 	 * Returns the destination of the move operation.
 	 * 
-	 * @return
+	 * @return the destination {@link IJavaElement}
 	 */
 	protected IJavaElement getDestination() {
 		return fDestination;
@@ -86,8 +86,8 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	/**
 	 * Returns whether this given element is a valid target for this operation.
 	 * 
-	 * @param element
-	 * @return
+	 * @param element the Java model element
+	 * @return whether this given element is a valid target for this operation
 	 */
 	protected abstract boolean accepts(IJavaElement element);
 
@@ -112,14 +112,14 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List<?> changes = new ArrayList<Object>();
+		List<Change> changes = new ArrayList<Change>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes);
 		if (changes.size() > 1) {
-			return new CompositeChange(RefactoringMessages.BreakpointRenameParticipant_1, (Change[]) changes.toArray(new Change[changes.size()]));
+			return new CompositeChange(RefactoringMessages.BreakpointRenameParticipant_1, changes.toArray(new Change[changes.size()]));
 		} else if (changes.size() == 1) {
-			return (Change) changes.get(0);
+			return changes.get(0);
 		}
 		return null;
 	}
@@ -127,13 +127,12 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	/**
 	 * Gathers refactoring specific changes. Subclasses must override.
 	 * 
-	 * @param breakpoint markers to consider during the change
-	 * @param list to add changes to 
-	 * @return changes for this refactoring.
-	 * @throws CoreException
-	 * @throws OperationCanceledException
+	 * @param markers markers to consider during the change
+	 * @param changes the list of changes
+	 * @throws CoreException if a problem occurs
+	 * @throws OperationCanceledException if the operation was cancelled
 	 */
-	protected abstract void gatherChanges(IMarker[] markers, List<?> changes) throws CoreException, OperationCanceledException;
+	protected abstract void gatherChanges(IMarker[] markers, List<Change> changes) throws CoreException, OperationCanceledException;
 	
 	/**
 	 * Returns the resource that should be considered when searching for affected breakpoints.
@@ -156,8 +155,12 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	
 	/**
 	 * Creates a specific type of change for a breakpoint that is changing types.
+	 * @param breakpoint the breakpoint to create a change for
+	 * @param destType the new type
+	 * @param originalType the original type
 	 * 
 	 * @return type change or <code>null</code>
+	 * @throws CoreException if creating the change fails
 	 */
 	protected Change createTypeChange(IJavaBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
 		if (breakpoint instanceof IJavaWatchpoint) {
@@ -177,9 +180,9 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	/**
 	 * Returns whether the given target type is contained in the specified container type.
 	 * 
-	 * @param container
-	 * @param target
-	 * @return
+	 * @param container the containing element
+	 * @param type the target element
+	 * @return if the given type is contained in the given container
 	 */
 	protected boolean isContained(IJavaElement container, IType type) {
 		IJavaElement parent = type;

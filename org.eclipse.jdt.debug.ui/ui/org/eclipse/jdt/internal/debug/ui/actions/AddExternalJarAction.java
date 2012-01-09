@@ -70,7 +70,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 		}
 		if(list.size() > 0) {
 			setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
-			getViewer().addEntries((IRuntimeClasspathEntry[]) list.toArray(new IRuntimeClasspathEntry[list.size()]));
+			getViewer().addEntries(list.toArray(new IRuntimeClasspathEntry[list.size()]));
 		}
 	}	
 }

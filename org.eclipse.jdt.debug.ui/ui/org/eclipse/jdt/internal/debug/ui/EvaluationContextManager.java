@@ -163,7 +163,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	private static IJavaStackFrame getContext(IWorkbenchPage page) {
 		if (fgManager != null) {
 			if (fgManager.fContextsByPage != null) {
-				return (IJavaStackFrame)fgManager.fContextsByPage.get(page);
+				return fgManager.fContextsByPage.get(page);
 			}
 		}
 		return null;

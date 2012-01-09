@@ -92,7 +92,7 @@ public class VMTypePage extends WizardPage {
 		super.dispose();
 		Iterator<AbstractVMInstallPage> iterator = fPages.iterator();
 		while (iterator.hasNext()) {
-			AbstractVMInstallPage page = (AbstractVMInstallPage)iterator.next();
+			AbstractVMInstallPage page = iterator.next();
 			page.dispose();
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import com.sun.jdi.Type;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
+public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue, Comparable<DoubleValue> {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.DOUBLE_TAG;
 
@@ -51,6 +51,13 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
 		return virtualMachineImpl().getDoubleType();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(DoubleValue o) {
+		return ((Double)doubleValue()).compareTo(o.doubleValue());
+	}
+	
 	/**
 	 * @returns Value.
 	 */

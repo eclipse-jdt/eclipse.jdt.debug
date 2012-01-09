@@ -135,7 +135,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		if (fErrorMessages.isEmpty()) {
 			addErrorMessage(null);
 		} else {
-			addErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
+			addErrorMessage(fErrorMessages.get(fErrorMessages.size() - 1));
 		}
 	}
 	

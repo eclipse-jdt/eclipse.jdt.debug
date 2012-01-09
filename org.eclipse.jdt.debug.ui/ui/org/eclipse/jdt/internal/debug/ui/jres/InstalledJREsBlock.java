@@ -377,7 +377,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
             // duplicate & add vm
             VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
             standin.setName(generateName(selectedVM.getName()));
-			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, fVMs.toArray(new IVMInstall[fVMs.size()]));
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			int dialogResult = dialog.open();
 			if (dialogResult == Window.OK) {
@@ -571,14 +571,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @return JREs currently being displayed in this block
 	 */
 	public IVMInstall[] getJREs() {
-		return (IVMInstall[])fVMs.toArray(new IVMInstall[fVMs.size()]);
+		return fVMs.toArray(new IVMInstall[fVMs.size()]);
 	}
 	
 	/**
 	 * Bring up a wizard that lets the user create a new VM definition.
 	 */
 	private void addVM() {
-		AddVMInstallWizard wizard = new AddVMInstallWizard((IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+		AddVMInstallWizard wizard = new AddVMInstallWizard(fVMs.toArray(new IVMInstall[fVMs.size()]));
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		if (dialog.open() == Window.OK) {
 			VMStandin result = wizard.getResult();
@@ -624,7 +624,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
 			dialog.open();
 		} else {
-			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, fVMs.toArray(new IVMInstall[fVMs.size()]));
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			if (dialog.open() == Window.OK) {
 				VMStandin result = wizard.getResult();
@@ -751,7 +751,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			Iterator<IVMInstallType> iter2 = types.iterator();
 			while (iter.hasNext()) {
 				File location = (File)iter.next();
-				IVMInstallType type = (IVMInstallType)iter2.next();
+				IVMInstallType type = iter2.next();
 				AbstractVMInstall vm = new VMStandin(type, createUniqueId(type));
 				String name = location.getName();
 				String nameCopy = new String(name);
@@ -809,7 +809,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		Iterator<VMStandin> iterator = added.iterator();
 		while (iterator.hasNext()) {
-			IVMInstall vm = (IVMInstall) iterator.next();
+			IVMInstall vm = iterator.next();
 			vmAdded(vm);
 		}
 
@@ -890,7 +890,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		}
 		while (!subDirs.isEmpty()) {
-			File subDir = (File)subDirs.remove(0);
+			File subDir = subDirs.remove(0);
 			search(subDir, found, types, ignore, monitor);
 			if (monitor.isCanceled()) {
 				return;
@@ -1004,7 +1004,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				standins.add(new VMStandin(install));
 			}
 		}
-		setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));	
+		setJREs(standins.toArray(new IVMInstall[standins.size()]));	
 	}
 		
 }

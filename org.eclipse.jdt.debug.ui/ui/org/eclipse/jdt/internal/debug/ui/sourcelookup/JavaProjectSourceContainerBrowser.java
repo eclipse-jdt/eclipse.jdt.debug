@@ -105,7 +105,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			
 			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
-				IJavaProject jp = (IJavaProject)iter.next();
+				IJavaProject jp = iter.next();
 				sourceContainers.add(new JavaProjectSourceContainer(jp));
 				if (dialog.isAddExportedEntries()) {
 					try {
@@ -120,7 +120,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);
 		}
-		return (ISourceContainer[])sourceContainers.toArray(new ISourceContainer[sourceContainers.size()]);
+		return sourceContainers.toArray(new ISourceContainer[sourceContainers.size()]);
 	}
 
 	/**

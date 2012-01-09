@@ -14,8 +14,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
+
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
@@ -81,20 +83,18 @@ public class LocationImpl extends MirrorImpl implements Location {
 		}
 		return false;
 	}
-
-	/**
-	 * @return Returns a negative integer, zero, or a positive integer as this
-	 *         object is less than, equal to, or greater than the specified
-	 *         object.
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object object) {
-		if (object == null || !object.getClass().equals(this.getClass()))
+	public int compareTo(Locatable locatable) {
+		if (locatable == null || !locatable.getClass().equals(this.getClass()))
 			throw new ClassCastException(
 					JDIMessages.LocationImpl_Can__t_compare_location_to_given_object_1);
 
 		// See if methods are the same, if not return comparison between
 		// methods.
-		LocationImpl location2 = (LocationImpl) object;
+		LocationImpl location2 = (LocationImpl) locatable;
 		if (!method().equals(location2.method()))
 			return method().compareTo(location2.method());
 
@@ -141,8 +141,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	@Override
 	public String toString() {
 		try {
-			return MessageFormat
-					.format(JDIMessages.LocationImpl_sourcename___0___line___1__3,
+			return NLS.bind(JDIMessages.LocationImpl_sourcename___0___line___1__3,
 							new String[] { sourceName(),
 									Integer.toString(lineNumber()) });
 		} catch (Exception e) {

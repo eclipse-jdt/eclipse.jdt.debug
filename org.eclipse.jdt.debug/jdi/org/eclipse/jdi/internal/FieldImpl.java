@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,19 +70,16 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 						((FieldImpl) object).referenceTypeImpl());
 	}
 
-	/**
-	 * @return Returns a negative integer, zero, or a positive integer as this
-	 *         object is less than, equal to, or greater than the specified
-	 *         object.
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object object) {
+	public int compareTo(Field object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException(
-					JDIMessages.FieldImpl_Can__t_compare_field_to_given_object_1);
+			throw new ClassCastException(JDIMessages.FieldImpl_Can__t_compare_field_to_given_object_1);
 
 		// See if declaring types are the same, if not return comparison between
 		// declaring types.
-		Field type2 = (Field) object;
+		Field type2 = object;
 		if (!declaringType().equals(type2.declaringType()))
 			return declaringType().compareTo(type2.declaringType());
 
@@ -134,7 +131,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	}
 
 	/**
-	 * @return Returns true if object is volitile.
+	 * @return Returns true if object is volatile.
 	 */
 	public boolean isVolatile() {
 		return (fModifierBits & MODIFIER_ACC_VOLITILE) != 0;

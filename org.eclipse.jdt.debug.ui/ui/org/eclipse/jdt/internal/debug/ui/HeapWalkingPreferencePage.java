@@ -162,7 +162,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		fErrorMessages.remove(cause);
 		Iterator<String> iter = fErrorMessages.values().iterator();
 		if (iter.hasNext()){
-			setErrorMessage((String)iter.next());
+			setErrorMessage(iter.next());
 		} else {
 			setErrorMessage(null);
 			setValid(true);

@@ -556,6 +556,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 *                shape change</li>
 	 *                </ul>
 	 */
+	@SuppressWarnings("null")
 	private void redefineTypesJ9(JDIDebugTarget target, List<String> qualifiedNames)
 			throws DebugException {
 		String[] typeNames = qualifiedNames
@@ -603,6 +604,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * 
 	 * This method is to be used for JDK hot code replace.
 	 */
+	@SuppressWarnings("null")
 	private void redefineTypesJDK(JDIDebugTarget target, List<IResource> resources,
 			List<String> qualifiedNames) throws DebugException {
 		if (target.supportsJDKHotCodeReplace()) {
@@ -722,7 +724,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			} catch (JavaModelException jme) {
 				continue;
 			}
-			Iterator<ReferenceType> classIter = classes.iterator();
 			for(ReferenceType type : classes) {
 				typesToBytes.put(type, bytes);
 			}

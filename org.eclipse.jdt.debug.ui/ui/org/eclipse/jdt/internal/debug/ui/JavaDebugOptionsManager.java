@@ -447,7 +447,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			String token = tokenizer.nextToken();
 			list.add(token);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/**
@@ -715,7 +715,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			}
 		}
 		if (!update.isEmpty()) {
-			updateBreakpointMessages((IBreakpoint[])update.toArray(new IBreakpoint[update.size()]));
+			updateBreakpointMessages(update.toArray(new IBreakpoint[update.size()]));
 		}
 	}
 	

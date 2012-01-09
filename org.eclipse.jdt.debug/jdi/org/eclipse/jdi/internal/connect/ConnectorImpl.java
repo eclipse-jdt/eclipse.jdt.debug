@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,34 +125,54 @@ public abstract class ConnectorImpl implements Connector {
 			fMustSpecify = mustSpecify;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#name()
+		 */
 		public String name() {
 			return fName;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#description()
+		 */
 		public String description() {
 			return fDescription;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#label()
+		 */
 		public String label() {
 			return fLabel;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#mustSpecify()
+		 */
 		public boolean mustSpecify() {
 			return fMustSpecify;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#value()
+		 */
 		public abstract String value();
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#setValue(java.lang.String)
+		 */
 		public abstract void setValue(String value);
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.Argument#isValid(java.lang.String)
+		 */
 		public abstract boolean isValid(String value);
 
 		@Override
 		public abstract String toString();
 	}
 
-	public class StringArgumentImpl extends ArgumentImpl implements
-			com.sun.jdi.connect.Connector.StringArgument {
+	public class StringArgumentImpl extends ArgumentImpl implements StringArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 
 		private String fValue;
@@ -184,8 +204,7 @@ public abstract class ConnectorImpl implements Connector {
 
 	}
 
-	public class IntegerArgumentImpl extends ArgumentImpl implements
-			com.sun.jdi.connect.Connector.IntegerArgument {
+	public class IntegerArgumentImpl extends ArgumentImpl implements IntegerArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 		private Integer fValue;
 		private int fMin;
@@ -224,33 +243,50 @@ public abstract class ConnectorImpl implements Connector {
 			return value();
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#intValue()
+		 */
 		public int intValue() {
 			return fValue.intValue();
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#setValue(int)
+		 */
 		public void setValue(int value) {
 			fValue = new Integer(value);
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#min()
+		 */
 		public int min() {
 			return fMin;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#max()
+		 */
 		public int max() {
 			return fMax;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#isValid(int)
+		 */
 		public boolean isValid(int value) {
 			return fMin <= value && value <= fMax;
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.IntegerArgument#stringValueOf(int)
+		 */
 		public String stringValueOf(int value) {
 			return new Integer(value).toString();
 		}
 	}
 
-	public class BooleanArgumentImpl extends ArgumentImpl implements
-			com.sun.jdi.connect.Connector.BooleanArgument {
+	public class BooleanArgumentImpl extends ArgumentImpl implements BooleanArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
 		private Boolean fValue;
 
@@ -279,36 +315,47 @@ public abstract class ConnectorImpl implements Connector {
 			return value();
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.BooleanArgument#booleanValue()
+		 */
 		public boolean booleanValue() {
 			return fValue.booleanValue();
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.BooleanArgument#setValue(boolean)
+		 */
 		public void setValue(boolean value) {
 			fValue = Boolean.valueOf(value);
 		}
 
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.BooleanArgument#stringValueOf(boolean)
+		 */
 		public String stringValueOf(boolean value) {
 			return Boolean.valueOf(value).toString();
 		}
 	}
 
-	public class SelectedArgumentImpl extends StringArgumentImpl implements
-			com.sun.jdi.connect.Connector.SelectedArgument {
+	public class SelectedArgumentImpl extends StringArgumentImpl implements	SelectedArgument {
 		private static final long serialVersionUID = 6009335074727417445L;
-		private List fChoices;
+		private List<String> fChoices;
 
 		protected SelectedArgumentImpl(String name, String description,
-				String label, boolean mustSpecify, List choices) {
+				String label, boolean mustSpecify, List<String> choices) {
 			super(name, description, label, mustSpecify);
 			fChoices = choices;
 		}
 
-		public List choices() {
+		/* (non-Javadoc)
+		 * @see com.sun.jdi.connect.Connector.SelectedArgument#choices()
+		 */
+		public List<String> choices() {
 			return fChoices;
 		}
 
 		@Override
-		public boolean isValid(java.lang.String value) {
+		public boolean isValid(String value) {
 			return fChoices.contains(value);
 		}
 	}

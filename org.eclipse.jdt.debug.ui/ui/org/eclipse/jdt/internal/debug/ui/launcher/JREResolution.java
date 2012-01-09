@@ -60,7 +60,7 @@ public abstract class JREResolution implements IMarkerResolution {
 				vms.add(installs[j]);
 			}
 		}
-		return (IVMInstall[])vms.toArray(new IVMInstall[vms.size()]);		
+		return vms.toArray(new IVMInstall[vms.size()]);		
 	}
 
 }

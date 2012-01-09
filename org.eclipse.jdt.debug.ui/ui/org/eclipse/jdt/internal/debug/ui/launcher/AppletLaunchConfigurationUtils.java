@@ -159,7 +159,7 @@ public class AppletLaunchConfigurationUtils {
 			// filter within the parent element
 			Iterator<IType> iterator = found.iterator();
 			while (iterator.hasNext()) {
-				IJavaElement target = (IJavaElement) iterator.next();
+				IJavaElement target = iterator.next();
 				IJavaElement child = target;
 				while (child != null) {
 					if (child.equals(parent)) {
@@ -235,7 +235,7 @@ public class AppletLaunchConfigurationUtils {
 			};
 			context.run(true, true, runnable);			
 		}
-		return (IType[]) result.toArray(new IType[result.size()]) ;
+		return result.toArray(new IType[result.size()]) ;
 	}
 }
 

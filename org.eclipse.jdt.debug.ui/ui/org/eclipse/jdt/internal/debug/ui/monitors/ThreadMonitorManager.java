@@ -144,7 +144,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		IDebugElement debugElements[] = null;
 		synchronized(map) {
 			debugElements = new IDebugElement[map.size()]; 
-			debugElements =	(IDebugElement[]) map.keySet().toArray(debugElements);
+			debugElements =	map.keySet().toArray(debugElements);
 		}
 		for(int i = 0; i < debugElements.length; ++i) {
 			if (debugElements[i].getDebugTarget().equals(debugTarget)) {
@@ -309,14 +309,14 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	private JavaMonitor[] getJavaMonitors() {
 		synchronized(fJavaMonitors) {
 			JavaMonitor[] monitors = new JavaMonitor[fJavaMonitors.size()];
-			return (JavaMonitor[]) fJavaMonitors.values().toArray(monitors);
+			return fJavaMonitors.values().toArray(monitors);
 		}
 	}
 	
 	private JavaMonitorThread[] getJavaMonitorThreads() {
 		synchronized(fJavaMonitorThreads) {
 			JavaMonitorThread[] threads = new JavaMonitorThread[fJavaMonitorThreads.size()];
-			return (JavaMonitorThread[]) fJavaMonitorThreads.values().toArray(threads);
+			return fJavaMonitorThreads.values().toArray(threads);
 		}
 	}
 }

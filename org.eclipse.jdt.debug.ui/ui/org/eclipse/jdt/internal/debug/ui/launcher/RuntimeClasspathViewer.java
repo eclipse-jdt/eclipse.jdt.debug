@@ -113,7 +113,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
 	public IRuntimeClasspathEntry[] getEntries() {
-		return (IRuntimeClasspathEntry[])fEntries.toArray(new IRuntimeClasspathEntry[fEntries.size()]);
+		return fEntries.toArray(new IRuntimeClasspathEntry[fEntries.size()]);
 	}
 	
 	/* (non-Javadoc)

@@ -42,10 +42,10 @@ public class JDTDebugRefactoringUtil {
 			return null;
 		} 
 		else if (nbChanges == 1) {
-			return (Change) changes.get(0);
+			return changes.get(0);
 		} 
 		else {
-			return new CompositeChange(changeLabel, (Change[])changes.toArray(new Change[changes.size()]));
+			return new CompositeChange(changeLabel, changes.toArray(new Change[changes.size()]));
 		}
 	}
 	
@@ -272,7 +272,7 @@ public class JDTDebugRefactoringUtil {
 					}
 				}
 			}
-			return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
+			return list.toArray(new ILaunchConfiguration[list.size()]);
 		}
 		catch(CoreException e) {JDIDebugPlugin.log(e);}
 		return new ILaunchConfiguration[0];

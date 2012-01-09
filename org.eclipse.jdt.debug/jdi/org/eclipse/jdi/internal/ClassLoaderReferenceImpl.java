@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,9 @@ import com.sun.jdi.ReferenceType;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements
-		ClassLoaderReference {
+public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements ClassLoaderReference {
 	/** JDWP Tag. */
+	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.CLASS_LOADER_TAG;
 
 	/**
@@ -57,16 +57,15 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements
 	 */
 	public List<ReferenceType> definedClasses() {
 		// Note that this information should not be cached.
-		List<ReferenceTypeImpl> visibleClasses = visibleClasses();
+		List<ReferenceType> visibleClasses = visibleClasses();
 		List<ReferenceType> result = new ArrayList<ReferenceType>(visibleClasses.size());
-		Iterator<ReferenceTypeImpl> iter = visibleClasses.iterator();
+		Iterator<ReferenceType> iter = visibleClasses.iterator();
 		while (iter.hasNext()) {
 			try {
 				ReferenceType type = iter.next();
 				// Note that classLoader() is null for the bootstrap
 				// classloader.
-				if (type.classLoader() != null
-						&& type.classLoader().equals(this))
+				if (type.classLoader() != null && type.classLoader().equals(this))
 					result.add(type);
 			} catch (ClassNotPreparedException e) {
 				continue;
@@ -75,11 +74,10 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements
 		return result;
 	}
 
-	/**
-	 * @returns Returns a list of all loaded classes that are visible by this
-	 *          class loader.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassLoaderReference#visibleClasses()
 	 */
-	public List<ReferenceTypeImpl> visibleClasses() {
+	public List<ReferenceType> visibleClasses() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -88,10 +86,9 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ReferenceTypeImpl> elements = new ArrayList<ReferenceTypeImpl>(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this,
-						replyData);
+				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
 				if (elt == null)
 					continue;
 				elements.add(elt);

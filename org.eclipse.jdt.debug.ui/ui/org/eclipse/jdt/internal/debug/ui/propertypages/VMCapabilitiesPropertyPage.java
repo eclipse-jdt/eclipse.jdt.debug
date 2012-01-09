@@ -239,7 +239,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		IPreferenceStore store = getPreferenceStore();
 		if(store != null) {
 			for (int i = 0; i < fExpandedComps.size(); i++) {
-				store.setValue(EXPANDED_STATE+i, ((ExpandableComposite) fExpandedComps.get(i)).isExpanded());
+				store.setValue(EXPANDED_STATE+i, fExpandedComps.get(i).isExpanded());
 			}
 		}
 	}
@@ -250,12 +250,12 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private void restoreExpansionState() {
 		IPreferenceStore store = getPreferenceStore();
 		if(store == null) {
-			((ExpandableComposite)fExpandedComps.get(0)).setExpanded(true);
+			fExpandedComps.get(0).setExpanded(true);
 		}
 		else {
 			ExpandableComposite ex;
 			for (int i = 0; i < fExpandedComps.size(); i++) {
-				ex = (ExpandableComposite) fExpandedComps.get(i);
+				ex = fExpandedComps.get(i);
 				ex.setExpanded(store.getBoolean(EXPANDED_STATE+i));
 			}
 		}

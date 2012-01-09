@@ -101,9 +101,9 @@ public class MainMethodSearchEngine{
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
 			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size()); 
 			Set<IType> set = addSubtypes(result, subtypesMonitor, scope);
-			return (IType[]) set.toArray(new IType[set.size()]);
+			return set.toArray(new IType[set.size()]);
 		}
-		return (IType[]) result.toArray(new IType[result.size()]);
+		return result.toArray(new IType[result.size()]);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class MainMethodSearchEngine{
 		ITypeHierarchy hierarchy = null;
 		IType[] subtypes = null;
 		while (iterator.hasNext()) {
-			type = (IType) iterator.next();
+			type = iterator.next();
 			if (result.add(type)) {
 				try {
 					hierarchy = type.newTypeHierarchy(monitor);

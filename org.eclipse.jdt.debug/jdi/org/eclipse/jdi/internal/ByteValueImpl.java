@@ -24,7 +24,7 @@ import com.sun.jdi.Type;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
+public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comparable<ByteValue> {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.BYTE_TAG;
 
@@ -45,6 +45,13 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 		return tag;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(ByteValue o) {
+		return ((Byte)byteValue()).compareTo(o.byteValue());
+	}
+	
 	/**
 	 * @returns type of value.
 	 */
@@ -77,8 +84,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 	 * Writes value without value tag.
 	 */
 	@Override
-	public void write(MirrorImpl target, DataOutputStream out)
-			throws IOException {
+	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		target.writeByte(((Byte) fValue).byteValue(), "byteValue", out); //$NON-NLS-1$
 	}
 }

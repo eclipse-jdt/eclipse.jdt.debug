@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,8 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
@@ -43,9 +43,11 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InternalException;
+import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
@@ -93,7 +95,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * the output source file, range in the output source file]. (Integer ->
 		 * List of int[2]).
 		 */
-		private HashMap<Integer, List> fLineInfo;
+		private HashMap<Integer, List<int[]>> fLineInfo;
 
 		/**
 		 * FileInfo constructor.
@@ -109,7 +111,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			fFileId = fileId;
 			fFileName = fileName;
 			fAbsoluteFileName = absoluteFileName;
-			fLineInfo = new HashMap<Integer, List>();
+			fLineInfo = new HashMap<Integer, List<int[]>>();
 		}
 
 		/**
@@ -146,10 +148,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 */
 		public List<Integer> getOutputLinesForLine(int lineNumber) {
 			List<Integer> list = new ArrayList<Integer>();
-			List outputLines = fLineInfo.get(new Integer(lineNumber));
+			List<int[]> outputLines = fLineInfo.get(new Integer(lineNumber));
 			if (outputLines != null) {
-				for (Iterator iter = outputLines.iterator(); iter.hasNext();) {
-					int[] info = (int[]) iter.next();
+				for (Iterator<int[]> iter = outputLines.iterator(); iter.hasNext();) {
+					int[] info = iter.next();
 					int outputLineNumber = info[0];
 					int length = info[1];
 					if (length == 0) {
@@ -200,7 +202,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * Map line number in the output source file -> list of line numbers in
 		 * the input source file. (Integer -> List of Integer)
 		 */
-		private HashMap<Integer, List> fOutputLineToInputLine;
+		private HashMap<Integer, List<int[]>> fOutputLineToInputLine;
 
 		/**
 		 * Stratum constructor.
@@ -211,7 +213,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		public Stratum(String id) {
 			fId = id;
 			fFileInfos = new ArrayList<FileInfo>();
-			fOutputLineToInputLine = new HashMap<Integer, List>();
+			fOutputLineToInputLine = new HashMap<Integer, List<int[]>>();
 			fPrimaryFileId = -1;
 		}
 
@@ -245,7 +247,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			}
 			FileInfo fileInfo = new FileInfo(fileId, fileName, absoluteFileName);
 			if (fFileInfos.contains(fileInfo)) {
-				throw new AbsentInformationException(MessageFormat.format(
+				throw new AbsentInformationException(NLS.bind(
 						JDIMessages.ReferenceTypeImpl_28, new String[] {
 								Integer.toString(fileId), fId }));
 			}
@@ -279,7 +281,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				}
 			}
 			if (fileInfo == null) {
-				throw new AbsentInformationException(MessageFormat.format(
+				throw new AbsentInformationException(NLS.bind(
 						JDIMessages.ReferenceTypeImpl_29,
 						new String[] { Integer.toString(lineFileId) }));
 			}
@@ -336,7 +338,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * @param outputLineNumber
 		 * @return
 		 */
-		public List getInputLineInfos(int outputLineNumber) {
+		public List<int[]> getInputLineInfos(int outputLineNumber) {
 			return fOutputLineToInputLine.get(new Integer(
 					outputLineNumber));
 		}
@@ -356,7 +358,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	private List<Field> fAllFields = null;
 	private List<Field> fVisibleFields = null;
 	private List<InterfaceType> fAllInterfaces = null;
-	private Map<String, Map> fStratumAllLineLocations = null;
+	private Map<String, Map<String, List<Location>>> fStratumAllLineLocations = null;
 	private String fSourceName = null;
 	private int fModifierBits = -1;
 	private ClassLoaderReferenceImpl fClassLoader = null;
@@ -418,14 +420,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * Flushes all stored Jdwp results.
 	 */
 	public void flushStoredJdwpResults() {
-		Iterator<Method> iter;
-
 		// Flush Methods.
 		if (fMethods != null) {
-			iter = fMethods.iterator();
-			while (iter.hasNext()) {
-				MethodImpl method = (MethodImpl) iter.next();
-				method.flushStoredJdwpResults();
+			for (Method method : fMethods) {
+				((MethodImpl)method).flushStoredJdwpResults();
 			}
 			fMethods = null;
 			fMethodTable = null;
@@ -433,10 +431,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		// Flush Fields.
 		if (fFields != null) {
-			iter = fFields.iterator();
-			while (iter.hasNext()) {
-				FieldImpl field = (FieldImpl) iter.next();
-				field.flushStoredJdwpResults();
+			for (Field field : fFields) {
+				((FieldImpl)field).flushStoredJdwpResults();
 			}
 			fFields = null;
 		}
@@ -665,7 +661,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				defaultReplyErrorHandler(replyPacket.errorCode());
 			}
 			DataInputStream replyData = replyPacket.dataInStream();
-			List<InterfaceTypeImpl> elements = new ArrayList<InterfaceTypeImpl>();
+			List<InterfaceType> elements = new ArrayList<InterfaceType>();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				InterfaceTypeImpl ref = InterfaceTypeImpl.read(this, replyData);
@@ -883,7 +879,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns the visible Field with the given non-ambiguous name.
 	 */
 	public Field fieldByName(String name) {
-		Iterator<TypeComponentImpl> iter = visibleFields().iterator();
+		Iterator<Field> iter = visibleFields().iterator();
 		while (iter.hasNext()) {
 			FieldImpl field = (FieldImpl) iter.next();
 			if (field.name().equals(name))
@@ -937,7 +933,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *         given fieldID, or null if not found.
 	 */
 	public FieldImpl findField(JdwpFieldID fieldID) {
-		Iterator<TypeComponentImpl> iter = fields().iterator();
+		Iterator<Field> iter = fields().iterator();
 		while (iter.hasNext()) {
 			FieldImpl field = (FieldImpl) iter.next();
 			if (field.getFieldID().equals(fieldID))
@@ -950,15 +946,15 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns MethodImpl of a method in the reference specified by a
 	 *         given methodID, or null if not found.
 	 */
-	public MethodImpl findMethod(JdwpMethodID methodID) {
+	public Method findMethod(JdwpMethodID methodID) {
 		if (methodID.value() == 0) {
 			return new MethodImpl(virtualMachineImpl(), this, methodID,
 					JDIMessages.ReferenceTypeImpl_Obsolete_method_1,
 					"", null, -1); //$NON-NLS-1$ 
 		}
 		if (fMethodTable == null) {
-			fMethodTable = new Hashtable<JdwpMethodID, MethodImpl>();
-			Iterator<TypeComponentImpl> iter = methods().iterator();
+			fMethodTable = new Hashtable<JdwpMethodID, Method>();
+			Iterator<Method> iter = methods().iterator();
 			while (iter.hasNext()) {
 				MethodImpl method = (MethodImpl) iter.next();
 				fMethodTable.put(method.getMethodID(), method);
@@ -1046,14 +1042,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/**
 	 * @return Returns a negative integer, zero, or a positive integer as this
-	 *         object is less than, equal to, or greater than the specified
-	 *         object.
+	 *         {@link ReferenceType} is less than, equal to, or greater than the specified
+	 *         {@link ReferenceType}.
 	 */
-	public int compareTo(Object object) {
-		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException(
-					JDIMessages.ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4);
-		return name().compareTo(((ReferenceType) object).name());
+	public int compareTo(ReferenceType type) {
+		if (type == null || !type.getClass().equals(this.getClass()))
+			throw new ClassCastException(JDIMessages.ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4);
+		return name().compareTo(type.name());
 	}
 
 	/**
@@ -1077,11 +1072,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		return (modifiers() & MODIFIER_ACC_STATIC) != 0;
 	}
 
-	/**
-	 * @return Returns a List filled with all Location objects that map to the
-	 *         given line number.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#locationsOfLine(int)
 	 */
-	public List locationsOfLine(int line) throws AbsentInformationException {
+	public List<Location> locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
 
@@ -1131,11 +1125,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a List containing each visible Method that has the given
 	 *         name.
 	 */
-	public List<MethodImpl> methodsByName(String name) {
-		List<MethodImpl> elements = new ArrayList<MethodImpl>();
-		Iterator<MethodImpl> iter = visibleMethods().iterator();
+	public List<Method> methodsByName(String name) {
+		List<Method> elements = new ArrayList<Method>();
+		Iterator<Method> iter = visibleMethods().iterator();
 		while (iter.hasNext()) {
-			MethodImpl method = iter.next();
+			Method method = iter.next();
 			if (method.name().equals(name)) {
 				elements.add(method);
 			}
@@ -1147,13 +1141,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a List containing each visible Method that has the given
 	 *         name and signature.
 	 */
-	public List<MethodImpl> methodsByName(String name, String signature) {
-		List<MethodImpl> elements = new ArrayList<MethodImpl>();
-		Iterator<MethodImpl> iter = visibleMethods().iterator();
+	public List<Method> methodsByName(String name, String signature) {
+		List<Method> elements = new ArrayList<Method>();
+		Iterator<Method> iter = visibleMethods().iterator();
 		while (iter.hasNext()) {
-			MethodImpl method = iter.next();
-			if (method.name().equals(name)
-					&& method.signature().equals(signature)) {
+			MethodImpl method = (MethodImpl) iter.next();
+			if (method.name().equals(name) && method.signature().equals(signature)) {
 				elements.add(method);
 			}
 		}
@@ -1332,11 +1325,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 						+ typeTag);
 	}
 
-	/**
-	 * @return Returns the Location objects for each executable source line in
-	 *         this reference type.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#allLineLocations()
 	 */
-	public List allLineLocations() throws AbsentInformationException {
+	public List<Location> allLineLocations() throws AbsentInformationException {
 		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
 
@@ -1371,12 +1363,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *             when the ReferenceType has not been loaded by the specified
 	 *             class loader.
 	 */
+	@SuppressWarnings("null")
 	public static TypeImpl create(VirtualMachineImpl vmImpl, String signature,
 			ClassLoaderReference classLoader) throws ClassNotLoadedException {
 		ReferenceTypeImpl refTypeBootstrap = null;
-		List classes = vmImpl.classesBySignature(signature);
+		List<ReferenceType> classes = vmImpl.classesBySignature(signature);
 		ReferenceTypeImpl type;
-		Iterator iter = classes.iterator();
+		Iterator<ReferenceType> iter = classes.iterator();
 		while (iter.hasNext()) {
 			// First pass. Look for a class loaded by the given class loader
 			type = (ReferenceTypeImpl) iter.next();
@@ -1397,14 +1390,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			return refTypeBootstrap;
 		}
 
-		List<ReferenceTypeImpl> visibleTypes;
+		List<ReferenceType> visibleTypes;
 		iter = classes.iterator();
 		while (iter.hasNext()) {
 			// Second pass. Look for a class that is visible to
 			// the given class loader
 			type = (ReferenceTypeImpl) iter.next();
 			visibleTypes = classLoader.visibleClasses();
-			Iterator<ReferenceTypeImpl> visibleIter = visibleTypes.iterator();
+			Iterator<ReferenceType> visibleIter = visibleTypes.iterator();
 			while (visibleIter.hasNext()) {
 				if (type.equals(visibleIter.next())) {
 					return type;
@@ -1542,57 +1535,52 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		throw new AbsentInformationException();
 	}
 
-	/**
-	 * @see ReferenceType#allLineLocations(String, String)
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#allLineLocations(java.lang.String, java.lang.String)
 	 */
-	public List allLineLocations(String stratum, String sourceName)
-			throws AbsentInformationException {
-		Iterator<TypeComponentImpl> allMethods = methods().iterator();
+	public List<Location> allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
+		Iterator<Method> allMethods = methods().iterator();
 		if (stratum == null) { // if stratum not defined use the default stratum
 			stratum = defaultStratum();
 		}
-		List allLineLocations = null;
-		Map<String, List> sourceNameAllLineLocations = null;
+		List<Location> allLineLocations = null;
+		Map<String, List<Location>> sourceNameAllLineLocations = null;
 		if (fStratumAllLineLocations == null) { // the stratum map doesn't
 												// exist, create it
-			fStratumAllLineLocations = new HashMap<String, Map>();
+			fStratumAllLineLocations = new HashMap<String, Map<String, List<Location>>>();
 		} else {
 			// get the source name map
-			sourceNameAllLineLocations = fStratumAllLineLocations
-					.get(stratum);
+			sourceNameAllLineLocations = fStratumAllLineLocations.get(stratum);
 		}
 		if (sourceNameAllLineLocations == null) { // the source name map doesn't
 													// exist, create it
-			sourceNameAllLineLocations = new HashMap<String, List>();
+			sourceNameAllLineLocations = new HashMap<String, List<Location>>();
 			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
 		} else {
 			// get the line locations
-			allLineLocations = sourceNameAllLineLocations
-					.get(sourceName);
+			allLineLocations = sourceNameAllLineLocations.get(sourceName);
 		}
 		if (allLineLocations == null) { // the line locations are not know,
 										// compute and store them
-			allLineLocations = new ArrayList();
+			allLineLocations = new ArrayList<Location>();
 			while (allMethods.hasNext()) {
 				MethodImpl method = (MethodImpl) allMethods.next();
 				if (method.isAbstract() || method.isNative()) {
 					continue;
 				}
-				allLineLocations.addAll(method.allLineLocations(stratum,
-						sourceName));
+				allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
 			}
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}
 		return allLineLocations;
 	}
 
-	/**
-	 * @see ReferenceType#locationsOfLine(String, String, int)
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#locationsOfLine(java.lang.String, java.lang.String, int)
 	 */
-	public List locationsOfLine(String stratum, String sourceName,
-			int lineNumber) throws AbsentInformationException {
-		Iterator<TypeComponentImpl> allMethods = methods().iterator();
-		List locations = new ArrayList();
+	public List<Location> locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
+		Iterator<Method> allMethods = methods().iterator();
+		List<Location> locations = new ArrayList<Location>();
 		boolean hasLineInformation = false;
 		AbsentInformationException exception = null;
 		while (allMethods.hasNext()) {
@@ -1604,8 +1592,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			// in different
 			// methods in the output source. We need all these locations.
 			try {
-				locations.addAll(locationsOfLine(stratum, sourceName,
-						lineNumber, method));
+				locations.addAll(locationsOfLine(stratum, sourceName, lineNumber, method));
 				hasLineInformation = true;
 			} catch (AbsentInformationException e) {
 				exception = e;
@@ -1617,8 +1604,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		return locations;
 	}
 
-	/**
-	 * @see ReferenceType#availableStrata()
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#availableStrata()
 	 */
 	public List<String> availableStrata() {
 		List<String> list = new ArrayList<String>();
@@ -1631,8 +1618,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		return list;
 	}
 
-	/**
-	 * @see ReferenceType#defaultStratum()
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ReferenceType#defaultStratum()
 	 */
 	public String defaultStratum() {
 		if (isSourceDebugExtensionAvailable()) {
@@ -1837,14 +1824,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	private FileInfo fileInfo(long codeIndex, MethodImpl method, Stratum stratum) {
 		int fileId = stratum.fPrimaryFileId;
 		if (stratum.fFileInfos.size() > 1) {
-			List lineInfos = null;
+			List<int[]> lineInfos = null;
 			try {
 				lineInfos = lineInfos(codeIndex, method, stratum);
 			} catch (AbsentInformationException e) {
 				// nothing to do, use the primary file id.
 			}
 			if (lineInfos != null) {
-				fileId = ((int[]) lineInfos.get(0))[0];
+				fileId = lineInfos.get(0)[0];
 			}
 		}
 		for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
@@ -1868,8 +1855,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @param stratum
 	 * @return List of int[2]: [fileId, inputLineNumber]
 	 */
-	private List lineInfos(long codeIndex, MethodImpl method, Stratum stratum)
-			throws AbsentInformationException {
+	private List<int[]> lineInfos(long codeIndex, MethodImpl method, Stratum stratum) throws AbsentInformationException {
 		int outputLineNumber = -1;
 		try {
 			outputLineNumber = method.javaStratumLineNumber(codeIndex);
@@ -1928,9 +1914,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		Stratum stratum = getStratum(stratumId);
 		try {
 			if (stratum != null) {
-				List lineInfos = lineInfos(codeIndex, method, stratum);
+				List<int[]> lineInfos = lineInfos(codeIndex, method, stratum);
 				if (lineInfos != null) {
-					return ((int[]) lineInfos.get(0))[1];
+					return lineInfos.get(0)[1];
 				}
 				return LocationImpl.LINE_NR_NOT_AVAILABLE;
 			}
@@ -1961,25 +1947,19 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @throws AbsentInformationException
 	 *             if the specified sourceName is not valid.
 	 */
-	public List locationsOfLine(String stratumId, String sourceName,
-			int lineNumber, MethodImpl method)
-			throws AbsentInformationException {
+	public List<Location> locationsOfLine(String stratumId, String sourceName, int lineNumber, MethodImpl method)	throws AbsentInformationException {
 		Stratum stratum = getStratum(stratumId);
 		List<Integer> javaLines = new ArrayList<Integer>();
 		if (stratum != null) {
 			boolean found = false;
-			for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext()
-					&& !found;) {
+			for (Iterator<FileInfo> iter = stratum.fFileInfos.iterator(); iter.hasNext() && !found;) {
 				FileInfo fileInfo = iter.next();
-				if (sourceName == null
-						|| (found = sourceName.equals(fileInfo.fFileName))) {
-					javaLines
-							.addAll(fileInfo.getOutputLinesForLine(lineNumber));
+				if (sourceName == null || (found = sourceName.equals(fileInfo.fFileName))) {
+					javaLines.addAll(fileInfo.getOutputLinesForLine(lineNumber));
 				}
 			}
 			if (sourceName != null && !found) {
-				throw new AbsentInformationException(
-						JDIMessages.ReferenceTypeImpl_34);
+				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_34);
 			}
 		} else { // Java stratum
 			javaLines.add(new Integer(lineNumber));
@@ -2006,7 +1986,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *            as get from the VM/JDWP
 	 * @return
 	 */
-	public List<LocationImpl> allLineLocations(String stratumId, String sourceName,
+	public List<Location> allLineLocations(String stratumId, String sourceName,
 			MethodImpl method, long[] codeIndexTable,
 			int[] javaStratumLineNumberTable) throws AbsentInformationException {
 		Stratum stratum = getStratum(stratumId);
@@ -2017,10 +1997,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				for (int i = 0, length = javaStratumLineNumberTable.length; i < length; i++) {
 					// for each executable line in the java source, get the
 					// associated lines in the stratum source
-					List lineInfos = stratum
-							.getInputLineInfos(javaStratumLineNumberTable[i]);
+					List<int[]> lineInfos = stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
-						int[] lineInfo = (int[]) lineInfos.get(0);
+						int[] lineInfo = lineInfos.get(0);
 						if (!lineInfo.equals(lineInfoTable[lastIndex])) {
 							lineInfoTable[i] = lineInfo;
 							lastIndex = i;
@@ -2030,18 +2009,15 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			} else { // sourceName != null
 				FileInfo fileInfo = stratum.getFileInfo(sourceName);
 				if (fileInfo == null) {
-					throw new AbsentInformationException(
-							JDIMessages.ReferenceTypeImpl_34);
+					throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_34);
 				}
 				int fileId = fileInfo.fFileId;
 				int lastIndex = 0;
 				for (int i = 0, length = javaStratumLineNumberTable.length; i < length; i++) {
-					List lineInfos = stratum
-							.getInputLineInfos(javaStratumLineNumberTable[i]);
+					List<int[]> lineInfos = stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
-						for (Iterator iter = lineInfos.iterator(); iter
-								.hasNext();) {
-							int[] lineInfo = (int[]) iter.next();
+						for (Iterator<int[]> iter = lineInfos.iterator(); iter.hasNext();) {
+							int[] lineInfo = iter.next();
 							if (lineInfo[0] == fileId) {
 								if (!lineInfo.equals(lineInfoTable[lastIndex])) {
 									lineInfoTable[i] = lineInfo;
@@ -2053,17 +2029,16 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 					}
 				}
 			}
-			List<LocationImpl> locations = new ArrayList<LocationImpl>();
+			List<Location> locations = new ArrayList<Location>();
 			for (int i = 0, length = lineInfoTable.length; i < length; i++) {
 				if (lineInfoTable[i] != null) {
-					locations.add(new LocationImpl(virtualMachineImpl(),
-							method, codeIndexTable[i]));
+					locations.add(new LocationImpl(virtualMachineImpl(), method, codeIndexTable[i]));
 				}
 			}
 			return locations;
 		}
 		// Java stratum
-		List<LocationImpl> result = new ArrayList<LocationImpl>();
+		List<Location> result = new ArrayList<Location>();
 		for (long element : codeIndexTable) {
 			result.add(new LocationImpl(virtualMachineImpl(), method, element));
 		}
@@ -2128,11 +2103,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#instances(long)
-	 * @since 3.3
 	 */
-	public List<ValueImpl> instances(long maxInstances) {
+	public List<ObjectReference> instances(long maxInstances) {
 		try {
 			int max = (int) maxInstances;
 			if (maxInstances >= Integer.MAX_VALUE) {
@@ -2166,9 +2140,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			if (max > 0 && elements > max) {
 				elements = max;
 			}
-			ArrayList<ValueImpl> list = new ArrayList<ValueImpl>();
+			ArrayList<ObjectReference> list = new ArrayList<ObjectReference>();
 			for (int i = 0; i < elements; i++) {
-				list.add(ValueImpl.readWithTag(this, replyData));
+				list.add((ObjectReference) ValueImpl.readWithTag(this, replyData));
 			}
 			return list;
 		} catch (IOException e) {

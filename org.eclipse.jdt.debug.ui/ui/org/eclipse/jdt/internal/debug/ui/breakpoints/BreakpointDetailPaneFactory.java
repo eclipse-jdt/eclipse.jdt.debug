@@ -112,14 +112,14 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneName(java.lang.String)
 	 */
 	public String getDetailPaneName(String paneID) {
-		return (String) getNameMap().get(paneID);
+		return getNameMap().get(paneID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneDescription(java.lang.String)
 	 */
 	public String getDetailPaneDescription(String paneID) {
-		return (String) getNameMap().get(paneID);
+		return getNameMap().get(paneID);
 	}
 	
 	private Map<String, String> getNameMap() {

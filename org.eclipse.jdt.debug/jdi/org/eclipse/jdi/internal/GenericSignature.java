@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class GenericSignature {
 	private static final char C_TYPE_ARGUMENTS_START = '<';
 	private static final char C_TYPE_ARGUMENTS_END = '>';
 
-	public static List getParameterTypes(String methodSignature) {
+	public static List<String> getParameterTypes(String methodSignature) {
 		int parameterStart = methodSignature.indexOf(C_PARAMETERS_START);
 		int parametersEnd = methodSignature.lastIndexOf(C_PARAMETERS_END);
 		if (parameterStart == -1 || parametersEnd == -1) {
@@ -39,16 +39,14 @@ public class GenericSignature {
 			// list if we can't parse it
 			return Collections.EMPTY_LIST;
 		}
-		return getTypeSignatureList(methodSignature.substring(
-				parameterStart + 1, parametersEnd));
+		return getTypeSignatureList(methodSignature.substring(parameterStart + 1, parametersEnd));
 	}
 
-	private static List getTypeSignatureList(String typeSignatureList) {
-		List list = new ArrayList();
+	private static List<String> getTypeSignatureList(String typeSignatureList) {
+		List<String> list = new ArrayList<String>();
 		int pos = 0;
 		while (pos < typeSignatureList.length()) {
-			int signatureLength = nextTypeSignatureLength(typeSignatureList,
-					pos);
+			int signatureLength = nextTypeSignatureLength(typeSignatureList, pos);
 			list.add(typeSignatureList.substring(pos, pos += signatureLength));
 		}
 		return list;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
      *      java.util.List, java.lang.String)
      */
     @Override
-	protected void gatherChanges(IMarker[] markers, List changes, String simpleDestName) throws CoreException, OperationCanceledException {
+	protected void gatherChanges(IMarker[] markers, List<Change> changes, String simpleDestName) throws CoreException, OperationCanceledException {
         IType originalType = (IType) getOriginalElement();
         ICompilationUnit originalCU = originalType.getCompilationUnit();
         ICompilationUnit destCU = null;

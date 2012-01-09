@@ -183,7 +183,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					List<IJavaBreakpoint> existing = new ArrayList<IJavaBreakpoint>();
 					Iterator<IJavaBreakpoint> iter = breakpoints.iterator();
 					while (iter.hasNext()) {
-						IJavaBreakpoint bp = (IJavaBreakpoint)iter.next();
+						IJavaBreakpoint bp = iter.next();
 						IJavaObject[] filters = bp.getInstanceFilters();
 						for (int i = 0; i < filters.length; i++) {
 							if (filters[i].equals(object)) {
@@ -206,7 +206,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 							// remove
 							iter = existing.iterator();
 							while (iter.hasNext()) {
-								IJavaBreakpoint bp = (IJavaBreakpoint)iter.next();
+								IJavaBreakpoint bp = iter.next();
 								bp.removeInstanceFilter(object);
 							}
 						}

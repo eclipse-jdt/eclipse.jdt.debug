@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpThreadGroupID;
 
 import com.sun.jdi.ThreadGroupReference;
+import com.sun.jdi.ThreadReference;
 
 /**
  * this class implements the corresponding interfaces declared by the JDI
@@ -31,6 +32,7 @@ import com.sun.jdi.ThreadGroupReference;
 public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		ThreadGroupReference {
 	/** JDWP Tag. */
+	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.THREAD_GROUP_TAG;
 	/**
 	 * The cached name of this thread group. This value is safe to cache because
@@ -61,8 +63,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		return tag;
 	}
 
-	/**
-	 * @return Returns the name of this thread group.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#name()
 	 */
 	public String name() {
 		if (fName != null) {
@@ -84,8 +86,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @return Returns the parent of this thread group., or null if there isn't.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#parent()
 	 */
 	public ThreadGroupReference parent() {
 		if (fParent != fgUnsetParent) {
@@ -107,24 +109,24 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * Resumes all threads in this thread group (including subgroups).
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#resume()
 	 */
 	public void resume() {
-		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
+		Iterator<ThreadReference> iter = allThreads().iterator();
 		while (iter.hasNext()) {
-			ThreadReferenceImpl thr = iter.next();
+			ThreadReference thr = iter.next();
 			thr.resume();
 		}
 	}
 
-	/**
-	 * Suspends all threads in this thread group (including subgroups).
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#suspend()
 	 */
 	public void suspend() {
-		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
+		Iterator<ThreadReference> iter = allThreads().iterator();
 		while (iter.hasNext()) {
-			ThreadReferenceImpl thr = iter.next();
+			ThreadReference thr = iter.next();
 			thr.suspend();
 		}
 	}
@@ -133,8 +135,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	 * Inner class used to return children info.
 	 */
 	private class ChildrenInfo {
-		List<ThreadReferenceImpl> childThreads;
-		List<ThreadGroupReferenceImpl> childThreadGroups;
+		List<ThreadReference> childThreads;
+		List<ThreadGroupReference> childThreadGroups;
 	}
 
 	/**
@@ -151,12 +153,12 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 			DataInputStream replyData = replyPacket.dataInStream();
 			ChildrenInfo result = new ChildrenInfo();
 			int nrThreads = readInt("nr threads", replyData); //$NON-NLS-1$
-			result.childThreads = new ArrayList<ThreadReferenceImpl>(nrThreads);
+			result.childThreads = new ArrayList<ThreadReference>(nrThreads);
 			for (int i = 0; i < nrThreads; i++)
 				result.childThreads.add(ThreadReferenceImpl.read(this,
 						replyData));
 			int nrThreadGroups = readInt("nr thread groups", replyData); //$NON-NLS-1$
-			result.childThreadGroups = new ArrayList<ThreadGroupReferenceImpl>(nrThreadGroups);
+			result.childThreadGroups = new ArrayList<ThreadGroupReference>(nrThreadGroups);
 			for (int i = 0; i < nrThreadGroups; i++)
 				result.childThreadGroups.add(ThreadGroupReferenceImpl.read(
 						this, replyData));
@@ -169,19 +171,17 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @return Returns a List containing each ThreadGroupReference in this
-	 *         thread group.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#threadGroups()
 	 */
-	public List<ThreadGroupReferenceImpl> threadGroups() {
+	public List<ThreadGroupReference> threadGroups() {
 		return childrenInfo().childThreadGroups;
 	}
 
-	/**
-	 * @return Returns a List containing each ThreadReference in this thread
-	 *         group.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadGroupReference#threads()
 	 */
-	public List<ThreadReferenceImpl> threads() {
+	public List<ThreadReference> threads() {
 		return childrenInfo().childThreads;
 	}
 
@@ -189,13 +189,12 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	 * @return Returns a List containing each ThreadGroupReference in this
 	 *         thread group and all of its subgroups.
 	 */
-	private List<ThreadReferenceImpl> allThreads() {
+	private List<ThreadReference> allThreads() {
 		ChildrenInfo info = childrenInfo();
-		List<ThreadReferenceImpl> result = info.childThreads;
-		Iterator<ThreadGroupReferenceImpl> iter = info.childThreadGroups.iterator();
+		List<ThreadReference> result = info.childThreads;
+		Iterator<ThreadGroupReference> iter = info.childThreadGroups.iterator();
 		while (iter.hasNext()) {
-			ThreadGroupReferenceImpl tg = iter
-					.next();
+			ThreadGroupReferenceImpl tg = (ThreadGroupReferenceImpl) iter.next();
 			result.addAll(tg.allThreads());
 		}
 		return result;

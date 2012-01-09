@@ -86,6 +86,6 @@ public class MacVMSearch {
 				}
 			}
 		}
-		return (VMStandin[]) vms.toArray(new VMStandin[vms.size()]);
+		return vms.toArray(new VMStandin[vms.size()]);
 	}
 }

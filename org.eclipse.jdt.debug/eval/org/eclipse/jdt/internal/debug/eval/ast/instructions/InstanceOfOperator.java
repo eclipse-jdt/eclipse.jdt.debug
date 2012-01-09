@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 public class InstanceOfOperator extends CompoundInstruction {
 	public static final String IS_INSTANCE = "isInstance"; //$NON-NLS-1$
@@ -49,8 +48,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 							IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IStatus.OK,
-							MessageFormat
-									.format(InstructionsEvaluationMessages.InstanceOfOperator_No_class_object,
+							NLS.bind(InstructionsEvaluationMessages.InstanceOfOperator_No_class_object,
 											new String[] { type.getName() }),
 							null));
 		}

@@ -58,7 +58,7 @@ public class ImageDescriptorRegistry {
 		if (descriptor == null)
 			descriptor= ImageDescriptor.getMissingImageDescriptor();
 			
-		Image result= (Image)fRegistry.get(descriptor);
+		Image result= fRegistry.get(descriptor);
 		if (result != null)
 			return result;
 	
@@ -74,7 +74,7 @@ public class ImageDescriptorRegistry {
 	 */	
 	public void dispose() {
 		for (Iterator<Image> iter= fRegistry.values().iterator(); iter.hasNext(); ) {
-			Image image= (Image)iter.next();
+			Image image= iter.next();
 			image.dispose();
 		}
 		fRegistry.clear();

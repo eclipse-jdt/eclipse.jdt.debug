@@ -42,7 +42,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	 * support generic types.
 	 */
 	public static final int MODIFIER_ACC_BRIDGE = 0x0040;
-	/** Modifier bit flag: Is volitile; cannot be reached. */
+	/** Modifier bit flag: Is volatile; cannot be reached. */
 	public static final int MODIFIER_ACC_VOLITILE = 0x0040;
 	/**
 	 * Modifier bit flag: Is transient; not written or read by a persistent
@@ -97,7 +97,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	}
 
 	/**
-	 * @return Returns true if object is pubic.
+	 * @return Returns true if object is public.
 	 */
 	public boolean isPublic() {
 		return (modifiers() & MODIFIER_ACC_PUBLIC) != 0;

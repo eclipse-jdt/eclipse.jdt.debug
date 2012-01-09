@@ -81,7 +81,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
             if (adaptableObject instanceof IBreakpoint) {
             	IBreakpoint breakpoint = (IBreakpoint)adaptableObject;
             	String type = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
-            	IBreakpointTypeCategory category = (IBreakpointTypeCategory) fOtherTypes.get(type);
+            	IBreakpointTypeCategory category = fOtherTypes.get(type);
             	if (category == null && type != null) {
 	            	if (breakpoint instanceof IJavaExceptionBreakpoint) {
 	                   	category = new BreakpointTypeCategory(type, getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION_BRKPT_TYPE));

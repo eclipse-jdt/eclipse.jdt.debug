@@ -23,8 +23,7 @@ import com.sun.jdi.PrimitiveValue;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public abstract class PrimitiveValueImpl extends ValueImpl implements
-		PrimitiveValue, Comparable {
+public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveValue {
 	/** Primitive value in wrapper. */
 	Object fValue;
 
@@ -150,35 +149,6 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements
 	@Override
 	public int hashCode() {
 		return fValue.hashCode();
-	}
-
-	/**
-	 * Compares this object with the specified object for order. Returns a
-	 * negative integer, zero, or a positive integer as this object is less
-	 * than, equal to, or greater than the specified object.
-	 * 
-	 * May throw a ClassCastException if obj is not comparable. This is in
-	 * accordance with Java 1.4 compareTo(Object) methods.
-	 */
-	public int compareTo(Object obj) {
-		if (fValue instanceof Character)
-			return ((Character) fValue).compareTo((Character) obj);
-		else if (fValue instanceof Byte)
-			return ((Byte) fValue).compareTo((Byte) obj);
-		else if (fValue instanceof Double)
-			return ((Double) fValue).compareTo((Double) obj);
-		else if (fValue instanceof Float)
-			return ((Float) fValue).compareTo((Float) obj);
-		else if (fValue instanceof Integer)
-			return ((Integer) fValue).compareTo((Integer) obj);
-		else if (fValue instanceof Long)
-			return ((Long) fValue).compareTo((Long) obj);
-		else if (fValue instanceof Short)
-			return ((Short) fValue).compareTo((Short) obj);
-
-		throw new InternalException(
-				JDIMessages.PrimitiveValueImpl_Invalid_Primitive_Value_encountered_1);
-
 	}
 
 	/**

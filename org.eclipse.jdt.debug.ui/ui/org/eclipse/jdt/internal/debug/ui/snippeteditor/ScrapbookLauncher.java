@@ -139,7 +139,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 					cp.add(entries[i]);
 				}
 			}
-			IRuntimeClasspathEntry[] classPath = (IRuntimeClasspathEntry[])cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
+			IRuntimeClasspathEntry[] classPath = cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
 			
 			return doLaunch(javaProject, page, classPath);
 		} catch (CoreException e) {
@@ -263,7 +263,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 * @return associated debug target or <code>null</code>
 	 */
 	public IDebugTarget getDebugTarget(IFile page) {
-		return (IDebugTarget)fScrapbookToVMs.get(page);
+		return fScrapbookToVMs.get(page);
 	}
 	
 	/**
@@ -276,7 +276,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 *  or <code>null</code> if none
 	 */
 	public IBreakpoint getMagicBreakpoint(IDebugTarget target) {
-		return (IBreakpoint)fVMsToBreakpoints.get(target);
+		return fVMsToBreakpoints.get(target);
 	}
 	
 	protected void showNoPageDialog() {

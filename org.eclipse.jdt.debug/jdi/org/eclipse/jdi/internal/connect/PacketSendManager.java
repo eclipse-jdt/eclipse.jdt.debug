@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ import java.io.InterruptedIOException;
 import java.util.LinkedList;
 
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.connect.spi.Connection;
 
@@ -76,13 +76,11 @@ public class PacketSendManager extends PacketManager {
 			} else {
 				String exMessage = getDisconnectException().getMessage();
 				if (exMessage == null) {
-					message = MessageFormat
-							.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1,
+					message = NLS.bind(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine_1,
 									new String[] { getDisconnectException()
 											.getClass().getName() });
 				} else {
-					message = MessageFormat
-							.format(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1,
+					message = NLS.bind(ConnectMessages.PacketSendManager_Got__0__from_Virtual_Machine___1__1,
 									new String[] {
 											getDisconnectException().getClass()
 													.getName(), exMessage });

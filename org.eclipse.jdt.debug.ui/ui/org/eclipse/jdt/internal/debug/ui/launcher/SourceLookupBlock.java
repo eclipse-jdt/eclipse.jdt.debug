@@ -176,7 +176,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		action = new AttachSourceAction(fPathViewer, SWT.RADIO);								
 		advancedActions.add(action);				
 									
-		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
+		IAction[] adv = advancedActions.toArray(new IAction[advancedActions.size()]);
 		action = new AddAdvancedAction(fPathViewer, adv);
 		button = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);

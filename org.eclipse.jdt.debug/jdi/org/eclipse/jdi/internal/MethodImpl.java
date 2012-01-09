@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
@@ -55,17 +56,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	private JdwpMethodID fMethodID;
 
 	/** The following are the stored results of JDWP calls. */
-	private List<LocalVariableImpl> fVariables = null;
+	private List<LocalVariable> fVariables = null;
 	private long fLowestValidCodeIndex = -1;
 	private long fHighestValidCodeIndex = -1;
 	private Map<Long, Integer> fCodeIndexToLine = null;
-	private Map<Integer, List> fLineToCodeIndexes = null;
-	private Map<String, Map> fStratumAllLineLocations = null;
+	private Map<Integer, List<Long>> fLineToCodeIndexes = null;
+	private Map<String, Map<String, List<Location>>> fStratumAllLineLocations = null;
 	private int fArgumentSlotsCount = -1;
-	private List<LocalVariableImpl> fArguments = null;
-	private List<TypeImpl> fArgumentTypes = null;
+	private List<LocalVariable> fArguments = null;
+	private List<Type> fArgumentTypes = null;
 	private List<String> fArgumentTypeNames = null;
-	private List fArgumentTypeSignatures = null;
+	private List<String> fArgumentTypeSignatures = null;
 	private byte[] fByteCodes = null;
 	private long[] fCodeIndexTable;
 	private int[] fJavaStratumLineNumberTable;
@@ -126,8 +127,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Returns map of line number to locations.
 	 */
-	protected List javaStratumLineToCodeIndexes(int line)
-			throws AbsentInformationException {
+	protected List<Long> javaStratumLineToCodeIndexes(int line) throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return null;
 		}
@@ -174,7 +174,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			fHighestValidCodeIndex = readLong("highest index", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			fCodeIndexToLine = new HashMap<Long, Integer>();
-			fLineToCodeIndexes = new HashMap<Integer, List>();
+			fLineToCodeIndexes = new HashMap<Integer, List<Long>>();
 			if (nrOfElements == 0) {
 				throw new AbsentInformationException(
 						JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_3);
@@ -220,8 +220,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		getLineTable();
 		if (lineCodeIndex > fHighestValidCodeIndex) {
-			throw new AbsentInformationException(
-					JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
+			throw new AbsentInformationException(JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
 		}
 
 		Long lineCodeIndexObj;
@@ -230,50 +229,46 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		// Search for the line where this code index is located.
 		do {
 			lineCodeIndexObj = new Long(index);
-			lineNrObj = javaStratumCodeIndexToLine().get(
-					lineCodeIndexObj);
+			lineNrObj = javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 		} while (lineNrObj == null && --index >= fLowestValidCodeIndex);
 		if (lineNrObj == null) {
 			if (lineCodeIndex >= fLowestValidCodeIndex) {
 				index = lineCodeIndex;
 				do {
 					lineCodeIndexObj = new Long(index);
-					lineNrObj = javaStratumCodeIndexToLine().get(
-							lineCodeIndexObj);
+					lineNrObj = javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 				} while (lineNrObj == null && ++index <= fHighestValidCodeIndex);
 				if (lineNrObj != null) {
 					return lineNrObj.intValue();
 				}
 			}
-			throw new AbsentInformationException(
-					JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
+			throw new AbsentInformationException(JDIMessages.MethodImpl_Invalid_code_index_of_a_location_given_4);
 		}
 		return lineNrObj.intValue();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#allLineLocations()
 	 */
-	public List allLineLocations() throws AbsentInformationException {
+	public List<Location> allLineLocations() throws AbsentInformationException {
 		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#arguments()
 	 */
-	public List<LocalVariableImpl> arguments() throws AbsentInformationException {
+	public List<LocalVariable> arguments() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
-			throw new AbsentInformationException(
-					JDIMessages.MethodImpl_No_local_variable_information_available_9);
+			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9);
 		}
 		if (fArguments != null) {
 			return fArguments;
 		}
 
-		List<LocalVariableImpl> result = new ArrayList<LocalVariableImpl>();
-		Iterator<LocalVariableImpl> iter = variables().iterator();
+		List<LocalVariable> result = new ArrayList<LocalVariable>();
+		Iterator<LocalVariable> iter = variables().iterator();
 		while (iter.hasNext()) {
-			LocalVariableImpl var = iter.next();
+			LocalVariable var = iter.next();
 			if (var.isArgument())
 				result.add(var);
 		}
@@ -289,10 +284,10 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
 		}
-		List argumentTypeSignatures = argumentTypeSignatures();
+		List<String> argumentTypeSignatures = argumentTypeSignatures();
 		List<String> result = new ArrayList<String>();
-		for (Iterator iter = argumentTypeSignatures.iterator(); iter.hasNext();) {
-			result.add(TypeImpl.signatureToName((String) iter.next()));
+		for (Iterator<String> iter = argumentTypeSignatures.iterator(); iter.hasNext();) {
+			result.add(TypeImpl.signatureToName(iter.next()));
 		}
 
 		fArgumentTypeNames = result;
@@ -303,32 +298,29 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @return Returns a signatures of all declared argument types of this
 	 *         method.
 	 */
-	private List argumentTypeSignatures() {
+	private List<String> argumentTypeSignatures() {
 		if (fArgumentTypeSignatures != null) {
 			return fArgumentTypeSignatures;
 		}
 
-		fArgumentTypeSignatures = GenericSignature
-				.getParameterTypes(signature());
+		fArgumentTypeSignatures = GenericSignature.getParameterTypes(signature());
 		return fArgumentTypeSignatures;
 	}
 
 	/**
 	 * @return Returns the list containing the type of each argument.
 	 */
-	public List<TypeImpl> argumentTypes() throws ClassNotLoadedException {
+	public List<Type> argumentTypes() throws ClassNotLoadedException {
 		if (fArgumentTypes != null) {
 			return fArgumentTypes;
 		}
-
-		List<TypeImpl> result = new ArrayList<TypeImpl>();
-		Iterator iter = argumentTypeSignatures().iterator();
+		List<Type> result = new ArrayList<Type>();
+		Iterator<String> iter = argumentTypeSignatures().iterator();
 		ClassLoaderReference classLoaderRef = declaringType().classLoader();
 		VirtualMachineImpl vm = virtualMachineImpl();
 		while (iter.hasNext()) {
-			String argumentTypeSignature = (String) iter.next();
-			result.add(TypeImpl.create(vm, argumentTypeSignature,
-					classLoaderRef));
+			String argumentTypeSignature = iter.next();
+			result.add(TypeImpl.create(vm, argumentTypeSignature, classLoaderRef));
 		}
 		fArgumentTypes = result;
 		return fArgumentTypes;
@@ -389,17 +381,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 	/**
 	 * @return Returns a negative integer, zero, or a positive integer as this
-	 *         object is less than, equal to, or greater than the specified
-	 *         object.
+	 *         {@link Method} is less than, equal to, or greater than the specified
+	 *         {@link Method}.
 	 */
-	public int compareTo(Object object) {
-		if (object == null || !object.getClass().equals(this.getClass()))
+	public int compareTo(Method method) {
+		if (method == null || !method.getClass().equals(this.getClass()))
 			throw new ClassCastException(
 					JDIMessages.MethodImpl_Can__t_compare_method_to_given_object_6);
 
 		// See if declaring types are the same, if not return comparison between
 		// declaring types.
-		Method type2 = (Method) object;
+		Method type2 = method;
 		if (!declaringType().equals(type2.declaringType()))
 			return declaringType().compareTo(type2.declaringType());
 
@@ -415,42 +407,42 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isAbstract()
 	 */
 	public boolean isAbstract() {
 		return (fModifierBits & MODIFIER_ACC_ABSTRACT) != 0;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isConstructor()
 	 */
 	public boolean isConstructor() {
 		return name().equals("<init>"); //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isNative()
 	 */
 	public boolean isNative() {
 		return (fModifierBits & MODIFIER_ACC_NATIVE) != 0;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isStaticInitializer()
 	 */
 	public boolean isStaticInitializer() {
 		return name().equals("<clinit>"); //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isSynchronized()
 	 */
 	public boolean isSynchronized() {
 		return (fModifierBits & MODIFIER_ACC_SYNCHRONIZED) != 0;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#locationOfCodeIndex(long)
 	 */
 	public Location locationOfCodeIndex(long index) {
@@ -458,27 +450,23 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return null;
 		}
 		try {
-			Integer lineNrInt = javaStratumCodeIndexToLine().get(
-					new Long(index));
+			Integer lineNrInt = javaStratumCodeIndexToLine().get(new Long(index));
 			if (lineNrInt == null) {
-				throw new AbsentInformationException(
-						MessageFormat
-								.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2,
-										new Object[] { Long.toString(index) }));
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.MethodImpl_No_valid_location_at_the_specified_code_index__0__2, new Object[] { Long.toString(index) }));
 			}
 		} catch (AbsentInformationException e) {
 		}
 		return new LocationImpl(virtualMachineImpl(), this, index);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#locationsOfLine(int)
 	 */
-	public List locationsOfLine(int line) throws AbsentInformationException {
+	public List<Location> locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#returnType()
 	 */
 	public Type returnType() throws ClassNotLoadedException {
@@ -490,7 +478,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 						.classLoader());
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#returnTypeName()
 	 */
 	public String returnTypeName() {
@@ -505,19 +493,16 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		return fReturnTypeName;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#variables()
 	 */
-	public List<LocalVariableImpl> variables() throws AbsentInformationException {
+	public List<LocalVariable> variables() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
-			throw new AbsentInformationException(
-					JDIMessages.MethodImpl_No_local_variable_information_available_9);
+			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9);
 		}
-
 		if (fVariables != null) {
 			return fVariables;
 		}
-
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -539,15 +524,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			DataInputStream replyData = replyPacket.dataInStream();
 			fArgumentSlotsCount = readInt("arg count", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<LocalVariableImpl> variables = new ArrayList<LocalVariableImpl>(nrOfElements);
+			List<LocalVariable> variables = new ArrayList<LocalVariable>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				long codeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				String name = readString("name", replyData); //$NON-NLS-1$
 				String signature = readString("signature", replyData); //$NON-NLS-1$
 				String genericSignature = null;
 				if (withGenericSignature) {
-					genericSignature = readString(
-							"generic signature", replyData); //$NON-NLS-1$
+					genericSignature = readString("generic signature", replyData); //$NON-NLS-1$
 					if ("".equals(genericSignature)) { //$NON-NLS-1$
 						genericSignature = null;
 					}
@@ -581,19 +565,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @throws AbsentInformationException
 	 */
-	private List<LocalVariableImpl> inferArguments() throws AbsentInformationException {
+	private List<LocalVariable> inferArguments() throws AbsentInformationException {
 		// infer arguments, if possible
 
 		// try to generate the right generic signature for each argument
 		String genericSignature = genericSignature();
-		String[] signatures = (String[]) argumentTypeSignatures().toArray(
-				new String[0]);
+		String[] signatures = argumentTypeSignatures().toArray(new String[0]);
 		String[] genericSignatures;
 		if (genericSignature == null) {
 			genericSignatures = new String[signatures.length];
 		} else {
-			genericSignatures = (String[]) GenericSignature.getParameterTypes(
-					genericSignature).toArray(new String[0]);
+			genericSignatures = GenericSignature.getParameterTypes(genericSignature).toArray(new String[0]);
 			for (int i = 0; i < genericSignatures.length; i++) {
 				if (genericSignatures[i].equals(signatures[i])) {
 					genericSignatures[i] = null;
@@ -607,12 +589,10 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		if (signatures.length > 0) {
 			fArgumentSlotsCount = signatures.length;
-			fVariables = new ArrayList<LocalVariableImpl>(fArgumentSlotsCount);
+			fVariables = new ArrayList<LocalVariable>(fArgumentSlotsCount);
 			for (int i = 0; i < signatures.length; i++) {
 				String name = "arg" + i; //$NON-NLS-1$
-				LocalVariableImpl localVar = new LocalVariableImpl(
-						virtualMachineImpl(), this, 0, name, signatures[i],
-						genericSignatures[i], -1, slot, true);
+				LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signatures[i], genericSignatures[i], -1, slot, true);
 				fVariables.add(localVar);
 				slot++;
 			}
@@ -623,14 +603,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 	}
 
-	/**
-	 * @see com.sun.jdi.Method#variablesByName(String)
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.Method#variablesByName(java.lang.String)
 	 */
-	public List<LocalVariableImpl> variablesByName(String name) throws AbsentInformationException {
-		Iterator<LocalVariableImpl> iter = variables().iterator();
-		List<LocalVariableImpl> result = new ArrayList<LocalVariableImpl>();
+	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
+		Iterator<LocalVariable> iter = variables().iterator();
+		List<LocalVariable> result = new ArrayList<LocalVariable>();
 		while (iter.hasNext()) {
-			LocalVariableImpl var = iter.next();
+			LocalVariable var = iter.next();
 			if (var.name().equals(name)) {
 				result.add(var);
 			}
@@ -712,12 +692,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 
 		// The method must be part of a known reference type.
-		MethodImpl method = referenceType.findMethod(ID);
+		Method method = referenceType.findMethod(ID);
 		if (method == null) {
 			throw new InternalError(
 					JDIMessages.MethodImpl_Got_MethodID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_10);
 		}
-		return method;
+		return (MethodImpl) method;
 	}
 
 	/**
@@ -817,95 +797,90 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		return false;
 	}
-
-	/**
-	 * @see Method#allLineLocations(String, String)
+	
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.Method#allLineLocations(java.lang.String, java.lang.String)
 	 */
-	public List allLineLocations(String stratum, String sourceName)
-			throws AbsentInformationException {
+	public List<Location> allLineLocations(String stratum, String sourceName)	throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return Collections.EMPTY_LIST;
 		}
-		if (stratum == null) { // if stratum not defined use the default stratum
-								// for the declaring type
+		if (stratum == null) { // if stratum not defined use the default stratum for the declaring type
 			stratum = declaringType().defaultStratum();
 		}
-		List allLineLocations = null;
-		Map<String, List> sourceNameAllLineLocations = null;
+		List<Location> allLineLocations = null;
+		Map<String, List<Location>> sourceNameAllLineLocations = null;
 		if (fStratumAllLineLocations == null) { // the stratum map doesn't
 												// exist, create it
-			fStratumAllLineLocations = new HashMap<String, Map>();
+			fStratumAllLineLocations = new HashMap<String, Map<String, List<Location>>>();
 		} else {
 			// get the source name map
-			sourceNameAllLineLocations = fStratumAllLineLocations
-					.get(stratum);
+			sourceNameAllLineLocations = fStratumAllLineLocations.get(stratum);
 		}
 		if (sourceNameAllLineLocations == null) { // the source name map doesn't
 													// exist, create it
-			sourceNameAllLineLocations = new HashMap<String, List>();
+			sourceNameAllLineLocations = new HashMap<String, List<Location>>();
 			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
 		} else {
 			// get the line locations
-			allLineLocations = sourceNameAllLineLocations
-					.get(sourceName);
+			allLineLocations = sourceNameAllLineLocations.get(sourceName);
 		}
 		if (allLineLocations == null) { // the line locations are not know,
 										// compute and store them
 			getLineTable();
-			allLineLocations = referenceTypeImpl().allLineLocations(stratum,
-					sourceName, this, fCodeIndexTable,
-					fJavaStratumLineNumberTable);
+			allLineLocations = referenceTypeImpl().allLineLocations(stratum, sourceName, this, fCodeIndexTable, fJavaStratumLineNumberTable);
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}
 		return allLineLocations;
 	}
 
-	/**
-	 * @see Method#locationsOfLine(String, String, int)
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.Method#locationsOfLine(java.lang.String, java.lang.String, int)
 	 */
-	public List locationsOfLine(String stratum, String sourceName,
+	public List<Location> locationsOfLine(String stratum, String sourceName,
 			int lineNumber) throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return Collections.EMPTY_LIST;
 		}
-		return referenceTypeImpl().locationsOfLine(stratum, sourceName,
-				lineNumber, this);
+		return referenceTypeImpl().locationsOfLine(stratum, sourceName, lineNumber, this);
 	}
 
 	/**
-	 * Return a list which contains a location for the each disjoin range of
-	 * code indice that have bean assigned to the given lines (by the compiler
+	 * Return a list which contains a location for the each disjoint range of
+	 * code indices that have bean assigned to the given lines (by the compiler
 	 * or/and the VM). Return an empty list if there is not executable code at
 	 * the specified lines.
 	 */
-	protected List javaStratumLocationsOfLines(List<Integer> javaLines)
-			throws AbsentInformationException {
-		Set tmpLocations = new TreeSet();
+	protected List<Location> javaStratumLocationsOfLines(List<Integer> javaLines)	throws AbsentInformationException {
+		Set<Long> tmpLocations = new TreeSet<Long>();
 		for (Iterator<Integer> iter = javaLines.iterator(); iter.hasNext();) {
 			Integer key = iter.next();
-			List indexes = javaStratumLineToCodeIndexes(key.intValue());
+			List<Long> indexes = javaStratumLineToCodeIndexes(key.intValue());
 			if (indexes != null) {
 				tmpLocations.addAll(indexes);
 			}
 		}
-		List locations = new ArrayList();
-		for (Iterator iter = tmpLocations.iterator(); iter.hasNext();) {
-			long index = ((Long) iter.next()).longValue();
+		List<Location> locations = new ArrayList<Location>();
+		for (Iterator<Long> iter = tmpLocations.iterator(); iter.hasNext();) {
+			long index = iter.next().longValue();
 			int position = Arrays.binarySearch(fCodeIndexTable, index);
-			if (position == 0
-					|| !tmpLocations.contains(new Long(
-							fCodeIndexTable[position - 1]))) {
-				locations.add(new LocationImpl(virtualMachineImpl(), this,
-						index));
+			if (position == 0 || !tmpLocations.contains(new Long(fCodeIndexTable[position - 1]))) {
+				locations.add(new LocationImpl(virtualMachineImpl(), this, index));
 			}
 		}
 		return locations;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.Method#isBridge()
+	 */
 	public boolean isBridge() {
 		return (fModifierBits & MODIFIER_ACC_BRIDGE) != 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.Method#isVarArgs()
+	 */
 	public boolean isVarArgs() {
 		// TODO: remove this test when j9 solve its problem
 		// it returns invalid 1.5 flags for 1.4 classes.

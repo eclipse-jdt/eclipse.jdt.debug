@@ -120,7 +120,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		 * Returns the attributes.
 		 */
 		public String[][] getElements() {
-			return (String[][])fVariables.toArray(new String[fVariables.size()][]);
+			return fVariables.toArray(new String[fVariables.size()][]);
 		}
 
 		/**

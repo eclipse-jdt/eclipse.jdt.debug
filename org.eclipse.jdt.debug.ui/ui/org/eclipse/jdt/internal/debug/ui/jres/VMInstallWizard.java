@@ -49,7 +49,7 @@ public abstract class VMInstallWizard extends Wizard {
 				names.add(install.getName());
 			}
 		}
-		fExistingNames = (String[]) names.toArray(new String[names.size()]);
+		fExistingNames = names.toArray(new String[names.size()]);
 	}
 	
 	/**

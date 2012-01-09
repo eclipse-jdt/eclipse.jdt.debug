@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VirtualMachine;
 
 public class LocalVariableCreation extends CompoundInstruction {
@@ -109,8 +109,7 @@ public class LocalVariableCreation extends CompoundInstruction {
 
 	@Override
 	public String toString() {
-		return MessageFormat
-				.format(InstructionsEvaluationMessages.LocalVariableCreation_create_local_variable__0___1___1,
+		return NLS.bind(InstructionsEvaluationMessages.LocalVariableCreation_create_local_variable__0___1___1,
 						new String[] { fName, fTypeSignature });
 	}
 }

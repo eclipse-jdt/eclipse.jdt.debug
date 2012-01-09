@@ -417,9 +417,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				inactive.add(name);
 			}
 		}
-		String pref = JavaDebugOptionsManager.serializeList((String[])active.toArray(new String[active.size()]));
+		String pref = JavaDebugOptionsManager.serializeList(active.toArray(new String[active.size()]));
 		store.setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, pref);
-		pref = JavaDebugOptionsManager.serializeList((String[])inactive.toArray(new String[inactive.size()]));
+		pref = JavaDebugOptionsManager.serializeList(inactive.toArray(new String[inactive.size()]));
 		store.setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, pref);
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());

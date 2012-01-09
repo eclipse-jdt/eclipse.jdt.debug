@@ -615,7 +615,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
 					List<ISnippetStateChangedListener> v= new ArrayList<ISnippetStateChangedListener>(fSnippetStateListeners);
 					for (int i= 0; i < v.size(); i++) {
-						ISnippetStateChangedListener l= (ISnippetStateChangedListener) v.get(i);
+						ISnippetStateChangedListener l= v.get(i);
 						l.snippetStateChanged(JavaSnippetEditor.this);
 					}
 				}

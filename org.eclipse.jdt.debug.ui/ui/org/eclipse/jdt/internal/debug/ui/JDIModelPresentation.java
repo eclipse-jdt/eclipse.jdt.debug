@@ -1881,9 +1881,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		name.append('<');
 		Iterator<String> iterator= parameters.iterator();
 		if (iterator.hasNext()) {
-			name.append(removeQualifierFromGenericName((String)iterator.next()));
+			name.append(removeQualifierFromGenericName(iterator.next()));
 			while (iterator.hasNext()) {
-				name.append(',').append(removeQualifierFromGenericName((String)iterator.next()));
+				name.append(',').append(removeQualifierFromGenericName(iterator.next()));
 			}
 		}
 		name.append('>');

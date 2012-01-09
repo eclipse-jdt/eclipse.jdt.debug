@@ -112,7 +112,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<IRuntimeClasspathEntry>(additions.size());
 			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
-				IJavaProject jp = (IJavaProject)iter.next();
+				IJavaProject jp = iter.next();
 				runtimeEntries.add(JavaRuntime.newProjectRuntimeClasspathEntry(jp));
 				if (dialog.isAddExportedEntries()) {
 					try {
@@ -122,7 +122,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 					}
 				}
 			}
-			IRuntimeClasspathEntry[] entries = (IRuntimeClasspathEntry[])runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
+			IRuntimeClasspathEntry[] entries = runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
 			getViewer().addEntries(entries);
 		}	
 		

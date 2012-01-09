@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
 	/**
 	 * Returns a list (copy) of the entries in the viewer
+	 * @return the complete listing of all of the entries in the viewer
 	 */
 	protected List<IRuntimeClasspathEntry> getEntriesAsList() {
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
@@ -102,9 +103,10 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
 	/**
 	 * Updates the entries to the entries in the given list
+	 * @param list the list of {@link IRuntimeClasspathEntry}s to set
 	 */
-	protected void setEntries(List<?> list) {
-		getViewer().setEntries((IRuntimeClasspathEntry[])list.toArray(new IRuntimeClasspathEntry[list.size()]));
+	protected void setEntries(List<IRuntimeClasspathEntry> list) {
+		getViewer().setEntries(list.toArray(new IRuntimeClasspathEntry[list.size()]));
 		// update all selection listeners
 		getViewer().setSelection(getViewer().getSelection());
 	}
@@ -112,6 +114,9 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * Returns whether the item at the given index in the list
 	 * (visually) is selected.
+	 * @param selection the current selection from the viewer
+	 * @param index the index to ask about
+	 * @return <code>true</code> if the given index is in the selection, <code>false</code> otherwise
 	 */
 	protected boolean isIndexSelected(IStructuredSelection selection, int index) {
 		if (selection.isEmpty()) {
@@ -129,7 +134,8 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	}	
 	
 	/**
-	 * Sets the button that invokes this action
+	 * Sets the {@link Button} that invokes this action
+	 * @param button the new {@link Button} to set as the backing widget for this action
 	 */
 	public void setButton(Button button) {
 		fButton = button;
@@ -161,6 +167,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
 	/**
 	 * Returns the shell used to realize this action's dialog (if any).
+	 * @return the current {@link Shell}
 	 */
 	protected Shell getShell() {
 		if (fShell == null) {
@@ -171,6 +178,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
 	/**
 	 * Sets the shell used to realize this action's dialog (if any).
+	 * @param shell the current shell
 	 */
 	public void setShell(Shell shell) {
 		fShell= shell;

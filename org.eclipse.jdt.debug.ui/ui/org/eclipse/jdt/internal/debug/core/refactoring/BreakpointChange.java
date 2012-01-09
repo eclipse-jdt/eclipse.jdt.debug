@@ -212,7 +212,7 @@ public abstract class BreakpointChange extends Change {
 		List<IJavaElement> path = getPath(parent);
 		IJavaElement currentElement = parent;
 		for (int i = children.size() - path.size() - 1; i >= 0; i--) {
-			IJavaElement child = (IJavaElement)children.get(i);
+			IJavaElement child = children.get(i);
 			switch (child.getElementType()) {
 				case IJavaElement.PACKAGE_DECLARATION:
 					currentElement = ((ICompilationUnit)currentElement).getPackageDeclaration(child.getElementName());

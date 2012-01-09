@@ -107,7 +107,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	protected void performDefaults() {
 		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
+			BooleanFieldEditor editor = iterator.next();
 			editor.loadDefault();
 		}
 		super.performDefaults();	
@@ -120,7 +120,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	private void loadValues() {
 		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
+			BooleanFieldEditor editor = iterator.next();
 			editor.load();
 		}
 	}
@@ -132,7 +132,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	private void storeValues() {
 		Iterator<BooleanFieldEditor> iterator = fEdtiors.iterator();
 		while (iterator.hasNext()) {
-			BooleanFieldEditor editor = (BooleanFieldEditor) iterator.next();
+			BooleanFieldEditor editor = iterator.next();
 			editor.store();
 		}
 	}

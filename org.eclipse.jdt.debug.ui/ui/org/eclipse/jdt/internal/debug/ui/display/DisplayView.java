@@ -363,12 +363,12 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			menu.add(fContentAssistAction);
 		}
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(ActionFactory.CUT.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.PASTE.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.CUT.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.PASTE.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(ActionFactory.FIND.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.FIND.getId()));
 		menu.add(fClearDisplayAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -400,7 +400,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected void updateActions() {
 		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			IAction action = (IAction) fGlobalActions.get(iterator.next());
+			IAction action = fGlobalActions.get(iterator.next());
 			if (action instanceof IUpdate) {
 				 ((IUpdate) action).update();
 			}
@@ -485,12 +485,12 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected void updateSelectionDependentActions() {
 		Iterator<String> iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
-			updateAction((String)iterator.next());
+			updateAction(iterator.next());
 	}
 
 
 	protected void updateAction(String actionId) {
-		IAction action= (IAction)fGlobalActions.get(actionId);
+		IAction action= fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}

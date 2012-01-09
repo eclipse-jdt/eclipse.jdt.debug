@@ -85,7 +85,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 			return null;
 		
 		if (nResults == 1)
-			return (IJavaElement) elements.get(0);
+			return elements.get(0);
 		
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED

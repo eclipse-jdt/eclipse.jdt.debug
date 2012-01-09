@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.ArgumentImpl;
 
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
 
-public class SocketListeningConnectorImpl extends ConnectorImpl implements
-		ListeningConnector {
+public class SocketListeningConnectorImpl extends ConnectorImpl implements ListeningConnector {
 	/** Port to which is attached. */
 	private int fPort;
 	/** Timeout before accept returns. */
@@ -45,8 +44,8 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements
 	/**
 	 * @return Returns the default arguments.
 	 */
-	public Map<String, ArgumentImpl> defaultArguments() {
-		HashMap<String, ArgumentImpl> arguments = new HashMap<String, ArgumentImpl>(1);
+	public Map<String, Connector.Argument> defaultArguments() {
+		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(1);
 
 		// Port
 		IntegerArgumentImpl intArg = new IntegerArgumentImpl(
@@ -81,8 +80,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements
 	/**
 	 * Retrieves connection arguments.
 	 */
-	private void getConnectionArguments(Map<String, ArgumentImpl> connectionArgs)
-			throws IllegalConnectorArgumentsException {
+	private void getConnectionArguments(Map<String, ? extends Connector.Argument> connectionArgs) throws IllegalConnectorArgumentsException {
 		String attribute = "port"; //$NON-NLS-1$
 		try {
 			// If listening port is not specified, use port 0
@@ -124,8 +122,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements
 	 * @return Returns the address at which the connector is listening for a
 	 *         connection.
 	 */
-	public String startListening(Map<String, ArgumentImpl> connectionArgs) throws IOException,
-			IllegalConnectorArgumentsException {
+	public String startListening(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		String result = null;
 		try {
@@ -138,10 +135,10 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements
 		return result;
 	}
 
-	/**
-	 * Cancels listening for connections.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.connect.ListeningConnector#stopListening(java.util.Map)
 	 */
-	public void stopListening(Map connectionArgs) throws IOException {
+	public void stopListening(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException {
 		((SocketTransportImpl) fTransport).stopListening();
 	}
 
@@ -150,8 +147,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements
 	 * 
 	 * @return Returns a connected Virtual Machine.
 	 */
-	public VirtualMachine accept(Map<String, ArgumentImpl> connectionArgs) throws IOException,
-			IllegalConnectorArgumentsException {
+	public VirtualMachine accept(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		SocketConnection connection = (SocketConnection) ((SocketTransportImpl) fTransport)
 				.accept(fTimeout, 0);

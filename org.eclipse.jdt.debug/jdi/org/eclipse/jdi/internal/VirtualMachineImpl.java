@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,8 @@ import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.request.EventRequestManagerImpl;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ByteValue;
 import com.sun.jdi.CharValue;
@@ -45,7 +45,8 @@ import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
-import com.sun.jdi.Type;
+import com.sun.jdi.ThreadGroupReference;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VoidValue;
@@ -73,7 +74,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	protected static final String JAVA_STRATUM_NAME = "Java"; //$NON-NLS-1$
 
-	/** Timeout value for requests to VM if not overriden for a particular VM. */
+	/** Timeout value for requests to VM if not overridden for a particular VM. */
 	private int fRequestTimeout;
 	/** Mapping of command codes to strings. */
 
@@ -84,7 +85,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/** EventQueue that returns EventSets from the Virtual Manager. */
 	private EventQueueImpl fEventQueue;
 
-	/** If a launchingconnector is used, we store the process. */
+	/** If a launching connector is used, we store the process. */
 	private Process fLaunchedProcess;
 
 	/**
@@ -237,7 +238,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 */
 	public void addCachedMirror(ReferenceTypeImpl mirror) {
 		fCachedReftypes.put(mirror.getRefTypeID(), mirror);
-		// tbd: It is now yet possible to only ask for unload events for
+		// TBD: It is now yet possible to only ask for unload events for
 		// classes that we know of due to a limitation in the J9 VM.
 		// eventRequestManagerImpl().enableInternalClasUnloadEvent(mirror);
 	}
@@ -271,7 +272,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * it.
 	 */
 	public final void removeKnownRefType(String signature) {
-		List refTypeList = classesBySignature(signature);
+		List<ReferenceType> refTypeList = classesBySignature(signature);
 		if (refTypeList.isEmpty())
 			return;
 
@@ -287,7 +288,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 		// We have more than one known class for the signature, let's find the
 		// unloaded one(s).
-		Iterator iter = refTypeList.iterator();
+		Iterator<ReferenceType> iter = refTypeList.iterator();
 		while (iter.hasNext()) {
 			ReferenceTypeImpl refType = (ReferenceTypeImpl) iter.next();
 			boolean prepared = false;
@@ -311,9 +312,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	public void checkHCRSupported() throws UnsupportedOperationException {
 		if (!isHCRSupported())
 			throw new UnsupportedOperationException(
-					MessageFormat
-							.format(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1,
-									new String[] { name() }));
+					NLS.bind(JDIMessages.VirtualMachineImpl_Target_VM__0__does_not_support_Hot_Code_Replacement_1, new String[] { name() }));
 	}
 
 	/*
@@ -348,9 +347,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 						JDIMessages.VirtualMachineImpl_Failed_to_get_ID_sizes_2);
 			}
 
-			// tbd: This call should be moved to addKnownRefType() when it can
+			// TBD: This call should be moved to addKnownRefType() when it can
 			// be made specific
-			// for a referencetype.
+			// for a reference type.
 			eventRequestManagerImpl().enableInternalClasUnloadEvent();
 		}
 
@@ -414,7 +413,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * in the target VM, a ThreadReference that mirrors it is placed in the
 	 * list.
 	 */
-	public List<ThreadReferenceImpl> allThreads() {
+	public List<ThreadReference> allThreads() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -422,7 +421,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ThreadReferenceImpl> elements = new ArrayList<ThreadReferenceImpl>(nrOfElements);
+			List<ThreadReference> elements = new ArrayList<ThreadReference>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this,
 						replyData);
@@ -628,7 +627,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/**
 	 * @return Returns the loaded reference types that match a given signature.
 	 */
-	public List classesBySignature(String signature) {
+	public List<ReferenceType> classesBySignature(String signature) {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -641,7 +640,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List elements = new ArrayList(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this,
 						replyData);
@@ -660,10 +659,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * @return Returns the loaded reference types that match a given name.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#classesByName(java.lang.String)
 	 */
-	public List classesByName(String name) {
+	public List<ReferenceType> classesByName(String name) {
 		String signature = TypeImpl.classNameToSignature(name);
 		return classesBySignature(signature);
 	}
@@ -683,17 +682,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * @return Returns EventQueue that returns EventSets from the Virtual
-	 *         Manager.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#eventQueue()
 	 */
 	public EventQueue eventQueue() {
 		return fEventQueue;
 	}
 
-	/**
-	 * @return Returns EventRequestManager that creates all event objects on
-	 *         request.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#eventRequestManager()
 	 */
 	public EventRequestManager eventRequestManager() {
 		return fEventReqMgr;
@@ -727,65 +724,65 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * @return Returns newly created ByteValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(byte)
 	 */
 	public ByteValue mirrorOf(byte value) {
 		return new ByteValueImpl(virtualMachineImpl(), new Byte(value));
 	}
 
-	/**
-	 * @return Returns newly created CharValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(char)
 	 */
 	public CharValue mirrorOf(char value) {
 		return new CharValueImpl(virtualMachineImpl(), new Character(value));
 	}
 
-	/**
-	 * @return Returns newly created DoubleValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(double)
 	 */
 	public DoubleValue mirrorOf(double value) {
 		return new DoubleValueImpl(virtualMachineImpl(), new Double(value));
 	}
 
-	/**
-	 * @return Returns newly created FloatValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(float)
 	 */
 	public FloatValue mirrorOf(float value) {
 		return new FloatValueImpl(virtualMachineImpl(), new Float(value));
 	}
 
-	/**
-	 * @return Returns newly created IntegerValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(int)
 	 */
 	public IntegerValue mirrorOf(int value) {
 		return new IntegerValueImpl(virtualMachineImpl(), new Integer(value));
 	}
 
-	/**
-	 * @return Returns newly created LongValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(long)
 	 */
 	public LongValue mirrorOf(long value) {
 		return new LongValueImpl(virtualMachineImpl(), new Long(value));
 	}
 
-	/**
-	 * @return Returns newly created ShortValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(short)
 	 */
 	public ShortValue mirrorOf(short value) {
 		return new ShortValueImpl(virtualMachineImpl(), new Short(value));
 	}
 
-	/**
-	 * @return Returns newly created BooleanValue for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(boolean)
 	 */
 	public BooleanValue mirrorOf(boolean value) {
 		return new BooleanValueImpl(virtualMachineImpl(),
 				Boolean.valueOf(value));
 	}
 
-	/**
-	 * @return Returns newly created StringReference for the given value.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOf(java.lang.String)
 	 */
 	public StringReference mirrorOf(String value) {
 		initJdwpRequest();
@@ -809,18 +806,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * Returns a void value from the VM.
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#mirrorOfVoid()
 	 */
 	public VoidValue mirrorOfVoid() {
 		return new VoidValueImpl(this);
 	}
 
-	/**
-	 * @return Returns the Process object for this virtual machine if launched
-	 *         by a LaunchingConnector.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#process()
 	 */
 	public Process process() {
 		return fLaunchedProcess;
@@ -834,9 +828,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		fLaunchedProcess = proc;
 	}
 
-	/**
-	 * Continues the execution of the application running in this virtual
-	 * machine.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#resume()
 	 */
 	public void resume() {
 		initJdwpRequest();
@@ -849,12 +842,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#setDebugTraceMode(int)
+	 */
 	public void setDebugTraceMode(int traceFlags) {
 		// We don't have trace info.
 	}
 
-	/**
-	 * Suspends all threads.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#suspend()
 	 */
 	public void suspend() {
 		initJdwpRequest();
@@ -866,7 +862,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	public List<ThreadGroupReferenceImpl> topLevelThreadGroups() {
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#topLevelThreadGroups()
+	 */
+	public List<ThreadGroupReference> topLevelThreadGroups() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -875,10 +874,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrGroups = readInt("nr of groups", replyData); //$NON-NLS-1$
-			ArrayList<ThreadGroupReferenceImpl> result = new ArrayList<ThreadGroupReferenceImpl>(nrGroups);
+			ArrayList<ThreadGroupReference> result = new ArrayList<ThreadGroupReference>(nrGroups);
 			for (int i = 0; i < nrGroups; i++) {
-				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl
-						.read(this, replyData);
+				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl.read(this, replyData);
 				result.add(threadGroup);
 			}
 			return result;
@@ -890,27 +888,24 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * @return Returns the name of the target VM as reported by the property
-	 *         java.vm.name.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#name()
 	 */
 	public String name() {
 		getVersionInfo();
 		return fVMName;
 	}
 
-	/**
-	 * @return Returns the version of the Java Runtime Environment in the target
-	 *         VM as reported by the property java.version.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#version()
 	 */
 	public String version() {
 		getVersionInfo();
 		return fVMVersion;
 	}
 
-	/**
-	 * @return Returns text information on the target VM and the debugger
-	 *         support that mirrors it.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#description()
 	 */
 	public String description() {
 		getVersionInfo();
@@ -921,10 +916,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * Reset event flags of all threads.
 	 */
 	private void resetThreadEventFlags() {
-		Iterator<ThreadReferenceImpl> iter = allThreads().iterator();
+		Iterator<ThreadReference> iter = allThreads().iterator();
 		ThreadReferenceImpl thread;
 		while (iter.hasNext()) {
-			thread = iter.next();
+			thread = (ThreadReferenceImpl) iter.next();
 			thread.resetEventFlags();
 		}
 	}
@@ -1035,9 +1030,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/**
-	 * @return Returns Whether VM can deal with the 'Classes have Changed'
-	 *         command.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.hcr.VirtualMachine#canReloadClasses()
 	 */
 	public boolean canReloadClasses() {
 		getHCRCapabilities();
@@ -1052,44 +1046,39 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		return fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION];
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canGetClassFileVersion()
-	 * @since 3.3
 	 */
 	public boolean canGetClassFileVersion() {
 		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canGetConstantPool()
-	 * @since 3.3
 	 */
 	public boolean canGetConstantPool() {
 		getCapabilities();
 		return fCanGetConstantPool;
 	}
 
-	/**
-	 * @return Returns Whether VM can do a return in the middle of executing a
-	 *         method.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.hcr.VirtualMachine#canDoReturn()
 	 */
 	public boolean canDoReturn() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_DO_RETURN];
 	}
 
-	/**
-	 * @return Returns Whether VM can reenter a method on exit.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.hcr.VirtualMachine#canReenterOnExit()
 	 */
 	public boolean canReenterOnExit() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT];
 	}
 
-	/**
-	 * Notify the VM that classes have changed due to Hot Code Replacement.
-	 * 
-	 * @return Returns RELOAD_SUCCESS, RELOAD_FAILURE or RELOAD_IGNORED.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.hcr.VirtualMachine#classesHaveChanged(java.lang.String[])
 	 */
 	public int classesHaveChanged(String[] names) {
 		checkHCRSupported();
@@ -1185,15 +1174,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		return fgHCRResultMap;
 	}
 
-	/**
-	 * Sets request timeout in ms.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.VirtualMachine#setRequestTimeout(int)
 	 */
 	public void setRequestTimeout(int timeout) {
 		fRequestTimeout = timeout;
 	}
 
-	/**
-	 * @return Returns request timeout in ms.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdi.VirtualMachine#getRequestTimeout()
 	 */
 	public int getRequestTimeout() {
 		return fRequestTimeout;
@@ -1212,7 +1201,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 				|| (fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
 	}
 
-	public void redefineClasses(Map<ReferenceType, byte[]> typesToBytes) {
+	public void redefineClasses(Map<? extends ReferenceType, byte[]> typesToBytes) {
 		if (!canRedefineClasses()) {
 			throw new UnsupportedOperationException();
 		}
@@ -1223,8 +1212,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeInt(typesToBytes.size(), "classes", outData); //$NON-NLS-1$
 
-			Set<ReferenceType> types = typesToBytes.keySet();
-			Iterator<ReferenceType> iter = types.iterator();
+			Set<? extends ReferenceType> types = typesToBytes.keySet();
+			Iterator<? extends ReferenceType> iter = types.iterator();
 			while (iter.hasNext()) {
 				ReferenceTypeImpl type = (ReferenceTypeImpl) iter.next();
 				type.write(this, outData);
@@ -1313,9 +1302,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		return fCanUnrestrictedlyRedefineClasses;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canUseSourceNameFilters()
-	 * @since 3.3
 	 */
 	public boolean canUseSourceNameFilters() {
 		getCapabilities();
@@ -1382,18 +1370,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 	}
 
-	/*
-	 * @see VirtualMachine#getDefaultStratum()
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#getDefaultStratum()
 	 */
 	public String getDefaultStratum() {
 		return fDefaultStratum;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#instanceCounts(java.util.List)
-	 * @since 3.3
 	 */
-	public long[] instanceCounts(List<Type> refTypes) {
+	public long[] instanceCounts(List<? extends ReferenceType> refTypes) {
 		if (refTypes == null) {
 			throw new NullPointerException(JDIMessages.VirtualMachineImpl_2);
 		}
@@ -1557,5 +1544,4 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	public boolean canBeModified() {
 		return true;
 	}
-
 }

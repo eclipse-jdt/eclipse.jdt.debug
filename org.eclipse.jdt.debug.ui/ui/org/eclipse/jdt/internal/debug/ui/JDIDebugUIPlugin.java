@@ -589,7 +589,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (fVmInstallTypePageMap == null) {	
 			initializeVMInstallTypePageMap();
 		}
-		IConfigurationElement configElement = (IConfigurationElement) fVmInstallTypePageMap.get(vmInstallTypeID);
+		IConfigurationElement configElement = fVmInstallTypePageMap.get(vmInstallTypeID);
 		ILaunchConfigurationTab tab = null;
 		if (configElement != null) {
 			try {

@@ -246,7 +246,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param attributes the attribute map to use
 	 */
-	public static void addRunToLineAttributes(Map<String, Boolean> attributes) {
+	public static void addRunToLineAttributes(Map<String, Object> attributes) {
 		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
 		attributes.put(RUN_TO_LINE, Boolean.TRUE);
 	}	

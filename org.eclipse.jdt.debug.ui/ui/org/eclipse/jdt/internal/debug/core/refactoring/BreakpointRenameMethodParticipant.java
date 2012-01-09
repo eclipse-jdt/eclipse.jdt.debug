@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for method rename.
@@ -42,7 +43,7 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
 	@Override
-	protected void gatherChanges(IMarker[] markers, List changes, String destMethodName) throws CoreException, OperationCanceledException {
+	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destMethodName) throws CoreException, OperationCanceledException {
 		IMethod originalMethod = (IMethod) getOriginalElement();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];

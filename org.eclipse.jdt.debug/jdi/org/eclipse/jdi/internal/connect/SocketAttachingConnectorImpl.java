@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.ArgumentImpl;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;
@@ -27,7 +26,7 @@ import com.sun.jdi.connect.spi.Connection;
 
 public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 		AttachingConnector {
-	/** Hostname to which is attached. */
+	/** Host name to which is attached. */
 	private String fHostname;
 	/** Port to which is attached. */
 	private int fPort;
@@ -45,13 +44,13 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 		setTransport(transport);
 	}
 
-	/**
-	 * @return Returns the default arguments.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.connect.Connector#defaultArguments()
 	 */
-	public Map<String, ArgumentImpl> defaultArguments() {
-		HashMap<String, ArgumentImpl> arguments = new HashMap<String, ArgumentImpl>(2);
+	public Map<String, Connector.Argument> defaultArguments() {
+		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(2);
 
-		// Hostname
+		// Host name
 		StringArgumentImpl strArg = new StringArgumentImpl(
 				"hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$  
 		strArg.setValue("localhost"); //$NON-NLS-1$
@@ -91,7 +90,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 	/**
 	 * Retrieves connection arguments.
 	 */
-	private void getConnectionArguments(Map connectionArgs)
+	private void getConnectionArguments(Map<String,? extends Connector.Argument> connectionArgs)
 			throws IllegalConnectorArgumentsException {
 		String attribute = ""; //$NON-NLS-1$
 		try {
@@ -124,12 +123,10 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 		}
 	}
 
-	/**
-	 * Establishes a connection to a virtual machine.
-	 * 
-	 * @return Returns a connected Virtual Machine.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.connect.AttachingConnector#attach(java.util.Map)
 	 */
-	public VirtualMachine attach(Map connectionArgs) throws IOException,
+	public VirtualMachine attach(Map<String,? extends Connector.Argument> connectionArgs) throws IOException,
 			IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		Connection connection = null;
@@ -137,7 +134,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 			connection = ((SocketTransportImpl) fTransport).attach(fHostname,
 					fPort, fTimeout, 0);
 		} catch (IllegalArgumentException e) {
-			List args = new ArrayList();
+			List<String> args = new ArrayList<String>();
 			args.add("hostname"); //$NON-NLS-1$
 			args.add("port"); //$NON-NLS-1$
 			throw new IllegalConnectorArgumentsException(e.getMessage(), args);

@@ -381,8 +381,8 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#deleteEventRequests(java.util.List)
 	 */
-	public void deleteEventRequests(List<? extends EventRequest> requests) throws VMMismatchException {
-		Iterator<? extends EventRequest> iter = requests.iterator();
+	public void deleteEventRequests(List<? extends EventRequest> reqs) throws VMMismatchException {
+		Iterator<? extends EventRequest> iter = reqs.iterator();
 		while (iter.hasNext()) {
 			Object obj = iter.next();
 			deleteEventRequest((EventRequest) obj);

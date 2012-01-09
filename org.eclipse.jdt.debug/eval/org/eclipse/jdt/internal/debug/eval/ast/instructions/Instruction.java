@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Common behavior for instructions.
@@ -207,7 +206,7 @@ public abstract class Instruction {
 		if (classReference == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
-					MessageFormat.format(
+					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
 							new String[] { qualifiedName }), null));
 		}
@@ -250,7 +249,7 @@ public abstract class Instruction {
 		}
 		throw new CoreException(new Status(IStatus.ERROR,
 				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
-				MessageFormat.format(
+				NLS.bind(
 						InstructionsEvaluationMessages.Instruction_No_type,
 						new String[] { name }), null));
 	}
@@ -270,7 +269,7 @@ public abstract class Instruction {
 		if (classReference == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
-					MessageFormat.format(
+					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
 							new String[] { qualifiedName }), null));
 		}
@@ -294,7 +293,7 @@ public abstract class Instruction {
 
 		throw new CoreException(new Status(IStatus.ERROR,
 				JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
-				MessageFormat.format(
+				NLS.bind(
 						InstructionsEvaluationMessages.Instruction_No_type,
 						new String[] { qualifiedName }), null));
 	}
@@ -304,7 +303,7 @@ public abstract class Instruction {
 		if (types == null || types.length == 0) {
 			throw new CoreException(new Status(IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
-					MessageFormat.format(
+					NLS.bind(
 							InstructionsEvaluationMessages.Instruction_No_type,
 							new String[] { qualifiedName }), null));
 		}

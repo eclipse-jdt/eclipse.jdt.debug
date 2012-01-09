@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 
-import org.eclipse.jdi.internal.connect.ConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketAttachingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
@@ -30,13 +29,15 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
+import com.sun.jdi.connect.AttachingConnector;
+import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.LaunchingConnector;
+import com.sun.jdi.connect.ListeningConnector;
 import com.sun.jdi.connect.spi.Connection;
 
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
  */
 public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/** Major interface version. */
@@ -49,7 +50,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
-	List<VirtualMachineImpl> fConnectedVMs = new ArrayList<VirtualMachineImpl>();
+	List<VirtualMachine> fConnectedVMs = new ArrayList<VirtualMachine>();
 	/** True if in verbose mode. */
 	private boolean fVerbose = false;
 	/** Name of verbose file. */
@@ -83,15 +84,15 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		}
 	}
 
-	/**
-	 * Returns the major version number of the JDI interface.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#majorInterfaceVersion()
 	 */
 	public int majorInterfaceVersion() {
 		return MAJOR_INTERFACE_VERSION;
 	}
 
-	/**
-	 * Returns the minor version number of the JDI interface.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#minorInterfaceVersion()
 	 */
 	public int minorInterfaceVersion() {
 		return MINOR_INTERFACE_VERSION;
@@ -143,7 +144,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 		} catch (NoClassDefFoundError e) {
 		}
-		// return the hard coded preference if the jdi debug plug-in does not
+		// return the hard coded preference if the JDI debug plug-in does not
 		// exist
 		return 3000;
 	}
@@ -162,53 +163,53 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		fConnectedVMs.remove(vm);
 	}
 
-	/**
-	 * @return Returns all target VMs which are connected to the debugger.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#connectedVirtualMachines()
 	 */
-	public List<VirtualMachineImpl> connectedVirtualMachines() {
+	public List<VirtualMachine> connectedVirtualMachines() {
 		return fConnectedVMs;
 	}
 
-	/**
-	 * @return Returns all connectors.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#allConnectors()
 	 */
-	public List<ConnectorImpl> allConnectors() {
-		List<ConnectorImpl> result = new ArrayList<ConnectorImpl>(attachingConnectors());
+	public List<Connector> allConnectors() {
+		List<Connector> result = new ArrayList<Connector>(attachingConnectors());
 		result.addAll(launchingConnectors());
 		result.addAll(listeningConnectors());
 		return result;
 	}
 
-	/**
-	 * @return Returns attaching connectors.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#attachingConnectors()
 	 */
-	public List<SocketAttachingConnectorImpl> attachingConnectors() {
-		ArrayList<SocketAttachingConnectorImpl> list = new ArrayList<SocketAttachingConnectorImpl>(1);
+	public List<AttachingConnector> attachingConnectors() {
+		ArrayList<AttachingConnector> list = new ArrayList<AttachingConnector>(1);
 		list.add(new SocketAttachingConnectorImpl(this));
 		return list;
 	}
 
-	/**
-	 * @return Returns launching connectors.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#launchingConnectors()
 	 */
-	public List<ConnectorImpl> launchingConnectors() {
-		ArrayList<ConnectorImpl> list = new ArrayList<ConnectorImpl>(2);
+	public List<LaunchingConnector> launchingConnectors() {
+		ArrayList<LaunchingConnector> list = new ArrayList<LaunchingConnector>(2);
 		list.add(new SocketLaunchingConnectorImpl(this));
 		list.add(new SocketRawLaunchingConnectorImpl(this));
 		return list;
 	}
 
-	/**
-	 * @return Returns listening connectors.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#listeningConnectors()
 	 */
-	public List<SocketListeningConnectorImpl> listeningConnectors() {
-		ArrayList<SocketListeningConnectorImpl> list = new ArrayList<SocketListeningConnectorImpl>(1);
+	public List<ListeningConnector> listeningConnectors() {
+		ArrayList<ListeningConnector> list = new ArrayList<ListeningConnector>(1);
 		list.add(new SocketListeningConnectorImpl(this));
 		return list;
 	}
 
-	/**
-	 * @return Returns default connector.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#defaultConnector()
 	 */
 	public LaunchingConnector defaultConnector() {
 		return new SocketLaunchingConnectorImpl(this);
@@ -222,14 +223,18 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		return fVerbosePrintWriter;
 	}
 
-	public VirtualMachine createVirtualMachine(Connection connection)
-			throws IOException {
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#createVirtualMachine(com.sun.jdi.connect.spi.Connection)
+	 */
+	public VirtualMachine createVirtualMachine(Connection connection) throws IOException {
 		VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
 		return vmImpl;
 	}
 
-	public VirtualMachine createVirtualMachine(Connection connection,
-			Process process) throws IOException {
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachineManager#createVirtualMachine(com.sun.jdi.connect.spi.Connection, java.lang.Process)
+	 */
+	public VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException {
 		VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
 		vmImpl.setLaunchedProcess(process);
 		return vmImpl;

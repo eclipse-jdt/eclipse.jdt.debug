@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,14 +48,14 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List<WatchpointFieldChange> changes = new ArrayList<WatchpointFieldChange>();
+		List<Change> changes = new ArrayList<Change>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers = resource.findMarkers(JavaWatchpoint.JAVA_WATCHPOINT, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes, getArguments().getNewName());
 		if (changes.size() > 1) {
-			return new CompositeChange(RefactoringMessages.BreakpointRenameParticipant_1, (Change[]) changes.toArray(new Change[changes.size()]));
+			return new CompositeChange(RefactoringMessages.BreakpointRenameParticipant_1, changes.toArray(new Change[changes.size()]));
 		} else if (changes.size() == 1) {
-			return (Change) changes.get(0);
+			return changes.get(0);
 		}
 		return null;
 	}
@@ -64,7 +64,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
 	@Override
-	protected void gatherChanges(IMarker[] markers, List changes, String destFieldName) throws CoreException, OperationCanceledException {
+	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destFieldName) throws CoreException, OperationCanceledException {
 		IField originalField = (IField) getOriginalElement();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];

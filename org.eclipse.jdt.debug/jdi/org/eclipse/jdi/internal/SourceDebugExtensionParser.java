@@ -13,7 +13,8 @@ package org.eclipse.jdi.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
+
 import com.sun.jdi.AbsentInformationException;
 
 /**
@@ -333,7 +334,7 @@ public class SourceDebugExtensionParser {
 		}
 		String stratumId = getNonAsteriskString(lexer);
 		if (fDefinedStrata.contains(stratumId)) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_9,
 					new String[] { stratumId }));
 		}
@@ -345,7 +346,7 @@ public class SourceDebugExtensionParser {
 			switch (lexemType) {
 			case Lexer.ASTERISK_F:
 				if (fFileSectionDefinedForCurrentStratum) {
-					throw new AbsentInformationException(MessageFormat.format(
+					throw new AbsentInformationException(NLS.bind(
 							JDIMessages.SourceDebugExtensionParser_10,
 							new String[] { stratumId }));
 				}
@@ -354,7 +355,7 @@ public class SourceDebugExtensionParser {
 				break;
 			case Lexer.ASTERISK_L:
 				if (fLineSectionDefinedForCurrentStratum) {
-					throw new AbsentInformationException(MessageFormat.format(
+					throw new AbsentInformationException(NLS.bind(
 							JDIMessages.SourceDebugExtensionParser_11,
 							new String[] { stratumId }));
 				}
@@ -368,19 +369,19 @@ public class SourceDebugExtensionParser {
 				parseFutureSection(lexer);
 				break;
 			default:
-				throw new AbsentInformationException(MessageFormat.format(
+				throw new AbsentInformationException(NLS.bind(
 						JDIMessages.SourceDebugExtensionParser_12,
 						new String[] { new String(lexer.lexem()) }));
 			}
 			lexemType = lexer.lexemType();
 		}
 		if (!fFileSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_13,
 					new String[] { stratumId }));
 		}
 		if (!fLineSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_14,
 					new String[] { stratumId }));
 		}
@@ -394,7 +395,7 @@ public class SourceDebugExtensionParser {
 	private void parseFileSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
 					new String[] { new String(lexer.lexem()) }));
 		}
@@ -434,7 +435,7 @@ public class SourceDebugExtensionParser {
 			fCurrentStratum.addFileInfo(fileId, fileName,
 					getNonAsteriskString(lexer));
 		} else {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
 					new String[] { new String(lexer.lexem()) }));
 		}
@@ -447,7 +448,7 @@ public class SourceDebugExtensionParser {
 			throws AbsentInformationException {
 		fCurrentLineFileId = 0;
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
 					new String[] { new String(lexer.lexem()) }));
 		}
@@ -522,7 +523,7 @@ public class SourceDebugExtensionParser {
 	private void parseVendorSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
 					new String[] { new String(lexer.lexem()) }));
 		}
@@ -539,7 +540,7 @@ public class SourceDebugExtensionParser {
 	private void parseFutureSection(Lexer lexer)
 			throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(
+			throw new AbsentInformationException(NLS.bind(
 					JDIMessages.SourceDebugExtensionParser_12,
 					new String[] { new String(lexer.lexem()) }));
 		}

@@ -156,7 +156,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		 */
 		public void add(JavaLogicalStructure logicalStructure) {
 			for (int i= 0, length= fLogicalStructures.size(); i < length; i++) {
-				if (!greaterThan(logicalStructure, (JavaLogicalStructure)fLogicalStructures.get(i))) {
+				if (!greaterThan(logicalStructure, fLogicalStructures.get(i))) {
 					fLogicalStructures.add(i, logicalStructure);
 					return;
 				}
@@ -198,12 +198,12 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		public void saveUserDefinedJavaLogicalStructures() {
 			List<JavaLogicalStructure> logicalStructures= new ArrayList<JavaLogicalStructure>();
 			for (Iterator<JavaLogicalStructure> iter = fLogicalStructures.iterator(); iter.hasNext();) {
-				JavaLogicalStructure logicalStructure= (JavaLogicalStructure) iter.next();
+				JavaLogicalStructure logicalStructure= iter.next();
 				if (!logicalStructure.isContributed()) {
 					logicalStructures.add(logicalStructure);
 				}
 			}
-			JavaLogicalStructures.setUserDefinedJavaLogicalStructures((JavaLogicalStructure[]) logicalStructures.toArray(new JavaLogicalStructure[logicalStructures.size()]));
+			JavaLogicalStructures.setUserDefinedJavaLogicalStructures(logicalStructures.toArray(new JavaLogicalStructure[logicalStructures.size()]));
 		}
 
     }

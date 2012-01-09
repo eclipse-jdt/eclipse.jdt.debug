@@ -120,7 +120,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		}
 		
 		if (nResults == 1) {
-			return (IJavaElement) elements.get(0);
+			return elements.get(0);
 		}
 		
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT

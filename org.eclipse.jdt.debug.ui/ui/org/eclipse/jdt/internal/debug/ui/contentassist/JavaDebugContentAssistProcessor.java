@@ -163,7 +163,7 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 		
 			 //Order here and not in result collector to make sure that the order
 			 //applies to all proposals and not just those of the compilation unit. 
-			return order((IJavaCompletionProposal[])total.toArray(new IJavaCompletionProposal[total.size()]));	
+			return order(total.toArray(new IJavaCompletionProposal[total.size()]));	
 		} catch (CoreException x) {
 			setErrorMessage(x.getStatus().getMessage());
 		} finally {

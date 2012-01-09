@@ -191,8 +191,8 @@ public class ExceptionFilterEditor {
 			}
 		}
 		try {
-			fBreakpoint.setInclusionFilters((String[]) inclusionFilters.toArray(new String[inclusionFilters.size()]));
-			fBreakpoint.setExclusionFilters((String[]) exclusionFilters.toArray(new String[exclusionFilters.size()]));
+			fBreakpoint.setInclusionFilters(inclusionFilters.toArray(new String[inclusionFilters.size()]));
+			fBreakpoint.setExclusionFilters(exclusionFilters.toArray(new String[exclusionFilters.size()]));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}

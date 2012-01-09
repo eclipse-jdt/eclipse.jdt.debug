@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * Moves selected enries in a runtime classpath viewer down one position.
+ * Moves selected entries in a runtime classpath viewer down one position.
  */
 public class MoveDownAction extends RuntimeClasspathAction {
 
@@ -29,19 +30,19 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	 */
 	@Override
 	public void run() {
-		List<?> targets = getOrderedSelection();
+		List<IRuntimeClasspathEntry> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
-		List<Object> list = getEntriesAsList();
+		List<IRuntimeClasspathEntry> list = getEntriesAsList();
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
-			Object target = targets.get(i);
+			IRuntimeClasspathEntry target = targets.get(i);
 			index = list.indexOf(target);
 			if (index < bottom) {
 				bottom = index + 1;
-				Object temp = list.get(bottom);
+				IRuntimeClasspathEntry temp = list.get(bottom);
 				list.set(bottom, target);
 				list.set(index, temp);
 			}

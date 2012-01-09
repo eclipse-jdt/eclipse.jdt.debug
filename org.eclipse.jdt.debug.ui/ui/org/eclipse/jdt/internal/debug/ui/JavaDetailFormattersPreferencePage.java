@@ -382,7 +382,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			String[] values= new String[fDetailFormattersSet.size() * 3];
 			int i= 0;
 			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
+				DetailFormatter detailFormatter= iter.next();
 				values[i++]= detailFormatter.getTypeName();
 				values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
 				values[i++]= detailFormatter.isEnabled() ? DETAIL_FORMATTER_IS_ENABLED : DETAIL_FORMATTER_IS_DISABLED;
@@ -438,7 +438,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
 			int i= 0;
 			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
+				DetailFormatter detailFormatter= iter.next();
 				if (detailFormatter.isEnabled()) {
 					checkedElementsTmp[i++]= detailFormatter;
 				}

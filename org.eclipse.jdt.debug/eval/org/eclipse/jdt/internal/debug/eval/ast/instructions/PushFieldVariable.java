@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Pops an object off the stack, and pushes the value of one of its fields onto
@@ -71,8 +70,7 @@ public class PushFieldVariable extends CompoundInstruction {
 							IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							IStatus.OK,
-							MessageFormat
-									.format(InstructionsEvaluationMessages.PushFieldVariable_Cannot_find_the_field__0__for_the_object__1__1,
+							NLS.bind(InstructionsEvaluationMessages.PushFieldVariable_Cannot_find_the_field__0__for_the_object__1__1,
 											new String[] { fName,
 													receiver.toString() }),
 							null)); //
@@ -82,8 +80,7 @@ public class PushFieldVariable extends CompoundInstruction {
 
 	@Override
 	public String toString() {
-		return MessageFormat
-				.format(InstructionsEvaluationMessages.PushFieldVariable_push_field__0__2,
+		return NLS.bind(InstructionsEvaluationMessages.PushFieldVariable_push_field__0__2,
 						new String[] { fName });
 	}
 }

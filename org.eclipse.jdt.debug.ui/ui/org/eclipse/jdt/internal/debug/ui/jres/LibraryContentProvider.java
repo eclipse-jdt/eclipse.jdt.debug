@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,18 +29,18 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Provides the content for the JREs selection/edit viewer
  * 
- * @see {@link ITreeContentProvider}
- * @see {@link VMDetailsDialog}
- * @see {@link VMLibraryBlock}
- * @see {@link LibraryLocation}
- * @see {@link LibraryStandin}
+ * @see ITreeContentProvider
+ * @see VMDetailsDialog
+ * @see VMLibraryBlock
+ * @see LibraryLocation
+ * @see LibraryStandin
  */
 public class LibraryContentProvider implements ITreeContentProvider {
 	
 	private Viewer fViewer;
 	
 	/**
-	 * Represents a subelement of a <code>LibraryStandin</code>
+	 * Represents a sub-element of a <code>LibraryStandin</code>
 	 */
 	public class SubElement {
 		
@@ -106,7 +106,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof LibraryStandin) {
 			LibraryStandin standin= (LibraryStandin) parentElement;
-			Object[] children= (Object[])fChildren.get(standin);
+			Object[] children= fChildren.get(standin);
 			if (children == null) {
 				children= new Object[] {new SubElement(standin, SubElement.SOURCE_PATH), new SubElement(standin, SubElement.JAVADOC_URL)};
 				fChildren.put(standin, children);
@@ -221,7 +221,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the current viewer selection
 	 */
 	public void remove(IStructuredSelection selection) {
-		List<?> newLibraries = new ArrayList<Object>();
+		List<LibraryStandin> newLibraries = new ArrayList<LibraryStandin>();
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
@@ -235,7 +235,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 				subElement.remove();
 			}
 		}
-		fLibraries= (LibraryStandin[]) newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
+		fLibraries= newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
 		fViewer.refresh();
 	}
 
@@ -247,7 +247,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * is empty.
 	 */
 	public void add(LibraryLocation[] libs, IStructuredSelection selection) {
-		List<?> newLibraries = new ArrayList<Object>(fLibraries.length + libs.length);
+		List<LibraryStandin> newLibraries = new ArrayList<LibraryStandin>(fLibraries.length + libs.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
@@ -268,7 +268,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 			int index = newLibraries.indexOf(firstLib);
 			newLibraries.addAll(index, toAdd);
 		}
-		fLibraries= (LibraryStandin[]) newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
+		fLibraries= newLibraries.toArray(new LibraryStandin[newLibraries.size()]);
 		fViewer.refresh();
 		fViewer.setSelection(new StructuredSelection(libs), true);
 	}
@@ -314,9 +314,9 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	}
 	
 	/**
-	 * Returns the standin libraries being edited.
+	 * Returns the stand-in libraries being edited.
 	 * 
-	 * @return standins
+	 * @return stand-ins
 	 */
 	LibraryStandin[] getStandins() {
 		return fLibraries;

@@ -25,8 +25,8 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpThreadID;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InternalException;
@@ -47,8 +47,7 @@ import com.sun.jdi.Value;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public class ThreadReferenceImpl extends ObjectReferenceImpl implements
-		ThreadReference, org.eclipse.jdi.hcr.ThreadReference {
+public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadReference, org.eclipse.jdi.hcr.ThreadReference {
 	/** ThreadStatus Constants. */
 	public static final int JDWP_THREAD_STATUS_ZOMBIE = 0;
 	public static final int JDWP_THREAD_STATUS_RUNNING = 1;
@@ -66,6 +65,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 	private static String[] fgSuspendStatusStrings = null;
 
 	/** JDWP Tag. */
+	@SuppressWarnings("hiding")
 	protected static final byte tag = JdwpID.THREAD_TAG;
 
 	/** Is thread currently at a breakpoint? */
@@ -234,19 +234,17 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @returns Returns a List containing each StackFrame in the thread's
-	 *          current call stack.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#frames()
 	 */
-	public List<StackFrameImpl> frames() throws IncompatibleThreadStateException {
+	public List<StackFrame> frames() throws IncompatibleThreadStateException {
 		return frames(0, -1);
 	}
 
-	/**
-	 * @returns Returns a List containing each StackFrame in the thread's
-	 *          current call stack.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#frames(int, int)
 	 */
-	public List<StackFrameImpl> frames(int start, int length) throws IndexOutOfBoundsException,
+	public List<StackFrame> frames(int start, int length) throws IndexOutOfBoundsException,
 			IncompatibleThreadStateException {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -273,7 +271,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<StackFrameImpl> frames = new ArrayList<StackFrameImpl>(nrOfElements);
+			List<StackFrame> frames = new ArrayList<StackFrame>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				StackFrameImpl frame = StackFrameImpl.readWithLocation(this,
 						this, replyData);
@@ -291,9 +289,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * Interrupts this thread
-	 * 
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#interrupt()
 	 */
 	public void interrupt() {
@@ -306,16 +302,15 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @return Returns whether the thread is suspended at a breakpoint.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#isAtBreakpoint()
 	 */
 	public boolean isAtBreakpoint() {
 		return isSuspended() && fIsAtBreakpoint;
 	}
 
-	/**
-	 * @return Returns whether the thread has been suspended by the the
-	 *         debugger.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#isSuspended()
 	 */
 	public boolean isSuspended() {
 		// Note that this information should not be cached.
@@ -343,8 +338,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @return Returns the name of this thread.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#name()
 	 */
 	public String name() {
 		initJdwpRequest();
@@ -366,11 +361,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
-	 * @return Returns a List containing an ObjectReference for each monitor
-	 *         owned by the thread.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ThreadReference#ownedMonitors()
 	 */
-	public List<ObjectReferenceImpl> ownedMonitors() throws IncompatibleThreadStateException {
+	public List<ObjectReference> ownedMonitors() throws IncompatibleThreadStateException {
 		if (!virtualMachine().canGetOwnedMonitorInfo()) {
 			throw new UnsupportedOperationException();
 		}
@@ -390,7 +384,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 			DataInputStream replyData = replyPacket.dataInStream();
 
 			int nrOfMonitors = readInt("nr of monitors", replyData); //$NON-NLS-1$
-			List<ObjectReferenceImpl> result = new ArrayList<ObjectReferenceImpl>(nrOfMonitors);
+			List<ObjectReference> result = new ArrayList<ObjectReference>(nrOfMonitors);
 			for (int i = 0; i < nrOfMonitors; i++) {
 				result.add(ObjectReferenceImpl.readObjectRefWithTag(this,
 						replyData));
@@ -404,11 +398,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#ownedMonitorsAndFrames()
-	 * @since 3.3
 	 */
-	public List<MonitorInfoImpl> ownedMonitorsAndFrames()
+	public List<com.sun.jdi.MonitorInfo> ownedMonitorsAndFrames()
 			throws IncompatibleThreadStateException {
 		initJdwpRequest();
 		try {
@@ -432,15 +425,14 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 			DataInputStream replyData = replyPacket.dataInStream();
 
 			int owned = readInt("owned monitors", replyData); //$NON-NLS-1$
-			List<MonitorInfoImpl> result = new ArrayList<MonitorInfoImpl>(owned);
+			List<com.sun.jdi.MonitorInfo> result = new ArrayList<com.sun.jdi.MonitorInfo>(owned);
 			ObjectReference monitor = null;
 			int depth = -1;
 			for (int i = 0; i < owned; i++) {
 				monitor = ObjectReferenceImpl.readObjectRefWithTag(this,
 						replyData);
 				depth = readInt("stack depth", replyData); //$NON-NLS-1$
-				result.add(new MonitorInfoImpl(this, depth, monitor,
-						virtualMachineImpl()));
+				result.add(new MonitorInfoImpl(this, depth, monitor, virtualMachineImpl()));
 			}
 			return result;
 		} catch (IOException e) {
@@ -620,7 +612,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Simulate the execution of a return instruction instead of executing the
-	 * next bytecode in a method.
+	 * next byte code in a method.
 	 * 
 	 * @return Returns whether any finally or synchronized blocks are enclosing
 	 *         the current instruction.
@@ -682,7 +674,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements
 	@Override
 	public String toString() {
 		try {
-			return MessageFormat.format(JDIMessages.ThreadReferenceImpl_8,
+			return NLS.bind(JDIMessages.ThreadReferenceImpl_8,
 					new String[] { type().toString(), name(),
 							getObjectID().toString() });
 		} catch (ObjectCollectedException e) {

@@ -661,7 +661,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             } 
             catch (JavaModelException e) {}
         }
-        return (IMethod[]) methods.toArray(new IMethod[methods.size()]);
+        return methods.toArray(new IMethod[methods.size()]);
     }
 
     /**

@@ -70,7 +70,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 				}
 			}
 		}
-		return (IPath[]) jars.toArray(new IPath[jars.size()]);
+		return jars.toArray(new IPath[jars.size()]);
 	}
 	
 	@Override

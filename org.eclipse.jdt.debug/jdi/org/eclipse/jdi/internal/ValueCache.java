@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,14 +47,14 @@ public class ValueCache {
 	 * garbage collector will enqueue soft references that are garbage
 	 * collected.
 	 */
-	private ReferenceQueue refQueue = new ReferenceQueue();
+	private ReferenceQueue<Object> refQueue = new ReferenceQueue<Object>();
 
 	/**
 	 * Clean up all entries from the table for which the values were garbage
 	 * collected.
 	 */
 	private void cleanup() {
-		Reference ref;
+		Reference<?> ref;
 		while ((ref = refQueue.poll()) != null) {
 			Object key = refTable.get(ref);
 			if (key != null)
@@ -83,7 +83,7 @@ public class ValueCache {
 	public Object get(Object key) {
 		cleanup();
 		Object value = null;
-		SoftReference ref = cacheTable.get(key);
+		SoftReference<?> ref = cacheTable.get(key);
 		if (ref != null) {
 			value = ref.get();
 		}
@@ -98,7 +98,7 @@ public class ValueCache {
 		List<Object> returnValues = new ArrayList<Object>();
 		synchronized (cacheTable) {
 			Iterator<SoftReference<Object>> iter = cacheTable.values().iterator();
-			SoftReference ref;
+			SoftReference<Object> ref;
 			Object value;
 			while (iter.hasNext()) {
 				ref = iter.next();
@@ -115,12 +115,12 @@ public class ValueCache {
 	 * Returns a Collection view of the values contained in this cache that have
 	 * the same runtime class as the given Class.
 	 */
-	public Collection<Object> valuesWithType(Class type) {
+	public Collection<Object> valuesWithType(Class<?> type) {
 		cleanup();
 		List<Object> returnValues = new ArrayList<Object>();
 		synchronized (cacheTable) {
 			Iterator<SoftReference<Object>> iter = cacheTable.values().iterator();
-			SoftReference ref;
+			SoftReference<Object> ref;
 			Object value;
 			while (iter.hasNext()) {
 				ref = iter.next();
@@ -142,7 +142,7 @@ public class ValueCache {
 	public Object remove(Object key) {
 		cleanup();
 		Object value = null;
-		SoftReference ref = cacheTable.get(key);
+		SoftReference<?> ref = cacheTable.get(key);
 		if (ref != null) {
 			value = ref.get();
 			refTable.remove(ref);

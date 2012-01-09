@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import com.sun.jdi.VMMismatchException;
  * specification. See the com.sun.jdi package for more information.
  * 
  */
-public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
+public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comparable<LocalVariable> {
 	/** Method that holds local variable. */
 	private MethodImpl fMethod;
 	/** First code index at which the variable is visible (unsigned). */
@@ -42,7 +42,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	 * code index + length.
 	 * <p>
 	 * The length is set to -1 when this variable represents an inferred
-	 * argument (when local var info is unavailable). We assume that such
+	 * argument (when local variable info is unavailable). We assume that such
 	 * arguments are visible for the entire method.
 	 * </p>
 	 * */
@@ -65,7 +65,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		fSlot = slot;
 		fIsArgument = isArgument;
 	}
-
+	
 	/**
 	 * @return Returns local variable's index in its frame.
 	 */
@@ -96,19 +96,17 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		return false;
 	}
 
-	/**
-	 * @return Returns a negative integer, zero, or a positive integer as this
-	 *         object is less than, equal to, or greater than the specified
-	 *         object.
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object object) {
-		if (object == null || !object.getClass().equals(this.getClass()))
+	public int compareTo(LocalVariable variable) {
+		if (variable == null || !variable.getClass().equals(this.getClass()))
 			throw new ClassCastException(
 					JDIMessages.LocalVariableImpl_Can__t_compare_local_variable_to_given_object_1);
 
 		// See if methods are the same, if not return comparison between
 		// methods.
-		LocalVariableImpl var2 = (LocalVariableImpl) object;
+		LocalVariableImpl var2 = (LocalVariableImpl) variable;
 		if (!method().equals(var2.method()))
 			return method().compareTo(var2.method());
 
