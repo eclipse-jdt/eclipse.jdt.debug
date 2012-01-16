@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,10 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getStructuredSelection();
-		Iterator<?> itr= selection.iterator();
+		Iterator<IJavaBreakpoint> itr= selection.iterator();
 		while (itr.hasNext()) {
 			try {
-				IJavaBreakpoint breakpoint= (IJavaBreakpoint) itr.next();
+				IJavaBreakpoint breakpoint= itr.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
 				String title= ActionMessages.BreakpointAction_Breakpoint_configuration_1; 

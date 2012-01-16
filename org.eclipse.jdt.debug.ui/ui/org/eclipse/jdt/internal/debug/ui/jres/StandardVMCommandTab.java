@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,9 +131,9 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		String javaCommand= null;
 		try {
-			Map<?, ?> attributeMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<?, ?>)null);
+			Map<String, String> attributeMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 			if (attributeMap != null) {
-				javaCommand = (String) attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
+				javaCommand = attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 			}
 		} catch(CoreException ce) {
 			JDIDebugUIPlugin.log(ce);		
@@ -172,8 +172,8 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 	}	
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	@Override
 	public String getId() {

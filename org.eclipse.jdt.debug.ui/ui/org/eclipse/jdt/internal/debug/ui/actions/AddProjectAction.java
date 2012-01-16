@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
@@ -44,37 +42,7 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  */
 public class AddProjectAction extends RuntimeClasspathAction {
 	
-	class ContentProvider implements IStructuredContentProvider {
-		
-		private List<?> fProjects;
-		
-		public ContentProvider(List<?> projects) {
-			fProjects = projects;
-		}
-		
-		/**
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return fProjects.toArray();
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(
-			Viewer viewer,
-			Object oldInput,
-			Object newInput) {
-		}
-
-	}	
+	
 
 	public AddProjectAction(IClasspathViewer viewer) {
 		super(ActionMessages.AddProjectAction_Add_Project_1, viewer); 
@@ -146,6 +114,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	
 	/**
 	 * Returns the possible projects that can be added
+	 * @return the list of projects
 	 */
 	protected List<IJavaProject> getPossibleAdditions() {
 		IJavaProject[] projects;
@@ -180,6 +149,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * @param proj the project for which to compute required
 	 *  projects
 	 * @param res the list to add all required projects too
+	 * @throws JavaModelException if there is a problem accessing the Java model
 	 */
 	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
@@ -204,9 +174,9 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	 * Adds all exported entries defined by <code>proj</code> to the list
 	 * <code>runtimeEntries</code>.
 	 * 
-	 * @param proj
-	 * @param runtimeEntries
-	 * @throws JavaModelException
+	 * @param proj the project
+	 * @param runtimeEntries the entries
+	 * @throws CoreException if an exception occurs
 	 */
 	protected void collectExportedEntries(IJavaProject proj, List<IRuntimeClasspathEntry> runtimeEntries) throws CoreException {
 		IClasspathEntry[] entries = proj.getRawClasspath();

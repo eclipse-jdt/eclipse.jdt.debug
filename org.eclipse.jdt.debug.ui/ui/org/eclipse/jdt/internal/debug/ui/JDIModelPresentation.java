@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1795,14 +1795,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					label.append(DebugUIMessages.JDIModelPresentation_unknown_method_name__6); 
 				}
 				try {
-					List<?> args= frame.getArgumentTypeNames();
+					List<String> args= frame.getArgumentTypeNames();
 					if (args.isEmpty()) {
 						label.append("()"); //$NON-NLS-1$
 					} else {
 						label.append('(');
-						Iterator<?> iter= args.iterator();
+						Iterator<String> iter= args.iterator();
 						while (iter.hasNext()) {
-							label.append(getQualifiedName((String) iter.next()));
+							label.append(getQualifiedName(iter.next()));
 							if (iter.hasNext()) {
 								label.append(", "); //$NON-NLS-1$
 							} else if (frame.isVarArgs()) {

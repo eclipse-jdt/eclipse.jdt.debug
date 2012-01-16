@@ -8,6 +8,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/RuntimeClasspathViewer.java" type="org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer">
+        <filter comment="Known illegal extension" id="571473929">
+            <message_arguments>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="RuntimeClasspathViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/jdt/internal/debug/ui/launcher/AppletSelectionDialog.java" type="org.eclipse.jdt.internal.debug.ui.launcher.AppletSelectionDialog$PackageRenderer">
         <filter comment="known API usage" id="571473929">
             <message_arguments>

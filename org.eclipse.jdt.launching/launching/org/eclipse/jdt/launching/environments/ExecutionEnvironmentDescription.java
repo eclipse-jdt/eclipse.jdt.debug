@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,9 +285,9 @@ public final class ExecutionEnvironmentDescription {
 		StringBuffer arguments = new StringBuffer();
 		Iterator<Entry<String, String>> entries = fProperties.entrySet().iterator();
 		while (entries.hasNext()) {
-			Entry<?, ?> entry = entries.next();
-			String key = (String)entry.getKey();
-			String value = (String)entry.getValue();
+			Entry<String, String> entry = entries.next();
+			String key = entry.getKey();
+			String value = entry.getValue();
 			boolean appendArgument = !key.startsWith(EE_ARG_FILTER);
 			if (appendArgument) {
 				arguments.append(key);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,13 +56,14 @@ public class AddJarAction extends RuntimeClasspathAction {
 	
 	/**
 	 * Returns a list of resources of currently selected jars
+	 * @return the selected jar paths
 	 */
 	protected IPath[] getSelectedJars() {
-		List<?> list = getEntriesAsList();
+		List<IRuntimeClasspathEntry> list = getEntriesAsList();
 		List<IPath> jars = new ArrayList<IPath>();
-		Iterator<?> iter = list.iterator();
+		Iterator<IRuntimeClasspathEntry> iter = list.iterator();
 		while (iter.hasNext()) {
-			IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)iter.next();
+			IRuntimeClasspathEntry entry = iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
 				IResource res = entry.getResource();
 				if (res != null && res instanceof IFile) {

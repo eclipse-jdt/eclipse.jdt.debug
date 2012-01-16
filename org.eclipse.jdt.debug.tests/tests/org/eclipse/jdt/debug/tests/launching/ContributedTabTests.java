@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		for(int i = 0; i < tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
-		Set<Class<?>> contribs = new HashSet<Class<?>>();
+		Set<Class<? extends ILaunchConfigurationTab>> contribs = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		contribs.add(ContributedTestTab1.class);
 		contribs.add(JavaAlernateModeTab.class);
 		assertTrue("java tab group should contain all contributed tabs", tabset.containsAll(contribs)); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		HashSet<Class<? extends ILaunchConfigurationTab>> tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		tabset.add(tabs[3].getClass());
 		tabset.add(tabs[4].getClass());
-		HashSet<Class<?>> contribs = new HashSet<Class<?>>();
+		HashSet<Class<? extends ILaunchConfigurationTab>> contribs = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		contribs.add(ContributedTestTab2.class);
 		contribs.add(ContributedTestTab3.class);
 		assertTrue("the tab set must only contain test tab 2 and test tab 3", tabset.containsAll(contribs)); //$NON-NLS-1$

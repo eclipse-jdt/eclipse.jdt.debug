@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,9 +50,9 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	
 	class ContentProvider implements IStructuredContentProvider {
 		
-		private List<?> fProjects;
+		private List<IJavaProject> fProjects;
 		
-		public ContentProvider(List<?> projects) {
+		public ContentProvider(List<IJavaProject> projects) {
 			fProjects = projects;
 		}
 		
@@ -127,6 +127,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * Returns the possible projects that can be added
 	 * 
 	 * @param director the source lookup director currently being edited
+	 * @return the listing of {@link IJavaProject}s to add
 	 */
 	protected List<IJavaProject> getPossibleAdditions(ISourceLookupDirector director) {
 		IJavaProject[] projects;
@@ -160,6 +161,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * @param proj the project for which to compute required
 	 *  projects
 	 * @param res the list to add all required projects too
+	 * @throws JavaModelException if there is an exception accessing the Java model
 	 */
 	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
@@ -184,9 +186,9 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	 * Adds all exported entries defined by <code>proj</code> to the list
 	 * <code>list</code>.
 	 * 
-	 * @param proj
-	 * @param list
-	 * @throws JavaModelException
+	 * @param proj the project to inspect
+	 * @param list the listing of containers
+	 * @throws CoreException if an exception occurs
 	 */
 	protected void collectExportedEntries(IJavaProject proj, List<ISourceContainer> list) throws CoreException {
 		IClasspathEntry[] entries = proj.getRawClasspath();

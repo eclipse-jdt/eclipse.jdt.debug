@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,10 +65,10 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 	 */
 	public void run(IAction action) {
 		IStructuredSelection ss = (IStructuredSelection)fSelection;
-		Iterator<?> iterator = ss.iterator();
+		Iterator<IType> iterator = ss.iterator();
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		while (iterator.hasNext()) {
-			IType type = (IType) iterator.next();
+			IType type = iterator.next();
 			IBreakpoint existing = null;
 			try {
 				for (int i = 0; i < breakpoints.length; i++) {

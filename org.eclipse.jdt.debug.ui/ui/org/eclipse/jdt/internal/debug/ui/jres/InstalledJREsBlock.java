@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -369,12 +369,12 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void copyVM() {
         IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
-        Iterator<?> it = selection.iterator();
+        Iterator<IVMInstall> it = selection.iterator();
 
         ArrayList<VMStandin> newEntries = new ArrayList<VMStandin>();
         while (it.hasNext()) {
-            IVMInstall selectedVM = (IVMInstall) it.next();
-            // duplicate & add vm
+            IVMInstall selectedVM = it.next();
+            // duplicate & add VM
             VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
             standin.setName(generateName(selectedVM.getName()));
 			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, fVMs.toArray(new IVMInstall[fVMs.size()]));
@@ -386,7 +386,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					newEntries.add(result);
 				}
 			} else if (dialogResult == Window.CANCEL){
-				// Cancelling one wizard should cancel all subsequent wizards
+				// Canceling one wizard should cancel all subsequent wizards
 				break;
 			}
         }
@@ -519,9 +519,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fEditButton.setEnabled(selectionCount == 1);
 		fCopyButton.setEnabled(selectionCount > 0);
 		if (selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount()) {
-			Iterator<?> iterator = selection.iterator();
+			Iterator<IVMInstall> iterator = selection.iterator();
 			while (iterator.hasNext()) {
-				IVMInstall install = (IVMInstall)iterator.next();
+				IVMInstall install = iterator.next();
 				if (isContributed(install)) {
 					fRemoveButton.setEnabled(false);
 					return;
@@ -648,10 +648,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void removeVMs() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
 		IVMInstall[] vms = new IVMInstall[selection.size()];
-		Iterator<?> iter = selection.iterator();
+		Iterator<IVMInstall> iter = selection.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
-			vms[i] = (IVMInstall)iter.next();
+			vms[i] = iter.next();
 			i++;
 		}
 		removeJREs(vms);

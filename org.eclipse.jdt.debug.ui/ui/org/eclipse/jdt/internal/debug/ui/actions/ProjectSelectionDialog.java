@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.swt.SWT;
@@ -33,12 +34,14 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
 	
-	private List<?> fProjects;
+	private List<IJavaProject> fProjects;
 
 	/**
+	 * @param parentShell the parent {@link Shell}
+	 * @param projects the list of projects to present
 	 * @see ListSelectionDialog
 	 */
-	public ProjectSelectionDialog(Shell parentShell, List<?> projects){
+	public ProjectSelectionDialog(Shell parentShell, List<IJavaProject> projects){
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setShowSelectAllButtons(true);

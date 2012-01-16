@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2680,9 +2680,9 @@ public final class JavaRuntime {
 						String defId = vmDefs.getDefaultVMInstallCompositeID();
 						boolean validDef = false;
 						if (defId != null) {
-							Iterator<?> iterator = vmDefs.getValidVMList().iterator();
+							Iterator<IVMInstall> iterator = vmDefs.getValidVMList().iterator();
 							while (iterator.hasNext()) {
-								IVMInstall vm = (IVMInstall) iterator.next();
+								IVMInstall vm = iterator.next();
 								if (getCompositeIdFromVM(vm).equals(defId)) {
 									validDef = true;
 									break;
@@ -2692,9 +2692,9 @@ public final class JavaRuntime {
 						if (!validDef) {
 							// use the first as the default
 							setPref = true;
-							List<?> list = vmDefs.getValidVMList();
+							List<IVMInstall> list = vmDefs.getValidVMList();
 							if (!list.isEmpty()) {
-								IVMInstall vm = (IVMInstall) list.get(0);
+								IVMInstall vm = list.get(0);
 								vmDefs.setDefaultVMInstallCompositeID(getCompositeIdFromVM(vm));
 							}
 						}
@@ -2763,7 +2763,7 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_7;
             	}
             	if (compliance != null) {
-	                Hashtable<?, ?> options= JavaCore.getOptions();
+	                Hashtable<String, String> options= JavaCore.getOptions();
 
 	                org.osgi.service.prefs.Preferences bundleDefaults = BundleDefaultsScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 

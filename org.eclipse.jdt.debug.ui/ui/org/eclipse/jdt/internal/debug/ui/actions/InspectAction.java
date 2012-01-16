@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,9 +91,9 @@ public class InspectAction extends EvaluateAction {
 		}
 		
 		//inspecting from the context of the variables view
-		Iterator<?> variables = ((IStructuredSelection)selection).iterator();
+		Iterator<IJavaVariable> variables = ((IStructuredSelection)selection).iterator();
 		while (variables.hasNext()) {
-			IJavaVariable var = (IJavaVariable)variables.next();
+			IJavaVariable var = variables.next();
 			try {
 				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
 				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,6 +118,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		
 		/**
 		 * Returns the attributes.
+		 * @return the elements
 		 */
 		public String[][] getElements() {
 			return fVariables.toArray(new String[fVariables.size()][]);
@@ -125,6 +126,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		/**
 		 * Adds the given attributes.
+		 * @param newAttribute the new attribute
 		 */
 		public void add(String[] newAttribute) {
 			fVariables.add(newAttribute);
@@ -132,17 +134,19 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		/**
 		 * Remove the given attributes
+		 * @param list the list 
 		 */
-		public void remove(List<?> list) {
+		public void remove(List<String[]> list) {
 			fVariables.removeAll(list);
 		}
 
 		/**
 		 * Moves the given attributes up in the list.
+		 * @param list the list
 		 */
-		public void up(List<?> list) {
-			for (Iterator<?> iter= list.iterator(); iter.hasNext();) {
-				String[] variable= (String[]) iter.next();
+		public void up(List<String[]> list) {
+			for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
+				String[] variable= iter.next();
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
 				fVariables.add(index - 1, variable);
@@ -151,10 +155,11 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		/**
 		 * Moves the given attributes down int the list.
+		 * @param list the list
 		 */
-		public void down(List<?> list) {
-			for (Iterator<?> iter= list.iterator(); iter.hasNext();) {
-				String[] variable= (String[]) iter.next();
+		public void down(List<String[]> list) {
+			for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
+				String[] variable= iter.next();
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
 				fVariables.add(index + 1, variable);
@@ -279,6 +284,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	/**
 	 * Create the widgets it the code snippet editor group
+	 * @param isValue if it is a snippet value
 	 */
 	private void createCodeGroupWidgets(boolean isValue) {
 		if (isValue) {
@@ -424,7 +430,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private void removeAttribute() {
 		IStructuredSelection selection= (IStructuredSelection)fAttributeListViewer.getSelection();
 		if (selection.size() > 0) {
-			List<?> selectedElements= selection.toList();
+			List<String[]> selectedElements= selection.toList();
 			Object[] elements= fAttributesContentProvider.getElements();
 			Object newSelectedElement= null;
 			for (int i= 0; i < elements.length; i++) {
@@ -477,7 +483,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	}
 
 	/*
-	 * Display or hide the widgets specific to a logicial structure with
+	 * Display or hide the widgets specific to a logical structure with
 	 * variables.
 	 */
 	private void toggleAttributesWidgets(boolean isValue) {
@@ -507,6 +513,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	/**
 	 * Set the data in the attributes and code widgets
+	 * @param isValue if it is a snippet value
 	 */
 	private void setAttributesData(boolean isValue) {
 		if (isValue) {
@@ -720,6 +727,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	
 	/**
 	 * Return the type object which corresponds to the given name.
+	 * @return the {@link IType}
 	 */
 	public IType getType() {
 		if (!fTypeSearched) {

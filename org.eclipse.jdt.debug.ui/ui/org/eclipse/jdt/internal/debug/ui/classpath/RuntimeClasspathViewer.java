@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,6 +144,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	
 	/**
 	 * Sets the launch configuration context for this viewer, if any
+	 * @param configuration the backing {@link ILaunchConfiguration}
 	 */
 	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		if (getLabelProvider() != null) {
@@ -213,9 +214,9 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		}
 		switch (actionType) {
 			case RuntimeClasspathAction.ADD :
-				Iterator<?> selected= selection.iterator();
+				Iterator<IClasspathEntry> selected= selection.iterator();
 				while (selected.hasNext()) {
-					IClasspathEntry entry = (IClasspathEntry)selected.next();
+					IClasspathEntry entry = selected.next();
 					if (!entry.isEditable() && entry instanceof ClasspathEntry) {
 						return false;
 					}
@@ -225,7 +226,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 			case RuntimeClasspathAction.MOVE :
 				selected= selection.iterator();
 				while (selected.hasNext()) {
-					IClasspathEntry entry = (IClasspathEntry)selected.next();
+					IClasspathEntry entry = selected.next();
 					if (!entry.isEditable()) {
 						return false;
 					}
@@ -244,9 +245,9 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	public ISelection getSelectedEntries() {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		List<IClasspathEntry> entries= new ArrayList<IClasspathEntry>(selection.size() * 2);
-		Iterator<?> itr= selection.iterator();
+		Iterator<IClasspathEntry> itr= selection.iterator();
 		while (itr.hasNext()) {
-			IClasspathEntry element = (IClasspathEntry) itr.next();
+			IClasspathEntry element = itr.next();
 			if (element.hasEntries()) {
 				entries.addAll(Arrays.asList(element.getEntries()));
 			} else {

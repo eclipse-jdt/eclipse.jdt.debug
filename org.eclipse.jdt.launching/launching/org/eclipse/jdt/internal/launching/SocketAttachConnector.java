@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,9 @@ public class SocketAttachConnector implements IVMConnector {
 	 */
 	protected static AttachingConnector getAttachingConnector() throws CoreException {
 		AttachingConnector connector= null;
-		Iterator<?> iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
+		Iterator<AttachingConnector> iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
 		while (iter.hasNext()) {
-			AttachingConnector lc= (AttachingConnector) iter.next();
+			AttachingConnector lc= iter.next();
 			if (lc.name().equals("com.sun.jdi.SocketAttach")) { //$NON-NLS-1$
 				connector= lc;
 				break;

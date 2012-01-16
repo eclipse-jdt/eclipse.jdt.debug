@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Ecliptical Software Inc. and others.
+ * Copyright (c) 2007, 2012 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,9 +138,9 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
 	 * Creates an adjusted pattern from the specified quote pattern
-	 * @param pattern
+	 * @param pattern the search pattern to manipulate
 	 * @return the original pattern adjusted to escape special chars in Java,and change Eclipse
-	 * search chars to Java regex chars
+	 * search chars to Java RegEx chars
 	 */
 	private String quotePattern(String pattern) {
 		StringTokenizer t = new StringTokenizer(pattern, ".?*$", true); //$NON-NLS-1$
@@ -204,12 +204,11 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
 	 * Returns the success of the the pattern matching 
-	 * @param scope
-	 * @param config
-	 * @param workspaceRoot
-	 * @param pattern
+	 * @param scope the search scope
+	 * @param config the backing {@link ILaunchConfiguration}
+	 * @param pattern the search pattern
 	 * @return true if there were matching elements for the pattern, false otherwise
-	 * @throws CoreException
+	 * @throws CoreException if an exception occurs
 	 */
 	private boolean matches(IJavaSearchScope scope, ILaunchConfiguration config, Pattern pattern) throws CoreException {
 		if(!config.exists() || !config.getType().isPublic() || !DebugUIPlugin.doLaunchConfigurationFiltering(config)) {
@@ -241,11 +240,11 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
 	 * Searches for configurations matching the specified pattern
-	 * @param scope
-	 * @param requestor
-	 * @param pattern
-	 * @param monitor
-	 * @throws CoreException
+	 * @param scope the search scope
+	 * @param requestor the requester
+	 * @param pattern the search pattern
+	 * @param monitor for progress monitoring
+	 * @throws CoreException if an exception occurs
 	 */
 	private void searchLaunchConfigurations(IJavaSearchScope scope, ISearchRequestor requestor, Pattern pattern, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
@@ -288,13 +287,13 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 				if (activate) {
 					try {
 						ILaunchConfiguration config = (ILaunchConfiguration) o;
-						Set<?> modes =  config.getType().getSupportedModeCombinations();
+						Set<Set<String>> modes =  config.getType().getSupportedModeCombinations();
 						ILaunchGroup group = null;
-						Set<?> mode = null;
-						for (Iterator<?> iter = modes.iterator(); iter.hasNext();) {
-							mode = (Set<?>) iter.next();
+						Set<String> mode = null;
+						for (Iterator<Set<String>> iter = modes.iterator(); iter.hasNext();) {
+							mode = iter.next();
 							if(mode.size() == 1) {
-								group = DebugUITools.getLaunchGroup(config, (String) mode.iterator().next());
+								group = DebugUITools.getLaunchGroup(config, mode.iterator().next());
 								if (group != null) {
 									break;
 								}

@@ -176,7 +176,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		testGroup.createTabs(dialog, "TEST_MODE"); //$NON-NLS-1$
 		
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
-		HashSet<Class<?>> tabset = new HashSet<Class<?>>();
+		HashSet<Class<? extends ILaunchConfigurationTab>> tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		for(int i = 0; i< tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
@@ -192,7 +192,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		
 		tabs = testGroup.getTabs();
 		assertEquals("Wrong number of tabs in the test group", 4, tabs.length); //$NON-NLS-1$
-		tabset = new HashSet<Class<?>>();
+		tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		for(int i = 0; i< tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}

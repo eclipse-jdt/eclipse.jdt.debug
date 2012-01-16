@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,6 +153,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
 		/**
 		 * Add the given logical structure to the content provider.
+		 * @param logicalStructure the new structure
 		 */
 		public void add(JavaLogicalStructure logicalStructure) {
 			for (int i= 0, length= fLogicalStructures.size(); i < length; i++) {
@@ -167,6 +168,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		/**
 		 * Compare two logical structures, return <code>true</code> if the first one is 'greater' than
 		 * the second one.
+		 * @param logicalStructure1 a structure
+		 * @param logicalStructure2 a structure
+		 * @return if the first structure is 'greater' than the second
 		 */
 		private boolean greaterThan(JavaLogicalStructure logicalStructure1, JavaLogicalStructure logicalStructure2) {
 			int res= logicalStructure1.getQualifiedTypeName().compareToIgnoreCase(logicalStructure2.getQualifiedTypeName());
@@ -182,13 +186,15 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
 		/**
 		 * Remove the given logical structures from the content provider.
+		 * @param list the list
 		 */
-		public void remove(List<?> list) {
+		public void remove(List<JavaLogicalStructure> list) {
 			fLogicalStructures.removeAll(list);
 		}
 
 		/**
 		 * Refresh (reorder) the given logical structure.
+		 * @param logicalStructure the logical structure
 		 */
 		public void refresh(JavaLogicalStructure logicalStructure) {
 			fLogicalStructures.remove(logicalStructure);
@@ -303,7 +309,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     }
 
     /**
-     * @param container
+     * @param parent the parent widget
      */
     private void createTable(Composite parent) {
     	SWTFactory.createWrapLabel(parent, DebugUIMessages.JavaLogicalStructuresPreferencePage_1, 2, 300);
@@ -392,6 +398,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	
 	/**
 	 * Modify the state of the button from the selection.
+	 * @param structuredSelection the selection that changed
 	 */
 	private void selectionChanged(IStructuredSelection structuredSelection) {
 		int size= structuredSelection.size();
@@ -403,8 +410,8 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 			JavaLogicalStructure structure = (JavaLogicalStructure)structuredSelection.getFirstElement();
             fEditLogicalStructureButton.setEnabled(size == 1 && !structure.isContributed());
 			boolean removeEnabled= true;
-			for (Iterator<?> iter= structuredSelection.iterator(); iter.hasNext();) {
-				if (((JavaLogicalStructure) iter.next()).isContributed()) {
+			for (Iterator<JavaLogicalStructure> iter= structuredSelection.iterator(); iter.hasNext();) {
+				if (iter.next().isContributed()) {
 					removeEnabled= false;
 				}
 			}
@@ -486,7 +493,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	protected void removeLogicalStrutures() {
 		IStructuredSelection selection= (IStructuredSelection)fLogicalStructuresViewer.getSelection();
 		if (selection.size() > 0) {
-			List<?> selectedElements= selection.toList();
+			List<JavaLogicalStructure> selectedElements= selection.toList();
 			Object[] elements= fLogicalStructuresContentProvider.getElements(null);
 			Object newSelectedElement= null;
 			for (int i= 0; i < elements.length; i++) {

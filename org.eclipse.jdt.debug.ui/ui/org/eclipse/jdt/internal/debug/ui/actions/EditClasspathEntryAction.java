@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
- * Moves selected enries in a runtime classpath viewer up one position.
+ * Moves selected entries in a runtime classpath viewer up one position.
  */
 public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	
@@ -42,11 +42,11 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	 */
 	@Override
 	public void run() {
-		List<?> targets = getOrderedSelection();
+		List<IRuntimeClasspathEntry> targets = getOrderedSelection();
 		if (targets.size() != 1) {
 			return;
 		}
-		IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry) targets.get(0);
+		IRuntimeClasspathEntry entry = targets.get(0);
 		IRuntimeClasspathEntry[] original = new IRuntimeClasspathEntry[]{entry};
 		IRuntimeClasspathEntry[] delegtes = new IRuntimeClasspathEntry[original.length];
 		IClasspathEntry[] parents = new IClasspathEntry[original.length];

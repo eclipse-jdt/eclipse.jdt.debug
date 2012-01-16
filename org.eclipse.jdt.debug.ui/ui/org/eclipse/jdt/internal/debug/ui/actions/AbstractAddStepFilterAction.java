@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,9 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		}
 
 		// For each selected stack frame, add a corresponding active step filter
-		Iterator<?> itr = selection.iterator();
+		Iterator<IJavaStackFrame> itr = selection.iterator();
 		while (itr.hasNext()) {
-			IJavaStackFrame frame = (IJavaStackFrame)itr.next();
+			IJavaStackFrame frame = itr.next();
 			String pattern = generateStepFilterPattern(frame);
 			if (pattern != null) {
 				addActiveStepFilter(pattern);						
