@@ -55,6 +55,17 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * 			Home
 	 * 				src.jar
 	 * 		CurrentJDK -> 1.3.1
+	 * 
+	 * New in OSX 10.7 'Lion' JDKs are laid out in the following location:
+	 * 
+	 * /System/Library/Java/JavaVirtualMachines/
+	 * 		1.6.0
+	 * 			/Contents
+	 * 				/Home
+	 * 					classes.jar
+	 * 					ui.jar
+	 * @see http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate3LeopardUpdate8RN/NewandNoteworthy/NewandNoteworthy.html#//apple_ref/doc/uid/TP40010380-CH4-SW1
+	 * for more information
 	 */
 	 
 	
@@ -211,14 +222,10 @@ public class MacOSXVMInstallType extends StandardVMType {
 		}
 	}
 
-	/**
-	 * Returns default library info for the given install location.
-	 * 
-	 * @param installLocation
-	 * @return LibraryInfo
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultLibraryInfo(java.io.File)
 	 */
 	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
-
 		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
 		File lib1= new File(classes, "classes.jar"); //$NON-NLS-1$
 		File lib2= new File(classes, "ui.jar"); //$NON-NLS-1$
@@ -243,6 +250,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
+	 */
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		File parent= libLocation.getParentFile();
 		while (parent != null) {
@@ -263,8 +273,8 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return Path.EMPTY;
 	}
 
-	/**
-	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.launching.StandardVMType#validateInstallLocation(java.io.File)
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
 		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
@@ -274,11 +284,10 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return new Status(IStatus.ERROR, id, 0, MacOSXLaunchingPlugin.getString("MacOSXVMType.error.notRoot"), null); //$NON-NLS-1$
 	}
 	
-	/**
-	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultJavadocLocation(java.io.File)
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {
-		
 		// try in local filesystem
 		String id= null;	
 		try {
@@ -317,5 +326,4 @@ public class MacOSXVMInstallType extends StandardVMType {
 	protected String getVMVersion(File javaHome, File javaExecutable) {
 		return super.getVMVersion(javaHome, javaExecutable);
 	}
-	
 }
