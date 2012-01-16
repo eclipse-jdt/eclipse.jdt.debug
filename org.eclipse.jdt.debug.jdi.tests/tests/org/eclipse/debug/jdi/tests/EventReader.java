@@ -95,6 +95,7 @@ public class EventReader extends AbstractReader {
 	/**
 	 * Continuously reads events that are coming from the event queue.
 	 */
+	@Override
 	protected void readerLoop() {
 		while (!fIsStopping) {
 			try {

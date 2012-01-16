@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.ListeningConnector;
@@ -42,13 +42,14 @@ public class SocketListenConnector implements IVMConnector {
 	/**
 	 * Return the socket transport listening connector
 	 * 
+	 * @return the new {@link ListeningConnector}
 	 * @exception CoreException if unable to locate the connector
 	 */
 	protected static ListeningConnector getListeningConnector() throws CoreException {
 		ListeningConnector connector= null;
-		Iterator iter= Bootstrap.virtualMachineManager().listeningConnectors().iterator();
+		Iterator<ListeningConnector> iter= Bootstrap.virtualMachineManager().listeningConnectors().iterator();
 		while (iter.hasNext()) {
-			ListeningConnector lc= (ListeningConnector) iter.next();
+			ListeningConnector lc= iter.next();
 			if (lc.name().equals("com.sun.jdi.SocketListen")) { //$NON-NLS-1$
 				connector= lc;
 				break;
@@ -77,7 +78,7 @@ public class SocketListenConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
 	 */
-	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
+	public void connect(Map<String, String> arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -86,18 +87,18 @@ public class SocketListenConnector implements IVMConnector {
 		
 		ListeningConnector connector= getListeningConnector();
 		
-		String portNumberString = (String)arguments.get("port"); //$NON-NLS-1$
+		String portNumberString = arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
 			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); 
 		}
 	
-		Map acceptArguments = connector.defaultArguments();
+		Map<String, Connector.Argument> acceptArguments = connector.defaultArguments();
 		
-        Connector.Argument param= (Connector.Argument) acceptArguments.get("port"); //$NON-NLS-1$
+        Connector.Argument param= acceptArguments.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
         
 		try {
-			monitor.subTask(MessageFormat.format(LaunchingMessages.SocketListenConnector_3, new String[]{portNumberString}));
+			monitor.subTask(NLS.bind(LaunchingMessages.SocketListenConnector_3, new String[]{portNumberString}));
 			connector.startListening(acceptArguments);
 			SocketListenConnectorProcess process = new SocketListenConnectorProcess(launch,portNumberString);
 			launch.addProcess(process);
@@ -112,8 +113,8 @@ public class SocketListenConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#getDefaultArguments()
 	 */
-	public Map getDefaultArguments() throws CoreException {
-		Map def = getListeningConnector().defaultArguments();
+	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException {
+		Map<String, Connector.Argument> def = getListeningConnector().defaultArguments();
 		Connector.IntegerArgument arg = (Connector.IntegerArgument)def.get("port"); //$NON-NLS-1$
 		arg.setValue(8000);
 		return def;
@@ -122,8 +123,8 @@ public class SocketListenConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#getArgumentOrder()
 	 */
-	public List getArgumentOrder() {
-		List list = new ArrayList(1);
+	public List<String> getArgumentOrder() {
+		List<String> list = new ArrayList<String>(1);
 		list.add("port"); //$NON-NLS-1$
 		return list;
 	}
@@ -136,6 +137,7 @@ public class SocketListenConnector implements IVMConnector {
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
 	 * @param code error code
+	 * @throws CoreException if an error occurs
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));

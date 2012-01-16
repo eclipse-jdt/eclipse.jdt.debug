@@ -54,6 +54,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		fToggleMessage= toggleMessage;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogComposite= (Composite) super.createDialogArea(parent);
 		dialogComposite.setFont(parent.getFont());
@@ -80,6 +81,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		return button;
 	}
 
+	@Override
 	protected void buttonPressed(int id) {
 		if (id == IDialogConstants.OK_ID) {  // was the OK button pressed?
 			storePreference();
@@ -102,6 +104,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setFocus();

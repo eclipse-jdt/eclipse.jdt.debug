@@ -22,6 +22,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenAction;
+import org.eclipse.jdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -76,7 +77,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	 * Shows a dialog for resolving an ambigous java element.
 	 * Utility method that can be called by subclassers.
 	 */
-	protected IJavaElement selectJavaElement(List elements, Shell shell, String title, String message) {
+	protected IJavaElement selectJavaElement(List<IJavaElement> elements, Shell shell, String title, String message) {
 		
 		int nResults= elements.size();
 		
@@ -84,7 +85,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 			return null;
 		
 		if (nResults == 1)
-			return (IJavaElement) elements.get(0);
+			return elements.get(0);
 		
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED
@@ -114,9 +115,9 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	 * Filters out source references from the given code resolve results.
 	 * A utility method that can be called by subclassers. 
 	 */
-	protected List filterResolveResults(IJavaElement[] codeResolveResults) {
+	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
-		List refs= new ArrayList(nResults);
+		List<IJavaElement> refs= new ArrayList<IJavaElement>(nResults);
 		for (int i= 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference)
 				refs.add(codeResolveResults[i]);
@@ -124,6 +125,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		return refs;
 	}
 			
+	@Override
 	public void run() {
 		if (fEditor == null) {
 			return;
@@ -146,6 +148,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	/**
 	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
 	 */
+	@Override
 	public void selectionChanged(ITextSelection selection) {
 		setEnabled(fEditor != null);
 	}

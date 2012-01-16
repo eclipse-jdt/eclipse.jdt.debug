@@ -25,11 +25,13 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 	}
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// Finish the shut down
 		shutDownTarget();
@@ -48,6 +50,7 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.VirtualMachine.exit(int)";
 	}

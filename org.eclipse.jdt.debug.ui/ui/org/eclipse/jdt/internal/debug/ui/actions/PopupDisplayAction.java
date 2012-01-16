@@ -54,10 +54,12 @@ public class PopupDisplayAction extends DisplayAction {
             super(shell, getPopupAnchor(textWidget), ACTION_DEFINITION_ID);
         }
 
-        protected String getActionText() {
+        @Override
+		protected String getActionText() {
 			return ActionMessages.PopupDisplayAction_2;
 		}
 
+		@Override
 		protected void persist() {
             IDataDisplay directDisplay = getDirectDataDisplay();
             Display display = JDIDebugUIPlugin.getStandardDisplay();
@@ -73,7 +75,8 @@ public class PopupDisplayAction extends DisplayAction {
             }
         }
 
-        protected Control createDialogArea(Composite parent) {
+        @Override
+		protected Control createDialogArea(Composite parent) {
             GridData gd = new GridData(GridData.FILL_BOTH);
             StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL);
             text.setLayoutData(gd);
@@ -85,7 +88,8 @@ public class PopupDisplayAction extends DisplayAction {
             return text;
         }
         
-        public boolean close() {
+        @Override
+		public boolean close() {
         	boolean returnValue = super.close();
         	if (fTextEditor != null && fSelectionBeforeEvaluation != null) {
     			fTextEditor.getSelectionProvider().setSelection(fSelectionBeforeEvaluation);
@@ -96,7 +100,8 @@ public class PopupDisplayAction extends DisplayAction {
         }
     }
 
-    protected void displayStringResult(String currentSnippet, String currentResultString) {
+    @Override
+	protected void displayStringResult(String currentSnippet, String currentResultString) {
         IWorkbenchPart part = getTargetPart();
         if (part instanceof DisplayView) {
             super.displayStringResult(currentSnippet, currentResultString);

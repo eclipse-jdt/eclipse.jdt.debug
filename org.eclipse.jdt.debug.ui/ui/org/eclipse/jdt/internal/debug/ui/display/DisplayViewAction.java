@@ -46,6 +46,7 @@ public class DisplayViewAction extends Action implements IUpdate {
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
 	 */
+	@Override
 	public void run() {
 		if (fOperationCode != -1 && fOperationTarget != null)
 			fOperationTarget.doOperation(fOperationCode);

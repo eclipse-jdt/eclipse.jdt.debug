@@ -152,6 +152,7 @@ public interface IVMInstall {
 	 * @deprecated if possible, clients should use setVMArgs(String) on
 	 *  {@link IVMInstall2} when possible
 	 */
+	@Deprecated
 	public void setVMArguments(String[] vmArgs);
 	    
 }

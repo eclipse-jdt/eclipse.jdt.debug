@@ -14,7 +14,7 @@ package org.eclipse.jdt.internal.debug.ui;
 /**
  * Information about a detail formatter.
  */
-public class DetailFormatter implements Comparable {
+public class DetailFormatter implements Comparable<Object> {
 	
 	private boolean fEnabled;
 	

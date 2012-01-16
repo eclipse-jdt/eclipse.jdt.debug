@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.IRegion;
  */
 public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLineTrackerExtension {
 	
-	protected List fLinesRead = new ArrayList();
+	protected List<String> fLinesRead = new ArrayList<String>();
 	
 	protected boolean fStarted = false;
 	
@@ -48,7 +48,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		super(name);
 	}
 	
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;
@@ -173,7 +174,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			}
 		}
 		assertEquals("Wrong number of lines", linesExpected, fLinesRead.size());
-		return (String[])fLinesRead.toArray(new String[0]);
+		return fLinesRead.toArray(new String[0]);
 	}
 	
 	/**

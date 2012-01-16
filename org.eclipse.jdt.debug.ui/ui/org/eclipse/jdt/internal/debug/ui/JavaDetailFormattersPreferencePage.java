@@ -80,6 +80,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
@@ -158,6 +159,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fFormatViewerContentProvider= new FormatterListViewerContentProvider(fFormatterListViewer);
 		fFormatterListViewer.setContentProvider(fFormatViewerContentProvider);
 		fFormatterListViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof DetailFormatter) {
 					return ((DetailFormatter)element).getTypeName();
@@ -183,6 +185,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 		}); 
 		table.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					removeTypes();
@@ -328,6 +331,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 	}
 	
+	@Override
 	public boolean performOk() {
 		if (fFormatViewerContentProvider != null) {
 			fFormatViewerContentProvider.saveDetailFormatters();
@@ -346,9 +350,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	class FormatterListViewerContentProvider implements IStructuredContentProvider {
 		
-		private Set fDetailFormattersSet;
+		private Set<DetailFormatter> fDetailFormattersSet;
 		
-		private List fDefinedTypes;
+		private List<String> fDefinedTypes;
 		
 		private CheckboxTableViewer fViewer;
 		
@@ -359,8 +363,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer= viewer;
 			// load the current formatters
 			String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-			fDetailFormattersSet= new TreeSet();
-			fDefinedTypes= new ArrayList(detailFormattersList.length / 3);
+			fDetailFormattersSet= new TreeSet<DetailFormatter>();
+			fDefinedTypes= new ArrayList<String>(detailFormattersList.length / 3);
 			for (int i= 0, length= detailFormattersList.length; i < length;) {
 				String typeName= detailFormattersList[i++];
 				String snippet= detailFormattersList[i++].replace('\u0000', ',');
@@ -377,8 +381,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		public void saveDetailFormatters() {
 			String[] values= new String[fDetailFormattersSet.size() * 3];
 			int i= 0;
-			for (Iterator iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
+			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
+				DetailFormatter detailFormatter= iter.next();
 				values[i++]= detailFormatter.getTypeName();
 				values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
 				values[i++]= detailFormatter.isEnabled() ? DETAIL_FORMATTER_IS_ENABLED : DETAIL_FORMATTER_IS_DISABLED;
@@ -433,8 +437,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		private void refreshViewer() {
 			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
 			int i= 0;
-			for (Iterator iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
-				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
+			for (Iterator<DetailFormatter> iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
+				DetailFormatter detailFormatter= iter.next();
 				if (detailFormatter.isEnabled()) {
 					checkedElementsTmp[i++]= detailFormatter;
 				}
@@ -452,7 +456,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			return fDetailFormattersSet.toArray();
 		}
 		
-		public List getDefinedTypes() {
+		public List<String> getDefinedTypes() {
 			return fDefinedTypes;
 		}
 		
@@ -472,6 +476,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeViewer != null) {
 			fCodeViewer.dispose();

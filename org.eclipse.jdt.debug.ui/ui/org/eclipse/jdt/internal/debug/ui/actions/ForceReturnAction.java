@@ -35,6 +35,7 @@ public class ForceReturnAction extends EvaluateAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction#displayResult(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
+	@Override
 	protected void displayResult(final IEvaluationResult result) {
 		evaluationCleanup();
 		
@@ -82,6 +83,7 @@ public class ForceReturnAction extends EvaluateAction {
 		}
 	}
 
+	@Override
 	protected void run() {		
 		IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame != null) {

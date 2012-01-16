@@ -35,6 +35,7 @@ public class LibraryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		String key = null;
 		IStatus status = Status.OK_STATUS;
@@ -70,6 +71,7 @@ public class LibraryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof LibraryStandin) {
 			return ((LibraryStandin)element).getSystemLibraryPath().toOSString();

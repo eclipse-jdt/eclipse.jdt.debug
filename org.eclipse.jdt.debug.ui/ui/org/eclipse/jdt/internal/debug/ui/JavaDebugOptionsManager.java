@@ -69,10 +69,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -126,10 +126,10 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * 
 	 * @since 3.3
 	 */
-	private static Set fgDisplayOptions;
+	private static Set<String> fgDisplayOptions;
 	
 	static {
-		fgDisplayOptions = new HashSet();
+		fgDisplayOptions = new HashSet<String>();
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_CHAR);
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_HEX);
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED);
@@ -146,6 +146,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			super(DebugUIMessages.JavaDebugOptionsManager_0); 
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Java debug options failed to initialize", null);  //$NON-NLS-1$
 			// compilation error breakpoint 
@@ -440,13 +441,13 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @return list
 	 */
 	public static String[] parseList(String listString) {
-		List list = new ArrayList(10);
+		List<String> list = new ArrayList<String>(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
 			list.add(token);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/**
@@ -635,7 +636,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		if (display.isDisposed()) {
 			return;
 		}
-		final String message= MessageFormat.format(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
+		final String message= NLS.bind(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {
@@ -702,7 +703,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
 		// if a breakpoint is added, but already has a message, do not update it
-		List update = new ArrayList();
+		List<IBreakpoint> update = new ArrayList<IBreakpoint>();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			try {
@@ -714,7 +715,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 			}
 		}
 		if (!update.isEmpty()) {
-			updateBreakpointMessages((IBreakpoint[])update.toArray(new IBreakpoint[update.size()]));
+			updateBreakpointMessages(update.toArray(new IBreakpoint[update.size()]));
 		}
 	}
 	

@@ -33,6 +33,7 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		return editLibraries(shell, director, null);
 		// SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.0")
@@ -40,12 +41,14 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
 		return containers.length == 1;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		ClasspathContainerSourceContainer sourceContainer = (ClasspathContainerSourceContainer)containers[0];
 		IPath containerPath = (sourceContainer).getPath();

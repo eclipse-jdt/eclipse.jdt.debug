@@ -27,9 +27,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Quick fix to select an alternate JRE for a project. 
@@ -104,7 +103,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		return MessageFormat.format(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()}); 
+		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()}); 
 	}
 
 }

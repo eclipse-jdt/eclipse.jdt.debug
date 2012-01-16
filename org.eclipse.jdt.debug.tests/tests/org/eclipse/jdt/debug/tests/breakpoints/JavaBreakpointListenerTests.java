@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -150,6 +150,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		/**
 		 * @see org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests.SuspendVoter#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
+		@Override
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			if (breakpoint.equals(fTheBreakpoint)) {
 				return fVote;
@@ -163,9 +164,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	class Collector implements IJavaBreakpointListener {
 		
-		public List HIT = new ArrayList();
-		public List COMPILATION_ERRORS = new ArrayList();
-		public List RUNTIME_ERRORS = new ArrayList();
+		public List<IJavaBreakpoint> HIT = new ArrayList<IJavaBreakpoint>();
+		public List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
+		public List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
 
 		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}

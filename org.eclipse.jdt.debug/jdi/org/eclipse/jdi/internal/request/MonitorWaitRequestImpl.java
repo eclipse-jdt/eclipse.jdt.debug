@@ -16,13 +16,14 @@ import org.eclipse.jdi.internal.event.MonitorWaitEventImpl;
 import com.sun.jdi.request.MonitorWaitRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  * @since 3.3
  */
-public class MonitorWaitRequestImpl extends EventRequestImpl implements MonitorWaitRequest {
-	
+public class MonitorWaitRequestImpl extends EventRequestImpl implements
+		MonitorWaitRequest {
+
 	public MonitorWaitRequestImpl(VirtualMachineImpl vmImpl) {
 		super("MonitorWaitRequest", vmImpl); //$NON-NLS-1$
 	}
@@ -30,6 +31,7 @@ public class MonitorWaitRequestImpl extends EventRequestImpl implements MonitorW
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected byte eventKind() {
 		return MonitorWaitEventImpl.EVENT_KIND;
 	}

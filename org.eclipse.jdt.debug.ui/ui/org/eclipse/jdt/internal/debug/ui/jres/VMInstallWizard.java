@@ -42,14 +42,14 @@ public abstract class VMInstallWizard extends Wizard {
 	 */
 	public VMInstallWizard(VMStandin editVM, IVMInstall[] currentInstalls) {
 		fEditVM = editVM;
-		List names = new ArrayList(currentInstalls.length);
+		List<String> names = new ArrayList<String>(currentInstalls.length);
 		for (int i = 0; i < currentInstalls.length; i++) {
 			IVMInstall install = currentInstalls[i];
 			if (!install.equals(editVM)) {
 				names.add(install.getName());
 			}
 		}
-		fExistingNames = (String[]) names.toArray(new String[names.size()]);
+		fExistingNames = names.toArray(new String[names.size()]);
 	}
 	
 	/**
@@ -71,6 +71,7 @@ public abstract class VMInstallWizard extends Wizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		return getResult() != null;
 	}

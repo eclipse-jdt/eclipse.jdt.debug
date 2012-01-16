@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,16 +29,16 @@ class BundleDescription implements BundleAttributes {
 	
 	private static final String STUB= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub"; //$NON-NLS-1$
 	private static final String ICON= "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"; //$NON-NLS-1$
-	private static  Set RUN_MODE;
+	private static  Set<String> RUN_MODE;
 	{
-		RUN_MODE = new HashSet();
+		RUN_MODE = new HashSet<String>();
 		RUN_MODE.add(ILaunchManager.RUN_MODE);
 	}
 		
 	private ListenerList fListeners= new ListenerList();
 	private Properties fProperties= new Properties();
-	private List fClassPath= new ArrayList();
-	private List fResources= new ArrayList();
+	private List<ResourceInfo> fClassPath= new ArrayList<ResourceInfo>();
+	private List<ResourceInfo> fResources= new ArrayList<ResourceInfo>();
 	Properties fProperties2= new Properties();
 	
 	
@@ -70,8 +70,8 @@ class BundleDescription implements BundleAttributes {
 
 	ResourceInfo[] getResources(boolean onClasspath) {
 		if (onClasspath)
-			return (ResourceInfo[]) fClassPath.toArray(new ResourceInfo[fClassPath.size()]);
-		return (ResourceInfo[]) fResources.toArray(new ResourceInfo[fResources.size()]);
+			return fClassPath.toArray(new ResourceInfo[fClassPath.size()]);
+		return fResources.toArray(new ResourceInfo[fResources.size()]);
 	}
 	
 	void addListener(IPropertyChangeListener listener) {
@@ -186,9 +186,9 @@ class BundleDescription implements BundleAttributes {
 		fProperties.put(VMOPTIONS, vmOptions2);
 		
 		boolean isSWT= false;
-		Iterator iter= fResources.iterator();
+		Iterator<ResourceInfo> iter= fResources.iterator();
 		while (iter.hasNext()) {
-			ResourceInfo ri= (ResourceInfo) iter.next();
+			ResourceInfo ri= iter.next();
 			if (ri.fPath.indexOf("libswt-carbon") >= 0) {	//$NON-NLS-1$
 				isSWT= true;
 				break;

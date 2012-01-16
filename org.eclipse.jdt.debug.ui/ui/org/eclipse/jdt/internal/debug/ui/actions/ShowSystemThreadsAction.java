@@ -30,6 +30,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ThreadFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS;
 	}
@@ -37,6 +38,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 	    if (!getValue()) {
             
@@ -67,6 +69,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		super.init(view);
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -74,6 +77,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);

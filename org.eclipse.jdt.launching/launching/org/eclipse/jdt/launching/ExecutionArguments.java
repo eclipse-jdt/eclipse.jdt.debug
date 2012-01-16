@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * <p>
  * Clients may instantiate this class.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class ExecutionArguments {
 	private String fVMArgs;

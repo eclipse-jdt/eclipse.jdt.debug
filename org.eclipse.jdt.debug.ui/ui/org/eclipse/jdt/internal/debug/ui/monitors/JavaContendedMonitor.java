@@ -109,6 +109,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if(adapter == IDebugTarget.class) {
 			return getDebugTarget();

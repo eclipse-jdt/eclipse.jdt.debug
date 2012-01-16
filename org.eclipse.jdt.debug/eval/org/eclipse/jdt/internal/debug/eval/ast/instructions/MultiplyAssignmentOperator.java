@@ -12,12 +12,14 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public class MultiplyAssignmentOperator extends MultiplyOperator {
 
-	public MultiplyAssignmentOperator(int variableTypeId, int valueTypeId, int start) {
+	public MultiplyAssignmentOperator(int variableTypeId, int valueTypeId,
+			int start) {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.MultiplyAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.MultiplyAssignmentOperator_operator_1;
 	}
 
 }

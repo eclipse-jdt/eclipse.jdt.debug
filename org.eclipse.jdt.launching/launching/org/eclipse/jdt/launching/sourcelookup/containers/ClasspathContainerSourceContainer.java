@@ -79,6 +79,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(getPath(), IRuntimeClasspathEntry.USER_CLASSES);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveSourceLookupPath(new IRuntimeClasspathEntry[]{entry}, getDirector().getLaunchConfiguration());
@@ -97,6 +98,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ClasspathContainerSourceContainer) {
 			return getPath().equals(((ClasspathContainerSourceContainer)obj).getPath());
@@ -106,6 +108,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getPath().hashCode();
 	}

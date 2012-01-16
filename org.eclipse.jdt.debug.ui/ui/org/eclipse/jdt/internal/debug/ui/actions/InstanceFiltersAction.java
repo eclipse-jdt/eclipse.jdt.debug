@@ -37,10 +37,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action to associate an object with one or more breakpoints.
@@ -69,6 +68,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
 		 */
+		@Override
 		protected boolean isValid() {
 			return true;
 		}
@@ -76,6 +76,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
+		@Override
 		protected String getDialogSettingsId() {
 			return IJavaDebugUIConstants.PLUGIN_ID + ".INSTANCE_FILTERS_ACTION_DIALOG"; //$NON-NLS-1$
 		}
@@ -83,6 +84,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 		 */
+		@Override
 		protected String getHelpContextId() {
 			return IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG;
 		}
@@ -90,6 +92,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 		 */
+		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
@@ -97,6 +100,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 		 */
+		@Override
 		protected String getViewerLabel() {
 			return fMessage;
 		}
@@ -104,6 +108,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 		 */
+		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return fLabelProvider;
 		}
@@ -125,7 +130,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 				IValue value = var.getValue();
 				if (value instanceof IJavaObject) {
 					final IJavaObject object = (IJavaObject)value;
-					final List breakpoints = getApplicableBreakpoints(var, object);
+					final List<IJavaBreakpoint> breakpoints = getApplicableBreakpoints(var, object);
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
 					
 					if (breakpoints.isEmpty())
@@ -134,7 +139,8 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 						return;
 					}
 					
-					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, MessageFormat.format(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
+					InstanceFilterDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, modelPresentation, NLS.bind(ActionMessages.InstanceFiltersAction_1, new String[] {var.getName()})){ 
+						@Override
 						public void okPressed() {
 							// check if breakpoints have already been restricted to other objects.
 							Object[] checkBreakpoint= getCheckBoxTableViewer().getCheckedElements();
@@ -152,7 +158,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 									}
 									if (sameTarget) {
 										MessageDialog messageDialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.InstanceFiltersAction_2, 
-											null, MessageFormat.format(ActionMessages.InstanceFiltersAction_3, new String[] { modelPresentation.getText(breakpoint), var.getName()}), 
+											null, NLS.bind(ActionMessages.InstanceFiltersAction_3, new String[] { modelPresentation.getText(breakpoint), var.getName()}), 
 											MessageDialog.QUESTION, new String[] { ActionMessages.InstanceFiltersAction_Yes_2, ActionMessages.InstanceFiltersAction_Cancel_3}, // 
 											0);
 										if (messageDialog.open() == Window.OK) {
@@ -174,10 +180,10 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					dialog.setTitle(ActionMessages.InstanceFiltersAction_2); 
 					
 					// determine initial selection
-					List existing = new ArrayList();
-					Iterator iter = breakpoints.iterator();
+					List<IJavaBreakpoint> existing = new ArrayList<IJavaBreakpoint>();
+					Iterator<IJavaBreakpoint> iter = breakpoints.iterator();
 					while (iter.hasNext()) {
-						IJavaBreakpoint bp = (IJavaBreakpoint)iter.next();
+						IJavaBreakpoint bp = iter.next();
 						IJavaObject[] filters = bp.getInstanceFilters();
 						for (int i = 0; i < filters.length; i++) {
 							if (filters[i].equals(object)) {
@@ -200,7 +206,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 							// remove
 							iter = existing.iterator();
 							while (iter.hasNext()) {
-								IJavaBreakpoint bp = (IJavaBreakpoint)iter.next();
+								IJavaBreakpoint bp = iter.next();
 								bp.removeInstanceFilter(object);
 							}
 						}
@@ -214,12 +220,12 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		}
 	}
 	
-	protected List getApplicableBreakpoints(IJavaVariable variable, IJavaObject object) {
-		List breakpoints = new ArrayList();
+	protected List<IJavaBreakpoint> getApplicableBreakpoints(IJavaVariable variable, IJavaObject object) {
+		List<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
 		
 		try {
 			// collect names in type hierarchy
-			List superTypeNames = new ArrayList();
+			List<String> superTypeNames = new ArrayList<String>();
 			IJavaType type = object.getJavaType();
 			while (type instanceof IJavaClassType) {
 				superTypeNames.add(type.getName());

@@ -77,7 +77,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     /**
      * @see org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest#setUp()
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;
@@ -87,7 +88,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     /**
      * @see org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest#tearDown()
      */
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         super.tearDown();
         ConsoleLineTracker.setDelegate(null);
     }

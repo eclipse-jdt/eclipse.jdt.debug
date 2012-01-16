@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.SWTFactory;
-
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -41,8 +40,8 @@ import org.eclipse.jdt.internal.debug.ui.breakpoints.ExceptionBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.MethodBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.WatchpointEditor;
-
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
@@ -58,8 +57,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Property page for configuring IJavaBreakpoints.
  */
@@ -67,7 +64,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
-	protected List fErrorMessages= new ArrayList();
+	protected List<String> fErrorMessages= new ArrayList<String>();
 	protected String fPrevMessage = null;
 	private AbstractJavaBreakpointEditor fEditor;
 	
@@ -86,6 +83,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Store the breakpoint properties.
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -137,7 +135,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		if (fErrorMessages.isEmpty()) {
 			addErrorMessage(null);
 		} else {
-			addErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
+			addErrorMessage(fErrorMessages.get(fErrorMessages.size() - 1));
 		}
 	}
 	
@@ -169,6 +167,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Creates the labels and editors displayed for the breakpoint.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		Composite mainComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -183,7 +182,7 @@ public class JavaBreakpointPage extends PropertyPage {
             	getShell().addShellListener(new ShellListener() {
                     public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(MessageFormat.format(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
+                        shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
                         shell.removeShellListener(this);
                     }
                     public void shellClosed(ShellEvent e) {
@@ -394,6 +393,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * Check to see if the breakpoint should be deleted.
 	 * @return <code>true</code> if the page was canceled, <code>false</code> othewise
 	 */
+	@Override
 	public boolean performCancel() {
 		try {
 			if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
@@ -409,6 +409,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_BREAKPOINT_PROPERTY_PAGE);

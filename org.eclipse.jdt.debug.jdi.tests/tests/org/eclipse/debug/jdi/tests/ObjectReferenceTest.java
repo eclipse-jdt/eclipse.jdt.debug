@@ -51,6 +51,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Make sure the object is in expected state (eg. it has not entered a monitor)
 		waitUntilReady();
@@ -61,6 +62,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// The test has resumed and suspended the Test Thread. Make sure this
 		// thread is suspended at the right location
@@ -77,12 +79,14 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ObjectReference";
 	}
 	/**
 	 * Returns all tests 
 	 */
+	@Override
 	protected Test suite() {
 		JDITestSuite suite = (JDITestSuite) super.suite();
 		Vector testNames = getAllMatchingTests("testLast");

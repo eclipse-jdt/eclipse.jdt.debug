@@ -41,6 +41,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -52,8 +53,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A dialog which prompts the user to enter an expression for
@@ -91,7 +90,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
     	IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getHelpSystem().setHelp(
 				parent,
@@ -148,7 +148,7 @@ public class ExpressionInputDialog extends TrayDialog {
             JDIDebugUIPlugin.log(e);
         }
         
-        SWTFactory.createWrapLabel(fSourceViewerComposite, MessageFormat.format(ActionMessages.ExpressionInputDialog_0, new String[] {name}), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
+        SWTFactory.createWrapLabel(fSourceViewerComposite, NLS.bind(ActionMessages.ExpressionInputDialog_0, new String[] {name}), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
         
         fSourceViewer= new JDISourceViewer(fSourceViewerComposite, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setInput(fSourceViewerComposite);
@@ -183,6 +183,7 @@ public class ExpressionInputDialog extends TrayDialog {
         IDocument document= new Document();
         tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fSourceViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 				return getCompletionProcessor();
 			}
@@ -328,7 +329,8 @@ public class ExpressionInputDialog extends TrayDialog {
 	/**
 	 * Persist the dialog size and store the user's input on OK is pressed.
 	 */
-    protected void okPressed() {
+    @Override
+	protected void okPressed() {
         fResult= getText();
         super.okPressed();
     }
@@ -375,7 +377,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /**
      * Initializes the dialog shell with a title.
      */
-    protected void configureShell(Shell newShell) {
+    @Override
+	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(ActionMessages.ExpressionInputDialog_2); 
     }
@@ -384,7 +387,8 @@ public class ExpressionInputDialog extends TrayDialog {
      * Override method to initialize the enablement of the OK button after
      * it is created.
      */
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
         super.createButtonsForButtonBar(parent);
         //do this here because setting the text will set enablement on the ok
         // button
@@ -394,7 +398,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#close()
      */
-    public boolean close() {
+    @Override
+	public boolean close() {
         dispose();
         return super.close();
     }
@@ -402,7 +407,8 @@ public class ExpressionInputDialog extends TrayDialog {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
-    protected IDialogSettings getDialogBoundsSettings() {
+    @Override
+	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {

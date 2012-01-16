@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A dialog for selecting projects to add to a classpath or source
@@ -32,12 +33,12 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
 	
-	private List fProjects;
+	private List<?> fProjects;
 
 	/**
 	 * @see ListSelectionDialog
 	 */
-	public ProjectSelectionDialog(Shell parentShell, List projects){
+	public ProjectSelectionDialog(Shell parentShell, List<?> projects){
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setShowSelectAllButtons(true);
@@ -47,11 +48,13 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void addCustomFooterControls(Composite parent) {
 		super.addCustomFooterControls(parent);
 		final Button addExported = new Button(parent, SWT.CHECK);
 		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1); 
 		addExported.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAddExportedEntries = addExported.getSelection();
 			}
@@ -62,6 +65,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 		final Button addRequired = new Button(parent, SWT.CHECK);
 		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2); 
 		addRequired.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAddRequiredProjects = addRequired.getSelection();
 			}
@@ -91,6 +95,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
+	@Override
 	protected String getDialogSettingsId() {
 		return IJavaDebugUIConstants.PLUGIN_ID + ".PROJECT_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
@@ -98,6 +103,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return IJavaDebugHelpContextIds.SELECT_PROJECT_DIALOG;
 	}
@@ -105,6 +111,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
+	@Override
 	protected Object getViewerInput() {
 		return fProjects;
 	}
@@ -112,6 +119,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
 	 */
+	@Override
 	protected String getViewerLabel() {
 		return ActionMessages.ProjectSelectionDialog_0;
 	}

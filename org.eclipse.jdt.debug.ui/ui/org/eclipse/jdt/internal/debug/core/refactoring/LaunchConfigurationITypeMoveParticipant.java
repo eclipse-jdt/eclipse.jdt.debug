@@ -33,6 +33,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
+	@Override
 	protected boolean initialize(Object element) {
 		fType= (IType)element;
 		try {
@@ -58,6 +59,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
+	@Override
 	public String getName() {
 		return RefactoringMessages.LaunchConfigurationParticipant_0; 
 	}
@@ -65,6 +67,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
@@ -72,6 +75,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		return JDTDebugRefactoringUtil.createChangesForTypeMove(fType, fDestination);
 	}

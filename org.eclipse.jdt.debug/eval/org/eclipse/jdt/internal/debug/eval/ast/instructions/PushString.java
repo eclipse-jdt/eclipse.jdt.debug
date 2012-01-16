@@ -10,25 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
- 
 /**
  * Pushes a String literal onto the stack.
  */
 public class PushString extends SimpleInstruction {
-	
+
 	private String fValue;
-	
+
 	public PushString(String value) {
 		fValue = value;
 	}
-	
+
+	@Override
 	public void execute() {
 		pushNewValue(fValue);
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushString_push__1 + fValue; 
+		return InstructionsEvaluationMessages.PushString_push__1 + fValue;
 	}
 
 }
-

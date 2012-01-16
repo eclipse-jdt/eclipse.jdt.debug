@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -159,7 +160,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			return ((ClasspathEntry)parentElement).getChildren(fTab.getLaunchConfiguration());
 		}
 		if (parentElement == null) {
-			List all= new ArrayList();
+			List<Object> all= new ArrayList<Object>();
 			Object[] topEntries= model.getEntries();
 			for (int i = 0; i < topEntries.length; i++) {
 				Object object = topEntries[i];
@@ -175,7 +176,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	public void removeAll(List selection) {
+	public void removeAll(List<?> selection) {
 		Object[] array= selection.toArray();
 		model.removeAll(array);
 		treeViewer.remove(array);

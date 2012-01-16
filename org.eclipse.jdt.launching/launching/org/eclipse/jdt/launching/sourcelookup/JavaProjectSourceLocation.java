@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,9 @@ import org.xml.sax.helpers.DefaultHandler;
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by
  *  <code>org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer</code>. 
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
+@Deprecated
 public class JavaProjectSourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
@@ -114,14 +115,14 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		if (fProject != null) {
 			try {
 				IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-				ArrayList list = new ArrayList(roots.length);
+				ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<PackageFragmentRootSourceLocation>(roots.length);
 				
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						list.add(new PackageFragmentRootSourceLocation(roots[i]));
 					}
 				}
-				fRootLocations = (IJavaSourceLocation[])list.toArray(new IJavaSourceLocation[list.size()]);
+				fRootLocations = list.toArray(new IJavaSourceLocation[list.size()]);
 			} catch (JavaModelException e) {
 				LaunchingPlugin.log(e);
 			}
@@ -141,6 +142,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {		
 		return object instanceof JavaProjectSourceLocation &&
 			 getJavaProject().equals(((JavaProjectSourceLocation)object).getJavaProject());
@@ -149,6 +151,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
@@ -171,8 +174,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser =
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);

@@ -28,6 +28,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences dnode = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(dnode == null) {

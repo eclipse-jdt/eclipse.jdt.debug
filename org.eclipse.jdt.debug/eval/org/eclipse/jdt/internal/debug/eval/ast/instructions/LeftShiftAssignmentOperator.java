@@ -12,12 +12,14 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 public class LeftShiftAssignmentOperator extends LeftShiftOperator {
 
-	public LeftShiftAssignmentOperator(int variableTypeId, int valueTypeId, int start) {
+	public LeftShiftAssignmentOperator(int variableTypeId, int valueTypeId,
+			int start) {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.LeftShiftAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.LeftShiftAssignmentOperator_operator_1;
 	}
 
 }

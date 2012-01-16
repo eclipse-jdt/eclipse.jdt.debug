@@ -62,7 +62,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		}
 	}
 	
-	private List fExpandedComps;
+	private List<ExpandableComposite> fExpandedComps;
 	private static final String EXPANDED_STATE = "vmc_expanded_state"; //$NON-NLS-1$
 	private static Font fHeadingFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	
@@ -70,12 +70,13 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 * Constructor 
 	 */
 	public VMCapabilitiesPropertyPage() {
-		fExpandedComps = new ArrayList();
+		fExpandedComps = new ArrayList<ExpandableComposite>();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		final ScrollPain scomp = new ScrollPain(parent);
@@ -159,6 +160,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.VMCAPABILITIES_PROPERTY_PAGE);
@@ -211,6 +213,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private ExpandableComposite createExpandibleComposite(Composite parent, int style, String label, int hspan, int fill) {
 		ExpandableComposite ex = SWTFactory.createExpandibleComposite(parent, style, label, hspan, fill);
 		ex.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ScrollPain sp = getParentScrollPane((ExpandableComposite) e.getSource());
 				if(sp != null) {
@@ -224,6 +227,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#doGetPreferenceStore()
 	 */
+	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	}
@@ -235,7 +239,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		IPreferenceStore store = getPreferenceStore();
 		if(store != null) {
 			for (int i = 0; i < fExpandedComps.size(); i++) {
-				store.setValue(EXPANDED_STATE+i, ((ExpandableComposite) fExpandedComps.get(i)).isExpanded());
+				store.setValue(EXPANDED_STATE+i, fExpandedComps.get(i).isExpanded());
 			}
 		}
 	}
@@ -246,12 +250,12 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	private void restoreExpansionState() {
 		IPreferenceStore store = getPreferenceStore();
 		if(store == null) {
-			((ExpandableComposite)fExpandedComps.get(0)).setExpanded(true);
+			fExpandedComps.get(0).setExpanded(true);
 		}
 		else {
 			ExpandableComposite ex;
 			for (int i = 0; i < fExpandedComps.size(); i++) {
-				ex = (ExpandableComposite) fExpandedComps.get(i);
+				ex = fExpandedComps.get(i);
 				ex.setExpanded(store.getBoolean(EXPANDED_STATE+i));
 			}
 		}
@@ -260,6 +264,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean ok = super.performOk();
 		persistExpansionState();

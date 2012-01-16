@@ -16,8 +16,9 @@ public class PlusAssignmentOperator extends PlusOperator {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PlusAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.PlusAssignmentOperator_operator_1;
 	}
 
 }

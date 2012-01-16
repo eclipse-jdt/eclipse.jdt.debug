@@ -134,7 +134,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private IJavaHotCodeReplaceListener fHCRListener;
 	
 	// Map of VMInstallTypeIDs to IConfigurationElements
-	protected Map fVmInstallTypePageMap;
+	protected Map<String, IConfigurationElement> fVmInstallTypePageMap;
 	
 	/**
 	 * Whether this plugin is in the process of shutting
@@ -245,6 +245,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
+	@Override
 	protected ImageRegistry createImageRegistry() {
 		return JavaDebugImages.getImageRegistry();
 	}	
@@ -354,6 +355,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		IAdapterManager manager= Platform.getAdapterManager();
@@ -419,6 +421,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			setShuttingDown(true);
@@ -516,7 +519,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * workspace are considered.
 	 */
 	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] originals, final boolean includeDefaultPackage) throws JavaModelException{
-		final List packageList = new ArrayList();
+		final List<IPackageFragment> packageList = new ArrayList<IPackageFragment>();
 		if (originals == null) {
 			IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
 			IJavaModel model= JavaCore.create(wsroot);
@@ -528,7 +531,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
-					Set packageNameSet= new HashSet();
+					Set<String> packageNameSet= new HashSet<String>();
 					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length); 
 					for (int i = 0; i < projects.length; i++) {						
 						IPackageFragment[] pkgs= projects[i].getPackageFragments();	
@@ -586,7 +589,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (fVmInstallTypePageMap == null) {	
 			initializeVMInstallTypePageMap();
 		}
-		IConfigurationElement configElement = (IConfigurationElement) fVmInstallTypePageMap.get(vmInstallTypeID);
+		IConfigurationElement configElement = fVmInstallTypePageMap.get(vmInstallTypeID);
 		ILaunchConfigurationTab tab = null;
 		if (configElement != null) {
 			try {
@@ -599,7 +602,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	protected void initializeVMInstallTypePageMap() {
-		fVmInstallTypePageMap = new HashMap(10);
+		fVmInstallTypePageMap = new HashMap<String, IConfigurationElement>(10);
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
@@ -629,6 +632,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param page pref page
 	 * @deprecated use <code>JDIDebugUIPlugin#showPreferencePage(String pageId)</code>, which uses the <code>PreferenceUtils</code> framework for opening pages.
 	 */
+	@Deprecated
 	public static void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
 		

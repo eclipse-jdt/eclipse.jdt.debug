@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.StepEventImpl;
 
@@ -18,10 +17,9 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.StepRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	/**
@@ -42,26 +40,27 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	 * @return Returns the relative call stack limit.
 	 */
 	public int depth() {
-		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThreadStepDepth;
+		return fThreadStepFilters.get(0).fThreadStepDepth;
 	}
-	
+
 	/**
 	 * @return Returns the size of each step.
 	 */
 	public int size() {
-		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThreadStepSize;
+		return fThreadStepFilters.get(0).fThreadStepSize;
 	}
-	
+
 	/**
 	 * @return Returns ThreadReference of thread in which to step.
 	 */
 	public ThreadReference thread() {
-		return ((EventRequestImpl.ThreadStepFilter)fThreadStepFilters.get(0)).fThread;
+		return fThreadStepFilters.get(0).fThread;
 	}
 
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return StepEventImpl.EVENT_KIND;
 	}

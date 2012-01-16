@@ -46,7 +46,6 @@ import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
 import com.sun.jdi.event.StepEvent;
@@ -1044,6 +1043,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Init tests
 	 */
+	@Override
 	protected void setUp() {
 		if (fVM == null || fInControl) {
 			launchTargetAndStartProgram();
@@ -1213,7 +1213,7 @@ public abstract class AbstractJDITest extends TestCase {
 		fEventReader.start();
 
 		// Wait until the program has started
-		Event event = (ClassPrepareEvent) waitForEvent(waiter, 3 * TIMEOUT);
+		Event event = waitForEvent(waiter, 3 * TIMEOUT);
 		fEventReader.removeEventListener(waiter);
 		if (event == null) {
 //			try {
@@ -1252,6 +1252,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Undo the initialization of the test.
 	 */
+	@Override
 	protected void tearDown() {
 		try {
 			super.tearDown();

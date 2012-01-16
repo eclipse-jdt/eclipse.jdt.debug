@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -24,30 +23,31 @@ import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 
 /**
- * This class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * This class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public abstract class LocatableEventImpl extends EventImpl implements Locatable {
 	/** Location where event occurred. */
 	protected LocationImpl fLocation;
-	
+
 	/**
 	 * Creates new LocatableEventImpl, only used by subclasses.
 	 */
-	protected LocatableEventImpl(String description, VirtualMachineImpl vmImpl, RequestID requestID) {
+	protected LocatableEventImpl(String description, VirtualMachineImpl vmImpl,
+			RequestID requestID) {
 		super(description, vmImpl, requestID);
 	}
-	
+
 	/**
 	 * Reads Thread and Location.
 	 */
-	public void readThreadAndLocation(MirrorImpl target, DataInputStream dataInStream) throws IOException {
+	public void readThreadAndLocation(MirrorImpl target,
+			DataInputStream dataInStream) throws IOException {
 		fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		fLocation = LocationImpl.read(target, dataInStream);
-   	}
-	
+	}
+
 	/**
 	 * @return Returns Location where event occurred.
 	 */

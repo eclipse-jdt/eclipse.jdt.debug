@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,14 @@ import java.util.List;
 /**
  * Compares lists of runtime classpath entry mementos
  */
-public class RuntimeClasspathEntryListComparator implements Comparator {
+public class RuntimeClasspathEntryListComparator implements Comparator<Object> {
 
 	/**
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(Object o1, Object o2) {
-		List list1 = (List)o1;
-		List list2 = (List)o2;
+		List<?> list1 = (List<?>)o1;
+		List<?> list2 = (List<?>)o2;
 		
 		if (list1.size() == list2.size()) {
 			for (int i = 0; i < list1.size(); i++) {

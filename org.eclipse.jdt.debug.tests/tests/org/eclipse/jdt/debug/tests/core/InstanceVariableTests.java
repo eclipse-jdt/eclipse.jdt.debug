@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			
 			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
 			assertEquals("Should be 7 declared fields", 7, names.length);
-			List fields = new ArrayList();
+			List<String> fields = new ArrayList<String>();
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
 				fields.add(string);
@@ -114,7 +114,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			
 			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
 			assertEquals("Should be 3 declared fields", 3, names.length);
-			List fields = new ArrayList();
+			List<String> fields = new ArrayList<String>();
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
 				fields.add(string);

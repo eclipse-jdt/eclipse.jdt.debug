@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
 
-	protected List childEntries = new ArrayList();
+	protected List<IClasspathEntry> childEntries = new ArrayList<IClasspathEntry>();
 	protected IClasspathEntry parent = null;
 
 	/* (non-Javadoc)
@@ -28,7 +28,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		if (up) {
 			direction= -1;
 		}
-		Object moved= childEntries.get(index+direction);
+		IClasspathEntry moved= childEntries.get(index+direction);
 		childEntries.set(index + direction, child);
 		childEntries.set(index, moved);
 	}
@@ -37,7 +37,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
 	 */
 	public IClasspathEntry[] getEntries() {
-		return (IClasspathEntry[])childEntries.toArray(new IClasspathEntry[childEntries.size()]);
+		return childEntries.toArray(new IClasspathEntry[childEntries.size()]);
 	}
 
 	/* (non-Javadoc)

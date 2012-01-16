@@ -28,41 +28,52 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVaria
  * Context for evaluation of an expression in the receiver context of an array.
  */
 public class ArrayRuntimeContext extends AbstractRuntimeContext {
-	
+
 	/**
-	 * Name used for temp variable referring to array (replaces 'this').
-	 * The same length as "this" so it does not affect code assist.
+	 * Name used for temp variable referring to array (replaces 'this'). The
+	 * same length as "this" so it does not affect code assist.
 	 */
 	public static String ARRAY_THIS_VARIABLE = "_a_t"; //$NON-NLS-1$
-	
+
 	private IJavaArray fArray = null;
 	private IJavaReferenceType fReceivingType = null;
 	private IJavaThread fThread = null;
 	private IJavaVariable fLocalArray = null;
-	
-	public ArrayRuntimeContext(IJavaArray arrayObject, IJavaThread thread, IJavaProject project) {
+
+	public ArrayRuntimeContext(IJavaArray arrayObject, IJavaThread thread,
+			IJavaProject project) {
 		super(project);
 		fArray = arrayObject;
 		fThread = thread;
-		fLocalArray = new JDIPlaceholderVariable(ARRAY_THIS_VARIABLE, arrayObject); 
+		fLocalArray = new JDIPlaceholderVariable(ARRAY_THIS_VARIABLE,
+				arrayObject);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getVM()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getVM()
 	 */
 	public IJavaDebugTarget getVM() {
 		return (IJavaDebugTarget) fArray.getDebugTarget();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThis()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThis()
 	 */
 	public IJavaObject getThis() throws CoreException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getReceivingType()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#
+	 * getReceivingType()
 	 */
 	public IJavaReferenceType getReceivingType() throws CoreException {
 		if (fReceivingType == null) {
@@ -70,29 +81,44 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 			if (javaTypes.length > 0) {
 				fReceivingType = (IJavaReferenceType) javaTypes[0];
 			} else {
-				IStatus status = new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR,	EvaluationEngineMessages.ArrayRuntimeContext_0, null);
+				IStatus status = new Status(IStatus.ERROR,
+						JDIDebugPlugin.getUniqueIdentifier(),
+						JDIDebugPlugin.INTERNAL_ERROR,
+						EvaluationEngineMessages.ArrayRuntimeContext_0, null);
 				throw new CoreException(status);
 			}
 		}
 		return fReceivingType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getLocals()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getLocals
+	 * ()
 	 */
 	public IJavaVariable[] getLocals() throws CoreException {
-		return new IJavaVariable[]{fLocalArray};
+		return new IJavaVariable[] { fLocalArray };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThread()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThread
+	 * ()
 	 */
 	public IJavaThread getThread() {
 		return fThread;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#isConstructor()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#isConstructor
+	 * ()
 	 */
 	public boolean isConstructor() throws CoreException {
 		return false;

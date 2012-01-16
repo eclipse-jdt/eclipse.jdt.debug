@@ -45,15 +45,15 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					VMDefinitionsContainer vms = new VMDefinitionsContainer();
 					String pref = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(JavaRuntime.PREF_VM_XML, ""); //$NON-NLS-1$
 					// names -> existing vm's
-					Map names = new HashMap();
-					Set ids = new HashSet();
+					Map<String, IVMInstall> names = new HashMap<String, IVMInstall>();
+					Set<String> ids = new HashSet<String>();
 					if (pref.length() > 0) {
 						try {
 							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes("UTF8"))); //$NON-NLS-1$
-							List validVMList = container.getValidVMList();
-							Iterator iterator = validVMList.iterator();
+							List<IVMInstall> validVMList = container.getValidVMList();
+							Iterator<IVMInstall> iterator = validVMList.iterator();
 							while (iterator.hasNext()) {
-								IVMInstall vm = (IVMInstall) iterator.next();
+								IVMInstall vm = iterator.next();
 								names.put(vm.getName(), vm);
 								ids.add(vm.getId());
 								vms.addVM(vm);
@@ -69,13 +69,13 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					try {
 						ByteArrayInputStream inputStream = new ByteArrayInputStream(jresXML.getBytes("UTF8")); //$NON-NLS-1$
 						VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(inputStream);
-						List validVMList = container.getValidVMList();
-						Iterator iterator = validVMList.iterator();
+						List<IVMInstall> validVMList = container.getValidVMList();
+						Iterator<IVMInstall> iterator = validVMList.iterator();
 						while (iterator.hasNext()) {
-							IVMInstall vm = (IVMInstall) iterator.next();
-							IVMInstall existing = (IVMInstall) names.get(vm.getName());
+							IVMInstall vm = iterator.next();
+							IVMInstall existing = names.get(vm.getName());
 							if (existing != null) {
-								// vm with same name already exists - replace with imported VM
+								// VM with same name already exists - replace with imported VM
 								vms.removeVM(existing);
 								ids.remove(existing.getId());
 							}
@@ -96,7 +96,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 						validVMList = vms.getValidVMList();
 						iterator = validVMList.iterator();
 						while (iterator.hasNext()) {
-							IVMInstall vm = (IVMInstall)iterator.next();
+							IVMInstall vm = iterator.next();
 							if (JavaRuntime.getCompositeIdFromVM(vm).equals(defaultVMInstallCompositeID)) {
 								vms.setDefaultVMInstallCompositeID(defaultVMInstallCompositeID);
 								break;
@@ -121,6 +121,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 		
 	}
 
+	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		try {
 			// force VMs to be initialized before we import the new VMs

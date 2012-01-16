@@ -57,6 +57,7 @@ public abstract class LineBreakpointChange extends BreakpointChange {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointChange#getLineNumber()
 	 */
+	@Override
 	protected int getLineNumber() {
 		return fLineNumber;
 	}

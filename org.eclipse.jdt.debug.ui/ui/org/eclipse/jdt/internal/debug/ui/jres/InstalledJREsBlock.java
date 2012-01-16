@@ -56,6 +56,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -74,8 +75,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -96,7 +95,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * VMs being displayed
 	 */
-	private List fVMs = new ArrayList(); 
+	private List<Object> fVMs = new ArrayList<Object>(); 
 	
 	/**
 	 * The main list control
@@ -161,7 +160,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				switch(columnIndex) {
 					case 0:
 						if (isContributed(vm)) {
-							return MessageFormat.format(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
+							return NLS.bind(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
 						}
 						return vm.getName();
 					case 1:
@@ -252,6 +251,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		TableColumn column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_0); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
 			}
@@ -262,6 +262,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_1); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
 			}
@@ -271,6 +272,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		column = new TableColumn(fTable, SWT.NULL);
 		column.setText(JREMessages.InstalledJREsBlock_2); 
 		column.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
 			}
@@ -307,6 +309,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});
 		fTable.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					if (fRemoveButton.isEnabled()){
@@ -366,15 +369,15 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void copyVM() {
         IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
-        Iterator it = selection.iterator();
+        Iterator<?> it = selection.iterator();
 
-        ArrayList newEntries = new ArrayList();
+        ArrayList<VMStandin> newEntries = new ArrayList<VMStandin>();
         while (it.hasNext()) {
             IVMInstall selectedVM = (IVMInstall) it.next();
             // duplicate & add vm
             VMStandin standin = new VMStandin(selectedVM, createUniqueId(selectedVM.getVMInstallType()));
             standin.setName(generateName(selectedVM.getName()));
-			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(standin, fVMs.toArray(new IVMInstall[fVMs.size()]));
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			int dialogResult = dialog.open();
 			if (dialogResult == Window.OK) {
@@ -437,6 +440,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByType() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -452,6 +456,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -464,6 +469,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByName() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -473,6 +479,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -485,6 +492,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	private void sortByLocation() {
 		fVMList.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
 					IVMInstall left= (IVMInstall)e1;
@@ -494,6 +502,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return super.compare(viewer, e1, e2);
 			}
 			
+			@Override
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
@@ -510,7 +519,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fEditButton.setEnabled(selectionCount == 1);
 		fCopyButton.setEnabled(selectionCount > 0);
 		if (selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount()) {
-			Iterator iterator = selection.iterator();
+			Iterator<?> iterator = selection.iterator();
 			while (iterator.hasNext()) {
 				IVMInstall install = (IVMInstall)iterator.next();
 				if (isContributed(install)) {
@@ -562,14 +571,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @return JREs currently being displayed in this block
 	 */
 	public IVMInstall[] getJREs() {
-		return (IVMInstall[])fVMs.toArray(new IVMInstall[fVMs.size()]);
+		return fVMs.toArray(new IVMInstall[fVMs.size()]);
 	}
 	
 	/**
 	 * Bring up a wizard that lets the user create a new VM definition.
 	 */
 	private void addVM() {
-		AddVMInstallWizard wizard = new AddVMInstallWizard((IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+		AddVMInstallWizard wizard = new AddVMInstallWizard(fVMs.toArray(new IVMInstall[fVMs.size()]));
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		if (dialog.open() == Window.OK) {
 			VMStandin result = wizard.getResult();
@@ -615,7 +624,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
 			dialog.open();
 		} else {
-			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, (IVMInstall[]) fVMs.toArray(new IVMInstall[fVMs.size()]));
+			EditVMInstallWizard wizard = new EditVMInstallWizard(vm, fVMs.toArray(new IVMInstall[fVMs.size()]));
 			WizardDialog dialog = new WizardDialog(getShell(), wizard);
 			if (dialog.open() == Window.OK) {
 				VMStandin result = wizard.getResult();
@@ -639,7 +648,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void removeVMs() {
 		IStructuredSelection selection= (IStructuredSelection)fVMList.getSelection();
 		IVMInstall[] vms = new IVMInstall[selection.size()];
-		Iterator iter = selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			vms[i] = (IVMInstall)iter.next();
@@ -689,16 +698,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 		
 		// ignore installed locations
-		final Set exstingLocations = new HashSet();
-		Iterator iter = fVMs.iterator();
+		final Set<File> exstingLocations = new HashSet<File>();
+		Iterator<Object> iter = fVMs.iterator();
 		while (iter.hasNext()) {
 			exstingLocations.add(((IVMInstall)iter.next()).getInstallLocation());
 		}
 		
 		// search
 		final File rootDir = new File(path);
-		final List locations = new ArrayList();
-		final List types = new ArrayList();
+		final List<Object> locations = new ArrayList<Object>();
+		final List<IVMInstallType> types = new ArrayList<IVMInstallType>();
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -715,7 +724,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
                  * More accurately reflects action taken when button pressed.
                  * Bug [162902]
                  */
-                protected void createCancelButton(Composite parent) {
+                @Override
+				protected void createCancelButton(Composite parent) {
                     cancel = createButton(parent, IDialogConstants.CANCEL_ID,
                             IDialogConstants.STOP_LABEL, true);
                     if (arrowCursor == null) {
@@ -735,13 +745,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		if (locations.isEmpty()) {
 			String messagePath = path.replaceAll("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
-			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, MessageFormat.format(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); // 
+			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); // 
 		} else {
 			iter = locations.iterator();
-			Iterator iter2 = types.iterator();
+			Iterator<IVMInstallType> iter2 = types.iterator();
 			while (iter.hasNext()) {
 				File location = (File)iter.next();
-				IVMInstallType type = (IVMInstallType)iter2.next();
+				IVMInstallType type = iter2.next();
 				AbstractVMInstall vm = new VMStandin(type, createUniqueId(type));
 				String name = location.getName();
 				String nameCopy = new String(name);
@@ -768,11 +778,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Mac OS location
 	 */
 	private void doMacSearch() {
-		final List added = new ArrayList();
+		final List<VMStandin> added = new ArrayList<VMStandin>();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				Set exists = new HashSet();
-				Iterator iterator = fVMs.iterator();
+				Set<String> exists = new HashSet<String>();
+				Iterator<Object> iterator = fVMs.iterator();
 				while (iterator.hasNext()) {
 					IVMInstall vm = (IVMInstall) iterator.next();
 					exists.add(vm.getId());
@@ -797,9 +807,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return;
 		}
 		
-		Iterator iterator = added.iterator();
+		Iterator<VMStandin> iterator = added.iterator();
 		while (iterator.hasNext()) {
-			IVMInstall vm = (IVMInstall) iterator.next();
+			IVMInstall vm = iterator.next();
 			vmAdded(vm);
 		}
 
@@ -832,7 +842,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param types
 	 * @param ignore
 	 */
-	protected void search(File directory, List found, List types, Set ignore, IProgressMonitor monitor) {
+	protected void search(File directory, List<Object> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -841,14 +851,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		if (names == null) {
 			return;
 		}
-		List subDirs = new ArrayList();
+		List<File> subDirs = new ArrayList<File>();
 		for (int i = 0; i < names.length; i++) {
 			if (monitor.isCanceled()) {
 				return;
 			}
 			File file = new File(directory, names[i]);
 			try {
-				monitor.subTask(MessageFormat.format(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
+				monitor.subTask(NLS.bind(JREMessages.InstalledJREsBlock_14, new String[]{Integer.toString(found.size()),
 						file.getCanonicalPath().replaceAll("&", "&&")}));   // @see bug 29855 //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
 			}		
@@ -880,7 +890,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		}
 		while (!subDirs.isEmpty()) {
-			File subDir = (File)subDirs.remove(0);
+			File subDir = subDirs.remove(0);
 			search(subDir, found, types, ignore, monitor);
 			if (monitor.isCanceled()) {
 				return;
@@ -984,7 +994,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List standins = new ArrayList();
+		List<VMStandin> standins = new ArrayList<VMStandin>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];
@@ -994,7 +1004,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				standins.add(new VMStandin(install));
 			}
 		}
-		setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));	
+		setJREs(standins.toArray(new IVMInstall[standins.size()]));	
 	}
 		
 }

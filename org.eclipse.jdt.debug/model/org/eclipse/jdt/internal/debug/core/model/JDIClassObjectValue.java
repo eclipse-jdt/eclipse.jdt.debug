@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 
@@ -22,28 +21,29 @@ import com.sun.jdi.ClassObjectReference;
  * 
  * @see IJavaClassObject
  */
-public class JDIClassObjectValue extends JDIObjectValue implements IJavaClassObject {
+public class JDIClassObjectValue extends JDIObjectValue implements
+		IJavaClassObject {
 
 	/**
 	 * Constructs a reference to a class object.
 	 */
-	public JDIClassObjectValue(JDIDebugTarget target, ClassObjectReference object) {
+	public JDIClassObjectValue(JDIDebugTarget target,
+			ClassObjectReference object) {
 		super(target, object);
 	}
-	
 
 	/**
 	 * @see IJavaClassObject#getInstanceType()
 	 */
 	public IJavaType getInstanceType() {
-		return JDIType.createType((JDIDebugTarget)getDebugTarget(),getUnderlyingClassObject().reflectedType());
+		return JDIType.createType((JDIDebugTarget) getDebugTarget(),
+				getUnderlyingClassObject().reflectedType());
 	}
 
 	/**
 	 * Returns the underlying class object
 	 */
 	protected ClassObjectReference getUnderlyingClassObject() {
-		return (ClassObjectReference)getUnderlyingValue();
+		return (ClassObjectReference) getUnderlyingValue();
 	}
 }
-

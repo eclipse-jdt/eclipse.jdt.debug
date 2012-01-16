@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,10 @@ public class VMInstallTests extends AbstractDebugTest {
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		assertTrue("should be an IVMInstall3", def instanceof IVMInstall3);
 		IVMInstall3 vm3 = (IVMInstall3)def;
-		Map map = vm3.evaluateSystemProperties(new String[]{"user.home"}, new NullProgressMonitor());
+		Map<String, String> map = vm3.evaluateSystemProperties(new String[]{"user.home"}, new NullProgressMonitor());
 		assertNotNull("No system properties returned", map);
 		assertEquals("Wrong number of properties", 1, map.size());
-		String value = (String) map.get("user.home");
+		String value = map.get("user.home");
 		assertNotNull("missing user.home", value);
 	}
 	

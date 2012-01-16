@@ -16,8 +16,9 @@ public class OrAssignmentOperator extends OrOperator {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.OrAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.OrAssignmentOperator_operator_1;
 	}
 
 }

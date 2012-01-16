@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,12 +46,13 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 		return childEntries.contains(entry);
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}
 
 	public void removeAll() {
-		Iterator iter= childEntries.iterator();
+		Iterator<IClasspathEntry> iter= childEntries.iterator();
 		while (iter.hasNext()) {
 			Object entry = iter.next();
 			if (entry instanceof ClasspathGroup) {

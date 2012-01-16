@@ -28,7 +28,8 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
      * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#canModify(java.lang.Object,
      *      java.lang.String)
      */
-    public boolean canModify(Object element, String property) {
+    @Override
+	public boolean canModify(Object element, String property) {
         if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
             if (element instanceof IJavaVariable) {
                 IJavaVariable var = (IJavaVariable) element;
@@ -56,7 +57,8 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
      * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#getValue(java.lang.Object,
      *      java.lang.String)
      */
-    public Object getValue(Object element, String property) {
+    @Override
+	public Object getValue(Object element, String property) {
         if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
             if (element instanceof IJavaVariable) {
                 IJavaVariable var = (IJavaVariable) element;
@@ -75,7 +77,8 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
         return super.getValue(element, property);
     }
 
-    public void modify(Object element, String property, Object value) {
+    @Override
+	public void modify(Object element, String property, Object value) {
         Object oldValue = getValue(element, property);
         if (!value.equals(oldValue)) {
             if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {

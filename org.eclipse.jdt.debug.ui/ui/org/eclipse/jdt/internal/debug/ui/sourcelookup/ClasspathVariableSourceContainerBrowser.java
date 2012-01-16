@@ -27,12 +27,14 @@ public class ClasspathVariableSourceContainerBrowser extends AbstractSourceConta
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
 		return containers.length == 1;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		ClasspathVariableSourceContainer container = (ClasspathVariableSourceContainer) containers[0];
 		IPath path = BuildPathDialogAccess.configureVariableEntry(shell, container.getPath(), new IPath[]{container.getPath()});
@@ -46,6 +48,7 @@ public class ClasspathVariableSourceContainerBrowser extends AbstractSourceConta
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		IPath[] paths = BuildPathDialogAccess.chooseVariableEntries(shell, new IPath[0]);
 		if (paths != null) {			

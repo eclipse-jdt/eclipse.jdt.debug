@@ -13,19 +13,19 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.ui.IDetailPane3;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -36,12 +36,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.EditorActionBarContributor;
-
-import org.eclipse.debug.internal.ui.SWTFactory;
-
-import org.eclipse.debug.ui.IDetailPane3;
-
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * Common detail pane function.
@@ -54,7 +48,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	private String fDescription;
 	private String fId;
 	private AbstractJavaBreakpointEditor fEditor;
-	private Set fAutoSaveProperties = new HashSet();
+	private Set<Integer> fAutoSaveProperties = new HashSet<Integer>();
 	private IWorkbenchPartSite fSite; 
 	
 	// property listeners

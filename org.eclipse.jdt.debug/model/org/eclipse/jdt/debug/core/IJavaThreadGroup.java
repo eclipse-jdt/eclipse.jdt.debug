@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,53 +23,59 @@ import org.eclipse.debug.core.model.IDebugElement;
 public interface IJavaThreadGroup extends IDebugElement {
 
 	/**
-	 * Returns the threads in this thread group. Does not include
-	 * threads in subgroups.
+	 * Returns the threads in this thread group. Does not include threads in
+	 * subgroups.
 	 * 
 	 * @return threads in this group
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public IJavaThread[] getThreads() throws DebugException;
-	
+
 	/**
 	 * Returns whether this group contains any threads.
 	 * 
 	 * @return whether this group contains any threads
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public boolean hasThreads() throws DebugException;
-	
+
 	/**
-	 * Returns the thread group this thread group is contained in or <code>null</code>
-	 * if none.
+	 * Returns the thread group this thread group is contained in or
+	 * <code>null</code> if none.
 	 * 
 	 * @return parent thread group or <code>null</code>
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public IJavaThreadGroup getThreadGroup() throws DebugException;
-	
+
 	/**
 	 * Returns whether this thread group contains subgroups.
 	 * 
 	 * @return whether this thread group contains subgroups
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public boolean hasThreadGroups() throws DebugException;
-	
+
 	/**
-	 * Returns immediate thread groups contained in this thread. Does not include
-	 * subgroups of immediate groups.
+	 * Returns immediate thread groups contained in this thread. Does not
+	 * include subgroups of immediate groups.
 	 * 
 	 * @return thread groups contained in this group
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public IJavaThreadGroup[] getThreadGroups() throws DebugException;
-	
+
 	/**
 	 * Returns the name of this thread group.
 	 * 
 	 * @return thread group name
 	 * @throws DebugException
+	 *             if the request fails
 	 */
 	public String getName() throws DebugException;
 }

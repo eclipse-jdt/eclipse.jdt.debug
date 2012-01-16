@@ -50,6 +50,7 @@ public class NameValuePairDialog extends Dialog {
 	/**
 	 * @see Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -101,6 +102,7 @@ public class NameValuePairDialog extends Dialog {
 	/**
 	 * @see Dialog#buttonPressed(int)
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			fName= fNameText.getText().trim();
@@ -115,6 +117,7 @@ public class NameValuePairDialog extends Dialog {
 	/**
 	 * @see Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null) {
@@ -134,6 +137,7 @@ public class NameValuePairDialog extends Dialog {
 	/**
 	 * Enable the buttons on creation.
 	 */
+	@Override
 	public void create() {
 		super.create();
 		updateButtons();

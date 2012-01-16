@@ -28,6 +28,7 @@ public class DoubleValueTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get double value for 12345.6789
 		fValue = fVM.mirrorOf(12345.6789);
@@ -43,6 +44,7 @@ public class DoubleValueTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.DoubleValue";
 	}

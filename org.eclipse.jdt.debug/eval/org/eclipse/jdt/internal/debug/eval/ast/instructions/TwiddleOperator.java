@@ -22,23 +22,25 @@ public class TwiddleOperator extends UnaryOperator {
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		IJavaPrimitiveValue value= (IJavaPrimitiveValue)popValue();
+		IJavaPrimitiveValue value = (IJavaPrimitiveValue) popValue();
 		switch (fExpressionTypeId) {
-			case T_long:
-				pushNewValue(~value.getLongValue());
-				break;
-			case T_byte:
-			case T_short:
-			case T_int:
-			case T_char:
-				pushNewValue(~value.getIntValue());
-				break;
+		case T_long:
+			pushNewValue(~value.getLongValue());
+			break;
+		case T_byte:
+		case T_short:
+		case T_int:
+		case T_char:
+			pushNewValue(~value.getIntValue());
+			break;
 		}
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.TwiddleOperator______operator_1; 
+		return InstructionsEvaluationMessages.TwiddleOperator______operator_1;
 	}
 
 }

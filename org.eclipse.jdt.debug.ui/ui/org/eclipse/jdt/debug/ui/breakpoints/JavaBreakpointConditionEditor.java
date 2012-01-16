@@ -15,8 +15,47 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
+import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
+import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -33,38 +72,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.operations.IUndoContext;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.IMarker;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.ITextViewerExtension6;
-import org.eclipse.jface.text.IUndoManager;
-import org.eclipse.jface.text.IUndoManagerExtension;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.source.ISourceViewer;
-
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -76,28 +83,9 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
-
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import org.eclipse.debug.internal.ui.SWTFactory;
-
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IType;
-
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
-import org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.IJavaDebugContentAssistContext;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
-import org.eclipse.jdt.internal.debug.ui.contentassist.TypeContext;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
-import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
-
-import org.eclipse.jdt.ui.text.IJavaPartitions;
 
 /**
  * Controls to edit a breakpoint's conditional expression, condition enabled state,
@@ -141,7 +129,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private Combo fConditionHistory;
 	private IDialogSettings fConditionHistoryDialogSettings;
 	private boolean fReplaceConditionInHistory;
-	private Map fLocalConditionHistory;
+	private Map<IJavaLineBreakpoint, Stack<String>> fLocalConditionHistory;
 	private int fSeparatorIndex;
 
 	private IViewSite fBreakpointsViewSite;
@@ -197,6 +185,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void addPropertyListener(IPropertyListener listener) {
 		super.addPropertyListener(listener);
 	}
@@ -206,6 +195,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param listener listener
 	 */
+	@Override
 	public void removePropertyListener(IPropertyListener listener) {
 		super.removePropertyListener(listener);
 	}
@@ -216,6 +206,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param input breakpoint or <code>null</code>
 	 * @throws CoreException if unable to access breakpoint attributes
 	 */
+	@Override
 	public void setInput(Object input) throws CoreException {
 		try {
 			boolean sameBreakpoint= fBreakpoint == input;
@@ -296,6 +287,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fCompletionProcessor = new JavaDebugContentAssistProcessor(context);
 		document.set((condition == null ? "" : condition)); //$NON-NLS-1$
 		fViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 					return fCompletionProcessor;
 			}
@@ -325,6 +317,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * @param parent composite to embed the editor controls in
 	 * @return top level control
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		fConditional = SWTFactory.createCheckButton(controls, 
@@ -334,6 +327,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				1);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		fConditional.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean checked = fConditional.getSelection();
 				setEnabled(checked, true);
@@ -346,21 +340,24 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		fWhenChange = SWTFactory.createRadioButton(radios, processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_2));
 		fWhenChange.setLayoutData(new GridData());
 		fWhenTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
 		});
 		fWhenChange.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_CONDITION_SUSPEND_POLICY);
 			}
 		});
 
 		if (fConditionHistoryDialogSettings != null) {
-			fLocalConditionHistory= new HashMap();
+			fLocalConditionHistory= new HashMap<IJavaLineBreakpoint, Stack<String>>();
 			fConditionHistory= SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			initializeConditionHistoryDropDown();
 			fConditionHistory.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int historyIndex= fConditionHistory.getSelectionIndex() - 1;
 					if (historyIndex >= 0 && historyIndex != fSeparatorIndex)
@@ -370,7 +367,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			GridData data= new GridData(GridData.FILL_HORIZONTAL);
 			data.widthHint= 10;
 			fConditionHistory.setLayoutData(data);
-			fLocalConditionHistory= new HashMap(10);
+			fLocalConditionHistory= new HashMap<IJavaLineBreakpoint, Stack<String>>(10);
 		}
 
 		fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
@@ -409,9 +406,11 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		};
 		fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		fViewer.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				activateHandlers();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				deactivateHandlers();
 			}				
@@ -428,6 +427,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Disposes this editor and its controls. Once disposed, the editor can no
 	 * longer be used.
 	 */
+	@Override
 	protected void dispose() {
 		super.dispose();
 		deactivateHandlers();
@@ -440,6 +440,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	/**
 	 * Gives focus to an appropriate control in the editor.
 	 */
+	@Override
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
@@ -451,6 +452,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @exception CoreException if unable to update the breakpoint.
 	 */
+	@Override
 	public void doSave() throws CoreException {
 		if (fBreakpoint != null && isDirty()) {
 			fBreakpoint.setCondition(fViewer.getDocument().get().trim());
@@ -469,6 +471,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @return editor status.
 	 */
+	@Override
 	public IStatus getStatus() {
 		if (fBreakpoint != null && fBreakpoint.supportsCondition()) {
 			if (fConditional.getSelection()) {
@@ -485,6 +488,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 *  
 	 * @return whether the editor needs saving
 	 */
+	@Override
 	public boolean isDirty() {
 		return super.isDirty();
 	}
@@ -496,6 +500,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @param mnemonics whether to display mnemonics
 	 */
+	@Override
 	public void setMnemonics(boolean mnemonics) {
 		super.setMnemonics(mnemonics);
 	}
@@ -572,6 +577,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * 
 	 * @return breakpoint or <code>null</code>
 	 */
+	@Override
 	public Object getInput() {
 		return fBreakpoint;
 	}
@@ -623,7 +629,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
 
 		// Get local history
-		Stack localHistory= (Stack)fLocalConditionHistory.get(fBreakpoint);
+		Stack<String> localHistory= fLocalConditionHistory.get(fBreakpoint);
 		if (localHistory == null) {
 			return globalItems;
 		}
@@ -632,7 +638,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		int localHistorySize= Math.min(localHistory.size(), MAX_HISTORY_SIZE);
 		String[] historyItems= new String[localHistorySize + globalItems.length + 1];
 		for (int i= 0; i < localHistorySize; i++) {
-			historyItems[i]= (String)localHistory.get(localHistory.size() - i - 1);
+			historyItems[i]= localHistory.get(localHistory.size() - i - 1);
 		}
 		fSeparatorIndex= localHistorySize;
 		historyItems[localHistorySize]= getSeparatorLabel();
@@ -649,9 +655,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			return;
 
 		// Update local history
-		Stack localHistory= (Stack)fLocalConditionHistory.get(fBreakpoint);
+		Stack<String> localHistory= fLocalConditionHistory.get(fBreakpoint);
 		if (localHistory == null) {
-			localHistory= new Stack();
+			localHistory= new Stack<String>();
 			fLocalConditionHistory.put(fBreakpoint, localHistory);
 		}
 

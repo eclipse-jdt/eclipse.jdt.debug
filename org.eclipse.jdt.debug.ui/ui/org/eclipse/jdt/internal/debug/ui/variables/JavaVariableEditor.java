@@ -30,6 +30,7 @@ public class JavaVariableEditor extends VariableEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
 		return new JavaVariableCellModifier();
 	}
@@ -37,6 +38,7 @@ public class JavaVariableEditor extends VariableEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
 		if (element instanceof IJavaVariable) {
 			IJavaVariable var = (IJavaVariable) element;

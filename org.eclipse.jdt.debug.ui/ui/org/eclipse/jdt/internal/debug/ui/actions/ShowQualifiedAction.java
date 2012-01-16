@@ -31,6 +31,7 @@ public class ShowQualifiedAction extends ViewFilterAction {
 	/**
 	 * @see ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES; 
 	}	
@@ -41,6 +42,7 @@ public class ShowQualifiedAction extends ViewFilterAction {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return true;
 	}
@@ -48,6 +50,7 @@ public class ShowQualifiedAction extends ViewFilterAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		final StructuredViewer viewer = getStructuredViewer();
 		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);

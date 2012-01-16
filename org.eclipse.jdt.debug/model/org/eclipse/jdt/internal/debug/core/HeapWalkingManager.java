@@ -10,112 +10,174 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Controls preferences related to heap walking so that they are available in java 
- * debug model code, but can be updated through the UI.
+ * Controls preferences related to heap walking so that they are available in
+ * java debug model code, but can be updated through the UI.
  * 
  * @since 3.3
  */
-public class HeapWalkingManager{
-	
+public class HeapWalkingManager {
+
 	private static HeapWalkingManager fgSingleton;
-	
+
 	/**
 	 * Constructor. Intended to be called by getDefault()
 	 */
-	protected HeapWalkingManager() {}
-	
+	protected HeapWalkingManager() {
+	}
+
 	/**
-	 * Returns whether the given parent object is a debug element with a debug target
-	 * that supports retrieval of instance and reference information from the VM.
+	 * Returns whether the given parent object is a debug element with a debug
+	 * target that supports retrieval of instance and reference information from
+	 * the VM.
 	 * 
-	 * @param object the object to test, can be <code>null</code>
-	 * @return whether the given object has a debug target that supports heap walking
+	 * @param object
+	 *            the object to test, can be <code>null</code>
+	 * @return whether the given object has a debug target that supports heap
+	 *         walking
 	 */
-	public static boolean supportsHeapWalking(Object object){
-		if (object instanceof IDebugElement){
-			IDebugTarget target = ((IDebugElement)object).getDebugTarget();
-			if (target instanceof IJavaDebugTarget){
-				return ((IJavaDebugTarget)target).supportsInstanceRetrieval();
+	public static boolean supportsHeapWalking(Object object) {
+		if (object instanceof IDebugElement) {
+			IDebugTarget target = ((IDebugElement) object).getDebugTarget();
+			if (target instanceof IJavaDebugTarget) {
+				return ((IJavaDebugTarget) target).supportsInstanceRetrieval();
 			} else if (target != null) {
 				Object adapter = target.getAdapter(IJavaDebugTarget.class);
-				if (adapter instanceof IJavaDebugTarget){
+				if (adapter instanceof IJavaDebugTarget) {
 					return ((IJavaDebugTarget) adapter).supportsInstanceRetrieval();
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return the default singleton instance of the manager
 	 */
 	public static HeapWalkingManager getDefault() {
-		if (fgSingleton == null){
+		if (fgSingleton == null) {
 			fgSingleton = new HeapWalkingManager();
 		}
 		return fgSingleton;
 	}
-	
+
 	/**
-	 * @return preference dictating whether to display references as variables in variables view.
+	 * @return preference dictating whether to display references as variables
+	 *         in variables view.
 	 */
 	public boolean isShowReferenceInVarView() {
-		return JDIDebugPlugin.getDefault().getPluginPreferences().getBoolean(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW);
+		return Platform.getPreferencesService().getBoolean(
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, 
+				false, 
+				null);
 	}
-	
+
 	/**
-	 * @return preference dictating the maximum number of references that should be displayed to the user 
+	 * @return preference dictating the maximum number of references that should
+	 *         be displayed to the user
 	 */
 	public int getAllReferencesMaxCount() {
-		return JDIDebugPlugin.getDefault().getPluginPreferences().getInt(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT);
+		return Platform.getPreferencesService().getInt(
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT,
+				100,
+				null);
 	}
-	
+
 	/**
-	 * @return preference dictating the maximum number of instances that should be displayed to the user 
+	 * @return preference dictating the maximum number of instances that should
+	 *         be displayed to the user
 	 */
 	public int getAllInstancesMaxCount() {
-		return JDIDebugPlugin.getDefault().getPluginPreferences().getInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT);
+		return Platform.getPreferencesService().getInt(
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT,
+				100,
+				null);
 	}
-	
+
 	/**
 	 * Stores the passed vale in the preference store
 	 * 
-	 * @param value whether to display references as variables in the variables view
+	 * @param value
+	 *            whether to display references as variables in the variables
+	 *            view
 	 */
 	public void setShowReferenceInVarView(boolean value) {
-		JDIDebugPlugin.getDefault().getPluginPreferences().setValue(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW,value);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(node != null) {
+			node.putBoolean(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, value);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+		}
 	}
-	
+
 	/**
 	 * Stores the passed value in the preference store
 	 * 
-	 * @param max the maximum number of references that should be displayed to the user
+	 * @param max
+	 *            the maximum number of references that should be displayed to
+	 *            the user
 	 */
-	public void setAllReferencesMaxCount(int max){
-		JDIDebugPlugin.getDefault().getPluginPreferences().setValue(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT, max);
+	public void setAllReferencesMaxCount(int max) {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(node != null) {
+			node.putInt(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT, max);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+		}
 	}
-	
+
 	/**
 	 * Stores the passed value in the preference store
 	 * 
-	 * @param max the maximum number of instances that should be displayed to the user
+	 * @param max
+	 *            the maximum number of instances that should be displayed to
+	 *            the user
 	 */
-	public void setAllInstancesMaxCount(int max){
-		JDIDebugPlugin.getDefault().getPluginPreferences().setValue(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, max);
+	public void setAllInstancesMaxCount(int max) {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(node != null) {
+			node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, max);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+		}
 	}
-	
+
 	/**
-	 * Resets the preferences controlled by this manager to their default settings
+	 * Resets the preferences controlled by this manager to their default
+	 * settings
 	 */
-	public void resetToDefaultSettings(){
-		JDIDebugPlugin.getDefault().getPluginPreferences().setToDefault(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW);
-		JDIDebugPlugin.getDefault().getPluginPreferences().setToDefault(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT);
-		JDIDebugPlugin.getDefault().getPluginPreferences().setToDefault(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT);
+	public void resetToDefaultSettings() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(node != null) {
+			node.putBoolean(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, false);
+			node.putInt(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT, 100);
+			node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, 100);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+		}
 	}
-	
+
 }

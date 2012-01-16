@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		String typeName = "Breakpoints";		 //$NON-NLS-1$
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
 		getLaunchManager().addLaunchListener(this);
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<String>();
 		set.add(ILaunchManager.DEBUG_MODE);
 		ensurePreferredDelegate(configuration, set);
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);

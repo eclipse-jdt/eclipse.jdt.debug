@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,41 +25,47 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @since 3.2
- *
+ * 
  */
-public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup, ITerminate {
-	
+public class JDIThreadGroup extends JDIDebugElement implements
+		IJavaThreadGroup, ITerminate {
+
 	private ThreadGroupReference fGroup = null;
 	private String fName = null;
 
 	/**
 	 * Constructs a new thread group in the given target based on the underlying
 	 * thread group reference.
-	 *  
-	 * @param target debug target
-	 * @param group thread group reference
+	 * 
+	 * @param target
+	 *            debug target
+	 * @param group
+	 *            thread group reference
 	 */
 	public JDIThreadGroup(JDIDebugTarget target, ThreadGroupReference group) {
 		super(target);
 		fGroup = group;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreads()
 	 */
 	public synchronized IJavaThread[] getThreads() throws DebugException {
 		try {
-			List threads = fGroup.threads();
-			List modelThreads = new ArrayList(threads.size());
-			Iterator iterator = threads.iterator();
+			List<ThreadReference> threads = fGroup.threads();
+			List<JDIThread> modelThreads = new ArrayList<JDIThread>(threads.size());
+			Iterator<ThreadReference> iterator = threads.iterator();
 			while (iterator.hasNext()) {
-				ThreadReference ref = (ThreadReference) iterator.next();
+				ThreadReference ref = iterator.next();
 				JDIThread thread = getJavaDebugTarget().findThread(ref);
 				if (thread != null) {
 					modelThreads.add(thread);
 				}
 			}
-			return (IJavaThread[]) modelThreads.toArray(new IJavaThread[modelThreads.size()]);
+			return modelThreads
+					.toArray(new IJavaThread[modelThreads.size()]);
 		} catch (VMDisconnectedException e) {
 			// terminated/disconnected, return empty collection
 			return new IJavaThread[0];
@@ -69,7 +75,9 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroup()
 	 */
 	public IJavaThreadGroup getThreadGroup() throws DebugException {
@@ -84,22 +92,27 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroups()
 	 */
 	public IJavaThreadGroup[] getThreadGroups() throws DebugException {
 		try {
-			List groups = fGroup.threadGroups();
-			List modelGroups = new ArrayList(groups.size());
-			Iterator iterator = groups.iterator();
+			List<ThreadGroupReference> groups = fGroup.threadGroups();
+			List<JDIThreadGroup> modelGroups = new ArrayList<JDIThreadGroup>(groups.size());
+			Iterator<ThreadGroupReference> iterator = groups.iterator();
 			while (iterator.hasNext()) {
-				ThreadGroupReference ref = (ThreadGroupReference) iterator.next();
-				JDIThreadGroup group = getJavaDebugTarget().findThreadGroup(ref);
+				ThreadGroupReference ref = iterator
+						.next();
+				JDIThreadGroup group = getJavaDebugTarget()
+						.findThreadGroup(ref);
 				if (group != null) {
 					modelGroups.add(group);
 				}
 			}
-			return (IJavaThreadGroup[]) modelGroups.toArray(new IJavaThreadGroup[modelGroups.size()]);
+			return modelGroups
+					.toArray(new IJavaThreadGroup[modelGroups.size()]);
 		} catch (VMDisconnectedException e) {
 			return new IJavaThreadGroup[0];
 		} catch (RuntimeException e) {
@@ -108,7 +121,9 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getName()
 	 */
 	public synchronized String getName() throws DebugException {
@@ -121,17 +136,19 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 		}
 		return fName;
 	}
-	
+
 	ThreadGroupReference getUnderlyingThreadGroup() {
 		return fGroup;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreadGroups()
 	 */
 	public boolean hasThreadGroups() throws DebugException {
 		try {
-			List groups = fGroup.threadGroups();
+			List<ThreadGroupReference> groups = fGroup.threadGroups();
 			return groups.size() > 0;
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIThreadGroup_4, e);
@@ -139,12 +156,14 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreads()
 	 */
 	public boolean hasThreads() throws DebugException {
 		try {
-			List threads = fGroup.threads();
+			List<ThreadReference> threads = fGroup.threads();
 			return threads.size() > 0;
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.JDIThreadGroup_5, e);
@@ -156,7 +175,7 @@ public class JDIThreadGroup extends JDIDebugElement implements IJavaThreadGroup,
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		//the group can terminate if the target can terminate
+		// the group can terminate if the target can terminate
 		return getDebugTarget().canTerminate();
 	}
 

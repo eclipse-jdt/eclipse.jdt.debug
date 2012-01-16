@@ -40,6 +40,7 @@ public class StackFrameShowInSourceAdapter implements IShowInSource {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.part.ShowInContext#getSelection()
 		 */
+		@Override
 		public ISelection getSelection() {
 			if (!resolved) {
 				try {

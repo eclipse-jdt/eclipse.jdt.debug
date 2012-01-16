@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,6 +146,11 @@ public class BreakpointUtils {
 	/**
 	 * Searches the given source range of the container for a member that is
 	 * not the same as the given type.
+	 * @param type the {@link IType}
+	 * @param start the starting position
+	 * @param end the ending position
+	 * @return the {@link IMember} from the given start-end range
+	 * @throws JavaModelException if there is a problem with the backing Java model
 	 */
 	protected static IMember binSearch(IType type, int start, int end) throws JavaModelException {
 		IJavaElement je = getElementAt(type, start);
@@ -186,6 +191,10 @@ public class BreakpointUtils {
 	
 	/**
 	 * Returns the element at the given position in the given type
+	 * @param type the {@link IType}
+	 * @param pos the position
+	 * @return the {@link IJavaElement} at the given position
+	 * @throws JavaModelException if there is a problem with the backing Java model
 	 */
 	protected static IJavaElement getElementAt(IType type, int pos) throws JavaModelException {
 		if (type.isBinary()) {
@@ -202,10 +211,8 @@ public class BreakpointUtils {
 	 * 
 	 * @param attributes the attribute map to use
 	 * @param element the Java element associated with the breakpoint
-	 * @exception CoreException if an exception occurs configuring
-	 *  the marker
 	 */
-	public static void addJavaBreakpointAttributes(Map attributes, IJavaElement element) {
+	public static void addJavaBreakpointAttributes(Map<String, Object> attributes, IJavaElement element) {
 		String handleId = element.getHandleIdentifier();
 		attributes.put(HANDLE_ID, handleId);
 		JavaCore.addJavaElementMarkerAttributes(attributes, element);		
@@ -223,10 +230,8 @@ public class BreakpointUtils {
 	 * @param element the Java element associated with the breakpoint
 	 * @param memberStart the start position of the Java member that the breakpoint is positioned within
 	 * @param memberEnd the end position of the Java member that the breakpoint is positioned within
-	 * @exception CoreException if an exception occurs configuring
-	 *  the marker
 	 */
-	public static void addJavaBreakpointAttributesWithMemberDetails(Map attributes, IJavaElement element, int memberStart, int memberEnd) {
+	public static void addJavaBreakpointAttributesWithMemberDetails(Map<String, Object> attributes, IJavaElement element, int memberStart, int memberEnd) {
 		addJavaBreakpointAttributes(attributes, element);
 		attributes.put(MEMBER_START, new Integer(memberStart));
 		attributes.put(MEMBER_END, new Integer(memberEnd));
@@ -240,11 +245,8 @@ public class BreakpointUtils {
 	 * </ul>
 	 * 
 	 * @param attributes the attribute map to use
-	 * @param element the Java element associated with the breakpoint
-	 * @exception CoreException if an exception occurs configuring
-	 *  the marker
 	 */
-	public static void addRunToLineAttributes(Map attributes) {
+	public static void addRunToLineAttributes(Map<String, Object> attributes) {
 		attributes.put(IBreakpoint.PERSISTED, Boolean.FALSE);
 		attributes.put(RUN_TO_LINE, Boolean.TRUE);
 	}	

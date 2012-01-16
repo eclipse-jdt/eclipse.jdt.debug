@@ -27,6 +27,7 @@ public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 	 * 
 	 * @see org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			Object[] children = super.getAllChildren(parent, context, monitor);

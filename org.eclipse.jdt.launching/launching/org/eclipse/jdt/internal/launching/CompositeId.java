@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class CompositeId {
 	}
 	
 	public static CompositeId fromString(String idString) {
-		ArrayList parts= new ArrayList();
+		ArrayList<String> parts= new ArrayList<String>();
 		int commaIndex= idString.indexOf(',');
 		while (commaIndex > 0) {
 			int length= Integer.valueOf(idString.substring(0, commaIndex)).intValue();
@@ -32,10 +32,11 @@ public class CompositeId {
 			idString= idString.substring(commaIndex+1+length);
 			commaIndex= idString.indexOf(',');
 		}
-		String[] result= (String[])parts.toArray(new String[parts.size()]);
+		String[] result= parts.toArray(new String[parts.size()]);
 		return new CompositeId(result);
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < fParts.length; i++) {

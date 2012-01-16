@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
-
 import org.eclipse.jdi.internal.event.VMDeathEventImpl;
+
 import com.sun.jdi.request.VMDeathRequest;
 
-public class VMDeathRequestImpl extends EventRequestImpl implements VMDeathRequest {
-	
+public class VMDeathRequestImpl extends EventRequestImpl implements
+		VMDeathRequest {
+
 	public VMDeathRequestImpl(VirtualMachineImpl vmImpl) {
 		super("VMDeathRequest", vmImpl); //$NON-NLS-1$
 	}
@@ -25,8 +25,8 @@ public class VMDeathRequestImpl extends EventRequestImpl implements VMDeathReque
 	/**
 	 * @return JDWP event kind
 	 */
+	@Override
 	protected byte eventKind() {
 		return VMDeathEventImpl.EVENT_KIND;
 	}
 }
-

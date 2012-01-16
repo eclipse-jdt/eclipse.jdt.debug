@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A wizard page used to edit the attributes of an installed JRE. A page is 
@@ -137,7 +136,7 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(newName, IResource.FILE);
 				if (!s.isOK()) {
-					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()})); 
+					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), NLS.bind(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()})); 
 				}
 			}
 		}
@@ -174,6 +173,7 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		return null;
 	}

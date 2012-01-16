@@ -29,6 +29,7 @@ public class ClassPrepareEventTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Trigger a class prepare event
 		fRequest = fVM.eventRequestManager().createClassPrepareRequest();
@@ -40,6 +41,7 @@ public class ClassPrepareEventTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// The test has resumed the test thread, so suspend it
 		waitUntilReady();
@@ -58,6 +60,7 @@ public class ClassPrepareEventTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.event.ClassPrepareEvent";
 	}

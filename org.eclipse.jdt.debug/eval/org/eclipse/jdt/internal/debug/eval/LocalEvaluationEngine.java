@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,12 +44,14 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
+import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -59,139 +59,136 @@ import com.sun.jdi.ObjectReference;
  * An evaluation engine that deploys class files locally
  */
 
-public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor , IEvaluationRunnable {	 
-	
-	private static final String CODE_SNIPPET_NAME= "CodeSnippet.class"; //$NON-NLS-1$
+public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
+		ICodeSnippetRequestor, IEvaluationRunnable {
+
+	private static final String CODE_SNIPPET_NAME = "CodeSnippet.class"; //$NON-NLS-1$
 
 	/**
-	 * A count of the number of engines created.
-	 * Count is incremented on instantiation and decremented on 
-	 * dispose.  When the count == 0, the special CodeSnippet.class
-	 * is deleted as this class file is shared by all.
+	 * A count of the number of engines created. Count is incremented on
+	 * instantiation and decremented on dispose. When the count == 0, the
+	 * special CodeSnippet.class is deleted as this class file is shared by all.
 	 */
-	private static int ENGINE_COUNT= 0;
+	private static int ENGINE_COUNT = 0;
 
 	/**
 	 * The Java project context in which to compile snippets.
 	 */
 	private IJavaProject fJavaProject;
-	
+
 	/**
 	 * The debug target on which to execute snippets
 	 */
 	private IJavaDebugTarget fDebugTarget;
-	
+
 	/**
 	 * The location in which to deploy snippet class files
 	 */
 	private File fOutputDirectory;
-	
+
 	/**
-	 * The listener to notify when the current evaluation
-	 * is complete.
+	 * The listener to notify when the current evaluation is complete.
 	 */
 	private IEvaluationListener fListener;
-	
+
 	/**
-	 * The stack frame context for the current evaluation
-	 * or <code>null</code> if there is no stack frame
-	 * context.
+	 * The stack frame context for the current evaluation or <code>null</code>
+	 * if there is no stack frame context.
 	 */
 	private IJavaStackFrame fStackFrame;
-	
+
 	/**
 	 * The result of this evaluation
 	 */
 	private EvaluationResult fResult;
-	
+
 	/**
 	 * Collection of deployed snippet class files
 	 */
-	private List fSnippetFiles;
-	
+	private List<File> fSnippetFiles;
+
 	/**
-	 * Collection of directories created by this evaluation
+	 * Collection of directories created by this evaluation engine.
+	 */
+	private List<File> fDirectories;
+
+	/**
+	 * Evaluation context for the Java project associated with this evaluation
 	 * engine.
 	 */
-	private List fDirectories;
-	
-	/**
-	 * Evaluation context for the Java project associated
-	 * with this evaluation engine.
-	 */
 	private IEvaluationContext fEvaluationContext;
-		
+
 	/**
-	 * Array of modifier constants for visible local variables
-	 * in the current evaluation.
+	 * Array of modifier constants for visible local variables in the current
+	 * evaluation.
 	 * 
-	 * XXX: constants should be 'default' or 'final'. Where
-	 * 	are these constants defined.
+	 * XXX: constants should be 'default' or 'final'. Where are these constants
+	 * defined.
 	 */
 	private int[] fLocalVariableModifiers;
-	
+
 	/**
-	 * Array of names of visible local variables
-	 * in the current evaluation.
+	 * Array of names of visible local variables in the current evaluation.
 	 */
 	private String[] fLocalVariableNames;
-	
+
 	/**
-	 * Array of type names of visible local variables
-	 * in the current evaluation.
+	 * Array of type names of visible local variables in the current evaluation.
 	 */
 	private String[] fLocalVariableTypeNames;
-	
+
 	/**
-	 * The 'this' object for the current evaluation
-	 * or <code>null</code> if there is no 'this'
-	 * context (static method, or not context)
+	 * The 'this' object for the current evaluation or <code>null</code> if
+	 * there is no 'this' context (static method, or not context)
 	 */
 	private IJavaObject fThis;
-	
+
 	/**
 	 * Whether this engine has been disposed.
 	 */
 	private boolean fDisposed = false;
-	
+
 	/**
-	 * The number of evaluations currently being
-	 * performed.
+	 * The number of evaluations currently being performed.
 	 */
 	private int fEvaluationCount = 0;
-	
+
 	/**
 	 * The name of the code snippet class to instantiate
 	 */
 	private String fCodeSnippetClassName = null;
-	
-	/** 
+
+	/**
 	 * Whether to hit breakpoints in the evaluation thread
 	 */
 	private boolean fHitBreakpoints = false;
-		
+
 	/**
 	 * Constant for empty array of <code>java.lang.String</code>
 	 */
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	
+
 	/**
 	 * Constant for empty array of <code>int</code>
 	 */
 	private static final int[] EMPTY_INT_ARRAY = new int[0];
-		
+
 	/**
-	 * Cosntructs a new evaluation engine for the given VM in the context
-	 * of the specified project. Class files required for the evaluation will
-	 * be deployed to the specified directory (which must be on the class
-	 * path of the VM in order for evaluation to work).
+	 * Constructs a new evaluation engine for the given VM in the context of the
+	 * specified project. Class files required for the evaluation will be
+	 * deployed to the specified directory (which must be on the class path of
+	 * the VM in order for evaluation to work).
 	 * 
-	 * @param project context in which to compile snippets
-	 * @param vm debug target in which to evaluate snippets
-	 * @param directory location where snippet class files will
-	 *  be deployed for execution. The directory must exist
+	 * @param project
+	 *            context in which to compile snippets
+	 * @param vm
+	 *            debug target in which to evaluate snippets
+	 * @param directory
+	 *            location where snippet class files will be deployed for
+	 *            execution. The directory must exist
 	 */
-	public LocalEvaluationEngine(IJavaProject project, IJavaDebugTarget vm, File directory) {
+	public LocalEvaluationEngine(IJavaProject project, IJavaDebugTarget vm,
+			File directory) {
 		setJavaProject(project);
 		setDebugTarget(vm);
 		setOutputDirectory(directory);
@@ -201,60 +198,66 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see ICodeSnippetRequestor#acceptClassFiles(byte[][], String[][], String)
 	 */
-	public boolean acceptClassFiles(
-		byte[][] classFileBytes,
-		String[][] classFileCompoundNames,
-		String codeSnippetClassName) {
+	public boolean acceptClassFiles(byte[][] classFileBytes,
+			String[][] classFileCompoundNames, String codeSnippetClassName) {
+		try {
+			deploy(classFileBytes, classFileCompoundNames);
+		} catch (DebugException e) {
+			getResult().setException(e);
+			return false;
+		}
+		if (codeSnippetClassName != null) {
+			setCodeSnippetClassName(codeSnippetClassName);
 			try {
-				deploy(classFileBytes, classFileCompoundNames);
+				getThread().runEvaluation(this, null, DebugEvent.EVALUATION,
+						getHitBreakpoints());
 			} catch (DebugException e) {
-				getResult().setException(e);
-				return false;
+				// exception handling is in evaluation runnable
 			}
-			if (codeSnippetClassName != null) {
-				setCodeSnippetClassName(codeSnippetClassName);
-				try {
-					getThread().runEvaluation(this, null, DebugEvent.EVALUATION, getHitBreakpoints());
-				} catch (DebugException e) {
-					// exception handling is in evaluation runnable
-				}
-			}
-			return true;
+		}
+		return true;
 	}
-	
+
 	public void run(IJavaThread thread, IProgressMonitor monitor) {
 		IJavaObject codeSnippetInstance = null;
 		try {
 			codeSnippetInstance = newInstance(getCodeSnippetClassName());
-			initializeLocals(codeSnippetInstance);	
-			codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false); //$NON-NLS-1$
+			initializeLocals(codeSnippetInstance);
+			codeSnippetInstance.sendMessage(RUN_METHOD,
+					"()V", null, getThread(), false); //$NON-NLS-1$
 			restoreLocals(codeSnippetInstance);
-			
+
 			// now retrieve the description of the result
 			IVariable[] fields = codeSnippetInstance.getVariables();
 			IJavaVariable resultValue = null;
 			IJavaVariable resultType = null;
-			for (int i = 0; i < fields.length; i++) {
-				if (fields[i].getName().equals(RESULT_TYPE_FIELD)) {
-					resultType = (IJavaVariable)fields[i];
+			for (IVariable field : fields) {
+				if (field.getName().equals(RESULT_TYPE_FIELD)) {
+					resultType = (IJavaVariable) field;
 				}
-				if (fields[i].getName().equals(RESULT_VALUE_FIELD)) {
-					resultValue = (IJavaVariable)fields[i];
+				if (field.getName().equals(RESULT_VALUE_FIELD)) {
+					resultValue = (IJavaVariable) field;
 				}
 			}
-			IJavaValue result = convertResult((IJavaClassObject)resultType.getValue(), (IJavaValue)resultValue.getValue());
+			IJavaValue result = convertResult(
+					(IJavaClassObject) resultType.getValue(),
+					(IJavaValue) resultValue.getValue());
 			getResult().setValue(result);
 		} catch (DebugException e) {
 			getResult().setException(e);
-			
+
 			Throwable underlyingException = e.getStatus().getException();
 			if (underlyingException instanceof InvocationException) {
-				ObjectReference theException = ((InvocationException)underlyingException).exception();
+				ObjectReference theException = ((InvocationException) underlyingException)
+						.exception();
 				if (theException != null) {
 					try {
 						try {
-							IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
-							v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
+							IJavaObject v = (IJavaObject) JDIValue.createValue(
+									(JDIDebugTarget) getDebugTarget(),
+									theException);
+							v.sendMessage(
+									"printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 						} catch (DebugException de) {
 							JDIDebugPlugin.log(de);
 						}
@@ -264,18 +267,18 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * Initializes the value of instance variables in the 
-	 * 'code snippet object' that are used as placeholders
-	 * for locals and 'this' in the current stack frame.
+	 * Initializes the value of instance variables in the 'code snippet object'
+	 * that are used as place-holders for locals and 'this' in the current stack
+	 * frame.
 	 * 
-	 * @param object instance of code snippet class that will
-	 * 	be run
-	 * @exception DebugException if an exception is thrown
-	 *  accessing the given object
+	 * @param object
+	 *            instance of code snippet class that will be run
+	 * @exception DebugException
+	 *                if an exception is thrown accessing the given object
 	 */
 	protected void initializeLocals(IJavaObject object) throws DebugException {
 		IJavaVariable[] locals = null;
@@ -284,15 +287,18 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			locals = getStackFrame().getLocalVariables();
 		}
 		if (locals != null) {
-			for (int i = 0; i < locals.length; i++) {
-				IJavaVariable local = locals[i];
-				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName(), false);
+			for (IJavaVariable local : locals) {
+				IJavaVariable field = object.getField(
+						LOCAL_VAR_PREFIX + local.getName(), false);
 				// internal error if field is not found
 				if (field == null) {
 					throw new DebugException(
-						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4, null) 
-					);
+							new Status(
+									IStatus.ERROR,
+									JDIDebugModel.getPluginIdentifier(),
+									DebugException.REQUEST_FAILED,
+									EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__4,
+									null));
 				}
 				field.setValue(local.getValue());
 			}
@@ -302,23 +308,26 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// internal error if field is not found
 			if (field == null) {
 				throw new DebugException(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5, null) 
-				);				
-			} 
+						new Status(
+								IStatus.ERROR,
+								JDIDebugModel.getPluginIdentifier(),
+								DebugException.REQUEST_FAILED,
+								EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize___this___context__5,
+								null));
+			}
 			field.setValue(thisObject);
 		}
 	}
-	
+
 	/**
-	 * Restores the value local variables from the instance
-	 * variables in the  'code snippet object' that are used
-	 * as placeholders for locals in the current stack frame.
+	 * Restores the value local variables from the instance variables in the
+	 * 'code snippet object' that are used as place-holders for locals in the
+	 * current stack frame.
 	 * 
-	 * @param object instance of code snippet class that was
-	 *   run
-	 * @exception DebugException if an exception is thrown
-	 *  accessing the given object
+	 * @param object
+	 *            instance of code snippet class that was run
+	 * @exception DebugException
+	 *                if an exception is thrown accessing the given object
 	 */
 	protected void restoreLocals(IJavaObject object) throws DebugException {
 		IJavaVariable[] locals = null;
@@ -326,16 +335,19 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			locals = getStackFrame().getLocalVariables();
 		}
 		if (locals != null) {
-			for (int i = 0; i < locals.length; i++) {
-				IJavaVariable local = locals[i];
-				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName(), false);
+			for (IJavaVariable local : locals) {
+				IJavaVariable field = object.getField(
+						LOCAL_VAR_PREFIX + local.getName(), false);
 				// internal error if field is not found
 				if (field == null) {
 					throw new DebugException(
-						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6, null) 
-					);
-				} 
+							new Status(
+									IStatus.ERROR,
+									JDIDebugModel.getPluginIdentifier(),
+									DebugException.REQUEST_FAILED,
+									EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_initialize_local_variables__6,
+									null));
+				}
 				local.setValue(field.getValue());
 			}
 		}
@@ -344,13 +356,14 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see ICodeSnippetRequestor#acceptProblem(IMarker, String, int)
 	 */
-	public void acceptProblem(IMarker problemMarker, String fragmentSource, int fragmentKind) {
+	public void acceptProblem(IMarker problemMarker, String fragmentSource,
+			int fragmentKind) {
 		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
 			return;
 		}
 		getResult().addError(problemMarker.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see IEvaluationEngine#getDebugTarget()
 	 */
@@ -361,7 +374,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * Sets the debug target in which snippets are executed.
 	 * 
-	 * @param debugTarget the debug target in which snippets are executed
+	 * @param debugTarget
+	 *            the debug target in which snippets are executed
 	 */
 	private void setDebugTarget(IJavaDebugTarget debugTarget) {
 		fDebugTarget = debugTarget;
@@ -377,7 +391,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * Sets the Java project in which snippets are compiled.
 	 * 
-	 * @param javaProject the Java project in which snippets are compiled
+	 * @param javaProject
+	 *            the Java project in which snippets are compiled
 	 */
 	private void setJavaProject(IJavaProject javaProject) {
 		fJavaProject = javaProject;
@@ -393,263 +408,298 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * Sets the directory in which snippet class files are
-	 * deployed.
+	 * Sets the directory in which snippet class files are deployed.
 	 * 
-	 * @param outputDirectory location to deploy snippet class files
+	 * @param outputDirectory
+	 *            location to deploy snippet class files
 	 */
 	private void setOutputDirectory(File outputDirectory) {
 		fOutputDirectory = outputDirectory;
 	}
 
 	/**
-	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
+	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread,
+	 *      IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, boolean hitBreakpoints) throws DebugException {
-			checkDisposed();
-			checkEvaluating();
-			try {
-				evaluationStarted();
-				setListener(listener);
-				setHitBreakpoints(hitBreakpoints);
-				setResult(new EvaluationResult(this, snippet, thread));
-				checkThread();
-				// no receiver/stack frame context
-				setThis(null);
-				setLocalVariableNames(EMPTY_STRING_ARRAY);
-				setLocalVariableTypeNames(EMPTY_STRING_ARRAY);
-				setLocalVariableModifiers(EMPTY_INT_ARRAY);
-				
-				// do the evaluation in a different thread
-				Runnable r = new Runnable() {
-					public void run() {
-						try {
-							LocalEvaluationEngine.this.getEvaluationContext().
-								evaluateCodeSnippet(LocalEvaluationEngine.this.getSnippet(),
-									LocalEvaluationEngine.this, null);
-						} catch (JavaModelException e) {
-							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
-						} finally {
-							LocalEvaluationEngine.this.evaluationComplete();
-						}
-					}
-				};
-				
-				Thread t = new Thread(r);
-                t.setDaemon(true);
-				t.start();
-			} catch (DebugException d) {
-				evaluationAborted();
-				throw d;
-			}
-			
-	}
+	public void evaluate(String snippet, IJavaThread thread,
+			IEvaluationListener listener, boolean hitBreakpoints)
+			throws DebugException {
+		checkDisposed();
+		checkEvaluating();
+		try {
+			evaluationStarted();
+			setListener(listener);
+			setHitBreakpoints(hitBreakpoints);
+			setResult(new EvaluationResult(this, snippet, thread));
+			checkThread();
+			// no receiver/stack frame context
+			setThis(null);
+			setLocalVariableNames(EMPTY_STRING_ARRAY);
+			setLocalVariableTypeNames(EMPTY_STRING_ARRAY);
+			setLocalVariableModifiers(EMPTY_INT_ARRAY);
 
-	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int)
-	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
-			checkDisposed();
-			checkEvaluating();
-			try {
-				evaluationStarted();
-				setListener(listener);
-				setStackFrame(frame);
-				setHitBreakpoints(hitBreakpoints);
-				setResult(new EvaluationResult(this, snippet, (IJavaThread)frame.getThread()));
-				checkThread();
-				
-				// set up local variables and 'this' context for evaluation
-				IJavaVariable[] locals = frame.getLocalVariables();
-				
-				List typeNames = new ArrayList(locals.length);
-				List varNames = new ArrayList(locals.length);
-	
-				for (int i = 0; i < locals.length; i++) {
-					IJavaVariable var = locals[i];
-					String typeName = getTranslatedTypeName(var.getReferenceTypeName());
-					if (typeName != null) {
-						typeNames.add(typeName);
-						varNames.add(var.getName());
+			// do the evaluation in a different thread
+			Runnable r = new Runnable() {
+				public void run() {
+					try {
+						LocalEvaluationEngine.this
+								.getEvaluationContext()
+								.evaluateCodeSnippet(
+										LocalEvaluationEngine.this.getSnippet(),
+										LocalEvaluationEngine.this, null);
+					} catch (JavaModelException e) {
+						LocalEvaluationEngine.this.getResult().setException(
+								new DebugException(e.getStatus()));
+					} finally {
+						LocalEvaluationEngine.this.evaluationComplete();
 					}
 				}
-				
-				setLocalVariableTypeNames((String[])typeNames.toArray(new String[typeNames.size()]));
-				setLocalVariableNames((String[])varNames.toArray(new String[varNames.size()]));
-				int[] modifiers = new int[typeNames.size()];
-				// cannot determine if local is final, so specify as default
-				Arrays.fill(modifiers, 0);
-				setLocalVariableModifiers(modifiers);
-				setThis(frame.getThis());
-				
-				final boolean isStatic = frame.isStatic();				
-				final boolean isConstructor = frame.isConstructor();
-				final IType receivingType = JavaDebugUtils.resolveDeclaringType(frame);
-				validateReceivingType(receivingType);	
-				
-				// do the evaluation in a different thread
-				Runnable r = new Runnable() {
-					public void run() {
-						try {
-							LocalEvaluationEngine.this.getEvaluationContext().
-								evaluateCodeSnippet(
-								LocalEvaluationEngine.this.getSnippet(),
-								LocalEvaluationEngine.this.getLocalVariableTypeNames(),
-								LocalEvaluationEngine.this.getLocalVariableNames(),
-								LocalEvaluationEngine.this.getLocalVariableModifiers(),
-								receivingType,
-								isStatic,
-								isConstructor,
-								LocalEvaluationEngine.this,
-								null);
-						} catch (JavaModelException e) {
-							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
-						} finally {
-							LocalEvaluationEngine.this.evaluationComplete();
-						}
-					}
-				};
-				
-				Thread t = new Thread(r);
-				t.setDaemon(true);
-				t.start();
-			} catch (DebugException d) {
-				evaluationAborted();
-				throw d;
-			} catch (CoreException e) {
-				evaluationAborted();
-				throw new DebugException(e.getStatus());
-			}				
+			};
+
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			t.start();
+		} catch (DebugException d) {
+			evaluationAborted();
+			throw d;
+		}
+
 	}
 
 	/**
-	 * Verifies the receiving type was resovled and is not an inner type.
+	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame,
+	 *      IEvaluationListener, int)
+	 */
+	public void evaluate(String snippet, IJavaStackFrame frame,
+			IEvaluationListener listener, int evaluationDetail,
+			boolean hitBreakpoints) throws DebugException {
+		checkDisposed();
+		checkEvaluating();
+		try {
+			evaluationStarted();
+			setListener(listener);
+			setStackFrame(frame);
+			setHitBreakpoints(hitBreakpoints);
+			setResult(new EvaluationResult(this, snippet,
+					(IJavaThread) frame.getThread()));
+			checkThread();
+
+			// set up local variables and 'this' context for evaluation
+			IJavaVariable[] locals = frame.getLocalVariables();
+
+			List<String> typeNames = new ArrayList<String>(locals.length);
+			List<String> varNames = new ArrayList<String>(locals.length);
+
+			for (IJavaVariable var : locals) {
+				String typeName = getTranslatedTypeName(var
+						.getReferenceTypeName());
+				if (typeName != null) {
+					typeNames.add(typeName);
+					varNames.add(var.getName());
+				}
+			}
+
+			setLocalVariableTypeNames(typeNames
+					.toArray(new String[typeNames.size()]));
+			setLocalVariableNames(varNames
+					.toArray(new String[varNames.size()]));
+			int[] modifiers = new int[typeNames.size()];
+			// cannot determine if local is final, so specify as default
+			Arrays.fill(modifiers, 0);
+			setLocalVariableModifiers(modifiers);
+			setThis(frame.getThis());
+
+			final boolean isStatic = frame.isStatic();
+			final boolean isConstructor = frame.isConstructor();
+			final IType receivingType = JavaDebugUtils
+					.resolveDeclaringType(frame);
+			validateReceivingType(receivingType);
+
+			// do the evaluation in a different thread
+			Runnable r = new Runnable() {
+				public void run() {
+					try {
+						LocalEvaluationEngine.this
+								.getEvaluationContext()
+								.evaluateCodeSnippet(
+										LocalEvaluationEngine.this.getSnippet(),
+										LocalEvaluationEngine.this
+												.getLocalVariableTypeNames(),
+										LocalEvaluationEngine.this
+												.getLocalVariableNames(),
+										LocalEvaluationEngine.this
+												.getLocalVariableModifiers(),
+										receivingType, isStatic, isConstructor,
+										LocalEvaluationEngine.this, null);
+					} catch (JavaModelException e) {
+						LocalEvaluationEngine.this.getResult().setException(
+								new DebugException(e.getStatus()));
+					} finally {
+						LocalEvaluationEngine.this.evaluationComplete();
+					}
+				}
+			};
+
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			t.start();
+		} catch (DebugException d) {
+			evaluationAborted();
+			throw d;
+		} catch (CoreException e) {
+			evaluationAborted();
+			throw new DebugException(e.getStatus());
+		}
+	}
+
+	/**
+	 * Verifies the receiving type was resolved and is not an inner type.
 	 * 
 	 * @param receivingType
 	 * @throws DebugException
 	 */
-	private void validateReceivingType(final IType receivingType) throws DebugException {
+	private void validateReceivingType(final IType receivingType)
+			throws DebugException {
 		if (receivingType == null) {
 			throw new DebugException(
-				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18, null) 
-			);
+					new Status(
+							IStatus.ERROR,
+							JDIDebugModel.getPluginIdentifier(),
+							DebugException.REQUEST_FAILED,
+							EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_determine_receiving_type_context__18,
+							null));
 		}
-		
+
 		if (receivingType.getDeclaringType() != null) {
 			throw new DebugException(
-				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19, null) 
-			);
+					new Status(
+							IStatus.ERROR,
+							JDIDebugModel.getPluginIdentifier(),
+							DebugException.REQUEST_FAILED,
+							EvaluationMessages.LocalEvaluationEngine_Evaluation_in_context_of_inner_type_not_supported__19,
+							null));
 		}
 	}
-	
+
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int)
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread,
+	 *      IEvaluationListener, int)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
-			checkDisposed();
-			checkEvaluating();
-			try {
-				evaluationStarted();
-				setListener(listener);
-				setHitBreakpoints(hitBreakpoints);
-				setResult(new EvaluationResult(this, snippet, thread));
-				checkThread();
-							
-				// no locals			
-				setLocalVariableTypeNames(new String[0]);
-				setLocalVariableNames(new String[0]);
-				setLocalVariableModifiers(new int[0]);
-				
-				setThis(thisContext);
-				
-				final boolean isStatic = false;
-				final boolean isConstructor = false;
-				final IType receivingType = JavaDebugUtils.resolveType(thisContext.getJavaType());
-				validateReceivingType(receivingType);
-				
-				// do the evaluation in a different thread
-				Runnable r = new Runnable() {
-					public void run() {
-						try {
-							LocalEvaluationEngine.this.getEvaluationContext().
-								evaluateCodeSnippet(
-								LocalEvaluationEngine.this.getSnippet(),
-								LocalEvaluationEngine.this.getLocalVariableTypeNames(),
-								LocalEvaluationEngine.this.getLocalVariableNames(),
-								LocalEvaluationEngine.this.getLocalVariableModifiers(),
-								receivingType,
-								isStatic,
-								isConstructor,
-								LocalEvaluationEngine.this,
-								null);
-						} catch (JavaModelException e) {
-							LocalEvaluationEngine.this.getResult().setException(new DebugException(e.getStatus()));
-						} finally {
-							LocalEvaluationEngine.this.evaluationComplete();
-						}
+	public void evaluate(String snippet, IJavaObject thisContext,
+			IJavaThread thread, IEvaluationListener listener,
+			int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		checkDisposed();
+		checkEvaluating();
+		try {
+			evaluationStarted();
+			setListener(listener);
+			setHitBreakpoints(hitBreakpoints);
+			setResult(new EvaluationResult(this, snippet, thread));
+			checkThread();
+
+			// no locals
+			setLocalVariableTypeNames(new String[0]);
+			setLocalVariableNames(new String[0]);
+			setLocalVariableModifiers(new int[0]);
+
+			setThis(thisContext);
+
+			final boolean isStatic = false;
+			final boolean isConstructor = false;
+			final IType receivingType = JavaDebugUtils.resolveType(thisContext
+					.getJavaType());
+			validateReceivingType(receivingType);
+
+			// do the evaluation in a different thread
+			Runnable r = new Runnable() {
+				public void run() {
+					try {
+						LocalEvaluationEngine.this
+								.getEvaluationContext()
+								.evaluateCodeSnippet(
+										LocalEvaluationEngine.this.getSnippet(),
+										LocalEvaluationEngine.this
+												.getLocalVariableTypeNames(),
+										LocalEvaluationEngine.this
+												.getLocalVariableNames(),
+										LocalEvaluationEngine.this
+												.getLocalVariableModifiers(),
+										receivingType, isStatic, isConstructor,
+										LocalEvaluationEngine.this, null);
+					} catch (JavaModelException e) {
+						LocalEvaluationEngine.this.getResult().setException(
+								new DebugException(e.getStatus()));
+					} finally {
+						LocalEvaluationEngine.this.evaluationComplete();
 					}
-				};
-				
-				Thread t = new Thread(r);
-				t.setDaemon(true);
-				t.start();
-			} catch (DebugException d) {
-				evaluationAborted();
-				throw d;
-			} catch (CoreException e) {
-				evaluationAborted();
-				throw new DebugException(e.getStatus());
-			}				
+				}
+			};
+
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			t.start();
+		} catch (DebugException d) {
+			evaluationAborted();
+			throw d;
+		} catch (CoreException e) {
+			evaluationAborted();
+			throw new DebugException(e.getStatus());
+		}
 	}
-	
+
 	/**
-	 * Throws an exception if this engine has already been 
-	 * disposed.
+	 * Throws an exception if this engine has already been disposed.
 	 * 
-	 * @exception DebugException if this engine has been disposed
+	 * @exception DebugException
+	 *                if this engine has been disposed
 	 */
 	protected void checkDisposed() throws DebugException {
 		if (isDisposed()) {
 			throw new DebugException(
-				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_context_has_been_disposed__7, null) 
-			);
+					new Status(
+							IStatus.ERROR,
+							JDIDebugModel.getPluginIdentifier(),
+							DebugException.REQUEST_FAILED,
+							EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_context_has_been_disposed__7,
+							null));
 		}
 	}
-	
+
 	/**
-	 * Throws an exception if this engine is already in an
-	 * evaluation.
+	 * Throws an exception if this engine is already in an evaluation.
 	 * 
-	 * @exception DebugException if this engine is currently
-	 *  performing an evaluation
+	 * @exception DebugException
+	 *                if this engine is currently performing an evaluation
 	 */
 	protected void checkEvaluating() throws DebugException {
 		if (isEvaluating()) {
-			throw new DebugException(
-				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Cannot perform nested evaluations.", null) //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR,
+					JDIDebugModel.getPluginIdentifier(),
+					DebugException.REQUEST_FAILED,
+					"Cannot perform nested evaluations.", null) //$NON-NLS-1$
 			);
 		}
-	}	
-	
+	}
+
 	/**
-	 * Throws an exception if this engine's current evaluation
-	 * thread is not suspended.
+	 * Throws an exception if this engine's current evaluation thread is not
+	 * suspended.
 	 * 
-	 * @exception DebugException if this engine's current evaluation
-	 *  thread is not suspended
+	 * @exception DebugException
+	 *                if this engine's current evaluation thread is not
+	 *                suspended
 	 */
 	protected void checkThread() throws DebugException {
 		if (!getThread().isSuspended()) {
 			throw new DebugException(
-				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_thread_must_be_suspended__8, null) 
-			);
+					new Status(
+							IStatus.ERROR,
+							JDIDebugModel.getPluginIdentifier(),
+							DebugException.REQUEST_FAILED,
+							EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___evaluation_thread_must_be_suspended__8,
+							null));
 		}
-	}	
+	}
 
 	/**
 	 * Deletes deployed class files, and clears state.
@@ -664,33 +714,43 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// wait for evaluation to complete
 			return;
 		}
-		List snippetFiles = getSnippetFiles();
-		Iterator iter = snippetFiles.iterator();
+		List<File> snippetFiles = getSnippetFiles();
+		Iterator<File> iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
-			File file = (File)iter.next();
+			File file = iter.next();
 			if (file.exists()) {
-				if (CODE_SNIPPET_NAME.equals(file.getName()) && ENGINE_COUNT > 0) {
-					continue; //do not delete the common file for other engines
+				if (CODE_SNIPPET_NAME.equals(file.getName())
+						&& ENGINE_COUNT > 0) {
+					continue; // do not delete the common file for other engines
 				}
 				if (!file.delete()) {
-					JDIDebugPlugin.log(
-						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-							MessageFormat.format("Unable to delete temporary evaluation class file {0}.", new String[] {file.getAbsolutePath()}), null)  //$NON-NLS-1$
-					);				
+					JDIDebugPlugin
+							.log(new Status(
+									IStatus.ERROR,
+									JDIDebugModel.getPluginIdentifier(),
+									DebugException.REQUEST_FAILED,
+									MessageFormat
+											.format("Unable to delete temporary evaluation class file {0}.", new Object[] { file.getAbsolutePath() }), null) //$NON-NLS-1$
+							);
 				}
 			}
 		}
-		List directories = getDirectories();
+		List<File> directories = getDirectories();
 		// remove directories in bottom up order
 		int i = directories.size() - 1;
 		while (i >= 0) {
-			File dir = (File)directories.get(i);
-			String[] listing= dir.list();
-			if (dir.exists() && listing != null && listing.length == 0 && !dir.delete()) {
-				JDIDebugPlugin.log(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format("Unable to delete temporary evaluation directory {0}.", new String[] {dir.getAbsolutePath()}), null)  //$NON-NLS-1$
-				);
+			File dir = directories.get(i);
+			String[] listing = dir.list();
+			if (dir.exists() && listing != null && listing.length == 0
+					&& !dir.delete()) {
+				JDIDebugPlugin
+						.log(new Status(
+								IStatus.ERROR,
+								JDIDebugModel.getPluginIdentifier(),
+								DebugException.REQUEST_FAILED,
+								MessageFormat
+										.format("Unable to delete temporary evaluation directory {0}.", new Object[] { dir.getAbsolutePath() }), null) //$NON-NLS-1$
+						);
 			}
 			i--;
 		}
@@ -701,7 +761,6 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setResult(null);
 		setEvaluationContext(null);
 	}
-	
 
 	/**
 	 * Resets this engine for another evaluation.
@@ -711,35 +770,32 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		setStackFrame(null);
 		setListener(null);
 	}
-	
+
 	/**
-	 * Returns the listener to notify when the current
-	 * evaluation is complete.
+	 * Returns the listener to notify when the current evaluation is complete.
 	 * 
-	 * @return the listener to notify when the current
-	 * evaluation is complete
+	 * @return the listener to notify when the current evaluation is complete
 	 */
 	protected IEvaluationListener getListener() {
 		return fListener;
 	}
 
 	/**
-	 * Sets the listener to notify when the current
-	 * evaluation is complete.
+	 * Sets the listener to notify when the current evaluation is complete.
 	 * 
-	 * @param listener the listener to notify when the current
-	 *  evaluation is complete
+	 * @param listener
+	 *            the listener to notify when the current evaluation is complete
 	 */
 	private void setListener(IEvaluationListener listener) {
 		fListener = listener;
 	}
 
 	/**
-	 * Returns the stack frame context for the current
-	 * evaluation, or <code>null</code> if none.
+	 * Returns the stack frame context for the current evaluation, or
+	 * <code>null</code> if none.
 	 * 
-	 * @return the stack frame context for the current
-	 *  evaluation, or <code>null</code> if none
+	 * @return the stack frame context for the current evaluation, or
+	 *         <code>null</code> if none
 	 */
 	protected IJavaStackFrame getStackFrame() {
 		return fStackFrame;
@@ -748,24 +804,22 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * Sets the stack frame context for the current evaluation.
 	 * 
-	 * @param stackFrame stack frame context or <code>null</code>
-	 *   if none
+	 * @param stackFrame
+	 *            stack frame context or <code>null</code> if none
 	 */
 	private void setStackFrame(IJavaStackFrame stackFrame) {
 		fStackFrame = stackFrame;
 	}
 
 	/**
-	 * Returns the thread in which the current evaluation is
-	 * to be executed.
+	 * Returns the thread in which the current evaluation is to be executed.
 	 * 
-	 * @return the thread in which the current evaluation is
-	 *  to be executed
+	 * @return the thread in which the current evaluation is to be executed
 	 */
 	protected IJavaThread getThread() {
 		return getResult().getThread();
 	}
-	
+
 	/**
 	 * Returns the code snippet being evaluated.
 	 * 
@@ -773,7 +827,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	protected String getSnippet() {
 		return getResult().getSnippet();
-	}	
+	}
 
 	/**
 	 * Returns the current evaluation result.
@@ -787,30 +841,31 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * Sets the current evaluation result.
 	 * 
-	 * @param result the current evaluation result
+	 * @param result
+	 *            the current evaluation result
 	 */
 	private void setResult(EvaluationResult result) {
 		fResult = result;
 	}
-	
+
 	/**
-	 * Deploys the given class files to this engine's
-	 * output location, and adds the files to this
-	 * engines list of temporary files to be deleted
-	 * when disposed.
-	 *
-	 * @exception DebugException if this fails due to a
-	 * lower level exception.
+	 * Deploys the given class files to this engine's output location, and adds
+	 * the files to this engines list of temporary files to be deleted when
+	 * disposed.
+	 * 
+	 * @exception DebugException
+	 *                if this fails due to a lower level exception.
 	 */
-	protected void deploy(byte[][] classFiles, String[][] classFileNames) throws DebugException {
+	protected void deploy(byte[][] classFiles, String[][] classFileNames)
+			throws DebugException {
 		for (int i = 0; i < classFiles.length; i++) {
 			String[] compoundName = classFileNames[i];
-			//create required folders
+			// create required folders
 			File dir = LocalEvaluationEngine.this.getOutputDirectory();
 			try {
 				String pkgDirName = dir.getCanonicalPath();
 				for (int j = 0; j < (compoundName.length - 1); j++) {
-					pkgDirName += File.separator +  compoundName[j];
+					pkgDirName += File.separator + compoundName[j];
 					File pkgDir = new File(pkgDirName);
 					if (!pkgDir.exists()) {
 						pkgDir.mkdir();
@@ -828,47 +883,51 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				LocalEvaluationEngine.this.addSnippetFile(classFile);
 			} catch (IOException e) {
 				throw new DebugException(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-						MessageFormat.format(EvaluationMessages.LocalEvaluationEngine__0__occurred_deploying_class_file_for_evaluation_9, new String[] {e.toString()}), e) 
-				);
+						new Status(
+								IStatus.ERROR,
+								JDIDebugModel.getPluginIdentifier(),
+								DebugException.REQUEST_FAILED,
+								MessageFormat
+										.format(EvaluationMessages.LocalEvaluationEngine__0__occurred_deploying_class_file_for_evaluation_9,
+												new Object[] { e.toString() }),
+								e));
 			}
-		}	
-	}	
-	
+		}
+	}
+
 	/**
-	 * Adds the given file to this engine's collection 
-	 * of deployed snippet class files, which are to
-	 * be deleted when this engine is diposed.
+	 * Adds the given file to this engine's collection of deployed snippet class
+	 * files, which are to be deleted when this engine is disposed.
 	 * 
-	 * @param File snippet class file
+	 * @param File
+	 *            snippet class file
 	 */
 	private void addSnippetFile(File file) {
 		if (fSnippetFiles == null) {
-			fSnippetFiles = new ArrayList();
+			fSnippetFiles = new ArrayList<File>();
 		}
 		fSnippetFiles.add(file);
 	}
-	
+
 	/**
-	 * Adds the given file to this engine's collection 
-	 * of cerated directories, which are to
-	 * be deleted when this engine is diposed.
+	 * Adds the given file to this engine's collection of created directories,
+	 * which are to be deleted when this engine is disposed.
 	 * 
-	 * @param file directory created for class file deployment
+	 * @param file
+	 *            directory created for class file deployment
 	 */
 	private void addDirectory(File file) {
 		if (fDirectories == null) {
-			fDirectories = new ArrayList();
+			fDirectories = new ArrayList<File>();
 		}
 		fDirectories.add(file);
-	}	
+	}
 
 	/**
-	 * Returns an evaluation context for this evaluation
-	 * engine. An evaluation context is associted with a
-	 * specific Java project. The evaluation context is
-	 * created lazily on the first access.
-	 *  
+	 * Returns an evaluation context for this evaluation engine. An evaluation
+	 * context is associated with a specific Java project. The evaluation context
+	 * is created lazily on the first access.
+	 * 
 	 * @return evaluation context
 	 */
 	protected IEvaluationContext getEvaluationContext() {
@@ -877,62 +936,59 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		}
 		return fEvaluationContext;
 	}
-	
+
 	/**
-	 * Sets the evaluation context for this evaluation
-	 * engine.
-	 *  
-	 * @param context evaluation context
+	 * Sets the evaluation context for this evaluation engine.
+	 * 
+	 * @param context
+	 *            evaluation context
 	 */
 	private void setEvaluationContext(IEvaluationContext context) {
 		fEvaluationContext = context;
 	}
-	
 
 	/**
-	 * Returns a collection of snippet class file deployed by
-	 * this evaluation engine, possibly empty.
+	 * Returns a collection of snippet class file deployed by this evaluation
+	 * engine, possibly empty.
 	 * 
 	 * @return deployed class files
 	 */
-	protected List getSnippetFiles() {
+	protected List<File> getSnippetFiles() {
 		if (fSnippetFiles == null) {
 			return Collections.EMPTY_LIST;
 		}
 		return fSnippetFiles;
 	}
-	
+
 	/**
-	 * Returns a collection of directories created by
-	 * this evaluation engine, possibly empty.
+	 * Returns a collection of directories created by this evaluation engine,
+	 * possibly empty.
 	 * 
 	 * @return directories created when deploying class files
 	 */
-	protected List getDirectories() {
+	protected List<File> getDirectories() {
 		if (fDirectories == null) {
 			return Collections.EMPTY_LIST;
-		} 
+		}
 		return fDirectories;
-	}	
-	
+	}
+
 	/**
-	 * Returns whether this evaluation engine has been
-	 * disposed.
+	 * Returns whether this evaluation engine has been disposed.
 	 * 
-	 * @return whether this evaluation engine has been
-	 *  disposed
+	 * @return whether this evaluation engine has been disposed
 	 */
 	protected boolean isDisposed() {
 		return fDisposed;
 	}
-	
+
 	/**
-	 * The evaluation is complete. Notify the current listener
-	 * and reset for the next evaluation.
+	 * The evaluation is complete. Notify the current listener and reset for the
+	 * next evaluation.
 	 */
 	protected void evaluationComplete() {
 		// only notify if plug-in not yet shutdown (bug# 8693)
-		if (JDIDebugPlugin.getDefault() != null)  {
+		if (JDIDebugPlugin.getDefault() != null) {
 			getListener().evaluationComplete(getResult());
 		}
 		evaluationEnded();
@@ -941,16 +997,16 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// if the engine was disposed during an evaluation
 			// do the cleanup now
 			dispose();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Increments the evaluation counter.
 	 */
 	private void evaluationStarted() {
 		fEvaluationCount++;
 	}
-	
+
 	/**
 	 * Decrements the evaluation counter.
 	 */
@@ -958,20 +1014,18 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (fEvaluationCount > 0) {
 			fEvaluationCount--;
 		}
-	}	
-	
+	}
+
 	/**
-	 * Returns whether this engine is currently in the
-	 * midst of an evaluation.
+	 * Returns whether this engine is currently in the midst of an evaluation.
 	 */
 	protected boolean isEvaluating() {
 		return fEvaluationCount > 0;
 	}
-	
+
 	/**
-	 * Called when an evaluation is aborted due to an
-	 * exception. Decrements the evalution count, and
-	 * disposes this engine if the target VM disconnected
+	 * Called when an evaluation is aborted due to an exception. Decrements the
+	 * evaluation count, and disposes this engine if the target VM disconnected
 	 * or terminated during the evaluation attempt.
 	 */
 	private void evaluationAborted() {
@@ -980,23 +1034,25 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// if the engine was disposed during an evaluation
 			// do the cleanup now
 			dispose();
-		}		
+		}
 	}
-	
+
 	/**
-	 * Constructs and returns a new instance of the specified
-	 * class on the  target VM.
+	 * Constructs and returns a new instance of the specified class on the
+	 * target VM.
 	 * 
-	 * @param className fully qualified class name
+	 * @param className
+	 *            fully qualified class name
 	 * @return a new instance on the target, as an <code>IJavaValue</code>
-	 * @exception DebugException if creation fails
+	 * @exception DebugException
+	 *                if creation fails
 	 */
 	protected IJavaObject newInstance(String className) throws DebugException {
 		IJavaObject object = null;
 		IJavaClassType clazz = null;
 		IJavaType[] types = getDebugTarget().getJavaTypes(className);
 		if (types != null && types.length > 0) {
-			clazz = (IJavaClassType)types[0];
+			clazz = (IJavaClassType) types[0];
 		}
 		if (clazz == null) {
 			// The class is not loaded on the target VM.
@@ -1004,48 +1060,59 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			types = getDebugTarget().getJavaTypes("java.lang.Class"); //$NON-NLS-1$
 			IJavaClassType classClass = null;
 			if (types != null && types.length > 0) {
-				classClass = (IJavaClassType)types[0]; 
+				classClass = (IJavaClassType) types[0];
 			}
 			if (classClass == null) {
 				// unable to load the class
 				throw new DebugException(
-					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_instantiate_code_snippet_class__11, null) 
-				);				
+						new Status(
+								IStatus.ERROR,
+								JDIDebugModel.getPluginIdentifier(),
+								DebugException.REQUEST_FAILED,
+								EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___unable_to_instantiate_code_snippet_class__11,
+								null));
 			}
-			IJavaValue[] args = new IJavaValue[] {getDebugTarget().newValue(className)};
-			IJavaObject classObject = (IJavaObject)classClass.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", args, getThread()); //$NON-NLS-2$ //$NON-NLS-1$
-			object = (IJavaObject)classObject.sendMessage("newInstance", "()Ljava/lang/Object;", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
+			IJavaValue[] args = new IJavaValue[] { getDebugTarget().newValue(
+					className) };
+			IJavaObject classObject = (IJavaObject) classClass
+					.sendMessage(
+							"forName", "(Ljava/lang/String;)Ljava/lang/Class;", args, getThread()); //$NON-NLS-2$ //$NON-NLS-1$
+			object = (IJavaObject) classObject
+					.sendMessage(
+							"newInstance", "()Ljava/lang/Object;", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 		} else {
 			object = clazz.newInstance("<init>", null, getThread()); //$NON-NLS-1$
 		}
 		return object;
 	}
-	
+
 	/**
-	 * Interpretts and returns the result of the running the snippet
-	 * class file. The type of the result is described by an instance of
-	 * <code>java.lang.Class</code>. The value is interpretted based
-	 * on the result type.
+	 * Interprets and returns the result of the running the snippet class file.
+	 * The type of the result is described by an instance of
+	 * <code>java.lang.Class</code>. The value is interpreted based on the
+	 * result type.
 	 * <p>
-	 * Objects as well as primitve data types (boolean, int, etc.),
-	 * have class objects, which are created by the VM. If the class object
-	 * represents a primitive data type, then the associated value
-	 * is stored in an instance of its "object" class. For example, when 
-	 * the result type is the class object for <code>int</code>, the result
-	 * object is an instance of <code>java.lang.Integer</code>, and the
-	 * actual <code>int</code> is stored in the </code>intValue()</code>.
-	 * When the result type is the class object for <code>java.lang.Integer</code>
-	 * the result object is an instance of <code>java.lang.Integer</code>,
-	 * to be interpretted as a <ocde>java.lang.Integer</code>.
+	 * Objects as well as primitive data types (boolean, int, etc.), have class
+	 * objects, which are created by the VM. If the class object represents a
+	 * primitive data type, then the associated value is stored in an instance
+	 * of its "object" class. For example, when the result type is the class
+	 * object for <code>int</code>, the result object is an instance of
+	 * <code>java.lang.Integer</code>, and the actual <code>int</code> is stored
+	 * in the </code>intValue()</code>. When the result type is the class object
+	 * for <code>java.lang.Integer</code> the result object is an instance of
+	 * <code>java.lang.Integer</code>, to be interpreted as a
+	 * <code>java.lang.Integer</code>.
 	 * </p>
 	 * 
-	 * @param resultType the class of the result
-	 * @param resultValue the value of ther result, to be interpretted
-	 *  based on resultType
-	 * @return the result of running the code snipped class file
+	 * @param resultType
+	 *            the class of the result
+	 * @param resultValue
+	 *            the value of the result, to be interpreted based on
+	 *            resultType
+	 * @return the result of running the code snippet class file
 	 */
-	protected IJavaValue convertResult(IJavaClassObject resultType, IJavaValue result) throws DebugException {
+	protected IJavaValue convertResult(IJavaClassObject resultType,
+			IJavaValue result) throws DebugException {
 		if (resultType == null) {
 			// there was an exception or compilation problem - no result
 			return null;
@@ -1062,35 +1129,38 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			// null result
 			return result;
 		}
-		
+
 		if (sig.length() == 1) {
 			// primitive type - find the instance variable with the
 			// signature of the result type we are looking for
 			IVariable[] vars = result.getVariables();
 			IJavaVariable var = null;
-			for (int i = 0; i < vars.length; i++) {
-				IJavaVariable jv = (IJavaVariable)vars[i];
+			for (IVariable var2 : vars) {
+				IJavaVariable jv = (IJavaVariable) var2;
 				if (!jv.isStatic() && jv.getSignature().equals(sig)) {
 					var = jv;
 					break;
 				}
 			}
 			if (var != null) {
-				return (IJavaValue)var.getValue();
+				return (IJavaValue) var.getValue();
 			}
 		} else {
 			// an object
 			return result;
 		}
 		throw new DebugException(
-			new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.REQUEST_FAILED, EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___internal_error_retreiving_result__17, null) 
-		);
+				new Status(
+						IStatus.ERROR,
+						JDIDebugModel.getPluginIdentifier(),
+						DebugException.REQUEST_FAILED,
+						EvaluationMessages.LocalEvaluationEngine_Evaluation_failed___internal_error_retreiving_result__17,
+						null));
 	}
-	
+
 	/**
-	 * Returns the modifiers of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Returns the modifiers of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
 	 * @return array of modifiers
 	 */
@@ -1099,90 +1169,95 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * Sets the modifiers of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Sets the modifiers of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
-	 * @param localVariableModifiers array of modifiers
+	 * @param localVariableModifiers
+	 *            array of modifiers
 	 */
 	private void setLocalVariableModifiers(int[] localVariableModifiers) {
 		fLocalVariableModifiers = localVariableModifiers;
 	}
-	
+
 	/**
-	 * Returns the names of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Returns the names of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
-	 * @param array of names
-	 */	
+	 * @param array
+	 *            of names
+	 */
 	private String[] getLocalVariableNames() {
 		return fLocalVariableNames;
 	}
-	
+
 	/**
-	 * Sets the names of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Sets the names of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
-	 * @param localVariableNames array of names
+	 * @param localVariableNames
+	 *            array of names
 	 */
 	private void setLocalVariableNames(String[] localVariableNames) {
 		fLocalVariableNames = localVariableNames;
 	}
 
 	/**
-	 * Returns the type names of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Returns the type names of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
-	 * @param array of type names
+	 * @param array
+	 *            of type names
 	 */
 	private String[] getLocalVariableTypeNames() {
 		return fLocalVariableTypeNames;
 	}
 
 	/**
-	 * Sets the type names of the local variables
-	 * visible in this evaluation, possibly empty.
+	 * Sets the type names of the local variables visible in this evaluation,
+	 * possibly empty.
 	 * 
-	 * @param localVariableTypeNames array of type names
+	 * @param localVariableTypeNames
+	 *            array of type names
 	 */
 	private void setLocalVariableTypeNames(String[] localVariableTypeNames) {
 		fLocalVariableTypeNames = localVariableTypeNames;
-	}	
-	
+	}
+
 	/**
-	 * Sets the receiver context for the associated evaluation,
-	 * possibly <code>null</code> if the evaluation is
-	 * in the context of a static method or there is
-	 * no object context.
+	 * Sets the receiver context for the associated evaluation, possibly
+	 * <code>null</code> if the evaluation is in the context of a static method
+	 * or there is no object context.
 	 * 
-	 * @param thisObject the receiver content of the
-	 *  associated evaluation, or <code>null</code>
+	 * @param thisObject
+	 *            the receiver content of the associated evaluation, or
+	 *            <code>null</code>
 	 */
 	private void setThis(IJavaObject thisObject) {
 		fThis = thisObject;
 	}
-	
+
 	/**
-	 * Returns the receiver context for the associated evaluation,
-	 * or <code>null</code> if the evaluation is
-	 * in the context of a static method or there is
-	 * no object context.
+	 * Returns the receiver context for the associated evaluation, or
+	 * <code>null</code> if the evaluation is in the context of a static method
+	 * or there is no object context.
 	 * 
-	 * @return the receiver context of the associated
-	 *  evaluation or <code>null</code>
+	 * @return the receiver context of the associated evaluation or
+	 *         <code>null</code>
 	 */
 	private IJavaObject getThis() {
 		return fThis;
 	}
-	
+
 	/**
-	 * Returns a copy of the type name with '$' replaced by
-	 * '.', or returns <code>null</code> if the given type
-	 * name refers to an anonymous inner class. 
+	 * Returns a copy of the type name with '$' replaced by '.', or returns
+	 * <code>null</code> if the given type name refers to an anonymous inner
+	 * class.
 	 * 
-	 * @param typeName a fully qualified type name
-	 * @return a copy of the type name with '$' replaced by
-	 * '.', or returns <code>null</code> if the given type
-	 * name refers to an anonymous inner class.
+	 * @param typeName
+	 *            a fully qualified type name
+	 * @return a copy of the type name with '$' replaced by '.', or returns
+	 *         <code>null</code> if the given type name refers to an anonymous
+	 *         inner class.
 	 */
 	protected String getTranslatedTypeName(String typeName) {
 		int index = typeName.lastIndexOf('$');
@@ -1203,30 +1278,30 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * Returns an array of simple type names that are
-	 * part of the given type's qualified name. For
-	 * example, if the given name is <code>x.y.A$B</code>,
+	 * Returns an array of simple type names that are part of the given type's
+	 * qualified name. For example, if the given name is <code>x.y.A$B</code>,
 	 * an array with <code>["A", "B"]</code> is returned.
 	 * 
-	 * @param typeName fully qualified type name
+	 * @param typeName
+	 *            fully qualified type name
 	 * @return array of nested type names
 	 */
 	protected String[] getNestedTypeNames(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
-			typeName= typeName.substring(index + 1);
+			typeName = typeName.substring(index + 1);
 		}
 		index = typeName.indexOf('$');
-		ArrayList list = new ArrayList(1);
+		ArrayList<String> list = new ArrayList<String>(1);
 		while (index >= 0) {
 			list.add(typeName.substring(0, index));
 			typeName = typeName.substring(index + 1);
 			index = typeName.indexOf('$');
 		}
 		list.add(typeName);
-		return (String[])list.toArray(new String[list.size()]);	
+		return list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * @see IClassFileEvaluationEngine#getImports()
 	 */
@@ -1240,25 +1315,24 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	public void setImports(String[] imports) {
 		getEvaluationContext().setImports(imports);
 	}
-	
+
 	/**
-	 * Sets the name of the code snippet to instantiate
-	 * to run the current evaluation.
+	 * Sets the name of the code snippet to instantiate to run the current
+	 * evaluation.
 	 * 
-	 * @param name the name of the deployed code snippet
-	 *  to instantiate and run
+	 * @param name
+	 *            the name of the deployed code snippet to instantiate and run
 	 */
 	private void setCodeSnippetClassName(String name) {
 		fCodeSnippetClassName = name;
 	}
 
 	/**
-	 * Returns the name of the code snippet to instantiate
-	 * to run the current evaluation.
+	 * Returns the name of the code snippet to instantiate to run the current
+	 * evaluation.
 	 * 
-	 * @return the name of the deployed code snippet
-	 *  to instantiate and run
-	 */	
+	 * @return the name of the deployed code snippet to instantiate and run
+	 */
 	protected String getCodeSnippetClassName() {
 		return fCodeSnippetClassName;
 	}
@@ -1281,7 +1355,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 
 	/**
 	 * Sets whether to hit breakpoints in the evaluation thread.
-	 * @param hit whether to hit breakpoints in the evaluation thread
+	 * 
+	 * @param hit
+	 *            whether to hit breakpoints in the evaluation thread
 	 */
 	private void setHitBreakpoints(boolean hit) {
 		fHitBreakpoints = hit;

@@ -24,19 +24,20 @@ public class ObjectFilter extends ViewerFilter {
 	/**
 	 * Objects to filter
 	 */
-	protected List fFilter;
+	protected List<?> fFilter;
 	
 	/**
 	 * Creates a new filter that filters the given 
 	 * objects.
 	 */
-	public ObjectFilter(List objects) {
+	public ObjectFilter(List<?> objects) {
 		fFilter = objects;
 	}
 	
 	/**
 	 * @see ViewerFilter#select(Viewer, Object, Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return !fFilter.contains(element);
 	}

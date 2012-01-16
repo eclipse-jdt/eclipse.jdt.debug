@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,12 +29,14 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeContainerComparator;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Default user classpath entries for a Java project
  */
+@SuppressWarnings("deprecation")
 public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry {
 	
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.defaultClasspath"; //$NON-NLS-1$
@@ -64,6 +65,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
+	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		memento.setAttribute("project", getJavaProject().getElementName()); //$NON-NLS-1$
 		memento.setAttribute("exportedEntriesOnly", Boolean.toString(fExportedEntriesOnly)); //$NON-NLS-1$
@@ -106,6 +108,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return getProject().getLocation().toOSString();
 	}
@@ -113,6 +116,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return getProject().getFullPath();
 	}
@@ -120,6 +124,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return getProject();
 	}
@@ -129,8 +134,8 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
-		List classpathEntries = new ArrayList(5);
-		List expanding = new ArrayList(5);
+		List<Object> classpathEntries = new ArrayList<Object>(5);
+		List<IClasspathEntry> expanding = new ArrayList<IClasspathEntry>(5);
 		expandProject(entry, classpathEntries, expanding);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
@@ -143,13 +148,13 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			}
 		}
 		// remove bootpath entries - this is a default user classpath
-		List ordered = new ArrayList(runtimeEntries.length);
+		List<IRuntimeClasspathEntry> ordered = new ArrayList<IRuntimeClasspathEntry>(runtimeEntries.length);
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			if (runtimeEntries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				ordered.add(runtimeEntries[i]);
 			} 
 		}
-		return (IRuntimeClasspathEntry[]) ordered.toArray(new IRuntimeClasspathEntry[ordered.size()]);		
+		return ordered.toArray(new IRuntimeClasspathEntry[ordered.size()]);		
 	}
 	
 	/**
@@ -163,7 +168,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * expanded (to detect cycles)
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	private void expandProject(IClasspathEntry projectEntry, List expandedPath, List expanding) throws CoreException {
+	private void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding) throws CoreException {
 		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
@@ -182,7 +187,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		}
 		
 		IClasspathEntry[] buildPath = project.getRawClasspath();
-		List unexpandedPath = new ArrayList(buildPath.length);
+		List<IClasspathEntry> unexpandedPath = new ArrayList<IClasspathEntry>(buildPath.length);
 		boolean projectAdded = false;
 		for (int i = 0; i < buildPath.length; i++) {
 			IClasspathEntry classpathEntry = buildPath[i];
@@ -192,7 +197,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 					unexpandedPath.add(projectEntry);
 				}
 			} else {
-				// add exported entires, as configured
+				// add exported entries, as configured
 				if (classpathEntry.isExported()) {
 					unexpandedPath.add(classpathEntry);
 				} else if (!isExportedEntriesOnly() || project.equals(getJavaProject())) {
@@ -203,9 +208,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		}
 		// 3. expand each project entry (except for the root project)
 		// 4. replace each container entry with a runtime entry associated with the project
-		Iterator iter = unexpandedPath.iterator();
+		Iterator<IClasspathEntry> iter = unexpandedPath.iterator();
 		while (iter.hasNext()) {
-			IClasspathEntry entry = (IClasspathEntry)iter.next();
+			IClasspathEntry entry = iter.next();
 			if (entry == projectEntry) {
 				expandedPath.add(entry);
 			} else {
@@ -311,6 +316,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
@@ -319,13 +325,14 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 */
 	public String getName() {
 		if (isExportedEntriesOnly()) {
-			return MessageFormat.format(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});
+			return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});
 		}
-		return MessageFormat.format(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()}); 
+		return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()}); 
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DefaultProjectClasspathEntry) {
 			DefaultProjectClasspathEntry entry = (DefaultProjectClasspathEntry) obj;
@@ -337,6 +344,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}

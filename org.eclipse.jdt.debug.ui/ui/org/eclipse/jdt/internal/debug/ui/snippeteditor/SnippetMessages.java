@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import org.eclipse.osgi.util.NLS;
 
 public class SnippetMessages {
 
@@ -45,7 +46,7 @@ public class SnippetMessages {
 		}
 		if (arg == null)
 			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+		return NLS.bind(format, new Object[] { arg });
 	}
 
 	static ResourceBundle getBundle() {

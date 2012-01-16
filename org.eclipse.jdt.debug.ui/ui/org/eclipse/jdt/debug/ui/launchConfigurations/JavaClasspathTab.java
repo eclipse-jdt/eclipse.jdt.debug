@@ -54,6 +54,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -63,8 +64,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration tab that displays and edits the user and
@@ -147,7 +146,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * @since 3.0
 	 */
 	protected void createPathButtons(Composite pathButtonComp) {
-		List advancedActions = new ArrayList(5);
+		List<RuntimeClasspathAction> advancedActions = new ArrayList<RuntimeClasspathAction>(5);
 		
 		createButton(pathButtonComp, new MoveUpAction(fClasspathViewer));
 		createButton(pathButtonComp, new MoveDownAction(fClasspathViewer));
@@ -171,7 +170,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		action = new AttachSourceAction(null, SWT.RADIO);								
 		advancedActions.add(action);
 		
-		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
+		IAction[] adv = advancedActions.toArray(new IAction[advancedActions.size()]);
 		createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
 
 		action = new EditClasspathEntryAction(fClasspathViewer, getLaunchConfiguration());
@@ -204,6 +203,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		refresh(configuration);
 		fClasspathViewer.expandToLevel(2);
@@ -212,6 +212,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		try {
 			boolean useDefault= workingCopy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
@@ -229,6 +230,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/**
 	 * Refreshes the classpath entries based on the current state of the given
 	 * launch configuration.
+	 * @param configuration the configuration
 	 */
 	private void refresh(ILaunchConfiguration configuration) {
 		boolean useDefault = true;
@@ -290,7 +292,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				try {
-					List mementos = new ArrayList(classpath.length);
+					List<String> mementos = new ArrayList<String>(classpath.length);
 					for (int i = 0; i < classpath.length; i++) {
 						IRuntimeClasspathEntry entry = classpath[i];
 						mementos.add(entry.getMemento());
@@ -311,7 +313,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	private IRuntimeClasspathEntry[] getCurrentClasspath() {
 		IClasspathEntry[] boot = fModel.getEntries(ClasspathModel.BOOTSTRAP);
 		IClasspathEntry[] user = fModel.getEntries(ClasspathModel.USER);
-		List entries = new ArrayList(boot.length + user.length);
+		List<IRuntimeClasspathEntry> entries = new ArrayList<IRuntimeClasspathEntry>(boot.length + user.length);
 		IClasspathEntry bootEntry;
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < boot.length; i++) {
@@ -343,7 +345,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 				entries.add(entry);
 			}
 		}			
-		return (IRuntimeClasspathEntry[]) entries.toArray(new IRuntimeClasspathEntry[entries.size()]);
+		return entries.toArray(new IRuntimeClasspathEntry[entries.size()]);
 	}
 
 	/**
@@ -387,11 +389,15 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaClasspathTab"; //$NON-NLS-1$
 	}
 	
 	/**
+	 * Returns the image for this tab, or <code>null</code> if none
+	 * 
+	 * @return the image for this tab, or <code>null</code> if none
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public static Image getClasspathImage() {
@@ -400,6 +406,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	
 	/**
 	 * Sets the launch configuration for this classpath tab
+	 * @param config the backing {@link ILaunchConfiguration}
 	 */
 	private void setLaunchConfiguration(ILaunchConfiguration config) {
 		fLaunchConfiguration = config;
@@ -407,6 +414,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	
 	/**
 	 * Returns the current launch configuration
+	 * @return the backing {@link ILaunchConfiguration}
 	 */
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fLaunchConfiguration;
@@ -415,6 +423,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
@@ -425,6 +434,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return getClasspathImage();
 	}
@@ -432,6 +442,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -447,15 +458,15 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				if (!project.exists()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {projectName})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {projectName})); 
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {projectName})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {projectName})); 
 					return false;
 				}
 			} else {
-				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
+				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
 				return false;
 			}
 		}
@@ -466,14 +477,14 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 			type = entries[i].getType();
 			if (type == IRuntimeClasspathEntry.ARCHIVE) {
 				if(!entries[i].getPath().isAbsolute())	{
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_Invalid_runtime_classpath_1, new String[]{entries[i].getPath().toString()}));
 					return false;
 				}
 			}
 			if(type == IRuntimeClasspathEntry.PROJECT) {
 				IResource res = entries[i].getResource();
 				if(res != null && !res.isAccessible()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaClasspathTab_1, new String[]{res.getName()}));
+					setErrorMessage(NLS.bind(LauncherMessages.JavaClasspathTab_1, new String[]{res.getName()}));
 					return false;
 				}
 			}

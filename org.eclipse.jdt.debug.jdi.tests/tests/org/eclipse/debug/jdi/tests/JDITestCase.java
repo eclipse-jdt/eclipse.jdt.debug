@@ -33,6 +33,7 @@ public class JDITestCase extends TestCase {
 	 * Override to run the test and assert its state.
 	 * @exception Throwable if any exception is thrown
 	 */
+	@Override
 	protected void runTest() throws Throwable {
 		Method runMethod = null;
 		try {
@@ -59,12 +60,14 @@ public class JDITestCase extends TestCase {
 	/**
 	 * Init tests
 	 */
+	@Override
 	protected void setUp() {
 		// Ignore setUp since it is done once for all tests in the test suite
 	}
 	/**
 	 * Tears down the fixture.
 	 */
+	@Override
 	protected void tearDown() {
 		// Ignore tearDown since it is done once for all tests in the test suite
 	}
@@ -72,6 +75,7 @@ public class JDITestCase extends TestCase {
 	 * Returns a string representation of the test case
 	 * @see junit.framework.TestCase#toString()
 	 */
+	@Override
 	public String toString() {
 		return fTest.getClass().getName() + "." + getName() + "()";
 	}

@@ -28,6 +28,7 @@ import org.eclipse.debug.jdi.tests.ClassTypeTest;
  * as well as its behavior. So if this class or one of the types in this
  * package is changed, the corresponding tests must also be changed.
  */
+@SuppressWarnings("unused")
 public class MainClass extends Date implements Runnable, Printable {
 
 	private static byte[] byteArray = new byte[0];

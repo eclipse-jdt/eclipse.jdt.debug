@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,13 +26,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public Object addEntry(Object entry) {
 		if (entry instanceof ClasspathGroup) {
 			if (!childEntries.contains(entry)) {
-				childEntries.add(entry);
+				childEntries.add((ClasspathGroup) entry);
 				return entry;
 			}
 			return null;
 		}
 		ClasspathEntry newEntry= createEntry((IRuntimeClasspathEntry)entry, null);
-		Iterator entries= childEntries.iterator();
+		Iterator<IClasspathEntry> entries= childEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof ClasspathGroup) {
@@ -61,7 +61,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 			
 		ClasspathEntry newEntry= createEntry(entry, entryParent);
-		Iterator entries= childEntries.iterator();
+		Iterator<IClasspathEntry> entries= childEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof ClasspathGroup) {
@@ -84,7 +84,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 * Returns the entries of the given type, or an empty
 	 * collection if none.
 	 * 
-	 * @param entryType
+	 * @param entryType the kind of the entries to get
 	 * @return the entries of the given type, or an empty
 	 * collection if none
 	 */

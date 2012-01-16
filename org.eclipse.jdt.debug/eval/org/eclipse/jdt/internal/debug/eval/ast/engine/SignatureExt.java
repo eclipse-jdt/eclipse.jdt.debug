@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,16 +18,21 @@ import org.eclipse.jdt.internal.core.util.Util;
 
 public class SignatureExt {
 
-	public static char[][] getTypeSuperClassInterfaces(char[] typeSignature) throws IllegalArgumentException {
+	public static char[][] getTypeSuperClassInterfaces(char[] typeSignature)
+			throws IllegalArgumentException {
 		try {
 			int length = typeSignature.length;
-			if (length == 0) return CharOperation.NO_CHAR_CHAR;
+			if (length == 0)
+				return CharOperation.NO_CHAR_CHAR;
 			int i = 0;
 			if (typeSignature[0] == Signature.C_GENERIC_START) {
 				i++; // leading '<'
-				while (i < length && typeSignature[i] != Signature.C_GENERIC_END) {
-					i = CharOperation.indexOf(Signature.C_COLON, typeSignature, i);
-					if (i < 0 || i >= length) throw new IllegalArgumentException();
+				while (i < length
+						&& typeSignature[i] != Signature.C_GENERIC_END) {
+					i = CharOperation.indexOf(Signature.C_COLON, typeSignature,
+							i);
+					if (i < 0 || i >= length)
+						throw new IllegalArgumentException();
 					// iterate over bounds
 					nextBound: while (typeSignature[i] == ':') {
 						i++; // skip colon
@@ -38,15 +43,17 @@ public class SignatureExt {
 						i++; // position at start of next param if any
 					}
 				}
-				if (i < 0 || i >= length) throw new IllegalArgumentException();
+				if (i < 0 || i >= length)
+					throw new IllegalArgumentException();
 				i++; // trailing '>'
 			}
-			ArrayList superList= new ArrayList();
+			ArrayList<char[]> superList = new ArrayList<char[]>();
 			while (i < length) {
-				int superStart= i;
-				i= Util.scanTypeSignature(typeSignature, i);
+				int superStart = i;
+				i = Util.scanTypeSignature(typeSignature, i);
 				i++;
-				superList.add(CharOperation.subarray(typeSignature, superStart, i));
+				superList.add(CharOperation.subarray(typeSignature, superStart,
+						i));
 			}
 			char[][] result;
 			superList.toArray(result = new char[superList.size()][]);
@@ -57,8 +64,10 @@ public class SignatureExt {
 		throw new IllegalArgumentException();
 	}
 
-	public static String[] getTypeSuperClassInterfaces(String typeSignature) throws IllegalArgumentException {
-		char[][] params = getTypeSuperClassInterfaces(typeSignature.toCharArray());
+	public static String[] getTypeSuperClassInterfaces(String typeSignature)
+			throws IllegalArgumentException {
+		char[][] params = getTypeSuperClassInterfaces(typeSignature
+				.toCharArray());
 		return CharOperation.toStrings(params);
 	}
 }

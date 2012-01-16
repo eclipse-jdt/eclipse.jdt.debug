@@ -65,7 +65,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 	 */
 	public void run(IAction action) {
 		IStructuredSelection ss = (IStructuredSelection)fSelection;
-		Iterator iterator = ss.iterator();
+		Iterator<?> iterator = ss.iterator();
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		while (iterator.hasNext()) {
 			IType type = (IType) iterator.next();
@@ -86,7 +86,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					if (!type.isClass()) {
 						kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
 					}
-					HashMap map = new HashMap(10);
+					HashMap<String, Object> map = new HashMap<String, Object>(10);
 					BreakpointUtils.addJavaBreakpointAttributes(map, type);
 					
 					ISourceRange range= type.getNameRange();

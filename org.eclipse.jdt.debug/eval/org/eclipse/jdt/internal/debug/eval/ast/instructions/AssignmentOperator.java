@@ -20,7 +20,6 @@ public class AssignmentOperator extends CompoundInstruction {
 	protected int fVariableTypeId;
 	protected int fValueTypeId;
 
-
 	public AssignmentOperator(int variableTypeId, int valueTypeId, int start) {
 		super(start);
 		fVariableTypeId = variableTypeId;
@@ -30,37 +29,38 @@ public class AssignmentOperator extends CompoundInstruction {
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
 		IJavaValue value = popValue();
 		IJavaVariable variable = (IJavaVariable) pop();
-		
+
 		if (value instanceof IJavaPrimitiveValue) {
 			IJavaPrimitiveValue primitiveValue = (IJavaPrimitiveValue) value;
 			switch (fVariableTypeId) {
-				case T_boolean:
-					variable.setValue(newValue(primitiveValue.getBooleanValue()));
-					break;
-				case T_byte:
-					variable.setValue(newValue(primitiveValue.getByteValue()));
-					break;
-				case T_short:
-					variable.setValue(newValue(primitiveValue.getShortValue()));
-					break;
-				case T_char:
-					variable.setValue(newValue(primitiveValue.getCharValue()));
-					break;
-				case T_int:
-					variable.setValue(newValue(primitiveValue.getIntValue()));
-					break;
-				case T_long:
-					variable.setValue(newValue(primitiveValue.getLongValue()));
-					break;
-				case T_float:
-					variable.setValue(newValue(primitiveValue.getFloatValue()));
-					break;
-				case T_double:
-					variable.setValue(newValue(primitiveValue.getDoubleValue()));
-					break;
+			case T_boolean:
+				variable.setValue(newValue(primitiveValue.getBooleanValue()));
+				break;
+			case T_byte:
+				variable.setValue(newValue(primitiveValue.getByteValue()));
+				break;
+			case T_short:
+				variable.setValue(newValue(primitiveValue.getShortValue()));
+				break;
+			case T_char:
+				variable.setValue(newValue(primitiveValue.getCharValue()));
+				break;
+			case T_int:
+				variable.setValue(newValue(primitiveValue.getIntValue()));
+				break;
+			case T_long:
+				variable.setValue(newValue(primitiveValue.getLongValue()));
+				break;
+			case T_float:
+				variable.setValue(newValue(primitiveValue.getFloatValue()));
+				break;
+			case T_double:
+				variable.setValue(newValue(primitiveValue.getDoubleValue()));
+				break;
 			}
 		} else {
 			variable.setValue(value);
@@ -68,7 +68,8 @@ public class AssignmentOperator extends CompoundInstruction {
 		push(variable.getValue());
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.AssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.AssignmentOperator_operator_1;
 	}
 }

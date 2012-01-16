@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated.
  * </p>
  * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaArgumentsTab extends JavaLaunchTab {
 		
@@ -81,6 +81,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * Creates a control to specify a working directory.
 	 * 
+	 * @return the new {@link WorkingDirectoryBlock}
 	 * @since 3.4
 	 */
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
@@ -150,6 +151,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		Button pgrmArgVariableButton = createPushButton(group, buttonLabel, null); 
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -176,12 +178,14 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 		
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
 	}
@@ -200,6 +204,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
@@ -223,6 +228,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
+	 * @param text the widget to get the value from
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {
@@ -243,6 +249,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
 	 */
+	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
@@ -251,6 +258,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
 		if (m == null) {
@@ -262,6 +270,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		String m = super.getMessage();
 		if (m == null) {
@@ -273,6 +282,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}	
@@ -282,6 +292,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaArgumentsTab"; //$NON-NLS-1$
 	}
@@ -289,6 +300,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fWorkingDirectoryBlock.initializeFrom(workingCopy);
 	}
@@ -296,6 +308,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}

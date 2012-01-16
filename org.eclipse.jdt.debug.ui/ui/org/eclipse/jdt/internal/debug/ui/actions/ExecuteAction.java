@@ -23,6 +23,7 @@ public class ExecuteAction extends EvaluateAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction#displayResult(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
+	@Override
 	protected void displayResult(final IEvaluationResult result) {
 		if (result.hasErrors()) {
 			final Display display = JDIDebugUIPlugin.getStandardDisplay();
@@ -43,6 +44,7 @@ public class ExecuteAction extends EvaluateAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction#run()
 	 */
+	@Override
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
 		if (part instanceof JavaSnippetEditor) {
@@ -55,6 +57,7 @@ public class ExecuteAction extends EvaluateAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.EvaluateAction#getDataDisplay()
 	 */
+	@Override
 	protected IDataDisplay getDataDisplay() {
 		return super.getDirectDataDisplay();
 	}

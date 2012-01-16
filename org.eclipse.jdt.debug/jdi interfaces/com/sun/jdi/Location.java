@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,18 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package com.sun.jdi;
-
-
-public interface Location extends Mirror , Comparable {
+/**
+ * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/Location.html
+ */
+public interface Location extends Mirror, Comparable<Locatable> {
 	public long codeIndex();
 	public ReferenceType declaringType();
 	public boolean equals(Object arg1);
 	public int hashCode();
 	public int lineNumber();
-   	public int lineNumber(String stratum);
+	public int lineNumber(String stratum);
 	public Method method();
-   	public String sourceName() throws AbsentInformationException;
-   	public String sourceName(String stratum) throws AbsentInformationException;
-   	public String sourcePath() throws AbsentInformationException;
-   	public String sourcePath(String stratum) throws AbsentInformationException;
+	public String sourceName() throws AbsentInformationException;
+	public String sourceName(String stratum) throws AbsentInformationException;
+	public String sourcePath() throws AbsentInformationException;
+	public String sourcePath(String stratum) throws AbsentInformationException;
 }

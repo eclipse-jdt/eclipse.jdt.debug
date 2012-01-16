@@ -38,6 +38,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
 		if (fSelection == null) {
@@ -55,6 +56,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */	
+	@Override
 	public boolean performFinish() {
 		return fPage.finish();
 	}

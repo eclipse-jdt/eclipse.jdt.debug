@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,16 +28,17 @@ import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Factory for Java breakpoint types
  */
 public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
     
-    private Map fStratumTypes = new HashMap();
+    private Map<String, Object> fStratumTypes = new HashMap<String, Object>();
     
     // map of breakpoint type names to breakpoint type categories
-    private Map fOtherTypes = new HashMap();
+    private Map<String, IBreakpointTypeCategory> fOtherTypes = new HashMap<String, IBreakpointTypeCategory>();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -65,7 +65,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
                     if (stratum != null) {
                         Object type = fStratumTypes.get(stratum);
                         if (type == null) {
-                            String label = MessageFormat.format(BreakpointMessages.JavaBreakpointTypeAdapterFactory_0, new String[]{stratum}); 
+                            String label = NLS.bind(BreakpointMessages.JavaBreakpointTypeAdapterFactory_0, new String[]{stratum}); 
                             if (stratum.equalsIgnoreCase("jsp")) { //$NON-NLS-1$
                             	type = new BreakpointTypeCategory(label, getImageDescriptor(JavaDebugImages.IMG_OBJS_JSP_BRKPT_TYPE));
                             } else {
@@ -81,7 +81,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
             if (adaptableObject instanceof IBreakpoint) {
             	IBreakpoint breakpoint = (IBreakpoint)adaptableObject;
             	String type = DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);
-            	IBreakpointTypeCategory category = (IBreakpointTypeCategory) fOtherTypes.get(type);
+            	IBreakpointTypeCategory category = fOtherTypes.get(type);
             	if (category == null && type != null) {
 	            	if (breakpoint instanceof IJavaExceptionBreakpoint) {
 	                   	category = new BreakpointTypeCategory(type, getImageDescriptor(JavaDebugImages.IMG_OBJS_EXCEPTION_BRKPT_TYPE));

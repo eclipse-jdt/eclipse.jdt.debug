@@ -390,7 +390,7 @@ public class JavaProjectHelper {
 	 * @param compliance
 	 */
 	public static void setCompliance(IJavaProject project, String compliance) {
-		Map map = JavaCore.getOptions();
+		Map<String, String> map = JavaCore.getOptions();
 		map.put(JavaCore.COMPILER_COMPLIANCE, compliance);
 		map.put(JavaCore.COMPILER_SOURCE, compliance);
 		project.setOptions(map);
@@ -434,14 +434,14 @@ public class JavaProjectHelper {
 	public static void removeFromClasspath(IJavaProject jproject, IPath path) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		int nEntries= oldEntries.length;
-		ArrayList list= new ArrayList(nEntries);
+		ArrayList<IClasspathEntry> list= new ArrayList<IClasspathEntry>(nEntries);
 		for (int i= 0 ; i < nEntries ; i++) {
 			IClasspathEntry curr= oldEntries[i];
 			if (!path.equals(curr.getPath())) {
 				list.add(curr);			
 			}
 		}
-		IClasspathEntry[] newEntries= (IClasspathEntry[])list.toArray(new IClasspathEntry[list.size()]);
+		IClasspathEntry[] newEntries= list.toArray(new IClasspathEntry[list.size()]);
 		jproject.setRawClasspath(newEntries, null);
 	}	
 
@@ -453,7 +453,7 @@ public class JavaProjectHelper {
 	 */
 	private static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
-		ArrayList entries = new ArrayList(oldEntries.length);
+		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(oldEntries.length);
 		for (int i= 0; i < oldEntries.length; i++) {
 			if (oldEntries[i].equals(cpe)) {
 				return;
@@ -465,7 +465,7 @@ public class JavaProjectHelper {
 			entries.add(oldEntries[i]);
 		}
 		entries.add(cpe);
-		jproject.setRawClasspath((IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]), null);
+		jproject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 	}
 	
 			
@@ -513,7 +513,7 @@ public class JavaProjectHelper {
 	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(100);
+		List<File> files = new ArrayList<File>(100);
 		addJavaFiles(rootDir, files);
 		try {
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
@@ -533,7 +533,7 @@ public class JavaProjectHelper {
 	 */
 	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(1);
+		List<File> files = new ArrayList<File>(1);
 		files.add(file);
 		try {
 			ImportOperation op= new ImportOperation(destPath, file.getParentFile(), structureProvider, new ImportOverwriteQuery(), files);
@@ -550,9 +550,9 @@ public class JavaProjectHelper {
 	 * @param collection
 	 * @throws IOException
 	 */
-	private static void addJavaFiles(File dir, List collection) throws IOException {
+	private static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
-		List subDirs = new ArrayList(2);
+		List<File> subDirs = new ArrayList<File>(2);
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
@@ -560,9 +560,9 @@ public class JavaProjectHelper {
 				subDirs.add(files[i]);
 			}
 		}
-		Iterator iter = subDirs.iterator();
+		Iterator<File> iter = subDirs.iterator();
 		while (iter.hasNext()) {
-			File subDir = (File)iter.next();
+			File subDir = iter.next();
 			addJavaFiles(subDir, collection);
 		}
 	}

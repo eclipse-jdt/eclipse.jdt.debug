@@ -30,6 +30,7 @@ public class LocalVariableTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Wait for the program to be ready
 		waitUntilReady();
@@ -48,6 +49,7 @@ public class LocalVariableTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.LocalVariable";
 	}

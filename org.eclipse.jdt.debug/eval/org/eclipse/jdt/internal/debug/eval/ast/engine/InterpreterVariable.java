@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -27,23 +26,24 @@ public class InterpreterVariable implements IJavaVariable {
 	 * The reference type of this variable.
 	 */
 	private IJavaType fReferenceType;
-	
+
 	/**
 	 * The variable name.
 	 */
 	private String fName;
-	
+
 	/**
 	 * The variable value.
 	 */
 	private IValue fValue;
-	
+
 	private IDebugTarget fDebugTarget;
 
-	public InterpreterVariable(String name, IJavaType referenceType, IDebugTarget debugTarget) {
-		fName= name;
-		fReferenceType= referenceType;
-		fDebugTarget= debugTarget;
+	public InterpreterVariable(String name, IJavaType referenceType,
+			IDebugTarget debugTarget) {
+		fName = name;
+		fReferenceType = referenceType;
+		fDebugTarget = debugTarget;
 	}
 
 	/**
@@ -99,14 +99,20 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_setValue_String__not_supported_for_interpreter_variable_1, null)); 
+		throw new DebugException(
+				new Status(
+						IStatus.ERROR,
+						JDIDebugModel.getPluginIdentifier(),
+						DebugException.NOT_SUPPORTED,
+						EvaluationEngineMessages.InterpreterVariable_setValue_String__not_supported_for_interpreter_variable_1,
+						null));
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(IValue)
 	 */
 	public void setValue(IValue value) {
-		fValue= value;
+		fValue = value;
 	}
 
 	/**
@@ -120,14 +126,26 @@ public class InterpreterVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(IValue)
 	 */
 	public boolean verifyValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_IValue__not_supported_for_interpreter_variable_2, null)); 
+		throw new DebugException(
+				new Status(
+						IStatus.ERROR,
+						JDIDebugModel.getPluginIdentifier(),
+						DebugException.NOT_SUPPORTED,
+						EvaluationEngineMessages.InterpreterVariable_verifyValue_IValue__not_supported_for_interpreter_variable_2,
+						null));
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR,  JDIDebugModel.getPluginIdentifier(), DebugException.NOT_SUPPORTED, EvaluationEngineMessages.InterpreterVariable_verifyValue_String__not_supported_for_interpreter_variable_3, null)); 
+		throw new DebugException(
+				new Status(
+						IStatus.ERROR,
+						JDIDebugModel.getPluginIdentifier(),
+						DebugException.NOT_SUPPORTED,
+						EvaluationEngineMessages.InterpreterVariable_verifyValue_String__not_supported_for_interpreter_variable_3,
+						null));
 	}
 
 	/**
@@ -206,8 +224,10 @@ public class InterpreterVariable implements IJavaVariable {
 	public boolean isLocal() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
 	public String getGenericSignature() throws DebugException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@
 package org.eclipse.jdt.internal.ui.macbundler;
 
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -56,6 +54,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		super("page1", bd); //$NON-NLS-1$
 	}
 
+	@Override
 	public void createContents(Composite c) {
 		
 		final Shell shell= c.getShell();
@@ -67,6 +66,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			fillCombo(fLaunchConfigs);
 			fLaunchConfigs.addSelectionListener(
 				new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						int ix= fLaunchConfigs.getSelectionIndex();
 						if (ix > 0 && ix < fConfigurations.length) {
@@ -85,6 +85,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				fMainClass= createText(c7a, MAINCLASS, 1);
 				Button b1= createButton(c7a, SWT.NONE, Util.getString("page1.mainClass.chooseButton.label")); //$NON-NLS-1$
 				b1.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						MessageBox mb= new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setMessage(Util.getString("page1.mainClass.dialog.message")); //$NON-NLS-1$
@@ -107,6 +108,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				
 				final Button browse= createButton(c3a, SWT.NONE, Util.getString("page1.appFolder.browseButton.label")); //$NON-NLS-1$
 				browse.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						DirectoryDialog dd= new DirectoryDialog(browse.getShell(), SWT.SAVE);
 						dd.setMessage(Util.getString("page1.appFolder.browseDialog.message")); //$NON-NLS-1$
@@ -138,6 +140,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				fIconFileName= createText(c7, ICONFILE, 1);
 				final Button b= createButton(c7, SWT.NONE, Util.getString("page1.appIcon.chooseButton.label")); //$NON-NLS-1$
 				b.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						FileDialog fd= new FileDialog(b.getShell(), SWT.OPEN);
 						fd.setText(Util.getString("page1.appIcon.chooseDialog.title")); //$NON-NLS-1$
@@ -150,6 +153,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			
 	}
 	
+	@Override
 	void enterPage() {
 		super.enterPage();
 		initCombo(fLaunchConfigs);
@@ -173,7 +177,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 	// private stuff
 	
 	private void collectLaunchConfigs() {
-		ArrayList configs= new ArrayList();
+		ArrayList<ILaunchConfiguration> configs= new ArrayList<ILaunchConfiguration>();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		try {
@@ -186,14 +190,15 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		} catch (CoreException e) {
 			//
 		}
-		fConfigurations= (ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]);
-		Arrays.sort(fConfigurations, new Comparator() {
+		fConfigurations= configs.toArray(new ILaunchConfiguration[configs.size()]);
+		Arrays.sort(fConfigurations, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				ILaunchConfiguration lc1= (ILaunchConfiguration) o1;
 				ILaunchConfiguration lc2= (ILaunchConfiguration) o2;
 				return lc1.getName().compareTo(lc2.getName());
 			}
 
+			@Override
 			public boolean equals(Object obj) {
 				return false;
 			}

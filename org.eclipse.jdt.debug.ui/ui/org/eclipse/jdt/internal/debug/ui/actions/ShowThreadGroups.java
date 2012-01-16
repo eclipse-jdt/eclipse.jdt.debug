@@ -20,6 +20,7 @@ public class ShowThreadGroups extends ToggleBooleanPreferenceAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS;
 	}
@@ -27,6 +28,7 @@ public class ShowThreadGroups extends ToggleBooleanPreferenceAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#getCompositeKey()
 	 */
+	@Override
 	protected String getCompositeKey() {
 		return getPreferenceKey();
 	}

@@ -82,7 +82,6 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
-
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -147,8 +146,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected IAction fClearDisplayAction;
 	protected DisplayViewAction fContentAssistAction;
 
-	protected Map fGlobalActions= new HashMap(4);
-	protected List fSelectionActions= new ArrayList(3);
+	protected Map<String, IAction> fGlobalActions= new HashMap<String, IAction>(4);
+	protected List<String> fSelectionActions= new ArrayList<String>(3);
 
 	protected String fRestoredContents= null;
 	/**
@@ -163,6 +162,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		fSourceViewer= new JDISourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.LEFT_TO_RIGHT);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
@@ -225,6 +225,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fSourceViewer != null) {
 			fSourceViewer.getControl().setFocus();
@@ -362,12 +363,12 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			menu.add(fContentAssistAction);
 		}
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(ActionFactory.CUT.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.PASTE.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.CUT.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.PASTE.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(ActionFactory.FIND.getId()));
+		menu.add(fGlobalActions.get(ActionFactory.FIND.getId()));
 		menu.add(fClearDisplayAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -375,6 +376,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 			
 		if (ITextOperationTarget.class.equals(required)) {
@@ -396,9 +398,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	}
 	
 	protected void updateActions() {
-		Iterator iterator = fSelectionActions.iterator();
+		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			IAction action = (IAction) fGlobalActions.get(iterator.next());
+			IAction action = fGlobalActions.get(iterator.next());
 			if (action instanceof IUpdate) {
 				 ((IUpdate) action).update();
 			}
@@ -410,6 +412,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * 
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (fSourceViewer != null) {
 		    String contents= getContents();
@@ -426,6 +429,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * 
 	 * @see org.eclipse.ui.IViewPart#init(IViewSite, IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
 		if (fgMemento != null) {
@@ -446,7 +450,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
     	DragSource ds = new DragSource(fSourceViewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
     	ds.setTransfer(new Transfer[] {TextTransfer.getInstance()});
     	ds.addDragListener(new DragSourceAdapter() {
-        	public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
+        	@Override
+			public void dragSetData(org.eclipse.swt.dnd.DragSourceEvent event) {
         		event.data = fSourceViewer.getTextWidget().getSelectionText();
         	}
         });
@@ -478,14 +483,14 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	}
 	
 	protected void updateSelectionDependentActions() {
-		Iterator iterator= fSelectionActions.iterator();
+		Iterator<String> iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
-			updateAction((String)iterator.next());
+			updateAction(iterator.next());
 	}
 
 
 	protected void updateAction(String actionId) {
-		IAction action= (IAction)fGlobalActions.get(actionId);
+		IAction action= fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}
@@ -505,6 +510,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		if (fSourceViewer != null) {

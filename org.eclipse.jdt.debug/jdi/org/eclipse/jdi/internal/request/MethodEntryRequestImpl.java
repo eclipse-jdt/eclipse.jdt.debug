@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.MethodEntryEventImpl;
 
 import com.sun.jdi.request.MethodEntryRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class MethodEntryRequestImpl extends EventRequestImpl implements MethodEntryRequest {
+public class MethodEntryRequestImpl extends EventRequestImpl implements
+		MethodEntryRequest {
 	/**
 	 * Creates new MethodEntryRequest.
 	 */
@@ -33,6 +32,7 @@ public class MethodEntryRequestImpl extends EventRequestImpl implements MethodEn
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return MethodEntryEventImpl.EVENT_KIND;
 	}

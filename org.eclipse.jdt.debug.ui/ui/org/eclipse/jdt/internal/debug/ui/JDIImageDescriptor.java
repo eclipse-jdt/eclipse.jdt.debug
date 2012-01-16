@@ -76,6 +76,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
+	@Override
 	protected Point getSize() {
 		if (fSize == null) {
 			ImageData data= getBaseImage().getImageData();
@@ -87,6 +88,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof JDIImageDescriptor)){
 			return false;
@@ -99,6 +101,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
@@ -106,6 +109,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg= getBaseImage().getImageData();
 		if (bg == null) {

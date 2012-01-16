@@ -28,6 +28,7 @@ import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
 /**
  * Tests source lookup in source folders
  */
+@SuppressWarnings("deprecation")
 public class SourceLookupTests extends AbstractDebugTest {
 	
 	public SourceLookupTests(String name) {

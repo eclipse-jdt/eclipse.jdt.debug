@@ -25,6 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -34,8 +35,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action to browse all references to selected object.
@@ -55,7 +54,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 				InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
 						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 
 						PopupInspectAction.ACTION_DEFININITION_ID,
-						new JavaInspectExpression(MessageFormat.format(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
+						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
 				ipd.open();
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.statusDialog(e.getStatus());
@@ -107,6 +106,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
 	 */
+	@Override
 	protected IWorkbenchPart getPart() {
 		IWorkbenchPart part = super.getPart();
 		if (part != null){

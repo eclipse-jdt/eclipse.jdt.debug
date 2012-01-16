@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,12 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 			super(JavaElementLabelProvider.SHOW_PARAMETERS | JavaElementLabelProvider.SHOW_POST_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return super.getImage(((IType) element).getPackageFragment());
 		}
 
+		@Override
 		public String getText(Object element) {
 			return super.getText(((IType) element).getPackageFragment());
 		}
@@ -69,6 +71,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 	}
@@ -76,6 +79,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
+	@Override
 	public int open() {
 		IType[] types = getAppletTypes();
 		if (types == null) {
@@ -89,6 +93,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	 * Return all types extending <code>java.lang.Applet</code> in the project, or
 	 * all types extending Applet in the workspace if the project is <code>null</code>.
 	 * If the search is canceled, return <code>null</code>.
+	 * @return the array of {@link IType}s
 	 */
 	private IType[] getAppletTypes() {
 		// Populate an array of java projects with either the project specified in
@@ -107,7 +112,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		// For each java project, calculate the Applet types it contains and add 
 		// them to the results
 		final int projectCount = javaProjects.length;
-		final Set results = new HashSet(projectCount);
+		final Set<IType> results = new HashSet<IType>(projectCount);
 		boolean canceled = false;
 		try {
 			fRunnableContext.run(true, true, new IRunnableWithProgress() {
@@ -132,13 +137,14 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 			return null;
 		}
 		IType[] types = null;
-		types = (IType[]) results.toArray(new IType[results.size()]);		
+		types = results.toArray(new IType[results.size()]);		
 		return types; 
 	}
 
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
 		applyDialogFont(control);
@@ -147,6 +153,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Convenience method to get access to the java model.
+	 * @return the current Java model
 	 */
 	private IJavaModel getJavaModel() {
 		return JavaCore.create(getWorkspaceRoot());
@@ -154,6 +161,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	/**
 	 * Convenience method to get the workspace root.
+	 * @return the {@link IWorkspaceRoot}
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();

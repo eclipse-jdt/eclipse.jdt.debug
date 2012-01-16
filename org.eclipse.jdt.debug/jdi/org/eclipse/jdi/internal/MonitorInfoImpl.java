@@ -16,9 +16,9 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ThreadReference;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  * @since 3.3
  */
 public class MonitorInfoImpl extends MirrorImpl implements MonitorInfo {
@@ -26,15 +26,16 @@ public class MonitorInfoImpl extends MirrorImpl implements MonitorInfo {
 	private ThreadReference fThread;
 	private ObjectReference fMonitor;
 	private int fDepth;
-	
+
 	/** constructor **/
-	public MonitorInfoImpl(ThreadReference thread, int depth, ObjectReference monitor, VirtualMachineImpl virtualMachineImpl) {
+	public MonitorInfoImpl(ThreadReference thread, int depth,
+			ObjectReference monitor, VirtualMachineImpl virtualMachineImpl) {
 		super("MonitorInfoImpl", virtualMachineImpl); //$NON-NLS-1$
 		fThread = thread;
 		fDepth = depth;
 		fMonitor = monitor;
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.MonitorInfo#monitor()
 	 */

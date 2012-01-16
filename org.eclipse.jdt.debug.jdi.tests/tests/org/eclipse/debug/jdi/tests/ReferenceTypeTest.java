@@ -54,6 +54,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get all kinds of reference type
 		fTypes.add(getSystemType());
@@ -72,6 +73,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ReferenceType";
 	}

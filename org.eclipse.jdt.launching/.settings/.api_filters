@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jdt.launching" version="2">
+    <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java" type="org.eclipse.jdt.launching.sourcelookup.LocalFileStorage">
+        <filter comment="Known illegal extension" id="571473929">
+            <message_arguments>
+                <message_argument value="LocalFileStorage"/>
+                <message_argument value="LocalFileStorage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="launching/org/eclipse/jdt/launching/sourcelookup/ZipEntryStorage.java" type="org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage">
+        <filter comment="This is a known illegal extension" id="571473929">
+            <message_arguments>
+                <message_argument value="ZipEntryStorage"/>
+                <message_argument value="ZipEntryStorage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

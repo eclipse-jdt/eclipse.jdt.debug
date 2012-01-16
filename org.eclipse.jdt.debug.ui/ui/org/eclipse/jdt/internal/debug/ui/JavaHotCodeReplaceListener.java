@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -23,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -81,7 +80,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 			alertMessage= DebugUIMessages.JDIDebugUIPlugin_1; 
 		}
 		final String title = DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1; 
-		final String message = MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName, launchName});
+		final String message = NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName, launchName});
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {
@@ -108,7 +107,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		}
 		final String vmName= fLabelProvider.getText(target);
 		final String dialogTitle= DebugUIMessages.JDIDebugUIPlugin_Obsolete_methods_remain_1; 
-		final String message= MessageFormat.format(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName}); 
+		final String message= NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName}); 
 		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_Stepping_may_be_hazardous_1, null); 
 		final String toggleMessage= DebugUIMessages.JDIDebugUIPlugin_2; 
 		display.asyncExec(new Runnable() {

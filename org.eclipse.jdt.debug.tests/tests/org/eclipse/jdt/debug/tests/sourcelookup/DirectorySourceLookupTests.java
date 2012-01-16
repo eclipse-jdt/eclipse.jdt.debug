@@ -23,6 +23,7 @@ import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
 /**
  * Tests source lookup in directories
  */
+@SuppressWarnings("deprecation")
 public class DirectorySourceLookupTests extends AbstractDebugTest {
 	
 	public DirectorySourceLookupTests(String name) {

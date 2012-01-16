@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.ThreadStartEventImpl;
 
 import com.sun.jdi.request.ThreadStartRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ThreadStartRequestImpl extends EventRequestImpl implements ThreadStartRequest {
+public class ThreadStartRequestImpl extends EventRequestImpl implements
+		ThreadStartRequest {
 	/**
 	 * Creates new ThreadStartRequest.
 	 */
@@ -33,6 +32,7 @@ public class ThreadStartRequestImpl extends EventRequestImpl implements ThreadSt
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return ThreadStartEventImpl.EVENT_KIND;
 	}

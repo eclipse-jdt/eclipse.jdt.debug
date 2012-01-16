@@ -43,7 +43,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testDeferredBreakpoints() throws Exception {
 		String typeName = "Breakpoints";
-		List bps = new ArrayList();
+		List<IBreakpoint> bps = new ArrayList<IBreakpoint>();
 		int[] lines = new int[]{
 				43,		// anonymous class
 				102,	// blocks
@@ -93,7 +93,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
-	private void createBreakpoints(String typeName, List breakpoints, int[] lineNumbers) throws Exception {
+	private void createBreakpoints(String typeName, List<IBreakpoint> breakpoints, int[] lineNumbers) throws Exception {
 		IType type = get14Project().findType(typeName);
 		assertNotNull(type);
 		IResource resource = type.getResource();

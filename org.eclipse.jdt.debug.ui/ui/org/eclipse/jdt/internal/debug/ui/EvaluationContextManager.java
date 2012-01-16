@@ -61,7 +61,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 */
 	private static final String SUPPORTS_INSTANCE_RETRIEVAL = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsInstanceRetrieval"; //$NON-NLS-1$
 	
-	private Map fContextsByPage = null;
+	private Map<IWorkbenchPage, IJavaStackFrame> fContextsByPage = null;
 	
 	private IWorkbenchWindow fActiveWindow;
 	
@@ -121,7 +121,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 */
 	private void setContext(IWorkbenchPage page, IJavaStackFrame frame, boolean instOf) {
 		if (fContextsByPage == null) {
-			fContextsByPage = new HashMap();
+			fContextsByPage = new HashMap<IWorkbenchPage, IJavaStackFrame>();
 		}
 		fContextsByPage.put(page, frame);
 		System.setProperty(DEBUGGER_ACTIVE, "true"); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	private static IJavaStackFrame getContext(IWorkbenchPage page) {
 		if (fgManager != null) {
 			if (fgManager.fContextsByPage != null) {
-				return (IJavaStackFrame)fgManager.fContextsByPage.get(page);
+				return fgManager.fContextsByPage.get(page);
 			}
 		}
 		return null;
@@ -209,14 +209,14 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 * @return IJavaStackFrame
 	 */
 	public static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window) {
-		List alreadyVisited= new ArrayList();
+		List<IWorkbenchWindow> alreadyVisited= new ArrayList<IWorkbenchWindow>();
 		if (window == null) {
 			window = fgManager.fActiveWindow;
 		}
 		return getEvaluationContext(window, alreadyVisited);
 	}
 	
-	private static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window, List alreadyVisited) {
+	private static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window, List<IWorkbenchWindow> alreadyVisited) {
 		IWorkbenchPage activePage = window.getActivePage();
 		IJavaStackFrame frame = null;
 		if (activePage != null) {

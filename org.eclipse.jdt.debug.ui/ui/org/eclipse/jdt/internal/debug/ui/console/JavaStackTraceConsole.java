@@ -115,14 +115,16 @@ public class JavaStackTraceConsole extends TextConsole {
     /**
      * @see org.eclipse.ui.console.AbstractConsole#init()
      */
-    protected void init() {
+    @Override
+	protected void init() {
         JFaceResources.getFontRegistry().addListener(propertyListener);
     }
 
     /**
      * @see org.eclipse.ui.console.TextConsole#dispose()
      */
-    protected void dispose() {
+    @Override
+	protected void dispose() {
         saveDocument();
         JFaceResources.getFontRegistry().removeListener(propertyListener);
         super.dispose();
@@ -152,13 +154,15 @@ public class JavaStackTraceConsole extends TextConsole {
     /**
      * @see org.eclipse.ui.console.TextConsole#getPartitioner()
      */
-    protected IConsoleDocumentPartitioner getPartitioner() {
+    @Override
+	protected IConsoleDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
 	/**
 	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
 	 */
+	@Override
 	public String getHelpContextId() {
 		return IJavaDebugHelpContextIds.STACK_TRACE_CONSOLE;
 	}
@@ -166,7 +170,8 @@ public class JavaStackTraceConsole extends TextConsole {
     /**
      * @see org.eclipse.ui.console.TextConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
-    public IPageBookViewPage createPage(IConsoleView view) {
+    @Override
+	public IPageBookViewPage createPage(IConsoleView view) {
     	return new JavaStackTraceConsolePage(this, view);
 	}
     
@@ -175,6 +180,7 @@ public class JavaStackTraceConsole extends TextConsole {
      */
     public void format() {
     	WorkbenchJob job = new WorkbenchJob(ConsoleMessages.JavaStackTraceConsole_1) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 	            IJobManager jobManager = Job.getJobManager();
 	            try {

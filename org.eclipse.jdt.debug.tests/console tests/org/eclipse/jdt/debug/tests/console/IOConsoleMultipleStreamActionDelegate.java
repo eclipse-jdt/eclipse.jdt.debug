@@ -77,7 +77,7 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
         
         final Display display = Display.getDefault();
         final IOConsoleInputStream in = console.getInputStream();
-        final IOConsoleOutputStream echo = console.newOutputStream(); //$NON-NLS-1$
+        final IOConsoleOutputStream echo = console.newOutputStream(); 
         display.asyncExec(new Runnable() {
             public void run() {
                 in.setColor(display.getSystemColor(SWT.COLOR_BLUE));
@@ -86,7 +86,7 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
         });
         startInputReadThread(in, echo);
         
-        IOConsoleOutputStream out = console.newOutputStream(); //$NON-NLS-1$
+        IOConsoleOutputStream out = console.newOutputStream(); 
         startOutputThread(out);
     }
         

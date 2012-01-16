@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for package rename.
@@ -34,6 +35,7 @@ public class BreakpointRenamePackageParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IPackageFragment;
 	}
@@ -41,7 +43,8 @@ public class BreakpointRenamePackageParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
-	protected void gatherChanges(IMarker[] markers, List changes, String destPackageName) throws CoreException, OperationCanceledException {
+	@Override
+	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destPackageName) throws CoreException, OperationCanceledException {
 		IPackageFragment originalPackage = (IPackageFragment) getOriginalElement();
 		String originalPackageName = originalPackage.getElementName();
 		IPackageFragmentRoot root = (IPackageFragmentRoot)originalPackage.getParent();

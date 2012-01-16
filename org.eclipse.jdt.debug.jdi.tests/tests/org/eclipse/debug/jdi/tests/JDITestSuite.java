@@ -33,6 +33,7 @@ public class JDITestSuite extends TestSuite {
 	 * Runs the tests and collects their result in a TestResult.
 	 * @see junit.framework.TestSuite#run(junit.framework.TestResult)
 	 */
+	@Override
 	public void run(TestResult result) {
 		fTest.setUp();
 		super.run(result);

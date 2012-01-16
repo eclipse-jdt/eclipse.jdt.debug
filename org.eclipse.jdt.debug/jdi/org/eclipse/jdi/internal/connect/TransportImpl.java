@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,25 +17,24 @@ import java.io.OutputStream;
 import com.sun.jdi.connect.Transport;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public abstract class TransportImpl implements Transport {
 	/** Name of Transport. */
 	private String fName;
-	
+
 	/**
 	 * Constructs new SocketTransportImpl.
-	 */	
+	 */
 	public TransportImpl(String name) {
 		fName = name;
 	}
 
 	/**
 	 * @return Returns a short identifier for the transport.
-	 */	
+	 */
 	public String name() {
 		return fName;
 	}
@@ -45,19 +43,19 @@ public abstract class TransportImpl implements Transport {
 	 * @return Returns true if we have an open connection.
 	 */
 	public abstract boolean isOpen();
-	
+
 	/**
 	 * Closes connection.
-	 */	
+	 */
 	public abstract void close();
 
 	/**
 	 * @return Returns InputStream from Virtual Machine.
-	 */	
+	 */
 	public abstract InputStream getInputStream() throws IOException;
-	
+
 	/**
 	 * @return Returns OutputStream to Virtual Machine.
-	 */	
+	 */
 	public abstract OutputStream getOutputStream() throws IOException;
 }

@@ -36,6 +36,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	
 	
 
+	@Override
 	protected void setUp() throws Exception {
 		added = false;
 		removed = false;

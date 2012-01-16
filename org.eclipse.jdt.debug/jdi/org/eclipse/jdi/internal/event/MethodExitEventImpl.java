@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -24,45 +23,51 @@ import com.sun.jdi.Value;
 import com.sun.jdi.event.MethodExitEvent;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class MethodExitEventImpl extends LocatableEventImpl implements MethodExitEvent {
+public class MethodExitEventImpl extends LocatableEventImpl implements
+		MethodExitEvent {
 	/** Jdwp Event Kind. */
 	public static final byte EVENT_KIND = EVENT_METHOD_EXIT;
-	
+
 	/** return value for the method **/
 	private Value fReturnValue = null;
-	
+
 	/**
 	 * Creates new MethodExitEventImpl.
 	 */
 	private MethodExitEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
 		super("MethodExitEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
-		
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static MethodExitEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static MethodExitEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
 		event.readThreadAndLocation(target, dataInStream);
 		return event;
-   	}
-	
+	}
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static MethodExitEventImpl readWithReturnValue(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static MethodExitEventImpl readWithReturnValue(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		MethodExitEventImpl event = new MethodExitEventImpl(vmImpl, requestID);
 		event.readThreadAndLocation(target, dataInStream);
 		event.fReturnValue = ValueImpl.readWithTag(target, dataInStream);
 		return event;
-   	}	
+	}
 
 	/**
 	 * @return Returns the method that was entered.
@@ -70,7 +75,7 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 	public Method method() {
 		return fLocation.method();
 	}
-	
+
 	/**
 	 * @see com.sun.jdi.event.MethodExitEvent#returnValue()
 	 * @since 3.3

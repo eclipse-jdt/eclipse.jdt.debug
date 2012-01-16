@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.ThreadDeathEventImpl;
 
 import com.sun.jdi.request.ThreadDeathRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ThreadDeathRequestImpl extends EventRequestImpl implements ThreadDeathRequest {
+public class ThreadDeathRequestImpl extends EventRequestImpl implements
+		ThreadDeathRequest {
 	/**
 	 * Creates new ThreadDeathRequest.
 	 */
@@ -33,6 +32,7 @@ public class ThreadDeathRequestImpl extends EventRequestImpl implements ThreadDe
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return ThreadDeathEventImpl.EVENT_KIND;
 	}

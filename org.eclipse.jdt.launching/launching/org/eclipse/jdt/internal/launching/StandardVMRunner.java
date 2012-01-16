@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,15 +26,16 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.osgi.util.NLS;
 
 import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launcher for running Java main classes.
@@ -48,7 +49,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	/**
 	 * Constructor
-	 * @param vmInstance
+	 * @param vmInstance the VM
 	 */
 	public StandardVMRunner(IVMInstall vmInstance) {
 		fVMInstance= vmInstance;
@@ -56,30 +57,30 @@ public class StandardVMRunner extends AbstractVMRunner {
 	
 	/**
 	 * Returns the 'rendered' name for the current target
-	 * @param classToRun
-	 * @param host
+	 * @param classToRun the class
+	 * @param host the host name
 	 * @return the name for the current target
 	 */
 	protected String renderDebugTarget(String classToRun, int host) {
 		String format= LaunchingMessages.StandardVMRunner__0__at_localhost__1__1; 
-		return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
+		return NLS.bind(format, new String[] { classToRun, String.valueOf(host) });
 	}
 
 	/**
 	 * Returns the 'rendered' name for the specified command line
-	 * @param commandLine
+	 * @param commandLine the command line
 	 * @return the name for the process
 	 */
 	public static String renderProcessLabel(String[] commandLine) {
 		String format= LaunchingMessages.StandardVMRunner__0____1___2; 
 		String timestamp= DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
+		return NLS.bind(format, new String[] { commandLine[0], timestamp });
 	}
 	
 	/**
 	 * Prepares the command line from the specified array of strings
-	 * @param commandLine
-	 * @return
+	 * @param commandLine the command line
+	 * @return the command line label
 	 */
 	protected String renderCommandLine(String[] commandLine) {
 		if (commandLine.length < 1)
@@ -111,11 +112,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 	}	
 	
 	/**
-	 * Adds the values of args to the given list v
-	 * @param args
-	 * @param v
+	 * Adds the array of {@link String}s to the given {@link List}
+	 * @param args the strings
+	 * @param v the list
 	 */
-	protected void addArguments(String[] args, List v) {
+	protected void addArguments(String[] args, List<String> v) {
 		if (args == null) {
 			return;
 		}
@@ -129,6 +130,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * or <code>null</code> if the working directory is to be inherited
 	 * from the current process.
 	 * 
+	 * @param config the VM configuration
 	 * @return the working directory to use
 	 * @exception CoreException if the working directory specified by
 	 *  the configuration does not exist or is not a directory
@@ -140,14 +142,15 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		File dir = new File(path);
 		if (!dir.isDirectory()) {
-			abort(MessageFormat.format(LaunchingMessages.StandardVMRunner_Specified_working_directory_does_not_exist_or_is_not_a_directory___0__3, new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
+			abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_working_directory_does_not_exist_or_is_not_a_directory___0__3, new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
 		}
 		return dir;
 	}
 	
-	/**
-	 * @see VMRunner#getPluginIdentifier()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractVMRunner#getPluginIdentifier()
 	 */
+	@Override
 	protected String getPluginIdentifier() {
 		return LaunchingPlugin.getUniqueIdentifier();
 	}
@@ -157,6 +160,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * command such as 'java' or 'javaw.exe'.  If the configuration specifies an
 	 * explicit executable, that is used.
 	 * 
+	 * @param config the runner configuration
 	 * @return full path to java executable
 	 * @exception CoreException if unable to locate an executable
 	 */
@@ -164,9 +168,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		// Look for the user-specified java executable command
 		String command= null;
-		Map map= config.getVMSpecificAttributesMap();
+		Map<String, Object> map= config.getVMSpecificAttributesMap();
 		if (map != null) {
-			command = (String)map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
+			command = (String) map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 		}
 		
 		// If no java command was specified, use default executable
@@ -178,7 +182,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 				exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
 			}
 			if (exe == null) {
-				abort(MessageFormat.format(LaunchingMessages.StandardVMRunner_Unable_to_locate_executable_for__0__1, new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
+				abort(NLS.bind(LaunchingMessages.StandardVMRunner_Unable_to_locate_executable_for__0__1, new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
 			} else {
 				return exe.getAbsolutePath();
 			}
@@ -206,14 +210,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		
 		// not found
-		abort(MessageFormat.format(LaunchingMessages.StandardVMRunner_Specified_executable__0__does_not_exist_for__1__4, new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
+		abort(NLS.bind(LaunchingMessages.StandardVMRunner_Specified_executable__0__does_not_exist_for__1__4, new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
 		// NOTE: an exception will be thrown - null cannot be returned
 		return null;		
 	}	
 	
 	/**
 	 * Convenience method to determine if the specified file exists or not
-	 * @param file
+	 * @param file the file to check
 	 * @return true if the file indeed exists, false otherwise
 	 */
 	protected boolean fileExists(File file) {
@@ -239,6 +243,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 	/**
 	 * This method is used to ensure that the JVM file encoding matches that of the console preference for file encoding.
 	 * If the user explicitly declares a file encoding in the launch configuration, then that file encoding is used.
+	 * 
+	 * @param launch the {@link Launch}
 	 * @param vmargs the original listing of JVM arguments
 	 * @return the listing of JVM arguments including file encoding if one was not specified
 	 * 
@@ -279,7 +285,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		
 		String program= constructProgramString(config);
 		
-		List arguments= new ArrayList();
+		List<String> arguments= new ArrayList<String>();
 		arguments.add(program);
 				
 		// VM args are the first thing after the java program so that users can specify
@@ -335,7 +341,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * Prepends the correct java version variable state to the environment path for Mac VMs
 	 * 
 	 * @param env the current array of environment variables to run with
-	 * @param jdkpath the path of the current jdk
+	 * @return the new path segments
 	 * @since 3.3
 	 */
 	protected String[] prependJREPath(String[] env) {
@@ -345,18 +351,18 @@ public class StandardVMRunner extends AbstractVMRunner {
 				String javaVersion = vm.getJavaVersion();
 				if (javaVersion != null) {
 					if (env == null) {
-						Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+						Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
 						if (map.containsKey(StandardVMDebugger.JAVA_JVM_VERSION)) {
 							String[] env2 = new String[map.size()];
-							Iterator iterator = map.entrySet().iterator();
+							Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
 							int i = 0;
 							while (iterator.hasNext()) {
-								Entry entry = (Entry) iterator.next();
-								String key = (String) entry.getKey();
+								Entry<String, String> entry = iterator.next();
+								String key = entry.getKey();
 								if (StandardVMDebugger.JAVA_JVM_VERSION.equals(key)) {
 									env2[i] = key + "=" + javaVersion; //$NON-NLS-1$
 								} else {
-									env2[i] = key + "=" + (String)entry.getValue(); //$NON-NLS-1$
+									env2[i] = key + "=" + entry.getValue(); //$NON-NLS-1$
 								}
 								i++;
 							}
@@ -379,14 +385,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	/**
 	 * Adds arguments to the bootpath
-	 * @param arguments
-	 * @param config
+	 * @param arguments the arguments
+	 * @param config the VM config
 	 */
-	protected void addBootClassPathArguments(List arguments, VMRunnerConfiguration config) {
+	protected void addBootClassPathArguments(List<String> arguments, VMRunnerConfiguration config) {
 		String[] prependBootCP= null;
 		String[] bootCP= null;
 		String[] appendBootCP= null;
-		Map map = config.getVMSpecificAttributesMap();
+		Map<String, Object> map = config.getVMSpecificAttributesMap();
 		if (map != null) {
 			prependBootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
 			bootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);

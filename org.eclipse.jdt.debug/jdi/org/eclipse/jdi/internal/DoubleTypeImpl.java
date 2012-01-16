@@ -10,34 +10,34 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import com.sun.jdi.DoubleType;
 import com.sun.jdi.Value;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class DoubleTypeImpl extends PrimitiveTypeImpl implements DoubleType {
 	/**
 	 * Creates new instance.
 	 */
 	public DoubleTypeImpl(VirtualMachineImpl vmImpl) {
-		super("DoubleType", vmImpl, "double" , "D"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super("DoubleType", vmImpl, "double", "D"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	/**
 	 * @returns primitive type tag.
 	 */
+	@Override
 	public byte tag() {
 		return DoubleValueImpl.tag;
 	}
-	
+
 	/**
 	 * @return Create a null value instance of the type.
 	 */
+	@Override
 	public Value createNullValue() {
 		return virtualMachineImpl().mirrorOf(0.0D);
 	}

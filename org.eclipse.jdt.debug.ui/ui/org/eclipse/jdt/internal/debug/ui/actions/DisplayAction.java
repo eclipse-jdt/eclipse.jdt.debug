@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
@@ -24,6 +22,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -35,6 +34,7 @@ public class DisplayAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
+	@Override
 	protected void displayResult(final IEvaluationResult evaluationResult) {
 		if (evaluationResult.hasErrors()) {
 			final Display display = JDIDebugUIPlugin.getStandardDisplay();
@@ -63,13 +63,13 @@ public class DisplayAction extends EvaluateAction {
 			} else {
 				final String resultString;
 				if (sig != null) {
-					resultString= MessageFormat.format(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() }); 
+					resultString= NLS.bind(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() }); 
 				} else {
 					resultString= ""; //$NON-NLS-1$
 				}
 				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					public void detailComputed(IValue value, String result) {
-						displayStringResult(snippet, MessageFormat.format(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); 
+						displayStringResult(snippet, NLS.bind(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); 
 					}
 				});
 			}
@@ -97,6 +97,7 @@ public class DisplayAction extends EvaluateAction {
 		});
 	}
 
+	@Override
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
 		if (part instanceof JavaSnippetEditor) {

@@ -10,25 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
- 
 /**
  * Pushes a long literal onto the stack.
  */
 public class PushLong extends SimpleInstruction {
-	
+
 	private long fValue;
-	
+
 	public PushLong(long value) {
 		fValue = value;
 	}
-	
+
+	@Override
 	public void execute() {
 		pushNewValue(fValue);
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushLong_push__1 + fValue; 
+		return InstructionsEvaluationMessages.PushLong_push__1 + fValue;
 	}
 
 }
-

@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
 
-import com.sun.jdi.BooleanType;
-import com.sun.jdi.ByteType;
-import com.sun.jdi.CharType;
-import com.sun.jdi.DoubleType;
-import com.sun.jdi.FloatType;
-import com.sun.jdi.IntegerType;
-import com.sun.jdi.LongType;
-import com.sun.jdi.ShortType;
 import com.sun.jdi.Type;
 
 /**
@@ -65,20 +57,21 @@ public class TypeTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get reference types
 		fArrayType = getArrayType();
 		fClassType = getMainClass();
 		fInterfaceType = getInterfaceType();
 		// Get primitive types
-		fBooleanType = (BooleanType) (fVM.mirrorOf(true).type());
-		fByteType = (ByteType) (fVM.mirrorOf((byte) 1).type());
-		fCharType = (CharType) (fVM.mirrorOf('a').type());
-		fDoubleType = (DoubleType) (fVM.mirrorOf(12345.6789).type());
-		fFloatType = (FloatType) (fVM.mirrorOf(12345.6789f).type());
-		fIntegerType = (IntegerType) (fVM.mirrorOf(12345).type());
-		fLongType = (LongType) (fVM.mirrorOf(123456789l).type());
-		fShortType = (ShortType) (fVM.mirrorOf((short) 12345).type());
+		fBooleanType = (fVM.mirrorOf(true).type());
+		fByteType = (fVM.mirrorOf((byte) 1).type());
+		fCharType = (fVM.mirrorOf('a').type());
+		fDoubleType = (fVM.mirrorOf(12345.6789).type());
+		fFloatType = (fVM.mirrorOf(12345.6789f).type());
+		fIntegerType = (fVM.mirrorOf(12345).type());
+		fLongType = (fVM.mirrorOf(123456789l).type());
+		fShortType = (fVM.mirrorOf((short) 12345).type());
 		// Get one-dimensional primitive arrays
 		fByteArrayType = getByteArrayType();
 		fShortArrayType = getShortArrayType();
@@ -110,6 +103,7 @@ public class TypeTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.Type";
 	}

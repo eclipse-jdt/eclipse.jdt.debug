@@ -11,11 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 
 import com.sun.jdi.ReferenceType;
@@ -31,7 +30,7 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT)) {
 			final ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(JDIDebugUIPlugin.getActiveWorkbenchShell(),
 					DebugUIMessages.NoLineNumberAttributesStatusHandler_Java_Breakpoint_1, 
-					MessageFormat.format(DebugUIMessages.NoLineNumberAttributesStatusHandler_2, new String[] {type.name()}), 
+					NLS.bind(DebugUIMessages.NoLineNumberAttributesStatusHandler_2, new String[] {type.name()}), 
 					status, IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT,
 					DebugUIMessages.NoLineNumberAttributesStatusHandler_3, 
 					preferenceStore);

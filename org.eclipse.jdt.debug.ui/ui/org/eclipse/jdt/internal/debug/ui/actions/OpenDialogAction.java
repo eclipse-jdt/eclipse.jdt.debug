@@ -82,6 +82,7 @@ public abstract class OpenDialogAction extends RuntimeClasspathAction {
 		return settings;
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

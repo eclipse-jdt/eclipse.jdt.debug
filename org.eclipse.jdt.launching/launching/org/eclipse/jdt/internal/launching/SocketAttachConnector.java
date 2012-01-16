@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.launching;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
@@ -49,11 +49,12 @@ public class SocketAttachConnector implements IVMConnector {
 	/**
 	 * Return the socket transport attaching connector
 	 * 
+	 * @return the {@link AttachingConnector}
 	 * @exception CoreException if unable to locate the connector
 	 */
 	protected static AttachingConnector getAttachingConnector() throws CoreException {
 		AttachingConnector connector= null;
-		Iterator iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
+		Iterator<?> iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
 		while (iter.hasNext()) {
 			AttachingConnector lc= (AttachingConnector) iter.next();
 			if (lc.name().equals("com.sun.jdi.SocketAttach")) { //$NON-NLS-1$
@@ -89,6 +90,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
 	 * @param code error code
+	 * @throws CoreException if an error occurs
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
@@ -97,7 +99,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
 	 */
-	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
+	public void connect(Map<String, String> arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -107,24 +109,24 @@ public class SocketAttachConnector implements IVMConnector {
 		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1); 
 		
 		AttachingConnector connector= getAttachingConnector();
-		String portNumberString = (String)arguments.get("port"); //$NON-NLS-1$
+		String portNumberString = arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
 			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); 
 		}
-		String host = (String)arguments.get("hostname"); //$NON-NLS-1$
+		String host = arguments.get("hostname"); //$NON-NLS-1$
 		if (host == null) {
 			abort(LaunchingMessages.SocketAttachConnector_Hostname_unspecified_for_remote_connection__4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME); 
 		}
-		Map map= connector.defaultArguments();
+		Map<String, Connector.Argument> map= connector.defaultArguments();
 		
-        Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
+        Connector.Argument param= map.get("hostname"); //$NON-NLS-1$
 		param.setValue(host);
-		param= (Connector.Argument) map.get("port"); //$NON-NLS-1$
+		param= map.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
         
-        String timeoutString = (String)arguments.get("timeout"); //$NON-NLS-1$
+        String timeoutString = arguments.get("timeout"); //$NON-NLS-1$
         if (timeoutString != null) {
-            param= (Connector.Argument) map.get("timeout"); //$NON-NLS-1$
+            param= map.get("timeout"); //$NON-NLS-1$
             param.setValue(timeoutString);
         }
         
@@ -145,7 +147,7 @@ public class SocketAttachConnector implements IVMConnector {
         } catch (TimeoutException e) {
             abort(LaunchingMessages.SocketAttachConnector_0, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (UnknownHostException e) {
-			abort(MessageFormat.format(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(NLS.bind(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		} catch (ConnectException e) {
 			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_as_connection_was_refused_2, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
 		} catch (IOException e) {
@@ -157,6 +159,11 @@ public class SocketAttachConnector implements IVMConnector {
 
 	/**
 	 * Helper method that constructs a human-readable label for a remote VM.
+	 * @param vm the VM
+	 * @param host the host name
+	 * @param port the port number
+	 * @param configuration the backing configuration
+	 * @return the new label for the VM
 	 */
 	protected String constructVMLabel(VirtualMachine vm, String host, String port, ILaunchConfiguration configuration) {
 		String name = null;
@@ -182,26 +189,24 @@ public class SocketAttachConnector implements IVMConnector {
 		buffer.append(']'); 
 		return buffer.toString();
 	}
-		
 
-	/**
-	 * @see IVMConnector#getDefaultArguments()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMConnector#getDefaultArguments()
 	 */
-	public Map getDefaultArguments() throws CoreException {
-		Map def = getAttachingConnector().defaultArguments();
+	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException {
+		Map<String, Connector.Argument> def = getAttachingConnector().defaultArguments();
 		Connector.IntegerArgument arg = (Connector.IntegerArgument)def.get("port"); //$NON-NLS-1$
 		arg.setValue(8000);
 		return def;
 	}
 
-	/**
-	 * @see IVMConnector#getArgumentOrder()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMConnector#getArgumentOrder()
 	 */
-	public List getArgumentOrder() {
-		List list = new ArrayList(2);
+	public List<String> getArgumentOrder() {
+		List<String> list = new ArrayList<String>(2);
 		list.add("hostname"); //$NON-NLS-1$
 		list.add("port"); //$NON-NLS-1$
 		return list;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for project rename.
@@ -38,6 +39,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IJavaProject;
 	}
@@ -45,7 +47,8 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */
-	protected void gatherChanges(IMarker[] markers, List changes, String destProjectName) throws CoreException, OperationCanceledException {
+	@Override
+	protected void gatherChanges(IMarker[] markers, List<Change> changes, String destProjectName) throws CoreException, OperationCanceledException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destProjectName);
 		IJavaProject destProject = JavaCore.create(project);
 		for (int i = 0; i < markers.length; i++) {

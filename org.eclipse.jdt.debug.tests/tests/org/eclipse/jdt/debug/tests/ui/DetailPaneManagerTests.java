@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2007 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -52,10 +52,10 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 * one or more detail panes are available.
 	 */
 	public void testGetUserPreferredDetailPane() {
-		String id = fManager.getUserPreferredDetailPane(new HashSet());
+		String id = fManager.getUserPreferredDetailPane(new HashSet<String>());
 		assertEquals("Incorrect pane ID", null, id);
 		
-		Set detailPanes = new HashSet();
+		Set<String> detailPanes = new HashSet<String>();
 		detailPanes.add("NewPane1");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
 		assertEquals("Incorrect pane ID", null, id);
@@ -87,7 +87,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		id = fManager.getUserPreferredDetailPane(null);
 		assertEquals("Incorrect pane ID", null, id);
 		
-		Set detailPanes = new HashSet();
+		Set<String> detailPanes = new HashSet<String>();
 		detailPanes.add("Example1");
 		fManager.setPreferredDetailPane(detailPanes, "Example1");
 		id = fManager.getUserPreferredDetailPane(detailPanes);
@@ -152,7 +152,7 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 	 */
 	public void testGetAvailablePaneIDs() {
 		IStructuredSelection selection = null;
-		Set result = fManager.getAvailablePaneIDs(selection);
+		Set<String> result = fManager.getAvailablePaneIDs(selection);
 		assertTrue("Set was incorrect",result.size()==1 && result.contains(DefaultDetailPane.ID));
 		
 		selection = new StructuredSelection(new String[]{"example selection"});

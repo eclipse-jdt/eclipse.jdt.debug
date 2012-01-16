@@ -38,6 +38,7 @@ public class InspectAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
+	@Override
 	protected void displayResult(final IEvaluationResult result) {
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
@@ -75,6 +76,7 @@ public class InspectAction extends EvaluateAction {
 		}
 	}
 	
+	@Override
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
 		if (part instanceof JavaSnippetEditor) {
@@ -89,7 +91,7 @@ public class InspectAction extends EvaluateAction {
 		}
 		
 		//inspecting from the context of the variables view
-		Iterator variables = ((IStructuredSelection)selection).iterator();
+		Iterator<?> variables = ((IStructuredSelection)selection).iterator();
 		while (variables.hasNext()) {
 			IJavaVariable var = (IJavaVariable)variables.next();
 			try {
@@ -103,6 +105,7 @@ public class InspectAction extends EvaluateAction {
 		showExpressionView();
 	}
 	
+	@Override
 	protected IDataDisplay getDataDisplay() {
 		return getDirectDataDisplay();
 	}

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
+import org.eclipse.jdt.debug.core.IJavaType;
+
 /**
- * Void type. Since it is not possible to retrieve the
- * void type from the target VM on demand, there is a
- * special implementation for the void type.
+ * Void type. Since it is not possible to retrieve the void type from the target
+ * VM on demand, there is a special implementation for the void type.
  */
 
 public class JDIVoidType extends JDIType {
@@ -29,29 +29,35 @@ public class JDIVoidType extends JDIType {
 	/**
 	 * @see IJavaType#getName()
 	 */
+	@Override
 	public String getName() {
 		return "void"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see IJavaType#getSignature()
 	 */
+	@Override
 	public String getSignature() {
 		return "V"; //$NON-NLS-1$
 	}
+
 	/**
 	 * @see java.lang.Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object object) {
-		return object instanceof JDIVoidType && getDebugTarget().equals(((JDIVoidType)object).getDebugTarget());
+		return object instanceof JDIVoidType
+				&& getDebugTarget().equals(
+						((JDIVoidType) object).getDebugTarget());
 	}
 
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
 
 }
-

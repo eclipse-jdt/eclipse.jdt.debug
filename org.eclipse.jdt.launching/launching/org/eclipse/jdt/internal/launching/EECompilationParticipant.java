@@ -32,8 +32,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Creates build path errors related to execution environment bindings.
@@ -46,11 +45,12 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 * A set of projects that have been cleaned. When the build finishes for
 	 * a project that has been cleaned, we check for EE problems.
 	 */
-	private Set fCleaned = new HashSet();
+	private Set<IJavaProject> fCleaned = new HashSet<IJavaProject>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#isActive(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public boolean isActive(IJavaProject project) {
 		return true;
 	}
@@ -58,6 +58,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#cleanStarting(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void cleanStarting(IJavaProject project) {
 		super.cleanStarting(project);
 		fCleaned.add(project);
@@ -66,6 +67,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#buildFinished(org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void buildFinished(IJavaProject project) {
 		super.buildFinished(project);
 		if (fCleaned.remove(project)) {
@@ -106,7 +108,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 		final IExecutionEnvironment environment = manager.getEnvironment(id);
 		if (environment != null) {
 			if (vm == null) {
-				String message = MessageFormat.format(
+				String message = NLS.bind(
 						LaunchingMessages.LaunchingPlugin_38,
 						new String[]{environment.getId()});
 				createJREContainerProblem(project, message, IMarker.SEVERITY_ERROR);
@@ -122,11 +124,11 @@ public class EECompilationParticipant extends CompilationParticipant {
 				}
 				String message = null;
 				if (exact == 0) {
-					message = MessageFormat.format(
+					message = NLS.bind(
 						LaunchingMessages.LaunchingPlugin_35,
 						new String[]{environment.getId()});
 				} else {
-					message = MessageFormat.format(
+					message = NLS.bind(
 							LaunchingMessages.LaunchingPlugin_36,
 							new String[]{environment.getId()});
 				}
@@ -151,12 +153,12 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 */
 	private int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
-		List scopes = new ArrayList();
+		List<IScopeContext> scopes = new ArrayList<IScopeContext>();
 		scopes.add(InstanceScope.INSTANCE);
 		if(project != null) {
 			scopes.add(new ProjectScope(project));
 		}
-		String value = service.getString(LaunchingPlugin.ID_PLUGIN, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
+		String value = service.getString(LaunchingPlugin.ID_PLUGIN, prefkey, null, scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
 			value = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(prefkey, null);
 		}

@@ -20,11 +20,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Determines the child content of an IJavaVariable.
@@ -40,6 +40,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			Object[] variables = getAllChildren(parent, context);
@@ -47,7 +48,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	        	Object[] moreVariables = new Object[variables.length+1];
 	        	System.arraycopy(variables, 0, moreVariables, 1, variables.length);
 	        	IValue value = ((IVariable)parent).getValue();
-	       		moreVariables[0] = new JDIReferenceListVariable(MessageFormat.format(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
+	       		moreVariables[0] = new JDIReferenceListVariable(NLS.bind(JDIDebugModelMessages.JDIReferenceListValue_6, new String[]{((IVariable)parent).getName()}),(IJavaObject)value);
 	        	return getElements(moreVariables, index, length);
 	        }
 	        return getElements(variables, index, length);
@@ -63,6 +64,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		try {
 			int count = super.getChildCount(element, context, monitor);
@@ -82,6 +84,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context,	IViewerUpdate monitor) throws CoreException {
 		try {
 			if (displayReferencesAsChild(element)){
@@ -133,6 +136,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
 		Object[] children = super.getAllChildren(parent, context);
 		return JavaContentProviderFilter.filterVariables(children, context);

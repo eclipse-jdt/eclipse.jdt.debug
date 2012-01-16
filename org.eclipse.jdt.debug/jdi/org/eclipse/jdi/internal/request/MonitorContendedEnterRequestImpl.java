@@ -16,12 +16,13 @@ import org.eclipse.jdi.internal.event.MonitorContendedEnterEventImpl;
 import com.sun.jdi.request.MonitorContendedEnterRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  * @since 3.3
  */
-public class MonitorContendedEnterRequestImpl extends EventRequestImpl implements MonitorContendedEnterRequest {
+public class MonitorContendedEnterRequestImpl extends EventRequestImpl
+		implements MonitorContendedEnterRequest {
 
 	/**
 	 * Creates new MethodExitRequest.
@@ -33,6 +34,7 @@ public class MonitorContendedEnterRequestImpl extends EventRequestImpl implement
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected byte eventKind() {
 		return MonitorContendedEnterEventImpl.EVENT_KIND;
 	}

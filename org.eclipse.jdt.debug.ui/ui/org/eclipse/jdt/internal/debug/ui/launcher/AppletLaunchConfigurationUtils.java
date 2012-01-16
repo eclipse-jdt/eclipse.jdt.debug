@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +40,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 
 public class AppletLaunchConfigurationUtils {
 	
@@ -79,7 +79,7 @@ public class AppletLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(MessageFormat.format(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
+			abort(NLS.bind(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
 		}
 		return mainType;
 	}		
@@ -106,9 +106,9 @@ public class AppletLaunchConfigurationUtils {
 	/**
 	 * 
 	 */
-	public static Set collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
+	public static Set<IType> collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
 		IType[] types;
-		HashSet result = new HashSet(5);
+		HashSet<IType> result = new HashSet<IType>(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
 			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
@@ -128,7 +128,7 @@ public class AppletLaunchConfigurationUtils {
 		return result;
 	}
 	
-	public static void collectTypes(Object element, IProgressMonitor monitor, Set result) throws JavaModelException/*, InvocationTargetException*/ {
+	public static void collectTypes(Object element, IProgressMonitor monitor, Set<Object> result) throws JavaModelException/*, InvocationTargetException*/ {
 		element= computeScope(element);
 		while(element instanceof IMember) {
 			if(element instanceof IType) {
@@ -155,11 +155,11 @@ public class AppletLaunchConfigurationUtils {
 			}
 		} else if (element instanceof IJavaElement) {
 			IJavaElement parent = (IJavaElement) element;
-			List found= searchSubclassesOfApplet(monitor, (IJavaElement)element);
+			List<IType> found= searchSubclassesOfApplet(monitor, (IJavaElement)element);
 			// filter within the parent element
-			Iterator iterator = found.iterator();
+			Iterator<IType> iterator = found.iterator();
 			while (iterator.hasNext()) {
-				IJavaElement target = (IJavaElement) iterator.next();
+				IJavaElement target = iterator.next();
 				IJavaElement child = target;
 				while (child != null) {
 					if (child.equals(parent)) {
@@ -173,8 +173,8 @@ public class AppletLaunchConfigurationUtils {
 		monitor.done();
 	}
 
-	private static List searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
-		return new ArrayList(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
+	private static List<IType> searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
+		return new ArrayList<IType>(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
 	}
 	
 	private static boolean isSubclassOfApplet(IProgressMonitor pm, IType type) {
@@ -210,7 +210,7 @@ public class AppletLaunchConfigurationUtils {
 	 * @throws InterruptedException
 	 */
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
-		final Set result= new HashSet();
+		final Set<Object> result= new HashSet<Object>();
 	
 		if (elements.length > 0) {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
@@ -235,7 +235,7 @@ public class AppletLaunchConfigurationUtils {
 			};
 			context.run(true, true, runnable);			
 		}
-		return (IType[]) result.toArray(new IType[result.size()]) ;
+		return result.toArray(new IType[result.size()]) ;
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,13 @@ public class LibraryDetector {
 	 * <li>java.endorsed.dirs</li>
 	 * </ul>
 	 * 
-	 * @param args
+	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
 		// if we are running raw j9
 		if ("j9".equalsIgnoreCase(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			// Map class lib versions onto things that the launch infrastructure understands.  J9 
-			// behaves like 1.4 wrt launch/debug
+			// behaves like 1.4 with-respect-to launch/debug
 			String configuration = System.getProperty("com.ibm.oti.configuration"); //$NON-NLS-1$
 			if ("found10".equals(configuration)) //$NON-NLS-1$
 				System.out.print("1.4"); //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class LibraryDetector {
 			System.out.print(System.getProperty("java.version")); //$NON-NLS-1$
 			System.out.print("|"); //$NON-NLS-1$
 			// get the boot class path - the property may vary for different vendors
-			Enumeration keys = System.getProperties().keys();
+			Enumeration<Object> keys = System.getProperties().keys();
 			boolean found = false;
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();

@@ -28,6 +28,7 @@ public class ExceptionRequestTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get the exception request
 		fRequest = getExceptionRequest();
@@ -35,6 +36,7 @@ public class ExceptionRequestTest extends AbstractJDITest {
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
 	 */
+	@Override
 	public void localTearDown() {
 		// Delete the exception request we created in this test
 		fVM.eventRequestManager().deleteEventRequest(fRequest);
@@ -50,6 +52,7 @@ public class ExceptionRequestTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.request.ExceptionRequest";
 	}

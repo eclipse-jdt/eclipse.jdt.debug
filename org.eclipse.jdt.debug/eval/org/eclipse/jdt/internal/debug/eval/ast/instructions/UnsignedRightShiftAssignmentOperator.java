@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-public class UnsignedRightShiftAssignmentOperator extends UnsignedRightShiftOperator {
+public class UnsignedRightShiftAssignmentOperator extends
+		UnsignedRightShiftOperator {
 
-	public UnsignedRightShiftAssignmentOperator(int variableTypeId, int valueTypeId, int start) {
+	public UnsignedRightShiftAssignmentOperator(int variableTypeId,
+			int valueTypeId, int start) {
 		super(variableTypeId, variableTypeId, valueTypeId, true, start);
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.UnsignedRightShiftAssignmentOperator_operator_1; 
+		return InstructionsEvaluationMessages.UnsignedRightShiftAssignmentOperator_operator_1;
 	}
 
 }

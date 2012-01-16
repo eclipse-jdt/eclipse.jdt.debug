@@ -47,4 +47,4 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.jdt.core.manipulation,
  org.eclipse.core.filesystem
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

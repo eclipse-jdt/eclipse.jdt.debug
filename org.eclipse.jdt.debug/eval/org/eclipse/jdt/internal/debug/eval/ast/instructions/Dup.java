@@ -15,27 +15,30 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Duplicate the top element of the stack
  * 
- * Element
- * ...
+ * Element ...
  * 
  * ->
  * 
- * Element
- * Element
- * ...
+ * Element Element ...
  * 
  */
 public class Dup extends SimpleInstruction {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute
+	 * ()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		Object element= pop();
+		Object element = pop();
 		push(element);
 		push(element);
 	}
-	
+
+	@Override
 	public String toString() {
 		return "Dup"; //$NON-NLS-1$
 	}

@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -87,6 +88,7 @@ public class ExceptionFilterEditor {
 	private FilterContentProvider fFilterContentProvider;
 	
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fAddTypeButton) {
@@ -161,6 +163,7 @@ public class ExceptionFilterEditor {
 			}
 		});
 		fFilterViewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					removeFilters();
@@ -173,8 +176,8 @@ public class ExceptionFilterEditor {
 
 	protected void doStore() {
 		Object[] filters = fFilterContentProvider.getElements(null);
-		List inclusionFilters = new ArrayList(filters.length);
-		List exclusionFilters = new ArrayList(filters.length);
+		List<String> inclusionFilters = new ArrayList<String>(filters.length);
+		List<String> exclusionFilters = new ArrayList<String>(filters.length);
 		for (int i = 0; i < filters.length; i++) {
 			Filter filter = (Filter) filters[i];
 			String name = filter.getName();
@@ -188,8 +191,8 @@ public class ExceptionFilterEditor {
 			}
 		}
 		try {
-			fBreakpoint.setInclusionFilters((String[]) inclusionFilters.toArray(new String[inclusionFilters.size()]));
-			fBreakpoint.setExclusionFilters((String[]) exclusionFilters.toArray(new String[exclusionFilters.size()]));
+			fBreakpoint.setInclusionFilters(inclusionFilters.toArray(new String[inclusionFilters.size()]));
+			fBreakpoint.setExclusionFilters(exclusionFilters.toArray(new String[exclusionFilters.size()]));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
@@ -291,6 +294,7 @@ public class ExceptionFilterEditor {
 	private void setEditorListeners(Text text) {
 		// CR means commit the changes, ESC means abort and don't commit
 		text.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent event) {
 				if (event.character == SWT.CR) {
 					if (fInvalidEditorText != null) {
@@ -307,6 +311,7 @@ public class ExceptionFilterEditor {
 		});
 		// Consider loss of focus on the editor to mean the same as CR
 		text.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent event) {
 				if (fInvalidEditorText != null) {
 					fEditorText.setText(fInvalidEditorText);
@@ -484,7 +489,7 @@ public class ExceptionFilterEditor {
 	protected class FilterContentProvider implements IStructuredContentProvider {
 
 		private CheckboxTableViewer fViewer;
-		private List fFilters;
+		private List<Filter> fFilters;
 
 		public FilterContentProvider(CheckboxTableViewer viewer) {
 			fViewer = viewer;
@@ -504,7 +509,7 @@ public class ExceptionFilterEditor {
 				eFilters = new String[] {
 				};
 			}
-			fFilters = new ArrayList();
+			fFilters = new ArrayList<Filter>();
 			populateFilters(iFilters, true);
 			populateFilters(eFilters, false);
 

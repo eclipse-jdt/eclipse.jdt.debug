@@ -29,11 +29,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class WatchAction extends InspectAction {
 		
+	@Override
 	public void run() {
 		Object selectedObject= getSelectedObject();
 		if (selectedObject instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection)selectedObject;
-			Iterator elements = selection.iterator();
+			Iterator<?> elements = selection.iterator();
 			while (elements.hasNext()) {
 				try {
 					createWatchExpression(((IJavaVariable)elements.next()).getName());

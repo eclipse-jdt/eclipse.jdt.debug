@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,27 +12,29 @@ package org.eclipse.jdt.internal.ui.macbundler;
 
 import java.io.*;
 import java.util.*;
-import java.util.List;
 
 import javax.xml.parsers.*;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.*;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
-import org.w3c.dom.Document;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
 public class BundleBuilder implements BundleAttributes {
 	
-	private List fProcesses= new ArrayList();
+	private List<Process> fProcesses= new ArrayList<Process>();
 	private BundleDescription fBundleDescription;
 	
 	
+	/**
+	 * Create a new bundle
+	 * @param bd the new description
+	 * @param pm progress monitor
+	 * @throws IOException if something happens
+	 */
 	public void createBundle(BundleDescription bd, IProgressMonitor pm) throws IOException {
 		
 		fBundleDescription= bd;
@@ -58,9 +60,9 @@ public class BundleBuilder implements BundleAttributes {
 				
 		createInfoPList(contents_dir, resources_dir, java_dir, launcher);
 		
-		Iterator iter= fProcesses.iterator();
+		Iterator<Process> iter= fProcesses.iterator();
 		while (iter.hasNext()) {
-			Process p= (Process) iter.next();
+			Process p= iter.next();
 			try {
 				p.waitFor();
 			} catch (InterruptedException e) {
@@ -82,6 +84,7 @@ public class BundleBuilder implements BundleAttributes {
 			docBuilder= factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex) {
 			System.err.println("createInfoPList: could not get XML builder"); //$NON-NLS-1$
+			throw new IOException("Could not get XML builder"); //$NON-NLS-1$
 		}
 		Document doc= docBuilder.newDocument();
 		

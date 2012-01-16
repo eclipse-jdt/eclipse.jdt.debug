@@ -30,6 +30,8 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -295,7 +297,7 @@ public class ThreadFilterEditor {
 				}
 			}		
 			if (parent instanceof ILaunchManager) {
-				List children= new ArrayList();
+				List<IJavaDebugTarget> children= new ArrayList<IJavaDebugTarget>();
 				ILaunch[] launches= ((ILaunchManager) parent).getLaunches();
 				IDebugTarget[] targets;
 				IJavaDebugTarget target;

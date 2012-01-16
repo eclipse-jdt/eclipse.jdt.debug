@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
- 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,13 +18,12 @@ import java.io.UTFDataFormatException;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID
  * declared by the JDWP specification.
- *
+ * 
  */
 public class JdwpString {
 	/**
-	 * Reads String from Jdwp stream.
-	 * Read a UTF where length has 4 bytes, and not just 2.
-	 * This code was based on the OTI Retysin source for readUTF.
+	 * Reads String from Jdwp stream. Read a UTF where length has 4 bytes, and
+	 * not just 2. This code was based on the OTI Retysin source for readUTF.
 	 */
 	public static String read(DataInputStream in) throws IOException {
 		int utfSize = in.readInt();
@@ -42,7 +40,8 @@ public class JdwpString {
 				int b = utfBytes[i + 1] & 0xFF;
 				if ((a >> 4) < 14) {
 					if ((b & 0xBF) == 0) {
-						throw new UTFDataFormatException(JDWPMessages.JdwpString_Second_byte_input_does_not_match_UTF_Specification_1); 
+						throw new UTFDataFormatException(
+								JDWPMessages.JdwpString_Second_byte_input_does_not_match_UTF_Specification_1);
 					}
 					strBuffer.append((char) (((a & 0x1F) << 6) | (b & 0x3F)));
 					i += 2;
@@ -50,12 +49,15 @@ public class JdwpString {
 					int c = utfBytes[i + 2] & 0xFF;
 					if ((a & 0xEF) > 0) {
 						if (((b & 0xBF) == 0) || ((c & 0xBF) == 0)) {
-							throw new UTFDataFormatException(JDWPMessages.JdwpString_Second_or_third_byte_input_does_not_mach_UTF_Specification_2); 
+							throw new UTFDataFormatException(
+									JDWPMessages.JdwpString_Second_or_third_byte_input_does_not_mach_UTF_Specification_2);
 						}
-						strBuffer.append((char) (((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+						strBuffer.append((char) (((a & 0x0F) << 12)
+								| ((b & 0x3F) << 6) | (c & 0x3F)));
 						i += 3;
 					} else {
-						throw new UTFDataFormatException(JDWPMessages.JdwpString_Input_does_not_match_UTF_Specification_3); 
+						throw new UTFDataFormatException(
+								JDWPMessages.JdwpString_Input_does_not_match_UTF_Specification_3);
 					}
 				}
 			}
@@ -63,25 +65,24 @@ public class JdwpString {
 		return strBuffer.toString();
 	}
 
- 
 	/**
-	 * Writes String to Jdwp stream.
-	 * Write a UTF where length has 4 bytes, and not just 2.
-	 * This code was based on OTI Retsin source for writeUTF.
+	 * Writes String to Jdwp stream. Write a UTF where length has 4 bytes, and
+	 * not just 2. This code was based on OTI Retsin source for writeUTF.
 	 */
-	public static void write(String str, DataOutputStream out) throws IOException {
+	public static void write(String str, DataOutputStream out)
+			throws IOException {
 		if (str == null)
-			throw new NullPointerException(JDWPMessages.JdwpString_str_is_null_4); 
+			throw new NullPointerException(
+					JDWPMessages.JdwpString_str_is_null_4);
 		int utfCount = 0;
 		for (int i = 0; i < str.length(); i++) {
 			int charValue = str.charAt(i);
 			if (charValue > 0 && charValue <= 127)
 				utfCount += 1;
+			else if (charValue <= 2047)
+				utfCount += 2;
 			else
-				if (charValue <= 2047)
-					utfCount += 2;
-				else
-					utfCount += 3;
+				utfCount += 3;
 		}
 		byte utfBytes[] = new byte[utfCount];
 		int utfIndex = 0;
@@ -89,15 +90,14 @@ public class JdwpString {
 			int charValue = str.charAt(i);
 			if (charValue > 0 && charValue <= 127)
 				utfBytes[utfIndex++] = (byte) charValue;
-			else
-				if (charValue <= 2047) {
-					utfBytes[utfIndex++] = (byte) (0xc0 | (0x1f & (charValue >> 6)));
-					utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & charValue));
-				} else {
-					utfBytes[utfIndex++] = (byte) (0xe0 | (0x0f & (charValue >> 12)));
-					utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & (charValue >> 6)));
-					utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & charValue));
-				}
+			else if (charValue <= 2047) {
+				utfBytes[utfIndex++] = (byte) (0xc0 | (0x1f & (charValue >> 6)));
+				utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & charValue));
+			} else {
+				utfBytes[utfIndex++] = (byte) (0xe0 | (0x0f & (charValue >> 12)));
+				utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & (charValue >> 6)));
+				utfBytes[utfIndex++] = (byte) (0x80 | (0x3f & charValue));
+			}
 		}
 		out.writeInt(utfCount);
 		if (utfCount > 0)

@@ -10,25 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
- 
 /**
  * Pushes a float literal onto the stack.
  */
 public class PushFloat extends SimpleInstruction {
-	
+
 	private float fValue;
-	
+
 	public PushFloat(float value) {
 		fValue = value;
 	}
-	
+
+	@Override
 	public void execute() {
 		pushNewValue(fValue);
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushFloat_push__1 + fValue; 
+		return InstructionsEvaluationMessages.PushFloat_push__1 + fValue;
 	}
 
 }
-

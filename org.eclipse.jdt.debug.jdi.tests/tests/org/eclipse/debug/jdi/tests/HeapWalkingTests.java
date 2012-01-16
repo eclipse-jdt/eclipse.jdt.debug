@@ -27,9 +27,11 @@ public class HeapWalkingTests extends AbstractJDITest {
 	private ObjectReference fObject;
 	
 	/**	 setup our tests */
+	@Override
 	public void localSetUp() {}
 	
 	/** tear down our tests */
+	@Override
 	public void localTearDown() {
 		super.localTearDown();
 		fClass = null;

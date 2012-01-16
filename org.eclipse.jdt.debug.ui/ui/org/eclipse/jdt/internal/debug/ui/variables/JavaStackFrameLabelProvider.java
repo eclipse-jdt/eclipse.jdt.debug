@@ -28,6 +28,7 @@ public class JavaStackFrameLabelProvider extends DebugElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#retrieveLabel(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 	 */
+	@Override
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
 		Object element = update.getElement();
 		if (element instanceof IJavaStackFrame) {
@@ -43,6 +44,7 @@ public class JavaStackFrameLabelProvider extends DebugElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 	 */
+	@Override
 	protected ISchedulingRule getRule(ILabelUpdate update) {
 		Object element = update.getElement();
 		if (element instanceof IJavaStackFrame) {

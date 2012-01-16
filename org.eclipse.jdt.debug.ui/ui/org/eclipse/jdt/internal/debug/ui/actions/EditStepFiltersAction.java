@@ -23,6 +23,7 @@ public class EditStepFiltersAction extends ActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		SWTFactory.showPreferencePage(JavaStepFilterPreferencePage.PAGE_ID);
 	}

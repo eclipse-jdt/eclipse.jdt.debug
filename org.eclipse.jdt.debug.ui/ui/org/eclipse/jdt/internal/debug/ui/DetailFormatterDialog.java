@@ -33,8 +33,8 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -48,6 +48,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -68,8 +69,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Dialog for edit detail formatter.
@@ -108,7 +107,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * List of types that have detail formatters already defined.
 	 */
-	private List fDefinedTypes;
+	private List<?> fDefinedTypes;
 
     /**
      * Activation handler for content assist, must be deactivated on disposal.
@@ -123,7 +122,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * @param definedTypes list of types with detail formatters already defined, or <code>null</code>
 	 * @param editDialog whether the dialog is being used to edit a detail formatter
 	 */
-	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editDialog) {
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List<?> definedTypes, boolean editDialog) {
 		this(parent, detailFormatter, definedTypes, true, editDialog);
 	}
 	
@@ -136,7 +135,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * @param editTypeName whether the user should be able to modify the type
 	 * @param editDialog whether the dialog is being used to edit a detail formatter
 	 */
-	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editTypeName, boolean editDialog) {
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List<?> definedTypes, boolean editTypeName, boolean editDialog) {
 		super(parent);
 		fDetailFormatter= detailFormatter;
 		fTypeSearched= false;
@@ -155,6 +154,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
@@ -191,7 +191,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
         IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
 		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST);
         if (binding != null) {
-            labelText = MessageFormat.format(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
+            labelText = NLS.bind(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
         }
         if (labelText == null) {
             labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1;
@@ -233,6 +233,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		IDocument document= new Document();
 		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 		fSnippetViewer.configure(new DisplayViewerConfiguration() {
+			@Override
 			public IContentAssistProcessor getContentAssistantProcessor() {
 				return new JavaDebugContentAssistProcessor(new DynamicTypeContext(DetailFormatterDialog.this));
 			}
@@ -281,6 +282,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fDetailFormatter.setEnabled(fCheckBox.getSelection());
 		fDetailFormatter.setTypeName(fTypeNameText.getText().trim());
@@ -337,10 +339,12 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
+			@Override
 			public void endReporting() {
 				checkValues();
 			}
 
+			@Override
 			public void acceptSearchMatch(SearchMatch match) throws CoreException {
 				Object enclosingElement = match.getElement();
 				if (!fFirst) {
@@ -380,6 +384,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);

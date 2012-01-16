@@ -107,6 +107,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
 	//The main composite
@@ -167,6 +168,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		});	
 		fTableViewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				handleFilterViewerKeyPress(event);
 			}
@@ -398,11 +400,12 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		DebugUITools.setUseStepFilters(fUseStepFiltersButton.getSelection());
 		IPreferenceStore store = getPreferenceStore();
-		ArrayList active = new ArrayList();
-		ArrayList inactive = new ArrayList();
+		ArrayList<String> active = new ArrayList<String>();
+		ArrayList<String> inactive = new ArrayList<String>();
 		String name = ""; //$NON-NLS-1$
 		Filter[] filters = getAllFiltersFromTable();
 		for(int i = 0; i < filters.length; i++) {
@@ -414,9 +417,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				inactive.add(name);
 			}
 		}
-		String pref = JavaDebugOptionsManager.serializeList((String[])active.toArray(new String[active.size()]));
+		String pref = JavaDebugOptionsManager.serializeList(active.toArray(new String[active.size()]));
 		store.setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, pref);
-		pref = JavaDebugOptionsManager.serializeList((String[])inactive.toArray(new String[inactive.size()]));
+		pref = JavaDebugOptionsManager.serializeList(inactive.toArray(new String[inactive.size()]));
 		store.setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, pref);
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());
@@ -430,6 +433,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		boolean stepenabled = DebugUITools.isUseStepFilters();
 		fUseStepFiltersButton.setSelection(stepenabled);

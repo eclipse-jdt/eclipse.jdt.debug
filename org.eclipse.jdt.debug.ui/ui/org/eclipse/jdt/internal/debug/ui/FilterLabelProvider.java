@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -40,6 +41,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 	/**
 	 * @see ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return ((Filter) element).getName();
 	}

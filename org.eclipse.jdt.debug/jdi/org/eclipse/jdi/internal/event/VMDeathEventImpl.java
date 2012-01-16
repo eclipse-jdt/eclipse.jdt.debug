@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 
 import org.eclipse.jdi.internal.MirrorImpl;
@@ -20,10 +19,9 @@ import org.eclipse.jdi.internal.request.RequestID;
 import com.sun.jdi.event.VMDeathEvent;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	/** Jdwp Event Kind. */
@@ -37,11 +35,13 @@ public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	}
 
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static VMDeathEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) {
+	public static VMDeathEventImpl read(MirrorImpl target, RequestID requestID,
+			DataInputStream dataInStream) {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		VMDeathEventImpl event = new VMDeathEventImpl(vmImpl, requestID);
 		return event;
-   	}
+	}
 }

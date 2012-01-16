@@ -11,8 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.display;
 
  
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -22,9 +20,11 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.InvocationException;
 
@@ -180,7 +180,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 			Throwable cause= exception.getStatus().getException();
 			if (cause instanceof InvocationException) {
 				String  nestedMessage= ((InvocationException) cause).exception().referenceType().name();
-				return new String[] { MessageFormat.format(DisplayMessages.JavaInspectExpression_0, new String[] {nestedMessage}) }; 
+				return new String[] { NLS.bind(DisplayMessages.JavaInspectExpression_0, new String[] {nestedMessage}) }; 
 			}
 			return new String[] { exception.getMessage() };
 		}

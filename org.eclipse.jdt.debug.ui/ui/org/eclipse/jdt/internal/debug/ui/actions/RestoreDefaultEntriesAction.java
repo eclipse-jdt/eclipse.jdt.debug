@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Restores default entries in the runtime classpath.
@@ -42,6 +43,7 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		try {
 			ILaunchConfiguration config = fTab.getLaunchConfiguration();
@@ -63,6 +65,7 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;
 	}

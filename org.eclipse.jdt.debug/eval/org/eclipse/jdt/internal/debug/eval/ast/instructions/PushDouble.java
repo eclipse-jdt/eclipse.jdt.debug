@@ -10,25 +10,25 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
- 
 /**
  * Pushes a double literal onto the stack.
  */
 public class PushDouble extends SimpleInstruction {
-	
+
 	private double fValue;
-	
+
 	public PushDouble(double value) {
 		fValue = value;
 	}
-	
+
+	@Override
 	public void execute() {
 		pushNewValue(fValue);
 	}
-	
+
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.PushDouble_push__1 + fValue; 
+		return InstructionsEvaluationMessages.PushDouble_push__1 + fValue;
 	}
 
 }
-

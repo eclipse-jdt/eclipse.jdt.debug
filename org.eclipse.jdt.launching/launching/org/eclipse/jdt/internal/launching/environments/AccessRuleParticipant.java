@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	 * <code>executionEnvironment</code> element or a <code>ruleParticipant</code>
 	 * extension.
 	 * 
-	 * @param element
+	 * @param element the configuration element
 	 */
 	AccessRuleParticipant(IConfigurationElement element) {
 		fElement = element;
@@ -94,6 +94,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AccessRuleParticipant) {
 			AccessRuleParticipant participant = (AccessRuleParticipant) obj;
@@ -105,6 +106,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getDelegateClassName().hashCode();
 	}
@@ -112,6 +114,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getDelegateClassName();
 	}

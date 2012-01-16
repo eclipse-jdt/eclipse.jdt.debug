@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/**
 	 * List of breakpoints with compilation errors
 	 */
-	public static List COMPILATION_ERRORS = new ArrayList();
+	public static List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
 	
 	/**
 	 * Lock used to notify when a notification is received.
@@ -81,7 +81,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/**
 	 * List of breakpoints with runtime errors
 	 */
-	public static List RUNTIME_ERRORS = new ArrayList();
+	public static List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
 	
 	public static void reset() {
 		VOTE = IJavaBreakpointListener.DONT_CARE;

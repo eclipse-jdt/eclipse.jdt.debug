@@ -29,6 +29,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.console.IHyperlink;
@@ -36,8 +37,6 @@ import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A hyperlink from a stack trace line of the form "*(*.java:*)"
@@ -94,6 +93,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 */
 	protected void startSourceSearch(final String typeName, final int lineNumber) {
 		Job search = new Job(ConsoleMessages.JavaStackTraceHyperlink_2) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				ILaunch launch = getLaunch();
 				Object result = null;
@@ -118,11 +118,12 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	
 	protected void searchCompleted(final Object source, final String typeName, final int lineNumber, final IStatus status) {
 		UIJob job = new UIJob("link search complete") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (source == null) {
 					if (status == null) {
 						// did not find source
-						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, MessageFormat.format(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));
+						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, NLS.bind(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));
 					} else {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
 					}			
@@ -160,7 +161,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 							IRegion line = document.getLineInformation(lineNumber);
 							textEditor.selectAndReveal(line.getOffset(), line.getLength());
 						} catch (BadLocationException e) {
-                            MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, MessageFormat.format("{0}{1}{2}", new String[] {(lineNumber+1)+"", ConsoleMessages.JavaStackTraceHyperlink_1, typeName}));  //$NON-NLS-2$ //$NON-NLS-1$
+                            MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_0, NLS.bind("{0}{1}{2}", new String[] {(lineNumber+1)+"", ConsoleMessages.JavaStackTraceHyperlink_1, typeName}));  //$NON-NLS-2$ //$NON-NLS-1$
 						}
 						provider.disconnect(editorInput);
 					}

@@ -23,6 +23,7 @@ public class TestClasspathContainerInitializer extends ClasspathContainerInitial
 	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
 		// never called
 	}
@@ -30,6 +31,7 @@ public class TestClasspathContainerInitializer extends ClasspathContainerInitial
 	/**
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getComparisonID(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public Object getComparisonID(IPath containerPath, IJavaProject project) {
 		return project;
 	}

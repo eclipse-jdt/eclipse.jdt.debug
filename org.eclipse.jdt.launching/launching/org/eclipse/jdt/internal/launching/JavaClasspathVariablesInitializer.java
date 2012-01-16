@@ -35,6 +35,7 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 	/**
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
+	@Override
 	public void initialize(String variable) {
 		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
 		if (vmInstall != null) {

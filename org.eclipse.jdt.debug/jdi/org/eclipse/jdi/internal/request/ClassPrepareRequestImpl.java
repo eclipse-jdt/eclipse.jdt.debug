@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.ClassPrepareEventImpl;
 
 import com.sun.jdi.request.ClassPrepareRequest;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ClassPrepareRequestImpl extends EventRequestImpl implements ClassPrepareRequest {
+public class ClassPrepareRequestImpl extends EventRequestImpl implements
+		ClassPrepareRequest {
 	/**
 	 * Creates new ClassPrepareRequest.
 	 */
@@ -33,8 +32,9 @@ public class ClassPrepareRequestImpl extends EventRequestImpl implements ClassPr
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return ClassPrepareEventImpl.EVENT_KIND;
 	}
-	
+
 }

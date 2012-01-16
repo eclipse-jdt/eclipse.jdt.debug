@@ -102,6 +102,7 @@ public class InstructionsEvaluationMessages extends NLS {
 
 	static {
 		// load message values from bundle file
-		NLS.initializeMessages(BUNDLE_NAME, InstructionsEvaluationMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME,
+				InstructionsEvaluationMessages.class);
 	}
 }

@@ -29,6 +29,7 @@ public class NullVariableInitializer extends ClasspathVariableInitializer {
 	 * 
 	 * @see org.eclipse.jdt.core.ClasspathVariableInitializer#initialize(java.lang.String)
 	 */
+	@Override
 	public void initialize(String variable) {
 	}
 

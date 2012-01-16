@@ -27,6 +27,7 @@ public class LongValueTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get long value for 123456789l
 		fValue = fVM.mirrorOf(123456789l);
@@ -42,6 +43,7 @@ public class LongValueTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.LongValue";
 	}

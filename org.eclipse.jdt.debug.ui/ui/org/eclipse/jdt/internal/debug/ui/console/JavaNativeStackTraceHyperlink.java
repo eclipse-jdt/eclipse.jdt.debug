@@ -29,10 +29,12 @@ public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink#getLineNumber()
 	 */
+	@Override
 	protected int getLineNumber(String linkText) {
 		return -1;
 	}
 
+	@Override
 	protected String getTypeName(String linkText) throws CoreException {
 		String typeName;
     	int index = linkText.indexOf('(');

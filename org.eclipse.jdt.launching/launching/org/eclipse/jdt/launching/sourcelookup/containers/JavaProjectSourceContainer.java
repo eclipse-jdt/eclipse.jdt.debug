@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * </p>
  * 
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		
@@ -101,8 +101,9 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		List containers = new ArrayList();
+		List<ISourceContainer> containers = new ArrayList<ISourceContainer>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (fProject.getProject().isOpen()) {
 			IClasspathEntry[] entries = fProject.getRawClasspath();
@@ -120,15 +121,16 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 			}
 		}
 		// cache the Java source folders to search for java like files in
-		fSourceFolders = (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
+		fSourceFolders = containers.toArray(new ISourceContainer[containers.size()]);
 		ISourceContainer theProject = new ProjectSourceContainer(fProject.getProject(), false);
 		fOthers = new ISourceContainer[] {theProject};
 		containers.add(theProject);
-		return (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
+		return containers.toArray(new ISourceContainer[containers.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof JavaProjectSourceContainer) {
 			return getJavaProject().equals(((JavaProjectSourceContainer)obj).getJavaProject());
@@ -138,12 +140,14 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		// force container initialization
 		getSourceContainers();
@@ -151,13 +155,13 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		if (isJavaLikeFileName(name)) {
 			// only look in source folders
 			Object[] objects = findSourceElements(name, fSourceFolders);
-			List filtered = null;
+			List<Object> filtered = null;
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
 				if (object instanceof IResource) {
 					if (!getJavaProject().isOnClasspath((IResource)object)) {
 						if (filtered == null) {
-							filtered = new ArrayList(objects.length);
+							filtered = new ArrayList<Object>(objects.length);
 							for (int j = 0; j < objects.length; j++) {
 								filtered.add(objects[j]);
 							}
@@ -174,6 +178,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		// look elsewhere if not a java like file
 		return findSourceElements(name, fOthers);
 	}
+	@Override
 	public void dispose() {
 		fSourceFolders = null;
 		fOthers = null;

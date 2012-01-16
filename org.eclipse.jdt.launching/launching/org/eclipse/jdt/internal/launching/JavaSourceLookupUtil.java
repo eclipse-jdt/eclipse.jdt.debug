@@ -49,7 +49,7 @@ public class JavaSourceLookupUtil {
 	 * @return source containers corresponding to the given runtime classpath entries
 	 */
 	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries) {
-		List containers = new ArrayList(entries.length);
+		List<ISourceContainer> containers = new ArrayList<ISourceContainer>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			switch (entry.getType()) {
@@ -106,7 +106,7 @@ public class JavaSourceLookupUtil {
 					break;
 			}
 		}
-		return (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
+		return containers.toArray(new ISourceContainer[containers.size()]);
 	}
 	
 	/**

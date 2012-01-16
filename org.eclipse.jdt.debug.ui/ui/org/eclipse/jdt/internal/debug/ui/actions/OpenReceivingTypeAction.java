@@ -24,6 +24,7 @@ public class OpenReceivingTypeAction extends OpenStackFrameAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getTypeToOpen(org.eclipse.debug.core.model.IDebugElement)
 	 */
+	@Override
 	protected IJavaType getTypeToOpen(IDebugElement element) throws CoreException {
 		if (element instanceof IJavaStackFrame) {
 			IJavaStackFrame frame = (IJavaStackFrame) element;

@@ -14,14 +14,15 @@ import org.eclipse.core.runtime.CoreException;
 
 public class Jump extends SimpleInstruction {
 	protected int fOffset;
-	
+
 	public void setOffset(int offset) {
-		fOffset= offset;
+		fOffset = offset;
 	}
 
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
 		jump(fOffset);
 	}
@@ -29,8 +30,9 @@ public class Jump extends SimpleInstruction {
 	/*
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.Jump_jump_1; 
+		return InstructionsEvaluationMessages.Jump_jump_1;
 	}
 
 }

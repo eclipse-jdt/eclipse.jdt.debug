@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	private IDebugTarget fDebugTarget = null;
 	
 	/**
-	 * @param target
+	 * @param target the backing target
 	 */
 	public JavaDebugTargetProxy(IDebugTarget target) {
 		super(target);
@@ -60,6 +60,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#createEventHandlers()
 	 */
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		fThreadEventHandler = new JavaThreadEventHandler(this);
 		return new DebugEventHandler[] { new DebugTargetEventHandler(this), fThreadEventHandler,
@@ -69,6 +70,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
+	@Override
 	public void installed(Viewer viewer) {
 		if (fIsScrapbook) {
 			// don't auto expand scrap books
@@ -78,6 +80,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 		// Delay the auto-select-expand job to allow for transient suspend states to resolve. 
 		// See bug 225377
 		Job job = new Job("Initialize Java Debug Session") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!isDisposed()) {
 					doInstalled(finalViewer);
@@ -90,6 +93,9 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 		fThreadEventHandler.init(viewer);
 	}
 
+	/**
+	 * @param viewer the viewer
+	 */
 	private void doInstalled(Viewer viewer) {
         // select any thread that is already suspended after installation
         IDebugTarget target = fDebugTarget;

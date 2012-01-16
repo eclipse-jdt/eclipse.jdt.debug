@@ -53,7 +53,7 @@ public class VMTypePage extends WizardPage {
 	/**
 	 * Keep track of pages created, so we can dispose of them.
 	 */
-	private Set fPages = new HashSet();
+	private Set<AbstractVMInstallPage> fPages = new HashSet<AbstractVMInstallPage>();
 	
 	/**
 	 * Label provider for VM types
@@ -63,6 +63,7 @@ public class VMTypePage extends WizardPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IVMInstallType) {
 				IVMInstallType type = (IVMInstallType) element;
@@ -86,11 +87,12 @@ public class VMTypePage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
-		Iterator iterator = fPages.iterator();
+		Iterator<AbstractVMInstallPage> iterator = fPages.iterator();
 		while (iterator.hasNext()) {
-			AbstractVMInstallPage page = (AbstractVMInstallPage)iterator.next();
+			AbstractVMInstallPage page = iterator.next();
 			page.dispose();
 		}
 	}
@@ -140,6 +142,7 @@ public class VMTypePage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
 	}	
@@ -147,6 +150,7 @@ public class VMTypePage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		return fNextPage;
 	}

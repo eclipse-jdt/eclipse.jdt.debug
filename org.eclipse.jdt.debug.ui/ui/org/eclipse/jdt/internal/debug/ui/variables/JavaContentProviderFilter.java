@@ -45,7 +45,7 @@ public class JavaContentProviderFilter {
 		boolean filterConstants = !includeConstants(context);
 
 		if (filterStatics || filterConstants) {
-			List keep = new ArrayList(variables.length);
+			List<Object> keep = new ArrayList<Object>(variables.length);
 			for (int i = 0; i < variables.length; i++) {
 				boolean filter = false;
 				if (variables[i] instanceof IJavaVariable){

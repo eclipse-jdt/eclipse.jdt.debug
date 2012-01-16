@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -59,8 +60,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The preference page for creating/modifying logical structures 
@@ -88,7 +87,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
                 buffer.append(logicalStructure.getDescription());
                 String pluginId= logicalStructure.getContributingPluginId();
                 if (pluginId != null) {
-                    buffer.append(MessageFormat.format(DebugUIMessages.JavaLogicalStructuresPreferencePage_8, new String[] {pluginId})); 
+                    buffer.append(NLS.bind(DebugUIMessages.JavaLogicalStructuresPreferencePage_8, new String[] {pluginId})); 
                 }
             }
             return buffer.toString();
@@ -123,10 +122,10 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     
     public class LogicalStructuresListViewerContentProvider implements IStructuredContentProvider {
         
-        private List fLogicalStructures;
+        private List<JavaLogicalStructure> fLogicalStructures;
         
         LogicalStructuresListViewerContentProvider() {
-			fLogicalStructures= new ArrayList();
+			fLogicalStructures= new ArrayList<JavaLogicalStructure>();
 			JavaLogicalStructure[] logicalStructures= JavaLogicalStructures.getJavaLogicalStructures();
 			for (int i= 0; i < logicalStructures.length; i++) {
 				add(logicalStructures[i]);
@@ -157,7 +156,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		 */
 		public void add(JavaLogicalStructure logicalStructure) {
 			for (int i= 0, length= fLogicalStructures.size(); i < length; i++) {
-				if (!greaterThan(logicalStructure, (JavaLogicalStructure)fLogicalStructures.get(i))) {
+				if (!greaterThan(logicalStructure, fLogicalStructures.get(i))) {
 					fLogicalStructures.add(i, logicalStructure);
 					return;
 				}
@@ -184,7 +183,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		/**
 		 * Remove the given logical structures from the content provider.
 		 */
-		public void remove(List list) {
+		public void remove(List<?> list) {
 			fLogicalStructures.removeAll(list);
 		}
 
@@ -197,14 +196,14 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		}
 
 		public void saveUserDefinedJavaLogicalStructures() {
-			List logicalStructures= new ArrayList();
-			for (Iterator iter = fLogicalStructures.iterator(); iter.hasNext();) {
-				JavaLogicalStructure logicalStructure= (JavaLogicalStructure) iter.next();
+			List<JavaLogicalStructure> logicalStructures= new ArrayList<JavaLogicalStructure>();
+			for (Iterator<JavaLogicalStructure> iter = fLogicalStructures.iterator(); iter.hasNext();) {
+				JavaLogicalStructure logicalStructure= iter.next();
 				if (!logicalStructure.isContributed()) {
 					logicalStructures.add(logicalStructure);
 				}
 			}
-			JavaLogicalStructures.setUserDefinedJavaLogicalStructures((JavaLogicalStructure[]) logicalStructures.toArray(new JavaLogicalStructure[logicalStructures.size()]));
+			JavaLogicalStructures.setUserDefinedJavaLogicalStructures(logicalStructures.toArray(new JavaLogicalStructure[logicalStructures.size()]));
 		}
 
     }
@@ -241,6 +240,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
@@ -249,6 +249,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
         Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 2);
         createTable(comp);
@@ -343,14 +344,16 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
             }
         });
         table.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent event) {
+            @Override
+			public void keyPressed(KeyEvent event) {
                 if (event.character == SWT.DEL && event.stateMask == 0 && fRemoveLogicalStructureButton.isEnabled()) {
                 	removeLogicalStrutures();
                 }
             }
         }); 
         fLogicalStructuresViewer.setComparator(new ViewerComparator() {
-            public int compare(Viewer iViewer, Object e1, Object e2) {
+            @Override
+			public int compare(Viewer iViewer, Object e1, Object e2) {
                 if (e1 == null) {
                     return -1;
                 } else if (e2 == null) {
@@ -400,7 +403,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 			JavaLogicalStructure structure = (JavaLogicalStructure)structuredSelection.getFirstElement();
             fEditLogicalStructureButton.setEnabled(size == 1 && !structure.isContributed());
 			boolean removeEnabled= true;
-			for (Iterator iter= structuredSelection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter= structuredSelection.iterator(); iter.hasNext();) {
 				if (((JavaLogicalStructure) iter.next()).isContributed()) {
 					removeEnabled= false;
 				}
@@ -483,7 +486,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	protected void removeLogicalStrutures() {
 		IStructuredSelection selection= (IStructuredSelection)fLogicalStructuresViewer.getSelection();
 		if (selection.size() > 0) {
-			List selectedElements= selection.toList();
+			List<?> selectedElements= selection.toList();
 			Object[] elements= fLogicalStructuresContentProvider.getElements(null);
 			Object newSelectedElement= null;
 			for (int i= 0; i < elements.length; i++) {
@@ -510,6 +513,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if (fCodeViewer != null) {
 			fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
@@ -521,6 +525,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		if (fCodeViewer != null) {
 			fCodeViewer.dispose();

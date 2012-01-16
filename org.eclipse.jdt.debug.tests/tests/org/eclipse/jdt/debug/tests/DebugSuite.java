@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,16 +41,17 @@ public abstract class DebugSuite extends TestSuite {
 	 * waiter blocks the UI when a resource changes.
 	 * @see junit.framework.TestSuite#run(junit.framework.TestResult)
 	 */
+	@Override
 	public void run(final TestResult result) {
 		final Display display = Display.getCurrent();
 		Thread thread = null;
 		try {
 			Runnable r = new Runnable() {
 				public void run() {
-					for (Enumeration e= tests(); e.hasMoreElements(); ) {
+					for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
 				  		if (result.shouldStop() )
 				  			break;
-						Test test= (Test)e.nextElement();
+						Test test= e.nextElement();
 						runTest(test, result);
 					}					
 					fTesting = false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package com.sun.jdi;
-
+/**
+ * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/MonitorInfo.html
+ */
 public interface MonitorInfo extends Mirror {
-	 public ObjectReference monitor();
-	 public int stackDepth();
-	 public ThreadReference thread();
+	public ObjectReference monitor();
+	public int stackDepth();
+	public ThreadReference thread();
 }

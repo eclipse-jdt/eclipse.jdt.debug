@@ -41,8 +41,7 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.service.environment.Constants;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -73,7 +72,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Map of the install path for which we were unable to generate
 	 * the library info during this session.
 	 */
-	private static Map fgFailedInstallPath = new HashMap();
+	private static Map<String, LibraryInfo> fgFailedInstallPath = new HashMap<String, LibraryInfo>();
 
 	/**
 	 * Cache for default library locations. See {@link #getDefaultLibraryLocations(File)}
@@ -82,7 +81,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * 
 	 * @since 3.7
 	 */
-	private static Map fgDefaultLibLocs = new HashMap();
+	private static Map<String, List<LibraryLocation>> fgDefaultLibLocs = new HashMap<String, List<LibraryLocation>>();
 	
 	/**
 	 * The list of locations in which to look for the java executable in candidate
@@ -122,6 +121,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
 	 */
+	@Override
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new StandardVM(this, id);
 	}
@@ -138,7 +138,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		String installPath = javaHome.getAbsolutePath();
 		LibraryInfo info = LaunchingPlugin.getLibraryInfo(installPath);
 		if (info == null || LaunchingPlugin.timeStampChanged(installPath)) {
-			info = (LibraryInfo)fgFailedInstallPath.get(installPath);
+			info = fgFailedInstallPath.get(installPath);
 			if (info == null) {
 				info = generateLibraryInfo(javaHome, javaExecutable);
 				if (info == null) {
@@ -330,7 +330,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		// Determine the java executable that corresponds to the specified install location
 		// and use this to generate library information.  If no java executable was found, 
 		// the 'standard' libraries will be returned.
-		List allLibs = (List) fgDefaultLibLocs.get(installLocation.getAbsolutePath());
+		List<LibraryLocation> allLibs = fgDefaultLibLocs.get(installLocation.getAbsolutePath());
 		if(allLibs == null) {
 			File javaExecutable = findJavaExecutable(installLocation);
 			LibraryInfo libInfo;
@@ -341,11 +341,11 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 			
 			// Add all endorsed libraries - they are first, as they replace
-			allLibs = new ArrayList(gatherAllLibraries(libInfo.getEndorsedDirs()));
+			allLibs = new ArrayList<LibraryLocation>(gatherAllLibraries(libInfo.getEndorsedDirs()));
 			
 			// next is the boot path libraries
 			String[] bootpath = libInfo.getBootpath();
-			List boot = new ArrayList(bootpath.length);
+			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
 			URL url = getDefaultJavadocLocation(installLocation);
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
@@ -364,10 +364,10 @@ public class StandardVMType extends AbstractVMInstallType {
 			allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
 			
 			//remove duplicates
-			HashSet set = new HashSet();
+			HashSet<String> set = new HashSet<String>();
 			LibraryLocation lib = null;
-			for(ListIterator liter = allLibs.listIterator(); liter.hasNext();) {
-				lib = (LibraryLocation) liter.next();
+			for(ListIterator<LibraryLocation> liter = allLibs.listIterator(); liter.hasNext();) {
+				lib = liter.next();
 				IPath systemLibraryPath = lib.getSystemLibraryPath();
 				String device = systemLibraryPath.getDevice();
 				if (device != null) {
@@ -381,7 +381,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 			fgDefaultLibLocs.put(installLocation.getAbsolutePath(), allLibs);
 		}
-		return (LibraryLocation[])allLibs.toArray(new LibraryLocation[allLibs.size()]);
+		return allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
 	
 	/**
@@ -415,8 +415,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @param dirPaths a list of absolute paths of directories to search
 	 * @return List of all zip's and jars
 	 */
-	public static List gatherAllLibraries(String[] dirPaths) {
-		List libraries = new ArrayList();
+	public static List<LibraryLocation> gatherAllLibraries(String[] dirPaths) {
+		List<LibraryLocation> libraries = new ArrayList<LibraryLocation>();
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
 			if (extDir.exists() && extDir.isDirectory()) {
@@ -536,14 +536,14 @@ public class StandardVMType extends AbstractVMInstallType {
 			try {
 				String envp[] = null;
 				if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-					Map map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+					Map<String, String> map = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
 					if (map.remove(StandardVMDebugger.JAVA_JVM_VERSION) != null) {
 						envp = new String[map.size()];
-						Iterator iterator = map.entrySet().iterator();
+						Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
 						int i = 0;
 						while (iterator.hasNext()) {
-							Entry entry = (Entry) iterator.next();
-							envp[i] = (String)entry.getKey() + "=" + (String)entry.getValue(); //$NON-NLS-1$
+							Entry<String, String> entry = iterator.next();
+							envp[i] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
 							i++;
 						}
 					}
@@ -571,7 +571,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		}
 		if (info == null) {
 		    // log error that we were unable to generate library information - see bug 70011
-		    LaunchingPlugin.log(MessageFormat.format("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
+		    LaunchingPlugin.log(NLS.bind("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
 		}
 		return info;
 	}
@@ -615,7 +615,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 	
 	protected String[] parsePaths(String paths) {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		int pos = 0;
 		int index = paths.indexOf(File.pathSeparatorChar, pos);
 		while (index > 0) {
@@ -628,12 +628,13 @@ public class StandardVMType extends AbstractVMInstallType {
 		if (!path.equals("null")) { //$NON-NLS-1$
 			list.add(path);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#disposeVMInstall(java.lang.String)
 	 */
+	@Override
 	public void disposeVMInstall(String id) {
 		IVMInstall vm = findVMInstall(id);
 		if (vm != null) {
@@ -648,6 +649,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
+	@Override
 	public URL getDefaultJavadocLocation(File installLocation) {
 		File javaExecutable = findJavaExecutable(installLocation);
 		if (javaExecutable != null) {

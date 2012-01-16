@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,14 +64,14 @@ import com.sun.jdi.connect.Connector;
  * This class may be instantiated.
  * </p>
  * @since 2.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChangeListener {
 	
 	// UI widgets
 	private Button fAllowTerminateButton;
-	private Map fArgumentMap;
-	private Map fFieldEditorMap = new HashMap();
+	private Map<String, Connector.Argument> fArgumentMap;
+	private Map<String, FieldEditor> fFieldEditorMap = new HashMap<String, FieldEditor>();
 	private Composite fArgumentComposite;
 	private Combo fConnectorCombo;
 	
@@ -99,6 +99,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		}
 		fConnectorCombo = SWTFactory.createCombo(group, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names); 
 		fConnectorCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleConnectorComboModified();
 			}
@@ -145,21 +146,21 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		fFieldEditorMap.clear();
 		PreferenceStore store = new PreferenceStore();
 		// create editors
-		Iterator keys = vm.getArgumentOrder().iterator();
+		Iterator<String> keys = vm.getArgumentOrder().iterator();
 		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+			String key = keys.next();
+			Connector.Argument arg = fArgumentMap.get(key);
 			FieldEditor field = null;
 			if (arg instanceof Connector.IntegerArgument) {
 				store.setDefault(arg.name(), ((Connector.IntegerArgument)arg).intValue());
 				field = new IntegerFieldEditor(arg.name(), arg.label(), fArgumentComposite);
 			} else if (arg instanceof Connector.SelectedArgument) {
-				List choices = ((Connector.SelectedArgument)arg).choices();
+				List<String> choices = ((Connector.SelectedArgument)arg).choices();
 				String[][] namesAndValues = new String[choices.size()][2];
-				Iterator iter = choices.iterator();
+				Iterator<String> iter = choices.iterator();
 				int count = 0;
 				while (iter.hasNext()) {
-					String choice = (String)iter.next();
+					String choice = iter.next();
 					namesAndValues[count][0] = choice;
 					namesAndValues[count][1] = choice;
 					count++;
@@ -188,6 +189,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 /* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		updateAllowTerminateFromConfig(config);
@@ -218,17 +220,17 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 			fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());
 			handleConnectorComboModified();
 			
-			Map attrMap = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
+			Map<String, String> attrMap = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map<String, String>)null);
 			if (attrMap == null) {
 				return;
 			}
-			Iterator keys = attrMap.keySet().iterator();
+			Iterator<String> keys = attrMap.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
-				FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+				String key = keys.next();
+				Connector.Argument arg = fArgumentMap.get(key);
+				FieldEditor editor = fFieldEditorMap.get(key);
 				if (arg != null && editor != null) {
-					String value = (String)attrMap.get(key);
+					String value = attrMap.get(key);
 					if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 						editor.getPreferenceStore().setValue(key, value);
 					} 
@@ -253,15 +255,15 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, getSelectedConnector().getIdentifier());
 		mapResources(config);
-		Map attrMap = new HashMap(fFieldEditorMap.size());
-		Iterator keys = fFieldEditorMap.keySet().iterator();
+		Map<String, String> attrMap = new HashMap<String, String>(fFieldEditorMap.size());
+		Iterator<String> keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+			String key = keys.next();
+			FieldEditor editor = fFieldEditorMap.get(key);
 			if (!editor.isValid()) {
 				return;
 			}
-			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+			Connector.Argument arg = fArgumentMap.get(key);
 			editor.store();
 			if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 				attrMap.put(key, editor.getPreferenceStore().getString(key));
@@ -278,6 +280,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	
 	/**
 	 * Initialize default settings for the given Java element
+	 * @param javaElement the Java element
+	 * @param config the configuration
 	 */
 	private void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		initializeJavaProject(javaElement, config);
@@ -301,6 +305,8 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	/**
 	 * Find the first instance of a type, compilation unit, class file or project in the
 	 * specified element's parental hierarchy, and use this as the default name.
+	 * @param javaElement the Java element
+	 * @param config the configuration
 	 */
 	private void initializeName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
 		String name = EMPTY_STRING;
@@ -324,6 +330,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 
 	/**
 	 * Initialize those attributes whose default values are independent of any context.
+	 * @param config the configuration
 	 */
 	private void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
@@ -333,6 +340,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 /* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {	
 		setErrorMessage(null);
 		setMessage(null);	
@@ -343,11 +351,11 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				return false;
 			}
 		}
-		Iterator keys = fFieldEditorMap.keySet().iterator();
+		Iterator<String> keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
-			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+			String key = keys.next();
+			Connector.Argument arg = fArgumentMap.get(key);
+			FieldEditor editor = fFieldEditorMap.get(key);
 			if (editor instanceof StringFieldEditor) {
 				String value = ((StringFieldEditor)editor).getStringValue();
 				if (!arg.isValid(value)) {
@@ -369,6 +377,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
 	}
@@ -378,12 +387,14 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaConnectTab"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Returns the selected connector
+	 * @return the selected {@link IVMConnector}
 	 */
 	private IVMConnector getSelectedConnector() {
 		return fConnector;

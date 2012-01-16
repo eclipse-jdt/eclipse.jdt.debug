@@ -345,7 +345,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		//workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(vm).toPortableString());
 
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
-		Map map = new HashMap(1);
+		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		
@@ -354,7 +354,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		IProcess process = null;
 		ILaunch launch = null;
 		try {
-			HashSet set = new HashSet();
+			HashSet<String> set = new HashSet<String>();
 			set.add(ILaunchManager.RUN_MODE);
 			ensurePreferredDelegate(workingCopy, set);
 			launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,13 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
- * Removes selected enries in a runtime classpath viewer.
+ * Removes selected entries in a runtime classpath viewer.
  */
 public class RemoveAction extends RuntimeClasspathAction {
 
@@ -29,9 +32,10 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
-		List targets = getOrderedSelection();
-		List list = getEntriesAsList();
+		List<IRuntimeClasspathEntry> targets = getOrderedSelection();
+		List<IRuntimeClasspathEntry> list = getEntriesAsList();
 		list.removeAll(targets);
 		setEntries(list);
 	}
@@ -39,6 +43,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return false;
@@ -46,6 +51,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 		return getViewer().updateSelection(getActionType(), selection);
 	}
 	
+	@Override
 	protected int getActionType() {
 		return REMOVE;
 	}

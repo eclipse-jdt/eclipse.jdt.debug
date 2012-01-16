@@ -52,6 +52,7 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IPath path = JavaCore.getClasspathVariable(fVariable.segment(0));
 		if (path == null) {

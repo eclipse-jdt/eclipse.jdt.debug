@@ -32,7 +32,8 @@ public class PopupInspectAction extends InspectAction {
     /**
      * @see EvaluateAction#displayResult(IEvaluationResult)
      */
-    protected void displayResult(final IEvaluationResult result) {
+    @Override
+	protected void displayResult(final IEvaluationResult result) {
         IWorkbenchPart part = getTargetPart();
         final StyledText styledText = getStyledText(part);
         if (styledText == null) {
@@ -55,7 +56,8 @@ public class PopupInspectAction extends InspectAction {
         	fSelectionBeforeEvaluation = getTargetSelection();
         }
         DebugPopup displayPopup = new InspectPopupDialog(getShell(), getPopupAnchor(textWidget), ACTION_DEFININITION_ID, expression){
-        	public boolean close() {
+        	@Override
+			public boolean close() {
         		boolean returnValue = super.close();
         		if (fTextEditor != null && fSelectionBeforeEvaluation != null){
         			fTextEditor.getSelectionProvider().setSelection(fSelectionBeforeEvaluation);

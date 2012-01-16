@@ -27,6 +27,7 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return false;
 	}
@@ -34,6 +35,7 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ViewFilterAction#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		final StructuredViewer viewer = getStructuredViewer();
 		BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {

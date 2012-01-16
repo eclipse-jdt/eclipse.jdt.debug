@@ -42,6 +42,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -62,8 +63,6 @@ import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class to provide new function of viewing all live objects of the selected type in the current VM
@@ -192,7 +191,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
 				getAnchor(), 
 				PopupInspectAction.ACTION_DEFININITION_ID,
-				new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{typeName}), aiv));
+				new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, new String[]{typeName}), aiv));
 		ipd.open();
 	}
 	
@@ -208,7 +207,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 			InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
 					getAnchor(), 
 					PopupInspectAction.ACTION_DEFININITION_ID,
-					new JavaInspectExpression(MessageFormat.format(Messages.AllInstancesActionDelegate_2, new String[]{rtype.getName()}), aiv));
+					new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, new String[]{rtype.getName()}), aiv));
 			ipd.open();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
@@ -357,6 +356,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
 	 */
+	@Override
 	protected IWorkbenchPart getPart() {
 		IWorkbenchPart part = super.getPart();
 		if (part != null){

@@ -10,32 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
 import org.eclipse.core.runtime.CoreException;
- 
+
 /**
  * Pushes a primitive type onto the stack.
- *
+ * 
  * @since 3.4
  */
 public class PushPrimitiveType extends SimpleInstruction {
-	
+
 	private String fName;
-	
-	
+
 	public PushPrimitiveType(String name) {
-		fName= name;
+		fName = name;
 	}
-	
+
+	@Override
 	public void execute() throws CoreException {
 		push(getPrimitiveType(fName));
 	}
-	
+
+	@Override
 	public String toString() {
-		return "Push Primitive Type: " + fName;  //$NON-NLS-1$
+		return "Push Primitive Type: " + fName; //$NON-NLS-1$
 	}
 
-	
-	
 }
-

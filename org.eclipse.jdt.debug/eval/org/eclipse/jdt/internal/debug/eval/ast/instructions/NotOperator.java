@@ -22,13 +22,15 @@ public class NotOperator extends UnaryOperator {
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		IJavaPrimitiveValue value= (IJavaPrimitiveValue)popValue();
+		IJavaPrimitiveValue value = (IJavaPrimitiveValue) popValue();
 		pushNewValue(!value.getBooleanValue());
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.NotOperator______operator_1; 
+		return InstructionsEvaluationMessages.NotOperator______operator_1;
 	}
 
 }

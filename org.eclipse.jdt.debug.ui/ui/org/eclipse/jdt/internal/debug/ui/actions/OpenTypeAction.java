@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -25,23 +26,15 @@ import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
-
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-
 import org.eclipse.jdt.internal.ui.util.OpenTypeHierarchyUtil;
-
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
 	
@@ -53,7 +46,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		if (selection == null) {
 			return;
 		}
-		Iterator itr= selection.iterator();
+		Iterator<?> itr= selection.iterator();
 		try {
 			while (itr.hasNext()) {
 				Object element= itr.next();
@@ -164,6 +157,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			}
 		}
 		TypeNameMatchRequestor requestor= new TypeNameMatchRequestor() {
+			@Override
 			public void acceptTypeNameMatch(TypeNameMatch match) {
 				throw new ResultException(match.getType());
 			}

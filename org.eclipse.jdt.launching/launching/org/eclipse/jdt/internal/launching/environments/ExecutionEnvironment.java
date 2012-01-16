@@ -45,10 +45,9 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IAccessRuleParticipant;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A contributed execution environment.
@@ -58,7 +57,7 @@ import com.ibm.icu.text.MessageFormat;
 class ExecutionEnvironment implements IExecutionEnvironment {
 	
 	/**
-	 * Add a vm changed listener to clear cached values when a VM changes or is removed
+	 * Add a VM changed listener to clear cached values when a VM changes or is removed
 	 */
 	private IVMInstallChangedListener fListener = new IVMInstallChangedListener() {
 
@@ -115,15 +114,15 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Set of compatible vm's - just the strictly compatible ones
 	 */
-	private Set fStrictlyCompatible = new HashSet();
+	private Set<IVMInstall> fStrictlyCompatible = new HashSet<IVMInstall>();
 	
 	/** 
 	 * All compatible vm's
 	 */
-	private List fCompatibleVMs = new ArrayList();
+	private List<IVMInstall> fCompatibleVMs = new ArrayList<IVMInstall>();
 	
 	/**
-	 * default vm install or <code>null</code> if none
+	 * default VM install or <code>null</code> if none
 	 */
 	private IVMInstall fDefault = null;
 	
@@ -137,7 +136,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * Caches access rules returned by each participant for a given VM.
 	 * @since 3.3
 	 */
-	private Map fParticipantMap = new HashMap();
+	private Map<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>> fParticipantMap = new HashMap<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>>();
 	
 	/**
 	 * Cache of VM -> IAccessRule[][] based on the current state of the participant
@@ -145,7 +144,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * for a specific VM. 
 	 * @since 3.3
 	 */
-	private Map fRuleCache = new HashMap();
+	private Map<IVMInstall, IAccessRule[][]> fRuleCache = new HashMap<IVMInstall, IAccessRule[][]>();
 	
 	/**
 	 * Wild card pattern matching all files
@@ -197,7 +196,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	public IVMInstall[] getCompatibleVMs() {
 		init();
-		return (IVMInstall[]) fCompatibleVMs.toArray(new IVMInstall[fCompatibleVMs.size()]);
+		return fCompatibleVMs.toArray(new IVMInstall[fCompatibleVMs.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -222,7 +221,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	public void setDefaultVM(IVMInstall vm) {
 		init();
 		if (vm != null && !fCompatibleVMs.contains(vm)) {
-			throw new IllegalArgumentException(MessageFormat.format(EnvironmentMessages.EnvironmentsManager_0, new String[]{getId()}));
+			throw new IllegalArgumentException(NLS.bind(EnvironmentMessages.EnvironmentsManager_0, new String[]{getId()}));
 		}
 		if (vm != null && vm.equals(fDefault)) {
 			return;
@@ -240,7 +239,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 		if (model != null) {
 			try {
-				List updates = new ArrayList();
+				List<IJavaProject> updates = new ArrayList<IJavaProject>();
 				IJavaProject[] javaProjects = model.getJavaProjects();
 				IPath path = JavaRuntime.newJREContainerPath(this);
 				for (int i = 0; i < javaProjects.length; i++) {
@@ -257,7 +256,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				}
 				if (!updates.isEmpty()) {
 					JavaCore.setClasspathContainer(path, 
-							(IJavaProject[]) updates.toArray(new IJavaProject[updates.size()]),
+							updates.toArray(new IJavaProject[updates.size()]),
 							new IClasspathContainer[updates.size()],
 							new NullProgressMonitor());
 				}
@@ -306,27 +305,28 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	public IAccessRule[][] getAccessRules(IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
 		IAccessRuleParticipant[] participants = getParticipants();
-		Map rulesByParticipant = collectRulesByParticipant(participants, vm, libraries, project);
+		Map<IAccessRuleParticipant, IAccessRule[][]> rulesByParticipant = collectRulesByParticipant(participants, vm, libraries, project);
 		synchronized (this) {
-			Map cachedRules = (Map) fParticipantMap.get(vm);
+			Map<IAccessRuleParticipant, IAccessRule[][]> cachedRules = fParticipantMap.get(vm);
 			if (cachedRules == null || !cachedRules.equals(rulesByParticipant)) {
-				List[] libLists = new List[libraries.length]; // array of lists of access rules
-				for (int i = 0; i < libLists.length; i++) {
-					libLists[i] = new ArrayList();
+				ArrayList<List<IAccessRule>> libLists = new ArrayList<List<IAccessRule>>(); // array of lists of access rules
+				for (int i = 0; i < libraries.length; i++) {
+					libLists.add(new ArrayList<IAccessRule>());
 				}
 				for (int i = 0; i < participants.length; i++) {
 					IAccessRuleParticipant participant = participants[i];
-					addRules((IAccessRule[][]) rulesByParticipant.get(participant), libLists);
+					addRules(rulesByParticipant.get(participant), libLists);
 				}
 				IAccessRule[][] allRules = new IAccessRule[libraries.length][];
-				for (int i = 0; i < libLists.length; i++) {
-					allRules[i] = (IAccessRule[]) libLists[i].toArray(new IAccessRule[libLists[i].size()]);
+				for (int i = 0; i < libLists.size(); i++) {
+					List<IAccessRule> l = libLists.get(i);
+					allRules[i] = l.toArray(new IAccessRule[l.size()]);
 				}
 				fParticipantMap.put(vm, rulesByParticipant);
 				fRuleCache.put(vm, allRules);
 				return allRules;
 			} else {
-				return (IAccessRule[][]) fRuleCache.get(vm);
+				return fRuleCache.get(vm);
 			}
 		}
 	}
@@ -344,14 +344,14 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
 			if (fRuleParticipant != null) {
 				// ensure environment specific provider is last and not duplicated
-				LinkedHashSet set = new LinkedHashSet();
+				LinkedHashSet<IAccessRuleParticipant> set = new LinkedHashSet<IAccessRuleParticipant>();
 				for (int i = 0; i < participants.length; i++) {
 					set.add(participants[i]);
 				}
 				// remove, add to make last
 				set.remove(fRuleParticipant);
 				set.add(fRuleParticipant);
-				participants = (IAccessRuleParticipant[]) set.toArray(new IAccessRuleParticipant[set.size()]);
+				participants = set.toArray(new IAccessRuleParticipant[set.size()]);
 			}
 			fParticipants = participants;
 		}
@@ -368,8 +368,8 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @param project the {@link IJavaProject} context
 	 * @return the mapping of {@link IAccessRuleParticipant} to {@link IAccessRule}s
 	 */
-	private Map collectRulesByParticipant(IAccessRuleParticipant[] participants, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
-		Map map = new HashMap();
+	private Map<IAccessRuleParticipant, IAccessRule[][]> collectRulesByParticipant(IAccessRuleParticipant[] participants, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
+		Map<IAccessRuleParticipant, IAccessRule[][]> map = new HashMap<IAccessRuleParticipant, IAccessRule[][]>();
 		for (int i = 0; i < participants.length; i++) {
 			// TODO: use safe runnable
 			map.put(participants[i], participants[i].getAccessRules(this, vm, libraries, project));
@@ -384,13 +384,13 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @param accessRules the list of {@link IAccessRule}s
 	 * @param collect the array of lists to collect the {@link IAccessRule}s in
 	 */
-	private void addRules(IAccessRule[][] accessRules, List[] collect) {
+	private void addRules(IAccessRule[][] accessRules, ArrayList<List<IAccessRule>> collect) {
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] libRules = accessRules[i];
-			List list = collect[i];
+			List<IAccessRule> list = collect.get(i);
 			// if the last rule is a **/* pattern, don't add any more rules, as they will have no effect
 			if (!list.isEmpty()) {
-				IAccessRule lastRule = (IAccessRule) list.get(list.size() - 1);
+				IAccessRule lastRule = list.get(list.size() - 1);
 				if(lastRule.getPattern().equals(ALL_PATTERN)) {
 					continue;
 				}
@@ -462,8 +462,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 */
 	public IExecutionEnvironment[] getSubEnvironments() {
 		Properties properties = getProfileProperties();
-		Set subenv = new LinkedHashSet();
+		Set<IExecutionEnvironment> subenv = new LinkedHashSet<IExecutionEnvironment>();
 		if (properties != null) {
+			@SuppressWarnings("deprecation")
 			String subsets = properties.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 			if (subsets != null) {
 				String[] ids = subsets.split(","); //$NON-NLS-1$
@@ -475,17 +476,17 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				}
 			}
 		}
-		return (IExecutionEnvironment[]) subenv.toArray(new IExecutionEnvironment[subenv.size()]);
+		return subenv.toArray(new IExecutionEnvironment[subenv.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironment#getComplianceOptions()
 	 */
-	public Map getComplianceOptions() {
+	public Map<String, String> getComplianceOptions() {
 		Properties properties = getProfileProperties();
 		if (properties != null) {
-			Map map = new HashMap();
-			Iterator iterator = properties.keySet().iterator();
+			Map<String, String> map = new HashMap<String, String>();
+			Iterator<?> iterator = properties.keySet().iterator();
 			while (iterator.hasNext()) {
 				String key = (String) iterator.next();
 				if (key.startsWith(COMPILER_SETTING_PREFIX)) {

@@ -28,6 +28,7 @@ public class FloatValueTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get float value for 123.45f
 		fValue = fVM.mirrorOf(123.45f);
@@ -43,6 +44,7 @@ public class FloatValueTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.FloatType";
 	}

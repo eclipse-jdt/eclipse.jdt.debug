@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.event;
 
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -22,10 +21,9 @@ import org.eclipse.jdi.internal.request.RequestID;
 import com.sun.jdi.event.ThreadDeathEvent;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class ThreadDeathEventImpl extends EventImpl implements ThreadDeathEvent {
 	/** Jdwp Event Kind. */
@@ -37,14 +35,17 @@ public class ThreadDeathEventImpl extends EventImpl implements ThreadDeathEvent 
 	private ThreadDeathEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
 		super("ThreadDeathEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
-		
+
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
+	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 *         already been read.
 	 */
-	public static ThreadDeathEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
+	public static ThreadDeathEventImpl read(MirrorImpl target,
+			RequestID requestID, DataInputStream dataInStream)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		ThreadDeathEventImpl event = new ThreadDeathEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		return event;
-   	}
+	}
 }

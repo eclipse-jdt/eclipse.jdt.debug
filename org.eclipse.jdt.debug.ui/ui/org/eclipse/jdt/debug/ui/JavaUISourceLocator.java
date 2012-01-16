@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A source locator that prompts the user to find source when source cannot
@@ -65,9 +64,10 @@ import com.ibm.icu.text.MessageFormat;
  *  runtime classpath. This class has been replaced by the Java source lookup
  *  director which is an internal class, but can be used via the
  *  <code>sourceLocatorId</code> attribute on a launch configuration type extension.
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 
+@Deprecated
 public class JavaUISourceLocator implements IPersistableSourceLocator {
 
 	/**
@@ -112,7 +112,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * A cache of types to associated source elements (when duplicates arise and
 	 * the users chooses a source element, it is remembered).
 	 */
-	private HashMap fTypesToSource = null;
+	private HashMap<IJavaReferenceType, Object> fTypesToSource = null;
 
 	/**
 	 * Constructs an empty source locator.
@@ -130,6 +130,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * @param projects the projects in which to look for source
 	 * @param includeRequired whether to look in required projects
 	 * 	as well
+	 * @throws CoreException if the underlying {@link JavaSourceLocator} fails to be created
 	 */
 	public JavaUISourceLocator(IJavaProject[] projects,	boolean includeRequired) throws CoreException {
 		fSourceLocator = new JavaSourceLocator(projects, includeRequired);
@@ -197,7 +198,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				// prompt
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(JDIDebugUIPlugin.getActiveWorkbenchShell(), new SourceElementLabelProvider(),new SourceElementQualifierProvider());
 				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1); 
-				dialog.setMessage(MessageFormat.format(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); 
+				dialog.setMessage(NLS.bind(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); 
 				dialog.setElements(sourceElements);
 				dialog.setMultipleSelection(false);
 				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3); 
@@ -227,7 +228,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	
 	private void cacheSourceElement(Object sourceElement, IJavaReferenceType type) {
 		if (fTypesToSource == null) {
-			fTypesToSource = new HashMap();
+			fTypesToSource = new HashMap<IJavaReferenceType, Object>();
 		}
 		fTypesToSource.put(type, sourceElement);
 	}
@@ -237,15 +238,14 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * thread, since a source lookup could be the result of a conditional
 	 * breakpoint looking up source for an evaluation, from the event
 	 * dispatch thread.
-	 * 
-	 * @param typeName the name of the type for which source
+	 * @param frame the stack frame to show source for
 	 *  could not be located
 	 */
 	private void showDebugSourcePage(final IJavaStackFrame frame) {
 		Runnable prompter = new Runnable() {
 			public void run() {
 				try {
-					String message = MessageFormat.format(LauncherMessages.JavaUISourceLocator_selectprojects_message, new String[] {frame.getDeclaringTypeName()});
+					String message = NLS.bind(LauncherMessages.JavaUISourceLocator_selectprojects_message, new String[] {frame.getDeclaringTypeName()});
 
 					ILaunchConfiguration configuration =
 						frame.getLaunch().getLaunchConfiguration();
@@ -333,14 +333,23 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	}
 
 	/**
-	 * @see JavaSourceLocator#getSourceLocations()
+	 * Returns the locations that this source locator is currently
+	 * searching, in the order that they are searched.
+	 * 
+	 * @return the locations that this source locator is currently
+	 * searching, in the order that they are searched
 	 */
 	public IJavaSourceLocation[] getSourceLocations() {
 		return fSourceLocator.getSourceLocations();
 	}
 
 	/**
-	 * @see JavaSourceLocator#setSourceLocations(IJavaSourceLocation[])
+	 * /**
+	 * Sets the locations that will be searched, in the order
+	 * to be searched.
+	 * 
+	 * @param locations the locations that will be searched, in the order
+	 *  to be searched
 	 */
 	public void setSourceLocations(IJavaSourceLocation[] locations) {
 		fSourceLocator.setSourceLocations(locations);

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
 /**
  * A timeout listener is notified when a timer expires.
+ * 
  * @see Timer
  */
 public interface ITimeoutListener {

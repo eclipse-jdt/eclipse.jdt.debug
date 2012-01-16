@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,11 +50,11 @@ public class ContributedTabTests extends AbstractDebugTest {
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
 		assertEquals("Wrong number of tabs", 11, tabs.length); //$NON-NLS-1$
-		Set tabset = new HashSet();
+		Set<Class<? extends ILaunchConfigurationTab>> tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		for(int i = 0; i < tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
-		Set contribs = new HashSet();
+		Set<Class<?>> contribs = new HashSet<Class<?>>();
 		contribs.add(ContributedTestTab1.class);
 		contribs.add(JavaAlernateModeTab.class);
 		assertTrue("java tab group should contain all contributed tabs", tabset.containsAll(contribs)); //$NON-NLS-1$
@@ -95,10 +95,10 @@ public class ContributedTabTests extends AbstractDebugTest {
 		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP), ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
-		HashSet tabset = new HashSet();
+		HashSet<Class<? extends ILaunchConfigurationTab>> tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		tabset.add(tabs[3].getClass());
 		tabset.add(tabs[4].getClass());
-		HashSet contribs = new HashSet();
+		HashSet<Class<?>> contribs = new HashSet<Class<?>>();
 		contribs.add(ContributedTestTab2.class);
 		contribs.add(ContributedTestTab3.class);
 		assertTrue("the tab set must only contain test tab 2 and test tab 3", tabset.containsAll(contribs)); //$NON-NLS-1$

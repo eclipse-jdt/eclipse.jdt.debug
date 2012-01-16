@@ -21,6 +21,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 
  /**
   * Test cases for the implementation of providing argumebnt information even if 
@@ -31,6 +32,7 @@ import com.sun.jdi.request.BreakpointRequest;
 public class ForceEarlyReturnTests extends AbstractJDITest {
 	
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {}
 
 	/**
@@ -55,7 +57,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 		try {
 			Method method = getMethod("foo", "()Ljava/lang/String;");
 			BreakpointRequest br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			EventWaiter waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
@@ -67,7 +69,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 				if(tref.isAtBreakpoint()) {
 					method = getMethod("printNumber", "(Ljava/io/OutputStream;I)I");
 					br = getBreakpointRequest((Location) method.locationsOfLine(136).get(0));
-					br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+					br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					br.enable();
 					waiter = new EventWaiter(br, true);
 					fEventReader.addEventListener(waiter);
@@ -77,7 +79,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 					tref = bpe.thread();
 					LocalVariable lv = (LocalVariable)tref.frame(0).visibleVariables().get(2);
 					Value val = tref.frame(0).getValue(lv);
-					System.out.println((StringReference)val);
+					System.out.println(val);
 					assertTrue("value should be a StringReference", val instanceof StringReference);
 					fEventReader.removeEventListener(waiter);
 					//TODO make sure this works with the newest versions of the 1.6VM

@@ -14,12 +14,13 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.MonitorWaitedEventImpl;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  * @since 3.3
  */
-public class MonitorWaitedRequestImpl extends EventRequestImpl implements com.sun.jdi.request.MonitorWaitedRequest {
+public class MonitorWaitedRequestImpl extends EventRequestImpl implements
+		com.sun.jdi.request.MonitorWaitedRequest {
 
 	/** constructor **/
 	public MonitorWaitedRequestImpl(VirtualMachineImpl vmImpl) {
@@ -29,6 +30,7 @@ public class MonitorWaitedRequestImpl extends EventRequestImpl implements com.su
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected byte eventKind() {
 		return MonitorWaitedEventImpl.EVENT_KIND;
 	}

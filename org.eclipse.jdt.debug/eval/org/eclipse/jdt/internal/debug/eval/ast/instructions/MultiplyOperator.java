@@ -14,58 +14,75 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class MultiplyOperator extends BinaryOperator {
-	public MultiplyOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
+	public MultiplyOperator(int resultId, int leftTypeId, int rightTypeId,
+			int start) {
 		this(resultId, leftTypeId, rightTypeId, false, start);
 	}
 
-	protected MultiplyOperator(int resultId, int leftTypeId, int rightTypeId, boolean isAssignmentOperator, int start) {
+	protected MultiplyOperator(int resultId, int leftTypeId, int rightTypeId,
+			boolean isAssignmentOperator, int start) {
 		super(resultId, leftTypeId, rightTypeId, isAssignmentOperator, start);
 	}
 
 	/*
 	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected boolean getBooleanResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		return false;
 	}
 
 	/*
 	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
-		return ((IJavaPrimitiveValue) leftOperand).getDoubleValue() * ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
+	@Override
+	protected double getDoubleResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getDoubleValue()
+				* ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
 	}
 
 	/*
 	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
-		return ((IJavaPrimitiveValue) leftOperand).getFloatValue() * ((IJavaPrimitiveValue) rightOperand).getFloatValue();
+	@Override
+	protected float getFloatResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
+		return ((IJavaPrimitiveValue) leftOperand).getFloatValue()
+				* ((IJavaPrimitiveValue) rightOperand).getFloatValue();
 	}
 
 	/*
 	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
+	@Override
 	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
-		return ((IJavaPrimitiveValue) leftOperand).getIntValue() * ((IJavaPrimitiveValue) rightOperand).getIntValue();
+		return ((IJavaPrimitiveValue) leftOperand).getIntValue()
+				* ((IJavaPrimitiveValue) rightOperand).getIntValue();
 	}
 
 	/*
 	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
+	@Override
 	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
-		return ((IJavaPrimitiveValue) leftOperand).getLongValue() * ((IJavaPrimitiveValue) rightOperand).getLongValue();
+		return ((IJavaPrimitiveValue) leftOperand).getLongValue()
+				* ((IJavaPrimitiveValue) rightOperand).getLongValue();
 	}
 
 	/*
 	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected String getStringResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.MultiplyOperator______operator_1; 
+		return InstructionsEvaluationMessages.MultiplyOperator______operator_1;
 	}
 
 }

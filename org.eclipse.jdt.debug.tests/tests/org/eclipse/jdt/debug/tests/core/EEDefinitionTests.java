@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -240,7 +240,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		File file = getEEFile();
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription desc = new ExecutionEnvironmentDescription(file);
-		Map map = desc.getProperties();
+		Map<String, String> map = desc.getProperties();
 		
 		// validate expected properties
 		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE, "jrew.txt" , map);
@@ -250,7 +250,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		
 	}
 	
-	protected void validateProperty(String key, String value, Map properties) {
+	protected void validateProperty(String key, String value, Map<String, String> properties) {
 		assertEquals("Unexpeted value for: " + key, value, properties.get(key));
 	}
 	

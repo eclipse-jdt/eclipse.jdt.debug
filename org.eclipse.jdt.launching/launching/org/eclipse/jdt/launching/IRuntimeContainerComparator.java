@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
  *  used to determine equality before using the support defined in
  *  <code>ClasspathContainerInitializer</code>. 
  */
+@Deprecated
 public interface IRuntimeContainerComparator {
 	
 	/**

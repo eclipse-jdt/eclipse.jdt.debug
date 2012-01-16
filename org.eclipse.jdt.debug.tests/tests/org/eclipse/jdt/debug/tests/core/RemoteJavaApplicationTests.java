@@ -59,7 +59,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, get14Project().getElementName());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Djava.compiler=NONE -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,suspend=y,server=y");
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
-		Map map = new HashMap(1);
+		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);		
 		ILaunchConfiguration launchRemoteVMConfig = config.doSave();
@@ -71,12 +71,12 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, true);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, IJavaLaunchConfigurationConstants.ID_SOCKET_ATTACH_VM_CONNECTOR);
 		IVMConnector connector = JavaRuntime.getVMConnector(IJavaLaunchConfigurationConstants.ID_SOCKET_ATTACH_VM_CONNECTOR);
-		Map def = connector.getDefaultArguments();
-		Map argMap = new HashMap(def.size());
-		Iterator iter = connector.getArgumentOrder().iterator();
+		Map<String, ? extends Connector.Argument> def = connector.getDefaultArguments();
+		Map<String, String> argMap = new HashMap<String, String>(def.size());
+		Iterator<String> iter = connector.getArgumentOrder().iterator();
 		while (iter.hasNext()) {
-			String key = (String)iter.next();
-			Connector.Argument arg = (Connector.Argument)def.get(key);
+			String key = iter.next();
+			Connector.Argument arg = def.get(key);
 			argMap.put(key, arg.toString()); 
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);		
@@ -137,12 +137,12 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, true);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, IJavaLaunchConfigurationConstants.ID_SOCKET_LISTEN_VM_CONNECTOR);
 		IVMConnector connector = JavaRuntime.getVMConnector(IJavaLaunchConfigurationConstants.ID_SOCKET_LISTEN_VM_CONNECTOR);
-		Map def = connector.getDefaultArguments();
-		Map argMap = new HashMap(def.size());
-		Iterator iter = connector.getArgumentOrder().iterator();
+		Map<String, ? extends Connector.Argument> def = connector.getDefaultArguments();
+		Map<String, String> argMap = new HashMap<String, String>(def.size());
+		Iterator<String> iter = connector.getArgumentOrder().iterator();
 		while (iter.hasNext()) {
 			String key = (String)iter.next();
-			Connector.Argument arg = (Connector.Argument)def.get(key);
+			Connector.Argument arg = def.get(key);
 			argMap.put(key, arg.toString()); 
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);		
@@ -155,7 +155,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, get14Project().getElementName());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Djava.compiler=NONE -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8000,suspend=y,server=n");
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
-		Map map = new HashMap(1);
+		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);		
 		ILaunchConfiguration launchRemoteVMConfig = config.doSave();

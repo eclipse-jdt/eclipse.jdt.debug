@@ -51,6 +51,7 @@ public class DynamicTypeContext extends TypeContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.text.IJavaDebugCompletionProcessorContext#getType()
 	 */
+	@Override
 	public IType getType() throws CoreException {
 		IType type = fTypeProvider.getType();
 		if (type == null) {

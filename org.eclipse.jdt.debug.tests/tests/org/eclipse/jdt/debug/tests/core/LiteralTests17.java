@@ -37,6 +37,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
+	@Override
 	protected IJavaProject getProjectContext() {
 		return get17Project();
 	}

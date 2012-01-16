@@ -114,6 +114,7 @@ public final class LibraryLocation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof LibraryLocation) {
 			LibraryLocation lib = (LibraryLocation)obj;
@@ -128,6 +129,7 @@ public final class LibraryLocation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getSystemLibraryPath().hashCode();
 	}

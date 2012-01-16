@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
+
+import com.sun.jdi.connect.Connector;
 
 /**
  * A VM connector establishes a JDI connection with a debuggable
@@ -59,7 +61,7 @@ public interface IVMConnector {
 	 * @param launch launch to contribute debug target(s) and/or process(es) to
 	 * @exception CoreException if unable to establish a connection with the target VM
 	 */
-	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException;
+	public void connect(Map<String, String> arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException;
 		
 	/**
 	 * Returns the name of this connector.
@@ -84,7 +86,7 @@ public interface IVMConnector {
 	 * @return argument map with default values
 	 * @exception CoreException if unable to retrieve a default argument map
 	 */
-	public Map getDefaultArguments() throws CoreException;
+	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException;
 	
 	/**
 	 * Returns a list of argument names found in this connector's
@@ -95,5 +97,5 @@ public interface IVMConnector {
 	 * 
 	 * @return list of argument names
 	 */
-	public List getArgumentOrder();	
+	public List<String> getArgumentOrder();	
 }

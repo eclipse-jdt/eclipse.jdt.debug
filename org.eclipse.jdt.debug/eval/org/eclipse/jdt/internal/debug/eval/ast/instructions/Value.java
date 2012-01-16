@@ -17,14 +17,18 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Value extends CompoundInstruction {
 
-	
 	public Value(int start) {
 		super(start);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute
+	 * ()
 	 */
+	@Override
 	public void execute() throws CoreException {
 		push(popValue());
 	}

@@ -27,6 +27,7 @@ public class JREsEnvironmentComparator extends ViewerComparator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
+	@Override
 	public int category(Object element) {
 		if (fEnvironment == null) {
 			return super.category(element);
@@ -42,6 +43,7 @@ public class JREsEnvironmentComparator extends ViewerComparator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		fEnvironment = (IExecutionEnvironment) viewer.getInput();
 		int result = super.compare(viewer, e1, e2);

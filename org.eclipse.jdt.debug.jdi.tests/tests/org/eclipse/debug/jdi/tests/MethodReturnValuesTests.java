@@ -18,6 +18,7 @@ import com.sun.jdi.Value;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.MethodExitRequest;
 
@@ -40,11 +41,13 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 	
 	
 	/** setup test info locally **/
+	@Override
 	public void localSetUp() {
 		erm = fVM.eventRequestManager();
 	}
 	
 	/** cleans up local tests **/
+	@Override
 	public void localTearDown() {
 		super.localTearDown();
 		if(erm != null) {
@@ -76,7 +79,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			//test VoidValueImpl return type
 			method = getMethod("print", "(Ljava/io/OutputStream;)V");
 			br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
@@ -118,7 +121,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			//test non void return types, in the case IntegerValueImpl
 			method = getMethod("foo", "()Ljava/lang/String;");
 			br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
@@ -160,7 +163,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			//test non void return types, in the case IntegerValueImpl
 			method = getMethod("getInt", "()I");
 			br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
@@ -202,7 +205,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			//test non void return types, in the case IntegerValueImpl
 			method = getMethod("getBoolean", "()Z");
 			br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
@@ -244,7 +247,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			//test non void return types, in the case IntegerValueImpl
 			method = getMethod("getLong", "()J");
 			br = getBreakpointRequest(method.location());
-			br.setSuspendPolicy(BreakpointRequest.SUSPEND_EVENT_THREAD);
+			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
 			waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);

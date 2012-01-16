@@ -81,11 +81,13 @@ public class OpenFromClipboardTests extends TestCase {
 			super(test);
 		}
 
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			fJProject = createProject("OpenFromClipboardTests");
 		}
 
+		@Override
 		protected void tearDown() throws Exception {
 			fJProject.getProject().delete(true, true, null);
 			super.tearDown();
@@ -117,11 +119,13 @@ public class OpenFromClipboardTests extends TestCase {
 		return new MyTestSetup(someTest);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fSourceFolder = JavaProjectHelper.addSourceContainer(MyTestSetup.fJProject, "src");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		JavaProjectHelper.removeSourceContainer(MyTestSetup.fJProject, "src");
 		super.tearDown();
@@ -132,8 +136,8 @@ public class OpenFromClipboardTests extends TestCase {
 		return ((Integer) returnValue).intValue();
 	}
 
-	private List getJavaElementMatches(final String textData) {
-		final List matches = new ArrayList();
+	private List<?> getJavaElementMatches(final String textData) {
+		final List<?> matches = new ArrayList<Object>();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				fAccessor.invoke("getJavaElementMatches", new Class[] { String.class, List.class }, new Object[] { textData, matches });
@@ -161,7 +165,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -170,7 +174,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -179,7 +183,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(JAVA_FILE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboard$Tests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -191,7 +195,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest(typeName);
 
-		List matches= getJavaElementMatches(s);
+		List<?> matches= getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -203,7 +207,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 		setupTypeTest(typeName);
 
-		List matches= getJavaElementMatches(s);
+		List<?> matches= getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -212,7 +216,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(JAVA_FILE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -221,7 +225,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -230,7 +234,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(TYPE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -240,7 +244,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -249,7 +253,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -258,7 +262,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -267,7 +271,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -276,7 +280,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -285,7 +289,7 @@ public class OpenFromClipboardTests extends TestCase {
 		setupTypeTest("OpenFromClipboardTests");
 
 		setupTypeTest("OpenFromClipboard$Tests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -295,7 +299,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK_TRACE_LINE, getMatachingPattern(s));
 
 		setupTypeTest("OpenFromClipboardTests");
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -320,7 +324,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -329,7 +333,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -338,7 +342,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -347,7 +351,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -356,7 +360,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -365,7 +369,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -374,7 +378,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -418,7 +422,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodWithDollarSignTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -427,7 +431,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD, getMatachingPattern(s));
 
 		setupMethodWithDollarSignTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -448,7 +452,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(MEMBER, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -457,7 +461,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(MEMBER, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -466,7 +470,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(METHOD_JAVADOC_REFERENCE, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -476,7 +480,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -485,7 +489,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -494,7 +498,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupMemberTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -522,7 +526,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupQualifiedNameWithDollarSignTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -531,7 +535,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupQualifiedNameWithDollarSignTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -540,7 +544,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(QUALIFIED_NAME, getMatachingPattern(s));
 
 		setupQualifiedNameWithDollarSignTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -561,7 +565,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK, getMatachingPattern(s));
 
 		setupStackElementTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 
@@ -570,7 +574,7 @@ public class OpenFromClipboardTests extends TestCase {
 		assertEquals(STACK, getMatachingPattern(s));
 
 		setupStackElementTest();
-		List matches = getJavaElementMatches(s);
+		List<?> matches = getJavaElementMatches(s);
 		assertEquals(1, matches.size());
 	}
 

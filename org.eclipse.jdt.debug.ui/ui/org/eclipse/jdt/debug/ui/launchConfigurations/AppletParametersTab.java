@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated.
  * </p>
  * @since 2.1
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class AppletParametersTab extends JavaLaunchTab {
 	
@@ -80,6 +80,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
 			if (source == fViewer.getTable() || source == fViewer) {
@@ -167,6 +168,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		ptable.setLinesVisible(true);
 		ptable.addSelectionListener(fListener);
 		ptable.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				setParametersButtonsEnableState();
 				if (fParametersEditButton.isEnabled()) {
@@ -177,7 +179,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		
 		fViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				Map params = (Map) inputElement;
+				Map<?, ?> params = (Map<?, ?>) inputElement;
 				return params.keySet().toArray();
 			}
 			public void dispose() {
@@ -196,7 +198,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 				}
 
 				String key = (String) element;
-				Map params = (Map) fViewer.getInput();
+				Map<String, String> params = (Map<String, String>) fViewer.getInput();
 				Object object = params.get(key);
 				if (object != null)
 					return object.toString();
@@ -234,6 +236,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		try {
@@ -264,8 +267,8 @@ public class AppletParametersTab extends JavaLaunchTab {
 	private void handleParametersEditButtonSelected() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		String key = (String) selection.getFirstElement();
-		Map params = (Map) fViewer.getInput();
-		String value = (String) params.get(key);
+		Map<String, String> params = (Map<String, String>) fViewer.getInput();
+		String value = params.get(key);
 		
 		NameValuePairDialog dialog =
 			new NameValuePairDialog(getShell(), 
@@ -281,7 +284,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		Object[] keys = selection.toArray();
 		for (int i = 0; i < keys.length; i++) {
 			String key = (String) keys[i];
-			Map params = (Map) fViewer.getInput();
+			Map<String, String> params = (Map<String, String>) fViewer.getInput();
 			params.remove(key);			
 		}
 		fViewer.refresh();
@@ -312,16 +315,15 @@ public class AppletParametersTab extends JavaLaunchTab {
 
 	/**
 	 * Show the specified dialog and update the parameter table based on its results.
-	 * 
-	 * @param updateItem the item to update, or <code>null</code> if
-	 *  adding a new item
+	 * @param dialog the dialog
+	 * @param key the key to edit
 	 */
 	private void openNewParameterDialog(NameValuePairDialog dialog, String key) {
 		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String[] nameValuePair = dialog.getNameValuePair();
-		Map params = (Map) fViewer.getInput();
+		Map<String, String> params = (Map<String, String>) fViewer.getInput();
 		params.remove(key);
 		params.put(nameValuePair[0], nameValuePair[1]);
 		fViewer.refresh();
@@ -341,7 +343,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		} catch (NumberFormatException e) {
 		}
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, fNameText.getText());
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map) fViewer.getInput());
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) fViewer.getInput());
 	}
 
 	/**
@@ -370,6 +372,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fWidthText.setText(Integer.toString(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, DEFAULT_APPLET_WIDTH))); 
@@ -387,9 +390,9 @@ public class AppletParametersTab extends JavaLaunchTab {
 			fNameText.setText(LauncherMessages.appletlauncher_argumenttab_name_defaultvalue); 
 		}
 		
-		Map input = new HashMap();
+		Map<String, String> input = new HashMap<String, String>();
 		try {
-			 Map params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map) null);
+			 Map<String, String> params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) null);
              if (params != null)
                  input.putAll(params);
 		} catch (CoreException e) {
@@ -410,6 +413,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.appletParametersTab"; //$NON-NLS-1$
 	}
@@ -417,6 +421,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}	
@@ -424,6 +429,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
 	}
@@ -431,6 +437,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when de-activated
 	}	

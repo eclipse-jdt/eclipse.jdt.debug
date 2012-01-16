@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.classpath;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,11 +32,12 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 
 	public DefaultClasspathEntryDialog(Shell parentShell, IRuntimeClasspathEntry entry) {
 		super(parentShell, ClasspathMessages.DefaultClasspathEntryDialog_0, null,
-				MessageFormat.format(ClasspathMessages.DefaultClasspathEntryDialog_1, new String[]{entry.getJavaProject().getElementName()}),
+				NLS.bind(ClasspathMessages.DefaultClasspathEntryDialog_1, new String[]{entry.getJavaProject().getElementName()}),
 				MessageDialog.NONE, new String[]{ClasspathMessages.DefaultClasspathEntryDialog_2, ClasspathMessages.DefaultClasspathEntryDialog_3}, 0);
 		fEntry = (DefaultProjectClasspathEntry) entry;
 	}
 
+	@Override
 	protected Control createCustomArea(Composite parent) {
 		fButton = new Button(parent, SWT.CHECK);
 		fButton.setText(ClasspathMessages.DefaultClasspathEntryDialog_4);
@@ -45,6 +45,7 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 		return fButton;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == 0) {
 			fEntry.setExportedEntriesOnly(fButton.getSelection());

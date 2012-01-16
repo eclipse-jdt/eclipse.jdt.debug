@@ -27,19 +27,24 @@ public class JDIDebugOptions {
 	public static boolean DEBUG_JDI_REQUEST_TIMES = false;
 	public static boolean DEBUG_AST_EVAL = false;
 	public static boolean DEBUG_AST_EVAL_THREAD_TRACE = false;
-	
+
 	// used to format debug messages
-	public static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+	public static final DateFormat FORMAT = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 
 	public static void initDebugOptions() {
-		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.debug/debug"));  //$NON-NLS-1$//$NON-NLS-2$
-		DEBUG_JDI_EVENTS = DEBUG && "true".equals( //$NON-NLS-1$
-				 Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiEvents")); //$NON-NLS-1$
-		DEBUG_JDI_REQUEST_TIMES = DEBUG && "true".equals( //$NON-NLS-1$
-				 Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiRequestTimes")); //$NON-NLS-1$
-		DEBUG_AST_EVAL = DEBUG && "true".equals( //$NON-NLS-1$
-				 Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations")); //$NON-NLS-1$
-		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG && "true".equals( //$NON-NLS-1$
-				 Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations/callingThreads")); //$NON-NLS-1$
+		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.debug/debug")); //$NON-NLS-1$//$NON-NLS-2$
+		DEBUG_JDI_EVENTS = DEBUG
+				&& "true".equals( //$NON-NLS-1$
+						Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiEvents")); //$NON-NLS-1$
+		DEBUG_JDI_REQUEST_TIMES = DEBUG
+				&& "true".equals( //$NON-NLS-1$
+						Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiRequestTimes")); //$NON-NLS-1$
+		DEBUG_AST_EVAL = DEBUG
+				&& "true".equals( //$NON-NLS-1$
+						Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations")); //$NON-NLS-1$
+		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG
+				&& "true".equals( //$NON-NLS-1$
+						Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations/callingThreads")); //$NON-NLS-1$
 	}
 }

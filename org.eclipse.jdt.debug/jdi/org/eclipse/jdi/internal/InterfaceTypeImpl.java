@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdi.internal;
-
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -22,79 +21,90 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpInterfaceID;
 
 import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.ClassType;
 import com.sun.jdi.InterfaceType;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceType {
+public class InterfaceTypeImpl extends ReferenceTypeImpl implements
+		InterfaceType {
 	/** JDWP Tag. */
 	public static final byte typeTag = JdwpID.TYPE_TAG_INTERFACE;
 
 	/**
 	 * Creates new InterfaceTypeImpl.
 	 */
-	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID) {
+	public InterfaceTypeImpl(VirtualMachineImpl vmImpl,
+			JdwpInterfaceID interfaceID) {
 		super("InterfaceType", vmImpl, interfaceID); //$NON-NLS-1$
 	}
 
 	/**
 	 * Creates new InterfaceTypeImpl.
 	 */
-	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID, String signature, String genericSignature) {
+	public InterfaceTypeImpl(VirtualMachineImpl vmImpl,
+			JdwpInterfaceID interfaceID, String signature,
+			String genericSignature) {
 		super("InterfaceType", vmImpl, interfaceID, signature, genericSignature); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return Create a null value instance of the type.
 	 */
+	@Override
 	public Value createNullValue() {
-		return new ClassObjectReferenceImpl(virtualMachineImpl(), new JdwpClassObjectID(virtualMachineImpl()));
+		return new ClassObjectReferenceImpl(virtualMachineImpl(),
+				new JdwpClassObjectID(virtualMachineImpl()));
 	}
 
 	/**
 	 * @return Returns type tag.
 	 */
+	@Override
 	public byte typeTag() {
 		return typeTag;
 	}
-	
+
 	/**
 	 * Flushes all stored Jdwp results.
 	 */
+	@Override
 	public void flushStoredJdwpResults() {
 		super.flushStoredJdwpResults();
 
-		// For all reftypes that have this interface cached, this cache must be undone.
-		Iterator itr = virtualMachineImpl().allCachedRefTypes();
+		// For all reference types that have this interface cached, this cache must be
+		// undone.
+		Iterator<Object> itr = virtualMachineImpl().allCachedRefTypes();
 		while (itr.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
-			if (refType.fInterfaces != null && refType.fInterfaces.contains(this)) {
+			ReferenceTypeImpl refType = (ReferenceTypeImpl) itr.next();
+			if (refType.fInterfaces != null
+					&& refType.fInterfaces.contains(this)) {
 				refType.flushStoredJdwpResults();
 			}
 		}
-		
+
 	}
-	
-	/**
-	 * @return Returns the currently prepared classes which directly implement this interface.
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#implementors()
 	 */
-	public List implementors() {
+	public List<ClassType> implementors() {
 		// Note that this information should not be cached.
-		List implementors = new ArrayList();
-		Iterator itr = virtualMachineImpl().allRefTypes();
+		List<ClassType> implementors = new ArrayList<ClassType>();
+		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
-			ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
+			ReferenceType refType = itr.next();
 			if (refType instanceof ClassTypeImpl) {
 				try {
-					ClassTypeImpl classType = (ClassTypeImpl)refType;
-					List interfaces = classType.interfaces();
+					ClassTypeImpl classType = (ClassTypeImpl) refType;
+					List<InterfaceType> interfaces = classType.interfaces();
 					if (interfaces.contains(this)) {
-						implementors .add(classType);
+						implementors.add(classType);
 					}
 				} catch (ClassNotPreparedException e) {
 					continue;
@@ -103,20 +113,20 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		}
 		return implementors;
 	}
-	
-	/**
-	 * @return Returns the currently prepared interfaces which directly extend this interface. 
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#subinterfaces()
 	 */
-	public List subinterfaces() {
+	public List<InterfaceType> subinterfaces() {
 		// Note that this information should not be cached.
-		List implementors = new ArrayList();
-		Iterator itr = virtualMachineImpl().allRefTypes();
+		List<InterfaceType> implementors = new ArrayList<InterfaceType>();
+		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {
-				ReferenceTypeImpl refType = (ReferenceTypeImpl)itr.next();
+				ReferenceType refType = itr.next();
 				if (refType instanceof InterfaceTypeImpl) {
-					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl)refType;
-					List interfaces = interFaceType.superinterfaces();
+					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl) refType;
+					List<InterfaceType> interfaces = interFaceType.superinterfaces();
 					if (interfaces.contains(this)) {
 						implementors.add(interFaceType);
 					}
@@ -127,25 +137,28 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		}
 		return implementors;
 	}
-	
-	/**
-	 * @return Returns the interfaces directly extended by this interface. 
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#superinterfaces()
 	 */
-	public List superinterfaces() {
+	public List<InterfaceType> superinterfaces() {
 		return interfaces();
 	}
-	
-	/** 
+
+	/**
 	 * @return Returns true if this type has been initialized.
 	 */
+	@Override
 	public boolean isInitialized() {
 		return isPrepared();
 	}
 
 	/**
-	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
+	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if
+	 *         ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static InterfaceTypeImpl read(MirrorImpl target, DataInputStream in) throws IOException {
+	public static InterfaceTypeImpl read(MirrorImpl target, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
@@ -156,19 +169,23 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		if (ID.isNull()) {
 			return null;
 		}
-			
-		InterfaceTypeImpl mirror = (InterfaceTypeImpl)vmImpl.getCachedMirror(ID);
+
+		InterfaceTypeImpl mirror = (InterfaceTypeImpl) vmImpl
+				.getCachedMirror(ID);
 		if (mirror == null) {
 			mirror = new InterfaceTypeImpl(vmImpl, ID);
 			vmImpl.addCachedMirror(mirror);
 		}
 		return mirror;
-	 }
-	
+	}
+
 	/**
-	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if ID is unknown a newly created ReferenceTypeImpl.
+	 * @return Reads ID and returns known ReferenceTypeImpl with that ID, or if
+	 *         ID is unknown a newly created ReferenceTypeImpl.
 	 */
-	public static InterfaceTypeImpl readWithSignature(MirrorImpl target, boolean withGenericSignature, DataInputStream in) throws IOException {
+	public static InterfaceTypeImpl readWithSignature(MirrorImpl target,
+			boolean withGenericSignature, DataInputStream in)
+			throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
@@ -177,15 +194,16 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		}
 
 		String signature = target.readString("signature", in); //$NON-NLS-1$
-		String genericSignature= null;
+		String genericSignature = null;
 		if (withGenericSignature) {
-			genericSignature= target.readString("generic signature", in); //$NON-NLS-1$
+			genericSignature = target.readString("generic signature", in); //$NON-NLS-1$
 		}
 		if (ID.isNull()) {
 			return null;
 		}
-			
-		InterfaceTypeImpl mirror = (InterfaceTypeImpl)vmImpl.getCachedMirror(ID);
+
+		InterfaceTypeImpl mirror = (InterfaceTypeImpl) vmImpl
+				.getCachedMirror(ID);
 		if (mirror == null) {
 			mirror = new InterfaceTypeImpl(vmImpl, ID);
 			vmImpl.addCachedMirror(mirror);
@@ -193,5 +211,5 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		mirror.setSignature(signature);
 		mirror.setGenericSignature(genericSignature);
 		return mirror;
-	 }
+	}
 }

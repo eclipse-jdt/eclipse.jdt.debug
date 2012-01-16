@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.jdt.launching;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-
 
 /**
  * An implementation of IVMInstall that is used for manipulating VMs without necessarily 
@@ -36,7 +34,7 @@ import java.util.Map.Entry;
  * </p>
  * 
  * @since 2.1
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class VMStandin extends AbstractVMInstall {
     
@@ -57,8 +55,8 @@ public class VMStandin extends AbstractVMInstall {
 	/**
 	 * Constructs a copy of the specified VM with the given identifier.
 	 * 
-	 * @param sourceVM
-	 * @param id
+	 * @param sourceVM the original VM 
+	 * @param id the new ID to use
 	 * @since 3.2
 	 */
 	public VMStandin(IVMInstall sourceVM, String id) {
@@ -69,10 +67,10 @@ public class VMStandin extends AbstractVMInstall {
 	
 	/**
 	 * Construct a <code>VMStandin</code> instance based on the specified <code>IVMInstall</code>.
-	 * Changes to this standin will not be reflected in the 'real' VM until <code>convertToRealVM</code>
+	 * Changes to this stand-in will not be reflected in the 'real' VM until <code>convertToRealVM</code>
 	 * is called.
 	 * 
-	 * @param realVM the 'real' VM from which to construct this standin VM
+	 * @param realVM the 'real' VM from which to construct this stand-in VM
 	 */
 	public VMStandin(IVMInstall realVM) {
 		this (realVM.getVMInstallType(), realVM.getId());
@@ -80,7 +78,7 @@ public class VMStandin extends AbstractVMInstall {
 	}
 
 	/**
-	 * Initializes the settings of this standin based on the settings in the given
+	 * Initializes the settings of this stand-in based on the settings in the given
 	 * VM install.
 	 * 
 	 * @param realVM VM to copy settings from
@@ -100,21 +98,22 @@ public class VMStandin extends AbstractVMInstall {
 		}
 		if (realVM instanceof AbstractVMInstall) {
 			AbstractVMInstall vm2 = (AbstractVMInstall) realVM;
-			Map attributes = vm2.getAttributes();
-			Iterator iterator = attributes.entrySet().iterator();
+			Map<String, String> attributes = vm2.getAttributes();
+			Iterator<Entry<String, String>> iterator = attributes.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
-				setAttribute((String)entry.getKey(), (String)entry.getValue());
+				Entry<String, String> entry = iterator.next();
+				setAttribute(entry.getKey(), entry.getValue());
 			}
 		}
 	}
 	
 	/**
-	 * If no corresponding 'real' VM exists, create one and populate it from this standin instance. 
-	 * If a corresponding VM exists, update its attributes from this standin instance.
+	 * If no corresponding 'real' VM exists, create one and populate it from this stand-in instance. 
+	 * If a corresponding VM exists, update its attributes from this stand-in instance.
 	 * 
-	 * @return IVMInstall the 'real' corresponding to this standin VM
+	 * @return IVMInstall the 'real' corresponding to this stand-in VM
 	 */
+	@SuppressWarnings("deprecation")
 	public IVMInstall convertToRealVM() {
 		IVMInstallType vmType= getVMInstallType();
 		IVMInstall realVM= vmType.findVMInstall(getId());
@@ -141,10 +140,10 @@ public class VMStandin extends AbstractVMInstall {
 		
 		if (realVM instanceof AbstractVMInstall) {
 			AbstractVMInstall avm = (AbstractVMInstall) realVM;
-			Iterator iterator = getAttributes().entrySet().iterator();
+			Iterator<Entry<String, String>> iterator = getAttributes().entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
-				avm.setAttribute((String)entry.getKey(), (String)entry.getValue());
+				Entry<String, String> entry = iterator.next();
+				avm.setAttribute(entry.getKey(), entry.getValue());
 			}
 			avm.setNotify(true);
 		}		
@@ -157,7 +156,8 @@ public class VMStandin extends AbstractVMInstall {
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall#getJavaVersion()
      */
-    public String getJavaVersion() {
+    @Override
+	public String getJavaVersion() {
         return fJavaVersion;
     }
 }

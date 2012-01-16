@@ -110,6 +110,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		fDefaultButton.setLayoutData(gd);
 		fDefaultButton.setFont(font);
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
 			}
@@ -122,13 +123,14 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		fDuplicatesButton.setLayoutData(gd);
 		fDuplicatesButton.setFont(font);
 		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
 		});		
 		
-		List advancedActions = new ArrayList(5);
+		List<RuntimeClasspathAction> advancedActions = new ArrayList<RuntimeClasspathAction>(5);
 		
 		GC gc = new GC(parent);
 		gc.setFont(parent.getFont());
@@ -174,7 +176,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 		action = new AttachSourceAction(fPathViewer, SWT.RADIO);								
 		advancedActions.add(action);				
 									
-		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
+		IAction[] adv = advancedActions.toArray(new IAction[advancedActions.size()]);
 		action = new AddAdvancedAction(fPathViewer, adv);
 		button = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
@@ -236,6 +238,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		boolean useDefault = true;
 		setErrorMessage(null);
@@ -279,12 +282,12 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 			boolean def = fDefaultButton.getSelection();		
 			if (def) {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List<String>)null);
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
 				try {
 					IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
-					List mementos = new ArrayList(entries.length);
+					List<String> mementos = new ArrayList<String>(entries.length);
 					for (int i = 0; i < entries.length; i++) {
 						mementos.add(entries[i].getMemento());
 					}
@@ -341,13 +344,14 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List<String>)null);
 		configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
 			super.updateLaunchConfigurationDialog();
@@ -357,6 +361,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fPathViewer.removeEntriesChangedListener(this);
 		super.dispose();

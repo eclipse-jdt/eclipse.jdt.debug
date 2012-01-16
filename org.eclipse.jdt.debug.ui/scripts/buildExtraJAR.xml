@@ -28,7 +28,7 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${destdir}"
+		<javac target="1.5" source="1.5" destdir="${destdir}"
 			failonerror="true"
 			verbose="false"
 			debug="on"

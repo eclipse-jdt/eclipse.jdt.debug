@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.request;
 
-
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.event.ExceptionEventImpl;
 
@@ -18,12 +17,12 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ExceptionRequest;
 
 /**
- * This class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * This class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
-public class ExceptionRequestImpl extends EventRequestImpl implements ExceptionRequest {
+public class ExceptionRequestImpl extends EventRequestImpl implements
+		ExceptionRequest {
 	/**
 	 * Creates new EventRequestManager.
 	 */
@@ -35,26 +34,27 @@ public class ExceptionRequestImpl extends EventRequestImpl implements ExceptionR
 	 * Returns exception type for which exception events are requested.
 	 */
 	public ReferenceType exception() {
-		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fException;
+		return fExceptionFilters.get(0).fException;
 	}
-	
+
 	/**
 	 * @return Returns true if caught exceptions will be reported.
 	 */
 	public boolean notifyCaught() {
-		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fNotifyCaught;
+		return fExceptionFilters.get(0).fNotifyCaught;
 	}
-   
+
 	/**
 	 * @return Returns true if uncaught exceptions will be reported.
 	 */
 	public boolean notifyUncaught() {
-		return ((EventRequestImpl.ExceptionFilter)fExceptionFilters.get(0)).fNotifyUncaught;
+		return fExceptionFilters.get(0).fNotifyUncaught;
 	}
 
 	/**
 	 * @return Returns JDWP EventKind.
 	 */
+	@Override
 	protected final byte eventKind() {
 		return ExceptionEventImpl.EVENT_KIND;
 	}

@@ -82,6 +82,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		if (fTree != null) {
 			fTree.removeTreeListener(this);
@@ -91,6 +92,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		super.dispose();
 	}
 
+	@Override
 	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
 		if (JavaElementContentProvider.isDisplayThreadGroups()) {
 			ILaunch launch = thread.getLaunch();
@@ -98,7 +100,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			Object[] launchChildren = launch.getChildren();
 			delta = delta.addNode(launch, indexOf(launches, launch), IModelDelta.NO_CHANGE, launchChildren.length);
 			IJavaDebugTarget debugTarget = (IJavaDebugTarget) thread.getDebugTarget();
-			List groups = new ArrayList();
+			List<IJavaThreadGroup> groups = new ArrayList<IJavaThreadGroup>();
 			try{
 				delta = delta.addNode(debugTarget, indexOf(launchChildren, debugTarget), IModelDelta.NO_CHANGE, debugTarget.getRootThreadGroups().length);
 				IJavaThread javaThread = (IJavaThread) thread;
@@ -107,9 +109,9 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					groups.add(0, threadGroup);
 					threadGroup = threadGroup.getThreadGroup();
 				}
-				Iterator iterator = groups.iterator();
+				Iterator<IJavaThreadGroup> iterator = groups.iterator();
 				while (iterator.hasNext()) {
-					IJavaThreadGroup group = (IJavaThreadGroup) iterator.next();
+					IJavaThreadGroup group = iterator.next();
 					int index = -1;
 					IJavaThreadGroup parent = group.getThreadGroup();
 					if (parent != null) {
@@ -145,6 +147,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	protected int indexOf(IStackFrame frame) {
 		if (isDisplayMonitors()) {
 			if (((IJavaDebugTarget)frame.getDebugTarget()).supportsMonitorInformation()) {
@@ -173,6 +176,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	 * @param thread thread
 	 * @return number of children
 	 */
+	@Override
 	protected int childCount(IThread thread) {
 		try {
 			IJavaThread jThread = (IJavaThread) thread;
@@ -198,6 +202,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IThread)
 	 */
+	@Override
 	protected int indexOf(IThread thread) {
 		if (JavaElementContentProvider.isDisplayThreadGroups()) {
 			IJavaThread javaThread = (IJavaThread) thread;
@@ -213,6 +218,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		if (super.handlesEvent(event)) {
 			Object source = event.getSource();
@@ -272,6 +278,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/**
 	 * Do not update for quiet resume/suspend
 	 */
+	@Override
 	protected void handleOther(DebugEvent event) {
 		if (event.getDetail() == JDIThread.SUSPEND_QUIET || event.getDetail() == JDIThread.RESUME_QUIET) {
 			return;
@@ -309,6 +316,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleCreate(DebugEvent event) {
 		if (isMissingRequiredThreadGroup(event)) {
 			// don't bother adding/removing thread missing thread group
@@ -320,6 +328,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleTerminate(DebugEvent event) {
 		if (isMissingRequiredThreadGroup(event)) {
 			// don't bother adding/removing thread missing thread group

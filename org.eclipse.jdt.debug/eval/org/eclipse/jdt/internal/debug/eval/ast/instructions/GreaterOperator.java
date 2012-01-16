@@ -21,38 +21,49 @@ public class GreaterOperator extends BinaryOperator {
 	/*
 	 * @see BinaryOperator#getBooleanResult(IJavaValue, IJavaValue)
 	 */
-	protected boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected boolean getBooleanResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		switch (getInternResultType()) {
-			case T_double :
-				return ((IJavaPrimitiveValue) leftOperand).getDoubleValue() > ((IJavaPrimitiveValue) rightOperand).getDoubleValue();
-			case T_float :
-				return ((IJavaPrimitiveValue) leftOperand).getFloatValue() > ((IJavaPrimitiveValue) rightOperand).getFloatValue();
-			case T_long :
-				return ((IJavaPrimitiveValue) leftOperand).getLongValue() > ((IJavaPrimitiveValue) rightOperand).getLongValue();
-			case T_int :
-				return ((IJavaPrimitiveValue) leftOperand).getIntValue() > ((IJavaPrimitiveValue) rightOperand).getIntValue();
-			default :
-				return false;
+		case T_double:
+			return ((IJavaPrimitiveValue) leftOperand).getDoubleValue() > ((IJavaPrimitiveValue) rightOperand)
+					.getDoubleValue();
+		case T_float:
+			return ((IJavaPrimitiveValue) leftOperand).getFloatValue() > ((IJavaPrimitiveValue) rightOperand)
+					.getFloatValue();
+		case T_long:
+			return ((IJavaPrimitiveValue) leftOperand).getLongValue() > ((IJavaPrimitiveValue) rightOperand)
+					.getLongValue();
+		case T_int:
+			return ((IJavaPrimitiveValue) leftOperand).getIntValue() > ((IJavaPrimitiveValue) rightOperand)
+					.getIntValue();
+		default:
+			return false;
 		}
 	}
 
 	/*
 	 * @see BinaryOperator#getDoubleResult(IJavaValue, IJavaValue)
 	 */
-	protected double getDoubleResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected double getDoubleResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
 	 * @see BinaryOperator#getFloatResult(IJavaValue, IJavaValue)
 	 */
-	protected float getFloatResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected float getFloatResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		return 0;
 	}
 
 	/*
 	 * @see BinaryOperator#getIntResult(IJavaValue, IJavaValue)
 	 */
+	@Override
 	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
@@ -60,6 +71,7 @@ public class GreaterOperator extends BinaryOperator {
 	/*
 	 * @see BinaryOperator#getLongResult(IJavaValue, IJavaValue)
 	 */
+	@Override
 	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) {
 		return 0;
 	}
@@ -67,12 +79,15 @@ public class GreaterOperator extends BinaryOperator {
 	/*
 	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	@Override
+	protected String getStringResult(IJavaValue leftOperand,
+			IJavaValue rightOperand) {
 		return null;
 	}
 
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.GreaterOperator______operator_1; 
+		return InstructionsEvaluationMessages.GreaterOperator______operator_1;
 	}
 
 }

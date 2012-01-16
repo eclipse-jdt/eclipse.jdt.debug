@@ -132,6 +132,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
+	@Deprecated
 	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
 		
 	/**
@@ -143,6 +144,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * 
 	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
+	@Deprecated
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
 	
 	/**

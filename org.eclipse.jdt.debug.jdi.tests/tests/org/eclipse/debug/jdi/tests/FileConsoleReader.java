@@ -42,6 +42,7 @@ public class FileConsoleReader extends AbstractReader {
 	/**
 	 * Continuously reads events that are coming from the event queue.
 	 */
+	@Override
 	protected void readerLoop() {
 		BufferedReader input = new BufferedReader(new InputStreamReader(fInput));
 		try {
@@ -60,6 +61,7 @@ public class FileConsoleReader extends AbstractReader {
 	/**
 	 * @see org.eclipse.debug.jdi.tests.AbstractReader#stop()
 	 */
+	@Override
 	public void stop() {
 		try {
 			fFileOutputStream.close();

@@ -35,13 +35,13 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/**
 	 * Maps pane IDs to names
 	 */
-	private Map fNameMap;
+	private Map<String, String> fNameMap;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneTypes(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<String>();
 		if (selection.size() == 1) {
 			IBreakpoint b = (IBreakpoint) selection.getFirstElement();
 			try {
@@ -112,19 +112,19 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneName(java.lang.String)
 	 */
 	public String getDetailPaneName(String paneID) {
-		return (String) getNameMap().get(paneID);
+		return getNameMap().get(paneID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneDescription(java.lang.String)
 	 */
 	public String getDetailPaneDescription(String paneID) {
-		return (String) getNameMap().get(paneID);
+		return getNameMap().get(paneID);
 	}
 	
-	private Map getNameMap() {
+	private Map<String, String> getNameMap() {
 		if (fNameMap == null) {
-			fNameMap = new HashMap();
+			fNameMap = new HashMap<String, String>();
 			fNameMap.put(LineBreakpointDetailPane.DETAIL_PANE_LINE_BREAKPOINT, BreakpointMessages.BreakpointDetailPaneFactory_0);
 			fNameMap.put(WatchpointDetailPane.DETAIL_PANE_WATCHPOINT, BreakpointMessages.WatchpointDetailPane_0);
 			fNameMap.put(MethodBreakpointDetailPane.DETAIL_PANE_METHOD_BREAKPOINT, BreakpointMessages.BreakpointDetailPaneFactory_1);

@@ -84,6 +84,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
+	@Override
 	protected boolean validatePage() {
 		// check whether file with extension doesn't exist
 		boolean valid= super.validatePage();
@@ -120,6 +121,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.NEW_SNIPPET_WIZARD_PAGE);		

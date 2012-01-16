@@ -15,17 +15,18 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 public class ConditionalJump extends Jump {
 	private boolean fJumpOnTrue;
-	
+
 	public ConditionalJump(boolean jumpOnTrue) {
-		fJumpOnTrue= jumpOnTrue;
+		fJumpOnTrue = jumpOnTrue;
 	}
-	
+
 	/*
 	 * @see Instruction#execute()
 	 */
+	@Override
 	public void execute() throws CoreException {
-		IJavaPrimitiveValue condition= (IJavaPrimitiveValue)popValue();
-		
+		IJavaPrimitiveValue condition = (IJavaPrimitiveValue) popValue();
+
 		if (!(fJumpOnTrue ^ condition.getBooleanValue())) {
 			jump(fOffset);
 		}
@@ -34,8 +35,9 @@ public class ConditionalJump extends Jump {
 	/*
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return InstructionsEvaluationMessages.ConditionalJump_conditional_jump_1; 
+		return InstructionsEvaluationMessages.ConditionalJump_conditional_jump_1;
 	}
 
 }

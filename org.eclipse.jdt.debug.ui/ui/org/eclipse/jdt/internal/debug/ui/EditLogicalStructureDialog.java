@@ -35,8 +35,8 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext;
-import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.contentassist.DynamicTypeContext.ITypeProvider;
+import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -57,6 +57,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -77,8 +78,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * A dialog that allows users to create/edit logical structures.
  */
@@ -86,10 +85,10 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	public class AttributesContentProvider implements IStructuredContentProvider {
 
-		private final List fVariables;
+		private final List<String[]> fVariables;
 
 		public AttributesContentProvider(String[][] variables) {
-			fVariables= new ArrayList();
+			fVariables= new ArrayList<String[]>();
 			for (int i= 0; i < variables.length; i++) {
 				String[] variable= new String[2];
 				variable[0]= variables[i][0];
@@ -121,7 +120,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		 * Returns the attributes.
 		 */
 		public String[][] getElements() {
-			return (String[][])fVariables.toArray(new String[fVariables.size()][]);
+			return fVariables.toArray(new String[fVariables.size()][]);
 		}
 
 		/**
@@ -134,15 +133,15 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		/**
 		 * Remove the given attributes
 		 */
-		public void remove(List list) {
+		public void remove(List<?> list) {
 			fVariables.removeAll(list);
 		}
 
 		/**
 		 * Moves the given attributes up in the list.
 		 */
-		public void up(List list) {
-			for (Iterator iter= list.iterator(); iter.hasNext();) {
+		public void up(List<?> list) {
+			for (Iterator<?> iter= list.iterator(); iter.hasNext();) {
 				String[] variable= (String[]) iter.next();
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
@@ -153,8 +152,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		/**
 		 * Moves the given attributes down int the list.
 		 */
-		public void down(List list) {
-			for (Iterator iter= list.iterator(); iter.hasNext();) {
+		public void down(List<?> list) {
+			for (Iterator<?> iter= list.iterator(); iter.hasNext();) {
 				String[] variable= (String[]) iter.next();
 				int index= fVariables.indexOf(variable);
 				fVariables.remove(variable);
@@ -165,6 +164,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	}
 	
 	public class AttributesLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((String[])element)[0];
 		}
@@ -210,6 +210,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getHelpSystem().setHelp(
@@ -308,6 +309,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		tools.setupJavaDocumentPartitioner(fSnippetDocument, IJavaPartitions.JAVA_PARTITIONING);
 		if (fViewerConfiguration == null) {
 			fViewerConfiguration= new DisplayViewerConfiguration() {
+				@Override
 				public IContentAssistProcessor getContentAssistantProcessor() {
 					return new JavaDebugContentAssistProcessor(new DynamicTypeContext(EditLogicalStructureDialog.this));
 				}
@@ -422,7 +424,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private void removeAttribute() {
 		IStructuredSelection selection= (IStructuredSelection)fAttributeListViewer.getSelection();
 		if (selection.size() > 0) {
-			List selectedElements= selection.toList();
+			List<?> selectedElements= selection.toList();
 			Object[] elements= fAttributesContentProvider.getElements();
 			Object newSelectedElement= null;
 			for (int i= 0; i < elements.length; i++) {
@@ -585,7 +587,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 					}
 					if (variable[1].trim().length() == 0) {
 						if (!oneElementSelected || fCurrentAttributeSelection.getFirstElement() != variable) {
-							status.setError(MessageFormat.format(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]})); 
+							status.setError(NLS.bind(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]})); 
 							break;
 						}
 					}
@@ -648,6 +650,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		// save the new data in the logical structure
 		fLogicalStructure.setType(fQualifiedTypeNameText.getText().trim());
@@ -683,10 +686,12 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
+			@Override
 			public void endReporting() {
 				checkValues();
 			}
 
+			@Override
 			public void acceptSearchMatch(SearchMatch match) throws CoreException {
 				Object enclosingElement = match.getElement();
 				if (!fFirst) {
@@ -726,6 +731,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
+	@Override
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);

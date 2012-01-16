@@ -75,7 +75,7 @@ public class BootpathTests extends AbstractDebugTest {
 		pre.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 		newpath[0] = pre;
 		System.arraycopy(classpath, 0, newpath, 1, classpath.length);
-		List mementos = new ArrayList(newpath.length);
+		List<String> mementos = new ArrayList<String>(newpath.length);
 		for (int i = 0; i < newpath.length; i++) {
 			IRuntimeClasspathEntry entry = newpath[i];
 			mementos.add(entry.getMemento());
@@ -85,7 +85,7 @@ public class BootpathTests extends AbstractDebugTest {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 		
 		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
-		Map map = delegate.getVMSpecificAttributesMap(wc);
+		Map<String, Object> map = delegate.getVMSpecificAttributesMap(wc);
 		assertNotNull("Missing VM specific attributes map", map);
 		String[] prepath = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
 		assertNotNull("Missing bootpath prepend", pre);

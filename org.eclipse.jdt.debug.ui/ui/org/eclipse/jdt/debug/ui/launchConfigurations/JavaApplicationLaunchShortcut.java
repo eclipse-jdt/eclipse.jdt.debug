@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 /**
  * Launch shortcut for local Java applications.
  * <p>
- * This class may be instantiated or subclassed.
+ * This class may be instantiated or sub-classed.
  * </p>
  * @since 3.3
  */
@@ -55,7 +55,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	 * @since 3.5
 	 */
 	protected IJavaElement[] getJavaElements(Object[] objects) {
-		List list= new ArrayList(objects.length);
+		List<IJavaElement> list= new ArrayList<IJavaElement>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IAdaptable) {
@@ -72,12 +72,13 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 				}
 			}
 		}
-		return (IJavaElement[]) list.toArray(new IJavaElement[list.size()]);
+		return list.toArray(new IJavaElement[list.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
+	@Override
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
 		ILaunchConfigurationWorkingCopy wc = null;
@@ -97,6 +98,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
 	 */
+	@Override
 	protected ILaunchConfigurationType getConfigurationType() {
 		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
 	}
@@ -113,6 +115,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
 	 */
+	@Override
 	protected IType[] findTypes(Object[] elements, IRunnableContext context) throws InterruptedException, CoreException {
 		try {
 			if(elements.length == 1) {
@@ -157,6 +160,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */
+	@Override
 	protected String getTypeSelectionTitle() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_0;
 	}
@@ -164,6 +168,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getEditorEmptyMessage()
 	 */
+	@Override
 	protected String getEditorEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_1;
 	}
@@ -171,6 +176,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getSelectionEmptyMessage()
 	 */
+	@Override
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaApplicationLaunchShortcut_2;
 	}

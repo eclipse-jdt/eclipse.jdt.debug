@@ -77,6 +77,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
 	}	
@@ -147,6 +148,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			}
 		});
 		variables.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				if (dialog.open() == Window.OK) {
@@ -273,6 +275,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#finish()
 	 */
+	@Override
 	public boolean finish() {
 		setFieldValuesToVM(fVM);
 		fLibraryBlock.finish();
@@ -282,6 +285,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getSelection()
 	 */
+	@Override
 	public VMStandin getSelection() {
 		return fVM;
 	}
@@ -289,6 +293,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#setSelection(org.eclipse.jdt.launching.VMStandin)
 	 */
+	@Override
 	public void setSelection(VMStandin vm) {
 		super.setSelection(vm);
 		fVM = vm;
@@ -368,6 +373,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		String message = super.getErrorMessage();
 		if (message == null) {
@@ -379,6 +385,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
 		boolean complete = super.isPageComplete();
 		if (complete) {
@@ -390,6 +397,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getVMStatus()
 	 */
+	@Override
 	protected IStatus[] getVMStatus() {
 		return fFieldStatus;
 	}

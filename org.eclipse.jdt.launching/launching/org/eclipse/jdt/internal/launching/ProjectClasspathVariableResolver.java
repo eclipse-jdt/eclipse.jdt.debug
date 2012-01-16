@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.JavaRuntime;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Resolver for ${project_classpath:<project_name>}. Returns a string corresponding to the
@@ -56,14 +55,14 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		if (javaProject.exists()) {
 			IRuntimeClasspathEntry2 defClassPath = (IRuntimeClasspathEntry2) JavaRuntime.newDefaultProjectClasspathEntry(javaProject);
 			IRuntimeClasspathEntry[] entries = defClassPath.getRuntimeClasspathEntries(null);
-			List collect = new ArrayList();
+			List<IRuntimeClasspathEntry> collect = new ArrayList<IRuntimeClasspathEntry>();
 			for (int i = 0; i < entries.length; i++) {
 				IRuntimeClasspathEntry[] children = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], javaProject);
 				for (int j = 0; j < children.length; j++) {
 					collect.add(children[j]);
 				}
 			}
-			entries = (IRuntimeClasspathEntry[]) collect.toArray(new IRuntimeClasspathEntry[collect.size()]);
+			entries = collect.toArray(new IRuntimeClasspathEntry[collect.size()]);
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < entries.length; i++) {
 				if (i > 0) {
@@ -73,7 +72,7 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 			}
 			return buffer.toString();
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, MessageFormat.format(LaunchingMessages.ProjectClasspathVariableResolver_1, new String[]{argument})));
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.ProjectClasspathVariableResolver_1, new String[]{argument})));
 		}
 	}
 	

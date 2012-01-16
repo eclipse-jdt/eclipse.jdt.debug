@@ -59,7 +59,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	        for (int i = 0; i < selection.length; i++) {
 	            final IType type = (IType) selection[i];
 	            final IResource resource = BreakpointUtils.getBreakpointResource(type);
-	            final Map map = new HashMap(10);
+	            final Map<String, Object> map = new HashMap<String, Object>(10);
 	            BreakpointUtils.addJavaBreakpointAttributes(map, type);
 	            int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
 	            if (!type.isClass()) {
@@ -88,7 +88,8 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	                final int finalStart = start;
 	                final int finalEnd = end;
 	                new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) { 
-	                    protected IStatus run(IProgressMonitor monitor) {
+	                    @Override
+						protected IStatus run(IProgressMonitor monitor) {
 	                        try {
 	                            JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), finalKind, finalStart, finalEnd, true, map);
 	                            return Status.OK_STATUS;

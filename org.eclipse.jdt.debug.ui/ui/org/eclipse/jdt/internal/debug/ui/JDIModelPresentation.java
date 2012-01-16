@@ -87,6 +87,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -97,7 +98,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.ObjectCollectedException;
 
 /**
@@ -116,7 +116,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public final static String DISPLAY_QUALIFIED_NAMES= "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
 		
-	protected HashMap fAttributes= new HashMap(3);
+	protected HashMap<String, Object> fAttributes= new HashMap<String, Object>(3);
 	
 	static final Point BIG_SIZE= new Point(16, 16);
 	
@@ -146,6 +146,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fJavaLabelProvider != null) {
@@ -204,6 +205,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
+	@Override
 	public String getText(Object item) {
 		try {
 			boolean showQualified= isShowQualifiedNames();
@@ -475,7 +477,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				buffer.append('"');
 				if(value instanceof IJavaObject){
 					buffer.append(" "); //$NON-NLS-1$
-					buffer.append(MessageFormat.format(DebugUIMessages.JDIModelPresentation_118, new String[]{String.valueOf(((IJavaObject)value).getUniqueId())})); 
+					buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_118, new String[]{String.valueOf(((IJavaObject)value).getUniqueId())})); 
 				}
 			}
 			
@@ -665,6 +667,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * 
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
+	@Override
 	public Image getImage(Object item) {
 		
 		initImageRegistries();
@@ -1233,7 +1236,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (isDuplicateName(field)) {
 				try {
 					String decl = field.getDeclaringType().getName();
-					buff.append(MessageFormat.format(" ({0})", new String[]{getQualifiedName(decl)})); //$NON-NLS-1$
+					buff.append(NLS.bind(" ({0})", new String[]{getQualifiedName(decl)})); //$NON-NLS-1$
 				} catch (DebugException e) {
 				}
 			}
@@ -1581,7 +1584,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			label= buffer.toString();
 		} else {
 			String format= DebugUIMessages.JDIModelPresentation__1____0__63; 
-			label= MessageFormat.format(format, new Object[] {state, buffer});
+			label= NLS.bind(format, new Object[] {state, buffer});
 		}
 		return label;
 	}
@@ -1792,12 +1795,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					label.append(DebugUIMessages.JDIModelPresentation_unknown_method_name__6); 
 				}
 				try {
-					List args= frame.getArgumentTypeNames();
+					List<?> args= frame.getArgumentTypeNames();
 					if (args.isEmpty()) {
 						label.append("()"); //$NON-NLS-1$
 					} else {
 						label.append('(');
-						Iterator iter= args.iterator();
+						Iterator<?> iter= args.iterator();
 						while (iter.hasNext()) {
 							label.append(getQualifiedName((String) iter.next()));
 							if (iter.hasNext()) {
@@ -1873,14 +1876,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return getSimpleName(qualifiedName);
 		}
 		// get the list of the parameters and generates their simple name
-		List parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
+		List<String> parameters= getNameList(qualifiedName.substring(parameterStart + 1, qualifiedName.length() - 1));
 		StringBuffer name= new StringBuffer(getSimpleName(qualifiedName.substring(0, parameterStart)));
 		name.append('<');
-		Iterator iterator= parameters.iterator();
+		Iterator<String> iterator= parameters.iterator();
 		if (iterator.hasNext()) {
-			name.append(removeQualifierFromGenericName((String)iterator.next()));
+			name.append(removeQualifierFromGenericName(iterator.next()));
 			while (iterator.hasNext()) {
-				name.append(',').append(removeQualifierFromGenericName((String)iterator.next()));
+				name.append(',').append(removeQualifierFromGenericName(iterator.next()));
 			}
 		}
 		name.append('>');
@@ -1901,8 +1904,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Decompose a comma separated list of generic names (String) to a list of generic names (List)
 	 */
-	private List getNameList(String listName) {
-		List names= new ArrayList();
+	private List<String> getNameList(String listName) {
+		List<String> names= new ArrayList<String>();
 		StringTokenizer tokenizer= new StringTokenizer(listName, ",<>", true); //$NON-NLS-1$
 		int enclosingLevel= 0;
 		int startPos= 0;
@@ -1940,7 +1943,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Plug in the arguments to the resource String for the key to get a formatted resource String
 	 */
 	public static String getFormattedString(String string, String[] args) {
-		return MessageFormat.format(string, args);
+		return NLS.bind(string, args);
 	}
 	
 	interface IValueDetailProvider {
@@ -1974,7 +1977,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			String instanceText= instances[i].getValueString();
 			if (instanceText != null) {
 				buffer.append(' ');
-				buffer.append(MessageFormat.format(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText})); 
+				buffer.append(NLS.bind(DebugUIMessages.JDIModelPresentation_instance_1, new String[] {instanceText})); 
 			}				
 		}
 	}

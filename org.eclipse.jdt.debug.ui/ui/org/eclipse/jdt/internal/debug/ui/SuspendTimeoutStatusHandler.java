@@ -11,13 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 
 public class SuspendTimeoutStatusHandler implements IStatusHandler {
@@ -27,7 +26,7 @@ public class SuspendTimeoutStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		IJavaThread thread= (IJavaThread) source;
-		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.SuspendTimeoutHandler_suspend, MessageFormat.format(DebugUIMessages.SuspendTimeoutHandler_timeout_occurred, new String[] {thread.getName()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); // 
+		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.SuspendTimeoutHandler_suspend, NLS.bind(DebugUIMessages.SuspendTimeoutHandler_timeout_occurred, new String[] {thread.getName()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); // 
 		Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {

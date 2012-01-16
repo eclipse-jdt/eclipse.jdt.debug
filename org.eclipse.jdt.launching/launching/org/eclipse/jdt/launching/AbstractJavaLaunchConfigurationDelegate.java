@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 20011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +49,7 @@ import org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.osgi.util.NLS;
 /**
  * Abstract implementation of a Java launch configuration delegate. Provides
  * convenience methods for accessing and verifying launch configuration
@@ -61,9 +61,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * 
  * @since 2.0
  */
-public abstract class AbstractJavaLaunchConfigurationDelegate
-		extends
-			LaunchConfigurationDelegate implements IDebugEventSetListener {
+public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
 	/**
 	 * A list of prerequisite projects ordered by their build order.
 	 */
@@ -121,6 +119,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
+	@SuppressWarnings("deprecation")
 	public String getVMInstallName(ILaunchConfiguration configuration)
 			throws CoreException {
 		return configuration.getAttribute(
@@ -160,6 +159,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
+	@SuppressWarnings("deprecation")
 	public String getVMInstallTypeId(ILaunchConfiguration configuration)
 			throws CoreException {
 		return configuration.getAttribute(
@@ -178,6 +178,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 *                unspecified, or if the home location is unspecified or
 	 *                does not exist
 	 */
+	@SuppressWarnings("null")
 	public IVMInstall verifyVMInstall(ILaunchConfiguration configuration)
 			throws CoreException {
 		IVMInstall vm = getVMInstall(configuration);
@@ -190,18 +191,13 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		File location = vm.getInstallLocation();
 		if (location == null) {
 			abort(
-					MessageFormat
-							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, 
-									new String[]{vm.getName()}),
+					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, new String[]{vm.getName()}),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
 		}
 		if (!location.exists()) {
 			abort(
-					MessageFormat
-							.format(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, 
+					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, 
 									new String[]{vm.getName(),
 											location.getAbsolutePath()}),
 					null,
@@ -254,7 +250,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-		List bootEntries = new ArrayList(entries.length);
+		List<String> bootEntries = new ArrayList<String>(entries.length);
 		boolean empty = true;
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
@@ -273,7 +269,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		} else if (allStandard) {
 			return null;
 		} else {
-			return (String[]) bootEntries
+			return bootEntries
 					.toArray(new String[bootEntries.size()]);
 		}
 	}
@@ -299,7 +295,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String[][] bootpathInfo = new String[3][];
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
-		List bootEntriesPrepend = new ArrayList();
+		List<IRuntimeClasspathEntry> bootEntriesPrepend = new ArrayList<IRuntimeClasspathEntry>();
 		int index = 0;
 		IRuntimeClasspathEntry jreEntry = null;
 		while (jreEntry == null && index < entries.length) {
@@ -315,7 +311,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		}
 		IRuntimeClasspathEntry[] bootEntriesPrep = JavaRuntime
 				.resolveRuntimeClasspath(
-						(IRuntimeClasspathEntry[]) bootEntriesPrepend
+						bootEntriesPrepend
 								.toArray(new IRuntimeClasspathEntry[bootEntriesPrepend
 										.size()]), configuration);
 		String[] entriesPrep = null;
@@ -326,7 +322,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			}
 		}
 		if (jreEntry != null) {
-			List bootEntriesAppend = new ArrayList();
+			List<IRuntimeClasspathEntry> bootEntriesAppend = new ArrayList<IRuntimeClasspathEntry>();
 			for (; index < entries.length; index++) {
 				IRuntimeClasspathEntry entry = entries[index];
 				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
@@ -336,7 +332,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			bootpathInfo[0] = entriesPrep;
 			IRuntimeClasspathEntry[] bootEntriesApp = JavaRuntime
 					.resolveRuntimeClasspath(
-							(IRuntimeClasspathEntry[]) bootEntriesAppend
+							bootEntriesAppend
 									.toArray(new IRuntimeClasspathEntry[bootEntriesAppend
 											.size()]), configuration);
 			if (bootEntriesApp.length > 0) {
@@ -415,8 +411,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-		List userEntries = new ArrayList(entries.length);
-		Set set = new HashSet(entries.length);
+		List<String> userEntries = new ArrayList<String>(entries.length);
+		Set<String> set = new HashSet<String>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entries[i].getLocation();
@@ -428,7 +424,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				}
 			}
 		}
-		return (String[]) userEntries.toArray(new String[userEntries.size()]);
+		return userEntries.toArray(new String[userEntries.size()]);
 	}
 	/**
 	 * Returns the Java project specified by the given launch configuration, or
@@ -559,29 +555,21 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
-	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration)
-			throws CoreException {
-		Map map = configuration
-				.getAttribute(
-						IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,
-						(Map) null);
+	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
+		Map<String, Object> map = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,(Map<String, Object>) null);
 		String[][] paths = getBootpathExt(configuration);
 		String[] pre = paths[0];
 		String[] boot = paths[1];
 		String[] app = paths[2];
 		if (pre != null || app != null || boot != null) {
 			if (map == null) {
-				map = new HashMap(3);
+				map = new HashMap<String, Object>(3);
 			}
 			if (pre != null) {
-				map
-						.put(
-								IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND,
-								pre);
+				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, pre);
 			}
 			if (app != null) {
-				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND,
-						app);
+				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND, app);
 			}
 			if (boot != null) {
 				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, boot);
@@ -698,7 +686,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			if (dir != null) {
 				if (!dir.isDirectory()) {
 					abort(
-							MessageFormat.format(
+							NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
 									new String[]{dir.toString()}),
 									null,
@@ -720,8 +708,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 					return res.getLocation().toFile();
 				}
 				abort(
-					MessageFormat
-							.format(
+					NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
 									new String[]{path.toString()}),
 					null,
@@ -733,8 +720,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 					return res.getLocation().toFile();
 				}
 				abort(
-					MessageFormat
-							.format(
+					NLS.bind(
 									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
 									new String[]{path.toString()}),
 					null,
@@ -842,7 +828,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 							if (isStopInMain(configuration)) {
 								String mainType = getMainTypeName(configuration);
 								if (mainType != null) {
-									Map map = new HashMap();
+									Map<String, Object> map = new HashMap<String, Object>();
 									map
 											.put(
 													IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN,
@@ -877,6 +863,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
+	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
 		return fOrderedProjects;
@@ -887,6 +874,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
+	@Override
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
@@ -896,6 +884,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#isLaunchProblem(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		return super.isLaunchProblem(problemMarker) && problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
 	}
@@ -905,6 +894,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
@@ -924,7 +914,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
      /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBreakpoints(org.eclipse.debug.core.ILaunchConfiguration)
      */
-    protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
+    @Override
+	protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
          IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
          if (!breakpointManager.isEnabled()) {
              // no need to check breakpoints individually.
@@ -947,7 +938,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IVMInstall vm = verifyVMInstall(configuration);
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); 
+			abort(NLS.bind(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); 
 		}
 		return runner;
 	}
@@ -957,6 +948,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * launching the given configuration or <code>null</code> if unspecified.
 	 * 
 	 * @param configuration launch configuration
+	 * @return an array of environment variables to use when launching the given configuration or null if unspecified
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
 	 * @since 3.1
@@ -969,7 +961,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * Returns an array of paths to be used for the <code>java.library.path</code>
 	 * system property, or <code>null</code> if unspecified.
 	 * 
-	 * @param configuration
+	 * @param configuration the config
 	 * @return an array of paths to be used for the <code>java.library.path</code>
 	 * system property, or <code>null</code>
 	 * @throws CoreException if unable to determine the attribute
@@ -990,7 +982,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * Returns the default working directory for the given launch configuration,
 	 * or <code>null</code> if none. Subclasses may override as necessary.
 	 * 
-	 * @param configuration
+	 * @param configuration the config
 	 * @return default working directory or <code>null</code> if none
 	 * @throws CoreException if an exception occurs computing the default working
 	 * 	 directory

@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-
-
 /**
- * A simple instruction cannot contain other instructions
- * so its size is always one.
+ * A simple instruction cannot contain other instructions so its size is always
+ * one.
  */
 public abstract class SimpleInstruction extends Instruction {
 
@@ -24,14 +22,10 @@ public abstract class SimpleInstruction extends Instruction {
 	protected SimpleInstruction() {
 		super();
 	}
-	
+
+	@Override
 	public int getSize() {
 		return 1;
 	}
-
-
-
-
-
 
 }

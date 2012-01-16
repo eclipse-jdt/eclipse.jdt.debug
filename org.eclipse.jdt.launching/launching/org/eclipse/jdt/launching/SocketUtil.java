@@ -37,6 +37,7 @@ public class SocketUtil {
 	 * 	 method can return a port that is already in use since the implementation does
 	 *   not bind to the given port to ensure that it is free.
 	 */
+	@Deprecated
 	public static int findUnusedLocalPort(String host, int searchFrom, int searchTo) {
 
 		for (int i= 0; i < 10; i++) {

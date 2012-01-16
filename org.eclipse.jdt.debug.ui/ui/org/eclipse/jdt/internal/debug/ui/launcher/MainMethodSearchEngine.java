@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -39,19 +40,20 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 public class MainMethodSearchEngine{
 	
 	private class MethodCollector extends SearchRequestor {
-		private List fResult;
+		private List<IType> fResult;
 
 		public MethodCollector() {
-			fResult = new ArrayList(200);
+			fResult = new ArrayList<IType>(200);
 		}
 
-		public List getResult() {
+		public List<IType> getResult() {
 			return fResult;
 		}	
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
 		 */
+		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			Object enclosingElement = match.getElement();
 			if (enclosingElement instanceof IMethod) { // defensive code
@@ -94,14 +96,14 @@ public class MainMethodSearchEngine{
 			JDIDebugUIPlugin.log(ce);
 		}
 
-		List result = collector.getResult();
+		List<IType> result = collector.getResult();
 		if (includeSubtypes) {
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
 			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size()); 
-			Set set = addSubtypes(result, subtypesMonitor, scope);
-			return (IType[]) set.toArray(new IType[set.size()]);
+			Set<IType> set = addSubtypes(result, subtypesMonitor, scope);
+			return set.toArray(new IType[set.size()]);
 		}
-		return (IType[]) result.toArray(new IType[result.size()]);
+		return result.toArray(new IType[result.size()]);
 	}
 
 	/**
@@ -111,14 +113,14 @@ public class MainMethodSearchEngine{
 	 * @param scope the scope of elements
 	 * @return as set of all types to consider
 	 */
-	private Set addSubtypes(List types, IProgressMonitor monitor, IJavaSearchScope scope) {
-		Iterator iterator = types.iterator();
-		Set result = new HashSet(types.size());
+	private Set<IType> addSubtypes(List<IType> types, IProgressMonitor monitor, IJavaSearchScope scope) {
+		Iterator<IType> iterator = types.iterator();
+		Set<IType> result = new HashSet<IType>(types.size());
 		IType type = null;
 		ITypeHierarchy hierarchy = null;
 		IType[] subtypes = null;
 		while (iterator.hasNext()) {
-			type = (IType) iterator.next();
+			type = iterator.next();
 			if (result.add(type)) {
 				try {
 					hierarchy = type.newTypeHierarchy(monitor);

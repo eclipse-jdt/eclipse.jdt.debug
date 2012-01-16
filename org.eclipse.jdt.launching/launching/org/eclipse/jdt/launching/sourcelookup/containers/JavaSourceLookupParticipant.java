@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
  * This class may be instantiated.
  * </p>
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	
@@ -44,7 +44,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	 * Internal jars are translated to package fragment roots
 	 * if possible.
 	 */
-	private Map fDelegateContainers;
+	private Map<ISourceContainer, PackageFragmentRootSourceContainer> fDelegateContainers;
 	
 	/**
 	 * Returns the source name associated with the given object, or <code>null</code>
@@ -63,10 +63,11 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#dispose()
 	 */
+	@Override
 	public void dispose() {
-		Iterator iterator = fDelegateContainers.values().iterator();
+		Iterator<PackageFragmentRootSourceContainer> iterator = fDelegateContainers.values().iterator();
 		while (iterator.hasNext()) {
-			ISourceContainer container = (ISourceContainer) iterator.next();
+			ISourceContainer container = iterator.next();
 			container.dispose();
 		}
 		fDelegateContainers = null;
@@ -77,8 +78,9 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupParticipant#getDelegateContainer(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	protected ISourceContainer getDelegateContainer(ISourceContainer container) {
-		ISourceContainer delegate = (ISourceContainer) fDelegateContainers.get(container);
+		ISourceContainer delegate = fDelegateContainers.get(container);
 		if (delegate == null) {
 			return container;
 		} 
@@ -87,13 +89,15 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
-		fDelegateContainers = new HashMap();
+		fDelegateContainers = new HashMap<ISourceContainer, PackageFragmentRootSourceContainer>();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 		// use package fragment roots in place of local archives, where they exist
 		fDelegateContainers.clear();

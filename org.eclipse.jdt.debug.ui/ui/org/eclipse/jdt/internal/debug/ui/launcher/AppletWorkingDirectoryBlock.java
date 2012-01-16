@@ -20,6 +20,7 @@ public class AppletWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setDefaultWorkingDir()
 	 */
+	@Override
 	protected void setDefaultWorkingDir() {
 		String outputDir = JavaRuntime.getProjectOutputDirectory(getLaunchConfiguration());
 		if (outputDir != null) {

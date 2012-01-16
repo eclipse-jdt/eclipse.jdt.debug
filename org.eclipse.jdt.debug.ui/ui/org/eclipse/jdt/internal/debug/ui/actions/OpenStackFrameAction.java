@@ -23,6 +23,7 @@ public abstract class OpenStackFrameAction extends OpenTypeAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#getDebugElement(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	protected IDebugElement getDebugElement(IAdaptable element) {
 		return (IDebugElement)element.getAdapter(IJavaStackFrame.class);
 	}

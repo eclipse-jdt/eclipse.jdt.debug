@@ -20,22 +20,27 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
  */
 public class JavaDebugPropertyTester extends PropertyTester {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-     */
-    public boolean test(Object receiver, String property, Object[] args,  Object expectedValue) {
-        if (property.equals("isMultiStrata")) { //$NON-NLS-1$
-            if (receiver instanceof IStackFrame) {
-                IJavaStackFrame frame = (IJavaStackFrame) ((IStackFrame)receiver).getAdapter(IJavaStackFrame.class);
-                if (frame != null) {
-                    try {
-                        return frame.getReferenceType().getAvailableStrata().length > 1;
-                    } catch (DebugException e) {
-                    }
-                }
-            }
-        }
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object,
+	 * java.lang.String, java.lang.Object[], java.lang.Object)
+	 */
+	public boolean test(Object receiver, String property, Object[] args,
+			Object expectedValue) {
+		if (property.equals("isMultiStrata")) { //$NON-NLS-1$
+			if (receiver instanceof IStackFrame) {
+				IJavaStackFrame frame = (IJavaStackFrame) ((IStackFrame) receiver)
+						.getAdapter(IJavaStackFrame.class);
+				if (frame != null) {
+					try {
+						return frame.getReferenceType().getAvailableStrata().length > 1;
+					} catch (DebugException e) {
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 }

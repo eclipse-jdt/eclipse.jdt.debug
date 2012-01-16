@@ -29,6 +29,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 
 	}
@@ -43,6 +44,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.VirtualMachine.classesByName";
 	}

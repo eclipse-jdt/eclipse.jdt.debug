@@ -48,6 +48,7 @@ public class JavaBreakpointPropertiesRulerActionDelegate extends AbstractRulerAc
 	/**
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		return new JavaBreakpointPropertiesRulerAction(editor, rulerInfo);
 	}

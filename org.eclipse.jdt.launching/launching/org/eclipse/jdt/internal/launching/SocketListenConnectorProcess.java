@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.osgi.util.NLS;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
@@ -91,16 +91,18 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * @throws CoreException if a problem occurs trying to accept a connection
 	 * @see SocketListenConnector
 	 */
-	public void waitForConnection(ListeningConnector connector, Map arguments) throws CoreException{
+	public void waitForConnection(ListeningConnector connector, Map<String, Connector.Argument> arguments) throws CoreException{
 		if (isTerminated()){
 			throw new CoreException(getStatus(LaunchingMessages.SocketListenConnectorProcess_0, null, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED));
 		}
 		fWaitForConnectionJob = new WaitForConnectionJob(this,connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);
 		fWaitForConnectionJob.addJobChangeListener(new JobChangeAdapter(){
+			@Override
 			public void running(IJobChangeEvent event) {
 				fireReadyToAcceptEvent();
 			}
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getResult().equals(Status.CANCEL_STATUS)){
 					try{
@@ -119,6 +121,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
 	 * @param code error code
+	 * @return the new {@link IStatus}
 	 */
 	protected static IStatus getStatus(String message, Throwable exception, int code) {
 		return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception);
@@ -135,7 +138,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * @see org.eclipse.debug.core.model.IProcess#getLabel()
 	 */
 	public String getLabel() {
-		return MessageFormat.format(LaunchingMessages.SocketListenConnectorProcess_1, new String[]{fPort});
+		return NLS.bind(LaunchingMessages.SocketListenConnectorProcess_1, new String[]{fPort});
 	}
 
 	/* (non-Javadoc)
@@ -231,7 +234,7 @@ public class SocketListenConnectorProcess implements IProcess {
 
 		private IProcess fWaitProcess;
 		private ListeningConnector fConnector;
-		private Map fArguments;
+		private Map<String, Connector.Argument> fArguments;
 		/**
 		 * Flag that can be set to tell this job that waiting
 		 * for incoming connections has been cancelled.  If true,
@@ -240,19 +243,20 @@ public class SocketListenConnectorProcess implements IProcess {
 		 */
 		private boolean fListeningStopped = false;
 		
-		public WaitForConnectionJob(IProcess waitProcess, ListeningConnector connector, Map arguments) {
+		public WaitForConnectionJob(IProcess waitProcess, ListeningConnector connector, Map<String, Connector.Argument> arguments) {
 			super(getLabel());
 			fWaitProcess = waitProcess;
 			fConnector = connector;
 			fArguments = arguments;
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try{
 				// The following code sets a timeout (not officially supported in Sun's spec).
 				// Allows polling for job cancellation. If the implementation does not support timeout
 				// the job cannot be cancelled (but the launch can still be terminated).
-				Connector.Argument timeout = (Connector.Argument) fArguments.get("timeout"); //$NON-NLS-1$
+				Connector.Argument timeout = fArguments.get("timeout"); //$NON-NLS-1$
 				if (timeout != null){
 					timeout.setValue("3000"); //$NON-NLS-1$
 				}
@@ -279,7 +283,7 @@ public class SocketListenConnectorProcess implements IProcess {
 						LaunchingPlugin.log(e);
 					}
 				}
-				Connector.Argument portArg= (Connector.Argument) fArguments.get("port"); //$NON-NLS-1$
+				Connector.Argument portArg= fArguments.get("port"); //$NON-NLS-1$
 				String vmLabel = constructVMLabel(vm, portArg.value(), fLaunch.getLaunchConfiguration());
 				IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(fLaunch, vm, vmLabel, null, allowTerminate, true);
 				fLaunch.addDebugTarget(debugTarget);
@@ -302,6 +306,7 @@ public class SocketListenConnectorProcess implements IProcess {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 		 */
+		@Override
 		protected void canceling() {
 			stopListening();
 		}
@@ -327,6 +332,10 @@ public class SocketListenConnectorProcess implements IProcess {
 		
 		/**
 		 * Helper method that constructs a human-readable label for a remote VM.
+		 * @param vm the VM
+		 * @param port the port
+		 * @param configuration the configuration 
+		 * @return the new VM label
 		 */
 		protected String constructVMLabel(VirtualMachine vm, String port, ILaunchConfiguration configuration) {
 			String name = null;

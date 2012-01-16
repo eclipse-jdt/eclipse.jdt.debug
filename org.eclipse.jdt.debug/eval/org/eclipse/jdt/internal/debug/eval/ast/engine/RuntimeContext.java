@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
- 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -28,24 +27,24 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	private IJavaStackFrame fFrame;
 
 	/**
-	 * Creates a runtime context for the given java project and 
-	 * stack frame.
+	 * Creates a runtime context for the given java project and stack frame.
 	 * 
-	 * @param project Java project context used to compile expressions in
-	 * @param frame stack frame used to define locals and receiving type
-	 *  context
+	 * @param project
+	 *            Java project context used to compile expressions in
+	 * @param frame
+	 *            stack frame used to define locals and receiving type context
 	 * @return a new runtime context
 	 */
 	public RuntimeContext(IJavaProject project, IJavaStackFrame frame) {
 		super(project);
 		setFrame(frame);
 	}
-	
+
 	/**
 	 * @see IRuntimeContext#getVM()
 	 */
 	public IJavaDebugTarget getVM() {
-		return (IJavaDebugTarget)getFrame().getDebugTarget();
+		return (IJavaDebugTarget) getFrame().getDebugTarget();
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	public IJavaReferenceType getReceivingType() throws CoreException {
 		IJavaObject rec = getThis();
 		if (rec != null) {
-			return (IJavaReferenceType)rec.getJavaType();
+			return (IJavaReferenceType) rec.getJavaType();
 		}
 		return getFrame().getReferenceType();
 	}
@@ -72,30 +71,32 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	public IJavaVariable[] getLocals() throws CoreException {
 		return getFrame().getLocalVariables();
 	}
-	
+
 	/**
 	 * Sets the stack frame context used to compile/run expressions
 	 * 
-	 * @param frame the stack frame context used to compile/run expressions
+	 * @param frame
+	 *            the stack frame context used to compile/run expressions
 	 */
 	protected IJavaStackFrame getFrame() {
 		return fFrame;
-	}	
-		
+	}
+
 	/**
 	 * Sets the stack frame context used to compile/run expressions
 	 * 
-	 * @param frame the stack frame context used to compile/run expressions
+	 * @param frame
+	 *            the stack frame context used to compile/run expressions
 	 */
 	private void setFrame(IJavaStackFrame frame) {
 		fFrame = frame;
-	}	
+	}
 
 	/**
 	 * @see IRuntimeContext#getThread()
 	 */
 	public IJavaThread getThread() {
-		return (IJavaThread)getFrame().getThread();
+		return (IJavaThread) getFrame().getThread();
 	}
 
 	/**
@@ -106,4 +107,3 @@ public class RuntimeContext extends AbstractRuntimeContext {
 	}
 
 }
-

@@ -18,6 +18,7 @@ public class OpenVariableConcreteTypeHierarchyAction extends OpenVariableConcret
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction#isHierarchy()
 	 */
+	@Override
 	protected boolean isHierarchy() {
 		return true;
 	}	

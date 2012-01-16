@@ -93,6 +93,7 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
+	@Override
 	protected IJavaProject getProjectContext() {
 		return get15Project();
 	}

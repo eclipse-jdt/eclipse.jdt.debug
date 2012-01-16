@@ -36,79 +36,81 @@ public class Interpreter {
 	private Instruction[] fInstructions;
 	private int fInstructionCounter;
 	private IRuntimeContext fContext;
-	private Stack fStack;
+	private Stack<Object> fStack;
 	private IJavaValue fLastValue;
-	
+
 	/**
 	 * The list of internal variables
 	 */
-	private Map fInternalVariables;
-	
+	private Map<String, IVariable> fInternalVariables;
+
 	/**
 	 * List of objects for which GC has been disabled
 	 */
-	private List fPermStorage = null;
-	
-	private boolean fStopped= false;
-	
+	private List<IJavaObject> fPermStorage = null;
+
+	private boolean fStopped = false;
+
 	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
-		fInstructions= instructions.getInstructions();
-		fContext= context;
-		fInternalVariables= new HashMap();
+		fInstructions = instructions.getInstructions();
+		fContext = context;
+		fInternalVariables = new HashMap<String, IVariable>();
 	}
-	
+
 	public void execute() throws CoreException {
 		try {
 			reset();
-			while(fInstructionCounter < fInstructions.length && !fStopped) {
-				Instruction instruction= fInstructions[fInstructionCounter++];
+			while (fInstructionCounter < fInstructions.length && !fStopped) {
+				Instruction instruction = fInstructions[fInstructionCounter++];
 				instruction.setInterpreter(this);
 				instruction.execute();
 				instruction.setInterpreter(null);
 			}
 		} catch (VMDisconnectedException e) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), e.getMessage(), e));
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugModel.getPluginIdentifier(), e.getMessage(), e));
 		} finally {
 			releaseObjects();
 		}
 	}
-	
+
 	public void stop() {
-		fStopped= true;
+		fStopped = true;
 	}
 
 	private void reset() {
-		fStack= new Stack();
-		fInstructionCounter= 0;
+		fStack = new Stack<Object>();
+		fInstructionCounter = 0;
 	}
-	
+
 	/**
 	 * Jumps to a given address
 	 */
 	public void jump(int offset) {
-		fInstructionCounter+= offset;
-	}		
-	
+		fInstructionCounter += offset;
+	}
+
 	/**
 	 * Pushes an object onto the stack. Disables garbage collection for any
-	 * interim object pushed onto the stack. Objects are released after the 
+	 * interim object pushed onto the stack. Objects are released after the
 	 * evaluation completes.
 	 */
 	public void push(Object object) {
 		fStack.push(object);
 		if (object instanceof IJavaObject) {
-			disableCollection((IJavaObject)object);
+			disableCollection((IJavaObject) object);
 		}
 	}
-	
+
 	/**
 	 * Avoid garbage collecting interim results.
 	 * 
-	 * @param value object to disable garbage collection for
+	 * @param value
+	 *            object to disable garbage collection for
 	 */
 	private void disableCollection(IJavaObject value) {
 		if (fPermStorage == null) {
-			fPermStorage = new ArrayList(5);
+			fPermStorage = new ArrayList<IJavaObject>(5);
 		}
 		try {
 			value.disableCollection();
@@ -117,19 +119,19 @@ public class Interpreter {
 			JDIDebugPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Re-enable garbage collection if interim results.
 	 */
 	private void releaseObjects() {
 		if (fPermStorage != null) {
-			Iterator iterator = fPermStorage.iterator();
+			Iterator<IJavaObject> iterator = fPermStorage.iterator();
 			while (iterator.hasNext()) {
-				IJavaObject object = (IJavaObject)iterator.next();
+				IJavaObject object = iterator.next();
 				try {
 					object.enableCollection();
 				} catch (CoreException e) {
-					// don't worry about GC if the VM has terminated 
+					// don't worry about GC if the VM has terminated
 					if ((e.getStatus().getException() instanceof VMDisconnectedException)) {
 						break;
 					}
@@ -145,22 +147,22 @@ public class Interpreter {
 	 */
 	public Object peek() {
 		return fStack.peek();
-	}		
-	
+	}
+
 	/**
 	 * Pops an object off of the stack
 	 */
 	public Object pop() {
 		return fStack.pop();
 	}
-	
+
 	/**
 	 * Answers the context for the interpreter
 	 */
 	public IRuntimeContext getContext() {
 		return fContext;
 	}
-	
+
 	public IJavaValue getResult() {
 		if (fStack == null || fStack.isEmpty()) {
 			if (fLastValue == null) {
@@ -168,48 +170,54 @@ public class Interpreter {
 			}
 			return fLastValue;
 		}
-		Object top= fStack.peek();
+		Object top = fStack.peek();
 		if (top instanceof IJavaVariable) {
 			try {
-				return (IJavaValue)((IJavaVariable)top).getValue();
+				return (IJavaValue) ((IJavaVariable) top).getValue();
 			} catch (CoreException exception) {
-				return getContext().getVM().newValue(exception.getStatus().getMessage());
+				return getContext().getVM().newValue(
+						exception.getStatus().getMessage());
 			}
 		}
 		if (top instanceof IJavaValue) {
-			return (IJavaValue)top;
+			return (IJavaValue) top;
 		}
 		// XXX: exception
-		return null;		
+		return null;
 	}
-	
+
 	public void setLastValue(IJavaValue value) {
-		fLastValue= value;
+		fLastValue = value;
 	}
-	
+
 	/**
-	 * Create a new variable in the interpreter with the given name
-	 * and the given type.
+	 * Create a new variable in the interpreter with the given name and the
+	 * given type.
 	 * 
-	 * @param name the name of the variable to create.
-	 * @param type the type of the variable to create.
+	 * @param name
+	 *            the name of the variable to create.
+	 * @param type
+	 *            the type of the variable to create.
 	 * @return the created variable.
 	 */
 	public IVariable createInternalVariable(String name, IJavaType referencType) {
-		IVariable var= new InterpreterVariable(name, referencType, fContext.getVM());
+		IVariable var = new InterpreterVariable(name, referencType,
+				fContext.getVM());
 		fInternalVariables.put(name, var);
 		return var;
 	}
-	
+
 	/**
-	 * Return the variable with the given name.
-	 * This method only looks in the list of internal variable (i.e. created by
+	 * Return the variable with the given name. This method only looks in the
+	 * list of internal variable (i.e. created by
 	 * Interpreter#createInternalVariable(String, IJavaType))
 	 * 
-	 * @param name the name of the variable to retrieve.
-	 * @return the corresponding variable, or <code>null</code> if there is none.
-	 */	
+	 * @param name
+	 *            the name of the variable to retrieve.
+	 * @return the corresponding variable, or <code>null</code> if there is
+	 *         none.
+	 */
 	public IVariable getInternalVariable(String name) {
-		return (IVariable)fInternalVariables.get(name);
+		return fInternalVariables.get(name);
 	}
 }

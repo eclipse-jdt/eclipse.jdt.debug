@@ -27,6 +27,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrary(java.io.File)
 	 */
+	@Override
 	protected IPath getDefaultSystemLibrary(File installLocation) {
 		return new Path(installLocation.getPath()).append("lib").append("classes.zip"); //$NON-NLS-2$ //$NON-NLS-1$
 	}
@@ -34,6 +35,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
 	 */
+	@Override
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new Standard11xVM(this, id);
 	}
@@ -41,6 +43,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
 	 */
+	@Override
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY;
@@ -49,6 +52,7 @@ public class Standard11xVMType extends StandardVMType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchingMessages.Standard11xVMType_Standard_1_1_x_VM_1; 
 	}	
@@ -58,6 +62,7 @@ public class Standard11xVMType extends StandardVMType {
 	 * 
 	 * @see StandardVMType#getDefaultExtensionDirectory(File)
 	 */
+	@Override
 	protected File getDefaultExtensionDirectory(File installLocation) {
 		return null;
 	}
@@ -65,6 +70,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultEndorsedDirectory(java.io.File)
 	 */
+	@Override
 	protected File getDefaultEndorsedDirectory(File installLocation) {
 		return null;
 	}
@@ -72,6 +78,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
 	 */
+	@Override
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
 		IPath libPath = getDefaultSystemLibrary(installLocation);
 		File lib = libPath.toFile();
@@ -85,6 +92,7 @@ public class Standard11xVMType extends StandardVMType {
 	 * Return <code>true</code> if the appropriate system libraries can be found for the
 	 * specified java executable, <code>false</code> otherwise.
 	 */
+	@Override
 	protected boolean canDetectDefaultSystemLibraries(File javaHome, File javaExecutable) {
 		LibraryLocation[] locations = getDefaultLibraryLocations(javaHome);
 		String version = getVMVersion(javaHome, javaExecutable);

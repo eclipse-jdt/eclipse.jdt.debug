@@ -60,7 +60,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
 	 */
-	private Map fAttributeMap = new HashMap();
+	private Map<String, String> fAttributeMap = new HashMap<String, String>();
 	
 	// system properties are cached in user preferences prefixed with this key, followed
 	// by vm type, vm id, and system property name
@@ -239,6 +239,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see java.lang.Object#equals(java.lang.Object)
      * @since 2.1
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IVMInstall) {
 			IVMInstall vm = (IVMInstall)object;
@@ -252,6 +253,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see java.lang.Object#hashCode()
 	 * @since 2.1
 	 */
+	@Override
 	public int hashCode() {
 		return getVMInstallType().hashCode() + getId().hashCode();
 	}
@@ -325,12 +327,13 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall3#evaluateSystemProperties(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Map evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException {
+	@SuppressWarnings("null")
+	public Map<String, String> evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException {
 		//locate the launching support jar - it contains the main program to run
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		
 		// first check cache (preference store) to avoid launching VM
 		Preferences preferences = JavaRuntime.getPreferences();
@@ -449,10 +452,10 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
 			// cache for future reference
-			Iterator keys = map.keySet().iterator();
+			Iterator<String> keys = map.keySet().iterator();
 			while (keys.hasNext()) {
-				String property = (String)keys.next();
-				String value = (String) map.get(property);
+				String property = keys.next();
+				String value = map.get(property);
 				String key = getSystemPropertyKey(property);
 				preferences.setValue(key, value);
 			}
@@ -506,7 +509,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @since 3.4
 	 */
 	public void setAttribute(String key, String value) {
-		String prevValue = (String) fAttributeMap.remove(key);
+		String prevValue = fAttributeMap.remove(key);
 		boolean notify = false;
 		if (value == null) {
 			if (prevValue != null && fNotify) {
@@ -533,7 +536,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @since 3.4
 	 */
 	public String getAttribute(String key) {
-		return (String) fAttributeMap.get(key);
+		return fAttributeMap.get(key);
 	}
 	
 	/**
@@ -544,7 +547,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @return map of VM attributes
 	 * @since 3.4
 	 */
-	public Map getAttributes() {
-		return new HashMap(fAttributeMap);
+	public Map<String, String> getAttributes() {
+		return new HashMap<String, String>(fAttributeMap);
 	}
 }

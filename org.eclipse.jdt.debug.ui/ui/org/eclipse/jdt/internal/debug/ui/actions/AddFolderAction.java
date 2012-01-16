@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -50,6 +51,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 *
 	 */
 	class FileFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if(element instanceof IProject) {
 				return true;
@@ -71,10 +73,11 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
+	@Override
 	public void run() {
 		
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
-			List fAlreadySelected = getSelectedFolders();
+			List<IResource> fAlreadySelected = getSelectedFolders();
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IContainer)) {
@@ -114,10 +117,10 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	/**
 	 * Returns a list of resources of currently selected folders
 	 */
-	protected List getSelectedFolders() {
-		List list = getEntriesAsList();
-		List folders = new ArrayList();
-		Iterator iter = list.iterator();
+	protected List<IResource> getSelectedFolders() {
+		List<?> list = getEntriesAsList();
+		List<IResource> folders = new ArrayList<IResource>();
+		Iterator<?> iter = list.iterator();
 		while (iter.hasNext()) {
 			IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)iter.next();
 			if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
@@ -130,6 +133,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		return folders;
 	}
 	
+	@Override
 	protected int getActionType() {
 		return ADD;
 	}

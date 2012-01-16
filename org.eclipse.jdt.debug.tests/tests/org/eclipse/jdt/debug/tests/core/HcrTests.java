@@ -93,6 +93,7 @@ public class HcrTests extends AbstractDebugTest {
 	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
 		cu = cu.getPrimary();

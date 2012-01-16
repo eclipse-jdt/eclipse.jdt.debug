@@ -30,6 +30,7 @@ public class ShowNullArrayEntriesAction extends ViewFilterAction {
 	/**
 	 * @see ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES; 
 	}
@@ -37,6 +38,7 @@ public class ShowNullArrayEntriesAction extends ViewFilterAction {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (getValue()) {
 			// when on, filter nothing

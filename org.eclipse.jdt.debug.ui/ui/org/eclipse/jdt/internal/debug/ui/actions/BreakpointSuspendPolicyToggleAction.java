@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IActionDelegate;
  
 /**
  * Toggles whether a breakpoint suspends a VM or only
@@ -35,6 +36,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
+	@Override
 	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
 		if(breakpoint.getSuspendPolicy() != fCurrentPolicy) {
 			breakpoint.setSuspendPolicy(fCurrentPolicy);
@@ -44,6 +46,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
+	@Override
 	protected boolean getToggleState(IJavaBreakpoint breakpoint) {
 		return false;
 	}
@@ -51,8 +54,9 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(IStructuredSelection)
 	 */
+	@Override
 	public boolean isEnabledFor(IStructuredSelection selection) {
-		Iterator iter= selection.iterator();
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			Object element = iter.next();
 			if (!(element instanceof IJavaBreakpoint)) {
@@ -66,6 +70,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		if (action.isEnabled()) {
@@ -77,6 +82,7 @@ public class BreakpointSuspendPolicyToggleAction extends BreakpointToggleAction 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.BreakpointToggleAction#isToggleAction()
 	 */
+	@Override
 	protected boolean isToggleAction() {
 		return false;
 	}

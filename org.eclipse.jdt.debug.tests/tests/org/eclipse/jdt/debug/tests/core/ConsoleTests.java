@@ -39,12 +39,14 @@ public class ConsoleTests extends AbstractDebugTest {
             super("Life's like that", null, autoLifecycle);
         }
         
-        protected void init() {
+        @Override
+		protected void init() {
             super.init();
             fInit = true;
         }
         
-        protected void dispose() {
+        @Override
+		protected void dispose() {
             super.dispose();
             fDispose = true;
         }

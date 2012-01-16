@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -93,9 +93,9 @@ public class BreakpointMethodLocator extends ASTVisitor {
 		}
 		StringBuffer signature= new StringBuffer();
 		signature.append('(');
-		List parameters = node.parameters();
-		for (Iterator iter = parameters.iterator(); iter.hasNext();) {
-			Type type = ((SingleVariableDeclaration) iter.next()).getType();
+		List<SingleVariableDeclaration> parameters = node.parameters();
+		for (Iterator<SingleVariableDeclaration> iter = parameters.iterator(); iter.hasNext();) {
+			Type type = iter.next().getType();
 			if (type instanceof PrimitiveType) {
 				appendTypeLetter(signature, (PrimitiveType)type);
 			} else {
@@ -139,11 +139,12 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CompilationUnit)
 	 */
+	@Override
 	public boolean visit(CompilationUnit node) {
 		// visit only the type declarations
-		List types = node.types();
-		for (Iterator iter = types.iterator(); iter.hasNext() && !fFound;) {
-			((TypeDeclaration) iter.next()).accept(this);
+		List<TypeDeclaration> types = node.types();
+		for (Iterator<TypeDeclaration> iter = types.iterator(); iter.hasNext() && !fFound;) {
+			iter.next().accept(this);
 		}
 		return false;
 	}
@@ -151,6 +152,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
 	 */
+	@Override
 	public boolean visit(MethodDeclaration node) {
 		if (containsPosition(node)) {
 			if (node.isConstructor()) {
@@ -168,6 +170,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
 	 */
+	@Override
 	public boolean visit(TypeDeclaration node) {
 		if (containsPosition(node)) {
 			// visit the methode declarations

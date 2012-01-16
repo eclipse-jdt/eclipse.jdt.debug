@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class JavaLaunchableTester extends PropertyTester {
     /**
      * Map of modifier text to corresponding flag (Integer)
      */
-    private static Map fgModifiers = new HashMap();
+    private static Map<String, Integer> fgModifiers = new HashMap<String, Integer>();
     
     private static final int FLAGS_MASK= Flags.AccPublic | Flags.AccProtected | Flags.AccPrivate | Flags.AccStatic
     	| Flags.AccFinal | Flags.AccSynchronized | Flags.AccAbstract | Flags.AccNative;
@@ -137,7 +137,6 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * gets the type of the IJavaElement
 	 * @param element the element to inspect
 	 * @return the type
-	 * @throws JavaModelException
 	 */
 	private IType getType(IJavaElement element) {
         IType type = null;
@@ -187,7 +186,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * Returns if the specified <code>IType</code> has a main method
 	 * @param type the type to inspect for a main type
 	 * @return true if the specified type has a main method, false otherwise
-	 * @throws JavaModelException
+	 * @throws JavaModelException if there is an error in the backing Java model
 	 * @since 3.3
 	 */
 	private boolean hasMainMethod(IType type) throws JavaModelException {
@@ -205,7 +204,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * When recursing we only care about child <code>IType</code>s that are static. 
 	 * @param type the <code>IType</code> to inspect for a main method
 	 * @return true if a main method was found in specified <code>IType</code>, false otherwise
-	 * @throws CoreException
+	 * @throws CoreException if there is an error
 	 * @since 3.3
 	 */
 	private boolean hasMainInChildren(IType type) throws CoreException {
@@ -263,7 +262,7 @@ public class JavaLaunchableTester extends PropertyTester {
                                 int flags = 0;
                                 for (int j = 0; j < modifiers.length; j++) {
                                     String modifier = modifiers[j];
-                                    Integer flag = (Integer) fgModifiers.get(modifier);
+                                    Integer flag = fgModifiers.get(modifier);
                                     if (flag != null) {
                                         flags = flags | flag.intValue();
                                     }
@@ -289,7 +288,7 @@ public class JavaLaunchableTester extends PropertyTester {
      *  <code>org.junit.JUnit</code>.</li>
      * </ol>
 	 * @param element the element to check for the method 
-	 * @param annotationName the qualified or unqualified name of the annotation to look for
+	 * @param annotationType the qualified or unqualified name of the annotation kind to look for
 	 * @return true if the type is found in the element, false otherwise
 	 */
 	private boolean hasTypeWithAnnotation(IJavaElement element, String annotationType) {
@@ -337,7 +336,7 @@ public class JavaLaunchableTester extends PropertyTester {
      *  example, <code>public static</code>.</li>
      * </ol>
 	 * @param element the element to check for the method 
-	 * @param annotationName the qualified or unqualified name of the annotation to look for
+	 * @param args the arguments
 	 * @return true if the method is found in the element, false otherwise
 	 */
 	private boolean hasMethodWithAnnotation(IJavaElement element, Object[] args) {
@@ -348,7 +347,7 @@ public class JavaLaunchableTester extends PropertyTester {
 				String[] modifiers = ((String) args[1]).split(" "); //$NON-NLS-1$
                 for (int j = 0; j < modifiers.length; j++) {
                     String modifier = modifiers[j];
-                    Integer flag = (Integer) fgModifiers.get(modifier);
+                    Integer flag = fgModifiers.get(modifier);
                     if (flag != null) {
                         flags = flags | flag.intValue();
                     }
@@ -439,7 +438,7 @@ public class JavaLaunchableTester extends PropertyTester {
 
 	/**
      * determines if the project selected has the specified nature
-     * @param resource the resource to get the project for
+     * @param element the Java element to get the project from
      * @param ntype the specified nature type
      * @return true if the specified nature matches the project, false otherwise
      */
@@ -492,16 +491,16 @@ public class JavaLaunchableTester extends PropertyTester {
 	private boolean hasItemOnBuildPath(IJavaElement element, Object[] args) {
 		if(element != null && args != null) {
 			IJavaProject project = element.getJavaProject();
-			Set searched = new HashSet();
+			Set<IJavaProject> searched = new HashSet<IJavaProject>();
 			searched.add(project);
 			return hasItemsOnBuildPath(project, searched, args);
 		}
 		return false;
 	}
 	
-	private boolean hasItemsOnBuildPath(IJavaProject project, Set searched, Object[] args) {
+	private boolean hasItemsOnBuildPath(IJavaProject project, Set<IJavaProject> searched, Object[] args) {
 		try {
-			List projects = new ArrayList();
+			List<IJavaProject> projects = new ArrayList<IJavaProject>();
 	        if(project != null && project.exists()) {
 	            IClasspathEntry[] entries = project.getResolvedClasspath(true);
 	            for(int i = 0; i < entries.length; i++) {
@@ -524,9 +523,9 @@ public class JavaLaunchableTester extends PropertyTester {
 	            }
 	        }
 	        // search referenced projects
-	        Iterator iterator = projects.iterator();
+	        Iterator<IJavaProject> iterator = projects.iterator();
 	        while (iterator.hasNext()) {
-	        	IJavaProject jp = (IJavaProject) iterator.next();
+	        	IJavaProject jp = iterator.next();
 	        	searched.add(jp);
 	        	if (hasItemsOnBuildPath(jp, searched, args)) {
 	        		return true;

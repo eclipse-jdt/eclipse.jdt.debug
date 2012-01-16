@@ -46,6 +46,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get the type org.eclipse.debug.jdi.tests.program.MainClass
 		fType = getMainClass();
@@ -61,6 +62,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.ClassType";
 	}

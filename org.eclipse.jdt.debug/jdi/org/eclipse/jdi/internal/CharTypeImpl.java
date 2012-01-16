@@ -10,35 +10,35 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-
 import com.sun.jdi.CharType;
 import com.sun.jdi.Value;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class CharTypeImpl extends PrimitiveTypeImpl implements CharType {
 	/**
 	 * Creates new instance.
 	 */
 	public CharTypeImpl(VirtualMachineImpl vmImpl) {
-		super("CharType", vmImpl, "char" , "C"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super("CharType", vmImpl, "char", "C"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	/**
 	 * @returns primitive type tag.
 	 */
+	@Override
 	public byte tag() {
 		return CharValueImpl.tag;
 	}
-	
+
 	/**
 	 * @return Create a null value instance of the type.
 	 */
+	@Override
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((char)0);
+		return virtualMachineImpl().mirrorOf((char) 0);
 	}
 }

@@ -28,6 +28,7 @@ public class BooleanValueTest extends AbstractJDITest {
 	/**
 	 * Init the fields that are used by this test only.
 	 */
+	@Override
 	public void localSetUp() {
 		// Get boolean value for "true"
 		fValue = fVM.mirrorOf(true);
@@ -43,6 +44,7 @@ public class BooleanValueTest extends AbstractJDITest {
 	 * Gets the name of the test case.
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		return "com.sun.jdi.BooleanValue";
 	}

@@ -54,6 +54,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * Method declared in WizardPage
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible)
 			enterPage();
@@ -70,7 +71,8 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		//System.out.println("leavePage: " + getName());
 	}
 
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         Image result = super.getImage();
 
         if (result == null && fWizard != null)
@@ -178,6 +180,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	
 	void hookButton(final Button b, final String key) {
 		b.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fBundleDescription.setValue(key, new Boolean(b.getSelection()));
 				checkIfPageComplete();

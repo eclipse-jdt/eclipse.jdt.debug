@@ -59,7 +59,7 @@ public class EvaluationEngineMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, EvaluationEngineMessages.class);
 	}
 
-    public static String ASTEvaluationEngine_0;
+	public static String ASTEvaluationEngine_0;
 	public static String ASTEvaluationEngine_1;
 	public static String ArrayRuntimeContext_0;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for type move.
@@ -33,6 +34,7 @@ public class BreakpointMoveTypeParticipant extends BreakpointMoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IType && getArguments().getDestination() instanceof IPackageFragment;
 	}
@@ -40,7 +42,8 @@ public class BreakpointMoveTypeParticipant extends BreakpointMoveParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List)
 	 */
-	protected void gatherChanges(IMarker[] markers, List changes) throws CoreException, OperationCanceledException {
+	@Override
+	protected void gatherChanges(IMarker[] markers, List<Change> changes) throws CoreException, OperationCanceledException {
 		IType originalType = (IType) getOriginalElement();
 		IPackageFragment destPackage = (IPackageFragment) getDestination();
 		for (int i = 0; i < markers.length; i++) {

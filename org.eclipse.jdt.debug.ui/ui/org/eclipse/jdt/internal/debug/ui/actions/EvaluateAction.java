@@ -64,6 +64,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -85,7 +86,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -359,7 +359,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 				} else {
 					IStructuredSelection ss= (IStructuredSelection)selection;
-					Iterator elements = ss.iterator();
+					Iterator<?> elements = ss.iterator();
 					while (elements.hasNext()) {
 						if (!(elements.next() instanceof IJavaVariable)) {
 							setSelectedObject(null);
@@ -514,7 +514,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); 
+				dataDisplay.displayExpressionValue(NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); 
 			} else {
 				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); 
 			}
@@ -548,9 +548,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= MessageFormat.format(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
+		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
 		if (exception.getMessage() != null) {
-			message= MessageFormat.format(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
+			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
 		}
 		return message;
 	}
@@ -561,7 +561,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected static String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
+			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
 	}
 	
 	protected String getErrorMessage(IEvaluationResult result) {
@@ -579,7 +579,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (i == 0) {
 				message= msg;
 			} else {
-				message= MessageFormat.format(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); 
+				message= NLS.bind(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); 
 			}
 		}
 		return message;

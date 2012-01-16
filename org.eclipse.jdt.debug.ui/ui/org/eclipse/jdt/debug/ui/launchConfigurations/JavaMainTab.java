@@ -40,14 +40,13 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -99,6 +98,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab#createMainTypeExtensions(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createMainTypeExtensions(Composite parent) {
 		fSearchExternalJarsCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, null, false, 2);
 		fSearchExternalJarsCheckButton.addSelectionListener(getDefaultListener());
@@ -113,6 +113,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
@@ -129,6 +130,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaMainTab"; //$NON-NLS-1$
 	}
@@ -136,6 +138,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	/**
 	 * Show a dialog that lists all main types
 	 */
+	@Override
 	protected void handleSearchButtonSelected() {
 		IJavaProject project = getJavaProject();
 		IJavaElement[] elements = null;
@@ -188,6 +191,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		updateMainTypeFromConfig(config);
@@ -199,6 +203,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -209,16 +214,16 @@ public class JavaMainTab extends SharedJavaMainTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				if (!project.exists()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_20, new String[] {name})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {name})); 
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_21, new String[] {name})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {name})); 
 					return false;
 				}
 			}
 			else {
-				setErrorMessage(MessageFormat.format(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
+				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
 				return false;
 			}
 		}

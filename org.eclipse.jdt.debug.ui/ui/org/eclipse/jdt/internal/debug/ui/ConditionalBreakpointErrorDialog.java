@@ -26,6 +26,7 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Edit and Cancel buttons
 		createButton(parent, IDialogConstants.OK_ID, DebugUIMessages.ConditionalBreakpointErrorDialog__Edit_Condition_2, true); 

@@ -20,7 +20,9 @@ import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEditor;
 import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Moves selected enries in a runtime classpath viewer up one position.
@@ -38,8 +40,9 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
-		List targets = getOrderedSelection();
+		List<?> targets = getOrderedSelection();
 		if (targets.size() != 1) {
 			return;
 		}
@@ -57,7 +60,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 			IRuntimeClasspathEntry[] replacements = editor.edit(getShell(), fConfiguration, delegtes);
 			if (replacements != null) {
 				IRuntimeClasspathEntry[] wrappers = new IRuntimeClasspathEntry[replacements.length];
-				List list = getEntriesAsList();
+				List<IRuntimeClasspathEntry> list = getEntriesAsList();
 				int index = 0;
 				for (int i = 0; i < list.size(); i++) {
 					Object element = list.get(i);
@@ -79,6 +82,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();

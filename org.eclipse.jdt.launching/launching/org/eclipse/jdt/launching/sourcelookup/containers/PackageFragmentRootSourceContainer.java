@@ -110,6 +110,7 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof PackageFragmentRootSourceContainer &&
 		 ((PackageFragmentRootSourceContainer)obj).getPackageFragmentRoot().equals(getPackageFragmentRoot());
@@ -127,6 +128,7 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fRoot.hashCode();
 	}

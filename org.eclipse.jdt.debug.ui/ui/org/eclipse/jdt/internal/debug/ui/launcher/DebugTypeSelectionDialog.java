@@ -52,14 +52,14 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Main list label provider
 	 */
 	public class DebugTypeLabelProvider implements ILabelProvider {
-		HashMap fImageMap = new HashMap();
+		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<ImageDescriptor, Image>();
 
 		public Image getImage(Object element) {
 			if(element instanceof IAdaptable) {
 				IWorkbenchAdapter adapter = (IWorkbenchAdapter) ((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
 				if(adapter != null) {
 					ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-					Image image = (Image) fImageMap.get(descriptor);
+					Image image = fImageMap.get(descriptor);
 					if(image == null) {
 						image = descriptor.createImage();
 						fImageMap.put(descriptor, image);
@@ -128,6 +128,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Provides a label and image for the details area of the dialog
 	 */
 	class DebugTypeDetailsLabelProvider extends DebugTypeLabelProvider {
+		@Override
 		public String getText(Object element) {
 			if(element instanceof IType) {
 				IType type = (IType) element;
@@ -149,6 +150,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 			return null;
 		}
+		@Override
 		public Image getImage(Object element) {
 			if(element instanceof IType) {
 				return super.getImage(getDeclaringContainer(((IType) element)));
@@ -161,9 +163,11 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Simple items filter
 	 */
 	class DebugTypeItemsFilter extends ItemsFilter {
+		@Override
 		public boolean isConsistentItem(Object item) {
 			return item instanceof IType;
 		}
+		@Override
 		public boolean matchItem(Object item) {
 			if(!(item instanceof IType) || !Arrays.asList(fTypes).contains(item)) {
 				return false;
@@ -176,10 +180,12 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * The selection history for the dialog
 	 */
 	class DebugTypeSelectionHistory extends SelectionHistory {
+		@Override
 		protected Object restoreItemFromMemento(IMemento memento) {
 			IJavaElement element = JavaCore.create(memento.getTextData()); 
 			return (element instanceof IType ? element : null);
 		}
+		@Override
 		protected void storeItemToMemento(Object item, IMemento memento) {
 			if(item instanceof IType) {
 				memento.putTextData(((IType) item).getHandleIdentifier());
@@ -208,6 +214,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control ctrl = super.createDialogArea(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IJavaDebugHelpContextIds.SELECT_MAIN_METHOD_DIALOG);
@@ -217,6 +224,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
@@ -229,8 +237,9 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
 	 */
+	@Override
 	protected Comparator getItemsComparator() {
-		Comparator comp = new Comparator() {
+		Comparator<?> comp = new Comparator<Object>() {
             public int compare(Object o1, Object o2) {
             	if(o1 instanceof IType && o2 instanceof IType) {
             		return ((IType)o1).getElementName().compareTo(((IType)o2).getElementName());
@@ -244,6 +253,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
+	@Override
 	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;
 	}
@@ -251,6 +261,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createExtendedContentArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		return null;
 	}
@@ -258,6 +269,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
+	@Override
 	protected ItemsFilter createFilter() {
 		return new DebugTypeItemsFilter();
 	}
@@ -265,6 +277,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		if(fTypes != null && fTypes.length > 0) {
 			for(int i = 0; i < fTypes.length; i++) {
@@ -278,6 +291,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
+	@Override
 	public String getElementName(Object item) {
 		if(item instanceof IType) {
 			return ((IType)item).getElementName();

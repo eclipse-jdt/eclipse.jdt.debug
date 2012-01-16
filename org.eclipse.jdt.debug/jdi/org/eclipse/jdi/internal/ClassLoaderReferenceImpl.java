@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdi.internal;
-
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -27,41 +26,45 @@ import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ReferenceType;
 
 /**
- * this class implements the corresponding interfaces
- * declared by the JDI specification. See the com.sun.jdi package
- * for more information.
- *
+ * this class implements the corresponding interfaces declared by the JDI
+ * specification. See the com.sun.jdi package for more information.
+ * 
  */
 public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements ClassLoaderReference {
 	/** JDWP Tag. */
+	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.CLASS_LOADER_TAG;
 
 	/**
 	 * Creates new ClassLoaderReferenceImpl.
 	 */
-	public ClassLoaderReferenceImpl(VirtualMachineImpl vmImpl, JdwpClassLoaderID classLoaderID) {
+	public ClassLoaderReferenceImpl(VirtualMachineImpl vmImpl,
+			JdwpClassLoaderID classLoaderID) {
 		super("ClassLoaderReference", vmImpl, classLoaderID); //$NON-NLS-1$
 	}
 
 	/**
 	 * @returns Value tag.
 	 */
+	@Override
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
-	 * @returns Returns a list of all loaded classes that were defined by this class loader.
+	 * @returns Returns a list of all loaded classes that were defined by this
+	 *          class loader.
 	 */
-	public List definedClasses() {
+	public List<ReferenceType> definedClasses() {
 		// Note that this information should not be cached.
-		List visibleClasses= visibleClasses();
-		List result = new ArrayList(visibleClasses.size());
-		Iterator iter = visibleClasses.iterator();
+		List<ReferenceType> visibleClasses = visibleClasses();
+		List<ReferenceType> result = new ArrayList<ReferenceType>(visibleClasses.size());
+		Iterator<ReferenceType> iter = visibleClasses.iterator();
 		while (iter.hasNext()) {
 			try {
-				ReferenceType type = (ReferenceType)iter.next();
-				// Note that classLoader() is null for the bootstrap classloader.
+				ReferenceType type = iter.next();
+				// Note that classLoader() is null for the bootstrap
+				// classloader.
 				if (type.classLoader() != null && type.classLoader().equals(this))
 					result.add(type);
 			} catch (ClassNotPreparedException e) {
@@ -71,18 +74,19 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 		return result;
 	}
 
-	/**
-	 * @returns Returns a list of all loaded classes that are visible by this class loader.
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.ClassLoaderReference#visibleClasses()
 	 */
-	public List visibleClasses() {
+	public List<ReferenceType> visibleClasses() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CLR_VISIBLE_CLASSES, this);
+			JdwpReplyPacket replyPacket = requestVM(
+					JdwpCommandPacket.CLR_VISIBLE_CLASSES, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List elements = new ArrayList(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
 				if (elt == null)
@@ -97,11 +101,12 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Reads JDWP representation and returns new instance.
 	 */
-	public static ClassLoaderReferenceImpl read(MirrorImpl target, DataInputStream in)  throws IOException {
+	public static ClassLoaderReferenceImpl read(MirrorImpl target,
+			DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpClassLoaderID ID = new JdwpClassLoaderID(vmImpl);
 		ID.read(in);
@@ -111,7 +116,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 		if (ID.isNull())
 			return null;
 
-		ClassLoaderReferenceImpl mirror = new ClassLoaderReferenceImpl(vmImpl, ID);
+		ClassLoaderReferenceImpl mirror = new ClassLoaderReferenceImpl(vmImpl,
+				ID);
 		return mirror;
 	}
 }

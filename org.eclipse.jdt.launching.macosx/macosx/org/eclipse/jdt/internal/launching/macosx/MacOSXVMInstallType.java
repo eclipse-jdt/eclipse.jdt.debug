@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * This plugins into the org.eclipse.jdt.launching.vmInstallTypes extension point
+ * This plug-ins into the org.eclipse.jdt.launching.vmInstallTypes extension point
  */
 public class MacOSXVMInstallType extends StandardVMType {
 	
@@ -81,10 +81,12 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
 	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
 				
+	@Override
 	public String getName() {
 		return MacOSXLaunchingPlugin.getString("MacOSXVMType.name"); //$NON-NLS-1$
 	}
 	
+	@Override
 	public IVMInstall doCreateVMInstall(String id) {
 		return new MacOSXVMInstall(this, id);
 	}
@@ -92,6 +94,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/*
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
+	@Override
 	public File detectInstallLocation() {
 		try {
 			// find all installed VMs
@@ -225,6 +228,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultLibraryInfo(java.io.File)
 	 */
+	@Override
 	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
 		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
 		File lib1= new File(classes, "classes.jar"); //$NON-NLS-1$
@@ -253,6 +257,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
 	 */
+	@Override
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		File parent= libLocation.getParentFile();
 		while (parent != null) {
@@ -276,6 +281,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#validateInstallLocation(java.io.File)
 	 */
+	@Override
 	public IStatus validateInstallLocation(File javaHome) {
 		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
 		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
@@ -287,6 +293,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultJavadocLocation(java.io.File)
 	 */
+	@Override
 	public URL getDefaultJavadocLocation(File installLocation) {
 		// try in local filesystem
 		String id= null;	
@@ -323,6 +330,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 	/*
 	 * Overridden to make it visible.
 	 */
+	@Override
 	protected String getVMVersion(File javaHome, File javaExecutable) {
 		return super.getVMVersion(javaHome, javaExecutable);
 	}

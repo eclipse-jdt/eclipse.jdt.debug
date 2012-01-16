@@ -31,6 +31,7 @@ public class SourceElementLabelProvider extends LabelProvider implements ILabelP
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IJavaElement) {
 			return ((IJavaElement)element).getElementName();
@@ -47,6 +48,7 @@ public class SourceElementLabelProvider extends LabelProvider implements ILabelP
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ICompilationUnit) {
 			return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);

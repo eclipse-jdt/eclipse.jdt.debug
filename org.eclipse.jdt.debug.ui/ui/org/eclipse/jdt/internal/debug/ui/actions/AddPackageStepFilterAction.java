@@ -22,6 +22,7 @@ public class AddPackageStepFilterAction extends AbstractAddStepFilterAction {
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.AbstractAddStepFilterAction#generateStepFilterPattern(org.eclipse.jdt.debug.core.IJavaStackFrame)
 	 */
+	@Override
 	protected String generateStepFilterPattern(IJavaStackFrame frame) {
 		String typeName;
 		try {
