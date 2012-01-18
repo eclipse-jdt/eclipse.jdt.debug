@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
  /**
-  * Test cases for the implementation of providing argumebnt information even if 
+  * Test cases for the implementation of providing argument information even if 
   * no debugging information is present in the new java 1.6 VM
   * 
   * @since 3.3
@@ -39,7 +39,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 	 * test to see if forcing early return is supported or not
 	 */
 	public void testCanForceEarlyReturn() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have force early return capabilities", fVM.canForceEarlyReturn());
 		}
 		else {
@@ -68,7 +68,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 			if(tref.isSuspended()) {
 				if(tref.isAtBreakpoint()) {
 					method = getMethod("printNumber", "(Ljava/io/OutputStream;I)I");
-					br = getBreakpointRequest((Location) method.locationsOfLine(136).get(0));
+					br = getBreakpointRequest((Location) method.locationsOfLine(200).get(0));
 					br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					br.enable();
 					waiter = new EventWaiter(br, true);
@@ -76,6 +76,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 					tref.forceEarlyReturn(fVM.mirrorOf("bar"));
 					tref.resume();
 					bpe = (BreakpointEvent) waiter.waitEvent(10000);
+					assertNotNull("Timed out waiting for a breakpoint event during force return", bpe);
 					tref = bpe.thread();
 					LocalVariable lv = (LocalVariable)tref.frame(0).visibleVariables().get(2);
 					Value val = tref.frame(0).getValue(lv);

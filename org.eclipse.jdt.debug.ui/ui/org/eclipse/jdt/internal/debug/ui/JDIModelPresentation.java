@@ -646,6 +646,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return charText.toString();
 	}
 
+	@SuppressWarnings("deprecation")
 	protected String getMarkerTypeName(IJavaBreakpoint breakpoint, boolean qualified) throws CoreException {
 		String typeName= null;
 		if (breakpoint instanceof IJavaPatternBreakpoint) {
@@ -1482,6 +1483,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buff.toString();
 	}
 
+	@SuppressWarnings("deprecation")
 	protected String getBreakpointText(IBreakpoint breakpoint) {
 	    try {
 	    	String label = null;
@@ -1644,8 +1646,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return label;
 	}
 	
-	protected String getJavaPatternBreakpointText(IJavaPatternBreakpoint breakpoint) throws CoreException {
-	
+	protected String getJavaPatternBreakpointText(@SuppressWarnings("deprecation") IJavaPatternBreakpoint breakpoint) throws CoreException {
 		IResource resource= breakpoint.getMarker().getResource();
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuffer label= new StringBuffer(resource.getName());

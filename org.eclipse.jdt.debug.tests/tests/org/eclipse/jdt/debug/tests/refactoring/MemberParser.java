@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,8 +60,9 @@ public class MemberParser{
 	 * @return
 	 */
 	private static ArrayList<String> createTypeList(String typeQualifiedName) {
-		typeQualifiedName = typeQualifiedName.replace('$','.');//ensure proper format was used.
-		String parsed[] = typeQualifiedName.split("\\."); //$NON-NLS-1$
+		String newname = typeQualifiedName;
+		newname = newname.replace('$','.');//ensure proper format was used.
+		String parsed[] = newname.split("\\."); //$NON-NLS-1$
 		//make list of types to find
 		ArrayList<String> typeList = new ArrayList<String>();
 		for (int splitNum = 0; splitNum < parsed.length; splitNum++) {
@@ -203,18 +204,18 @@ public class MemberParser{
 	public static IType[] getAllTypes(IType[] types) throws JavaModelException{
 		if(types == null)
 			return null;
-		
+		IType[] newtypes = types;
 		final Set<IType> results = new HashSet<IType>();
 		//get all the obvious type declarations
-		for (int mainTypeNum = 0; mainTypeNum < types.length; mainTypeNum++) {
-			IType declaredTypes[] = types[mainTypeNum].getTypes();
+		for (int mainTypeNum = 0; mainTypeNum < newtypes.length; mainTypeNum++) {
+			IType declaredTypes[] = newtypes[mainTypeNum].getTypes();
 			for (int declaredTypeNum = 0; declaredTypeNum < declaredTypes.length; declaredTypeNum++) {
 				results.add(declaredTypes[declaredTypeNum]);
 			}
 			//get all the type's method's type declarations
-			types = getAllTypes(getAllMethods(types));
-			for (int methodTypes = 0; methodTypes < types.length; methodTypes++) {
-				results.add(types[methodTypes]);
+			newtypes = getAllTypes(getAllMethods(newtypes));
+			for (int methodTypes = 0; methodTypes < newtypes.length; methodTypes++) {
+				results.add(newtypes[methodTypes]);
 			}
 		}
 		if(results.isEmpty())
@@ -372,8 +373,8 @@ public class MemberParser{
 	 * @return the designated type, or null if type not found.
 	 */
 	protected IMember getDeepest(IMember top, String tail) {
-		
-		if(tail==null || tail.length()==0 )
+		String newtail = tail;
+		if(newtail==null || newtail.length()==0 )
 			return top;
 		
 		if(!top.exists())
@@ -381,31 +382,31 @@ public class MemberParser{
 		
 		//check if there are more nested elements
 		String head=null;
-		for(int i=0;i<tail.length();i++)
+		for(int i=0;i<newtail.length();i++)
 		{
-			if(tail.charAt(i)=='$')//nested Item?
+			if(newtail.charAt(i)=='$')//nested Item?
 			{//Enclosing$Inner$MoreInner
-				head = tail.substring(0,i);
-				tail = tail.substring(i+1);	
+				head = newtail.substring(0,i);
+				newtail = newtail.substring(i+1);	
 				break;//found next item
 			}
 		}
 		if(head==null)//we are at last item to parse
 		{//swap Members
-			head = tail;
-			tail = null;
+			head = newtail;
+			newtail = null;
 		}
 		
 		if(top instanceof IType)
-			return getNextFromType(top, head, tail);
+			return getNextFromType(top, head, newtail);
 		else 
 			if(top instanceof IMethod)
-				return getNextFromMethod(top, head, tail);
+				return getNextFromMethod(top, head, newtail);
 			else
 				if(top instanceof IField)
-					return getNextFromField(top, head, tail);
+					return getNextFromField(top, head, newtail);
 		//else there is a problem!
-		return getDeepest(top,tail);			
+		return getDeepest(top,newtail);			
 	}
 	
 	/**

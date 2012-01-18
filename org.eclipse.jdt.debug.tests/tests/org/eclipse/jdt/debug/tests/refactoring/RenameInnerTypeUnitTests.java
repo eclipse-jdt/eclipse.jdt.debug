@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,7 +56,6 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	private void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
 		cleanTestFiles();		
-		targetLineage = pack+"."+targetLineage;
 		try {
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
@@ -68,7 +67,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaClassPrepareBreakpoint) breakpoints[0];
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("breakpoint attached to wrong type", targetLineage, breakpoint.getTypeName());
+			assertEquals("breakpoint attached to wrong type", pack+"."+targetLineage, breakpoint.getTypeName());
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -87,7 +86,6 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	private void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, int lineNumber) throws Exception {
 		cleanTestFiles();
-		targetLineage = pack+"."+targetLineage;
 		try {
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
@@ -99,7 +97,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaLineBreakpoint) breakpoints[0];
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("breakpoint attached to wrong type", targetLineage, breakpoint.getTypeName());
+			assertEquals("breakpoint attached to wrong type", pack+"."+targetLineage, breakpoint.getTypeName());
 			assertEquals("breakpoint on wrong line", lineNumber, breakpoint.getLineNumber());
 		} catch (Exception e) {
 			throw e;
@@ -119,7 +117,6 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	private void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String methodName) throws Exception {
 		cleanTestFiles();
-		targetLineage = pack+"."+targetLineage;
 		try {
 			//create breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
@@ -131,7 +128,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaMethodBreakpoint) breakpoints[0];
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("wrong type name", targetLineage, breakpoint.getTypeName());
+			assertEquals("wrong type name", pack+"."+targetLineage, breakpoint.getTypeName());
 			assertEquals("breakpoint attached to wrong method",methodName,breakpoint.getMethodName());
 		} catch (Exception e) {
 			throw e;
@@ -151,7 +148,6 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	private void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String fieldName) throws Exception {
 		cleanTestFiles();	
-		targetLineage = pack+"."+targetLineage;
 		try {
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
@@ -163,7 +159,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			breakpoint = (IJavaWatchpoint) breakpoints[0];
 			assertTrue("Breakpoint Marker has ceased existing",breakpoint.getMarker().exists());
-			assertEquals("breakpoint attached to wrong type", targetLineage, breakpoint.getTypeName());
+			assertEquals("breakpoint attached to wrong type", pack+"."+targetLineage, breakpoint.getTypeName());
 			assertEquals("breakpoint attached to wrong field", fieldName, breakpoint.getFieldName());
 		} catch (Exception e) {
 			throw e;

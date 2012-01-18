@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,23 +39,23 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
      */
     public void testContextualLaunchMenu() throws Exception {
     	setDegradationComment("This test is unreliable as it improved 10x during 3.3 (vs 3.2), and needs to be replaced.");
-        final PerfTestContextualLaunchAction action = new PerfTestContextualLaunchAction();
+        final PerfTestContextualLaunchAction launchaction = new PerfTestContextualLaunchAction();
         
         ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");        
         StructuredSelection selection = new StructuredSelection(new Object[] {cu});
-        action.selectionChanged(new BogusAction(), selection);
+        launchaction.selectionChanged(new BogusAction(), selection);
         
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
             public void run() {
                 Shell shell = DebugUIPlugin.getStandardDisplay().getActiveShell();
-                Menu menu = action.getMenu(new Menu(shell));
-                showMenu(action, menu, 5);
+                Menu menu = launchaction.getMenu(new Menu(shell));
+                showMenu(launchaction, menu, 5);
                 
                 for(int i=0; i<10; i++) {
                     try {
                     System.gc();
                     startMeasuring();
-                    showMenu(action, menu, 40);
+                    showMenu(launchaction, menu, 40);
                     stopMeasuring();
                     } catch (Throwable t) {
                         System.err.println("Error on iteration: " + i);

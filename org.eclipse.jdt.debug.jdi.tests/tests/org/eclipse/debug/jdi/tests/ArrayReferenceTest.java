@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.DoubleValue;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.StringReference;
+import com.sun.jdi.Value;
 
 /**
  * Tests for JDI com.sun.jdi.ArrayReference
@@ -91,9 +92,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		assertEquals("testJDIGetSetDoubleValue.4.2", pi, value.value(), delta);
 
 		// getValues()
-		List values = fDoubleArray.getValues();
+		List<Value> values = fDoubleArray.getValues();
 		double[] expected = new double[] { pi, twos, threes };
-		ListIterator iterator = values.listIterator();
+		ListIterator<Value> iterator = values.listIterator();
 		while (iterator.hasNext()) {
 			DoubleValue dv = (DoubleValue) iterator.next();
 			boolean included = false;
@@ -107,7 +108,7 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		}
 
 		// setValues(List)
-		List newValues = values;
+		List<Value> newValues = values;
 		newValues.set(1, cntValue);
 		try {
 			fDoubleArray.setValues(newValues);
@@ -172,9 +173,9 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		assertEquals("3", value, newValue);
 
 		// getValues()
-		List values = fArray.getValues();
+		List<Value> values = fArray.getValues();
 		String[] expected = new String[] { "biz", "bar", "hop" };
-		ListIterator iterator = values.listIterator();
+		ListIterator<Value> iterator = values.listIterator();
 		while (iterator.hasNext()) {
 			StringReference ref = (StringReference) iterator.next();
 			boolean included = false;
@@ -188,7 +189,7 @@ public class ArrayReferenceTest extends AbstractJDITest {
 		}
 
 		// setValues(List)
-		List newValues = values;
+		List<Value> newValues = values;
 		newValue = fVM.mirrorOf("hip");
 		newValues.set(1, newValue);
 		try {

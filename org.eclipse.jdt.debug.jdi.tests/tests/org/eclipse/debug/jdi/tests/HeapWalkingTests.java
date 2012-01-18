@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,10 +40,10 @@ public class HeapWalkingTests extends AbstractJDITest {
 	}
 
 	/**
-	 * test to make sure that the vm supports getting instance info for heap walking if it is a 1.6 VM
+	 * test to make sure that the VM supports getting instance info for heap walking if it is a 1.6 VM
 	 */
 	public void testCanGetInstanceInfo() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have instance info", fVM.canGetInstanceInfo());
 		}
 		else {
@@ -70,9 +70,9 @@ public class HeapWalkingTests extends AbstractJDITest {
 	 * tests to make sure the instanceCounts method throws a not supported
 	 */
 	public void testGetInstanceCountsUnsupported() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
-				fVM.instanceCounts(new ArrayList());
+				fVM.instanceCounts(new ArrayList<ReferenceType>());
 			}
 			catch(UnsupportedOperationException uoe) {
 				assertTrue("Threw unsupported exception in 1.6 VM", false);
@@ -80,7 +80,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		else {
 			try {
-				fVM.instanceCounts(new ArrayList());
+				fVM.instanceCounts(new ArrayList<ReferenceType>());
 				assertTrue("No exception for non 1.6 VM", false);
 			}
 			catch(UnsupportedOperationException uoe) {}
@@ -97,7 +97,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclass3load", true);
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclassload", true);
-		ArrayList list = new ArrayList(2);
+		ArrayList<ReferenceType> list = new ArrayList<ReferenceType>(2);
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass should not be null", fClass);
 		list.add(fClass);
@@ -116,7 +116,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 	public void testGetInstancesUnsupported() {
 		fClass = getClass("java.io.PrintStream");
 		assertNotNull("classs should not be null", fClass);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fClass.instances(20);
 			}
@@ -164,7 +164,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("RefClass3 should not be null", fClass);
 		fClass1 = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass1);
-		List list = fClass1.instances(10);
+		List<?> list = fClass1.instances(10);
 		assertNotNull("list should not be null", list);
 		assertTrue("list should have two enrtries", list.size() == 2);
 	}
@@ -177,7 +177,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("main class ref should not be null", fClass);
 		fObject = getObjectReference();
 		assertNotNull("String obj ref should not be null", fObject);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fObject.referringObjects(100);
 			}
@@ -229,7 +229,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("RefClass should not be null", fClass1);
 		fObject = getObjectReference();
 		assertNotNull("String obj ref should not be null", fObject);
-		List list = fObject.referringObjects(100);
+		List<?> list = fObject.referringObjects(100);
 		assertNotNull("referring objects list should not be null", list);
 		assertTrue("list size should be 4", list.size() == 4);
 		assertTrue("list should contain the main class", list.contains(fClass.classObject()));

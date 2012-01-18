@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Value;
 import com.sun.jdi.event.ThreadStartEvent;
 
 /**
@@ -97,7 +99,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	 * Test JDI frames() and JDWP 'Thread - Get frames'.
 	 */
 	public void testJDIFrames() {
-		List frames = null;
+		List<?> frames = null;
 		try {
 			frames = fThread.frames();
 		} catch (IncompatibleThreadStateException e) {
@@ -174,7 +176,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 		ThreadReference thread = event.thread();
 
 		// Create a java.lang.Throwable instance in 
-		java.util.List classes = fVM.classesByName("java.lang.Throwable");
+		List<ReferenceType> classes = fVM.classesByName("java.lang.Throwable");
 		assertTrue("1", classes.size() != 0);
 		ClassType threadDeathClass = (ClassType) classes.get(0);
 		Method constructor =
@@ -185,7 +187,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 				threadDeathClass.newInstance(
 					thread,
 					constructor,
-					new java.util.LinkedList(),
+					new java.util.LinkedList<Value>(),
 					ClassType.INVOKE_SINGLE_THREADED);
 			threadDeath.disableCollection();
 			// This object is going to be used for the lifetime of the VM.

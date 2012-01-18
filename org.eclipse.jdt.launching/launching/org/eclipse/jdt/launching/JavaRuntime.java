@@ -1279,7 +1279,7 @@ public final class JavaRuntime {
 	 * 
 	 * @param configuration launch configuration
 	 * @return VM install
-	 * @exception CoreException if unable to compute a vm install
+	 * @exception CoreException if unable to compute a VM install
 	 * @since 2.0
 	 */
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
@@ -2130,6 +2130,7 @@ public final class JavaRuntime {
 	 * @return the preference store for the launching plug-in
 	 * @since 2.0
 	 */
+	@SuppressWarnings("deprecation")
 	public static Preferences getPreferences() {
 		return LaunchingPlugin.getDefault().getPluginPreferences();
 	}

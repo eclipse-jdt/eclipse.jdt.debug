@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -61,7 +62,11 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			
 			Map<String, String> argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map<String, String>)null);
 	        
-	        int connectTimeout = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+	        int connectTimeout = Platform.getPreferencesService().getInt(
+	        		LaunchingPlugin.ID_PLUGIN, 
+	        		JavaRuntime.PREF_CONNECT_TIMEOUT, 
+	        		JavaRuntime.DEF_CONNECT_TIMEOUT, 
+	        		null);
 	        argMap.put("timeout", Integer.toString(connectTimeout));  //$NON-NLS-1$
 	
 			// check for cancellation

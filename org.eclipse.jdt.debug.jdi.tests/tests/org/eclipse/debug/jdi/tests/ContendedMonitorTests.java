@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import com.sun.jdi.request.MonitorWaitRequest;
 import com.sun.jdi.request.MonitorWaitedRequest;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
+ * Test cases for the implementation of providing argument information even if 
  * no debugging information is present in the new java 1.6 VM
  * 
  * @since 3.3
@@ -39,7 +39,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 	 * a non-1.6VM cannot.
 	 */
 	public void testCanRequestMonitorEvents() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have ability to request monitor events info", fVM.canRequestMonitorEvents());
 		}
 		else {
@@ -57,7 +57,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		}
 		MonitorContendedEnterRequest req = erm.createMonitorContendedEnterRequest();
 		req.enable();
-		List list = erm.monitorContendedEnterRequests();
+		List<?> list = erm.monitorContendedEnterRequests();
 		assertNotNull("list should not be null", list);
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorContendedEnterRequest)list.get(0)).isEnabled());
@@ -73,7 +73,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		}
 		MonitorContendedEnteredRequest req = erm.createMonitorContendedEnteredRequest();
 		req.enable();
-		List list = erm.monitorContendedEnteredRequests();
+		List<?> list = erm.monitorContendedEnteredRequests();
 		assertNotNull("list should not be null", list);
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorContendedEnteredRequest)list.get(0)).isEnabled());
@@ -89,7 +89,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		}	
 		MonitorWaitRequest req = erm.createMonitorWaitRequest();
 		req.enable();
-		List list = erm.monitorWaitRequests();
+		List<?> list = erm.monitorWaitRequests();
 		assertNotNull("list should not be null", list);
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorWaitRequest)list.get(0)).isEnabled());
@@ -105,7 +105,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		}
 		MonitorWaitedRequest req = erm.createMonitorWaitedRequest();
 		req.enable();
-		List list = erm.monitorWaitedRequests();
+		List<?> list = erm.monitorWaitedRequests();
 		assertNotNull("list should not be null", list);
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorWaitedRequest)list.get(0)).isEnabled());

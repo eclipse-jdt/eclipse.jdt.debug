@@ -52,7 +52,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * Test that there is a class object for 'int[]'
 	 */
 	public void testJDIIntArray() {
-		List classes = fVM.classesByName("int[]");
+		List<?> classes = fVM.classesByName("int[]");
 		assertTrue(
 			"Should be a class for int[]",
 			classes.size() == 1
@@ -62,7 +62,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * Test that there is a class object for 'int[][]'
 	 */
 	public void testJDIIntDoubleArray() {
-		List classes = fVM.classesByName("int[][]");
+		List<?> classes = fVM.classesByName("int[][]");
 		assertTrue(
 			"Should be a class for int[][]",
 			classes.size() == 1
@@ -73,7 +73,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * tests signature for an array of long values 
 	 */
 	public void testJDILongArray() {
-		List classes = fVM.classesByName("long[]");
+		List<?> classes = fVM.classesByName("long[]");
 		assertTrue(
 			"Should be a class for long[]",
 			classes.size() == 1
@@ -84,7 +84,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * tests signature of a two dimensional array of long values
 	 */
 	public void testJDILongDoubleArray() {
-		List classes = fVM.classesByName("long[][]");
+		List<?> classes = fVM.classesByName("long[][]");
 		assertTrue(
 			"Should be a class for long[][]",
 			classes.size() == 1
@@ -95,7 +95,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * Test that there is a class object for 'java.lang.String[]'
 	 */
 	public void testJDIStringArray() {
-		List classes = fVM.classesByName("java.lang.String[]");
+		List<?> classes = fVM.classesByName("java.lang.String[]");
 		assertTrue(
 			"Should be a class for java.lang.String[]",
 			classes.size() == 1
@@ -107,7 +107,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 	 * Test that there is a class object for 'java.lang.String'
 	 */
 	public void testJDIString() {
-		List classes = fVM.classesByName("java.lang.String");
+		List<?> classes = fVM.classesByName("java.lang.String");
 		assertTrue(
 			"Should be a class for java.lang.String",
 			classes.size() == 1

@@ -385,6 +385,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 		return (String) ensureMarker().getAttribute(SOURCE_PATH);
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	protected void createRequests(JDIDebugTarget target) throws CoreException {
 		if (target.isTerminated() || shouldSkipBreakpoint()) {

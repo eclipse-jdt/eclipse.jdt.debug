@@ -108,9 +108,9 @@ public class StackFrameTest extends AbstractJDITest {
 		assertEquals("2", thread, value);
 
 		// getValues(List)
-		List vars = new LinkedList();
+		List<LocalVariable> vars = new LinkedList<LocalVariable>();
 		vars.add(var);
-		Map values = fFrame.getValues(vars);
+		Map<?, ?> values = fFrame.getValues(vars);
 		value = (ThreadReference) values.get(var);
 		assertEquals("3", thread, value);
 
@@ -165,7 +165,7 @@ public class StackFrameTest extends AbstractJDITest {
 	 * Test JDI visibleVariables().
 	 */
 	public void testJDIVisibleVariables() {
-		List vars = null;
+		List<?> vars = null;
 		try {
 			vars = fFrame.visibleVariables();
 		} catch (AbsentInformationException e) {

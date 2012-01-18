@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class JDITestCase extends TestCase {
 		}
 		try {
 			fTest.verbose("Running " + getName());
-			runMethod.invoke(fTest, new Class[0]);
+			runMethod.invoke(fTest, new Object[0]);
 		} catch (java.lang.reflect.InvocationTargetException e) {
 			if (e.getTargetException() instanceof NotYetImplementedException)
 				System.out.println("\n" + getName() + " is not yet implemented.");

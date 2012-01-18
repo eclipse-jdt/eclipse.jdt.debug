@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
@@ -45,6 +46,7 @@ import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.Connector.Argument;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
@@ -128,14 +130,14 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Returns all tests that start with the given string.
 	 * Returns a vector of String.
 	 */
-	protected Vector getAllMatchingTests(String match) {
-		Class theClass = this.getClass();
+	protected Vector<String> getAllMatchingTests(String match) {
+		Class<? extends AbstractJDITest> theClass = this.getClass();
 		java.lang.reflect.Method[] methods = theClass.getDeclaredMethods();
-		Vector result = new Vector();
+		Vector<String> result = new Vector<String>();
 		for (int i = 0; i < methods.length; i++) {
 			java.lang.reflect.Method m = methods[i];
 			String name = m.getName();
-			Class[] parameters = m.getParameterTypes();
+			Class<?>[] parameters = m.getParameterTypes();
 			if (parameters.length == 0 && name.startsWith(match)) {
 				if (!isExcludedTest(name)) {
 					result.add(name);
@@ -144,6 +146,16 @@ public abstract class AbstractJDITest extends TestCase {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns if the current VM version is greater than or equal to 1.6
+	 * @return <code>true</code> if a 1.6 or higher VM
+	 * @since 3.8
+	 */
+	protected boolean is16OrGreater() {
+		String ver = fVM.version();
+		return ver.indexOf("1.6") > -1 || ver.indexOf("1.7") > -1;
 	}
 	
 	/**
@@ -330,8 +342,8 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 	
 	/**
-	 * Creates a new breakpoinmt request for a user specified position
-	 * @param loc thel oc to set the breakpoint on
+	 * Creates a new breakpoint request for a user specified position
+	 * @param loc the location to set the breakpoint on
 	 * @return a new breakpoint request or null if the location is invalid
 	 * @since 3.3
 	 */
@@ -342,7 +354,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Returns the class with the given name or null if not loaded.
 	 */
 	protected ClassType getClass(String name) {
-		List classes = fVM.classesByName(name);
+		List<?> classes = fVM.classesByName(name);
 		if (classes.size() == 0)
 			return null;
 		
@@ -399,7 +411,7 @@ public abstract class AbstractJDITest extends TestCase {
 		// Get the frame
 		StackFrame frame = null;
 		try {
-			List frames = thread.frames();
+			List<?> frames = thread.frames();
 			frame = (StackFrame) frames.get(n);
 		} catch (IncompatibleThreadStateException e) {
 			throw new Error("Thread was not suspended");
@@ -411,7 +423,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Returns the interface type org.eclipse.debug.jdi.tests.program.Printable.
 	 */
 	protected InterfaceType getInterfaceType() {
-		List types = fVM.classesByName("org.eclipse.debug.jdi.tests.program.Printable");
+		List<?> types = fVM.classesByName("org.eclipse.debug.jdi.tests.program.Printable");
 		return (InterfaceType) types.get(0);
 	}
 	/**
@@ -463,10 +475,10 @@ public abstract class AbstractJDITest extends TestCase {
 
 		// Get method print(OutputStream)
 		Method method = null;
-		List methods = type.methods();
-		ListIterator iterator = methods.listIterator();
+		List<Method> methods = type.methods();
+		ListIterator<Method> iterator = methods.listIterator();
 		while (iterator.hasNext()) {
-			Method m = (Method) iterator.next();
+			Method m = iterator.next();
 			if ((m.name().equals(name)) && (m.signature().equals(signature))) {
 				method = m;
 				break;
@@ -545,7 +557,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Returns the class java.lang.Object.
 	 */
 	protected ClassType getSystemType() {
-		List classes = fVM.classesByName("java.lang.Object");
+		List<ReferenceType> classes = fVM.classesByName("java.lang.Object");
 		if (classes.size() == 0)
 			return null;
 		
@@ -569,11 +581,11 @@ public abstract class AbstractJDITest extends TestCase {
 			return null;
 
 		// Get static field "fThread"
-		List fields = type.fields();
-		ListIterator iterator = fields.listIterator();
+		List<Field> fields = type.fields();
+		ListIterator<Field> iterator = fields.listIterator();
 		Field field = null;
 		while (iterator.hasNext()) {
-			field = (Field) iterator.next();
+			field = iterator.next();
 			if (field.name().equals(fieldName))
 				break;
 		}
@@ -673,7 +685,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fLaunchedProxy = Runtime.getRuntime().exec(proxyString);
 
 			// Launch target VM
-			Vector commandLine = new Vector();
+			Vector<String> commandLine = new Vector<String>();
 			
 			String launcher = binDirectory + "j9w.exe";
 			File vm= new File(launcher);
@@ -711,7 +723,7 @@ public abstract class AbstractJDITest extends TestCase {
 			binDirectory.append(System.getProperty("file.separator"));
 			binDirectory.append("bin").append(System.getProperty("file.separator"));
 
-			Vector commandLine = new Vector();
+			Vector<String> commandLine = new Vector<String>();
 
 			String launcher = binDirectory.toString() + "javaw.exe";
 			File vm= new File(launcher);
@@ -751,7 +763,7 @@ public abstract class AbstractJDITest extends TestCase {
 					+ "bin"
 					+ System.getProperty("file.separator");
 
-			Vector commandLine = new Vector();
+			Vector<String> commandLine = new Vector<String>();
 
 			commandLine.add(binDirectory + "javaw");
 			if (fBootPath.length() > 0) {
@@ -788,7 +800,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * the provided commandLine.
 	 * @param commandLine A vector of command line argument strings.
 	 */
-	private void injectVMArgs(Vector commandLine) {
+	private void injectVMArgs(Vector<String> commandLine) {
 		if (fVmArgs != null) {
 			String[] args = fVmArgs.split(",");
 			for (int i=0; i < args.length; i++) {
@@ -803,7 +815,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * @return The Process created by Runtime.exec()
 	 * @throws IOException
 	 */
-	private Process exec(Vector commandLine) throws IOException {
+	private Process exec(Vector<String> commandLine) throws IOException {
 		String[] vmString = new String[commandLine.size()];
 		commandLine.toArray(vmString);			
 		return Runtime.getRuntime().exec(vmString);		
@@ -822,11 +834,11 @@ public abstract class AbstractJDITest extends TestCase {
 		for (int i = 0; i < 10; i++) {
 			try {
 				VirtualMachineManager manager = Bootstrap.virtualMachineManager();
-				List connectors = manager.attachingConnectors();
+				List<AttachingConnector> connectors = manager.attachingConnectors();
 				if (connectors.size() == 0)
 					break;
-				AttachingConnector connector = (AttachingConnector) connectors.get(0);
-				Map args = connector.defaultArguments();
+				AttachingConnector connector = connectors.get(0);
+				Map<String, Argument> args = connector.defaultArguments();
 				((Connector.Argument) args.get("port")).setValue(String.valueOf(fBackEndPort));
 				((Connector.Argument) args.get("hostname")).setValue("localhost");
 
@@ -883,7 +895,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Parses the given arguments and store them in this tests
 	 * fields.
-	 * Returns whether the parsing was successfull.
+	 * Returns whether the parsing was successful.
 	 */
 	protected static boolean parseArgs(String[] args) {
 		// Default values
@@ -892,7 +904,7 @@ public abstract class AbstractJDITest extends TestCase {
 		String targetAddress = System.getProperty("java.home");
 		String vmLauncherName;
 		if (vmVendor != null
-			&& vmVendor.equals("Sun Microsystems Inc.")
+			&& (vmVendor.equals("Sun Microsystems Inc.") || vmVendor.equals("Oracle Corporation"))
 			&& vmVersion != null) {
 			vmLauncherName = "SunVMLauncher";
 		} else if (
@@ -914,7 +926,7 @@ public abstract class AbstractJDITest extends TestCase {
 					verbose = true;
 				} else {
 					String next = (i < args.length - 1) ? args[++i] : null;
-					// If specified, passed values overide default values
+					// If specified, passed values override default values
 					if (arg.equals("-launcher")) {
 						vmLauncherName = next;
 					} else if (arg.equals("-address")) {
@@ -1241,8 +1253,8 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	protected Test suite() {
 		JDITestSuite suite = new JDITestSuite(this);
-		Vector testNames = getAllMatchingTests( getTestPrefix() );
-		Iterator iterator = testNames.iterator();
+		Vector<String> testNames = getAllMatchingTests( getTestPrefix() );
+		Iterator<String> iterator = testNames.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
 			suite.addTest(new JDITestCase(this, name));
@@ -1301,6 +1313,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Triggers and waits for the given event to come in.
 	 * Let the thread go if asked.
 	 * Returns null if the event didn't come in after the given amount of time (in ms)
+	 * @param time the time to wait
 	 */
 	protected Event triggerAndWait(
 		EventRequest request,
@@ -1435,7 +1448,7 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 	/**
 	 * Waits until the program is ready to be tested.
-	 * The default behaviour is to wait until the "Test Thread" throws and catches
+	 * The default behavior is to wait until the "Test Thread" throws and catches
 	 * an exception.
 	 */
 	protected void waitUntilReady() {

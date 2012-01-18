@@ -23,7 +23,7 @@ import com.sun.jdi.request.ModificationWatchpointRequest;
  * Tests for JDI com.sun.jdi.Mirror.
  */
 public class MirrorTest extends AbstractJDITest {
-	List fMirrors = new LinkedList();
+	List<Mirror> fMirrors = new LinkedList<Mirror>();
 	/**
 	 * Creates a new test.
 	 */
@@ -40,7 +40,7 @@ public class MirrorTest extends AbstractJDITest {
 
 		//TO DO: Add events too
 
-		fMirrors = new LinkedList();
+		fMirrors = new LinkedList<Mirror>();
 
 		if (fVM.canWatchFieldAccess())
 			fMirrors.add(getAccessWatchpointRequest());
@@ -83,7 +83,7 @@ public class MirrorTest extends AbstractJDITest {
 	 */
 	@Override
 	public void localTearDown() {
-		ListIterator iterator = fMirrors.listIterator();
+		ListIterator<Mirror> iterator = fMirrors.listIterator();
 		while (iterator.hasNext()) {
 			Object mirror = iterator.next();
 

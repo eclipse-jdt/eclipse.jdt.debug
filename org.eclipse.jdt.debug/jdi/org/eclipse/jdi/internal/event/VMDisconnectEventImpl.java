@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,8 +36,12 @@ public class VMDisconnectEventImpl extends EventImpl implements
 	}
 
 	/**
-	 * @return Creates, reads and returns new EventImpl, of which requestID has
+	 * Creates, reads and returns new EventImpl, of which requestID has
 	 *         already been read.
+	 * @param target
+	 * @param requestID
+	 * @param dataInStream
+	 * @return the new event
 	 */
 	public static VMDisconnectEventImpl read(MirrorImpl target,
 			RequestID requestID, DataInputStream dataInStream) {

@@ -89,15 +89,15 @@ public class ThreadGroupReferenceTest extends AbstractJDITest {
 	 * Test JDI threadGroups().
 	 */
 	public void testJDIThreadGroups() {
-		List threadGroups = fThreadGroup.threadGroups();
+		List<?> threadGroups = fThreadGroup.threadGroups();
 		assertEquals("1", 0, threadGroups.size());
 	}
 	/**
 	 * Test JDI threads() and JDWP 'ThreadGroup - Get children'.
 	 */
 	public void testJDIThreads() {
-		List threads = fThreadGroup.threads();
-		ListIterator iterator = threads.listIterator();
+		List<?> threads = fThreadGroup.threads();
+		ListIterator<?> iterator = threads.listIterator();
 		boolean isIncluded = false;
 		while (iterator.hasNext()) {
 			ThreadReference thread = (ThreadReference) iterator.next();

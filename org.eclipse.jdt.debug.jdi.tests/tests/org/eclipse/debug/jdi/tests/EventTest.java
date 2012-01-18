@@ -22,7 +22,7 @@ import com.sun.jdi.request.EventRequest;
  * Tests for JDI com.sun.jdi.event.Event.
  */
 public class EventTest extends AbstractJDITest {
-	private HashMap fAllEvents = new HashMap();
+	private HashMap<EventRequest, Event> fAllEvents = new HashMap<EventRequest, Event>();
 	/**
 	 * Creates a new test.
 	 */
@@ -81,7 +81,7 @@ public class EventTest extends AbstractJDITest {
 
 		// Remove the requests
 		fVM.eventRequestManager().deleteEventRequests(
-			new LinkedList(fAllEvents.keySet()));
+			new LinkedList<EventRequest>(fAllEvents.keySet()));
 
 		// Set the value of the "fBool" field back to its original value
 		resetField();
@@ -105,7 +105,7 @@ public class EventTest extends AbstractJDITest {
 	 * Test JDI request().
 	 */
 	public void testJDIRequest() {
-		Iterator iterator = fAllEvents.keySet().iterator();
+		Iterator<EventRequest> iterator = fAllEvents.keySet().iterator();
 		while (iterator.hasNext()) {
 			EventRequest request = (EventRequest) iterator.next();
 			Event event = (Event) fAllEvents.get(request);

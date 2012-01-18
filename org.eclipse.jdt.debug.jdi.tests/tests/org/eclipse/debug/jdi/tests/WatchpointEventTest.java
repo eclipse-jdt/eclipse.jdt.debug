@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.event.AccessWatchpointEvent;
 import com.sun.jdi.event.ModificationWatchpointEvent;
 import com.sun.jdi.event.WatchpointEvent;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
@@ -80,9 +81,9 @@ public class WatchpointEventTest extends AbstractJDITest {
 		// Delete the event requests we created in this test
 		EventRequestManager requestManager = fVM.eventRequestManager();
 		requestManager.deleteEventRequests(
-			new ArrayList(requestManager.accessWatchpointRequests()));
+			new ArrayList<EventRequest>(requestManager.accessWatchpointRequests()));
 		requestManager.deleteEventRequests(
-			new ArrayList(requestManager.modificationWatchpointRequests()));
+			new ArrayList<EventRequest>(requestManager.modificationWatchpointRequests()));
 
 		// Set the value of the "fBool" field back to its original value
 		resetField();

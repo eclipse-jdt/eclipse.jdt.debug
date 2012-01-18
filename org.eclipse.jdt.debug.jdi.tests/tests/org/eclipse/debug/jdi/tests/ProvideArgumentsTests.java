@@ -51,7 +51,7 @@ public class ProvideArgumentsTests extends AbstractJDITest {
 			triggerEvent("argvalues");
 			BreakpointEvent bpe = (BreakpointEvent) waiter.waitEvent(10000);
 			ThreadReference tref = bpe.thread();
-			List list = tref.frame(0).getArgumentValues();
+			List<?> list = tref.frame(0).getArgumentValues();
 			assertNotNull("list should not be null", list);
 			assertTrue("first list item must be a String", list.get(0) instanceof StringReference);
 			assertEquals("test string is not the same as was created in MainClass", "teststr", ((StringReference)list.get(0)).value());

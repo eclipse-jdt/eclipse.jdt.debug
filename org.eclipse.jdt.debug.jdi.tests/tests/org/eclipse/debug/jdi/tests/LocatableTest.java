@@ -18,8 +18,10 @@ import java.util.ListIterator;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
+import com.sun.jdi.Mirror;
 import com.sun.jdi.request.AccessWatchpointRequest;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ModificationWatchpointRequest;
 
 /**
@@ -27,8 +29,8 @@ import com.sun.jdi.request.ModificationWatchpointRequest;
  */
 public class LocatableTest extends AbstractJDITest {
 
-	private List fLocatables = new LinkedList();
-	private List fRequests = new LinkedList();
+	private List<Mirror> fLocatables = new LinkedList<Mirror>();
+	private List<EventRequest> fRequests = new LinkedList<EventRequest>();
 	/**
 	 * Creates a new test.
 	 */
@@ -112,7 +114,7 @@ public class LocatableTest extends AbstractJDITest {
 	 * Test JDI location()
 	 */
 	public void testJDILocation() {
-		ListIterator iterator = fLocatables.listIterator();
+		ListIterator<Mirror> iterator = fLocatables.listIterator();
 		while (iterator.hasNext()) {
 			Locatable locatable = (Locatable) iterator.next();
 			Location location = locatable.location();

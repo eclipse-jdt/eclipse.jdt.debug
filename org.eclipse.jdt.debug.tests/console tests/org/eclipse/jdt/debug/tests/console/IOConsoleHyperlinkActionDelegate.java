@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,10 +41,10 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
-        console.setConsoleWidth(17);
+        final IOConsole backingconsole = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
+        backingconsole.setConsoleWidth(17);
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-        manager.addConsoles(new IConsole[] { console });
+        manager.addConsoles(new IConsole[] { backingconsole });
 
         IPatternMatchListener listener = new IPatternMatchListener() {
             public String getPattern() {
@@ -57,7 +57,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
 
             public void matchFound(PatternMatchEvent event) {
                 try {
-                    console.addHyperlink(new MyHyperlink(), event.getOffset(), event.getLength());
+                    backingconsole.addHyperlink(new MyHyperlink(), event.getOffset(), event.getLength());
                 } catch (BadLocationException e) {
                     e.printStackTrace();
                 }
@@ -74,8 +74,8 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             }
         };
         
-        console.addPatternMatchListener(listener);
-        IOConsoleOutputStream stream = console.newOutputStream();
+        backingconsole.addPatternMatchListener(listener);
+        IOConsoleOutputStream stream = backingconsole.newOutputStream();
         stream.setFontStyle(SWT.ITALIC | SWT.BOLD);
         final PrintStream out = new PrintStream(stream);
         new Thread(new Runnable() {

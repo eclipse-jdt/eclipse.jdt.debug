@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 	 * test to make sure 1.6 VM supports method return values 
 	 */
 	public void testCanGetMethodReturnValues() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have method return values capabilities", fVM.canGetMethodReturnValues());
 		}
 		else {

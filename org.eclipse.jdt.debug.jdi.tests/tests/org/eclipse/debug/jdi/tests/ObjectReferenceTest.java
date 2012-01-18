@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.ThreadStartEvent;
@@ -89,8 +90,8 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	@Override
 	protected Test suite() {
 		JDITestSuite suite = (JDITestSuite) super.suite();
-		Vector testNames = getAllMatchingTests("testLast");
-		Iterator iterator = testNames.iterator();
+		Vector<?> testNames = getAllMatchingTests("testLast");
+		Iterator<?> iterator = testNames.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
 			suite.addTest(new JDITestCase(this, name));
@@ -139,9 +140,9 @@ public class ObjectReferenceTest extends AbstractJDITest {
 	public void testJDIGetSetValues() {
 		// setup
 		ReferenceType type = fObject.referenceType();
-		List fields = type.fields();
-		ListIterator iterator = fields.listIterator();
-		List instanceFields = new LinkedList();
+		List<?> fields = type.fields();
+		ListIterator<?> iterator = fields.listIterator();
+		List<Field> instanceFields = new LinkedList<Field>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
 			if (!field.isStatic())
@@ -151,7 +152,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		assertEquals("1", "fChar", field.name());
 
 		// getValues(List)
-		Map values = fObject.getValues(instanceFields);
+		Map<?, ?> values = fObject.getValues(instanceFields);
 		assertTrue("2", values.size() == 7);
 		Value value = (Value) values.get(field);
 		assertEquals("3", value, fVM.mirrorOf('a'));
@@ -212,7 +213,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		ClassType ct = (ClassType) fObject.referenceType();
 		Method inv =
 			ct.concreteMethodByName("invoke3", "(Ljava/lang/String;Ljava/lang/Object;)I");
-		List args = new ArrayList();
+		List<StringReference> args = new ArrayList<StringReference>();
 		args.add(fVM.mirrorOf("888"));
 		args.add(null);
 		Exception oops = null;
@@ -252,7 +253,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		Method inv = ct.concreteMethodByName("invoke4", "()J");
 		Exception good = null, oops = null;
 		try {
-			fObject.invokeMethod(thread, inv, new ArrayList(), 0);
+			fObject.invokeMethod(thread, inv, new ArrayList<Value>(), 0);
 		} catch (ClassNotLoadedException exc) {
 			oops = exc;
 		} catch (IncompatibleThreadStateException exc) {

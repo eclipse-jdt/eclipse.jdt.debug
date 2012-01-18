@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2318,6 +2318,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						null);
 			}
 			try {
+				@SuppressWarnings("null")
 				StepRequest request = manager.createStepRequest(fThread,
 						StepRequest.STEP_LINE, kind);
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
@@ -2979,6 +2980,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return super.createStepRequest();
 			} else if (num == 0) {
 				try {
+					@SuppressWarnings("null")
 					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager)
 							.createReenterStepRequest(fThread);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
@@ -2993,6 +2995,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 			} else if (num == -1) {
 				try {
+					@SuppressWarnings("null")
 					StepRequest request = manager.createStepRequest(fThread,
 							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);

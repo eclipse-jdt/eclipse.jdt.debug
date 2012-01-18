@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ public class TestAll {
 	 * NB2: The last element must be the VMDeathEventTest class since 
 	 *      it shuts the VM down.
 	 */
-	protected static Vector getAllTestCases(VMInformation info) {
-		Vector classes = new Vector();
+	protected static Vector<Class<?>> getAllTestCases(VMInformation info) {
+		Vector<Class<?>> classes = new Vector<Class<?>>();
 		classes.addElement(AccessibleTest.class);
 		classes.addElement(ArrayReferenceTest.class);
 		classes.addElement(ArrayTypeTest.class);
@@ -108,12 +108,12 @@ public class TestAll {
 		VMInformation info = test.getVMInfo();
 	
 		// Get all test cases
-		Vector classes= getAllTestCases(info);
+		Vector<Class<?>> classes= getAllTestCases(info);
 	
 		// Run the other tests
-		Enumeration enumeration= classes.elements();
+		Enumeration<Class<?>> enumeration= classes.elements();
 		while (enumeration.hasMoreElements()) {
-			Class testClass= (Class)enumeration.nextElement();
+			Class<VirtualMachineTest> testClass= (Class<VirtualMachineTest>)enumeration.nextElement();
 			test= run(result, testClass, arguments, info);
 			info= test.getVMInfo(); // In case the test has changed this info
 		}
@@ -130,10 +130,10 @@ public class TestAll {
 	 * Returns null if there was a problem with the arguments.
 	 * @see AbstractJDITest for details on the arguments.
 	 */
-	private static AbstractJDITest run(junit.framework.TestResult result, Class testClass, String[] arguments, VMInformation info) throws Throwable {
+	private static AbstractJDITest run(junit.framework.TestResult result, Class<VirtualMachineTest> testClass, String[] arguments, VMInformation info) throws Throwable {
 		// Create test
-		Class[] argTypes= {};
-		Constructor construct = null;
+		Class<?>[] argTypes= {};
+		Constructor<VirtualMachineTest> construct = null;
 		try {
 			construct = testClass.getConstructor(argTypes);
 		} catch (NoSuchMethodException e) {

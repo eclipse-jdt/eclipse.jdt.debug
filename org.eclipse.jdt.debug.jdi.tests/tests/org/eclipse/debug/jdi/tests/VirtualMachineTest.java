@@ -90,8 +90,8 @@ public class VirtualMachineTest extends AbstractJDITest {
 		JDITestSuite suite = new JDITestSuite(this);
 
 		// Tests that run before the program is started
-		Vector testNames = getAllMatchingTests("testNotStarted");
-		Iterator iterator = testNames.iterator();
+		Vector<?> testNames = getAllMatchingTests("testNotStarted");
+		Iterator<?> iterator = testNames.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
 			suite.addTest(new JDITestCase(this, name));
@@ -272,8 +272,8 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * while the test program has not been started.
 	 */
 	public void testNotStartedAllClasses() {
-		List classes = fVM.allClasses();
-		Iterator iterator = classes.listIterator();
+		List<?> classes = fVM.allClasses();
+		Iterator<?> iterator = classes.listIterator();
 		int i = 0;
 		while (iterator.hasNext())
 			assertTrue(Integer.toString(i++), iterator.next() instanceof ReferenceType);
@@ -283,8 +283,8 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * while the test program has not been started.
 	 */
 	public void testNotStartedAllThreads() {
-		List threads = fVM.allThreads();
-		Iterator iterator = threads.listIterator();
+		List<?> threads = fVM.allThreads();
+		Iterator<?> iterator = threads.listIterator();
 		int i = 0;
 		while (iterator.hasNext())
 			assertTrue(Integer.toString(i++), iterator.next() instanceof ThreadReference);
@@ -293,7 +293,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * Test JDI classesByName() while the test program has not been started.
 	 */
 	public void testNotStartedClassesByName() {
-		List classes = fVM.classesByName("java.lang.Object");
+		List<?> classes = fVM.classesByName("java.lang.Object");
 		assertEquals("1", 1, classes.size());
 	}
 	/**
@@ -303,12 +303,12 @@ public class VirtualMachineTest extends AbstractJDITest {
 	public void testStartedAllClasses() {
 
 		// The test program has started, the number of classes is != 0
-		List classes = fVM.allClasses();
+		List<?> classes = fVM.allClasses();
 		assertTrue("1", classes.size() != 0);
 
 		// Collect names of received classes
 		String[] names = new String[classes.size()];
-		ListIterator iterator = classes.listIterator();
+		ListIterator<?> iterator = classes.listIterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
@@ -340,12 +340,12 @@ public class VirtualMachineTest extends AbstractJDITest {
 	public void testStartedAllThreads() {
 
 		// The test program has started, the number of threads is != 0
-		List threads = fVM.allThreads();
+		List<?> threads = fVM.allThreads();
 		assertTrue("1", threads.size() != 0);
 
 		// Collect names of received threads
 		String[] names = new String[threads.size()];
-		ListIterator iterator = threads.listIterator();
+		ListIterator<?> iterator = threads.listIterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			ThreadReference thread = (ThreadReference) iterator.next();
@@ -371,12 +371,12 @@ public class VirtualMachineTest extends AbstractJDITest {
 	public void testStartedClassesByName() {
 
 		// The test program has started, the number of java.lang.Object is 1
-		List classes = fVM.classesByName("java.lang.Object");
+		List<?> classes = fVM.classesByName("java.lang.Object");
 		assertEquals("1", classes.size(), 1);
 
 		// Collect names of received classes
 		String[] names = new String[classes.size()];
-		ListIterator iterator = classes.listIterator();
+		ListIterator<?> iterator = classes.listIterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
@@ -394,7 +394,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	public void testStartedSuspendResume() {
 		// Suspend
 		fVM.suspend();
-		ListIterator threads = fVM.allThreads().listIterator();
+		ListIterator<?> threads = fVM.allThreads().listIterator();
 		while (threads.hasNext()) {
 			ThreadReference thread = (ThreadReference) threads.next();
 			assertTrue("1." + thread.name(), thread.isSuspended());
@@ -423,7 +423,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 	 * Test JDI topLevelThreadGroups().
 	 */
 	public void testStartedTopLevelThreadGroups() {
-		List topLevelThreadGroups = fVM.topLevelThreadGroups();
+		List<?> topLevelThreadGroups = fVM.topLevelThreadGroups();
 		assertEquals("1", 1, topLevelThreadGroups.size());
 		assertTrue("2", topLevelThreadGroups.get(0) instanceof ThreadGroupReference);
 	}

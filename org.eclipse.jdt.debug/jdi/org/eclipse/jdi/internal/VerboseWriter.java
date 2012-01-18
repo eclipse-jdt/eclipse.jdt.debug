@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -327,6 +327,7 @@ public class VerboseWriter {
 
 	/**
 	 * Prints hex representation of a long.
+	 * @param b the boolean
 	 */
 	public void printHex(boolean b) {
 		printHexSubstitution("<boolean>"); //$NON-NLS-1$
@@ -334,6 +335,7 @@ public class VerboseWriter {
 
 	/**
 	 * Prints hex representation of a long.
+	 * @param c the char
 	 */
 	public void printHex(char c) {
 		printHexSubstitution("<char>"); //$NON-NLS-1$
@@ -341,6 +343,7 @@ public class VerboseWriter {
 
 	/**
 	 * Prints hex representation of a long.
+	 * @param d the double
 	 */
 	public void printHex(double d) {
 		printHexSubstitution("<double>"); //$NON-NLS-1$
@@ -348,6 +351,7 @@ public class VerboseWriter {
 
 	/**
 	 * Prints hex representation of a long.
+	 * @param f the float
 	 */
 	public void printHex(float f) {
 		printHexSubstitution("<float>"); //$NON-NLS-1$
@@ -355,6 +359,7 @@ public class VerboseWriter {
 
 	/**
 	 * Prints hex representation of a String.
+	 * @param str the string
 	 */
 	public void printHex(String str) {
 		printHexSubstitution("<string>"); //$NON-NLS-1$

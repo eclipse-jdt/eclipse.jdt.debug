@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -230,6 +231,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 *         <code>true</code>; ModificationWatchpointRequest if access is
 	 *         <code>false</code>).
 	 */
+	@SuppressWarnings("null")
 	protected WatchpointRequest createWatchpoint(JDIDebugTarget target,
 			Field field, boolean access) throws CoreException {
 		WatchpointRequest request = null;
@@ -403,8 +405,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * @since 3.3.1
 	 */
 	protected boolean[] getDefaultAccessAndModificationValues() {
-		int value = JDIDebugPlugin.getDefault().getPluginPreferences()
-				.getInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY);
+		int value = Platform.getPreferencesService().getInt(
+				JDIDebugPlugin.getUniqueIdentifier(), 
+				JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, 
+				0, 
+				null);
 		switch (value) {
 		case 0: {
 			return new boolean[] { true, true };

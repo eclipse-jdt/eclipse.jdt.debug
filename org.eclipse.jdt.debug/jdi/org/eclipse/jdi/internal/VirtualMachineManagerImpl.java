@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jdi.internal.connect.SocketAttachingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
@@ -136,17 +138,19 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	public int getGlobalRequestTimeout() {
 		try {
-			if (JDIDebugModel.getPreferences() != null) {
-				return JDIDebugModel.getPreferences().getInt(
-						JDIDebugModel.PREF_REQUEST_TIMEOUT);
+			IPreferencesService srvc = Platform.getPreferencesService();
+			if(srvc != null) {
+				return Platform.getPreferencesService().getInt(
+						JDIDebugModel.getPluginIdentifier(), 
+						JDIDebugModel.PREF_REQUEST_TIMEOUT, 
+						JDIDebugModel.DEF_REQUEST_TIMEOUT, 
+						null);
 			}
-			// JDI plug-in is not loaded
-			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 		} catch (NoClassDefFoundError e) {
 		}
 		// return the hard coded preference if the JDI debug plug-in does not
 		// exist
-		return 3000;
+		return JDIDebugModel.DEF_REQUEST_TIMEOUT;
 	}
 
 	/**

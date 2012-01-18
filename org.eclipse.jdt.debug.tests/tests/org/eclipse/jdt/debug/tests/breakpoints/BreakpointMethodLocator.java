@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2011 IBM Corporation and others.
+ *  Copyright (c) 2003, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -195,18 +195,19 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	 */
 	private String computeTypeName(ASTNode node) {
 		String typeName = null;
-		while (!(node instanceof CompilationUnit)) {
-			if (node instanceof AbstractTypeDeclaration) {
-				String identifier= ((AbstractTypeDeclaration)node).getName().getIdentifier();
+		ASTNode newnode = node;
+		while (!(newnode instanceof CompilationUnit)) {
+			if (newnode instanceof AbstractTypeDeclaration) {
+				String identifier= ((AbstractTypeDeclaration)newnode).getName().getIdentifier();
 				if (typeName == null) {
 					typeName= identifier;
 				} else {
 					typeName= identifier + "$" + typeName; //$NON-NLS-1$
 				}
 			}
-			node= node.getParent();
+			newnode= newnode.getParent();
 		}
-		PackageDeclaration packageDecl= ((CompilationUnit)node).getPackage();
+		PackageDeclaration packageDecl= ((CompilationUnit)newnode).getPackage();
 		String packageIdentifier= ""; //$NON-NLS-1$
 		if (packageDecl != null) {
 			Name packageName= packageDecl.getName();

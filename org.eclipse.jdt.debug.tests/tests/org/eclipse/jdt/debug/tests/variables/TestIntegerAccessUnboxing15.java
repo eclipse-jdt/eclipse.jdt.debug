@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,28 +35,28 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	class Listener implements IEvaluationListener {
 		
 		private Object lock = new Object();
-		private IEvaluationResult result;
+		private IEvaluationResult endresult;
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete(org.eclipse.jdt.debug.eval.IEvaluationResult)
 		 */
 		public void evaluationComplete(IEvaluationResult result) {
 			synchronized (lock) {
-				this.result = result;
+				this.endresult = result;
 				lock.notifyAll();
 			}
 		}
 		
 		IEvaluationResult getResult() throws Exception {
 			synchronized (lock) {
-				if (result == null) {
+				if (endresult == null) {
 					lock.wait(DEFAULT_TIMEOUT);
 				}
 			}
-			if(result == null) {
+			if(endresult == null) {
 				throw new TestAgainException("Retest - evaluation did not complete");
 			}
-			return result;
+			return endresult;
 		}
 		
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import com.sun.jdi.ArrayType;
 import com.sun.jdi.ReferenceType;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
+ * Test cases for the implementation of providing argument information even if 
  * no debugging information is present in the new java 1.6 VM
  * 
  * @since 3.3
@@ -29,10 +29,10 @@ public class ConstantPoolTests extends AbstractJDITest {
 	
 	/**
 	 * test to see if we can get class file version info from a 1.6 VM, and 
-	 * that we cannot from a pre 1.6 VM
+	 * that we cannot from a pre-1.6 VM
 	 */
 	public void testCanGetClassFileVersion() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have classfile version info", fVM.canGetClassFileVersion());
 		}
 		else {
@@ -42,10 +42,10 @@ public class ConstantPoolTests extends AbstractJDITest {
 	
 	/**
 	 * test to make sure we can get constant pool information from a 1.6 VM, and
-	 * that we cannot get it from a pre 1.6 VM 
+	 * that we cannot get it from a pre-1.6 VM 
 	 */
 	public void testCanGetConstantPool() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have constant pool info", fVM.canGetConstantPool());
 		}
 		else {
@@ -61,7 +61,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclassload", true);
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fClass.majorVersion();
 			}
@@ -115,7 +115,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclassload", true);
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fClass.minorVersion();
 			}
@@ -155,7 +155,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclassload", true);
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fClass.constantPoolCount();
 			}
@@ -196,7 +196,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 		triggerAndWait(fVM.eventRequestManager().createClassPrepareRequest(), "refclassload", true);
 		fClass = getClass("org.eclipse.debug.jdi.tests.program.RefClass1");
 		assertNotNull("RefClass1 should not be null", fClass);
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			try {
 				fClass.constantPool();
 			}

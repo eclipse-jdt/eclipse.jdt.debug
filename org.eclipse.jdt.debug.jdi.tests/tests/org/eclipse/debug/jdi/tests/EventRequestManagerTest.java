@@ -76,8 +76,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		assertEquals("1", field, request.field());
 	
 		// Get all access watchpoint requests
-		List requests = fManager.accessWatchpointRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.accessWatchpointRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("2."+i++, iterator.next() instanceof AccessWatchpointRequest);
@@ -98,8 +98,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		assertEquals("1", location, bp.location());
 
 		// Get all breakpoints
-		List breakpoints = fManager.breakpointRequests();
-		ListIterator iterator = breakpoints.listIterator();
+		List<?> breakpoints = fManager.breakpointRequests();
+		ListIterator<?> iterator = breakpoints.listIterator();
 		while (iterator.hasNext()) {
 			Object breakpoint = iterator.next();
 			assertTrue("3", breakpoint instanceof BreakpointRequest);
@@ -123,8 +123,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		ClassPrepareRequest request= fManager.createClassPrepareRequest();
 	
 		// Get all class prepare requests
-		List requests = fManager.classPrepareRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.classPrepareRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ClassPrepareRequest);
@@ -143,8 +143,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		ClassUnloadRequest request= fManager.createClassUnloadRequest();
 	
 		// Get all class unload requests
-		List requests = fManager.classUnloadRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.classUnloadRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ClassUnloadRequest);
@@ -163,8 +163,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		ExceptionRequest request= fManager.createExceptionRequest(null, true, true);
 	
 		// Get all exception requests
-		List requests = fManager.exceptionRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.exceptionRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ExceptionRequest);
@@ -188,8 +188,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		assertEquals("1", field, request.field());
 	
 		// Get all modification watchpoints
-		List requests = fManager.modificationWatchpointRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.modificationWatchpointRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("2."+i++, iterator.next() instanceof ModificationWatchpointRequest);
@@ -208,8 +208,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		StepRequest request= fManager.createStepRequest(getThread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
 	
 		// Get all step requests
-		List requests = fManager.stepRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.stepRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof StepRequest);
@@ -228,8 +228,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		ThreadDeathRequest request= fManager.createThreadDeathRequest();
 	
 		// Get all ThreadDeath requests
-		List requests = fManager.threadDeathRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.threadDeathRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ThreadDeathRequest);
@@ -248,8 +248,8 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		ThreadStartRequest request= fManager.createThreadStartRequest();
 	
 		// Get all ThreadStart requests
-		List requests = fManager.classUnloadRequests();
-		ListIterator iterator = requests.listIterator();
+		List<?> requests = fManager.classUnloadRequests();
+		ListIterator<?> iterator = requests.listIterator();
 		int i=0;
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ThreadStartRequest);

@@ -108,8 +108,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		initPluginContributedJavaLogicalStructure();
 		initUserDefinedJavaLogicalStructures();
 		initJavaLogicalStructureMap();
-		JDIDebugPlugin.getDefault().getPluginPreferences()
-				.addPropertyChangeListener(new PreferenceListener());
+		JDIDebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(new PreferenceListener());
 	}
 
 	private static void initJavaLogicalStructureMap() {

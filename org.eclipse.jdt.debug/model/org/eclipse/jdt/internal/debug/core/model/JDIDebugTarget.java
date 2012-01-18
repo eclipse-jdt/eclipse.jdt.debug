@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1165,11 +1165,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 *                if unable to create the request
 	 * @since 3.3
 	 */
+	@SuppressWarnings("null")
 	public ClassPrepareRequest createClassPrepareRequest(String classPattern,
 			String classExclusionPattern, boolean enabled, String sourceName)
 			throws CoreException {
 		EventRequestManager manager = getEventRequestManager();
-		if (!isAvailable() || manager == null) {
+		if (manager == null || !isAvailable()) {
 			requestFailed(
 					JDIDebugModelMessages.JDIDebugTarget_Unable_to_create_class_prepare_request___VM_disconnected__2,
 					null);
@@ -1709,6 +1710,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 						JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4,
 						null);
 			}
+			@SuppressWarnings("null")
 			List<ReferenceType> classes = vm.classesByName(name);
 			if (classes.size() == 0) {
 				switch (name.charAt(0)) {
@@ -2709,6 +2711,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
 	 */
+	@SuppressWarnings("null")
 	public String getVMName() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {
@@ -2730,6 +2733,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVersion()
 	 */
+	@SuppressWarnings("null")
 	public String getVersion() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {

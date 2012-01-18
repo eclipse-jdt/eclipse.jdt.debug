@@ -28,7 +28,7 @@ import com.sun.jdi.ReferenceType;
  */
 public class ReferenceTypeTest extends AbstractJDITest {
 
-	private List fTypes = new LinkedList();
+	private List<ReferenceType> fTypes = new LinkedList<ReferenceType>();
 
 	// These must match what is done in localSetUp
 	private boolean[] fSystemClassLoader = { true, true, false, false };
@@ -81,10 +81,10 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI allFields().
 	 */
 	public void testJDIAllFields() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
-			Iterator all = type.allFields().iterator();
+			Iterator<?> all = type.allFields().iterator();
 			int i = 0;
 			while (all.hasNext())
 				assertTrue("1." + type.name() + "." + i++, all.next() instanceof Field);
@@ -94,10 +94,10 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI allMethods().
 	 */
 	public void testJDIAllMethods() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
-			Iterator all = type.allMethods().iterator();
+			Iterator<?> all = type.allMethods().iterator();
 			int i = 0;
 			while (all.hasNext())
 				assertTrue("1." + type.name() + "." + i++, all.next() instanceof Method);
@@ -117,7 +117,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI classObject().
 	 */
 	public void testJDIClassObject() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue(type.name(), type.classObject() instanceof ObjectReference);
@@ -129,7 +129,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	public void testJDIEquality() {
 		ReferenceType other =
 			(ReferenceType) fVM.classesByName("java.lang.String").get(0);
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue("1." + type.name() + ".1", type.equals(type));
@@ -144,7 +144,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI failedToInitialize().
 	 */
 	public void testJDIFailedToInitialize() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue("1." + type.name(), !type.failedToInitialize());
@@ -163,10 +163,10 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI fields() and JDWP 'Type - Get Fields'.
 	 */
 	public void testJDIFields() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
-			Iterator fields = type.fields().iterator();
+			Iterator<?> fields = type.fields().iterator();
 			int i = 0;
 			while (fields.hasNext())
 				assertTrue("1." + i++ +"." + type.name(), fields.next() instanceof Field);
@@ -190,15 +190,15 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		ReferenceType type = (ReferenceType) fTypes.get(fMainClassIndex);
 
 		// Get field values
-		List fields = type.fields();
-		ListIterator iterator = fields.listIterator();
-		List staticFields = new LinkedList();
+		List<?> fields = type.fields();
+		ListIterator<?> iterator = fields.listIterator();
+		List<Field> staticFields = new LinkedList<Field>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
 			if (field.isStatic())
 				staticFields.add(field);
 		}
-		Map values = type.getValues(staticFields);
+		Map<?, ?> values = type.getValues(staticFields);
 		assertEquals("1." + type.name(), 24, values.size());
 
 		// Get value of field fInt in MainClass
@@ -214,7 +214,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI isAbstract().
 	 */
 	public void testJDIIsAbstract() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			if (type.name().equals("org.eclipse.debug.jdi.tests.program.Printable"))
@@ -236,7 +236,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI isInitialized().
 	 */
 	public void testJDIIsInitialized() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue("1." + type.name(), type.isInitialized());
@@ -246,7 +246,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI isPrepared().
 	 */
 	public void testJDIIsPrepared() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue("1." + type.name(), type.isPrepared());
@@ -256,7 +256,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI isStatic().
 	 */
 	public void testJDIIsStatic() {
-		ListIterator iterator = fTypes.listIterator();
+		ListIterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 			assertTrue("1." + type.name(), !type.isStatic());
@@ -279,7 +279,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	public void testJDIMethods() {
 		for (int i = 0; i < fTypes.size(); ++i) {
 			ReferenceType type = (ReferenceType) fTypes.get(i);
-			List methods = type.methods();
+			List<?> methods = type.methods();
 			assertTrue("" + i, (methods.size() != 0) == fHasMethods[i]);
 		}
 	}
@@ -287,12 +287,12 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI methodsByName(String) and methodsByName(String, String).
 	 */
 	public void testJDIMethodsByName() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
 
 			// methodsByName(String)
-			Iterator methods = type.methodsByName("run").iterator();
+			Iterator<?> methods = type.methodsByName("run").iterator();
 			while (methods.hasNext())
 				assertTrue("1." + type.name(), methods.next() instanceof Method);
 			assertEquals("2", 0, type.methodsByName("fraz").size());
@@ -335,7 +335,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		// NB: This tests the class type only, it should test the others too
 		ReferenceType type = getClass("org.eclipse.debug.jdi.tests.program.OtherClass");
 		assertTrue("1." + type.name(), type != null);
-		List nestedTypes = type.nestedTypes();
+		List<?> nestedTypes = type.nestedTypes();
 		assertEquals("2." + type.name(), 1, nestedTypes.size());
 		assertTrue("3." + type.name(), nestedTypes.get(0) instanceof ReferenceType);
 	}
@@ -343,11 +343,11 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI visibleFields().
 	 */
 	public void testJDIVisibleFields() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
-			List all = type.allFields();
-			Iterator visible = type.visibleFields().iterator();
+			List<?> all = type.allFields();
+			Iterator<?> visible = type.visibleFields().iterator();
 			while (visible.hasNext()) {
 				Field next = (Field) visible.next();
 				assertTrue("1." + type.name() + "." + next.name(), all.contains(next));
@@ -358,11 +358,11 @@ public class ReferenceTypeTest extends AbstractJDITest {
 	 * Test JDI visibleMethods().
 	 */
 	public void testJDIVisibleMethods() {
-		Iterator iterator = fTypes.listIterator();
+		Iterator<ReferenceType> iterator = fTypes.listIterator();
 		while (iterator.hasNext()) {
 			ReferenceType type = (ReferenceType) iterator.next();
-			List all = type.allMethods();
-			Iterator visible = type.visibleMethods().iterator();
+			List<?> all = type.allMethods();
+			Iterator<?> visible = type.visibleMethods().iterator();
 			while (visible.hasNext()) {
 				Method next = (Method) visible.next();
 				assertTrue("1." + type.name() + "." + next.name(), all.contains(next));

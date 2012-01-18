@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
@@ -63,7 +64,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	private Map<String, String> fAttributeMap = new HashMap<String, String>();
 	
 	// system properties are cached in user preferences prefixed with this key, followed
-	// by vm type, vm id, and system property name
+	// by VM type, VM id, and system property name
 	private static final String PREF_VM_INSTALL_SYSTEM_PROPERTY = "PREF_VM_INSTALL_SYSTEM_PROPERTY"; //$NON-NLS-1$
 	// whether change events should be fired
 	private boolean fNotify = true;
@@ -336,18 +337,21 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		Map<String, String> map = new HashMap<String, String>();
 		
 		// first check cache (preference store) to avoid launching VM
-		Preferences preferences = JavaRuntime.getPreferences();
 		boolean cached = true; 
-		for (int i = 0; i < properties.length; i++) {
-			String property = properties[i];
-			String key = getSystemPropertyKey(property);
-			if (preferences.contains(key)) {
-				String value = preferences.getString(key);
-				map.put(property, value);
-			} else {
-				map.clear();
-				cached = false;
-				break;
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+		if(prefs != null) {
+			for (int i = 0; i < properties.length; i++) {
+				String property = properties[i];
+				String key = getSystemPropertyKey(property);
+				String value = prefs.get(key, null);
+				if (value != null) {
+					System.out.println(property);
+					map.put(property, value);
+				} else {
+					map.clear();
+					cached = false;
+					break;
+				}
 			}
 		}
 		if (!cached) {		
@@ -457,7 +461,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				String property = keys.next();
 				String value = map.get(property);
 				String key = getSystemPropertyKey(property);
-				preferences.setValue(key, value);
+				prefs.put(key, value);
 			}
 		}
 		monitor.done();

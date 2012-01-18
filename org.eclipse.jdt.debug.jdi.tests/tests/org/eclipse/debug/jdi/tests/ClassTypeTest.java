@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.IntegerValue;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -71,7 +72,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	 */
 	public void testJDIAllFields() {
 		boolean found = false;
-		Iterator it = fType.allFields().iterator();
+		Iterator<?> it = fType.allFields().iterator();
 		while (it.hasNext()) {
 			Field fld = (Field) it.next();
 			if (fld.name().equals("fString")) {
@@ -84,9 +85,9 @@ public class ClassTypeTest extends AbstractJDITest {
 	 * Test JDI allInterfaces().
 	 */
 	public void testJDIAllInterfaces() {
-		List all = fType.allInterfaces();
+		List<?> all = fType.allInterfaces();
 		boolean found = false;
-		Iterator interfaces = fType.allInterfaces().iterator();
+		Iterator<?> interfaces = fType.allInterfaces().iterator();
 		while (interfaces.hasNext()) {
 			InterfaceType next = (InterfaceType) interfaces.next();
 			assertTrue(next.name(), all.contains(next));
@@ -100,7 +101,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	 */
 	public void testJDIAllMethods() {
 		boolean found = false;
-		Iterator it = fType.allMethods().iterator();
+		Iterator<?> it = fType.allMethods().iterator();
 		while (it.hasNext()) {
 			Method mth = (Method) it.next();
 			if (mth.name().equals("after")) { // in Date
@@ -124,9 +125,9 @@ public class ClassTypeTest extends AbstractJDITest {
 	public void testJDIInterfaces() {
 		boolean found = false;
 		boolean extra = false;
-		List interfaces = fType.interfaces();
+		List<?> interfaces = fType.interfaces();
 		assertEquals("1", 2, interfaces.size());
-		Iterator iterator = interfaces.iterator();
+		Iterator<?> iterator = interfaces.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
@@ -160,7 +161,7 @@ public class ClassTypeTest extends AbstractJDITest {
 			fType.concreteMethodByName(
 				"invoke1",
 				"(ILjava/lang/Object;)Ljava/lang/String;");
-		List args = new ArrayList();
+		List<IntegerValue> args = new ArrayList<IntegerValue>();
 		args.add(fVM.mirrorOf(41));
 		args.add(null);
 		Exception oops = null;
@@ -193,7 +194,7 @@ public class ClassTypeTest extends AbstractJDITest {
 		Exception good = null;
 		Exception oops = null;
 		try {
-			fType.invokeMethod(thread, inv2, new ArrayList(), 0);
+			fType.invokeMethod(thread, inv2, new ArrayList<Value>(), 0);
 		} catch (InvocationException exc) {
 			good = exc;
 		} catch (Exception exc) {
@@ -207,7 +208,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	 */
 	public void testJDILocationsOfLine() {
 		int lineNumber = getLocation().lineNumber();
-		List locations = null;
+		List<?> locations = null;
 		try {
 			locations = fType.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException e) {
@@ -232,7 +233,7 @@ public class ClassTypeTest extends AbstractJDITest {
 	 */
 	public void testJDIMethods() {
 		boolean found = false;
-		Iterator it = fType.methods().iterator();
+		Iterator<?> it = fType.methods().iterator();
 		while (it.hasNext()) {
 			Method mth = (Method) it.next();
 			if (mth.name().equals("printAndSignal"))
@@ -261,7 +262,7 @@ public class ClassTypeTest extends AbstractJDITest {
 				.methodsByName("<init>", "(ILjava/lang/Object;Ljava/lang/Object;)V")
 				.get(0);
 		ObjectReference result = null;
-		ArrayList arguments = new ArrayList();
+		ArrayList<Value> arguments = new ArrayList<Value>();
 		arguments.add(fVM.mirrorOf(0));
 		arguments.add(fVM.allThreads().get(0));
 		arguments.add(null);
@@ -350,9 +351,9 @@ public class ClassTypeTest extends AbstractJDITest {
 	 * Test JDI subclasses().
 	 */
 	public void testJDISubclasses() {
-		List subclasses = fType.subclasses();
+		List<?> subclasses = fType.subclasses();
 		assertEquals("1", 1, subclasses.size());
-		Iterator iterator = subclasses.iterator();
+		Iterator<?> iterator = subclasses.iterator();
 		while (iterator.hasNext()) {
 			ClassType sub = (ClassType) iterator.next();
 			assertEquals("2 " + sub.name(), fType, sub.superclass());

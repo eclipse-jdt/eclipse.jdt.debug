@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
+ * Test cases for the implementation of providing argument information even if 
  * no debugging information is present in the new java 1.6 VM
  * 
  * @since 3.3
@@ -36,7 +36,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 	 * a non-1.6VM cannot.
 	 */
 	public void testCanGetMonitorFrameInfo() {
-		if(fVM.version().indexOf("1.6") > -1) {
+		if(is16OrGreater()) {
 			assertTrue("Should have monitor frame info", fVM.canGetMonitorFrameInfo());
 		}
 		else {
@@ -62,7 +62,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 			triggerEvent("monitorinfo");
 			BreakpointEvent bpe = (BreakpointEvent) waiter.waitEvent(10000);
 			ThreadReference tref = bpe.thread();
-			List list = tref.ownedMonitorsAndFrames();
+			List<?> list = tref.ownedMonitorsAndFrames();
 			assertNotNull("list cannot be null", list);
 			assertTrue("there should be one monitor", list.size() == 1);
 			fEventReader.removeEventListener(waiter);

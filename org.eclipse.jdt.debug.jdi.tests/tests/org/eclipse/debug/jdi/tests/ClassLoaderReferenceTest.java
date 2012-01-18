@@ -56,7 +56,7 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 	 * Test JDI definedClasses().
 	 */
 	public void testJDIDefinedClasses() {
-		Iterator defined = fClassLoader.definedClasses().iterator();
+		Iterator<?> defined = fClassLoader.definedClasses().iterator();
 		int i = 0;
 		while (defined.hasNext())
 			assertTrue(
@@ -67,8 +67,8 @@ public class ClassLoaderReferenceTest extends AbstractJDITest {
 	 * Test JDI visibleClasses().
 	 */
 	public void testJDIVisibleClasses() {
-		List visible = fClassLoader.visibleClasses();
-		Iterator defined = fClassLoader.definedClasses().iterator();
+		List<?> visible = fClassLoader.visibleClasses();
+		Iterator<?> defined = fClassLoader.definedClasses().iterator();
 		while (defined.hasNext()) {
 			ReferenceType next = (ReferenceType) defined.next();
 			assertTrue(next.name(), visible.contains(next));

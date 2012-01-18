@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,8 +223,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 		try {
 			codeSnippetInstance = newInstance(getCodeSnippetClassName());
 			initializeLocals(codeSnippetInstance);
-			codeSnippetInstance.sendMessage(RUN_METHOD,
-					"()V", null, getThread(), false); //$NON-NLS-1$
+			codeSnippetInstance.sendMessage(RUN_METHOD,	"()V", null, getThread(), false); //$NON-NLS-1$
 			restoreLocals(codeSnippetInstance);
 
 			// now retrieve the description of the result
@@ -239,9 +238,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 					resultValue = (IJavaVariable) field;
 				}
 			}
-			IJavaValue result = convertResult(
-					(IJavaClassObject) resultType.getValue(),
-					(IJavaValue) resultValue.getValue());
+			@SuppressWarnings("null")
+			IJavaValue result = convertResult((IJavaClassObject) resultType.getValue(), (IJavaValue) resultValue.getValue());
 			getResult().setValue(result);
 		} catch (DebugException e) {
 			getResult().setException(e);

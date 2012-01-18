@@ -2927,8 +2927,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		IMethodBinding methodBinding = (IMethodBinding) node.getName()
-				.resolveBinding();
+		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
 		if (methodBinding == null) {
 			// could be the receiver is not visible - for example a private
 			// field access from super class
@@ -2953,6 +2952,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
+		@SuppressWarnings("null")
 		int paramCount = methodBinding.getParameterTypes().length;
 		String selector = methodBinding.getName();
 
@@ -2997,6 +2997,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @param arguments
 	 *            argument list
 	 */
+	@SuppressWarnings("null")
 	private void pushMethodArguments(IMethodBinding methodBinding, List<Expression> arguments) {
 		int argCount = arguments.size();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
@@ -3009,9 +3010,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return;
 			}
 		}
-		if (methodBinding.isVarargs()
-				&& !(paramCount == argCount && parameterTypes[paramCount - 1]
-						.getDimensions() == lastArgBinding.getDimensions())) {
+		if (methodBinding.isVarargs() && 
+				!(paramCount == argCount && 
+				parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using
 			// the varargs syntax
 			// (multiple arguments) and not an array
@@ -3825,6 +3826,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * 
 	 * @see ASTVisitor#visit(SuperMethodInvocation)
 	 */
+	@SuppressWarnings("null")
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
 		if (!isActive()) {
@@ -3878,9 +3880,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return false;
 			}
 		}
-		if (methodBinding.isVarargs()
-				&& !(paramCount == argCount && parameterTypes[paramCount - 1]
-						.getDimensions() == lastArgBinding.getDimensions())) {
+		if (methodBinding.isVarargs() && 
+				!(paramCount == argCount && 
+				parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using
 			// the varargs syntax
 			// (multiple arguments) and not an array
@@ -4029,15 +4031,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		// default case
 		if (jumpDefault != null) {
-			jumpDefault.setOffset((fCounter - fInstructions
-					.indexOf(jumpDefault)) - 1);
+			jumpDefault.setOffset((fCounter - fInstructions.indexOf(jumpDefault)) - 1);
 			push(new Pop(0));
 			storeInstruction(); // pop
-			for (Iterator<Statement> iterator = statementsDefault.iterator(); iterator
-					.hasNext();) {
+			for (@SuppressWarnings("null")Iterator<Statement> iterator = statementsDefault.iterator(); iterator.hasNext();) {
 				iterator.next().accept(this);
 			}
-		} else {
+		} else if(jumpEnd != null){
 			jumpEnd.setOffset((fCounter - fInstructions.indexOf(jumpEnd)) - 1);
 		}
 
@@ -4048,15 +4048,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			CompleteInstruction instruction = iter.next();
 			Jump jumpInstruction = instruction.fInstruction;
 			int instructionAddress = fInstructions.indexOf(jumpInstruction);
-			if (instructionAddress > switchStart
-					&& (instruction.fLabel == null || instruction.fLabel
-							.equals(label))) {
+			if (instructionAddress > switchStart && (instruction.fLabel == null || instruction.fLabel.equals(label))) {
 				iter.remove();
 				if (instruction.fIsBreak) {
 					// jump to the instruction after the last instruction of the
 					// switch
-					jumpInstruction
-							.setOffset((fCounter - instructionAddress) - 1);
+					jumpInstruction.setOffset((fCounter - instructionAddress) - 1);
 				}
 			}
 		}

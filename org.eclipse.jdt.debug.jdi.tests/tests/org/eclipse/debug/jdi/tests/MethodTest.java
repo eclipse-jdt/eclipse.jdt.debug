@@ -63,7 +63,7 @@ public class MethodTest extends AbstractJDITest {
 	 * Test JDI arguments() and JDWP 'Method - Get variable table'.
 	 */
 	public void testJDIArguments() {
-		List arguments = null;
+		List<?> arguments = null;
 		try {
 			arguments = fMethod1.arguments();
 		} catch (AbsentInformationException e) {
@@ -77,7 +77,7 @@ public class MethodTest extends AbstractJDITest {
 	 * Test JDI argumentTypeNames().
 	 */
 	public void testJDIArgumentTypeNames() {
-		List names = fMethod1.argumentTypeNames();
+		List<?> names = fMethod1.argumentTypeNames();
 		assertEquals("1", 2, names.size());
 		assertEquals("2", "java.lang.Thread", names.get(0));
 		assertEquals(
@@ -89,7 +89,7 @@ public class MethodTest extends AbstractJDITest {
 	 * Test JDI argumentTypes().
 	 */
 	public void testJDIArgumentTypes() {
-		List types = null;
+		List<?> types = null;
 		try {
 			types = fMethod1.argumentTypes();
 		} catch (ClassNotLoadedException e) {
@@ -166,7 +166,7 @@ public class MethodTest extends AbstractJDITest {
 	 */
 	public void testJDILocationsOfLine() {
 		int expected = fMethod1.location().lineNumber();
-		List locations = null;
+		List<?> locations = null;
 		try {
 			locations = fMethod1.locationsOfLine(expected);
 		} catch (AbsentInformationException e) {
@@ -195,7 +195,7 @@ public class MethodTest extends AbstractJDITest {
 	 * Test JDI variables() and JDWP 'Method - Get variable table'.
 	 */
 	public void testJDIVariables() {
-		List variables = null;
+		List<?> variables = null;
 		try {
 			variables = fMethod1.variables();
 		} catch (AbsentInformationException e) {
@@ -231,7 +231,7 @@ public class MethodTest extends AbstractJDITest {
 	 * for non-native method with a long argument.
 	 */
 	public void testJDIMethodVariablesWithLong() {
-		List variables = null;
+		List<?> variables = null;
 		Method method = getMethod("variablesTest", "(J)V");
 
 		try {
@@ -247,7 +247,7 @@ public class MethodTest extends AbstractJDITest {
 	 */
 	public void testJDIVariablesByName() {
 		String varName = "t";
-		List variables = null;
+		List<?> variables = null;
 		try {
 			variables = fMethod1.variablesByName(varName);
 		} catch (AbsentInformationException e) {

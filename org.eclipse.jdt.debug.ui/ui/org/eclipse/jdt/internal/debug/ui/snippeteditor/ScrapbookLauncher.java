@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -94,8 +95,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	/**
 	 * Launches a VM for the given scrapbook page, in debug mode.
 	 * Returns an existing launch if the page is already running.
+	 * @param page the scrapbook page file
 	 * 
-	 * @param file scrapbook page file
 	 * @return resulting launch, or <code>null</code> on failure
 	 */
 	protected ILaunch launch(IFile page) {
@@ -177,7 +178,11 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				u = getEncodedURL(f);
 			} catch (MalformedURLException e) {
-				JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM",e); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e); //$NON-NLS-1$
+				return null;
+			}
+			catch(UnsupportedEncodingException usee) {
+				JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", usee); //$NON-NLS-1$
 				return null;
 			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
@@ -191,6 +196,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 					JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e);				 //$NON-NLS-1$
 				 	return null;
 				}
+				catch(UnsupportedEncodingException usee) {
+					JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", usee); //$NON-NLS-1$
+					return null;
+				}
 			}
 			
 			// convert to mementos 
@@ -198,7 +207,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			for (int i = 0; i < classPath.length; i++) {
 				classpathList.add(classPath[i].getMemento());
 			}
-			
+			if(wc == null) {
+				wc = config.getWorkingCopy();
+			}
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
@@ -235,9 +246,12 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	/**
 	 * Creates an "invisible" line breakpoint. 
+	 * @param typeName the type name
+	 * @return the new 'magic' breakpoint
+	 * @throws CoreException if an exception occurs
 	 */
 	IBreakpoint createMagicBreakpoint(String typeName) throws CoreException{
-		//set a breakpoint on the Thread.sleep(100); line of the nop method of ScrapbookMain
+		//set a breakpoint on the Thread.sleep(100); line of the no-op method of ScrapbookMain
 		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 59, -1, -1, 0, false, null);
 		fMagicBreakpoint.setPersisted(false);
 		return fMagicBreakpoint;
@@ -296,13 +310,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				getLaunchManager().removeLaunch(launch);
 			}
 			if (fVMsToScrapbooks.isEmpty()) {
-				// no need to listen to events if no scrapbooks running
+				// no need to listen to events if no scrap books running
 				DebugPlugin.getDefault().removeDebugEventListener(this);
 			}
 		}
 	}
 	
-	protected URL getEncodedURL(File file) throws MalformedURLException {
+	protected URL getEncodedURL(File file) throws MalformedURLException, UnsupportedEncodingException {
 		//looking at File.toURL the delimiter is always '/' 
 		// NOT File.separatorChar
 		String urlDelimiter= "/"; //$NON-NLS-1$
@@ -313,11 +327,14 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		encoded.append(tokenizer.nextToken()); //file:
 		encoded.append(urlDelimiter);
 		encoded.append(tokenizer.nextToken()); //drive letter and ':'
-		
 		while (tokenizer.hasMoreElements()) {
 			encoded.append(urlDelimiter);
 			String token= tokenizer.nextToken();
-			encoded.append(URLEncoder.encode(token));
+			try {
+				encoded.append(URLEncoder.encode(token, ResourcesPlugin.getEncoding()));
+			} catch (UnsupportedEncodingException e) {
+				encoded.append(URLEncoder.encode(token, "UTF-8")); //$NON-NLS-1$
+			}
 		}
 		if (file.isDirectory()) {
 			encoded.append(urlDelimiter);
@@ -329,6 +346,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 * Returns the launch configuration used as a template for launching the
 	 * given scrapbook file, or <code>null</code> if none. The template contains
 	 * working directory and JRE settings to use when launching the scrapbook.
+	 * @param file the backing config file
+	 * @return the launch configuration template
+	 * @throws CoreException if an exception occurs
 	 */
 	public static ILaunchConfiguration getLaunchConfigurationTemplate(IFile file) throws CoreException {
 		String memento = getLaunchConfigMemento(file);
@@ -340,6 +360,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	/**
 	 * Creates and saves template launch configuration for the given scrapbook file.
+	 * @param page the backing page
+	 * @return the new {@link ILaunchConfiguration} template
+	 * @throws CoreException if an exception occurs
 	 */
 	public static ILaunchConfiguration createLaunchConfigurationTemplate(IFile page) throws CoreException {
 		ILaunchConfigurationType lcType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -360,6 +383,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	/**
 	 * Returns the handle memento for the given scrapbook's launch configuration
 	 * template, or <code>null</code> if none.
+	 * @param file the launch configuration template
+	 * @return the {@link String} memento
 	 */
 	private static String getLaunchConfigMemento(IFile file) {
 		try {
@@ -373,6 +398,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	/**
 	 * Sets the handle memento for the given scrapbook's launch configuration
 	 * template.
+	 * @param file the backing file
+	 * @param memento the {@link String} memento
 	 */
 	protected static void setLaunchConfigMemento(IFile file, String memento) {
 		try {
@@ -384,6 +411,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 
 	/**
 	 * Returns the launch manager.
+	 * @return the launch manager instance
 	 */
 	protected static ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
@@ -392,6 +420,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	/**
 	 * Returns the working directory attribute for the given snippet file,
 	 * possibly <code>null</code>.
+	 * @param file the backing file
+	 * @return the working directory
 	 * 
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
@@ -404,8 +434,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}
 	
 	/**
-	 * Returns the VM args attribute for the given snippet file,
+	 * Returns the VM arguments attribute for the given snippet file,
 	 * possibly <code>null</code>.
+	 * @param file the backing file
+	 * @return the VM arguments
 	 * 
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
@@ -419,6 +451,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	/**
 	 * Returns the VM install used to launch the given snippet file.
+	 * @param file the backing file
+	 * @return the VM install
 	 * 
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
@@ -432,9 +466,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}	
 	
 	/**
-	 * Deletes any scrapbook launch configurations for scrapbooks that
+	 * Deletes any scrapbook launch configurations for scrap books that
 	 * have been deleted. Rather than listening to all resource deltas,
-	 * configs are deleted each time a scrapbook is launched - which is
+	 * configurations are deleted each time a scrapbook is launched - which is
 	 * infrequent.
 	 */
 	public void cleanupLaunchConfigurations() {

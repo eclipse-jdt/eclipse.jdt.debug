@@ -65,7 +65,7 @@ public class InterfaceTypeTest extends AbstractJDITest {
 	 */
 	public void testJDIAllMethods() {
 		boolean found = false;
-		Iterator it = fType.allMethods().iterator();
+		Iterator<?> it = fType.allMethods().iterator();
 		while (it.hasNext()) {
 			Method mth = (Method) it.next();
 			if (mth.name().equals("print")) {
@@ -79,7 +79,7 @@ public class InterfaceTypeTest extends AbstractJDITest {
 	 * Test JDI implementors().
 	 */
 	public void testJDIImplementors() {
-		List implementors = fType.implementors();
+		List<?> implementors = fType.implementors();
 		assertEquals("1", 1, implementors.size());
 		ClassType implementor = (ClassType) implementors.get(0);
 		assertEquals("2", getMainClass(), implementor);
@@ -88,14 +88,14 @@ public class InterfaceTypeTest extends AbstractJDITest {
 	 * Test JDI subinterfaces().
 	 */
 	public void testJDISubinterfaces() {
-		List subinterfaces = fType.subinterfaces();
+		List<?> subinterfaces = fType.subinterfaces();
 		assertEquals("1", 0, subinterfaces.size());
 	}
 	/**
 	 * Test JDI superinterfaces().
 	 */
 	public void testJDISuperinterfaces() {
-		List superinterfaces = fType.superinterfaces();
+		List<?> superinterfaces = fType.superinterfaces();
 		assertEquals("1", 1, superinterfaces.size());
 		InterfaceType superinterface = (InterfaceType) superinterfaces.get(0);
 		InterfaceType expected =
