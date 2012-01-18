@@ -345,7 +345,6 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				String key = getSystemPropertyKey(property);
 				String value = prefs.get(key, null);
 				if (value != null) {
-					System.out.println(property);
 					map.put(property, value);
 				} else {
 					map.clear();

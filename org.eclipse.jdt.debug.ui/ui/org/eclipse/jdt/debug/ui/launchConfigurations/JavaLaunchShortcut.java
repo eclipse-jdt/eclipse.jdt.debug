@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,28 +155,40 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * @since 3.5
 	 */
 	protected void launch(IType type, String mode) {
-		ILaunchConfiguration config = findLaunchConfiguration(type, getConfigurationType());
-		if (config == null) {
-			config = createConfiguration(type);
+		List<ILaunchConfiguration> configs = getCandidates(type, getConfigurationType());
+		if(configs != null) {
+			ILaunchConfiguration config = null;
+			int count = configs.size();
+			if(count == 1) {
+				config = configs.get(0);
+			}
+			else if(count > 1) {
+				config = chooseConfiguration(configs);
+				if(config == null) {
+					return;
+				}
+			}
+			if (config == null) {
+				config = createConfiguration(type);
+			}
+			if (config != null) {
+				DebugUITools.launch(config, mode);
+			}	
 		}
-		if (config != null) {
-			DebugUITools.launch(config, mode);
-		}			
 	}
 	
 	/**
-	 * Finds and returns an <b>existing</b> configuration to re-launch for the given type,
-	 * or <code>null</code> if there is no existing configuration.
+	 * Collect the listing of {@link ILaunchConfiguration}s that apply to the given {@link IType} and {@link ILaunchConfigurationType}
 	 * 
-	 * @param type the {@link IType} to try and find the {@link ILaunchConfiguration} for
-	 * @param configType the {@link ILaunchConfigurationType} to try and narrow down the search
-	 * 
-	 * @return a configuration to use for launching the given type or <code>null</code> if none
+	 * @param type the type
+	 * @param ctype the {@link ILaunchConfigurationType}
+	 * @return the list of {@link ILaunchConfiguration}s or an empty list, never <code>null</code>
+	 * @since 3.8
 	 */
-	protected ILaunchConfiguration findLaunchConfiguration(IType type, ILaunchConfigurationType configType) {
+	List<ILaunchConfiguration> getCandidates(IType type, ILaunchConfigurationType ctype) {
 		List<ILaunchConfiguration> candidateConfigs = Collections.EMPTY_LIST;
 		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(ctype);
 			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
@@ -189,11 +201,26 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-		int candidateCount = candidateConfigs.size();
-		if (candidateCount == 1) {
-			return candidateConfigs.get(0);
-		} else if (candidateCount > 1) {
-			return chooseConfiguration(candidateConfigs);
+		return candidateConfigs;
+	}
+	
+	/**
+	 * Finds and returns an <b>existing</b> configuration to re-launch for the given type,
+	 * or <code>null</code> if there is no existing configuration.
+	 * 
+	 * @param type the {@link IType} to try and find the {@link ILaunchConfiguration} for
+	 * @param configType the {@link ILaunchConfigurationType} to try and narrow down the search
+	 * 
+	 * @return a configuration to use for launching the given type or <code>null</code> if none
+	 */
+	protected ILaunchConfiguration findLaunchConfiguration(IType type, ILaunchConfigurationType configType) {
+		List<ILaunchConfiguration> configs = getCandidates(type, configType);
+		int count = configs.size();
+		if(count == 1) {
+			return configs.get(0);
+		}
+		if(count > 1) {
+			return chooseConfiguration(configs);
 		}
 		return null;
 	}
