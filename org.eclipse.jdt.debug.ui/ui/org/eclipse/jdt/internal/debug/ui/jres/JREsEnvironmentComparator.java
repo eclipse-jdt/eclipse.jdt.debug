@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,11 @@ public class JREsEnvironmentComparator extends ViewerComparator {
 	public int category(Object element) {
 		if (fEnvironment == null) {
 			return super.category(element);
-		} else {
-			if (fEnvironment.isStrictlyCompatible((IVMInstall) element)) {
-				return 0;
-			} else {
-				return 1;
-			}
 		}
+		if (fEnvironment.isStrictlyCompatible((IVMInstall) element)) {
+			return 0;
+		}
+		return 1;
 	}
 
 	/* (non-Javadoc)

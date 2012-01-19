@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,10 +89,8 @@ public class JDTDebugRefactoringUtil {
 			if (innerTypes[i].getFullyQualifiedName().equals(mtname)) {
 				return new LaunchConfigurationProjectMainTypeChange(config, newTypeName, pname);
 			}
-			else {
-				// if it's not the type, check the inner types
-				change = createChangesForOuterTypeChange(config, innerTypes[i], newTypeName, pname);
-			}
+			// if it's not the type, check the inner types
+			change = createChangesForOuterTypeChange(config, innerTypes[i], newTypeName, pname);
 		}
 		return change;
 	}

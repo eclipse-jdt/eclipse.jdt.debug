@@ -32,7 +32,6 @@ import com.sun.jdi.ReferenceType;
  */
 public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements ClassLoaderReference {
 	/** JDWP Tag. */
-	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.CLASS_LOADER_TAG;
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IValue;
@@ -46,7 +48,7 @@ import org.eclipse.jface.viewers.TreePath;
  * Base implementation of a label provider for Java variables
  * @since 3.2
  */
-public class JavaVariableLabelProvider extends VariableLabelProvider implements IPropertyChangeListener {
+public class JavaVariableLabelProvider extends VariableLabelProvider implements IPreferenceChangeListener {
 	
 	public static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
 	/**
@@ -65,9 +67,11 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	private static final int SERIALIZE_SOME = 2; // some - only serialize those that don't have formatters (ones with formatters will be serialized by evaluation)
 	
 	public JavaVariableLabelProvider() {
-		Preferences prefs = JDIDebugUIPlugin.getDefault().getPluginPreferences();
-		prefs.addPropertyChangeListener(this);
-		determineSerializationMode(prefs.getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS));
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugUIPlugin.getUniqueIdentifier());
+		if(prefs != null) {
+			prefs.addPreferenceChangeListener(this);
+			determineSerializationMode(prefs.get(IJDIPreferencesConstants.PREF_SHOW_DETAILS, IJDIPreferencesConstants.DETAIL_PANE));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -119,7 +123,11 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 	private Boolean isShowQualfiiedNames(IPresentationContext context) {
 		Boolean qualified = fQualifiedNameSettings.get(context.getId());
 		if (qualified == null) {
-			qualified = Boolean.valueOf(JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(context.getId() + '.' + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
+			qualified = Boolean.valueOf(Platform.getPreferencesService().getBoolean(
+					JDIDebugUIPlugin.getUniqueIdentifier(),
+					context.getId() + '.' + IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES,
+					false,
+					null));
 			fQualifiedNameSettings.put(context.getId(), qualified);
 		}
 		return qualified;
@@ -174,22 +182,11 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		fLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, showQ);
 		super.retrieveLabel(update);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
-			fQualifiedNameSettings.clear();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
-			determineSerializationMode((String) event.getNewValue());
-		}
-	}
 	
 	/**
 	 * Sets the serialization mode for label jobs based on the current preference setting.
 	 * 
-	 * @param value preferance value for PREF_SHOW_DETAILS
+	 * @param value preference value for PREF_SHOW_DETAILS
 	 */
 	private void determineSerializationMode(String value) {
 		if (value.equals(IJDIPreferencesConstants.INLINE_ALL)) {
@@ -249,5 +246,16 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			return ((JDIThread)frame.getThread()).getThreadRule();
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+	 */
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().endsWith(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES)) {
+			fQualifiedNameSettings.clear();
+		} else if (event.getKey().equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
+			determineSerializationMode((String) event.getNewValue());
+		}
 	}
 }

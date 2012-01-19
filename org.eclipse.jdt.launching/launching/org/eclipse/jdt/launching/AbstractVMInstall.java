@@ -328,7 +328,6 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall3#evaluateSystemProperties(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	@SuppressWarnings("null")
 	public Map<String, String> evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException {
 		//locate the launching support jar - it contains the main program to run
 		if (monitor == null) {

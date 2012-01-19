@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -94,6 +96,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Plug-in class for the org.eclipse.jdt.debug.ui plug-in.
@@ -407,12 +410,20 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		// initialize exception inspector handler
 		new ExceptionInspector();
 		
-		ResourcesPlugin.getWorkspace().addSaveParticipant(this, new ISaveParticipant() {
+		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
 			public void doneSaving(ISaveContext sc) {}
 			public void prepareToSave(ISaveContext sc)	throws CoreException {}
 			public void rollback(ISaveContext sc) {}
 			public void saving(ISaveContext sc) throws CoreException {
-				savePluginPreferences();
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
+				if(prefs != null) {
+					try {
+						prefs.flush();
+					}
+					catch (BackingStoreException e) {
+						log(e);
+					}
+				}
 			}
 		});
 		JavaDebugOptionsManager.getDefault().startup();
@@ -440,7 +451,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			if (fTextTools != null) {
 				fTextTools.dispose();
 			}
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
 		} finally {
 			super.stop(context);
 		}

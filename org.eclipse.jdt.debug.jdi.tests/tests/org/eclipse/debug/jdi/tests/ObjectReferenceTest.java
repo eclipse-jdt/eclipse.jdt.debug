@@ -148,7 +148,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 			if (!field.isStatic())
 				instanceFields.add(field);
 		}
-		Field field = (Field) instanceFields.get(4);
+		Field field = instanceFields.get(4);
 		assertEquals("1", "fChar", field.name());
 
 		// getValues(List)
@@ -171,7 +171,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		assertEquals("5", fObject.getValue(field), newValue);
 
 		// test set and get null value.
-		field = (Field) instanceFields.get(5);
+		field = instanceFields.get(5);
 
 		assertEquals("6", "fString2", field.name());
 		try {
@@ -186,7 +186,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		assertEquals("8", fObject.getValue(field), null);
 
 		// test get final value.
-		field = (Field) instanceFields.get(6);
+		field = instanceFields.get(6);
 		assertEquals("9", "fString3", field.name());
 
 		// The value is null and should be because it's final

@@ -123,7 +123,7 @@ public class MirrorTest extends AbstractJDITest {
 	 */
 	public void testJDIToString() {
 		for (int i = 0; i < fMirrors.size(); i++) {
-			Mirror mirror = (Mirror) fMirrors.get(i);
+			Mirror mirror = fMirrors.get(i);
 			assertNotNull(Integer.toString(i), mirror.toString());
 		}
 	}
@@ -132,7 +132,7 @@ public class MirrorTest extends AbstractJDITest {
 	 */
 	public void testJDIVirtualMachine() {
 		for (int i = 0; i < fMirrors.size(); i++) {
-			Mirror mirror = (Mirror) fMirrors.get(i);
+			Mirror mirror = fMirrors.get(i);
 			assertEquals(Integer.toString(i), fVM, mirror.virtualMachine());
 		}
 	}

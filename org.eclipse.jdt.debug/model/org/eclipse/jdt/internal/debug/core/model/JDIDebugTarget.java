@@ -1165,7 +1165,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 *                if unable to create the request
 	 * @since 3.3
 	 */
-	@SuppressWarnings("null")
 	public ClassPrepareRequest createClassPrepareRequest(String classPattern,
 			String classExclusionPattern, boolean enabled, String sourceName)
 			throws CoreException {
@@ -1710,7 +1709,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 						JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4,
 						null);
 			}
-			@SuppressWarnings("null")
 			List<ReferenceType> classes = vm.classesByName(name);
 			if (classes.size() == 0) {
 				switch (name.charAt(0)) {
@@ -2711,7 +2709,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
 	 */
-	@SuppressWarnings("null")
 	public String getVMName() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {
@@ -2733,7 +2730,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVersion()
 	 */
-	@SuppressWarnings("null")
 	public String getVersion() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {

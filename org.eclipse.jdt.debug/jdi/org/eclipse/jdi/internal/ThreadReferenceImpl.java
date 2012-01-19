@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	private static String[] fgSuspendStatusStrings = null;
 
 	/** JDWP Tag. */
-	@SuppressWarnings("hiding")
 	protected static final byte tag = JdwpID.THREAD_TAG;
 
 	/** Is thread currently at a breakpoint? */

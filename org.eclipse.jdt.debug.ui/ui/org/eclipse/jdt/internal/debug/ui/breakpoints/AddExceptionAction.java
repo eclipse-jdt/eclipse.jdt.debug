@@ -156,8 +156,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 		} else {
 			final IJavaBreakpoint existingBreakpoint = breakpoint;
 			Job job = new Job(BreakpointMessages.AddExceptionAction_EnableExceptionBreakpoint) {
-	            @SuppressWarnings("null")
-				@Override
+	            @Override
 				protected IStatus run(IProgressMonitor monitor) {
 	                try {
 	                	existingBreakpoint.setEnabled(true);

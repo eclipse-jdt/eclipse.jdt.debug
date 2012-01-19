@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IExpression;
@@ -28,6 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -46,15 +49,22 @@ import org.eclipse.ui.IWorkbenchPartSite;
 /**
  * This class is used to show the inspect pop-up when a thread is suspended due to an exception being thrown
  */
-public class ExceptionInspector implements IDebugContextListener, IPropertyChangeListener {
+public class ExceptionInspector implements IDebugContextListener, IPreferenceChangeListener {
 	
 	/**
 	 * Constructor
 	 */
 	public ExceptionInspector() {
-		Preferences pluginPreferences = JDIDebugUIPlugin.getDefault().getPluginPreferences();
-		pluginPreferences.addPropertyChangeListener(this);
-		if (pluginPreferences.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION)) {
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugUIPlugin.getUniqueIdentifier());
+		if(prefs != null) {
+			prefs.addPreferenceChangeListener(this);
+		}
+		boolean doit = Platform.getPreferencesService().getBoolean(
+				JDIDebugPlugin.getUniqueIdentifier(), 
+				IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
+				false, 
+				null);
+		if (doit) {
 			DebugUITools.getDebugContextManager().addDebugContextListener(this);
 		}
 	}
@@ -111,18 +121,21 @@ public class ExceptionInspector implements IDebugContextListener, IPropertyChang
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION.equals(event.getProperty())) {
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION.equals(event.getKey())) {
 			IDebugContextManager manager = DebugUITools.getDebugContextManager();
-			if (JDIDebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION)) {
+			boolean doit = Platform.getPreferencesService().getBoolean(
+					JDIDebugPlugin.getUniqueIdentifier(), 
+					IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
+					false, 
+					null);
+			if (doit) {
 				manager.addDebugContextListener(this);
  			} else {
  				manager.removeDebugContextListener(this);
  			}
 		}
-		
 	}
-
 }

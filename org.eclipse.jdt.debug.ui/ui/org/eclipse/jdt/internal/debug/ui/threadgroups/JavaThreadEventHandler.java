@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -129,9 +129,8 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					JDIDebugUIPlugin.log(e);
 				}
 			return delta;
-		} else {
-			return super.addPathToThread(delta, thread);
 		}
+		return super.addPathToThread(delta, thread);
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
@@ -161,13 +160,11 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 				} catch (DebugException e) {
 				}
 				return index;
-			} else {
-				// make room for the 'no monitor info' element
-				return 1;
 			}
-		} else {
-			return super.indexOf(frame);
+			// make room for the 'no monitor info' element
+			return 1;
 		}
+		return super.indexOf(frame);
 	}
 	
 	/**

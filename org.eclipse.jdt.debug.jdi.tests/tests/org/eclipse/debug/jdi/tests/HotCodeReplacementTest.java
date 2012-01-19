@@ -106,7 +106,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		// Get top frame's location
 		Location location = null;
 		try {
-			StackFrame frame = (StackFrame) thread.frames(0, 1).get(0);
+			StackFrame frame = thread.frames(0, 1).get(0);
 			location = frame.location();
 		} catch (IncompatibleThreadStateException e) {
 			assertTrue("reenterOnExit.1", false);
@@ -136,7 +136,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		// Check that the top frame location is as expected
 		Location newLocation = null;
 		try {
-			StackFrame frame = (StackFrame) thread.frames(0, 1).get(0);
+			StackFrame frame = thread.frames(0, 1).get(0);
 			newLocation = frame.location();
 		} catch (IncompatibleThreadStateException e) {
 			assertTrue("reenterOnExit.3", false);

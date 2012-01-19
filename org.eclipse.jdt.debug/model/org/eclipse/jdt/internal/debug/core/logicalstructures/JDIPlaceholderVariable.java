@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -306,10 +306,9 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 			if (fLogicalParent != null) {
 				return var.getName().equals(getName())
 						&& fLogicalParent.equals(var.fLogicalParent);
-			} else {
-				return var.getName().equals(getName())
-						&& var.getValue().equals(getValue());
-			}
+			} 
+			return var.getName().equals(getName())
+					&& var.getValue().equals(getValue());
 		}
 		return false;
 	}

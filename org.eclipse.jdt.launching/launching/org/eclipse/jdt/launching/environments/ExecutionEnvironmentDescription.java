@@ -470,9 +470,8 @@ public final class ExecutionEnvironmentDescription {
 		if (!path.isEmpty() && !path.isAbsolute()) {
 			IPath filePath = root.append(path);
 			return filePath.toOSString();
-		} else {
-			return path.toOSString();
 		}
+		return path.toOSString();
 	}	
 	
 	/**

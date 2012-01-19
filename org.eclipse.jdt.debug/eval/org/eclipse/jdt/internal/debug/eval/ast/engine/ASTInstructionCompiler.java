@@ -2952,7 +2952,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		@SuppressWarnings("null")
 		int paramCount = methodBinding.getParameterTypes().length;
 		String selector = methodBinding.getName();
 
@@ -2997,7 +2996,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @param arguments
 	 *            argument list
 	 */
-	@SuppressWarnings("null")
 	private void pushMethodArguments(IMethodBinding methodBinding, List<Expression> arguments) {
 		int argCount = arguments.size();
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
@@ -3826,7 +3824,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * 
 	 * @see ASTVisitor#visit(SuperMethodInvocation)
 	 */
-	@SuppressWarnings("null")
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
 		if (!isActive()) {
@@ -4034,7 +4031,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			jumpDefault.setOffset((fCounter - fInstructions.indexOf(jumpDefault)) - 1);
 			push(new Pop(0));
 			storeInstruction(); // pop
-			for (@SuppressWarnings("null")Iterator<Statement> iterator = statementsDefault.iterator(); iterator.hasNext();) {
+			for (Iterator<Statement> iterator = statementsDefault.iterator(); iterator.hasNext();) {
 				iterator.next().accept(this);
 			}
 		} else if(jumpEnd != null){

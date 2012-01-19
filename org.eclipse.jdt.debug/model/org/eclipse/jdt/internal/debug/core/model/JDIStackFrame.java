@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,13 +234,17 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (!exists() || isObsolete() || !getThread().canStepReturn()) {
 				return false;
 			}
-			List<IJavaStackFrame> frames = ((JDIThread) getThread()).computeStackFrames();
+			List<IJavaStackFrame> frames = ((JDIThread) getThread())
+					.computeStackFrames();
 			if (frames != null && !frames.isEmpty()) {
-				boolean bottomFrame = this.equals(frames.get(frames.size() - 1));
+				boolean bottomFrame = this
+						.equals(frames.get(frames.size() - 1));
 				boolean aboveObsoleteFrame = false;
 				if (!bottomFrame) {
 					int index = frames.indexOf(this);
-					if (index < frames.size() - 1 && ((JDIStackFrame) frames.get(index + 1)).isObsolete()) {
+					if (index < frames.size() - 1
+							&& ((JDIStackFrame) frames.get(index + 1))
+									.isObsolete()) {
 						aboveObsoleteFrame = true;
 					}
 				}
@@ -312,19 +316,21 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 										field, declaringType));
 							}
 						}
-						Collections.sort(fVariables, new Comparator<IJavaVariable>() {
-							public int compare(IJavaVariable a, IJavaVariable b) {
-								JDIFieldVariable v1 = (JDIFieldVariable) a;
-								JDIFieldVariable v2 = (JDIFieldVariable) b;
-								try {
-									return v1.getName().compareToIgnoreCase(
-											v2.getName());
-								} catch (DebugException de) {
-									logError(de);
-									return -1;
-								}
-							}
-						});
+						Collections.sort(fVariables,
+								new Comparator<IJavaVariable>() {
+									public int compare(IJavaVariable a, IJavaVariable b) {
+										JDIFieldVariable v1 = (JDIFieldVariable) a;
+										JDIFieldVariable v2 = (JDIFieldVariable) b;
+										try {
+											return v1.getName()
+													.compareToIgnoreCase(
+															v2.getName());
+										} catch (DebugException de) {
+											logError(de);
+											return -1;
+										}
+									}
+								});
 					}
 				} else {
 					// add "this"
@@ -335,7 +341,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					}
 				}
 				// add locals
-				Iterator<LocalVariable> variables = getUnderlyingVisibleVariables().iterator();
+				Iterator<LocalVariable> variables = getUnderlyingVisibleVariables()
+						.iterator();
 				while (variables.hasNext()) {
 					LocalVariable var = variables.next();
 					fVariables.add(new JDILocalVariable(this, var));
@@ -460,7 +467,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (isTopStackFrame()) {
 			getThread().stepReturn();
 		} else {
-			List<IJavaStackFrame> frames = ((JDIThread) getThread()).computeStackFrames();
+			List<IJavaStackFrame> frames = ((JDIThread) getThread())
+					.computeStackFrames();
 			int index = frames.indexOf(this);
 			if (index >= 0 && index < frames.size() - 1) {
 				IStackFrame nextFrame = frames.get(index + 1);
@@ -565,7 +573,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		// add any new locals
 		Iterator<LocalVariable> newOnes = locals.iterator();
 		while (newOnes.hasNext()) {
-			JDILocalVariable local = new JDILocalVariable(this,	newOnes.next());
+			JDILocalVariable local = new JDILocalVariable(this, newOnes.next());
 			fVariables.add(local);
 		}
 	}
@@ -964,9 +972,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private boolean equals(Object o1, Object o2) {
 		if (o1 == null) {
 			return o2 == null;
-		} else {
-			return o1.equals(o2);
 		}
+		return o1.equals(o2);
 	}
 
 	protected boolean isTopStackFrame() throws DebugException {
@@ -1373,14 +1380,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				if (!isNative()) {
 					if (isTopStackFrame()) {
 						return true;
-					} else {
-						List<IJavaStackFrame> frames = fThread.computeStackFrames();
-						int index = frames.indexOf(this);
-						if (index > 0) {
-							JDIStackFrame prev = (JDIStackFrame) frames
-									.get(index - 1);
-							return prev.canDropToFrame();
-						}
+					}
+					List<IJavaStackFrame> frames = fThread.computeStackFrames();
+					int index = frames.indexOf(this);
+					if (index > 0) {
+						JDIStackFrame prev = (JDIStackFrame) frames
+								.get(index - 1);
+						return prev.canDropToFrame();
 					}
 				}
 			} catch (DebugException e) {

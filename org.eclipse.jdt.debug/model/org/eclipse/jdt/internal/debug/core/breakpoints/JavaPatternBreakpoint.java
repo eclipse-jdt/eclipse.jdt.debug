@@ -180,7 +180,6 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	protected void createRequests(JDIDebugTarget target) throws CoreException {
 		if (target.isTerminated() || shouldSkipBreakpoint()) {

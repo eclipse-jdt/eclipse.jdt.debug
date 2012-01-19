@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,31 +66,30 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	protected IJavaObject[] getInstances() {
 		if (fInstances != null) {
 			return fInstances;
-		} else {
-			IJavaObject[] instances = new IJavaObject[0];
-			fIsMoreThanPreference = false;
-			if (fRoot != null) {
-				int max = HeapWalkingManager.getDefault()
-						.getAllInstancesMaxCount();
-				try {
-					if (max == 0) {
-						instances = fRoot.getInstances(max);
-					} else {
-						instances = fRoot.getInstances(max + 1);
-						if (instances.length > max) {
-							instances[max] = new JDIPlaceholderValue(
-									(JDIDebugTarget) fRoot.getDebugTarget(),
-									MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_2, Integer.toString(max)));
-							fIsMoreThanPreference = true;
-						}
+		} 
+		IJavaObject[] instances = new IJavaObject[0];
+		fIsMoreThanPreference = false;
+		if (fRoot != null) {
+			int max = HeapWalkingManager.getDefault()
+					.getAllInstancesMaxCount();
+			try {
+				if (max == 0) {
+					instances = fRoot.getInstances(max);
+				} else {
+					instances = fRoot.getInstances(max + 1);
+					if (instances.length > max) {
+						instances[max] = new JDIPlaceholderValue(
+								(JDIDebugTarget) fRoot.getDebugTarget(),
+								MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_2, Integer.toString(max)));
+						fIsMoreThanPreference = true;
 					}
-				} catch (DebugException e) {
-					JDIDebugPlugin.log(e);
 				}
+			} catch (DebugException e) {
+				JDIDebugPlugin.log(e);
 			}
-			fInstances = instances;
-			return instances;
 		}
+		fInstances = instances;
+		return instances;
 	}
 
 	/*
@@ -152,11 +151,10 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 			return new JDIPlaceholderVariable(
 					LogicalStructuresMessages.JDIAllInstancesValue_4,
 					getInstances()[offset]);
-		} else {
-			return new JDIPlaceholderVariable(MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_5,
-					Integer.toString(offset)),
-					getInstances()[offset]);
 		}
+		return new JDIPlaceholderVariable(MessageFormat.format(LogicalStructuresMessages.JDIAllInstancesValue_5,
+				Integer.toString(offset)),
+				getInstances()[offset]);
 	}
 
 	/*

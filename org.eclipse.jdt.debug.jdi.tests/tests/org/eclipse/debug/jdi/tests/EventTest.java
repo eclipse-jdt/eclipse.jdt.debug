@@ -107,8 +107,8 @@ public class EventTest extends AbstractJDITest {
 	public void testJDIRequest() {
 		Iterator<EventRequest> iterator = fAllEvents.keySet().iterator();
 		while (iterator.hasNext()) {
-			EventRequest request = (EventRequest) iterator.next();
-			Event event = (Event) fAllEvents.get(request);
+			EventRequest request = iterator.next();
+			Event event = fAllEvents.get(request);
 
 			assertEquals(event.toString(), request, event.request());
 		}

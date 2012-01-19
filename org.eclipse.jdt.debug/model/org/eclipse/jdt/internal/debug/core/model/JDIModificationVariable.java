@@ -50,7 +50,6 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 * @throws DebugException
 	 *             if there is a problem generating the value
 	 */
-	@SuppressWarnings("null")
 	protected Value generateVMValue(String expression) throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {

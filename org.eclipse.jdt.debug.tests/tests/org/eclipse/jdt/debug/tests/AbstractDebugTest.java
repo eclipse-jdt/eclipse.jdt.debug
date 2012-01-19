@@ -2289,24 +2289,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		if (Thread.currentThread().equals(display.getThread())) {
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			return IDE.openEditor(page, file, true);
-		} else {
-			final IEditorPart[] parts = new IEditorPart[1];
-			WorkbenchJob job = new WorkbenchJob(display, "open editor") {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					try {
-						parts[0] = IDE.openEditor(page, file, true);
-					} catch (PartInitException e) {
-						return e.getStatus();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-			job.join();
-			return parts[0];
 		}
+		final IEditorPart[] parts = new IEditorPart[1];
+		WorkbenchJob job = new WorkbenchJob(display, "open editor") {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				try {
+					parts[0] = IDE.openEditor(page, file, true);
+				} catch (PartInitException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+		job.join();
+		return parts[0];
 	}
 	
 	/**

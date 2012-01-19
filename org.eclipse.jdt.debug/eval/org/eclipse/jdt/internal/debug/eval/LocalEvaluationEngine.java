@@ -238,7 +238,6 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 					resultValue = (IJavaVariable) field;
 				}
 			}
-			@SuppressWarnings("null")
 			IJavaValue result = convertResult((IJavaClassObject) resultType.getValue(), (IJavaValue) resultValue.getValue());
 			getResult().setValue(result);
 		} catch (DebugException e) {

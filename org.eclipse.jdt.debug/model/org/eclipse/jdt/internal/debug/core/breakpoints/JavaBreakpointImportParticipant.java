@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,15 +165,14 @@ public class JavaBreakpointImportParticipant implements
 					ITypeBinding binding = typeDeclaration.resolveBinding();
 					if (binding != null) {
 						return binding.getBinaryName();
+					}
+					if (typeDeclaration.isPackageMemberTypeDeclaration()) {
+						buffer.insert(0, typeDeclaration.getName()
+								.getIdentifier());
 					} else {
-						if (typeDeclaration.isPackageMemberTypeDeclaration()) {
-							buffer.insert(0, typeDeclaration.getName()
-									.getIdentifier());
-						} else {
-							buffer.insert(0, typeDeclaration.getName()
-									.getFullyQualifiedName());
-							buffer.insert(0, '$');
-						}
+						buffer.insert(0, typeDeclaration.getName()
+								.getFullyQualifiedName());
+						buffer.insert(0, '$');
 					}
 				}
 			}

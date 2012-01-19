@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1388,10 +1388,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		if (size == 0) {
 			if (isJdwpVersionGreaterOrEqual(1, 6)) {
 				return new long[0];
-			} else {
-				throw new UnsupportedOperationException(
-						JDIMessages.ReferenceTypeImpl_27);
 			}
+			throw new UnsupportedOperationException(JDIMessages.ReferenceTypeImpl_27);
 		}
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();

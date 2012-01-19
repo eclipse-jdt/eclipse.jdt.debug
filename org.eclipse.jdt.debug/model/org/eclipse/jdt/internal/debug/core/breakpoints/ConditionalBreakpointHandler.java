@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,48 +104,43 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 				if (wrappedException instanceof VMDisconnectedException) {
 					// VM terminated/disconnected during evaluation
 					return DONT_SUSPEND;
-				} else {
-					fireConditionHasRuntimeErrors(fBreakpoint, exception);
-					return SUSPEND;
-				}
-			} else {
-				try {
-					IValue value = result.getValue();
-					if (fBreakpoint.isConditionSuspendOnTrue()) {
-						if (value instanceof IJavaPrimitiveValue) {
-							// Suspend when the condition evaluates true
-							IJavaPrimitiveValue javaValue = (IJavaPrimitiveValue) value;
-							if (javaValue.getJavaType().getName()
-									.equals("boolean")) { //$NON-NLS-1$
-								if (javaValue.getBooleanValue()) {
-									return SUSPEND;
-								} else {
-									return DONT_SUSPEND;
-								}
-							}
-						}
-						IStatus status = new Status(
-								IStatus.ERROR,
-								JDIDebugPlugin.getUniqueIdentifier(),
-								MessageFormat.format(JDIDebugBreakpointMessages.ConditionalBreakpointHandler_1, value.getReferenceTypeName()));
-						// result was not boolean
-						fireConditionHasRuntimeErrors(fBreakpoint, new DebugException(status));
-						return SUSPEND;
-					} else {
-						IDebugTarget debugTarget = thread.getDebugTarget();
-						IValue lastValue = fBreakpoint
-								.setCurrentConditionValue(debugTarget, value);
-						if (!value.equals(lastValue)) {
-							return SUSPEND;
-						} else {
+				} 
+				fireConditionHasRuntimeErrors(fBreakpoint, exception);
+				return SUSPEND;
+			} 
+			try {
+				IValue value = result.getValue();
+				if (fBreakpoint.isConditionSuspendOnTrue()) {
+					if (value instanceof IJavaPrimitiveValue) {
+						// Suspend when the condition evaluates true
+						IJavaPrimitiveValue javaValue = (IJavaPrimitiveValue) value;
+						if (javaValue.getJavaType().getName()
+								.equals("boolean")) { //$NON-NLS-1$
+							if (javaValue.getBooleanValue()) {
+								return SUSPEND;
+							} 
 							return DONT_SUSPEND;
 						}
 					}
-				} catch (DebugException e) {
-					// Suspend when an error occurs
-					JDIDebugPlugin.log(e);
+					IStatus status = new Status(
+							IStatus.ERROR,
+							JDIDebugPlugin.getUniqueIdentifier(),
+							MessageFormat.format(JDIDebugBreakpointMessages.ConditionalBreakpointHandler_1, value.getReferenceTypeName()));
+					// result was not boolean
+					fireConditionHasRuntimeErrors(fBreakpoint, new DebugException(status));
 					return SUSPEND;
-				}
+				} 
+				IDebugTarget debugTarget = thread.getDebugTarget();
+				IValue lastValue = fBreakpoint
+						.setCurrentConditionValue(debugTarget, value);
+				if (!value.equals(lastValue)) {
+					return SUSPEND;
+				} 
+				return DONT_SUSPEND;
+			} catch (DebugException e) {
+				// Suspend when an error occurs
+				JDIDebugPlugin.log(e);
+				return SUSPEND;
 			}
 		}
 

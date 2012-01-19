@@ -14,7 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -83,7 +86,10 @@ public class JREsUpdater {
 					monitor.beginTask(JREMessages.JREsUpdater_0, 100); 
 					String vmDefXML = container.getAsXML();
 					monitor.worked(40);
-					JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_VM_XML, vmDefXML);
+					IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+					if(prefs != null) {
+						prefs.put(JavaRuntime.PREF_VM_XML, vmDefXML);
+					}
 					monitor.worked(30);
 					JavaRuntime.savePreferences();
 					monitor.worked(30);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -249,7 +250,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                             
                             engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
                             setEvaluating(true);
-                            boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
+                            boolean hitBreakpoints= Platform.getPreferencesService().getBoolean(
+                            		JDIDebugPlugin.getUniqueIdentifier(), 
+                            		JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, 
+                            		true, 
+                            		null);
                             if (object == null) {
                                 engine.evaluate(expression, stackFrame, EvaluateAction.this, DebugEvent.EVALUATION, hitBreakpoints);
                             } else {

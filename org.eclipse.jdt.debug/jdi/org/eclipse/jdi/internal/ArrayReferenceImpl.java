@@ -40,7 +40,6 @@ import com.sun.jdi.Value;
 public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 		ArrayReference {
 	/** JDWP Tag. */
-	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.ARRAY_TAG;
 
 	private int fLength = -1;

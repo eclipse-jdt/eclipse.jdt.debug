@@ -1306,11 +1306,10 @@ public final class JavaRuntime {
 			IRuntimeClasspathEntryResolver2 resolver = getVariableResolver(jrePath.segment(0));
 			if (resolver != null) {
 				return resolver.resolveVMInstall(entry);
-			} else {
-				resolver = getContainerResolver(jrePath.segment(0));
-				if (resolver != null) {
-					return resolver.resolveVMInstall(entry);
-				}
+			}
+			resolver = getContainerResolver(jrePath.segment(0));
+			if (resolver != null) {
+				return resolver.resolveVMInstall(entry);
 			}
 		}
 		
@@ -1326,7 +1325,6 @@ public final class JavaRuntime {
 	 * @exception CoreException if unable to resolve
 	 * @since 3.2
 	 */
-	@SuppressWarnings("null")
 	private static IVMInstall resolveVM(String type, String name, ILaunchConfiguration configuration) throws CoreException {
 		IVMInstallType vt = getVMInstallType(type);
 		if (vt == null) {
@@ -1515,7 +1513,6 @@ public final class JavaRuntime {
 						abort(NLS.bind("vmInstall {0} contributed by {1} references undefined VM install type {2}", //$NON-NLS-1$
 								new String[]{id, element.getContributor().getName(), vmType}), null);
 					}
-					@SuppressWarnings("null")
 					IVMInstall install = installType.findVMInstall(id);
 					if (install == null) {
 						// only load/create if first time we've seen this VM install
@@ -1803,9 +1800,8 @@ public final class JavaRuntime {
 		if (prefValue != null && prefValue != dummy) {
 			return options.containsKey(optionName) &&
 				equals(prefValue, options.get(optionName));
-		} else {
-			return !options.containsKey(optionName);
 		}
+		return !options.containsKey(optionName);
 	}
 	
 	/**
@@ -1818,9 +1814,8 @@ public final class JavaRuntime {
 	private static boolean equals(Object o1, Object o2) {
 		if (o1 == null) {
 			return o2 == null;
-		} else {
-			return o1.equals(o2);
 		}
+		return o1.equals(o2);
 	}
 	
 	/**
@@ -2833,9 +2828,7 @@ public final class JavaRuntime {
 			standin.setAttribute(EEVMInstall.ATTR_DEFINITION_FILE, eeFile.getPath());
 			standin.setAttribute(EEVMInstall.ATTR_DEBUG_ARGS, description.getProperty(ExecutionEnvironmentDescription.DEBUG_ARGS));
 			return standin;
-		} else {
-			throw new CoreException(status);
 		}
+		throw new CoreException(status);
 	}
-
 }

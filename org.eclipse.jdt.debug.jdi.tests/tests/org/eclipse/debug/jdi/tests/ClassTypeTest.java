@@ -258,9 +258,9 @@ public class ClassTypeTest extends AbstractJDITest {
 				false);
 		ThreadReference thread = event.thread();
 		Method constructor =
-			(Method) fType
-				.methodsByName("<init>", "(ILjava/lang/Object;Ljava/lang/Object;)V")
-				.get(0);
+			fType
+			.methodsByName("<init>", "(ILjava/lang/Object;Ljava/lang/Object;)V")
+			.get(0);
 		ObjectReference result = null;
 		ArrayList<Value> arguments = new ArrayList<Value>();
 		arguments.add(fVM.mirrorOf(0));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -530,11 +530,9 @@ public class VMDefinitionsContainer {
 					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
 							NLS.bind(LaunchingMessages.VMDefinitionsContainer_3, new String[]{vmType.getName()})));
 					return;
-				} else {
-					container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
-							NLS.bind(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
-					return;
 				}
+				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.VMDefinitionsContainer_4, new String[]{installPath})));
+				return;
 			}
 			if (installPath == null) {
 				container.addStatus(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,

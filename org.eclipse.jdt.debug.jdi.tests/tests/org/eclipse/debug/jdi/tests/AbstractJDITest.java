@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+
 import org.eclipse.jdi.Bootstrap;
 
 import com.sun.jdi.AbsentInformationException;
@@ -45,7 +46,6 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
-import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.Connector.Argument;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.event.Event;
@@ -839,8 +839,8 @@ public abstract class AbstractJDITest extends TestCase {
 					break;
 				AttachingConnector connector = connectors.get(0);
 				Map<String, Argument> args = connector.defaultArguments();
-				((Connector.Argument) args.get("port")).setValue(String.valueOf(fBackEndPort));
-				((Connector.Argument) args.get("hostname")).setValue("localhost");
+				args.get("port").setValue(String.valueOf(fBackEndPort));
+				args.get("hostname").setValue("localhost");
 
 				fVM = connector.attach(args);
 				if (fVMTraceFlags != com.sun.jdi.VirtualMachine.TRACE_NONE)
@@ -1256,7 +1256,7 @@ public abstract class AbstractJDITest extends TestCase {
 		Vector<String> testNames = getAllMatchingTests( getTestPrefix() );
 		Iterator<String> iterator = testNames.iterator();
 		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+			String name = iterator.next();
 			suite.addTest(new JDITestCase(this, name));
 		}
 		return suite;

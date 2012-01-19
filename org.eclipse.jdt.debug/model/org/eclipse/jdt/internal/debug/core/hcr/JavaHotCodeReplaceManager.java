@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -556,7 +556,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 *                shape change</li>
 	 *                </ul>
 	 */
-	@SuppressWarnings("null")
 	private void redefineTypesJ9(JDIDebugTarget target, List<String> qualifiedNames)
 			throws DebugException {
 		String[] typeNames = qualifiedNames
@@ -604,7 +603,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * 
 	 * This method is to be used for JDK hot code replace.
 	 */
-	@SuppressWarnings("null")
 	private void redefineTypesJDK(JDIDebugTarget target, List<IResource> resources,
 			List<String> qualifiedNames) throws DebugException {
 		if (target.supportsJDKHotCodeReplace()) {
@@ -952,7 +950,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 					break;
 				}
 				// The frame we wanted to drop to cannot be popped.
-				// Set the affected frame to the next lowest poppable
+				// Set the affected frame to the next lowest pop-able
 				// frame on the stack.
 				while (j > 0) {
 					j--;
@@ -1346,7 +1344,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/**
 	 * Begin listening for resource changes when a launch is registered with a
-	 * hot swapable target.
+	 * hot swap-able target.
 	 * 
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
@@ -1374,7 +1372,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/**
 	 * Begin listening for resource changes when a launch is registered with a
-	 * hot swapable target.
+	 * hot swap-able target.
 	 * 
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
@@ -1429,7 +1427,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	}
 
 	/**
-	 * Adds the given target to the list of hot-swappable targets. Has no effect
+	 * Adds the given target to the list of hot-swap-able targets. Has no effect
 	 * if the target is already registered.
 	 * 
 	 * @param target
@@ -1442,7 +1440,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	}
 
 	/**
-	 * Adds the given target to the list of non hot-swappable targets. Has no
+	 * Adds the given target to the list of non hot-swap-able targets. Has no
 	 * effect if the target is already registered.
 	 * 
 	 * @param target

@@ -77,7 +77,7 @@ public class ExceptionEventTest extends AbstractJDITest {
 	 */
 	public void testJDIException() {
 		ReferenceType expected =
-			(ReferenceType) fVM.classesByName("java.lang.Error").get(0);
+			fVM.classesByName("java.lang.Error").get(0);
 		assertEquals("1", expected, fEvent.exception().referenceType());
 	}
 	/**

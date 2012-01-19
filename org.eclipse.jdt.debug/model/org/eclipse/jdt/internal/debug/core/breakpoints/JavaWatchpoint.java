@@ -88,7 +88,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 */
 	protected static final Integer MODIFICATION_EVENT = new Integer(1);
 	/**
-	 * Maps each debug target that is suspended for this breakpiont to reason
+	 * Maps each debug target that is suspended for this breakpoint to reason
 	 * that this breakpoint suspended it. Reasons include:
 	 * <ol>
 	 * <li>Field access (value <code>ACCESS_EVENT</code>)</li>
@@ -231,7 +231,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 *         <code>true</code>; ModificationWatchpointRequest if access is
 	 *         <code>false</code>).
 	 */
-	@SuppressWarnings("null")
 	protected WatchpointRequest createWatchpoint(JDIDebugTarget target,
 			Field field, boolean access) throws CoreException {
 		WatchpointRequest request = null;

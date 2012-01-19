@@ -140,7 +140,7 @@ public class TestAll {
 		}
 		AbstractJDITest test = null;
 		try {
-			test = (AbstractJDITest) construct.newInstance(new Object[]{});
+			test = construct.newInstance(new Object[]{});
 		} catch (InstantiationException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {

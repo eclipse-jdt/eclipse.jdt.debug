@@ -96,7 +96,6 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		return "[" + getIndex() + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	protected void setJDIValue(Value value) throws DebugException {
 		ArrayReference ar = getArrayReference();

@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.variables;
 
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
@@ -22,15 +19,12 @@ import org.eclipse.ui.IViewPart;
 /**
  * Action which opens preference settings for Java variables.
  */
-public class VariableOptionsAction implements IViewActionDelegate, IPropertyChangeListener {
+public class VariableOptionsAction implements IViewActionDelegate {
 	
-	private IViewPart fPart;
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
     public void init(IViewPart view) {
-    	fPart = view;
     }
 
     /* (non-Javadoc)
@@ -49,16 +43,4 @@ public class VariableOptionsAction implements IViewActionDelegate, IPropertyChan
      */
     public void selectionChanged(IAction action, ISelection selection) {
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (fPart instanceof IDebugView) {
-			IDebugView view = (IDebugView) fPart;
-			view.getViewer().refresh();
-		}
-		
-	}
-    
 }

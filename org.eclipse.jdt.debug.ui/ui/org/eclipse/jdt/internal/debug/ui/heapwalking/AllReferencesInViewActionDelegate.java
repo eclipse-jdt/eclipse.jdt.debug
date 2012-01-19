@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.heapwalking;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.core.HeapWalkingManager;
@@ -31,7 +33,7 @@ import org.eclipse.ui.IViewPart;
  * 
  * @since 3.3
  */
-public class AllReferencesInViewActionDelegate implements IPropertyChangeListener, IActionDelegate2, IViewActionDelegate {
+public class AllReferencesInViewActionDelegate implements IPreferenceChangeListener, IActionDelegate2, IViewActionDelegate {
 
 	private IAction fAction;
 	private IDebugView fView;
@@ -57,7 +59,10 @@ public class AllReferencesInViewActionDelegate implements IPropertyChangeListene
 	public void init(IAction action) {
 		fAction = action;
 		action.setChecked(HeapWalkingManager.getDefault().isShowReferenceInVarView());
-		JDIDebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(prefs != null) {
+			prefs.addPreferenceChangeListener(this);
+		}
 	}	
 
 	/* (non-Javadoc)
@@ -79,7 +84,10 @@ public class AllReferencesInViewActionDelegate implements IPropertyChangeListene
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		JDIDebugPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(prefs != null) {
+			prefs.removePreferenceChangeListener(this);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -90,10 +98,10 @@ public class AllReferencesInViewActionDelegate implements IPropertyChangeListene
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW.equals(event.getProperty()) || JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT.equals(event.getProperty())){
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW.equals(event.getKey()) || JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT.equals(event.getKey())){
 			if (fAction != null){
 				fAction.setChecked(HeapWalkingManager.getDefault().isShowReferenceInVarView());
 				fView.getViewer().refresh();

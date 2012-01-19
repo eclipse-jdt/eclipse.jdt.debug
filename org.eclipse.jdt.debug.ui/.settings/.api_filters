@@ -8,6 +8,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/ClasspathEntry.java" type="org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry">
+        <filter comment="Known illegal implementation" id="574619656">
+            <message_arguments>
+                <message_argument value="IRuntimeClasspathEntry"/>
+                <message_argument value="ClasspathEntry"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/jdt/internal/debug/ui/classpath/RuntimeClasspathViewer.java" type="org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer">
         <filter comment="Known illegal extension" id="571473929">
             <message_arguments>

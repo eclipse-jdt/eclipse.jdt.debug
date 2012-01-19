@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,48 +44,46 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 						LauncherMessages.JreResolutionGenerator_open_ee_prefs, 
 						LauncherMessages.JreResolutionGenerator_opens_ee_prefs)};
 			}
-			else {
-				int id = marker.getAttribute(IJavaModelMarker.ID, -1);
-				switch (id) {
-					// unbound classpath container
-					case IJavaModelStatusConstants.CP_CONTAINER_PATH_UNBOUND :
-						String[] arguments = CorrectionEngine.getProblemArguments(marker);
-						IPath path = new Path(arguments[0]);
-						if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-							// unbound JRE_CONTAINER
-							if (JREResolution.getAllVMs().length > 0) {
-								IJavaProject project = getJavaProject(marker);
-								return new IMarkerResolution[]{new SelectSystemLibraryQuickFix(path, project)};
-							}
-							// define a new JRE
-							return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
-						}
-						break;
-		
-					// unbound classpath variable
-					case IJavaModelStatusConstants.CP_VARIABLE_PATH_UNBOUND :
-						arguments = CorrectionEngine.getProblemArguments(marker);
-						path = new Path(arguments[0]);
-						if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
-							// unbound JRE_LIB
-							if (JREResolution.getAllVMs().length > 0) {
-								return new IMarkerResolution[]{new SelectDefaultSystemLibraryQuickFix()};
-							}
-							// define a new default JRE
-							return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
-						}
-						break;
-					// deprecated JRE library variables
-					case IJavaModelStatusConstants.DEPRECATED_VARIABLE : 
-						arguments = CorrectionEngine.getProblemArguments(marker);
-						path = new Path(arguments[0]);
-						if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE) ||
-								path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+			int id = marker.getAttribute(IJavaModelMarker.ID, -1);
+			switch (id) {
+				// unbound classpath container
+				case IJavaModelStatusConstants.CP_CONTAINER_PATH_UNBOUND :
+					String[] arguments = CorrectionEngine.getProblemArguments(marker);
+					IPath path = new Path(arguments[0]);
+					if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+						// unbound JRE_CONTAINER
+						if (JREResolution.getAllVMs().length > 0) {
 							IJavaProject project = getJavaProject(marker);
-							return new IMarkerResolution[] {new SelectSystemLibraryQuickFix(path, project)};
+							return new IMarkerResolution[]{new SelectSystemLibraryQuickFix(path, project)};
 						}
-						break;
-				}
+						// define a new JRE
+						return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
+					}
+					break;
+	
+				// unbound classpath variable
+				case IJavaModelStatusConstants.CP_VARIABLE_PATH_UNBOUND :
+					arguments = CorrectionEngine.getProblemArguments(marker);
+					path = new Path(arguments[0]);
+					if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
+						// unbound JRE_LIB
+						if (JREResolution.getAllVMs().length > 0) {
+							return new IMarkerResolution[]{new SelectDefaultSystemLibraryQuickFix()};
+						}
+						// define a new default JRE
+						return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
+					}
+					break;
+				// deprecated JRE library variables
+				case IJavaModelStatusConstants.DEPRECATED_VARIABLE : 
+					arguments = CorrectionEngine.getProblemArguments(marker);
+					path = new Path(arguments[0]);
+					if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE) ||
+							path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+						IJavaProject project = getJavaProject(marker);
+						return new IMarkerResolution[] {new SelectSystemLibraryQuickFix(path, project)};
+					}
+					break;
 			}
 		}
 		catch(CoreException ce) {}

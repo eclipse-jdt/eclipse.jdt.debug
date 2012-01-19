@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -62,6 +63,7 @@ import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -639,7 +641,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			evaluationEnds();
 			return;
 		}
-		boolean hitBreakpoints= JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION);
+		boolean hitBreakpoints = Platform.getPreferencesService().getBoolean(
+				JDIDebugPlugin.getUniqueIdentifier(), 
+				JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, 
+				true, 
+				null);
 		try {
 			getEvaluationEngine().evaluate(snippet,getThread(), this, hitBreakpoints);
 		} catch (DebugException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,13 +114,11 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 				}
 				return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldMainTypeName}));
 			}
-			else {
-				//need to catch the case for remote java LC's, they have no maintype
-				if (fOldProjectName.equals(projectName)) {
-					return new RefactoringStatus();
-				}
-				return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
+			//need to catch the case for remote java LC's, they have no maintype
+			if (fOldProjectName.equals(projectName)) {
+				return new RefactoringStatus();
 			}
+			return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
 		} 
 		return RefactoringStatus.createFatalErrorStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()})); 
 	}

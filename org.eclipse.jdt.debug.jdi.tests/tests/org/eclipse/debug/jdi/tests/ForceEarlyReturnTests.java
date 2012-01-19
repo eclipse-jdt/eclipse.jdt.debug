@@ -14,7 +14,6 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
-import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
@@ -68,7 +67,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 			if(tref.isSuspended()) {
 				if(tref.isAtBreakpoint()) {
 					method = getMethod("printNumber", "(Ljava/io/OutputStream;I)I");
-					br = getBreakpointRequest((Location) method.locationsOfLine(200).get(0));
+					br = getBreakpointRequest(method.locationsOfLine(200).get(0));
 					br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					br.enable();
 					waiter = new EventWaiter(br, true);
@@ -78,7 +77,7 @@ public class ForceEarlyReturnTests extends AbstractJDITest {
 					bpe = (BreakpointEvent) waiter.waitEvent(10000);
 					assertNotNull("Timed out waiting for a breakpoint event during force return", bpe);
 					tref = bpe.thread();
-					LocalVariable lv = (LocalVariable)tref.frame(0).visibleVariables().get(2);
+					LocalVariable lv = tref.frame(0).visibleVariables().get(2);
 					Value val = tref.frame(0).getValue(lv);
 					System.out.println(val);
 					assertTrue("value should be a StringReference", val instanceof StringReference);

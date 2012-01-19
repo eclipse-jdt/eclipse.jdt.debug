@@ -92,7 +92,7 @@ public class StackFrameTest extends AbstractJDITest {
 	 */
 	public void testJDISetGetValue() {
 		// setValue
-		ThreadReference thread = (ThreadReference) fVM.allThreads().get(0);
+		ThreadReference thread = fVM.allThreads().get(0);
 		LocalVariable var = getLocalVariable();
 		try {
 			fFrame.setValue(var, thread);

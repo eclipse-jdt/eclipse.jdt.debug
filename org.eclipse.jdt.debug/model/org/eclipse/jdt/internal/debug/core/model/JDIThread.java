@@ -2318,7 +2318,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						null);
 			}
 			try {
-				@SuppressWarnings("null")
 				StepRequest request = manager.createStepRequest(fThread,
 						StepRequest.STEP_LINE, kind);
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
@@ -2980,9 +2979,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return super.createStepRequest();
 			} else if (num == 0) {
 				try {
-					@SuppressWarnings("null")
-					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager)
-							.createReenterStepRequest(fThread);
+					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager).createReenterStepRequest(fThread);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();
@@ -2995,9 +2992,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 			} else if (num == -1) {
 				try {
-					@SuppressWarnings("null")
-					StepRequest request = manager.createStepRequest(fThread,
-							StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					StepRequest request = manager.createStepRequest(fThread, StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();

@@ -65,7 +65,7 @@ public class ArrayTypeTest extends AbstractJDITest {
 	 * Test JDI componentType().
 	 */
 	public void testJDIComponentType() {
-		Type expected = (Type) fVM.classesByName("java.lang.String").get(0);
+		Type expected = fVM.classesByName("java.lang.String").get(0);
 		Type type = null;
 		try {
 			type = fType.componentType();

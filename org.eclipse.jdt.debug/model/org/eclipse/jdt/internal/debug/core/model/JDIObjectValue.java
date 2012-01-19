@@ -442,9 +442,8 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			ObjectReference underlyingObject = getUnderlyingObject();
 			if (underlyingObject != null) {
 				return underlyingObject.uniqueID();
-			} else {
-				return -1L;
-			}
+			} 
+			return -1L;
 		} catch (RuntimeException e) {
 			targetRequestFailed(
 					MessageFormat.format(

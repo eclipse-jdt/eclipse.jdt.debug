@@ -110,7 +110,7 @@ public class EventReader extends AbstractReader {
 						Event event = iterator.nextEvent();
 						for (int i = 0; i < fEventListeners.size(); i++) {
 							EventListener listener =
-								(EventListener) fEventListeners.elementAt(i);
+								fEventListeners.elementAt(i);
 							shouldGo = shouldGo & dispath(event, listener);
 						}
 						if (event instanceof VMDeathEvent)

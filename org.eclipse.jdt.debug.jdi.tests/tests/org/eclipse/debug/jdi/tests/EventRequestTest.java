@@ -79,7 +79,7 @@ public class EventRequestTest extends AbstractJDITest {
 	 */
 	public void testJDIEnable() {
 		for (int i = 0; i < fRequests.size(); i++) {
-			EventRequest request = (EventRequest) fRequests.get(i);
+			EventRequest request = fRequests.get(i);
 			assertTrue("1." + i, !request.isEnabled());
 			request.setEnabled(true);
 			assertTrue("2." + i, request.isEnabled());
@@ -97,11 +97,11 @@ public class EventRequestTest extends AbstractJDITest {
 	public void testJDISuspendPolicy() {
 		int policy = EventRequest.SUSPEND_EVENT_THREAD;
 		for (int i = 0; i < fRequests.size(); i++) {
-			EventRequest request = (EventRequest) fRequests.get(i);
+			EventRequest request = fRequests.get(i);
 			request.setSuspendPolicy(policy);
 		}
 		for (int i = 0; i < fRequests.size(); i++) {
-			EventRequest request = (EventRequest) fRequests.get(i);
+			EventRequest request = fRequests.get(i);
 			assertTrue(String.valueOf(i), request.suspendPolicy() == policy);
 		}
 	}
@@ -109,7 +109,7 @@ public class EventRequestTest extends AbstractJDITest {
 	 * Test JDI putProperty and getProperty.
 	 */
 	public void testJDIProperties() {
-		EventRequest request = (EventRequest) fRequests.get(0);
+		EventRequest request = fRequests.get(0);
 		request.putProperty(new Integer(0), "prop1");
 		String prop = (String) request.getProperty(new Integer(0));
 		assertTrue("1", prop.equals("prop1"));

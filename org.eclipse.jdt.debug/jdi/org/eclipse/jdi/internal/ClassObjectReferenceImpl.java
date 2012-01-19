@@ -29,7 +29,6 @@ import com.sun.jdi.ReferenceType;
 public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements
 		ClassObjectReference {
 	/** JDWP Tag. */
-	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.CLASS_OBJECT_TAG;
 
 	/**

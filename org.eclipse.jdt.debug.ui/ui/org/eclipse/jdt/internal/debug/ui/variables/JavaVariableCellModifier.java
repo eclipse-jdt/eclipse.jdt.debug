@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,9 +66,8 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
                     try {
                         if (var.getValue().getValueString().equals(Boolean.toString(true))) {
                             return new Integer(0);
-                        } else {
-                            return new Integer(1);
                         }
+                        return new Integer(1);
                     } catch (DebugException e) {
                     }
                 }
@@ -97,10 +96,9 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 	                        	// invalid value
 	                        	return;
 	                        }
-                    	} else {
-                    		// invalid value
-                    		return;
                     	}
+                		// invalid value
+                		return;
                     }
                 }
             }

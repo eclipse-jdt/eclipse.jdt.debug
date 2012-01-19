@@ -418,27 +418,24 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		if (fPerspectiveListener == null){
 			fPerspectiveListener = new MyPerspectiveListener();
 			return fPerspectiveListener;
-		} else {
-			return fPerspectiveListener;
 		}
+		return fPerspectiveListener;
 	}
 	
 	protected MyAnnotationListener getAnnotationListener(){
 		if (fAnnotationListener == null){
 			fAnnotationListener = new MyAnnotationListener();
 			return fAnnotationListener;
-		} else {
-			return fAnnotationListener;
 		}
+		return fAnnotationListener;
 	}
 	
 	private IPartListener2 getPartListener(){
 		if (fPartListener == null){
 			fPartListener = new MyPartListener();
 			return fPartListener;
-		} else {
-			return fPartListener;
 		}
+		return fPartListener;
 	}
 	
 	private void waitForAnnotationToBeAdded() throws Exception{

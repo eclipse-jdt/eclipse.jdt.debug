@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -78,17 +78,15 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	String getId() {
 		if (fElement.getName().equals(EnvironmentsManager.ENVIRONMENT_ELEMENT)) {
 			return fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
-		} else {
-			return fElement.getAttribute("id"); //$NON-NLS-1$
 		}
+		return fElement.getAttribute("id"); //$NON-NLS-1$
 	}
 	
 	private String getDelegateClassName() {
 		if (fElement.getName().equals(EnvironmentsManager.ENVIRONMENT_ELEMENT)) {
 			return fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
-		} else {
-			return fElement.getAttribute("class"); //$NON-NLS-1$
 		}
+		return fElement.getAttribute("class"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

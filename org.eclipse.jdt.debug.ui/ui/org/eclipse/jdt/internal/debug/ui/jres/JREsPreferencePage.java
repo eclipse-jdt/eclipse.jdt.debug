@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,13 +197,12 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * @since 3.3
 	 */
 	private String getCurrentCompilerCompliance() {
-		IEclipsePreferences setting = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
+		IEclipsePreferences setting = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 		if(getContainer() instanceof IWorkbenchPreferenceContainer) {
 			IEclipsePreferences wcs = ((IWorkbenchPreferenceContainer)getContainer()).getWorkingCopyManager().getWorkingCopy(setting);
 			return wcs.get(JavaCore.COMPILER_COMPLIANCE, (String) JavaCore.getDefaultOptions().get(JavaCore.COMPILER_COMPLIANCE));
-		} else {
-			return JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
 		}
+			return JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
 		
 	}
 	

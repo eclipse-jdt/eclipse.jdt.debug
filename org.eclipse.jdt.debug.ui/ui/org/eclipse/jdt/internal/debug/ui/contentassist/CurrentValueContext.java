@@ -66,8 +66,7 @@ public class CurrentValueContext extends CurrentFrameContext {
      * @return the value for which completions are to be computed for, or <code>null</code> if none
      * @throws CoreException if an exception occurs
      */
-    @SuppressWarnings("null")
-	protected IJavaValue resolveValue() throws CoreException {
+    protected IJavaValue resolveValue() throws CoreException {
         IJavaStackFrame stackFrame= getStackFrame();
         if (stackFrame == null) {
             unableToResolveType();

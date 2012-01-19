@@ -418,9 +418,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
                 int numericValue = Integer.parseInt(stringInt);
                 String newName = name.substring(0, start+1) + (numericValue+1) + ")"; //$NON-NLS-1$
                 return generateName(newName);
-            } else {
-                return generateName(name + " (1)"); //$NON-NLS-1$
             }
+            return generateName(name + " (1)"); //$NON-NLS-1$
         }
 	
 	/**

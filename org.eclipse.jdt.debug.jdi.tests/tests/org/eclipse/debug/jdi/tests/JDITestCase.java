@@ -12,6 +12,7 @@
 package org.eclipse.debug.jdi.tests;
 
 import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
 
 /**

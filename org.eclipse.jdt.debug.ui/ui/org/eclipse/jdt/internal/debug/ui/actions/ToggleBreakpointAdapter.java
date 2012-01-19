@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,18 +401,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							deleteBreakpoint(existing, part, monitor);
 							return Status.OK_STATUS;
 						}
-						else {
-							HashMap<String, Object> map = new HashMap<String, Object>(10);
-							BreakpointUtils.addJavaBreakpointAttributes(map, type);
-							ISourceRange range= type.getNameRange();
-							int start = -1;
-							int end = -1;
-							if (range != null) {
-								start = range.getOffset();
-								end = start + range.getLength();
-							}
-							JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(member), getQualifiedName(type), IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
+						HashMap<String, Object> map = new HashMap<String, Object>(10);
+						BreakpointUtils.addJavaBreakpointAttributes(map, type);
+						ISourceRange range= type.getNameRange();
+						int start = -1;
+						int end = -1;
+						if (range != null) {
+							start = range.getOffset();
+							end = start + range.getLength();
 						}
+						JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(member), getQualifiedName(type), IJavaClassPrepareBreakpoint.TYPE_CLASS, start, end, true, map);
 					}
 					else {
 						report(ActionMessages.ToggleBreakpointAdapter_0, part);
@@ -979,10 +977,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				String[] bounds = typeParameter.getBounds();
 				if (bounds.length == 0) {
 					return "Ljava/lang/Object;"; //$NON-NLS-1$
-				} else {
-					String bound = Signature.createTypeSignature(bounds[0], false);
-					return resolveTypeSignature(method, bound);
 				}
+				String bound = Signature.createTypeSignature(bounds[0], false);
+				return resolveTypeSignature(method, bound);
     		}
             // the type name cannot be resolved
             return null;

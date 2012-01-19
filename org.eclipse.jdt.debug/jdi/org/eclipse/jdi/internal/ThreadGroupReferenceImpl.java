@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import com.sun.jdi.ThreadReference;
 public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 		ThreadGroupReference {
 	/** JDWP Tag. */
-	@SuppressWarnings("hiding")
 	public static final byte tag = JdwpID.THREAD_GROUP_TAG;
 	/**
 	 * The cached name of this thread group. This value is safe to cache because

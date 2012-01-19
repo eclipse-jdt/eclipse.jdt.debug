@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,17 +56,14 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		IResource target = getResource(candidate);
 		if (target == null) {
 			return mapped != null;
-		} else {
-			if (mapped == null) {
-				return true;
-			} else {
-				if (mapped.length != 1) {
-					return true;
-				} else {
-					return !target.equals(mapped[0]);
-				}
-			}
 		}
+		if (mapped == null) {
+			return true;
+		}
+		if (mapped.length != 1) {
+			return true;
+		}
+		return !target.equals(mapped[0]);
 	}
 	
 	/**
