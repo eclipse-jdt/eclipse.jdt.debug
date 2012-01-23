@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -312,7 +312,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e, ONE_FOUR_PROJECT_NAME);
         }
     }
 	
@@ -343,7 +343,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e, ONE_FIVE_PROJECT_NAME);
         }
 	}
 	
@@ -373,7 +373,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e, ONE_SEVEN_PROJECT_NAME);
         }
 	}
 	
@@ -402,7 +402,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e, BOUND_JRE_PROJECT_NAME);
         }
 	}
 	
@@ -435,7 +435,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e,BOUND_EE_PROJECT_NAME);
         }
 	}
 	
@@ -468,8 +468,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-        	fail(e.getMessage());
+        	handleProjectCreationException(e, MULTI_OUTPUT_PROJECT_NAME);
         }
+	}
+	
+	void handleProjectCreationException(Exception e, String pname) {
+		String msg = e.getMessage();
+    	e.printStackTrace();
+    	if(msg == null) {
+    		msg = "could not acquire message for exception class: "+e.getClass();
+    	}
+    	fail("Failed to create the '"+pname+"' test project: "+msg);
 	}
 	
 	/**
