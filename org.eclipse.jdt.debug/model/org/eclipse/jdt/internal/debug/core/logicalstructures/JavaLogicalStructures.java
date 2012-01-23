@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILogicalStructureProvider;
@@ -77,27 +77,20 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	/**
 	 * Updates user defined logical structures if the preference changes
 	 */
-	static class PreferenceListener implements IPropertyChangeListener {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#
-		 * propertyChange
-		 * (org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	static class PreferenceListener implements IPreferenceChangeListener {
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 		 */
-		public void propertyChange(PropertyChangeEvent event) {
-			if (PREF_JAVA_LOGICAL_STRUCTURES.equals(event.getProperty())) {
+		public void preferenceChange(PreferenceChangeEvent event) {
+			if (PREF_JAVA_LOGICAL_STRUCTURES.equals(event.getKey())) {
 				initUserDefinedJavaLogicalStructures();
 				initJavaLogicalStructureMap();
 				Iterator<IJavaStructuresListener> iter = fListeners.iterator();
 				while (iter.hasNext()) {
-					iter.next()
-							.logicalStructuresChanged();
+					iter.next().logicalStructuresChanged();
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -108,7 +101,10 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		initPluginContributedJavaLogicalStructure();
 		initUserDefinedJavaLogicalStructures();
 		initJavaLogicalStructureMap();
-		JDIDebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(new PreferenceListener());
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		if(prefs != null) {
+			prefs.addPreferenceChangeListener(new PreferenceListener());
+		}
 	}
 
 	private static void initJavaLogicalStructureMap() {

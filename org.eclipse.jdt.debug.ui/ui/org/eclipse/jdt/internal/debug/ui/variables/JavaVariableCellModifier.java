@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.variables;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -30,7 +30,7 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
      */
     @Override
 	public boolean canModify(Object element, String property) {
-        if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+        if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(property)) {
             if (element instanceof IJavaVariable) {
                 IJavaVariable var = (IJavaVariable) element;
                 if (var.supportsValueModification()){
@@ -59,7 +59,7 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
      */
     @Override
 	public Object getValue(Object element, String property) {
-        if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+        if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(property)) {
             if (element instanceof IJavaVariable) {
                 IJavaVariable var = (IJavaVariable) element;
                 if (isBoolean(var)) {
@@ -80,7 +80,7 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 	public void modify(Object element, String property, Object value) {
         Object oldValue = getValue(element, property);
         if (!value.equals(oldValue)) {
-            if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
+            if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(property)) {
                 if (element instanceof IJavaVariable) {
                     IJavaVariable var = (IJavaVariable) element;
                     if (isBoolean(var)) {
