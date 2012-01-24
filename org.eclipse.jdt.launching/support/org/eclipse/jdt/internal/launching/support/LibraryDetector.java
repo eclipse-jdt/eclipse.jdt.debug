@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class LibraryDetector {
 			System.out.print(System.getProperty("java.version")); //$NON-NLS-1$
 			System.out.print("|"); //$NON-NLS-1$
 			// get the boot class path - the property may vary for different vendors
-			Enumeration<Object> keys = System.getProperties().keys();
+			Enumeration keys = System.getProperties().keys();
 			boolean found = false;
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();
