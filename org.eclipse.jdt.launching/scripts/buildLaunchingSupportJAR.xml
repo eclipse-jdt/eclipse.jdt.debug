@@ -36,6 +36,9 @@
 		<jar destfile="${build.result.folder}/lib/launchingsupport.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
+	
+	<!-- Empty target for "After a Clean" task (we don't want to rebuild the Jar here, e.g. on checkout). -->
+	<target name="dummy_clean"/>
 
 	<target name="clean" description="Deletes previous build remnants" depends="init">
 		<delete file="${build.result.folder}/lib/launchingsupport.jar"/>
