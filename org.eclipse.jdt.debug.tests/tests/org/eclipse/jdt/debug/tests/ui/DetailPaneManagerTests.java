@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,17 +13,24 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
-import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneManager;
-import org.eclipse.debug.ui.IDetailPane;
+import junit.framework.Test;
+
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.testplugin.detailpane.SimpleDetailPane;
 import org.eclipse.jdt.debug.testplugin.detailpane.TableDetailPane;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
+import org.eclipse.test.OrderedTestSuite;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
+import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneManager;
+
+import org.eclipse.debug.ui.IDetailPane;
+
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
 
 /**
  * Tests the detail pane functionality by testing <code>DetailPaneManager</code>.
@@ -46,7 +53,14 @@ public class DetailPaneManagerTests extends AbstractDebugTest {
 		// Make sure that the default pane has been loaded.
 		fManager.getPreferredPaneFromSelection(null);
 	}
-			
+
+	public static Test suite() {
+		return new OrderedTestSuite(DetailPaneManagerTests.class, new String[] { "testGetUserPreferredDetailPane", "testSetPreferredDetailPane",
+				"testGetPreferredPaneFromSelection", "testGetAvailablePaneIDs", "testGetDetailPaneFromID", "testGetNameFromID",
+				"testGetDescriptionFromID"
+		});
+	}
+
 	/**
 	 * Tests that the manager makes correct default selection when
 	 * one or more detail panes are available.
