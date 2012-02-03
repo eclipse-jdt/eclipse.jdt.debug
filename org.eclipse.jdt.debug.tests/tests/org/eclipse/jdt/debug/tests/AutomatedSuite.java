@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,7 +287,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(InstructionPointerTests.class));
 		
 	// Variables View Detail Pane tests
-		addTest(new TestSuite(DetailPaneManagerTests.class));
+		addTest(DetailPaneManagerTests.suite());
 		addTest(new TestSuite(ModelPresentationTests.class));
 
 	// Open from Clipboard action tests - Need to use #suite() because the test has a custom setup
