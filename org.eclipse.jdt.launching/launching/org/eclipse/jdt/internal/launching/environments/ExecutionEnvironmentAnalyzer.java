@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
+
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstall3;
@@ -35,6 +37,9 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
  */
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
+	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
+	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
+
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
 	private static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
 	private static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
@@ -70,6 +75,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(J2SE_1_5, new String[] {J2SE_1_4});
 		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
+		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 	}
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		ArrayList<CompatibleEnvironment> result = new ArrayList<CompatibleEnvironment>();
@@ -92,9 +98,11 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
 					types = getTypes(CDC_FOUNDATION_1_1);
 			} else {
-				if (javaVersion.startsWith("1.7")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("1.8")) //$NON-NLS-1$
+					types = getTypes(JavaSE_1_8);
+				else if (javaVersion.startsWith("1.7")) //$NON-NLS-1$
 					types = getTypes(JavaSE_1_7);
-				} else if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+				else if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
 					types = getTypes(JavaSE_1_6);
 				else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
 					types = getTypes(J2SE_1_5);
