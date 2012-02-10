@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,18 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestSuite;
+
+import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.test.OrderedTestSuite;
+
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -20,13 +32,9 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
-import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 
 /**
  * Tests console input.
@@ -43,6 +51,15 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	
 	protected Object fConsoleLock = new Object();
 	protected Object fLock = new Object();
+	
+	
+	public static TestSuite suite() {
+		return new OrderedTestSuite(ConsoleInputTests.class, new String[] {
+				"testMultiLineInput",	
+				"testEOF",
+				"testDeleteAllEnteredText"
+		});
+	}
 	
 	public ConsoleInputTests(String name) {
 		super(name);
@@ -112,6 +129,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			proxy2.closeInputStream();
 			int attempts = 0;
 			while (fLinesRead.size() < 2) {
+				while (DebugUIPlugin.getStandardDisplay().readAndDispatch()) {
+				}
 				synchronized (fLinesRead) {
 					if (fLinesRead.size() < 2) {
 						fLinesRead.wait(200);
@@ -151,7 +170,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	private String[] appendAndGet(IConsole console, final String text, int linesExpected) throws Exception {
 		fLinesRead.clear();
 		final IDocument document = console.getDocument();
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
+		standardDisplay.asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
@@ -163,6 +183,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		
 		int attempts = 0;
 		while (fLinesRead.size() < linesExpected) {
+			while (standardDisplay.readAndDispatch()) {
+			}
 			synchronized (fLinesRead) {
 				if (fLinesRead.size() < linesExpected) {
 					fLinesRead.wait(200);
@@ -186,7 +208,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	 */
 	private void append(IConsole console, final String text) throws Exception {
 		final IDocument document = console.getDocument();
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
+		standardDisplay.asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
@@ -195,6 +218,9 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
                 }
             }
         });
+		while (standardDisplay.readAndDispatch()) {
+		}
+
 	}	
 		
 	/**
@@ -205,7 +231,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	 */
 	private void deleteAll(IConsole console) throws Exception {
 		final IDocument document = console.getDocument();
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
+		standardDisplay.asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(0, document.getLength(), "");
@@ -214,6 +241,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
                 }
             }
         });
+		while (standardDisplay.readAndDispatch()) {
+		}
 	}
 	
 	/**
