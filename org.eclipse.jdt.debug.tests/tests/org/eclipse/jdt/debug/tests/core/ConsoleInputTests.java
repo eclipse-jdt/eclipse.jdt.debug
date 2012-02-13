@@ -129,8 +129,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			proxy2.closeInputStream();
 			int attempts = 0;
 			while (fLinesRead.size() < 2) {
-				while (DebugUIPlugin.getStandardDisplay().readAndDispatch()) {
-				}
+				spinEventLoop();
 				synchronized (fLinesRead) {
 					if (fLinesRead.size() < 2) {
 						fLinesRead.wait(200);
@@ -170,8 +169,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	private String[] appendAndGet(IConsole console, final String text, int linesExpected) throws Exception {
 		fLinesRead.clear();
 		final IDocument document = console.getDocument();
-		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
-		standardDisplay.asyncExec(new Runnable() {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
@@ -183,8 +181,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		
 		int attempts = 0;
 		while (fLinesRead.size() < linesExpected) {
-			while (standardDisplay.readAndDispatch()) {
-			}
+			spinEventLoop();
 			synchronized (fLinesRead) {
 				if (fLinesRead.size() < linesExpected) {
 					fLinesRead.wait(200);
@@ -208,8 +205,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	 */
 	private void append(IConsole console, final String text) throws Exception {
 		final IDocument document = console.getDocument();
-		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
-		standardDisplay.asyncExec(new Runnable() {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
@@ -218,9 +214,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
                 }
             }
         });
-		while (standardDisplay.readAndDispatch()) {
-		}
-
+		spinEventLoop();
 	}	
 		
 	/**
@@ -231,8 +225,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	 */
 	private void deleteAll(IConsole console) throws Exception {
 		final IDocument document = console.getDocument();
-		Display standardDisplay = DebugUIPlugin.getStandardDisplay();
-		standardDisplay.asyncExec(new Runnable() {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 try {
                     document.replace(0, document.getLength(), "");
@@ -241,8 +234,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
                 }
             }
         });
-		while (standardDisplay.readAndDispatch()) {
-		}
+		spinEventLoop();
 	}
 	
 	/**
@@ -319,5 +311,18 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			launch.getProcesses()[0].terminate();
 		}		
 	}
-	
+
+	private void spinEventLoop() {
+		final Display display= DebugUIPlugin.getStandardDisplay();
+		Runnable runnable= new Runnable() {
+			public void run() {
+				while (display.readAndDispatch()) {
+				}
+			}
+		};
+		if (Display.getCurrent() == display)
+			runnable.run();
+		else
+			display.syncExec(runnable);
+	}
 }
