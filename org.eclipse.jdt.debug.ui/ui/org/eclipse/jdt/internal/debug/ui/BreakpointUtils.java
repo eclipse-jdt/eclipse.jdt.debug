@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,14 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -29,6 +32,14 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
  
 /**
  * Utility class for Java breakpoints 
@@ -313,5 +324,44 @@ public class BreakpointUtils {
 	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) {
 		return breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnCompilationErrorBreakpoint() ||
 			breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnUncaughtExceptionBreakpoint();
-	}	
+	}
+	
+	/**
+     * Resolves the {@link IBreakpoint} from the given editor and ruler information. Returns <code>null</code>
+     * if no breakpoint exists or the operation fails.
+     * 
+     * @param editor the editor
+     * @param info the current ruler information
+     * @return the {@link IBreakpoint} from the current editor position or <code>null</code>
+     * @since 3.8
+     */
+    public static IBreakpoint getBreakpointFromEditor(ITextEditor editor, IVerticalRulerInfo info) {
+    	IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
+		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		if (annotationModel != null) {
+			Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+					IMarker marker = markerAnnotation.getMarker();
+					try {
+						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+							Position position = annotationModel.getPosition(markerAnnotation);
+							int line = document.getLineOfOffset(position.getOffset());
+							if (line == info.getLineOfLastMouseButtonActivity()) {
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+								if (breakpoint != null) {
+									return breakpoint;
+								}
+							}
+						}
+					} catch (CoreException e) {
+					} catch (BadLocationException e) {
+					}
+				}
+			}
+		}
+		return null;
+    }
 }

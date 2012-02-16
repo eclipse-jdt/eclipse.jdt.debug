@@ -33,7 +33,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -81,15 +81,19 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -99,7 +103,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since 3.0
  */
-public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
+public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension2 {
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -1315,4 +1319,49 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	}    	
         return canToggleLineBreakpoints(part, selection);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2#toggleBreakpointsWithEvent(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.swt.widgets.Event)
+	 */
+	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException {
+		if((event.stateMask & SWT.MOD2) > 0) {
+			ITextEditor editor = getTextEditor(part);
+			if(editor != null) {
+				IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+				if(info != null) {
+					IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
+					if(bp != null) {
+						bp.setEnabled(!bp.isEnabled());
+						return;
+					}
+				}
+			}
+		}
+		else if((event.stateMask & SWT.MOD1) > 0) {
+			ITextEditor editor = getTextEditor(part);
+			if(editor != null) {
+				IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+				if(info != null) {
+					IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
+					if(bp != null) {
+						PreferencesUtil.createPropertyDialogOn(
+								editor.getSite().getShell(),
+								bp,
+								null,
+								null,
+								null).open();
+						return;
+					}
+				}
+			}
+		}
+		toggleBreakpoints(part, selection);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2#canToggleBreakpointsWithEvent(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.swt.widgets.Event)
+	 */
+	public boolean canToggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) {
+		return canToggleBreakpoints(part, selection);
+	}
 }
