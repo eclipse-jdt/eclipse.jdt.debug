@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,16 +181,20 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IVMInstall install = installs[i];
 				if (environment.isStrictlyCompatible(install)) {
 					vm = install;
-					if (installs.length == 0 && JREContainer.DEBUG_JRE_CONTAINER) {
+					if (JREContainer.DEBUG_JRE_CONTAINER) {
 						System.out.println("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
 					}
 					break;
 				}
 			}
+			//try the default VM install: https://bugs.eclipse.org/bugs/show_bug.cgi?id=371300
+			if(vm == null && installs.length > 0) {
+				vm = JavaRuntime.getDefaultVMInstall();
+			}
 			// use the first VM failing that
 			if (vm == null && installs.length > 0) {
 				vm = installs[0];
-				if (installs.length == 0 && JREContainer.DEBUG_JRE_CONTAINER) {
+				if (JREContainer.DEBUG_JRE_CONTAINER) {
 					System.out.println("\tFirst Match: " + vm.getName()); //$NON-NLS-1$
 				}
 			}
