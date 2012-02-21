@@ -1324,33 +1324,35 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2#toggleBreakpointsWithEvent(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.swt.widgets.Event)
 	 */
 	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException {
-		if((event.stateMask & SWT.MOD2) > 0) {
-			ITextEditor editor = getTextEditor(part);
-			if(editor != null) {
-				IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
-				if(info != null) {
-					IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
-					if(bp != null) {
-						bp.setEnabled(!bp.isEnabled());
-						return;
+		if(event != null) {
+			if((event.stateMask & SWT.MOD2) > 0) {
+				ITextEditor editor = getTextEditor(part);
+				if(editor != null) {
+					IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+					if(info != null) {
+						IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
+						if(bp != null) {
+							bp.setEnabled(!bp.isEnabled());
+							return;
+						}
 					}
 				}
 			}
-		}
-		else if((event.stateMask & SWT.MOD1) > 0) {
-			ITextEditor editor = getTextEditor(part);
-			if(editor != null) {
-				IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
-				if(info != null) {
-					IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
-					if(bp != null) {
-						PreferencesUtil.createPropertyDialogOn(
-								editor.getSite().getShell(),
-								bp,
-								null,
-								null,
-								null).open();
-						return;
+			else if((event.stateMask & SWT.MOD1) > 0) {
+				ITextEditor editor = getTextEditor(part);
+				if(editor != null) {
+					IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+					if(info != null) {
+						IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
+						if(bp != null) {
+							PreferencesUtil.createPropertyDialogOn(
+									editor.getSite().getShell(),
+									bp,
+									null,
+									null,
+									null).open();
+							return;
+						}
 					}
 				}
 			}
