@@ -49,8 +49,7 @@ public class TypeResolutionTests extends AbstractDebugTest {
 	}
 	
 	public void testAnonTypeA2() throws Exception {
-		// Java mode returns 1 even though we expect 2 at runtime
-		resolve(203, "EvalNestedTypeTests$A$1");
+		resolve(203, "EvalNestedTypeTests$A$2");
 	}	
 	
 	public void testTypeBB() throws Exception {
@@ -110,18 +109,15 @@ public class TypeResolutionTests extends AbstractDebugTest {
 	}	
 	
 	public void testAnonTypeFB() throws Exception {
-		// Java mode returns 1 even though we expect 2 at runtime
-		resolve(664, "EvalNestedTypeTests$1$FB");
+		resolve(664, "EvalNestedTypeTests$2$FB");
 	}
 	
 	public void testAnonTypeFC() throws Exception {
-		// Java mode returns 1 even though we expect 2 at runtime
-		resolve(690, "EvalNestedTypeTests$1$FC");
+		resolve(690, "EvalNestedTypeTests$2$FC");
 	}
 	
 	public void testAnonType21() throws Exception {
-		// Java mode returns 1 even though we expect 2 at runtime
-		resolve(714, "EvalNestedTypeTests$1$1");
+		resolve(714, "EvalNestedTypeTests$2$1");
 	}
 	
 	/**
