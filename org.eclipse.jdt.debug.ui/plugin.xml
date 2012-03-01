@@ -3639,4 +3639,23 @@ M4 = Platform-specific fourth key
           variableName="project_classpath">
     </variablePresentation>
  </extension>
+ <extension
+       point="org.eclipse.ui.trace.traceComponents">
+    <component
+          id="org.eclipse.jdt.debug.core.component"
+          label="%JDTDebugCoreTrace.name">
+       <bundle
+             consumed="true"
+             name="org.eclipse.jdt.debug">
+       </bundle>
+    </component>
+    <component
+          id="org.eclipse.jdt.launching.component"
+          label="%JDTLaunchingTrace.name">
+       <bundle
+             consumed="true"
+             name="org.eclipse.jdt.launching">
+       </bundle>
+    </component>
+ </extension>
 </plugin>

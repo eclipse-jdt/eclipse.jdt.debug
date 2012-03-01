@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,8 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
@@ -87,8 +90,17 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 @SuppressWarnings("deprecation")
-public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPreferenceChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
+public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEclipsePreferences.IPreferenceChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
+
+	/**
+	 * Whether debug options are turned on for this plug-in.
+	 */
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_JRE_CONTAINER = false;
 	
+	public static final String DEBUG_JRE_CONTAINER_FLAG = "org.eclipse.jdt.launching/debug/classpath/jreContainer"; //$NON-NLS-1$
+	public static final String DEBUG_FLAG = "org.eclipse.jdt.launching/debug"; //$NON-NLS-1$
+
 	/**
 	 * The id of the JDT launching plug-in (value <code>"org.eclipse.jdt.launching"</code>).
 	 */
@@ -150,16 +162,11 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	 * the plug-in can ignore processing and changes.
 	 */
 	private boolean fBatchingChanges = false;
-	
+
 	/**
 	 * Shared XML parser
 	 */
 	private static DocumentBuilder fgXMLParser = null;
-	
-	/**
-	 * Whether debug options are turned on for this plug-in.
-	 */
-	public static boolean DEBUG = false;
 	
 	/**
 	 * Stores VM changes resulting from a JRE preference change.
@@ -513,7 +520,9 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.launching/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
+		context.registerService(DebugOptionsListener.class.getName(), this, props);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
 			public void doneSaving(ISaveContext context1) {}
 			public void prepareToSave(ISaveContext context1)	throws CoreException {}
@@ -1244,5 +1253,13 @@ public class LaunchingPlugin extends Plugin implements IEclipsePreferences.IPref
 				processVMPrefsChanged((String)event.getOldValue(), (String)event.getNewValue());
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	 */
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		DEBUG_JRE_CONTAINER = DEBUG && options.getBooleanOption(DEBUG_JRE_CONTAINER_FLAG, false);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
-import org.eclipse.core.runtime.Platform;
+import java.util.Hashtable;
+
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.osgi.framework.BundleContext;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -20,31 +24,40 @@ import com.ibm.icu.text.SimpleDateFormat;
  * 
  * @since 3.5
  */
-public class JDIDebugOptions {
-	// debug option flags
+public class JDIDebugOptions implements DebugOptionsListener {
+	
+	public static final String DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG = "org.eclipse.jdt.debug/debug/astEvaluations/callingThreads"; //$NON-NLS-1$
+	public static final String DEBUG_AST_EVALUATIONS_FLAG = "org.eclipse.jdt.debug/debug/astEvaluations"; //$NON-NLS-1$
+	public static final String DEBUG_JDI_REQUEST_TIMES_FLAG = "org.eclipse.jdt.debug/debug/jdiRequestTimes"; //$NON-NLS-1$
+	public static final String DEBUG_JDI_EVENTS_FLAG = "org.eclipse.jdt.debug/debug/jdiEvents"; //$NON-NLS-1$
+	public static final String DEBUG_FLAG = "org.eclipse.jdt.debug/debug"; //$NON-NLS-1$
+	
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_JDI_EVENTS = false;
 	public static boolean DEBUG_JDI_REQUEST_TIMES = false;
 	public static boolean DEBUG_AST_EVAL = false;
 	public static boolean DEBUG_AST_EVAL_THREAD_TRACE = false;
 
+	/**
+	 * Constructor
+	 */
+	public JDIDebugOptions(BundleContext context) {
+		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, JDIDebugPlugin.getUniqueIdentifier());
+		context.registerService(DebugOptionsListener.class.getName(), this, props);
+	}
+	
 	// used to format debug messages
-	public static final DateFormat FORMAT = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+	public static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 
-	public static void initDebugOptions() {
-		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.jdt.debug/debug")); //$NON-NLS-1$//$NON-NLS-2$
-		DEBUG_JDI_EVENTS = DEBUG
-				&& "true".equals( //$NON-NLS-1$
-						Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiEvents")); //$NON-NLS-1$
-		DEBUG_JDI_REQUEST_TIMES = DEBUG
-				&& "true".equals( //$NON-NLS-1$
-						Platform.getDebugOption("org.eclipse.jdt.debug/debug/jdiRequestTimes")); //$NON-NLS-1$
-		DEBUG_AST_EVAL = DEBUG
-				&& "true".equals( //$NON-NLS-1$
-						Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations")); //$NON-NLS-1$
-		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG
-				&& "true".equals( //$NON-NLS-1$
-						Platform.getDebugOption("org.eclipse.jdt.debug/debug/astEvaluations/callingThreads")); //$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	 */
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		DEBUG_JDI_EVENTS = DEBUG && options.getBooleanOption(DEBUG_JDI_EVENTS_FLAG, false);
+		DEBUG_JDI_REQUEST_TIMES = DEBUG && options.getBooleanOption(DEBUG_JDI_REQUEST_TIMES_FLAG, false);
+		DEBUG_AST_EVAL = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_FLAG, false);
+		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG, false);
 	}
 }

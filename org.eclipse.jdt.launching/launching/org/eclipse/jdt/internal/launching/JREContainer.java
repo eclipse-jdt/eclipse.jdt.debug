@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -63,9 +62,6 @@ public class JREContainer implements IClasspathContainer {
 	 * Variable to return an empty array of <code>IAccessRule</code>s
 	 */
 	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
-	
-	// debug flags
-	public static boolean DEBUG_JRE_CONTAINER = false;
 	
 	/**
 	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}} 
@@ -241,14 +237,6 @@ public class JREContainer implements IClasspathContainer {
 	}
 	
 	/**
-	 * Initialize debug flags
-	 */
-	static {
-		DEBUG_JRE_CONTAINER =LaunchingPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-		 Platform.getDebugOption("org.eclipse.jdt.launching/debug/classpath/jreContainer")); //$NON-NLS-1$
-	}
-	
-	/**
 	 * Returns the classpath entries associated with the given VM
 	 * in the context of the given path and project.
 	 * 
@@ -268,7 +256,7 @@ public class JREContainer implements IClasspathContainer {
 				fgClasspathEntries.put(vm, entries);
 			}
 		} else {
-			if (DEBUG_JRE_CONTAINER) {
+			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 				System.out.println("\tEE:\t" + id); //$NON-NLS-1$
 			}
 			// dynamically compute entries when bound to an EE
@@ -363,14 +351,14 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		if (DEBUG_JRE_CONTAINER) {
+		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 			System.out.println("<JRE_CONTAINER> getClasspathEntries() " + this.toString()); //$NON-NLS-1$
 			System.out.println("\tJRE:\t" + fVMInstall.getName()); //$NON-NLS-1$
 			System.out.println("\tPath:\t" + getPath().toString()); //$NON-NLS-1$
 			System.out.println("\tProj:\t" + fProject.getProject().getName()); //$NON-NLS-1$
 		}
 		IClasspathEntry[] entries = getClasspathEntries(fVMInstall, getPath(), fProject);
-		if (DEBUG_JRE_CONTAINER) {
+		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 			System.out.println("\tResolved " + entries.length + " entries:");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return entries;
