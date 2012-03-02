@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -719,6 +720,10 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(FieldDeclaration node) {
+		int mods = node.getModifiers();
+		if(Flags.isFinal(mods)) {
+			return false;
+		}
 		if (visit(node, false)) {
 			if (fBestMatch) {
 				// check if the line contains a single field declaration.

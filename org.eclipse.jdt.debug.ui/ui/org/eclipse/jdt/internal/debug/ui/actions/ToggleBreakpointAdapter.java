@@ -205,71 +205,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         Job job = new Job("Toggle Line Breakpoint") { //$NON-NLS-1$
             @Override
 			protected IStatus run(IProgressMonitor monitor) {
-            	ITextEditor editor = getTextEditor(part);
-                if (editor != null && selection instanceof ITextSelection) {
-                    if (monitor.isCanceled()) {
-                        return Status.CANCEL_STATUS;
-                    }
-                    try {
-	                    report(null, part);
-	                    ISelection sel = selection;
-	                	if(!(selection instanceof IStructuredSelection)) {
-	                		sel = translateToMembers(part, selection);
-	                	}
-	                	if(isInterface(sel, part)) {
-	                		report(ActionMessages.ToggleBreakpointAdapter_6, part);
-	                    	return Status.OK_STATUS;
-	                	}
-	                    if(sel instanceof IStructuredSelection) {
-	                    	IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
-	                    	IType type = null;
-	                    	if(member.getElementType() == IJavaElement.TYPE) {
-	                    		type = (IType) member;
-	                    	}
-	                    	else {
-	                    		type = member.getDeclaringType();
-	                    	}
-	                    	String tname = null;
-	                    	IJavaProject project = type.getJavaProject();
-	                    	if (locator == null || (project != null && !project.isOnClasspath(type))) {
-	                    		tname = createQualifiedTypeName(type);
-	                    	} else {
-	                    		tname = locator.getFullyQualifiedTypeName();
-	                    	}
-	                    	IResource resource = BreakpointUtils.getBreakpointResource(type);
-							int lnumber = locator == null ? ((ITextSelection) selection).getStartLine() + 1 : locator.getLineLocation();
-							IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
-							if (existingBreakpoint != null) {
-								deleteBreakpoint(existingBreakpoint, editor, monitor);
-								return Status.OK_STATUS;
-							}
-							Map<String, Object> attributes = new HashMap<String, Object>(10);
-							IDocumentProvider documentProvider = editor.getDocumentProvider();
-							if (documentProvider == null) {
-							    return Status.CANCEL_STATUS;
-							}
-							IDocument document = documentProvider.getDocument(editor.getEditorInput());
-							int charstart = -1, charend = -1;
-							try {
-								IRegion line = document.getLineInformation(lnumber - 1);
-								charstart = line.getOffset();
-								charend = charstart + line.getLength();
-							} 	
-							catch (BadLocationException ble) {JDIDebugUIPlugin.log(ble);}
-							BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
-							IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
-							if(locator == null) {
-								new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot()), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
-							}
-	                    }
-	                    else {
-	                    	report(ActionMessages.ToggleBreakpointAdapter_3, part);
-	                    	return Status.OK_STATUS;
-	                    }
-                    } 
-                    catch (CoreException ce) {return ce.getStatus();}
-                }
-                return Status.OK_STATUS;
+            	return doLineBreakpointToggle(selection, part, locator, bestMatch, monitor);
             }
         };
         job.setPriority(Job.INTERACTIVE);
@@ -372,6 +308,88 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.setPriority(Job.INTERACTIVE);
         job.setSystem(true);
         job.schedule();
+    }
+    
+    /**
+     * Performs the actual toggling of the line breakpoint
+     * @param selection the current selection (from the editor or view)
+     * @param part the active part
+     * @param locator the locator, may be <code>null</code>
+     * @param bestMatch if we should consider the best match rather than an exact match
+     * @param monitor progress reporting
+     * @return the status of the toggle
+     * @since 3.8
+     */
+    IStatus doLineBreakpointToggle(ISelection selection, IWorkbenchPart part, ValidBreakpointLocationLocator locator, boolean bestMatch, IProgressMonitor monitor) {
+    	ITextEditor editor = getTextEditor(part);
+        if (editor != null && selection instanceof ITextSelection) {
+            if (monitor.isCanceled()) {
+                return Status.CANCEL_STATUS;
+            }
+            ITextSelection tsel = (ITextSelection) selection;
+            if(tsel.getStartLine() < 0) {
+            	return Status.CANCEL_STATUS;
+            }
+            try {
+                report(null, part);
+                ISelection sel = selection;
+            	if(!(selection instanceof IStructuredSelection)) {
+            		sel = translateToMembers(part, selection);
+            	}
+            	if(isInterface(sel, part)) {
+            		report(ActionMessages.ToggleBreakpointAdapter_6, part);
+                	return Status.OK_STATUS;
+            	}
+                if(sel instanceof IStructuredSelection) {
+                	IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
+                	IType type = null;
+                	if(member.getElementType() == IJavaElement.TYPE) {
+                		type = (IType) member;
+                	}
+                	else {
+                		type = member.getDeclaringType();
+                	}
+                	String tname = null;
+                	IJavaProject project = type.getJavaProject();
+                	if (locator == null || (project != null && !project.isOnClasspath(type))) {
+                		tname = createQualifiedTypeName(type);
+                	} else {
+                		tname = locator.getFullyQualifiedTypeName();
+                	}
+                	IResource resource = BreakpointUtils.getBreakpointResource(type);
+					int lnumber = locator == null ? tsel.getStartLine() + 1 : locator.getLineLocation();
+					IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);
+					if (existingBreakpoint != null) {
+						deleteBreakpoint(existingBreakpoint, editor, monitor);
+						return Status.OK_STATUS;
+					}
+					Map<String, Object> attributes = new HashMap<String, Object>(10);
+					IDocumentProvider documentProvider = editor.getDocumentProvider();
+					if (documentProvider == null) {
+					    return Status.CANCEL_STATUS;
+					}
+					IDocument document = documentProvider.getDocument(editor.getEditorInput());
+					int charstart = -1, charend = -1;
+					try {
+						IRegion line = document.getLineInformation(lnumber - 1);
+						charstart = line.getOffset();
+						charend = charstart + line.getLength();
+					} 	
+					catch (BadLocationException ble) {JDIDebugUIPlugin.log(ble);}
+					BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
+					IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
+					if(locator == null) {
+						new BreakpointLocationVerifierJob(document, parseCompilationUnit(type.getTypeRoot()), breakpoint, lnumber, tname, type, editor, bestMatch).schedule();
+					}
+                }
+                else {
+                	report(ActionMessages.ToggleBreakpointAdapter_3, part);
+                	return Status.OK_STATUS;
+                }
+            } 
+            catch (CoreException ce) {return ce.getStatus();}
+        }
+        return Status.OK_STATUS;
     }
     
     /**
@@ -867,8 +885,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        breakpoint = getWatchpoint(typeName, fieldName);
 	                        if (breakpoint == null) {
 	                        	if(!allowed) {
-	                        		toggleLineBreakpoints(part, finalSelection);
-	                        		return Status.OK_STATUS;
+	                        		return doLineBreakpointToggle(finalSelection, part, null, true, monitor);
 	                        	}
 	                        	int start = -1;
 	                            int end = -1;

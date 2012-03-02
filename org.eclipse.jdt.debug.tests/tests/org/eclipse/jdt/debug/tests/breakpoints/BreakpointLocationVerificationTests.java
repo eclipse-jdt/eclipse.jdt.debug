@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -137,6 +137,14 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		testLocation(43, 46, "BreakpointsLocation");
 	}
     
+	/**
+	 * Tests that a breakpoint is not set on a final field
+	 * @throws Exception
+	 */
+	public void testFieldLocationOnFinalField() throws Exception {
+		testLocation(2, 4, "BreakpointsLocationBug344984");
+	}
+	
 	/**
 	 * Tests a specific breakpoint location
 	 * @throws Exception
