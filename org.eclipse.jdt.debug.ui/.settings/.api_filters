@@ -24,6 +24,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/jdt/internal/debug/ui/display/DisplayViewerConfiguration.java" type="org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="JavaSourceViewerConfiguration"/>
+                <message_argument value="DisplayViewerConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/jdt/internal/debug/ui/launcher/AppletSelectionDialog.java" type="org.eclipse.jdt.internal.debug.ui.launcher.AppletSelectionDialog$PackageRenderer">
         <filter comment="known API usage" id="571473929">
             <message_arguments>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,7 @@ import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistPro
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -74,27 +71,4 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 
 		return assistant;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
-	@Override
-	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		ITextDoubleClickStrategy clickStrat = new ITextDoubleClickStrategy() {
-			// Highlight the whole line when double clicked. See Bug#45481 
-			public void doubleClicked(ITextViewer viewer) {
-				try {
-					IDocument doc = viewer.getDocument();
-					int caretOffset = viewer.getSelectedRange().x;
-					int lineNum = doc.getLineOfOffset(caretOffset);
-					int start = doc.getLineOffset(lineNum);
-					int length = doc.getLineLength(lineNum);
-					viewer.setSelectedRange(start, length);
-				} catch (BadLocationException e) {
-					JDIDebugUIPlugin.log(e);
-				}
-			}
-		};
-		return clickStrat;
-	}	
 }
