@@ -178,7 +178,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				buf.append(thread.toString());
 			}
 			JDIDebugOptions.trace(buf.toString());
-			Thread.dumpStack();
 		}
 	}
 
