@@ -177,8 +177,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			} catch (DebugException e) {
 				buf.append(thread.toString());
 			}
-			System.out.println(buf.toString());
-			System.out.flush();
+			JDIDebugOptions.trace(buf.toString());
 			Thread.dumpStack();
 		}
 	}
@@ -646,7 +645,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				}
 				buf.append(" Hit Breakpoints: "); //$NON-NLS-1$
 				buf.append(fHitBreakpoints);
-				System.out.println(buf.toString());
+				JDIDebugOptions.trace(buf.toString());
 			}
 			EvaluationResult result = new EvaluationResult(
 					ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
@@ -666,7 +665,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 						buf.append("\t\t"); //$NON-NLS-1$
 						buf.append(errors[i]);
 					}
-					System.out.println(buf.toString());
+					JDIDebugOptions.trace(buf.toString());
 				}
 				return;
 			}
@@ -751,7 +750,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					StringBuffer buf = new StringBuffer();
 					buf.append("\tException: "); //$NON-NLS-1$
 					buf.append(exception.toString());
-					System.out.println(buf.toString());
+					JDIDebugOptions.trace(buf.toString());
 				}
 				if (exception instanceof DebugException) {
 					result.setException((DebugException) exception);
@@ -766,7 +765,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 						StringBuffer buf = new StringBuffer();
 						buf.append("\tResult: "); //$NON-NLS-1$
 						buf.append(value);
-						System.out.println(buf.toString());
+						JDIDebugOptions.trace(buf.toString());
 					}
 				} else {
 					result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation);
@@ -778,7 +777,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				buf.append("\tDuration: "); //$NON-NLS-1$
 				buf.append(end - start);
 				buf.append("ms"); //$NON-NLS-1$
-				System.out.println(buf.toString());
+				JDIDebugOptions.trace(buf.toString());
 			}
 
 			evaluationFinished(result);

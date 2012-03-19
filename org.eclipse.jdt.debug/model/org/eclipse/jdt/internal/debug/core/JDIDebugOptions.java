@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.BundleContext;
 
 import com.ibm.icu.text.DateFormat;
@@ -39,6 +40,12 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	public static boolean DEBUG_AST_EVAL_THREAD_TRACE = false;
 
 	/**
+	 * The {@link DebugTrace} object to print to OSGi tracing
+	 * @since 3.8
+	 */
+	private static DebugTrace fgDebugTrace;
+	
+	/**
 	 * Constructor
 	 */
 	public JDIDebugOptions(BundleContext context) {
@@ -54,10 +61,35 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
 	public void optionsChanged(DebugOptions options) {
+		fgDebugTrace = options.newDebugTrace(JDIDebugPlugin.getUniqueIdentifier());
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_JDI_EVENTS = DEBUG && options.getBooleanOption(DEBUG_JDI_EVENTS_FLAG, false);
 		DEBUG_JDI_REQUEST_TIMES = DEBUG && options.getBooleanOption(DEBUG_JDI_REQUEST_TIMES_FLAG, false);
 		DEBUG_AST_EVAL = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_FLAG, false);
 		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG, false);
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * @param option the option or <code>null</code>
+	 * @param message the message to print or <code>null</code>
+	 * @param throwable the {@link Throwable} or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String option, String message, Throwable throwable) {
+		System.out.println(message);
+		if(fgDebugTrace != null) {
+			fgDebugTrace.trace(option, message, throwable);
+		}
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * 
+	 * @param message the message or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String message) {
+		trace(null, message, null);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,14 +103,15 @@ public class EventDispatcher implements Runnable {
 		}
 		if (JDIDebugOptions.DEBUG_JDI_EVENTS) {
 			EventIterator eventIter = eventSet.eventIterator();
-			System.out.print("JDI Event Set: {"); //$NON-NLS-1$
+			StringBuffer buf = new StringBuffer("JDI Event Set: {\n"); //$NON-NLS-1$
 			while (eventIter.hasNext()) {
-				System.out.print(eventIter.next());
+				buf.append(eventIter.next());
 				if (eventIter.hasNext()) {
-					System.out.print(", "); //$NON-NLS-1$
+					buf.append(", "); //$NON-NLS-1$
 				}
 			}
-			System.out.println("}"); //$NON-NLS-1$
+			buf.append("}\n"); //$NON-NLS-1$
+			JDIDebugOptions.trace(buf.toString());
 		}
 		EventIterator iter = eventSet.eventIterator();
 		IJDIEventListener[] listeners = new IJDIEventListener[eventSet.size()];

@@ -257,7 +257,7 @@ public class JREContainer implements IClasspathContainer {
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-				System.out.println("\tEE:\t" + id); //$NON-NLS-1$
+				LaunchingPlugin.trace("\tEE:\t" + id); //$NON-NLS-1$
 			}
 			// dynamically compute entries when bound to an EE
 			entries = computeClasspathEntries(vm, project, id);
@@ -352,14 +352,14 @@ public class JREContainer implements IClasspathContainer {
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
 		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-			System.out.println("<JRE_CONTAINER> getClasspathEntries() " + this.toString()); //$NON-NLS-1$
-			System.out.println("\tJRE:\t" + fVMInstall.getName()); //$NON-NLS-1$
-			System.out.println("\tPath:\t" + getPath().toString()); //$NON-NLS-1$
-			System.out.println("\tProj:\t" + fProject.getProject().getName()); //$NON-NLS-1$
+			LaunchingPlugin.trace("<JRE_CONTAINER> getClasspathEntries() " + this.toString()); //$NON-NLS-1$
+			LaunchingPlugin.trace("\tJRE:\t" + fVMInstall.getName()); //$NON-NLS-1$
+			LaunchingPlugin.trace("\tPath:\t" + getPath().toString()); //$NON-NLS-1$
+			LaunchingPlugin.trace("\tProj:\t" + fProject.getProject().getName()); //$NON-NLS-1$
 		}
 		IClasspathEntry[] entries = getClasspathEntries(fVMInstall, getPath(), fProject);
 		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-			System.out.println("\tResolved " + entries.length + " entries:");  //$NON-NLS-1$//$NON-NLS-2$
+			LaunchingPlugin.trace("\tResolved " + entries.length + " entries:");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return entries;
 	}

@@ -78,6 +78,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
@@ -101,6 +102,12 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	public static final String DEBUG_JRE_CONTAINER_FLAG = "org.eclipse.jdt.launching/debug/classpath/jreContainer"; //$NON-NLS-1$
 	public static final String DEBUG_FLAG = "org.eclipse.jdt.launching/debug"; //$NON-NLS-1$
 
+	/**
+	 * The {@link DebugTrace} object to print to OSGi tracing
+	 * @since 3.8
+	 */
+	private static DebugTrace fgDebugTrace;
+	
 	/**
 	 * The id of the JDT launching plug-in (value <code>"org.eclipse.jdt.launching"</code>).
 	 */
@@ -1261,5 +1268,29 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_JRE_CONTAINER = DEBUG && options.getBooleanOption(DEBUG_JRE_CONTAINER_FLAG, false);
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * @param option the option or <code>null</code>
+	 * @param message the message to print or <code>null</code>
+	 * @param throwable the {@link Throwable} or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String option, String message, Throwable throwable) {
+		System.out.println(message);
+		if(fgDebugTrace != null) {
+			fgDebugTrace.trace(option, message, throwable);
+		}
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * 
+	 * @param message the message or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String message) {
+		trace(null, message, null);
 	}
 }

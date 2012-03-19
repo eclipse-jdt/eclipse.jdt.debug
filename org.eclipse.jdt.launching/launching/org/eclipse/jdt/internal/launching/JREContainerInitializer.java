@@ -47,9 +47,9 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException {
 		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-			System.out.println("<JRE_CONTAINER> initialize()"); //$NON-NLS-1$
-			System.out.println("\tPath: " + containerPath.toString()); //$NON-NLS-1$
-			System.out.println("\tProj: " + project.getProject().getName()); //$NON-NLS-1$
+			LaunchingPlugin.trace("<JRE_CONTAINER> initialize()"); //$NON-NLS-1$
+			LaunchingPlugin.trace("\tPath: " + containerPath.toString()); //$NON-NLS-1$
+			LaunchingPlugin.trace("\tProj: " + project.getProject().getName()); //$NON-NLS-1$
 		}
 		int size = containerPath.segmentCount();
 		if (size > 0) {
@@ -58,23 +58,23 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				JREContainer container = null;
 				if (vm != null) {
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
+						LaunchingPlugin.trace("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
 					}
 					container = new JREContainer(vm, containerPath, project);
 				} else {
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
+						LaunchingPlugin.trace("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
 					}
 				}
 				JavaCore.setClasspathContainer(containerPath, new IJavaProject[] {project}, new IClasspathContainer[] {container}, null);
 			} else {
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-					System.out.println("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
+					LaunchingPlugin.trace("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
 				}	
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-				System.out.println("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
+				LaunchingPlugin.trace("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -95,25 +95,25 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				IClasspathContainer[] containers = new JREContainer[length];
 				if (vm != null) {
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
+						LaunchingPlugin.trace("\tResolved VM: " + vm.getName()); //$NON-NLS-1$
 					}
 					for (int i=0; i<length; i++) {
 						containers[i] = new JREContainer(vm, containerPath, projects[i]);
 					}
 				} else {
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
+						LaunchingPlugin.trace("\t*** FAILED RESOLVE VM ***"); //$NON-NLS-1$
 					}
 				}
 				JavaCore.setClasspathContainer(containerPath, projects, containers, null);
 			} else {
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-					System.out.println("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
+					LaunchingPlugin.trace("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
 				}	
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-				System.out.println("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
+				LaunchingPlugin.trace("\t*** NO SEGMENTS IN CONTAINER PATH ***"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -131,8 +131,8 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			String id = getExecutionEnvironmentId(containerPath);
 			if (id != null) {
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-					System.out.println("<JRE_CONTAINER> resolveVM(IPath)"); //$NON-NLS-1$
-					System.out.println("\tEE: " + id); //$NON-NLS-1$
+					LaunchingPlugin.trace("<JRE_CONTAINER> resolveVM(IPath)"); //$NON-NLS-1$
+					LaunchingPlugin.trace("\tEE: " + id); //$NON-NLS-1$
 				}
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				IExecutionEnvironment environment = manager.getEnvironment(id);
@@ -140,7 +140,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					vm = resolveVM(environment);
 				} else {
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\t*** NO ENVIRONMENT ***"); //$NON-NLS-1$
+						LaunchingPlugin.trace("\t*** NO ENVIRONMENT ***"); //$NON-NLS-1$
 					}
 				}
 			} else {
@@ -168,21 +168,21 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	 */
 	public static IVMInstall resolveVM(IExecutionEnvironment environment) {
 		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-			System.out.println("<JRE_CONTAINER> resolveVM(IExecutionEnvironment)"); //$NON-NLS-1$
+			LaunchingPlugin.trace("<JRE_CONTAINER> resolveVM(IExecutionEnvironment)"); //$NON-NLS-1$
 		}
 		IVMInstall vm = environment.getDefaultVM();
 		if (vm == null) {
 			IVMInstall[] installs = environment.getCompatibleVMs();
 			// take the first strictly compatible VM if there is no default
 			if (installs.length == 0 && LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-				System.out.println("\t*** NO COMPATIBLE VMS ***"); //$NON-NLS-1$
+				LaunchingPlugin.trace("\t*** NO COMPATIBLE VMS ***"); //$NON-NLS-1$
 			}
 			for (int i = 0; i < installs.length; i++) {
 				IVMInstall install = installs[i];
 				if (environment.isStrictlyCompatible(install)) {
 					vm = install;
 					if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-						System.out.println("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
+						LaunchingPlugin.trace("\tPerfect Match: " + vm.getName()); //$NON-NLS-1$
 					}
 					break;
 				}
@@ -195,12 +195,12 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			if (vm == null && installs.length > 0) {
 				vm = installs[0];
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-					System.out.println("\tFirst Match: " + vm.getName()); //$NON-NLS-1$
+					LaunchingPlugin.trace("\tFirst Match: " + vm.getName()); //$NON-NLS-1$
 				}
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
-				System.out.println("\tUser Default VM: " + vm.getName()); //$NON-NLS-1$
+				LaunchingPlugin.trace("\tUser Default VM: " + vm.getName()); //$NON-NLS-1$
 			}
 		}
 		return vm;
