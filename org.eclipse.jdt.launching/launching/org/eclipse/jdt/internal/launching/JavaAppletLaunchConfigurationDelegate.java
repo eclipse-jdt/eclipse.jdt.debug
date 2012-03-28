@@ -16,7 +16,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -24,11 +23,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -36,6 +37,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -108,47 +110,52 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * @return the new HTML file
 	 */
 	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
-		FileWriter writer = null;
+		FileOutputStream stream = null;
 		File tempFile = null;
 		try {
+			String encoding = getLaunchManager().getEncoding(configuration);
 			String name = getAppletMainTypeName(configuration);
-			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ 
-			writer = new FileWriter(tempFile);
-			writer.write("<html>\n"); //$NON-NLS-1$
-			writer.write("<body>\n"); //$NON-NLS-1$
-			writer.write("<applet code="); //$NON-NLS-1$
-			writer.write(name);
-			writer.write(".class "); //$NON-NLS-1$
+			StringBuffer buf = new StringBuffer();
+			buf.append("<html>\n"); //$NON-NLS-1$
+			buf.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + encoding + "\"/>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append("<body>\n"); //$NON-NLS-1$
+			buf.append("<applet code="); //$NON-NLS-1$
+			buf.append(name);
+			buf.append(".class "); //$NON-NLS-1$
 			String appletName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
 			if (appletName.length() != 0) {
-				writer.write("NAME =\"" + appletName + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append("NAME =\"" + appletName + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			writer.write("width=\""); //$NON-NLS-1$
-			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200))); 
-			writer.write("\" height=\""); //$NON-NLS-1$
-			writer.write(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200))); 
-			writer.write("\" >\n"); //$NON-NLS-1$
+			buf.append("width=\""); //$NON-NLS-1$
+			buf.append(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, 200)));
+			buf.append("\" height=\""); //$NON-NLS-1$
+			buf.append(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200)));
+			buf.append("\" >\n"); //$NON-NLS-1$
 			Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<String, String>());
 			if (parameters.size() != 0) {
-				Iterator<Entry<String, String>> iterator= parameters.entrySet().iterator();
-				while(iterator.hasNext()) {
-		 			Entry<String, String> next = iterator.next();
-					writer.write("<param name="); //$NON-NLS-1$
-					writer.write(getQuotedString(next.getKey()));
-					writer.write(" value="); //$NON-NLS-1$
-					writer.write(getQuotedString(next.getValue()));
-					writer.write(">\n"); //$NON-NLS-1$
+				Iterator<Entry<String, String>> iterator = parameters.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry<String, String> next = iterator.next();
+					buf.append("<param name="); //$NON-NLS-1$
+					buf.append(getQuotedString(next.getKey()));
+					buf.append(" value="); //$NON-NLS-1$
+					buf.append(getQuotedString(next.getValue()));
+					buf.append(">\n"); //$NON-NLS-1$
 				}
 			}
-			writer.write("</applet>\n"); //$NON-NLS-1$
-			writer.write("</body>\n"); //$NON-NLS-1$
-			writer.write("</html>\n"); //$NON-NLS-1$
+			buf.append("</applet>\n"); //$NON-NLS-1$
+			buf.append("</body>\n"); //$NON-NLS-1$
+			buf.append("</html>\n"); //$NON-NLS-1$
+
+			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$
+			stream = new FileOutputStream(tempFile);
+			stream.write(buf.toString().getBytes(encoding));
 		} catch(IOException e) {
 		} catch(CoreException e) {
 		} finally {
-			if (writer != null) {
+			if (stream != null) {
 				try {
-					writer.close();
+					stream.close();
 				} catch(IOException e) {
 				}
 			}
@@ -156,14 +163,53 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		
 		return tempFile;
 	}
-	
+
 	private String getQuotedString(String string) {
-		if (string.indexOf('"') == -1) {
+		int singleQuotes = count(string, '\'');
+		int doubleQuotes = count(string, '"');
+		if (doubleQuotes == 0)
 			return '"' + string + '"';
-		} 
-		return '\'' + string + '\'';
+		else if (singleQuotes == 0)
+			return '\'' + string + '\'';
+		else
+			return '"' + convertToHTMLContent(string) + '"';
 	}
 	
+	private static int count(String string, char character) {
+		int count = 0;
+		for (int i = 0; i < string.length(); i++) {
+			if (string.charAt(i) == character)
+				count++;
+		}
+		return count;
+	}
+
+	private static String convertToHTMLContent(String content) {
+		content = replace(content, '"', "&quot;"); //$NON-NLS-1$
+		content = replace(content, '\'', "&#39;"); //$NON-NLS-1$
+		return content;
+	}
+
+	private static String replace(String text, char c, String s) {
+
+		int previous = 0;
+		int current = text.indexOf(c, previous);
+
+		if (current == -1)
+			return text;
+
+		StringBuffer buffer = new StringBuffer();
+		while (current > -1) {
+			buffer.append(text.substring(previous, current));
+			buffer.append(s);
+			previous = current + 1;
+			current = text.indexOf(c, previous);
+		}
+		buffer.append(text.substring(previous));
+
+		return buffer.toString();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
