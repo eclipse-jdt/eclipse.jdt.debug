@@ -1493,7 +1493,7 @@
                enablesFor="1"
                helpContextId="breakpoint_properties_action_context"
                id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointProperties"
-               label="%JavaBreakpointProperties.label"
+               label="%JavaBreakpointViewProperties.label"
                menubarPath="additions">
          </action>
       </objectContribution>
