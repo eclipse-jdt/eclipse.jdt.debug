@@ -31,10 +31,19 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.osgi.service.prefs.BackingStoreException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -50,16 +59,22 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.BundleDefaultsScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
@@ -78,16 +93,10 @@ import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.internal.launching.VMListener;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
+
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.osgi.util.NLS;
-import org.osgi.service.prefs.BackingStoreException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * The central access point for launching support. This class manages
@@ -904,7 +913,8 @@ public final class JavaRuntime {
 						return entries;
 					}
 				} else {
-					// could not resolve project
+					if (isOptional(entry.getClasspathEntry()))
+						return new IRuntimeClasspathEntry[] {};
 					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null);
 				}
 				break;
@@ -927,14 +937,14 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.ARCHIVE:
 				// verify the archive exists
 				String location = entry.getLocation();
-				if (location == null) {
-					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null);
+				if (location != null) {
+					File file = new File(location);
+					if (file.exists())
+						break;
 				}
-				File file = new File(location);
-				if (!file.exists()) {
-					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null);
-				}
-				break;
+				if (isOptional(entry.getClasspathEntry()))
+					return new IRuntimeClasspathEntry[] {};
+				abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[] { entry.getPath().toString() }), null);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
 				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
@@ -943,7 +953,17 @@ public final class JavaRuntime {
 		}
 		return new IRuntimeClasspathEntry[] {entry};
 	}
-	
+
+	private static boolean isOptional(IClasspathEntry entry) {
+		IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
+		for (int i = 0, length = extraAttributes.length; i < length; i++) {
+			IClasspathAttribute attribute = extraAttributes[i];
+			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && "true".equals(attribute.getValue())) //$NON-NLS-1$
+				return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Default resolution for a classpath variable - resolve to an archive. Only
 	 * one of project/configuration can be non-null.
