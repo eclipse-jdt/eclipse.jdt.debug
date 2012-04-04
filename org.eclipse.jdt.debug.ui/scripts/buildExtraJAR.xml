@@ -35,6 +35,7 @@
 			includeAntRuntime="no"
 			classpath="${basedir}/bin">
 			<src path="Snippet Support/"/>
+			<compilerarg value="-warn:-resource"/>
 		</javac>
 		<mkdir dir="${build.result.folder}"/>
 		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${destdir}"/>
