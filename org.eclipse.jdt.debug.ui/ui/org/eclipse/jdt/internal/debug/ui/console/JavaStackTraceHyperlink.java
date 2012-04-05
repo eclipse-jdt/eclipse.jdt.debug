@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,14 +39,15 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * A hyperlink from a stack trace line of the form "*(*.java:*)"
+ * A hyper-link from a stack trace line of the form "*(*.java:*)"
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
 	
 	private TextConsole fConsole;
 
 	/**
-	 * Constructor for JavaStackTraceHyperlink.
+	 * Constructor
+	 * @param console the {@link TextConsole} this link detector is attached to
 	 */
 	public JavaStackTraceHyperlink(TextConsole console) {
 		fConsole = console;
@@ -90,6 +91,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 * Starts a search for the type with the given name. Reports back to 'searchCompleted(...)'.
 	 * 
 	 * @param typeName the type to search for
+	 * @param lineNumber the line number to open the editor on
 	 */
 	protected void startSourceSearch(final String typeName, final int lineNumber) {
 		Job search = new Job(ConsoleMessages.JavaStackTraceHyperlink_2) {
@@ -98,12 +100,14 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				ILaunch launch = getLaunch();
 				Object result = null;
 				try {
-					if (launch != null) {
+					// search for the type in the workspace
+					result = OpenTypeAction.findTypeInWorkspace(typeName, true);
+					if (result == null && launch != null) {
 						result = JavaDebugUtils.resolveSourceElement(JavaDebugUtils.generateSourceName(typeName), getLaunch());
 					}
 					if (result == null) {
-						// search for the type in the workspace
-						result = OpenTypeAction.findTypeInWorkspace(typeName);
+						// search for any type in the workspace
+						result = OpenTypeAction.findTypeInWorkspace(typeName, false);
 					}
 					searchCompleted(result, typeName, lineNumber, null);
 				} catch (CoreException e) {
@@ -116,6 +120,14 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		search.schedule();
 	}
 	
+	/**
+	 * Reported back to from {@link JavaStackTraceHyperlink#startSourceSearch(String, int)} when results are found
+	 * 
+	 * @param source the source object
+	 * @param typeName the fully qualified type name
+	 * @param lineNumber the line number in the type
+	 * @param status the error status or <code>null</code> if none
+	 */
 	protected void searchCompleted(final Object source, final String typeName, final int lineNumber, final IStatus status) {
 		UIJob job = new UIJob("link search complete") { //$NON-NLS-1$
 			@Override
@@ -173,10 +185,10 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	}
 
 	/**
-	 * Returns the launch associated with this hyperlink, or
+	 * Returns the launch associated with this hyper-link, or
 	 *  <code>null</code> if none
 	 * 
-	 * @return the launch associated with this hyperlink, or
+	 * @return the launch associated with this hyper-link, or
 	 *  <code>null</code> if none
 	 */
 	private ILaunch getLaunch() {
@@ -189,7 +201,8 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 
 	/**
 	 * Returns the fully qualified name of the type to open
-	 *  
+	 * 
+	 * @param linkText the complete text of the link to be parsed
 	 * @return fully qualified type name
 	 * @exception CoreException if unable to parse the type name
 	 */
@@ -234,6 +247,8 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	/**
 	 * Returns the line number associated with the stack trace or -1 if none.
 	 * 
+	 * @param linkText the complete text of the link to be parsed
+	 * @return the line number for the stack trace or -1 if one cannot be computed or has not been provided
 	 * @exception CoreException if unable to parse the number
 	 */
 	protected int getLineNumber(String linkText) throws CoreException {
@@ -267,6 +282,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	/**
 	 * Returns this link's text
 	 * 
+	 * @return the complete text of the link, never <code>null</code>
 	 * @exception CoreException if unable to retrieve the text
 	 */
 	protected String getLinkText() throws CoreException {

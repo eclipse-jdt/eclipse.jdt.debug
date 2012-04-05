@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -95,7 +96,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 				if (source == null) {
 					//resort to looking through the workspace projects for the
 					//type as the source locators failed.
-					source = findTypeInWorkspace(type.getName());
+					source = findTypeInWorkspace(type.getName(), false);
 				}
 			}
 		}
@@ -133,10 +134,15 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * or <code>null</code> if none.
 	 * 
 	 * @param typeName fully qualified type name
+	 * @param findOnlyUniqueMatch
+	 *            if <code>true</code>, this method only returns a type iff
+	 *            there's only a single match in the workspace, and
+	 *            <code>null</code> otherwise. If <code>false</code>, it returns
+	 *            the first match.
 	 * @return type or <code>null</code>
-	 * @throws JavaModelException
+	 * @throws CoreException if search failed
 	 */
-	public static IType findTypeInWorkspace(String typeName) throws CoreException {
+	public static IType findTypeInWorkspace(String typeName, boolean findOnlyUniqueMatch) throws CoreException {
 		int dot= typeName.lastIndexOf('.');
 		char[][] qualifications;
 		String simpleName;
@@ -149,6 +155,14 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		}
 		char[][] typeNames= new char[][] { simpleName.toCharArray() };
 		
+		if (findOnlyUniqueMatch) {
+			return findUniqueTypeInWorkspace(qualifications, typeNames);
+		}
+		return findAnyTypeInWorkspace(qualifications, typeNames);
+	}
+
+	private static IType findAnyTypeInWorkspace(char[][] qualifications,
+			char[][] typeNames) throws JavaModelException {
 		class ResultException extends RuntimeException {
 			private static final long serialVersionUID= 1L;
 			private final IType fType;
@@ -168,6 +182,26 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			return e.fType;
 		}
 		return null;
+	}
+	
+	private static IType findUniqueTypeInWorkspace(char[][] qualifications,
+			char[][] typeNames) throws JavaModelException {
+		final IType[] result = { null };
+		TypeNameMatchRequestor requestor= new TypeNameMatchRequestor() {
+			public void acceptTypeNameMatch(TypeNameMatch match) {
+				if (result[0] == null) {
+					result[0]= match.getType();
+				} else {
+					throw new OperationCanceledException();
+				}
+			}
+		};
+		try {
+			new SearchEngine().searchAllTypeNames(qualifications, typeNames, SearchEngine.createWorkspaceScope(), requestor, IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+		} catch (OperationCanceledException e) {
+			return null;
+		}
+		return result[0];
 	}
 	
 	
