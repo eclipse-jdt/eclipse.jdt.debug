@@ -56,7 +56,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws JavaModelException
 	 */
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
-		testLocation(lineToTry, expectedLineNumber, expectedTypeName, expectedTypeName);
+		testLocation(lineToTry, expectedLineNumber, expectedTypeName, expectedTypeName, false);
 	}
 	
 	/**
@@ -65,13 +65,14 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @param expectedLineNumber
 	 * @param baseTypeName
 	 * @param expectedTypeName
+	 * @param bestmatch
 	 * @throws JavaModelException
 	 */
-	private void testLocation(int lineToTry, int expectedLineNumber, String baseTypeName, String expectedTypeName) throws JavaModelException {
+	private void testLocation(int lineToTry, int expectedLineNumber, String baseTypeName, String expectedTypeName, boolean bestmatch) throws JavaModelException {
 		IType type= get14Project().findType(baseTypeName);
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, false);
+		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, bestmatch);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getLineLocation();		
 		assertEquals("Wrong line number", expectedLineNumber, lineNumber);
@@ -86,6 +87,115 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
         }
 	}
 
+	/**
+	 * Tests setting a line breakpoint on a final field that is initialized
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl() throws Exception {
+		testLocation(14, 14, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on a final field that is initialized looking for best match
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecla() throws Exception {
+		testLocation(14, 14, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on a final field with an Expression as an initializer
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl2() throws Exception {
+		testLocation(15, 15, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on a final field with an Expression as an initializer looking
+	 * for best match
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl2a() throws Exception {
+		testLocation(15, 15, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on an inner type member for the initializer of 
+	 * a final local field variable
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl3() throws Exception {
+		testLocation(17, 17, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on an inner type member for the initializer of looking
+	 * for best match 
+	 * a final local field variable
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl3a() throws Exception {
+		testLocation(17, 17, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of 
+	 * a final local field variable
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl4() throws Exception {
+		testLocation(20, 20, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on an inner-inner type member for the initializer of 
+	 * a final local field variable looking for best match
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl4a() throws Exception {
+		testLocation(20, 20, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on a final field that has not been initialized
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl5() throws Exception {
+		testLocation(27, 30, "FinalBreakpointLocations");
+	}
+	
+	/**
+	 * Tests setting a line breakpoint on a final field that has not been initialized looking
+	 * for best match
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalFieldWithTypeDecl5a() throws Exception {
+		testLocation(27, 30, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
+	}
+	
 	/**
 	 * Test line before type declaration
 	 * 
@@ -143,6 +253,15 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 */
 	public void testFieldLocationOnFinalField() throws Exception {
 		testLocation(2, 4, "BreakpointsLocationBug344984");
+	}
+	
+	/**
+	 * Tests that a breakpoint is not set on a final field looking 
+	 * for best match
+	 * @throws Exception
+	 */
+	public void testFieldLocationOnFinalFielda() throws Exception {
+		testLocation(2, 4, "BreakpointsLocationBug344984", "BreakpointsLocationBug344984", true);
 	}
 	
 	/**
@@ -232,10 +351,10 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	public void testInnerStaticClass() throws Exception {
 		String version = get14Project().getOption(JavaCore.COMPILER_COMPLIANCE, false);
 		if(JavaCore.VERSION_1_5.equals(version) || JavaCore.VERSION_1_6.equals(version)) {
-			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1StaticInnerClass");
+			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1StaticInnerClass", false);
 		}
 		else {
-			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass");
+			testLocation(79, 79, "BreakpointsLocation", "BreakpointsLocation.1.StaticInnerClass", false);
 		}
 	}
 

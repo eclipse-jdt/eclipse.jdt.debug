@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -720,36 +720,56 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(FieldDeclaration node) {
-		int mods = node.getModifiers();
-		if(Flags.isFinal(mods)) {
-			return false;
-		}
 		if (visit(node, false)) {
 			if (fBestMatch) {
 				// check if the line contains a single field declaration.
 				List<VariableDeclarationFragment> fragments = node.fragments();
 				if (fragments.size() == 1) {
-					int offset = fragments.get(0).getName().getStartPosition();
-					// check if the breakpoint is to be set on the line which
-					// contains the name of the field
-					if (lineNumber(offset) == fLineNumber) {
-						fMemberOffset = offset;
-						fLocationType = LOCATION_FIELD;
-						fLocationFound = true;
-						return false;
+					VariableDeclarationFragment fragment = fragments.get(0);
+					Expression init = fragment.getInitializer();
+					int offset = fragment.getName().getStartPosition();
+					int line = lineNumber(offset);
+					if(Flags.isFinal(node.getModifiers())) {
+						if(init != null) {
+							if (line == fLineNumber && isReplacedByConstantValue(init)) {
+								fMemberOffset = offset;
+								fLineLocation = line;
+								fLocationType = LOCATION_LINE;
+								fLocationFound = true;
+								fTypeName = computeTypeName(node);
+								return false;
+							}
+						}
+						else {
+							//if it is an uninitialized final field, try to find the next executable line
+							return false;
+						}
+					}
+					else {
+						// check if the breakpoint is to be set on the line which
+						// contains the name of the field
+						if (line == fLineNumber) {
+							fMemberOffset = offset;
+							fLocationType = LOCATION_FIELD;
+							fLocationFound = true;
+							return false;
+						}
 					}
 				}
 			}
-			// visit only the variable declaration fragments, no the variable
+			// visit only the variable declaration fragments, not the variable
 			// names.
 			List<VariableDeclarationFragment> fragments = node.fragments();
 			for(VariableDeclarationFragment frag : fragments) {
 				frag.accept(this);
+				if(fLocationFound) {
+					break;
+				}
 			}
 		}
 		return false;
 	}
-
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ForStatement)
 	 */
@@ -1352,10 +1372,10 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			int startLine = lineNumber(node.getName().getStartPosition());
 			if (initializer != null) {
 				if (fLineNumber == startLine) {
-					fLineLocation = startLine;
-					fLocationFound = true;
-					fLocationType = LOCATION_LINE;
-					fTypeName = computeTypeName(node);
+						fLineLocation = startLine;
+						fLocationFound = true;
+						fLocationType = LOCATION_LINE;
+						fTypeName = computeTypeName(node);
 					return false;
 				}
 				initializer.accept(this);
@@ -1364,6 +1384,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				int offset = node.getName().getStartPosition();
 				// check if the breakpoint is to be set on the line which
 				// contains the name of the field
+				ASTNode parent = node.getParent();
+				if(parent.getNodeType() == ASTNode.FIELD_DECLARATION) {
+					//if the parent field is final and we are not initializing, find the next executable line
+					if(Flags.isFinal(((FieldDeclaration)parent).getModifiers())) {
+						return false;
+					}
+				}
 				if (lineNumber(offset) == fLineNumber) {
 					fMemberOffset = offset;
 					fLocationType = LOCATION_FIELD;
