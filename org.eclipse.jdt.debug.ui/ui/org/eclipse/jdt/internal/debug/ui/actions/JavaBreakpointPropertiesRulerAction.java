@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 	 */
 	public JavaBreakpointPropertiesRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		super(editor, info);
-		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1); 
+		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1 + '\t' + ActionMessages.JavaBreakpointPropertiesRulerAction_0); 
 	}
 	/**
 	 * @see Action#run()

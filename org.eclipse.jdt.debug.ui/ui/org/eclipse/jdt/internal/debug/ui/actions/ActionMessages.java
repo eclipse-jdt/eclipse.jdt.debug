@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,8 @@ public class ActionMessages extends NLS {
 	public static String EvaluateAction__evaluation_failed__Reason;
 	public static String EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1;
 	public static String EvaluateAction_Cannot_perform_nested_evaluations__1;
+
+	public static String JavaBreakpointPropertiesRulerAction_0;
 
 	public static String JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1;
 	public static String MoveDownAction_M_ove_Down_1;
