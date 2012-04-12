@@ -38,15 +38,15 @@
    <extension
          point="org.eclipse.debug.core.launchModes">
       <launchMode
-            label="TEST_MODE"
+            label="%launchMode.label"
             mode="TEST_MODE">
       </launchMode>
       <launchMode
-            label="Alternate"
+            label="%launchMode.label.0"
             mode="alternate">
       </launchMode>
       <launchMode
-            label="Alternate 2"
+            label="%launchMode.label.1"
             mode="alternate2">
       </launchMode>
    </extension>
@@ -69,7 +69,7 @@
             delegate="org.eclipse.jdt.debug.testplugin.AlternateDelegate"
             id="org.eclipse.jdt.debug.tests.alternateDelegate"
             modes="alternate"
-            name="Alternate Java Debugger"
+            name="%launchDelegate.name"
             type="org.eclipse.jdt.launching.localJavaApplication">
          <modeCombination
                modes="alternate, debug">
@@ -85,14 +85,14 @@
             delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate1"
             id="org.eclipse.jdt.debug.tests.testDelegate1"
             modes="alternate2"
-            name="Testing Multiple Launch Delegate"
+            name="%launchDelegate.name.0"
             type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
       <launchDelegate
             delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate2"
             id="org.eclipse.jdt.debug.tests.testtDelegate2"
             modes="alternate2"
-            name="Testing Multiple Launch Delegate 2"
+            name="%launchDelegate.name.1"
             type="org.eclipse.jdt.launching.localJavaApplication">
       </launchDelegate>
    </extension>
@@ -113,21 +113,21 @@
       <variable
             initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
             name="VALUE_VAR_WITH_INITIALIZER"
-            description="sample value variable">
+            description="%variable.description">
       </variable>
       <variable
             initialValue="initial-value"
             name="VALUE_VAR_WITH_VALUE"
-            description="sample value variable">
+            description="%variable.description.0">
       </variable>
       <variable
-            description="sample value variable"
+            description="%variable.description.1"
             initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
             name="VALUE_VAR_WITH_INITIALIZER_READ_ONLY"
             readOnly="true">
       </variable>
       <variable
-            description="sample value variable"
+            description="%variable.description.2"
             initialValue="initial-value"
             name="VALUE_VAR_WITH_VALUE_READ_ONLY"
             readOnly="true">
@@ -137,20 +137,20 @@
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="SAMPLE_DYNAMIC_VAR"
-            description="sample dynamic variable"
+            description="%variable.description.3"
             resolver="org.eclipse.jdt.debug.testplugin.SampleDynamicVariableResolver">
       </variable>
    </extension>
    <extension
          id="messageConsoleActionSet"
-         name="Message Console Test"
+         name="%extension.name"
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="Message Console Test"
-            description="Tests the message (generic) console"
+            label="%actionSet.label"
+            description="%actionSet.description"
             id="org.eclipse.jdt.debug.tests.messageConsoleActionSet">
          <menu
-               label="Run"
+               label="%menu.label"
                path="additions"
                id="org.eclipse.ui.run">
             <separator
@@ -158,49 +158,49 @@
             </separator>
          </menu>
          <action
-               label="Test Bufferred Output"
+               label="%action.label"
                class="org.eclipse.jdt.debug.tests.console.TestBufferredOutputActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testBufferredOutputAction">
          </action>
          <action
-               label="Test Message Console"
+               label="%action.label.0"
                class="org.eclipse.jdt.debug.tests.console.TestMessageConsoleActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testMessageConsoleAction">
          </action>
          <action
-               label="Test Show Console"
+               label="%action.label.1"
                class="org.eclipse.jdt.debug.tests.console.TestShowConsoleActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testShowConsoleAction">
          </action>         
       </actionSet>
       <actionSet
-            label="IO Console Tests"
-            description="Test the generic IOConsole"
+            label="%actionSet.label.0"
+            description="%actionSet.description.0"
             id="org.eclipse.jdt.debug.tests.ioConsoleTest">
          <menu
-               label="Run"
+               label="%menu.label.0"
                path="additions"
                id="org.eclipse.ui.run"/>
          <action
-               label="IOConsole Echo Test"
+               label="%action.label.2"
                class="org.eclipse.jdt.debug.tests.console.IOConsoleEchoActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.echoTest"/>
          <action
-               label="IOConsole Multiple Stream Test"
+               label="%action.label.3"
                class="org.eclipse.jdt.debug.tests.console.IOConsoleMultipleStreamActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.outputTest"/>
          <action
-               label="IOConsole Output Test"
+               label="%action.label.4"
                class="org.eclipse.jdt.debug.tests.console.IOConsoleOutputActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.outputTest"/>
          <action
-               label="IOConsole Hyperlink Test"
+               label="%action.label.5"
                class="org.eclipse.jdt.debug.tests.console.IOConsoleHyperlinkActionDelegate"
                menubarPath="org.eclipse.ui.run/IOConsoleTestGroup"
                id="org.eclipse.jdt.debug.tests.hyperlinkTest"/>
@@ -210,7 +210,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="Test Config Type"
+            name="%launchConfigurationType.name"
             delegate="org.eclipse.jdt.debug.testplugin.launching.TestLaunchDelegate"
             modes="run"
             id="org.eclipse.jdt.debug.tests.testConfigType">
@@ -231,7 +231,7 @@
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
             class="org.eclipse.jdt.debug.testplugin.TestSourceLocator"
-            name="Test Source Locator"
+            name="%sourceLocator.name"
             id="org.eclipse.jdt.debug.tests.testSourceLocator"/>
    </extension>
    <extension
@@ -249,23 +249,23 @@
    <extension
          point="org.eclipse.jdt.launching.executionEnvironments">
       <environment
-            description="Java 2 Platform, Test Edition 1.4.x"
+            description="%environment.description"
             id="org.eclipse.jdt.debug.tests.environment.j2se14x"
             ruleParticipant="org.eclipse.jdt.debug.testplugin.AccessRuleParticipant"/>
       <environment
-            description="Java 2 Platform, Test Edition 1.3.x"
+            description="%environment.description.0"
             id="org.eclipse.jdt.debug.tests.environment.j2se13x"/>
       <ruleParticipant
             class="org.eclipse.jdt.debug.testplugin.SecondaryAccessRuleParticipant"
             id="org.eclipse.jdt.debug.tests.secondaryRuleParticipant">
       </ruleParticipant>
       <environment
-            description="Java 2 Platform, Test Edition 1.5.x"
+            description="%environment.description.1"
             id="org.eclipse.jdt.debug.tests.environment.j2se15x"
             ruleParticipant="org.eclipse.jdt.debug.testplugin.AccessRuleParticipant">
       </environment>
       <environment
-            description="Test default system package access rules"
+            description="%environment.description.2"
             id="org.eclipse.jdt.debug.tests.systemPackages"
             profileProperties="testresources/systempackage.profile">
       </environment>
@@ -275,11 +275,11 @@
       <view
             class="org.eclipse.jdt.debug.testplugin.ContextView"
 			id="org.eclipse.jdt.debug.tests.context.view.one"
-            name="Java Debug Context View 1"/>
+            name="%view.name"/>
       <view
             class="org.eclipse.jdt.debug.testplugin.ContextView"
             id="org.eclipse.jdt.debug.tests.context.view.two"
-            name="Java Debug Context View 2"/>
+            name="%view.name.0"/>
    </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">
@@ -338,10 +338,10 @@
      <shortcut
            category="testing"
            class="org.eclipse.jdt.debug.testplugin.launching.TestLaunchShortcut"
-           description="General Description"
+           description="%shortcut.description"
            helpContextId="testing.help.id"
            id="org.eclipse.jdt.debug.tests.testShortCut"
-           label="Test Shortcut"
+           label="%shortcut.label"
            modes="run, debug"
            path="test/testing">
         <perspective
@@ -351,30 +351,30 @@
               id="org.eclipse.jdt.launching.localJavaApplication">
         </configurationType>
         <description
-              description="Run Description"
+              description="%description.description"
               mode="run">
         </description>
      </shortcut>
      <shortcut
            class="org.eclipse.jdt.debug.testplugin.launching.ParticipantLaunchShortcut"
-           description="This shortcut participates in luanching where there is no IResource"
+           description="%shortcut.description.0"
            id="org.eclipse.jdt.debug.tests.participantShortcut"
-           label="Participant Launch Shortcut"
+           label="%shortcut.label.0"
            modes="run, debug, profile">
         <configurationType
               id="org.eclipse.jdt.debug.tests.testConfigType">
         </configurationType>
         <contextualLaunch>
            <contextLabel
-                 label="Run FOOX file"
+                 label="%contextLabel.label"
                  mode="run">
            </contextLabel>
            <contextLabel
-                 label="Debug FOOX file"
+                 label="%contextLabel.label.0"
                  mode="debug">
            </contextLabel>
            <contextLabel
-                 label="Profile FOOX file"
+                 label="%contextLabel.label.1"
                  mode="profile">
            </contextLabel>
            <enablement>
@@ -442,7 +442,7 @@
         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
      <launchConfigurationTabGroup
            class="org.eclipse.jdt.debug.testplugin.launching.TestTabGroup"
-           description="Test Tab Group"
+           description="%launchConfigurationTabGroup.description"
            id="org.eclipse.jdt.debug.tests.testTabGroup"
            type="org.eclipse.jdt.debug.tests.testConfigType">
      </launchConfigurationTabGroup>
