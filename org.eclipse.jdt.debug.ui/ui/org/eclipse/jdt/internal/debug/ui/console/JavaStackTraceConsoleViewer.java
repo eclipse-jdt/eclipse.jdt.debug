@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.jface.text.ITextOperationTarget;
+
+import org.eclipse.ui.console.TextConsoleViewer;
+
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
  * provides the viewer for Java stack trace consoles
@@ -33,6 +38,7 @@ public class JavaStackTraceConsoleViewer extends TextConsoleViewer {
 	public JavaStackTraceConsoleViewer(Composite parent, JavaStackTraceConsole console) {
 		super(parent, console);
 		fConsole = console;
+		getTextWidget().setOrientation(SWT.LEFT_TO_RIGHT);
 		
 		IPreferenceStore fPreferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
         fAutoFormat = fPreferenceStore.getBoolean(IJDIPreferencesConstants.PREF_AUTO_FORMAT_JSTCONSOLE);
