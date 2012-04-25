@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+    <dict>
+        <key>JVMArch</key>
+        <string>x86_64</string>
+        <key>JVMBundleID</key>
+        <string>com.apple.javajdk16</string>
+        <key>JVMEnabled</key>
+        <true/>
+        <key>JVMHomePath</key>
+       
+<string>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <true/>
+        <key>JVMName</key>
+        <string>Java SE 6</string>
+        <key>JVMPlatformVersion</key>
+        <string>1.6</string>
+        <key>JVMVendor</key>
+        <string>Apple Inc.</string>
+        <key>JVMVersion</key>
+        <string>1.6.0_31-b04-413</string>
+    </dict>
+    <dict>
+        <key>JVMArch</key>
+        <string>i386</string>
+        <key>JVMBundleID</key>
+        <string>com.apple.javajdk16</string>
+        <key>JVMEnabled</key>
+        <true/>
+        <key>JVMHomePath</key>
+       
+<string>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <true/>
+        <key>JVMName</key>
+        <string>Java SE 6</string>
+        <key>JVMPlatformVersion</key>
+        <string>1.6</string>
+        <key>JVMVendor</key>
+        <string>Apple Inc.</string>
+        <key>JVMVersion</key>
+        <string>1.6.0_31-b04-413</string>
+    </dict>
+</array>
+</plist>

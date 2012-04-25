@@ -86,4 +86,31 @@ public class PListParserTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testParseLionJREs() throws Exception {
+		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-lion.xml"));
+		assertNotNull(file);
+		assertEquals(true, file.exists());
+		Object obj = new PListParser().parse(new FileInputStream(file));
+		if (obj instanceof Object[]) {
+			Object[] jres = (Object[]) obj;
+			assertEquals("Should be 8 entries in the array", 8, jres.length);
+			
+		} else {
+			assertTrue("Top level object should be an array", false);
+		}
+	}
+	
+	public void testParseSnowLeopardJREs() throws Exception {
+		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-snowleopard.xml"));
+		assertNotNull(file);
+		assertEquals(true, file.exists());
+		Object obj = new PListParser().parse(new FileInputStream(file));
+		if (obj instanceof Object[]) {
+			Object[] jres = (Object[]) obj;
+			assertEquals("Should be 2 entries in the array", 2, jres.length);
+			
+		} else {
+			assertTrue("Top level object should be an array", false);
+		}
+	}
 }
