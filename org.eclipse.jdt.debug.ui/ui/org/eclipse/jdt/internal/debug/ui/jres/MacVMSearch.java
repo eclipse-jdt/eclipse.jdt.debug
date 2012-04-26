@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.MacInstalledJREs;
@@ -55,8 +53,7 @@ public class MacVMSearch {
 			for (int i = 0; i < descriptors.length; i++) {
 				JREDescriptor descriptor = descriptors[i];
 				String name = descriptor.getName();
-				IPath path= new Path(descriptor.getHome().getAbsolutePath());
-				String id= path.segment(path.segmentCount() - 2); // ID is the second last segment in the install path (e.g. 1.5.0)
+				String id= descriptor.getId();
 				try {
 					File home= descriptor.getHome();
 					if (home.exists()) {

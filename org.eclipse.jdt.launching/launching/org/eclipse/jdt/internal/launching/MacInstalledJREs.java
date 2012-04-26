@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,15 +38,22 @@ public class MacInstalledJREs {
 	private static final String PLIST_JVM_NAME = "JVMName"; //$NON-NLS-1$
 	/** The plist attribute describing the JRE version */
 	private static final String PLIST_JVM_VERSION = "JVMVersion"; //$NON-NLS-1$
+	/**
+	 * The plist attribute describing the bundle id of the VM
+	 * @since 3.8
+	 */
+	private static final String PLIST_JVM_BUNDLE_ID = "JVMBundleID"; //$NON-NLS-1$
+	
+	static final JREDescriptor[] NO_DESCRIPTORS = new JREDescriptor[0];
 	
 	/**
 	 * Describes an installed JRE on MacOS
 	 */
 	public class JREDescriptor {
-		
 		String fName;
 		File fHome;
 		String fVersion;
+		String fId;
 		
 		/**
 		 * Constructs a new JRE descriptor 
@@ -54,11 +61,13 @@ public class MacInstalledJREs {
 		 * @param home Home directory of the JRE
 		 * @param name JRE name
 		 * @param version JRE version
+		 * @param id the computed id of the JRE from the plist output
 		 */
-		public JREDescriptor(File home, String name, String version) {
+		public JREDescriptor(File home, String name, String version, String id) {
 			fHome = home;
 			fName = name;
 			fVersion = version;
+			fId = id;
 		}
 		
 		/**
@@ -88,11 +97,21 @@ public class MacInstalledJREs {
 			return fVersion;
 		}
 		
+		/**
+		 * returns the computed id of the descriptor
+		 * 
+		 * @return the descriptor id
+		 * @since 3.8
+		 */
+		public String getId() {
+			return fId;
+		}
+		
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof JREDescriptor) {
 				JREDescriptor jre = (JREDescriptor) obj;
-				return jre.fHome.equals(fHome) && jre.fName.equals(fName) && jre.fVersion.equals(fVersion);
+				return jre.fHome.equals(fHome) && jre.fName.equals(fName) && jre.fVersion.equals(fVersion) && fId.equals(jre.fId);
 			}
 			return false;
 		}
@@ -167,26 +186,33 @@ public class MacInstalledJREs {
 						Object name = map.get(PLIST_JVM_NAME);
 						Object version = map.get(PLIST_JVM_VERSION);
 						if (home instanceof String && name instanceof String && version instanceof String) {
-							JREDescriptor descriptor = new JREDescriptor(new File((String)home), (String)name, (String)version);
+							String ver = (String) version;
+							JREDescriptor descriptor = new JREDescriptor(new File((String)home), (String)name, (String)version, computeId(map, ver));
 							if (!jres.contains(descriptor)) { // remove duplicates
 								jres.add(descriptor);	
 							}
-						} else {
-							unexpectedFormat();
-						}
-					} else {
-						unexpectedFormat();
-					}
+						} 
+					} 
 				}
 				return jres.toArray(new JREDescriptor[jres.size()]);
 			}
-			unexpectedFormat();
 		}
-		unexpectedFormat();
-		return null; // previous line will throw an exception
+		return NO_DESCRIPTORS;
 	}
 	
-	private void unexpectedFormat() throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), "Output from java_home not in expected format")); //$NON-NLS-1$
-	}
+	/**
+	 * Tries to compute the descriptor id using the {@link #PLIST_JVM_BUNDLE_ID}. If that is not defined
+	 * we fall back to using the version.
+	 * @param map the map to look up the VM bundle version in
+	 * @param version the current version - fall-back for no VM bundle id defined
+	 * @return the id to use for the {@link JREDescriptor}
+	 * @since 3.8
+	 */
+	String computeId(Map<?, ?> map, String version) {
+		Object o = map.get(PLIST_JVM_BUNDLE_ID);
+		if(o instanceof String) {
+			return (String) o;
+		}
+		return version;
+ 	}
 }
