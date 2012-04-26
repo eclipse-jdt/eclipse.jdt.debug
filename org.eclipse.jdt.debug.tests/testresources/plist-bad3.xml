@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+    <dict>
+        <key>JVMArch</key>
+        <string>x86_64</string>
+        <key>JVMBundleID</key>
+        <string>com.apple.javajdk16</string>
+        <key>JVMEnabled</key>
+        <true/
+        <key>JVMHomePath</key>
+        <string>/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <true/>
+        <true/>
+        <key>JVMPlatformVersion</key>
+        <string>1.6</string>
+        <key>JVMVendor</key>
+        <string>Apple Inc.</string>
+        <key>JVMVersion</key>
+        <string>1.6.0_29-b11-402</string>
+    </dict>
+    <dict>
+        <key>JVMArch</key>
+        <string>x86_64</string>
+        <key>JVMBundleID</key>
+        <string>net.java.openjdk</string>
+        <key>JVMEnabled</key>
+        <true/>
+        <key>JVMHomePath</key>
+        <string>/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <false/>
+        <key>JVMName</key>
+        <string>OpenJDK 7</string>
+        <key>JVMPlatformVersion</key>
+        <string>1.7</string>
+        <key>JVMVendor</key>
+        <string>openjdk-osx-build project</string>
+        <key>JVMVersion</key>
+        <string>1.7.0</string>
+    </dict>
+    <dict>
+        <key>JVMArch</key>
+        <string>x86_64</string>
+        <key>JVMBundleID</key>
+        <string>com.apple.javajdk.1.6.0_29-b11-402</string>
+        <key>JVMEnabled</key>
+        <true/>
+        <key>JVMHomePath</key>
+        <string>/Library/Java/JavaVirtualMachines/1.6.0_29-b11-402.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <false/>
+        <key>JVMName</key>
+        <string>Java SE 6</string>
+        <key>JVMPlatformVersion</key>
+        <string>1.6</string>
+        <key>JVMVendor</key>
+        <string>Apple Inc.</string>
+        <key>JVMVersion</key>
+        <string>1.6.0_29-b11-402</string>
+    </dict>
+    <dict>
+        <key>JVMArch</key>
+        <string>x86_64</string>
+        <key>JVMBundleID</key>
+        <string></string>
+        <key>JVMEnabled</key>
+        <true/>
+        <key>JVMHomePath</key>
+        <string>/Library/Java/JavaVirtualMachines/JDK 1.7.0 Developer Preview.jdk/Contents/Home</string>
+        <key>JVMIsBuiltIn</key>
+        <false/>
+        <key>JVMName</key>
+        <string>Java SE 7 Developer Preview</string>
+        <key>JVMPlatformVersion</key>
+        <string>1.7</string>
+        <key>JVMVendor</key>
+        <string>Oracle Corporation</string>
+        <key>JVMVersion</key>
+        <string>1.7.0-ea-b213</string>
+    </dict>
+</array>
+</plist>

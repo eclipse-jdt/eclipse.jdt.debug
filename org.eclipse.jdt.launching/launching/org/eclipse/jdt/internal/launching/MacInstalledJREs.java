@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +175,21 @@ public class MacInstalledJREs {
 		}
 		if (text != null && text.length() > 0) {
 			ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
+			return parseJREInfo(stream);
+		}
+		return NO_DESCRIPTORS;
+	}
+	
+	/**
+	 * Parse {@link JREDescriptor}s from the given input stream. The stream is expected to be in the 
+	 * XML properties format.
+	 * 
+	 * @param stream
+	 * @return the array of {@link JREDescriptor}s or an empty array never <code>null</code>
+	 * @since 3.8
+	 */
+	public JREDescriptor[] parseJREInfo(InputStream stream) {
+		try {
 			Object result = new PListParser().parse(stream);
 			if (result instanceof Object[]) {
 				Object[] maps = (Object[]) result;
@@ -196,6 +212,9 @@ public class MacInstalledJREs {
 				}
 				return jres.toArray(new JREDescriptor[jres.size()]);
 			}
+		}
+		catch(CoreException ce) {
+			//do nothing fall through and return no descriptors
 		}
 		return NO_DESCRIPTORS;
 	}
