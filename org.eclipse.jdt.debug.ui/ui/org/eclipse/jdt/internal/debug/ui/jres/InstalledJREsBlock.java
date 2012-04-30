@@ -784,11 +784,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				Iterator<Object> iterator = fVMs.iterator();
 				while (iterator.hasNext()) {
 					IVMInstall vm = (IVMInstall) iterator.next();
-					exists.add(vm.getId());
+					exists.add(vm.getInstallLocation().getPath());
 				}
 				VMStandin[] standins = new MacVMSearch().search(monitor);
 				for (int i = 0; i < standins.length; i++) {
-					if (!exists.contains(standins[i].getId())) {
+					//we should be comparing install paths, as the ID can be computed differently 
+					//based on if the VM is searched or added manually
+					if (!exists.contains(standins[i].getInstallLocation().getPath())) {
 						added.add(standins[i]);
 					}
 				}
