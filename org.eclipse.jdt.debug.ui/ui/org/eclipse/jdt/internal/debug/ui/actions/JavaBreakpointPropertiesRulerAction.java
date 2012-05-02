@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.actions.RulerBreakpointAction;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -38,7 +40,7 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 	 */
 	public JavaBreakpointPropertiesRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		super(editor, info);
-		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1 + '\t' + ActionMessages.JavaBreakpointPropertiesRulerAction_0); 
+		setText(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1 + '\t' + DebugUIPlugin.formatKeyBindingString(SWT.MOD1, ActionMessages.JavaBreakpointPropertiesRulerAction_0)); 
 	}
 	/**
 	 * @see Action#run()
