@@ -212,9 +212,8 @@ public class MacInstalledJREs {
 				}
 				return jres.toArray(new JREDescriptor[jres.size()]);
 			}
-		}
-		catch(CoreException ce) {
-			//do nothing fall through and return no descriptors
+		} catch (CoreException ce) {
+			LaunchingPlugin.log(ce);
 		}
 		return NO_DESCRIPTORS;
 	}

@@ -97,7 +97,9 @@ public class PListParser {
 	 */
 	private Object parseXML(InputStream stream) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
-		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+		DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) { 
