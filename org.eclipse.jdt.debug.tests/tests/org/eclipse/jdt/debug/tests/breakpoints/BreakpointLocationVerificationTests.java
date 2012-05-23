@@ -252,7 +252,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalField() throws Exception {
-		testLocation(2, 4, "BreakpointsLocationBug344984");
+		testLocation(12, 14, "BreakpointsLocationBug344984");
 	}
 	
 	/**
@@ -261,7 +261,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalFielda() throws Exception {
-		testLocation(2, 4, "BreakpointsLocationBug344984", "BreakpointsLocationBug344984", true);
+		testLocation(12, 14, "BreakpointsLocationBug344984", "BreakpointsLocationBug344984", true);
 	}
 	
 	/**
