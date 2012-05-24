@@ -11,10 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui;
 
  
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -147,24 +145,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, space);
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		int minValue = Platform.getPreferencesService().getInt(
-				JDIDebugPlugin.getUniqueIdentifier(),
-				JDIDebugModel.PREF_REQUEST_TIMEOUT, 
-				JDIDebugModel.DEF_REQUEST_TIMEOUT, 
-				new IScopeContext[] {DefaultScope.INSTANCE});
-		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
+		fTimeoutText.setValidRange(JDIDebugModel.DEF_REQUEST_TIMEOUT, Integer.MAX_VALUE);
+		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT)})); 
 		fTimeoutText.load();
 		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, space); 
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		minValue = Platform.getPreferencesService().getInt(
-				LaunchingPlugin.ID_PLUGIN, 
-				JavaRuntime.PREF_CONNECT_TIMEOUT, 
-				JavaRuntime.DEF_CONNECT_TIMEOUT, 
-				new IScopeContext[] {DefaultScope.INSTANCE});
-		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
-		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(minValue)})); 
+		fConnectionTimeoutText.setValidRange(JavaRuntime.DEF_CONNECT_TIMEOUT, Integer.MAX_VALUE);
+		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT)})); 
 		fConnectionTimeoutText.load();
 		
 		SWTFactory.createVerticalSpacer(composite, 1);
