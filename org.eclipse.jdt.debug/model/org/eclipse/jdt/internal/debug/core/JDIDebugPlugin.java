@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -357,7 +358,11 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 */
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(JDIDebugModel.PREF_REQUEST_TIMEOUT)) {
-			int value = ((Integer)event.getNewValue()).intValue();
+			int value = Platform.getPreferencesService().getInt(
+					JDIDebugPlugin.getUniqueIdentifier(), 
+					JDIDebugModel.PREF_REQUEST_TIMEOUT, 
+					JDIDebugModel.DEF_REQUEST_TIMEOUT, 
+					null);
 			IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 			for (IDebugTarget target : targets) {
 				if (target instanceof IJavaDebugTarget) {
