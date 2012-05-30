@@ -239,7 +239,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true));
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 		}
-		prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+		prefs = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
 			fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
 		}
