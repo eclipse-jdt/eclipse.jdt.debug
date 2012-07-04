@@ -83,6 +83,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -95,6 +96,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -210,6 +214,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
+	private static boolean welcomeClosed = false;
 	
 	/**
 	 * Constructor
@@ -242,6 +247,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loadedEE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(MULTI_OUTPUT_PROJECT_NAME);
 		loadedMulti = pro.exists();
+		assertWelcomeScreenClosed();
 	}
 
 	synchronized void setPreferences() {
@@ -340,6 +346,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				jp = createProject(ONE_FIVE_PROJECT_NAME, JavaProjectHelper.TEST_1_5_SRC_DIR.toString(), JavaProjectHelper.J2SE_1_5_EE_NAME, true);
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.MethodBreakpoints"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.IntegerAccess"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.StepIntoSelectionWithGenerics"));
 				loaded15 = true;
 				waitForBuild();
 	        }
@@ -483,6 +490,37 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 			handleProjectCreationException(e, MULTI_OUTPUT_PROJECT_NAME, jp);
         }
+	}
+	
+	/**
+	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
+	 *  
+	 * @throws Exception
+	 * @since 3.8
+	 */
+	void assertWelcomeScreenClosed() throws Exception {
+		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
+			final IWorkbench wb = PlatformUI.getWorkbench();
+			if(wb != null) {
+				UIJob job = new UIJob("close welcome screen for debug test suite") {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+						if(window != null) {
+							IIntroManager im = wb.getIntroManager();
+							IIntroPart intro = im.getIntro();
+							if(intro != null) {
+								welcomeClosed = im.closeIntro(intro);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setPriority(Job.INTERACTIVE);
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
 	}
 	
 	void handleProjectCreationException(Exception e, String pname, IJavaProject jp) {

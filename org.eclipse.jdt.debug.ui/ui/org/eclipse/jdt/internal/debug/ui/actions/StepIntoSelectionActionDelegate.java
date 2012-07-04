@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 356070 Step into selection does not work for generic types
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
@@ -103,8 +104,8 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 				return;
 			}
 			int lineNumber = frame.getLineNumber();
-            String callingTypeName = stripInnerNames(callingType.getFullyQualifiedName());
-            String frameName = stripInnerNames(frame.getDeclaringTypeName());
+            String callingTypeName = stripInnerNamesAndParameterType(callingType.getFullyQualifiedName());
+            String frameName = stripInnerNamesAndParameterType(frame.getDeclaringTypeName());
 			// debug line numbers are 1 based, document line numbers are 0 based
 			if (textSelection.getStartLine() == (lineNumber - 1) && callingTypeName.equals(frameName)) {
                 doStepIn(frame, method);
@@ -327,17 +328,23 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	}
 
 	/**
-     * Strips inner class names from the given type name.
+     * Strips inner class names and parameterized type information from the given type name.
      * 
      * @param fullyQualifiedName
      */
-    private String stripInnerNames(String fullyQualifiedName) {
+    private String stripInnerNamesAndParameterType(String fullyQualifiedName) {
         // ignore inner class qualification, as the compiler generated names and java model names can be different
-        int index = fullyQualifiedName.indexOf('$');
+    	String sig = fullyQualifiedName;
+        int index = sig.indexOf('$');
         if (index > 0) {
-            return fullyQualifiedName.substring(0, index);
+           sig = sig.substring(0, index);
         }
-        return fullyQualifiedName;
+        //also ignore erasure
+        index = sig.indexOf('<');
+        if (index > 0){
+        	sig = sig.substring(0, index);
+        }
+        return sig;
     }
 	
 	/**

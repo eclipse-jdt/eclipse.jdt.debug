@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
+import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionWithGenerics;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
@@ -175,6 +176,7 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava5Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
+			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
 		}
 		
 	//Sourcelookup tests
