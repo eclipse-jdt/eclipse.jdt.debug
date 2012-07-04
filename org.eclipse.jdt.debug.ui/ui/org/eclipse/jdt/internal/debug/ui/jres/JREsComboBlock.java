@@ -461,20 +461,7 @@ public class JREsComboBlock {
 		for (int i = 0; i < environments.length; i++) {
 			fEnvironments.add(environments[i]);
 		}
-		// sort by name
-		Collections.sort(fEnvironments, new Comparator<Object>() {
-			public int compare(Object o1, Object o2) {
-				IExecutionEnvironment left = (IExecutionEnvironment)o1;
-				IExecutionEnvironment right = (IExecutionEnvironment)o2;
-				return left.getId().compareToIgnoreCase(right.getId());
-			}
 
-			@Override
-			public boolean equals(Object obj) {
-				return obj == this;
-			}
-		});
-		// now make an array of names
 		String[] names = new String[fEnvironments.size()];
 		Iterator<Object> iter = fEnvironments.iterator();
 		int i = 0;

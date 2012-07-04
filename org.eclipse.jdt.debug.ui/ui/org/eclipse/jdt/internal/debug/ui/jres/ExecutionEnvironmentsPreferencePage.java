@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -152,7 +151,6 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fProfilesViewer = new TableViewer(table);
 		fProfilesViewer.setContentProvider(new ArrayContentProvider());
 		fProfilesViewer.setLabelProvider(new ExecutionEnvironmentsLabelProvider());
-		fProfilesViewer.setComparator(new ViewerComparator());
 		fProfilesViewer.setInput(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
 		
 		Composite jreContainer = new Composite(container, SWT.NONE);

@@ -12,13 +12,13 @@ package org.eclipse.jdt.internal.launching.environments;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -82,8 +82,8 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/**
 	 * List of environments 
 	 */
-	private List<IExecutionEnvironment> fEnvironments = null;
-	
+	private TreeSet<IExecutionEnvironment> fEnvironments = null;
+
 	/**
 	 * List of access rule participants
 	 */
@@ -191,7 +191,11 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		if (fEnvironments == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-			fEnvironments = new ArrayList<IExecutionEnvironment>();
+			fEnvironments = new TreeSet<IExecutionEnvironment>(new Comparator<IExecutionEnvironment>() {
+				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
+					return o1.getId().compareTo(o2.getId());
+				}
+			});
 			fRuleParticipants = new LinkedHashSet<AccessRuleParticipant>();
 			fEnvironmentsMap = new HashMap<String, IExecutionEnvironment>(configs.length);
 			fAnalyzers = new HashMap<String, Analyzer>(configs.length);
