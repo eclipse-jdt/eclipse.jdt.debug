@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pascal Gruen (pascal.gruen@googlemail.com) - Bug 217994 Run/Debug honors JRE VM args before Launcher VM args
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -156,9 +157,12 @@ public abstract class AbstractVMRunner implements IVMRunner {
 				LaunchingPlugin.log(e.getStatus());
 			}
 		}
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=217994
+		// merge default VM + launcher VM arguments. Make sure to pass launcher arguments in last so that
+		// they can take precedence over the default VM args!
 		String[] allVMArgs = new String[launchVMArgs.length + vmVMArgs.length];
-		System.arraycopy(launchVMArgs, 0, allVMArgs, 0, launchVMArgs.length);
-		System.arraycopy(vmVMArgs, 0, allVMArgs, launchVMArgs.length, vmVMArgs.length);
+		System.arraycopy(vmVMArgs, 0, allVMArgs, 0, vmVMArgs.length);
+		System.arraycopy(launchVMArgs, 0, allVMArgs, vmVMArgs.length, launchVMArgs.length);
 		return allVMArgs;
 	}
 }
