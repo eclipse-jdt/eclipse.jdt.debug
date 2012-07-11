@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.test.stepping;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
@@ -61,7 +61,9 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
-			IType type = cu.getType("StepIntoSelectionWithGenerics");
+			IJavaProject jp = cu.getJavaProject();
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			IType type = jp.findType(qtypename, monitor);
 			assertTrue("The top-level type"+qtypename+" must exist", type.exists());
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type "+qtypename, method.exists());
@@ -97,9 +99,11 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
-			IType type = cu.getType("StepIntoSelectionWithGenerics");
+			IJavaProject jp = cu.getJavaProject();
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			IType type = jp.findType(qtypename, monitor);
 			assertTrue("The top-level type"+qtypename+" must exist", type.exists());
-			type = findInnerType(type, "InnerClazz");
+			type = jp.findType(qtypename+".InnerClazz", monitor);
 			assertNotNull("The iner type InnerClazz must not be null", type);
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type InnerClazz", method.exists());
@@ -135,10 +139,12 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
-			IType type = cu.getType("StepIntoSelectionWithGenerics");
+			IJavaProject jp = cu.getJavaProject();
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			IType type = jp.findType(qtypename, monitor);
 			assertTrue("The top-level type"+qtypename+" must exist", type.exists());
-			type = findInnerType(type, "InnerClazz2");
-			assertNotNull("The iner type InnerClazz2 must not be null", type);
+			type = jp.findType(qtypename+".InnerClazz.InnerClazz2", monitor);
+			assertNotNull("The inner type InnerClazz2 must not be null", type);
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type InnerClazz2", method.exists());
 			
@@ -157,17 +163,5 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-	}
-	
-	IType findInnerType(IType root, String name) throws JavaModelException {
-		IType type = root.getType(name);
-		if(type != null && type.exists()) {
-			return type;
-		}
-		IType[] types = root.getTypes();
-		for (int i = 0; i < types.length; i++) {
-			return findInnerType(types[i], name);
-		}
-		return null;
 	}
 }
