@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +27,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * A 1.1.x VM runner
@@ -115,9 +118,15 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			p.destroy();
 			return;
 		}		
-		
-		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine));
+		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
+		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine, timestamp));
+		process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
+		process.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, ltime != null ? ltime : timestamp);
+		if(workingDir != null) {
+			process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
+		}
 		subMonitor.worked(1);
 	}
 }

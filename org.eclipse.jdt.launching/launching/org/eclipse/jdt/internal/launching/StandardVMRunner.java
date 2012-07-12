@@ -69,11 +69,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 	/**
 	 * Returns the 'rendered' name for the specified command line
 	 * @param commandLine the command line
+	 * @param timestamp the run-at time for the process
 	 * @return the name for the process
 	 */
-	public static String renderProcessLabel(String[] commandLine) {
+	public static String renderProcessLabel(String[] commandLine, String timestamp) {
 		String format= LaunchingMessages.StandardVMRunner__0____1___2; 
-		String timestamp= DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		return NLS.bind(format, new String[] { commandLine[0], timestamp });
 	}
 	
@@ -330,9 +330,25 @@ public class StandardVMRunner extends AbstractVMRunner {
 			p.destroy();
 			return;
 		}		
-		
-		IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
+		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
+		IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine, timestamp), getDefaultProcessMap());
+		process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
+		process.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, ltime != null ? ltime : timestamp);
+		if(workingDir != null) {
+			process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
+		}
+		if(envp != null) {
+			StringBuffer buff = new StringBuffer();
+			for (int i = 0; i < envp.length; i++) {
+				buff.append(envp[i]);
+				if(i < envp.length-1) {
+					buff.append(", "); //$NON-NLS-1$
+				}
+			}
+			process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
+		}
 		subMonitor.worked(1);
 		subMonitor.done();
 	}

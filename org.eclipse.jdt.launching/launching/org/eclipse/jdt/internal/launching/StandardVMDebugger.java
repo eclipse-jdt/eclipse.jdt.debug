@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
+import com.ibm.icu.text.DateFormat;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
@@ -258,9 +260,25 @@ public class StandardVMDebugger extends StandardVMRunner {
 					p.destroy();
 					return;
 				}				
-				
-				IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
+				String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
+				IProcess process= newProcess(launch, p, renderProcessLabel(cmdLine, timestamp), getDefaultProcessMap());
+				process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);
 				process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+				String ltime = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
+				process.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, ltime != null ? ltime : timestamp);
+				if(workingDir != null) {
+					process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
+				}
+				if(envp != null) {
+					StringBuffer buff = new StringBuffer();
+					for (int i = 0; i < envp.length; i++) {
+						buff.append(envp[i]);
+						if(i < envp.length-1) {
+							buff.append(", "); //$NON-NLS-1$
+						}
+					}
+					process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
+				}
 				subMonitor.worked(1);
 				subMonitor.subTask(LaunchingMessages.StandardVMDebugger_Establishing_debug_connection____5); 
 				boolean retry= false;
