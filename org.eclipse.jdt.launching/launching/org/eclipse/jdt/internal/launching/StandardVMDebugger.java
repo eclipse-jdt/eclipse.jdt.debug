@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -270,11 +271,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 					process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
 				}
 				if(envp != null) {
+					Arrays.sort(envp);
 					StringBuffer buff = new StringBuffer();
 					for (int i = 0; i < envp.length; i++) {
 						buff.append(envp[i]);
 						if(i < envp.length-1) {
-							buff.append(", "); //$NON-NLS-1$
+							buff.append('\n');
 						}
 					}
 					process.setAttribute(DebugPlugin.ATTR_ENVIRONMENT, buff.toString());
