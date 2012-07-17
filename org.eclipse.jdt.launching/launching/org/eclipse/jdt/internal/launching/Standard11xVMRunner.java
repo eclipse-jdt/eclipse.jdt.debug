@@ -40,11 +40,9 @@ public class Standard11xVMRunner extends StandardVMRunner {
 	 * @see org.eclipse.jdt.launching.IVMRunner#run(org.eclipse.jdt.launching.VMRunnerConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2); 
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //		
@@ -81,14 +79,23 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			combinedPath[offset] = classPath[i];
 			offset++;
 		}
-		
+		int cpidx = -1;
 		if (combinedPath.length > 0) {
+			cpidx = arguments.size();
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(combinedPath));
 		}
 		arguments.add(config.getClassToLaunch());
 		
 		String[] programArgs= config.getProgramArguments();
+		
+		String[] envp = prependJREPath(config.getEnvironment());
+		String[] newenvp = checkClasspath(arguments, classPath, envp);
+		if(newenvp != null) {
+			envp = newenvp;
+			arguments.remove(cpidx);
+			arguments.remove(cpidx);
+		}
 		addArguments(programArgs, arguments);
 				
 		String[] cmdLine= new String[arguments.size()];
@@ -104,7 +111,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		
 		Process p= null;
 		File workingDir = getWorkingDir(config);
-		p= exec(cmdLine, workingDir);
+		p= exec(cmdLine, workingDir, envp);
 		if (p == null) {
 			return;
 		}
