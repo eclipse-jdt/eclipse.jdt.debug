@@ -204,22 +204,30 @@ public class StandardVMDebugger extends StandardVMRunner {
 		addBootClassPathArguments(arguments, config);
 		
 		String[] cp= config.getClassPath();
+		int cpidx = -1;
 		if (cp.length > 0) {
+			cpidx = arguments.size();
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
 		}
 		
-		
-		
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);
-		String[] cmdLine= new String[arguments.size()];
-		arguments.toArray(cmdLine);
 		
 		//With the newer VMs and no backwards compatibility we have to always prepend the current env path (only the runtime one)
 		//with a 'corrected' path that points to the location to load the debug dlls from, this location is of the standard JDK installation 
 		//format: <jdk path>/jre/bin
 		String[] envp = prependJREPath(config.getEnvironment(), new Path(program));
+		
+		String[] newenvp = checkClasspath(arguments, cp, envp);
+		if(newenvp != null) {
+			envp = newenvp;
+			arguments.remove(cpidx);
+			arguments.remove(cpidx);
+		}
+		
+		String[] cmdLine= new String[arguments.size()];
+		arguments.toArray(cmdLine);
 		
 		// check for cancellation
 		if (monitor.isCanceled()) {
