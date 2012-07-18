@@ -384,7 +384,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			//greater than 32767 is a no-go
 			//see http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
 			if(size > 32767) {
-				StringBuffer newcp = new StringBuffer();
+				StringBuffer newcp = new StringBuffer("CLASSPATH="); //$NON-NLS-1$
 				for (int i = 0; i < cp.length; i++) {
 					newcp.append(cp[i]);
 					newcp.append(File.pathSeparatorChar);
@@ -406,7 +406,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 						if(key.equalsIgnoreCase("CLASSPATH")) { //$NON-NLS-1$
 							index = idx;
 						}
-						newenvp[idx] = key+'='+value+File.pathSeparatorChar;
+						newenvp[idx] = key+'='+value;
 						idx++;
 					}
 				}
@@ -415,18 +415,12 @@ public class StandardVMRunner extends AbstractVMRunner {
 					index = getCPIndex(newenvp);
 				}
 				if(index < 0) {
-					newcp.insert(0, "CLASSPATH="); //$NON-NLS-1$
 					String[] newenv = new String[newenvp.length+1];
 					System.arraycopy(newenvp, 0, newenv, 0, newenvp.length);
 					newenv[newenvp.length] = newcp.toString();
-					return newenv;
+				} else {
+					newenvp[index] = newcp.toString();
 				}
-				String oldcp = newenvp[index];
-				if(!oldcp.endsWith(File.pathSeparator)) {
-					oldcp += File.pathSeparatorChar;
-				}
-				newcp.insert(0, oldcp);
-				newenvp[index] = newcp.toString();
 				return newenvp;
 			}
 		}
