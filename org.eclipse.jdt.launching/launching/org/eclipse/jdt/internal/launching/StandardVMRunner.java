@@ -412,9 +412,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 					String[] newenv = new String[newenvp.length+1];
 					System.arraycopy(newenvp, 0, newenv, 0, newenvp.length);
 					newenv[newenvp.length] = newcp.toString();
-				} else {
-					newenvp[index] = newcp.toString();
+					return newenv;
 				}
+				newenvp[index] = newcp.toString();
 				return newenvp;
 			}
 		}
