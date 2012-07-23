@@ -557,6 +557,8 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 			MONITOR_WAIT_TYPE.enabledrequests.remove(req.requestID());
 		} else if(req instanceof MonitorWaitedRequestImpl) {
 			MONITOR_WAITED_TYPE.enabledrequests.remove(req.requestID());
+		} else if(req instanceof VMDeathRequestImpl) {
+			VM_DEATH_TYPE.enabledrequests.remove(req.requestID());
 		}
 	}
 	
@@ -594,6 +596,8 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 			MONITOR_CONTENDED_ENTER_TYPE.enabledrequests.put(req.requestID(), (MonitorContendedEnterRequestImpl)req);
 		} else if(req instanceof MonitorContendedEnteredRequestImpl) {
 			MONITOR_CONTENDED_ENTERED_TYPE.enabledrequests.put(req.requestID(), (MonitorContendedEnteredRequestImpl)req);
+		} else if(req instanceof VMDeathRequestImpl) {
+			VM_DEATH_TYPE.enabledrequests.put(req.requestID(), (VMDeathRequest) req);
 		}
 	}
 
