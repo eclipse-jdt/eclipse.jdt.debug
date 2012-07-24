@@ -79,7 +79,6 @@ import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetMessages;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
-import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementImageDescriptor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -120,7 +119,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	static final Point BIG_SIZE= new Point(16, 16);
 	
-	private static ImageDescriptorRegistry fgJavaElementImageRegistry;
 	private static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fgDebugImageRegistry;
 	
 	/**
@@ -569,7 +567,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return whether image registry's have been retrieved.
 	 */
 	public static boolean isInitialized() {
-		return fgJavaElementImageRegistry != null && fgDebugImageRegistry != null;
+		return fgDebugImageRegistry != null;
 	}
 	
 	/**
@@ -741,7 +739,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (!fInitialized && Thread.currentThread().equals(JDIDebugUIPlugin.getStandardDisplay().getThread())) {
 			// call get image registry's to force them to be created on the UI thread
 			getDebugImageRegistry();
-			getJavaElementImageRegistry();
+			JavaPlugin.getImageDescriptorRegistry();
 			JavaUI.getSharedImages();
 			fInitialized = true;
 		}
@@ -916,8 +914,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected Image getVariableImage(IAdaptable element) {
 		JavaElementImageDescriptor descriptor= new JavaElementImageDescriptor(
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
-
-		return getJavaElementImageRegistry().get(descriptor);			
+		return JavaPlugin.getImageDescriptorRegistry().get(descriptor);			
 	}
 	
 	/**
@@ -1983,13 +1980,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 	
-	protected static ImageDescriptorRegistry getJavaElementImageRegistry() {
-		if (fgJavaElementImageRegistry == null) {
-			fgJavaElementImageRegistry = JavaPlugin.getImageDescriptorRegistry();		
-		}
-		return fgJavaElementImageRegistry;
-	}
-
 	protected static org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry getDebugImageRegistry() {
 		if (fgDebugImageRegistry == null) {
 			fgDebugImageRegistry = JDIDebugUIPlugin.getImageDescriptorRegistry();		
