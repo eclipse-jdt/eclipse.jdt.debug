@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.jdt.debug</groupId>
   <artifactId>org.eclipse.jdt.debug</artifactId>
-  <version>3.7.100-SNAPSHOT</version>
+  <version>3.7.101-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
