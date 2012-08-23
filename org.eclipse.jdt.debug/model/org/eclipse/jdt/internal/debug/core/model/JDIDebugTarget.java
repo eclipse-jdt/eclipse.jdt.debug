@@ -604,7 +604,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		if (!isSuspended() && isAvailable()) {
+		if (isAvailable()) {
 			// allow suspend when one or more threads are currently running
 			IThread[] threads = getThreads();
 			for (IThread thread : threads) {
@@ -612,7 +612,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 					return true;
 				}
 			}
-			return false;
+			return !isSuspended();
 		}
 		return false;
 	}
@@ -1338,6 +1338,10 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	public void suspend() throws DebugException {
 		if (isSuspended()) {
+			IThread[] threads = getThreads();
+			for (IThread thread : threads) {
+				((JDIThread) thread).suspend();
+			}
 			return;
 		}
 		try {

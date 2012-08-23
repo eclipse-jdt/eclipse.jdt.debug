@@ -396,7 +396,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public boolean canResume() {
 		return isSuspended()
 				&& (!isPerformingEvaluation() || isInvokingMethod())
-				&& !isSuspendVoteInProgress();
+				&& !isSuspendVoteInProgress()
+				|| getDebugTarget().isSuspended();
 	}
 
 	/*
@@ -1481,7 +1482,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public synchronized void resume() throws DebugException {
-		if (getDebugTarget().isSuspended()) {
+		if (!isSuspended() && getDebugTarget().isSuspended()) {
 			getDebugTarget().resume();
 		} else {
 			fClientSuspendRequest = false;

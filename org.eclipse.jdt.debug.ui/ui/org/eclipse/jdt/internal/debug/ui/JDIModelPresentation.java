@@ -692,9 +692,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (item instanceof JDIThread) {
 				JDIThread jt = (JDIThread) item;
-				if (jt.getDebugTarget().isSuspended()) {
-					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
-				}
 				if (jt.isSuspendVoteInProgress()) {
 					return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
 				}
