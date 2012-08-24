@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,9 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
+import org.eclipse.jdt.internal.debug.core.model.JDILocalVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 
 public class LocalVariableTests extends AbstractDebugTest implements IValueDetailListener {
 	
@@ -30,6 +33,55 @@ public class LocalVariableTests extends AbstractDebugTest implements IValueDetai
 		super(name);
 	}
 
+	/**
+	 * Tests if the correct local variable is found when it shadows a field variable
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458
+	 * @throws Exception
+	 */
+	public void testFindConflicting1() throws Exception {
+		String typeName = "LocalVariableTests2";
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IJavaVariable var = frame.findVariable("a");
+			assertTrue("The returned var should be a LocalVariable instance", var instanceof JDILocalVariable);
+			IValue value = var.getValue();
+			assertTrue("The value should be an array", value instanceof JDIArrayValue);
+			JDIArrayValue aval = (JDIArrayValue) value;
+			assertTrue("there should be two values in the array", aval.getSize() == 2);
+			assertEquals("The array kind should be integer", "int[]", aval.getReferenceTypeName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
+	/**
+	 * Tests if the correct parameter variable is found when it shadows a field variable
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=384458
+	 * @throws Exception
+	 */
+	public void testFindConflicting2() throws Exception {
+		String typeName = "LocalVariableTests2";
+		ILineBreakpoint bp = createLineBreakpoint(25, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IJavaVariable var = frame.findVariable("att");
+			assertTrue("The returned var should be a LocalVariable instance", var instanceof JDILocalVariable);
+			IValue value = var.getValue();
+			assertTrue("The value should be a String", value instanceof JDINullValue);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
 	public void testSimpleVisibility() throws Exception {
 		String typeName = "LocalVariablesTests";
 		
