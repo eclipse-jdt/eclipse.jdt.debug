@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 384458 - debug shows value of variable in another scope 
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -689,16 +690,26 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return null;
 		}
 		IVariable[] variables = getVariables();
+		List<IJavaVariable> possibleMatches = new ArrayList<IJavaVariable>();
 		IJavaVariable thisVariable = null;
 		for (IVariable variable : variables) {
 			IJavaVariable var = (IJavaVariable) variable;
 			if (var.getName().equals(varName)) {
-				return var;
+				possibleMatches.add(var);
 			}
 			if (var instanceof JDIThisVariable) {
 				// save for later - check for instance and static variables
 				thisVariable = var;
 			}
+		}
+		for(IJavaVariable variable: possibleMatches){
+			// Local Variable has more preference than Field Variable
+			if(variable instanceof JDILocalVariable){
+				return variable;
+			}
+		}
+		if(possibleMatches.size() > 0) {
+			return possibleMatches.get(0);
 		}
 
 		if (thisVariable != null) {
@@ -710,9 +721,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				}
 			}
 		}
-
 		return null;
-
 	}
 
 	/**
