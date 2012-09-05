@@ -23,6 +23,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
@@ -104,7 +105,10 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 		if (JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW.equals(event.getKey()) || JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT.equals(event.getKey())){
 			if (fAction != null){
 				fAction.setChecked(HeapWalkingManager.getDefault().isShowReferenceInVarView());
-				fView.getViewer().refresh();
+				Viewer viewer = fView.getViewer();
+				if(viewer != null) {
+					viewer.refresh();
+				}
 			}
 		}
 	}
