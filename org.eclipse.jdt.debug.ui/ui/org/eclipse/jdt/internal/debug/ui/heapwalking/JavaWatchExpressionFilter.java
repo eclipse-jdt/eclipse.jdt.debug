@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.heapwalking;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
@@ -34,7 +35,7 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 	 */
 	public boolean canCreateWatchExpression(IVariable variable) {
 		if (variable instanceof JDIReferenceListVariable || variable instanceof JDIReferenceListEntryVariable ||
-				variable instanceof JDIArrayEntryVariable){
+				variable instanceof JDIArrayEntryVariable || variable instanceof IndexedVariablePartition){
 			return false;
 		}
 		try{
@@ -48,8 +49,7 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter#createWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
-	public String createWatchExpression(IVariable variable)
-			throws CoreException {
+	public String createWatchExpression(IVariable variable) throws CoreException {
 		return variable.getName();
 	}
 
