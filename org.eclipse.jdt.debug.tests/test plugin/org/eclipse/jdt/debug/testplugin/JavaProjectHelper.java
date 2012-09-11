@@ -451,7 +451,7 @@ public class JavaProjectHelper {
 	 * @param cpe
 	 * @throws JavaModelException
 	 */
-	private static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
+	public static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		IClasspathEntry[] oldEntries= jproject.getRawClasspath();
 		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(oldEntries.length);
 		for (int i= 0; i < oldEntries.length; i++) {

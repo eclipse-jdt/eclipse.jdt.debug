@@ -21,37 +21,13 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.sun.jdi.InternalException;
-
-import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.eval.EvaluationManager;
-import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
-import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
-import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
-import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
-import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
-import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
-import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
-import org.eclipse.jdt.debug.tests.core.LiteralTests17;
-import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-
-import org.eclipse.swt.widgets.Display;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,46 +37,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.SafeRunnable;
-
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.TextConsole;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
-import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -127,15 +63,16 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPre
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
-
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -148,16 +85,71 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
-
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
+import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.debug.tests.core.LiteralTests17;
+import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
+import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
+
+import com.sun.jdi.InternalException;
 
 /**
  * Tests for launch configurations
@@ -168,6 +160,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
 	public static final String BOUND_EE_PROJECT_NAME = "BoundEE";
 	public static final String ONE_FOUR_PROJECT_NAME = "DebugTests";
+	public static final String ONE_FOUR_PROJECT_CLOSED_NAME = "ClosedDebugTests";
 	public static final String ONE_FIVE_PROJECT_NAME = "OneFive";
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
@@ -303,6 +296,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
         try {
 	        if (!loaded14) {
+	        	try {
+	        		jp = JavaProjectHelper.createJavaProject(ONE_FOUR_PROJECT_CLOSED_NAME);
+	        		jp.getProject().close(null);
+	        	}
+	        	catch(Exception e) {
+	        		handleProjectCreationException(e, ONE_FOUR_PROJECT_CLOSED_NAME, jp);
+	        	}
 	        	jp = createProject(ONE_FOUR_PROJECT_NAME, JavaProjectHelper.TEST_SRC_DIR.toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, false);
 	        	IPackageFragmentRoot src = jp.findPackageFragmentRoot(new Path(ONE_FOUR_PROJECT_NAME).append(JavaProjectHelper.SRC_DIR).makeAbsolute());
 	        	assertNotNull("The 'src' package fragment root should not be null", src);
@@ -310,7 +310,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
 		        IPath path = src.getPath().append("A.jar");
 		        JavaProjectHelper.addLibrary(jp, path);
-		
+		        
+		        //add a closed project optional classpath entry
+		        //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=380918
+		        IClasspathEntry entry = JavaCore.newProjectEntry(
+		        		new Path(ONE_FOUR_PROJECT_CLOSED_NAME).makeAbsolute(), 
+		        		new IAccessRule[0], 
+		        		false, 
+		        		new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.OPTIONAL, Boolean.TRUE.toString())}, 
+		        		false);
+		        JavaProjectHelper.addToClasspath(jp, entry);
+		        
 		        // create launch configurations
 		        for (int i = 0; i < LAUNCH_CONFIG_NAMES_1_4.length; i++) {
 		        	cfgs.add(createLaunchConfiguration(jp, LAUNCH_CONFIG_NAMES_1_4[i]));

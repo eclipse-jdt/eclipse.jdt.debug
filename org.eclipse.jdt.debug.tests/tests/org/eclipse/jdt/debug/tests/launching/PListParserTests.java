@@ -191,6 +191,7 @@ public class PListParserTests extends AbstractDebugTest {
 		assertNotNull(file);
 		assertEquals(true, file.exists());
 		MacInstalledJREs mij = new MacInstalledJREs();
+		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad ***");
 		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
@@ -209,6 +210,7 @@ public class PListParserTests extends AbstractDebugTest {
 		assertNotNull(file);
 		assertEquals(true, file.exists());
 		MacInstalledJREs mij = new MacInstalledJREs();
+		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad2 ***");
 		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
@@ -227,6 +229,7 @@ public class PListParserTests extends AbstractDebugTest {
 		assertNotNull(file);
 		assertEquals(true, file.exists());
 		MacInstalledJREs mij = new MacInstalledJREs();
+		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad3 ***");
 		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
 		assertEquals("There should be 0 JRE descriptions", 0, desc.length);
 	}

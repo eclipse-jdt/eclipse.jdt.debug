@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,10 +99,11 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
             IMarker marker = markers[i];
             Integer severity = (Integer) marker.getAttribute(IMarker.SEVERITY);
             if (severity != null && severity.intValue() >= IMarker.SEVERITY_ERROR) {
+            	System.err.println("Found problem in 1.4 test project: "+marker.getResource().getFullPath().toString()+" "+ marker.getAttribute(IMarker.MESSAGE));
                 errors++;
             }
     	}
-        assertTrue("Unexpected compile errors in project. Expected 1, found " + markers.length, errors == 1);
+        assertTrue("Unexpected compile errors in project. Expected 0 found " + markers.length, errors == 0);
     }
 
     /**

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation 
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -958,8 +958,9 @@ public final class JavaRuntime {
 		IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
 		for (int i = 0, length = extraAttributes.length; i < length; i++) {
 			IClasspathAttribute attribute = extraAttributes[i];
-			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && "true".equals(attribute.getValue())) //$NON-NLS-1$
+			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && Boolean.parseBoolean(attribute.getValue())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -2504,7 +2505,10 @@ public final class JavaRuntime {
 				IProject p = root.getProject(projectName);
 				if (p.exists()) {
 					IJavaProject requiredProject = JavaCore.create(p);
-					if (requiredProject != null) {
+					if(requiredProject.isOpen()) {
+						gatherJavaLibraryPathEntries(requiredProject, requiredProjects, visited, entries);
+					}
+					else if(!isOptional(entry)) {
 						gatherJavaLibraryPathEntries(requiredProject, requiredProjects, visited, entries);
 					}
 				}
