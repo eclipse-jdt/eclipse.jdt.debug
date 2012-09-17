@@ -97,6 +97,11 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
+			if (element instanceof JavaLogicalStructure) {
+				if (((JavaLogicalStructure) element).isContributed()) {
+					return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
+				}
+			}
 			return null;
 		}
 

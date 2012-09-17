@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,8 +58,6 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 		if (element instanceof ClasspathGroup) {
 			Display display= Display.getCurrent();
 			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
-		} else if (element instanceof ClasspathEntry) {
-			
 		}
 		return null;
 	}
@@ -68,6 +66,10 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
+		if (element instanceof ClasspathGroup) {
+			Display display= Display.getCurrent();
+			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
+		}
 		return null;
 	}
 
