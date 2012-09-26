@@ -79,6 +79,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fOpenInspector;
 	private Button fPromptUnableToInstallBreakpoint;
 	private Button fPromptDeleteConditionalBreakpoint;
+	private Button fOnlyIncludeExportedEntries;
 	private Combo fSuspendVMorThread;
 	private Combo fWatchpoint;
 	
@@ -159,6 +160,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1);
 		fPromptDeleteConditionalBreakpoint= SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint, null, false, 1);
 		
+		SWTFactory.createVerticalSpacer(composite, 1);
+		fOnlyIncludeExportedEntries = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_only_include_exported_entries, null, false, 1);
+		
 		setValues();
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText.setPropertyChangeListener(this);
@@ -206,6 +210,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
 			prefs.putInt(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
+			prefs.putBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, fOnlyIncludeExportedEntries.getSelection());
 			try {
 				prefs.flush();
 			}
@@ -242,6 +247,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		prefs = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
 			fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
+			fOnlyIncludeExportedEntries.setSelection(prefs.getBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false));
 		}
 		super.performDefaults();	
 	}
@@ -272,6 +278,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
 			fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
+			fOnlyIncludeExportedEntries.setSelection(prefs.getBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false));
 		}
 	}
 

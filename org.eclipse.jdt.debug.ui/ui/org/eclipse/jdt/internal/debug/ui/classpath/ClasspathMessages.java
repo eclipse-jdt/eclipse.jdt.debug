@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,10 @@ public class ClasspathMessages extends NLS {
 	public static String DefaultClasspathEntryDialog_3;
 
 	public static String DefaultClasspathEntryDialog_4;
+
+	public static String DefaultClasspathEntryDialog_property_locked;
+
+	public static String DefaultClasspathEntryDialog_show_preferences;
 
 	static {
 		// load message values from bundle file

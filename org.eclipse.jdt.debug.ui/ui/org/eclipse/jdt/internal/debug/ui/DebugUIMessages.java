@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,8 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_19;
 	public static String JavaDebugPreferencePage_0;
 	public static String JavaDebugPreferencePage_20;
+
+	public static String JavaDebugPreferencePage_only_include_exported_entries;
 	public static String JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint;
 
 

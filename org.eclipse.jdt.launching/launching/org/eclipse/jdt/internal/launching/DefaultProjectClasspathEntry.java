@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -82,9 +83,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		IJavaProject project = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 		setJavaProject(project);
 		name = memento.getAttribute("exportedEntriesOnly"); //$NON-NLS-1$
-		if (name == null) {
-			fExportedEntriesOnly = false;
-		} else {
+		if (name != null) {
 			fExportedEntriesOnly = Boolean.valueOf(name).booleanValue();
 		}
 	}
@@ -370,6 +369,10 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @since 3.2
 	 */
 	public boolean isExportedEntriesOnly() {
-		return fExportedEntriesOnly;
+		return fExportedEntriesOnly | Platform.getPreferencesService().getBoolean(
+				LaunchingPlugin.ID_PLUGIN, 
+				JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, 
+				false, 
+				null);
 	}
 }

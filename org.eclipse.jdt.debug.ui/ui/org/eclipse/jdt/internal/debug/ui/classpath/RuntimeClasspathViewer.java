@@ -16,10 +16,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +32,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
@@ -44,6 +51,13 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	private ListenerList fListeners = new ListenerList();
 	
 	private IClasspathEntry fCurrentParent= null;
+	
+	private IPreferenceChangeListener fPrefListeners = new IPreferenceChangeListener() {
+		
+		public void preferenceChange(PreferenceChangeEvent event) {
+			refresh(true);
+		}
+	};
 		
 	/**
 	 * Creates a runtime classpath viewer with the given parent.
@@ -68,6 +82,18 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 				}
 			}
 		});
+		getTree().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+				if(prefs != null) {
+					prefs.removePreferenceChangeListener(fPrefListeners);
+				}
+			}
+		});
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+		if(prefs != null) {
+			prefs.addPreferenceChangeListener(fPrefListeners);
+		}
 	}	
 
 	/* (non-Javadoc)
