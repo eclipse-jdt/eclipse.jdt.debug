@@ -292,8 +292,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	public void testProgramArgOneQuote() throws CoreException {
-		//updated for https://bugs.eclipse.org/bugs/show_bug.cgi?id=387504
-		testProgramArgCount("\"", "0");
+		testProgramArgCount("\"", "1");
 	}
 	
 	/**
