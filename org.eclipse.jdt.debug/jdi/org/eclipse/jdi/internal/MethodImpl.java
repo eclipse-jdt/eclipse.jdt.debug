@@ -864,6 +864,13 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		for (Iterator<Long> iter = tmpLocations.iterator(); iter.hasNext();) {
 			long index = iter.next().longValue();
 			int position = Arrays.binarySearch(fCodeIndexTable, index);
+			if(position < 0) {
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=388172
+				//the key is not in the code index, we should not insert it as the line table is supposed to be 
+				//constant unless the parent class is redefined. 
+				//See http://docs.oracle.com/javase/6/docs/platform/jpda/jdwp/jdwp-protocol.html#JDWP_Method_LineTable for more information
+				continue;
+			}
 			if (position == 0 || !tmpLocations.contains(new Long(fCodeIndexTable[position - 1]))) {
 				locations.add(new LocationImpl(virtualMachineImpl(), this, index));
 			}
