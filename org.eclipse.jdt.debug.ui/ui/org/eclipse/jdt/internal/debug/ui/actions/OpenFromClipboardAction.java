@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -447,7 +449,17 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		if (matches.size() > 1) {
 			int flags = JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT;
 			IWorkbenchWindow window = JDIDebugUIPlugin.getActiveWorkbenchWindow();
-			ElementListSelectionDialog dialog = new ElementListSelectionDialog(window.getShell(), new JavaElementLabelProvider(flags));
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(window.getShell(), new JavaElementLabelProvider(flags)) {
+				/*
+				 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
+				 * @since 4.3
+				 */
+				@Override
+				protected IDialogSettings getDialogBoundsSettings() {
+					IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+					return DialogSettings.getOrCreateSection(settings, "OpenFromClipboardAction_dialogBounds"); //$NON-NLS-1$
+				}
+			};
 			dialog.setTitle(ActionMessages.OpenFromClipboardAction_OpenFromClipboard);
 			dialog.setMessage(ActionMessages.OpenFromClipboardAction_SelectOrEnterTheElementToOpen);
 			dialog.setElements(matches.toArray());
