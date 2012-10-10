@@ -98,7 +98,14 @@ public class PListParser {
 	private Object parseXML(InputStream stream) throws CoreException, ParserConfigurationException, IOException, SAXException {
 		Element root = null;
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+		try {
+			documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+		}
+		catch(ParserConfigurationException pce) {
+			//the document builder does not support the load-external-dtd feature
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=386188
+			LaunchingPlugin.log(pce);
+		}
 		DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
