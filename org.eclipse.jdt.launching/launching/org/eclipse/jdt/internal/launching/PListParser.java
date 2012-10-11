@@ -102,9 +102,8 @@ public class PListParser {
 			documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
 		}
 		catch(ParserConfigurationException pce) {
-			//the document builder does not support the load-external-dtd feature
+			//do nothing the document builder does not support the load-external-dtd feature
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=386188
-			LaunchingPlugin.log(pce);
 		}
 		DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
