@@ -55,12 +55,18 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	static String[] wrap(Class<?> clazz, String[] cmdLine) {
+	/**
+	 * @param clazz
+	 * @param cmdLine
+	 * @param startonfirstthread
+	 * @return
+	 */
+	static String[] wrap(Class<?> clazz, String[] cmdLine, boolean startonfirstthread) {
 		
 		for (int i= 0; i < cmdLine.length; i++) {
 			// test whether we depend on SWT
 			if (useSWT(cmdLine[i]))
-				return createSWTlauncher(clazz, cmdLine, cmdLine[0]);
+				return createSWTlauncher(clazz, cmdLine, cmdLine[0], startonfirstthread);
 		}
 		return cmdLine;
 	}
@@ -79,15 +85,18 @@ public class MacOSXLaunchingPlugin extends Plugin {
 	 * @param clazz the class
 	 * @param cmdLine the old command line
 	 * @param vmVersion the version of the VM
+	 * @param startonfirstthread
 	 * @return the new command line
 	 * 
 	 */
-	static String[] createSWTlauncher(Class<?> clazz, String[] cmdLine, String vmVersion) {
+	static String[] createSWTlauncher(Class<?> clazz, String[] cmdLine, String vmVersion, boolean startonfirstthread) {
 		
 		// the following property is defined if Eclipse is started via java_swt
 		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
 		
-		if (java_swt == null) {	
+		//newer VMs and non-MacOSX VMs don't like "-XstartOnFirstThread"
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=211625
+		if (java_swt == null && startonfirstthread) {	
 			// not started via java_swt -> now we require that the VM supports the "-XstartOnFirstThread" option
 			String[] newCmdLine= new String[cmdLine.length+1];
 			int argCount= 0;

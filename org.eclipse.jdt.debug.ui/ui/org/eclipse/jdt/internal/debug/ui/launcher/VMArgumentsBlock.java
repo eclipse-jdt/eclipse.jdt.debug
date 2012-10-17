@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -41,6 +43,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 
 	// VM arguments widgets
 	protected Text fVMArgumentsText;
+	private Button fUseStartOnFirstThread = null;
 	private Button fPgrmArgVariableButton;
 	
 	/**
@@ -92,7 +95,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			}
 		});	
 		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
-				
+			
 		fPgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null);
 		fPgrmArgVariableButton.setFont(font);
 		fPgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -107,13 +110,18 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 				}
 			}
 		});
+		
+		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+			fUseStartOnFirstThread = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_0, null, false, 1);
+		}
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);		
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);	
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true);
 	}
 
 	/**
@@ -123,6 +131,9 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
+			if(fUseStartOnFirstThread != null) {
+				fUseStartOnFirstThread.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true));
+			}
 		} catch (CoreException e) {
 			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
 			JDIDebugUIPlugin.log(e);			
@@ -134,6 +145,9 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getAttributeValueFrom(fVMArgumentsText));
+		if(fUseStartOnFirstThread != null) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, fUseStartOnFirstThread.getSelection());
+		}
 	}
 
 	/**
@@ -144,7 +158,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	}
 	
 	/**
-	 * Retuns the string in the text widget, or <code>null</code> if empty.
+	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
 	 */
