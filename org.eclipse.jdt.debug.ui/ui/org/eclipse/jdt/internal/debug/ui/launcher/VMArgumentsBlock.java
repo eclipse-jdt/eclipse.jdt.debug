@@ -113,6 +113,12 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		
 		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
 			fUseStartOnFirstThread = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_0, null, false, 1);
+			fUseStartOnFirstThread.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					scheduleUpdateJob();
+				}
+			});
 		}
 	}
 
