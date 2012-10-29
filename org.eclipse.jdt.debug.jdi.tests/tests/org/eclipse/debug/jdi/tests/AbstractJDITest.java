@@ -904,11 +904,11 @@ public abstract class AbstractJDITest extends TestCase {
 		String targetAddress = System.getProperty("java.home");
 		String vmLauncherName;
 		if (vmVendor != null
-			&& (vmVendor.equals("Sun Microsystems Inc.") || vmVendor.equals("Oracle Corporation"))
+			&& (vmVendor.indexOf("Sun") > -1 || vmVendor.indexOf("Oracle") > -1 || vmVendor.indexOf("Apple") > -1)
 			&& vmVersion != null) {
 			vmLauncherName = "SunVMLauncher";
 		} else if (
-			vmVendor != null && vmVendor.equals("IBM Corporation") && vmVersion != null) {
+			vmVendor != null && vmVendor.indexOf("IBM") > -1 && vmVersion != null) {
 			vmLauncherName = "IBMVMLauncher";
 		} else {
 			vmLauncherName = "J9VMLauncher";
