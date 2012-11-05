@@ -1924,6 +1924,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * the target is terminated. This avoids defunct processes on Linux.
 	 */
 	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
+		assertNotNull(getName()+" - you cannot terminate and remove a null debug target", debugTarget);
 	    ILaunch launch = debugTarget.getLaunch();
 		if (!(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
