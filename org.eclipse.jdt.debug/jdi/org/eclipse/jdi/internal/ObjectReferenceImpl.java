@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * 
 	 * @since 3.3
 	 */
-	public List<Value> referringObjects(long maxReferrers)
+	public List<ObjectReference> referringObjects(long maxReferrers)
 			throws UnsupportedOperationException, IllegalArgumentException {
 		try {
 			int max = (int) maxReferrers;
@@ -243,9 +243,9 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			if (max > 0 && elements > max) {
 				elements = max;
 			}
-			ArrayList<Value> list = new ArrayList<Value>();
+			ArrayList<ObjectReference> list = new ArrayList<ObjectReference>();
 			for (int i = 0; i < elements; i++) {
-				list.add(ValueImpl.readWithTag(this, replyData));
+				list.add((ObjectReference)ValueImpl.readWithTag(this, replyData));
 			}
 			return list;
 		} catch (IOException e) {

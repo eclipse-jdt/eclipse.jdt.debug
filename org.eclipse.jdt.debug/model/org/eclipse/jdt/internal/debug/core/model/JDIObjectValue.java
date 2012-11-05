@@ -487,17 +487,17 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	}
 
 	/**
-	 * Gets the list of objects that reference this object from the vm,
+	 * Gets the list of objects that reference this object from the VM,
 	 * overwriting the cached list (if one exists).
 	 * 
 	 * @param max
 	 *            The maximum number of entries to return
 	 * @throws DebugException
-	 *             if the vm cannot return a list of referring objects
+	 *             if the VM cannot return a list of referring objects
 	 */
 	protected void reloadReferringObjects(long max) throws DebugException {
 		try {
-			List<Value> list = getUnderlyingObject().referringObjects(max);
+			List<ObjectReference> list = getUnderlyingObject().referringObjects(max);
 			IJavaObject[] references = new IJavaObject[list.size()];
 			for (int i = 0; i < references.length; i++) {
 				references[i] = (IJavaObject) JDIValue.createValue(

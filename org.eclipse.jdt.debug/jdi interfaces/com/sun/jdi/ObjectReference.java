@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,5 +32,5 @@ public interface ObjectReference extends com.sun.jdi.Value {
 	public void setValue(Field arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public long uniqueID();
 	public List<ThreadReference> waitingThreads() throws IncompatibleThreadStateException;
-	public List<Value> referringObjects(long arg1);
+	public List<ObjectReference> referringObjects(long arg1);
 }
