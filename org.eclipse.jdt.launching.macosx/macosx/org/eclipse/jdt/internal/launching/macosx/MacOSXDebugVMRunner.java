@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
-import java.io.File;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -48,27 +46,8 @@ public class MacOSXDebugVMRunner extends StandardVMDebugger {
 		super.run(config, launch, monitor);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractVMRunner#exec(java.lang.String[], java.io.File)
-	 */
 	@Override
-	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
-		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine, startonfirstthread), workingDirectory);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.AbstractVMRunner#exec(java.lang.String[], java.io.File, java.lang.String[])
-	 */
-	@Override
-	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
-		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine, startonfirstthread), workingDirectory, envp);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.StandardVMRunner#renderCommandLine(java.lang.String[])
-	 */
-	@Override
-	protected String renderCommandLine(String[] commandLine) {
-		return super.renderCommandLine(MacOSXLaunchingPlugin.wrap(getClass(), commandLine, startonfirstthread));
+	protected String[] validateCommandLine(String[] cmdLine) {
+		return MacOSXLaunchingPlugin.wrap(cmdLine, startonfirstthread);
 	}
 }

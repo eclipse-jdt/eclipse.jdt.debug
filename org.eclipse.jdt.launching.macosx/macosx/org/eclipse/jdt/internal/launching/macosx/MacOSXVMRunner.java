@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
-import java.io.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -46,17 +44,7 @@ public class MacOSXVMRunner extends StandardVMRunner {
 	}
 	
 	@Override
-	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
-		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine, startonfirstthread), workingDirectory);
-	}
-
-	@Override
-	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
-		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine, startonfirstthread), workingDirectory, envp);
-	}
-	
-	@Override
-	protected String renderCommandLine(String[] commandLine) {
-		return super.renderCommandLine(MacOSXLaunchingPlugin.wrap(getClass(), commandLine, startonfirstthread));
+	protected String[] validateCommandLine(String[] cmdLine) {
+		return MacOSXLaunchingPlugin.wrap(cmdLine, startonfirstthread);
 	}
 }

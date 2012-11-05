@@ -259,6 +259,10 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.startListening(map);
 				
 				File workingDir = getWorkingDir(config);
+				String[] newCmdLine = validateCommandLine(cmdLine);
+				if(newCmdLine != null) {
+					cmdLine = newCmdLine;
+				}
 				p = exec(cmdLine, workingDir, envp);				
 				if (p == null) {
 					return;

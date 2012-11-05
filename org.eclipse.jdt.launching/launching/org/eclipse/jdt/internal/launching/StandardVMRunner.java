@@ -102,6 +102,22 @@ public class StandardVMRunner extends AbstractVMRunner {
 	}
 	
 	/**
+	 * This method allows consumers to have a last look at the command line that will be used 
+	 * to start the runner just prior to launching. This method returns the new array of commands
+	 * to use to start the runner with or <code>null</code> if the existing command line should be used.
+	 * <br><br>
+	 * By default this method returns <code>null</code> indicating that the existing command line should be used to launch
+	 * 
+	 * @param cmdLine the existing command line
+	 * @return the new command line to launch with or <code>null</code> if the existing one should be used
+	 * @since 3.7.0
+	 */
+	protected String[] validateCommandLine(String[] cmdLine) {
+		//do nothing by default
+		return null;
+	}
+	
+	/**
 	 * Returns the working directory to use for the launched VM,
 	 * or <code>null</code> if the working directory is to be inherited
 	 * from the current process.
@@ -304,6 +320,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3); 
 		Process p= null;
 		File workingDir = getWorkingDir(config);
+		String[] newCmdLine = validateCommandLine(cmdLine);
+		if(newCmdLine != null) {
+			cmdLine = newCmdLine;
+		}
 		p= exec(cmdLine, workingDir, envp);
 		if (p == null) {
 			return;
