@@ -9,11 +9,11 @@ Bundle-ClassPath: jdi.jar,
 Bundle-Activator: org.eclipse.jdt.internal.debug.core.JDIDebugPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: com.sun.jdi,
- com.sun.jdi.connect,
- com.sun.jdi.connect.spi,
- com.sun.jdi.event,
- com.sun.jdi.request,
+Export-Package: com.sun.jdi;x-friends:="org.eclipse.jdt.debug.ui",
+ com.sun.jdi.connect;x-friends:="org.eclipse.jdt.debug.ui",
+ com.sun.jdi.connect.spi;x-friends:="org.eclipse.jdt.debug.ui",
+ com.sun.jdi.event;x-friends:="org.eclipse.jdt.debug.ui",
+ com.sun.jdi.request;x-friends:="org.eclipse.jdt.debug.ui",
  org.eclipse.jdi,
  org.eclipse.jdi.hcr,
  org.eclipse.jdi.internal;x-friends:="org.eclipse.jdt.debug.ui",
