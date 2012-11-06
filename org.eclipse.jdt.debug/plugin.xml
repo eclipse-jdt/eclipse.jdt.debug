@@ -311,11 +311,7 @@
                value="return getValue();"
                name="value"/>
       </javaLogicalStructure>
-      <javaLogicalStructure
-            subtypes="true"
-            value="return getChildren();"
-            type="org.eclipse.swt.widgets.Composite"
-            description="%descriptionSWTComposite"/>
+      
    </extension>
    <extension
          point="org.eclipse.debug.core.logicalStructureProviders">

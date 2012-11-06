@@ -3660,4 +3660,12 @@ M4 = Platform-specific fourth key
        </bundle>
     </component>
  </extension>
+ <extension
+       point="org.eclipse.jdt.debug.javaLogicalStructures">
+    <javaLogicalStructure
+            subtypes="true"
+            value="return getChildren();"
+            type="org.eclipse.swt.widgets.Composite"
+            description="%descriptionSWTComposite"/>
+ </extension>
 </plugin>
