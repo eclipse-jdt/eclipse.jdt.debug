@@ -1,10 +1,1051 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="marking as officially internal: https://bugs.eclipse.org/bugs/show_bug.cgi?id=392605" id="923795461">
+    <resource path="jdi interfaces/com/sun/jdi/AbsentInformationException.java" type="com.sun.jdi.AbsentInformationException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
             <message_arguments>
-                <message_argument value="3.8.0"/>
-                <message_argument value="3.7.100"/>
+                <message_argument value="com.sun.jdi.AbsentInformationException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Accessible.java" type="com.sun.jdi.Accessible">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Accessible"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ArrayReference.java" type="com.sun.jdi.ArrayReference">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ArrayReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ArrayType.java" type="com.sun.jdi.ArrayType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ArrayType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/BooleanType.java" type="com.sun.jdi.BooleanType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.BooleanType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/BooleanValue.java" type="com.sun.jdi.BooleanValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.BooleanValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Bootstrap.java" type="com.sun.jdi.Bootstrap">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Bootstrap"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ByteType.java" type="com.sun.jdi.ByteType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ByteType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ByteValue.java" type="com.sun.jdi.ByteValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ByteValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/CharType.java" type="com.sun.jdi.CharType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.CharType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/CharValue.java" type="com.sun.jdi.CharValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.CharValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ClassLoaderReference.java" type="com.sun.jdi.ClassLoaderReference">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ClassLoaderReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ClassNotLoadedException.java" type="com.sun.jdi.ClassNotLoadedException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ClassNotLoadedException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ClassNotPreparedException.java" type="com.sun.jdi.ClassNotPreparedException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ClassNotPreparedException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ClassObjectReference.java" type="com.sun.jdi.ClassObjectReference">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ClassObjectReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ClassType.java" type="com.sun.jdi.ClassType">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ClassType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/DoubleType.java" type="com.sun.jdi.DoubleType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.DoubleType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/DoubleValue.java" type="com.sun.jdi.DoubleValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.DoubleValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Field.java" type="com.sun.jdi.Field">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Field"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/FloatType.java" type="com.sun.jdi.FloatType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.FloatType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/FloatValue.java" type="com.sun.jdi.FloatValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.FloatValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/IncompatibleThreadStateException.java" type="com.sun.jdi.IncompatibleThreadStateException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.IncompatibleThreadStateException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InconsistentDebugInfoException.java" type="com.sun.jdi.InconsistentDebugInfoException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InconsistentDebugInfoException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/IntegerType.java" type="com.sun.jdi.IntegerType">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.IntegerType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/IntegerValue.java" type="com.sun.jdi.IntegerValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.IntegerValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InterfaceType.java" type="com.sun.jdi.InterfaceType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InterfaceType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InternalException.java" type="com.sun.jdi.InternalException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InternalException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InvalidCodeIndexException.java" type="com.sun.jdi.InvalidCodeIndexException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InvalidCodeIndexException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InvalidLineNumberException.java" type="com.sun.jdi.InvalidLineNumberException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InvalidLineNumberException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InvalidStackFrameException.java" type="com.sun.jdi.InvalidStackFrameException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InvalidStackFrameException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InvalidTypeException.java" type="com.sun.jdi.InvalidTypeException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InvalidTypeException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/InvocationException.java" type="com.sun.jdi.InvocationException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.InvocationException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/JDIPermission.java" type="com.sun.jdi.JDIPermission">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.JDIPermission"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/LocalVariable.java" type="com.sun.jdi.LocalVariable">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.LocalVariable"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Locatable.java" type="com.sun.jdi.Locatable">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Locatable"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Location.java" type="com.sun.jdi.Location">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Location"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/LongType.java" type="com.sun.jdi.LongType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.LongType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/LongValue.java" type="com.sun.jdi.LongValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.LongValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Method.java" type="com.sun.jdi.Method">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Method"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Mirror.java" type="com.sun.jdi.Mirror">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Mirror"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/MonitorInfo.java" type="com.sun.jdi.MonitorInfo">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.MonitorInfo"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/NativeMethodException.java" type="com.sun.jdi.NativeMethodException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.NativeMethodException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ObjectCollectedException.java" type="com.sun.jdi.ObjectCollectedException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ObjectCollectedException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ObjectReference.java" type="com.sun.jdi.ObjectReference">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ObjectReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/PathSearchingVirtualMachine.java" type="com.sun.jdi.PathSearchingVirtualMachine">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.PathSearchingVirtualMachine"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/PrimitiveType.java" type="com.sun.jdi.PrimitiveType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.PrimitiveType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/PrimitiveValue.java" type="com.sun.jdi.PrimitiveValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.PrimitiveValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ReferenceType.java" type="com.sun.jdi.ReferenceType">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ReferenceType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ShortType.java" type="com.sun.jdi.ShortType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ShortType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ShortValue.java" type="com.sun.jdi.ShortValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ShortValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/StackFrame.java" type="com.sun.jdi.StackFrame">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.StackFrame"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/StringReference.java" type="com.sun.jdi.StringReference">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.StringReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ThreadGroupReference.java" type="com.sun.jdi.ThreadGroupReference">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ThreadGroupReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/ThreadReference.java" type="com.sun.jdi.ThreadReference">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.ThreadReference"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Type.java" type="com.sun.jdi.Type">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Type"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/TypeComponent.java" type="com.sun.jdi.TypeComponent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.TypeComponent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VMCannotBeModifiedException.java" type="com.sun.jdi.VMCannotBeModifiedException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VMCannotBeModifiedException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VMDisconnectedException.java" type="com.sun.jdi.VMDisconnectedException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VMDisconnectedException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VMMismatchException.java" type="com.sun.jdi.VMMismatchException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VMMismatchException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VMOutOfMemoryException.java" type="com.sun.jdi.VMOutOfMemoryException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VMOutOfMemoryException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/Value.java" type="com.sun.jdi.Value">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.Value"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VirtualMachine.java" type="com.sun.jdi.VirtualMachine">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VirtualMachine"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VirtualMachineManager.java" type="com.sun.jdi.VirtualMachineManager">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VirtualMachineManager"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VoidType.java" type="com.sun.jdi.VoidType">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VoidType"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/VoidValue.java" type="com.sun.jdi.VoidValue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.VoidValue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/AttachingConnector.java" type="com.sun.jdi.connect.AttachingConnector">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.AttachingConnector"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/Connector.java" type="com.sun.jdi.connect.Connector">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.Connector"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/IllegalConnectorArgumentsException.java" type="com.sun.jdi.connect.IllegalConnectorArgumentsException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.IllegalConnectorArgumentsException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/LaunchingConnector.java" type="com.sun.jdi.connect.LaunchingConnector">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.LaunchingConnector"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/ListeningConnector.java" type="com.sun.jdi.connect.ListeningConnector">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.ListeningConnector"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/Transport.java" type="com.sun.jdi.connect.Transport">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.Transport"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/TransportTimeoutException.java" type="com.sun.jdi.connect.TransportTimeoutException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.TransportTimeoutException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/VMStartException.java" type="com.sun.jdi.connect.VMStartException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.VMStartException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/spi/ClosedConnectionException.java" type="com.sun.jdi.connect.spi.ClosedConnectionException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.spi.ClosedConnectionException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/spi/Connection.java" type="com.sun.jdi.connect.spi.Connection">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.spi.Connection"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/connect/spi/TransportService.java" type="com.sun.jdi.connect.spi.TransportService">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.connect.spi.TransportService"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/AccessWatchpointEvent.java" type="com.sun.jdi.event.AccessWatchpointEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.AccessWatchpointEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/BreakpointEvent.java" type="com.sun.jdi.event.BreakpointEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.BreakpointEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ClassPrepareEvent.java" type="com.sun.jdi.event.ClassPrepareEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ClassPrepareEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ClassUnloadEvent.java" type="com.sun.jdi.event.ClassUnloadEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ClassUnloadEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/Event.java" type="com.sun.jdi.event.Event">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.Event"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/EventIterator.java" type="com.sun.jdi.event.EventIterator">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.EventIterator"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/EventQueue.java" type="com.sun.jdi.event.EventQueue">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.EventQueue"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/EventSet.java" type="com.sun.jdi.event.EventSet">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.EventSet"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ExceptionEvent.java" type="com.sun.jdi.event.ExceptionEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ExceptionEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/LocatableEvent.java" type="com.sun.jdi.event.LocatableEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.LocatableEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MethodEntryEvent.java" type="com.sun.jdi.event.MethodEntryEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MethodEntryEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MethodExitEvent.java" type="com.sun.jdi.event.MethodExitEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MethodExitEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ModificationWatchpointEvent.java" type="com.sun.jdi.event.ModificationWatchpointEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ModificationWatchpointEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MonitorContendedEnterEvent.java" type="com.sun.jdi.event.MonitorContendedEnterEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MonitorContendedEnterEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MonitorContendedEnteredEvent.java" type="com.sun.jdi.event.MonitorContendedEnteredEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MonitorContendedEnteredEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MonitorWaitEvent.java" type="com.sun.jdi.event.MonitorWaitEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MonitorWaitEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/MonitorWaitedEvent.java" type="com.sun.jdi.event.MonitorWaitedEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.MonitorWaitedEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/StepEvent.java" type="com.sun.jdi.event.StepEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.StepEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ThreadDeathEvent.java" type="com.sun.jdi.event.ThreadDeathEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ThreadDeathEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/ThreadStartEvent.java" type="com.sun.jdi.event.ThreadStartEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.ThreadStartEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/VMDeathEvent.java" type="com.sun.jdi.event.VMDeathEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.VMDeathEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/VMDisconnectEvent.java" type="com.sun.jdi.event.VMDisconnectEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.VMDisconnectEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/VMStartEvent.java" type="com.sun.jdi.event.VMStartEvent">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.VMStartEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/event/WatchpointEvent.java" type="com.sun.jdi.event.WatchpointEvent">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.event.WatchpointEvent"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/AccessWatchpointRequest.java" type="com.sun.jdi.request.AccessWatchpointRequest">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.AccessWatchpointRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/BreakpointRequest.java" type="com.sun.jdi.request.BreakpointRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.BreakpointRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ClassPrepareRequest.java" type="com.sun.jdi.request.ClassPrepareRequest">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ClassPrepareRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ClassUnloadRequest.java" type="com.sun.jdi.request.ClassUnloadRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ClassUnloadRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/DuplicateRequestException.java" type="com.sun.jdi.request.DuplicateRequestException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.DuplicateRequestException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/EventRequest.java" type="com.sun.jdi.request.EventRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.EventRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/EventRequestManager.java" type="com.sun.jdi.request.EventRequestManager">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.EventRequestManager"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ExceptionRequest.java" type="com.sun.jdi.request.ExceptionRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ExceptionRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/InvalidRequestStateException.java" type="com.sun.jdi.request.InvalidRequestStateException">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.InvalidRequestStateException"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MethodEntryRequest.java" type="com.sun.jdi.request.MethodEntryRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MethodEntryRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MethodExitRequest.java" type="com.sun.jdi.request.MethodExitRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MethodExitRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ModificationWatchpointRequest.java" type="com.sun.jdi.request.ModificationWatchpointRequest">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ModificationWatchpointRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MonitorContendedEnterRequest.java" type="com.sun.jdi.request.MonitorContendedEnterRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MonitorContendedEnterRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MonitorContendedEnteredRequest.java" type="com.sun.jdi.request.MonitorContendedEnteredRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MonitorContendedEnteredRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MonitorWaitRequest.java" type="com.sun.jdi.request.MonitorWaitRequest">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MonitorWaitRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/MonitorWaitedRequest.java" type="com.sun.jdi.request.MonitorWaitedRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.MonitorWaitedRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/StepRequest.java" type="com.sun.jdi.request.StepRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.StepRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ThreadDeathRequest.java" type="com.sun.jdi.request.ThreadDeathRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ThreadDeathRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/ThreadStartRequest.java" type="com.sun.jdi.request.ThreadStartRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.ThreadStartRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/VMDeathRequest.java" type="com.sun.jdi.request.VMDeathRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.VMDeathRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi interfaces/com/sun/jdi/request/WatchpointRequest.java" type="com.sun.jdi.request.WatchpointRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="305365105">
+            <message_arguments>
+                <message_argument value="com.sun.jdi.request.WatchpointRequest"/>
+                <message_argument value="org.eclipse.jdt.debug_3.8.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi/org/eclipse/jdi/Bootstrap.java" type="org.eclipse.jdi.Bootstrap">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
+            <message_arguments>
+                <message_argument value="VirtualMachineManager"/>
+                <message_argument value="Bootstrap"/>
+                <message_argument value="virtualMachineManager()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi/org/eclipse/jdi/hcr/EventRequestManager.java" type="org.eclipse.jdi.hcr.EventRequestManager">
+        <filter id="404791350">
+            <message_arguments>
+                <message_argument value="org.eclipse.jdi.hcr.EventRequestManager"/>
+            </message_arguments>
+        </filter>
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="Mirror"/>
+                <message_argument value="EventRequestManager"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
+            <message_arguments>
+                <message_argument value="ThreadReference"/>
+                <message_argument value="EventRequestManager"/>
+                <message_argument value="createReenterStepRequest(ThreadReference)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi/org/eclipse/jdi/hcr/ReenterStepRequest.java" type="org.eclipse.jdi.hcr.ReenterStepRequest">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="404791350">
+            <message_arguments>
+                <message_argument value="org.eclipse.jdi.hcr.ReenterStepRequest"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="576720909">
+            <message_arguments>
+                <message_argument value="StepRequest"/>
+                <message_argument value="ReenterStepRequest"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643842064">
+            <message_arguments>
+                <message_argument value="ThreadReference"/>
+                <message_argument value="ReenterStepRequest"/>
+                <message_argument value="thread()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
+            <message_arguments>
+                <message_argument value="ReferenceType"/>
+                <message_argument value="ReenterStepRequest"/>
+                <message_argument value="addClassFilter(ReferenceType)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="jdi/org/eclipse/jdi/hcr/ThreadReference.java" type="org.eclipse.jdi.hcr.ThreadReference">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
+            <message_arguments>
+                <message_argument value="Value"/>
+                <message_argument value="ThreadReference"/>
+                <message_argument value="doReturn(Value, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/jdt/debug/core/JDIDebugModel.java" type="org.eclipse.jdt.debug.core.JDIDebugModel">
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
+            <message_arguments>
+                <message_argument value="VirtualMachine"/>
+                <message_argument value="JDIDebugModel"/>
+                <message_argument value="newDebugTarget(ILaunch, VirtualMachine, String, IProcess, boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Additional filters for making the JDI interfaces officially internal" id="643846161">
+            <message_arguments>
+                <message_argument value="VirtualMachine"/>
+                <message_argument value="JDIDebugModel"/>
+                <message_argument value="newDebugTarget(ILaunch, VirtualMachine, String, IProcess, boolean, boolean, boolean)"/>
             </message_arguments>
         </filter>
     </resource>
