@@ -147,33 +147,42 @@ public class JREContainer implements IClasspathContainer {
 			if(obj instanceof IAccessRule[][]) {
 				rules = (IAccessRule[][]) obj;
 			}
+			if (fRules == rules) {
+				return true;
+			}
 			if(rules != null) {
-				if (fRules == rules) {
-					return true;
-				}
 				if (fRules.length == rules.length) {
-					boolean equal = true;
-					IAccessRule[] originalrule, comparerule = null; 
 					for (int i = 0; i < fRules.length; i++) {
-						originalrule = fRules[i];
-						comparerule = rules[i];
-						equal &= (originalrule == comparerule);
-						if(!equal) {
-							if (originalrule.length == comparerule.length) {
-								for (int j = 0; j < originalrule.length; j++) {
-									if (!originalrule[j].equals(comparerule[j])) {
-										return false;
-									}
-								}
-								return true;
-							} 
+						if (!rulesEqual(fRules[i], rules[i])){
 							return false;
 						}
 					}
-					return equal;
+					return true;
 				}
 			}
 			return false;
+		}
+		
+		/**
+		 * Checks if the two arrays of rules are equal (same rules in each position in the array)
+		 * 
+		 * @param a First list of rules to compare, must not be <code>null</code> 
+		 * @param b Second list of rules to compare, must not be <code>null</code>
+		 * @return <code>true</code> if the arrays are equal, <code>false</code> otherwise
+		 */
+		private static boolean rulesEqual(IAccessRule[] a, IAccessRule[] b){
+			if (a == b){
+				return true;
+			}
+			if (a.length != b.length){
+				return false;
+			}
+			for (int j = 0; j < a.length; j++) {
+				if (!a[j].equals(b[j])) {
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 	
