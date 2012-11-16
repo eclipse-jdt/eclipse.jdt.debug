@@ -2679,6 +2679,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new NoOp(fCounter));
 				}
+				storeInstruction();
 				break;
 			default:
 				unrecognized = true;
@@ -2697,6 +2698,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new NoOp(fCounter));
 				}
+				storeInstruction();
 				break;
 			default:
 				unrecognized = true;
