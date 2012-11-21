@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2010 IBM Corporation and others.
+     Copyright (c) 2005, 2012 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -311,6 +311,19 @@
                value="return getValue();"
                name="value"/>
       </javaLogicalStructure>
+		<javaLogicalStructure
+		      description="%descriptionDomNode"
+		      subtypes="true"
+		      type="org.w3c.dom.Node">
+		   <variable
+		         name="children"
+		         value="org.w3c.dom.NodeList children = getChildNodes(); org.w3c.dom.Node[] nodeArray = new org.w3c.dom.Node[children.getLength()];for (int i = 0; i &lt; children.getLength(); i++) { nodeArray[i] = children.item(i); } return nodeArray;">
+		   </variable>
+		   <variable
+		         name="attributes"
+		         value="org.w3c.dom.NamedNodeMap attributes = getAttributes();if (attributes == null) return null; org.w3c.dom.Node[] nodes = new org.w3c.dom.Node[attributes.getLength()];for (int i = 0; i &lt; attributes.getLength(); i++) {nodes[i] = attributes.item(i);}return nodes;">
+		   </variable>
+		</javaLogicalStructure>
       
    </extension>
    <extension
