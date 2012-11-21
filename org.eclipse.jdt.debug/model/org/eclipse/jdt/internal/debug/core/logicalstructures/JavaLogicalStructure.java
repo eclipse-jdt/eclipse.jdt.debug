@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Igor Fedorenko - Bug 368212 - JavaLineBreakpoint.computeJavaProject does not let ISourceLocator evaluate the stackFrame
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
@@ -290,21 +291,15 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 			// find the project the snippets will be compiled in.
 			ISourceLocator locator = javaValue.getLaunch().getSourceLocator();
-			Object sourceElement = null;
-			if (locator instanceof ISourceLookupDirector) {
+			Object sourceElement = locator.getSourceElement(stackFrame);
+			if (sourceElement == null && locator instanceof ISourceLookupDirector) {
 				String[] sourcePaths = type.getSourcePaths(null);
 				if (sourcePaths != null && sourcePaths.length > 0) {
 					sourceElement = ((ISourceLookupDirector) locator)
 							.getSourceElement(sourcePaths[0]);
 				}
-				if (!(sourceElement instanceof IJavaElement)
-						&& sourceElement instanceof IAdaptable) {
-					sourceElement = ((IAdaptable) sourceElement)
-							.getAdapter(IJavaElement.class);
-				}
 			}
-			if (sourceElement == null) {
-				sourceElement = locator.getSourceElement(stackFrame);
+			if (sourceElement != null) {
 				if (!(sourceElement instanceof IJavaElement)
 						&& sourceElement instanceof IAdaptable) {
 					sourceElement = ((IAdaptable) sourceElement)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Igor Fedorenko - Bug 368212 - JavaLineBreakpoint.computeJavaProject does not let ISourceLocator evaluate the stackFrame
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
@@ -470,25 +471,24 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		if (locator == null)
 			return null;
 
-		Object sourceElement = null;
-		try {
-			if (locator instanceof ISourceLookupDirector
-					&& !stackFrame.isStatic()) {
-				IJavaType thisType = stackFrame.getThis().getJavaType();
-				if (thisType instanceof IJavaReferenceType) {
-					String[] sourcePaths = ((IJavaReferenceType) thisType)
-							.getSourcePaths(null);
-					if (sourcePaths != null && sourcePaths.length > 0) {
-						sourceElement = ((ISourceLookupDirector) locator)
-								.getSourceElement(sourcePaths[0]);
+		Object sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement == null) {
+			try {
+				if (locator instanceof ISourceLookupDirector
+						&& !stackFrame.isStatic()) {
+					IJavaType thisType = stackFrame.getThis().getJavaType();
+					if (thisType instanceof IJavaReferenceType) {
+						String[] sourcePaths = ((IJavaReferenceType) thisType)
+								.getSourcePaths(null);
+						if (sourcePaths != null && sourcePaths.length > 0) {
+							sourceElement = ((ISourceLookupDirector) locator)
+									.getSourceElement(sourcePaths[0]);
+						}
 					}
 				}
+			} catch (DebugException e) {
+				DebugPlugin.log(e);
 			}
-		} catch (DebugException e) {
-			DebugPlugin.log(e);
-		}
-		if (sourceElement == null) {
-			sourceElement = locator.getSourceElement(stackFrame);
 		}
 		if (!(sourceElement instanceof IJavaElement)
 				&& sourceElement instanceof IAdaptable) {
