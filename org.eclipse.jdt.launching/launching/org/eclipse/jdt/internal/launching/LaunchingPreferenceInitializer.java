@@ -52,7 +52,32 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		if(dnode == null) {
 			return;
 		}
-		dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, launchFilter);
+		//check to see if another plug-in has contributed to these defaults as well
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=395366
+		String val = dnode.get(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, (String)null);
+		if(val != null && !"".equals(val)) { //$NON-NLS-1$
+			String[] filters = val.split(","); //$NON-NLS-1$
+			StringBuffer buff = new StringBuffer();
+			boolean found = false;
+			for (int i = 0; i < filters.length; i++) {
+				if(launchFilter.equals(val)) {
+					found = true;
+					break;
+				}
+				String filter = filters[i].trim();
+				buff.append(filter);
+				if(i < filters.length-1) {
+					buff.append(',');
+				}
+			}
+			if(!found) {
+				launchFilter = buff.append(',').append(launchFilter).toString();
+				dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, launchFilter);
+			}
+		}
+		else {
+			dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, launchFilter);
+		}
 		
 		try {
 			dnode.flush();
