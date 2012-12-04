@@ -22,30 +22,23 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -450,64 +443,15 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	protected IJavaProject getJavaProject(IJavaStackFrame stackFrame) {
 		synchronized (fProjectsByFrame) {
-			IJavaProject project = fProjectsByFrame
-					.get(stackFrame);
+			IJavaProject project = fProjectsByFrame.get(stackFrame);
 			if (project == null) {
-				project = computeJavaProject(stackFrame);
+				project = JavaDebugUtils.resolveJavaProject(stackFrame);
 				if (project != null) {
 					fProjectsByFrame.put(stackFrame, project);
 				}
 			}
 			return project;
 		}
-	}
-
-	private IJavaProject computeJavaProject(IJavaStackFrame stackFrame) {
-		ILaunch launch = stackFrame.getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		ISourceLocator locator = launch.getSourceLocator();
-		if (locator == null)
-			return null;
-
-		Object sourceElement = locator.getSourceElement(stackFrame);
-		if (sourceElement == null) {
-			try {
-				if (locator instanceof ISourceLookupDirector
-						&& !stackFrame.isStatic()) {
-					IJavaType thisType = stackFrame.getThis().getJavaType();
-					if (thisType instanceof IJavaReferenceType) {
-						String[] sourcePaths = ((IJavaReferenceType) thisType)
-								.getSourcePaths(null);
-						if (sourcePaths != null && sourcePaths.length > 0) {
-							sourceElement = ((ISourceLookupDirector) locator)
-									.getSourceElement(sourcePaths[0]);
-						}
-					}
-				}
-			} catch (DebugException e) {
-				DebugPlugin.log(e);
-			}
-		}
-		if (!(sourceElement instanceof IJavaElement)
-				&& sourceElement instanceof IAdaptable) {
-			Object element = ((IAdaptable) sourceElement)
-					.getAdapter(IJavaElement.class);
-			if (element != null) {
-				sourceElement = element;
-			}
-		}
-		if (sourceElement instanceof IJavaElement) {
-			return ((IJavaElement) sourceElement).getJavaProject();
-		} else if (sourceElement instanceof IResource) {
-			IJavaProject project = JavaCore.create(((IResource) sourceElement)
-					.getProject());
-			if (project.exists()) {
-				return project;
-			}
-		}
-		return null;
 	}
 
 	/*

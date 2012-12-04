@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,13 @@ package org.eclipse.jdt.internal.debug.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IWatchExpressionDelegate;
 import org.eclipse.debug.core.model.IWatchExpressionListener;
 import org.eclipse.debug.core.model.IWatchExpressionResult;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -31,6 +28,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 
@@ -111,7 +109,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 		}
 		
 		public void run() {
-			IJavaProject project = getProject(fStackFrame);
+			IJavaProject project = JavaDebugUtils.resolveJavaProject(fStackFrame);
 			if (project == null) {
 				fListener.watchEvaluationFinished(null);
 				return;
@@ -147,28 +145,5 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 				fListener.watchEvaluationFinished(null);
 			}
 		}
-	}
-	
-	/**
-	 * Return the project associated with the given stack frame.
-	 */
-	private IJavaProject getProject(IJavaStackFrame javaStackFrame) {
-		ILaunch launch = javaStackFrame.getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
-			return null;
-		}
-
-		Object sourceElement = locator.getSourceElement(javaStackFrame);
-		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-		}
-		if (sourceElement instanceof IJavaElement) {
-			return ((IJavaElement) sourceElement).getJavaProject();
-		}
-		return null;
 	}
 }

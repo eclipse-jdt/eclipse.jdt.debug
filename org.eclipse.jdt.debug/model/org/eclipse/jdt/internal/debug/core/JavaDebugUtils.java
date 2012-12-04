@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -302,8 +302,7 @@ public class JavaDebugUtils {
 	 * @return corresponding Java element or <code>null</code>
 	 * @throws CoreException if an exception occurs
 	 */
-	public static IJavaElement resolveJavaElement(Object object, ILaunch launch)
-			throws CoreException {
+	public static IJavaElement resolveJavaElement(Object object, ILaunch launch) throws CoreException {
 		Object sourceElement = resolveSourceElement(object, launch);
 		return getJavaElement(sourceElement);
 	}
@@ -323,8 +322,7 @@ public class JavaDebugUtils {
 		if (sourceElement instanceof IJavaElement) {
 			javaElement = (IJavaElement) sourceElement;
 		} else if (sourceElement instanceof IAdaptable) {
-			javaElement = (IJavaElement) ((IAdaptable) sourceElement)
-					.getAdapter(IJavaElement.class);
+			javaElement = (IJavaElement) ((IAdaptable) sourceElement).getAdapter(IJavaElement.class);
 		}
 		if (javaElement == null && sourceElement instanceof IResource) {
 			javaElement = JavaCore.create((IResource) sourceElement);
@@ -349,8 +347,7 @@ public class JavaDebugUtils {
 	 * @return corresponding source element or <code>null</code>
 	 * @throws CoreException if an exception occurs
 	 */
-	public static Object resolveSourceElement(Object object, ILaunch launch)
-			throws CoreException {
+	public static Object resolveSourceElement(Object object, ILaunch launch) throws CoreException {
 		ISourceLocator sourceLocator = launch.getSourceLocator();
 		if (sourceLocator instanceof ISourceLookupDirector) {
 			ISourceLookupDirector director = (ISourceLookupDirector) sourceLocator;
@@ -362,6 +359,29 @@ public class JavaDebugUtils {
 		return null;
 	}
 
+	/**
+	 * Resolves the {@link IJavaProject} within the context of the given {@link IJavaStackFrame}
+	 * 
+	 * @param frame
+	 * @return the {@link IJavaProject} or <code>null</code>
+	 * @since 3.8.0
+	 */
+	public static IJavaProject resolveJavaProject(IJavaStackFrame frame) {
+		ILaunch launch = frame.getLaunch();
+		if(launch != null) {
+			try {
+				IJavaElement element = resolveJavaElement(frame, launch);
+				if(element != null) {
+					return element.getJavaProject();
+				}
+			}
+			catch(CoreException ce) {
+				//do nothing, return null
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns an array of simple type names that are part of the given type's
 	 * qualified name. For example, if the given name is <code>x.y.A$B</code>,

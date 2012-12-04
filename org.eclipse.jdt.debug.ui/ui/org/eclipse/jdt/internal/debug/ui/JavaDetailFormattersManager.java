@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,15 +24,12 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -195,10 +191,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (type != null) {
 			return type.getJavaProject();
 		}
-		IStackFrame stackFrame= null;
+		IJavaStackFrame stackFrame= null;
 		IJavaDebugTarget target = (IJavaDebugTarget)javaValue.getDebugTarget().getAdapter(IJavaDebugTarget.class);
 		if (target != null) {
-			stackFrame= thread.getTopStackFrame();
+			stackFrame= (IJavaStackFrame) thread.getTopStackFrame();
 			if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
 				stackFrame= null;
 			}
@@ -206,20 +202,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (stackFrame == null) {
 			return null;
 		}
-		Object sourceElement = JavaDebugUtils.resolveSourceElement(stackFrame, stackFrame.getLaunch());
-		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-		}
-		IJavaProject project= null;
-		if (sourceElement instanceof IJavaElement) {
-			project= ((IJavaElement) sourceElement).getJavaProject();
-		} else if (sourceElement instanceof IResource) {
-			IJavaProject resourceProject = JavaCore.create(((IResource)sourceElement).getProject());
-			if (resourceProject.exists()) {
-				project= resourceProject;
-			}
-		}
-		return project;
+		return JavaDebugUtils.resolveJavaProject(stackFrame);
 	}
 	
 	/**
