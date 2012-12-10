@@ -20,6 +20,6 @@
   </parent>
   <groupId>eclipse.jdt.debug</groupId>
   <artifactId>org.eclipse.jdt.launching</artifactId>
-  <version>3.6.100-SNAPSHOT</version>
+  <version>3.7.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

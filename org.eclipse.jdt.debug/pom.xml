@@ -21,26 +21,6 @@
   </parent>
   <groupId>eclipse.jdt.debug</groupId>
   <artifactId>org.eclipse.jdt.debug</artifactId>
-  <version>3.7.100-SNAPSHOT</version>
+  <version>3.8.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-compiler-plugin</artifactId>
-        <configuration>
-          <!--
-          JDT compiler seems to have troubles with overridden Collection.add(Object) when compiling
-          against java 1.5+ libraries. The "right" solution is to compile against java 1.4, but there is no such
-          thing for osx 10.6. 
-           -->
-           <!-- 
-          <source>1.5</source>
-          <target>jst14</target>
-           -->
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
