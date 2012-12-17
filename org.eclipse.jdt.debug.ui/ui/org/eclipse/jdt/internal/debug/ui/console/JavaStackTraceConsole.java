@@ -55,11 +55,14 @@ public class JavaStackTraceConsole extends TextConsole {
 	 */
 	private static class JavaStackTraceConsoleCleaner implements IDocumentListener {
 
-		public void documentAboutToBeChanged(DocumentEvent event) {/*nothing to do here*/}
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			event.fDocument.removeDocumentListener(this);
+			// We must clear the document twice otherwise the ConsoleDocumentAdapter gets confused about where to insert text (Bug 396734)
+			event.fDocument.set(""); //$NON-NLS-1$
+			event.fDocument.set(""); //$NON-NLS-1$
+		}
 
 		public void documentChanged(DocumentEvent event) {
-			event.fDocument.removeDocumentListener(this);
-			event.fDocument.set(event.fText);
 		}
 	}
 	
