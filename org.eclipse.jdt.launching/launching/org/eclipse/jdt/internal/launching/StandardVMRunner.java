@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
@@ -42,6 +44,13 @@ import com.ibm.icu.text.DateFormat;
  * A launcher for running Java main classes.
  */
 public class StandardVMRunner extends AbstractVMRunner {
+	
+	/**
+	 * Constant representing the <code>-XstartOnFirstThread</code> VM argument
+	 * 
+	 * @since 3.2.200
+	 */
+	public static final String XSTART_ON_FIRST_THREAD = "-XstartOnFirstThread"; //$NON-NLS-1$
 	
 	/**
 	 * The VM install instance
@@ -108,13 +117,88 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * <br><br>
 	 * By default this method returns <code>null</code> indicating that the existing command line should be used to launch
 	 * 
+	 * @param configuration the backing {@link ILaunchConfiguration}
 	 * @param cmdLine the existing command line
 	 * @return the new command line to launch with or <code>null</code> if the existing one should be used
 	 * @since 3.7.0
 	 */
-	protected String[] validateCommandLine(String[] cmdLine) {
-		//do nothing by default
-		return null;
+	protected String[] validateCommandLine(ILaunchConfiguration configuration, String[] cmdLine) {
+		try {
+			return wrap(configuration, cmdLine);
+		}
+		catch(CoreException ce) {
+			LaunchingPlugin.log(ce);
+		}
+		return cmdLine;
+	}
+	
+	/**
+	 * Adds in special command line arguments if SWT or the <code>-ws</code> directive 
+	 * are used
+	 * 
+	 * @param config the backing {@link ILaunchConfiguration}
+	 * @param cmdLine the original VM arguments
+	 * @return the (possibly) modified command line to launch with
+	 * @throws CoreException 
+	 */
+	private String[] wrap(ILaunchConfiguration config, String[] cmdLine) throws CoreException {
+		if(config != null && Platform.OS_MACOSX.equals(Platform.getOS())) {
+			for (int i= 0; i < cmdLine.length; i++) {
+				if ("-ws".equals(cmdLine[i]) || cmdLine[i].indexOf("swt.jar") > -1 || cmdLine[i].indexOf("org.eclipse.swt") > -1) {   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					boolean first = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, false);
+					return createSWTlauncher(cmdLine, cmdLine[0], first);
+				}
+			}
+		}
+		return cmdLine;
+	}
+	
+	/**
+	 * Returns path to executable.
+	 * @param cmdLine the old command line
+	 * @param vmVersion the version of the VM
+	 * @param startonfirstthread
+	 * @return the new command line
+	 */
+	private String[] createSWTlauncher(String[] cmdLine, String vmVersion, boolean startonfirstthread) {
+		// the following property is defined if Eclipse is started via java_swt
+		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
+		if (java_swt == null) {	
+			// not started via java_swt -> now we require that the VM supports the "-XstartOnFirstThread" option
+			boolean found = false;
+			ArrayList<String> args = new ArrayList<String>();
+			for (int i = 0; i < cmdLine.length; i++) {
+				if(XSTART_ON_FIRST_THREAD.equals(cmdLine[i])) {
+					found = true;
+				}
+				args.add(cmdLine[i]);
+			}
+			//newer VMs and non-MacOSX VMs don't like "-XstartOnFirstThread"
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=211625
+			if(!found && startonfirstthread) {
+				//add it as the first VM argument
+				args.add(1, XSTART_ON_FIRST_THREAD);
+			}
+			return args.toArray(new String[args.size()]);
+		}
+		try {
+			// copy java_swt to /tmp in order to get the app name right
+			Process process= Runtime.getRuntime().exec(new String[] { "/bin/cp", java_swt, "/tmp" }); //$NON-NLS-1$ //$NON-NLS-2$
+			process.waitFor();
+			java_swt= "/tmp/java_swt"; //$NON-NLS-1$
+		} catch (IOException e) {
+			// ignore and run java_swt in place
+		} catch (InterruptedException e) {
+			// ignore and run java_swt in place
+		}
+		String[] newCmdLine= new String[cmdLine.length+1];
+		int argCount= 0;
+		newCmdLine[argCount++]= java_swt;
+		newCmdLine[argCount++]= "-XXvm=" + vmVersion; //$NON-NLS-1$
+		for (int i= 1; i < cmdLine.length; i++) {
+			newCmdLine[argCount++]= cmdLine[i];
+		}
+		return newCmdLine;
 	}
 	
 	/**
@@ -320,7 +404,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3); 
 		Process p= null;
 		File workingDir = getWorkingDir(config);
-		String[] newCmdLine = validateCommandLine(cmdLine);
+		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if(newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}

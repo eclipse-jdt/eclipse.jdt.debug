@@ -115,7 +115,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		
 		Process p= null;
 		File workingDir = getWorkingDir(config);
-		String[] newCmdLine = validateCommandLine(cmdLine);
+		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if(newCmdLine != null) {
 			cmdLine = newCmdLine;
 		}

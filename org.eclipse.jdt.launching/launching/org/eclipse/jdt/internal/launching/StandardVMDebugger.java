@@ -259,7 +259,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.startListening(map);
 				
 				File workingDir = getWorkingDir(config);
-				String[] newCmdLine = validateCommandLine(cmdLine);
+				String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 				if(newCmdLine != null) {
 					cmdLine = newCmdLine;
 				}

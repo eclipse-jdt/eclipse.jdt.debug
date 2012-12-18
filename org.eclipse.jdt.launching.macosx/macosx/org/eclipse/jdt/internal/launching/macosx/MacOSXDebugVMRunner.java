@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.StandardVMDebugger;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 /**
  * Special override for MacOSX wrapping
  */
 public class MacOSXDebugVMRunner extends StandardVMDebugger {
-	
-	static boolean startonfirstthread = false;
 	
 	/**
 	 * Constructor
@@ -32,22 +24,5 @@ public class MacOSXDebugVMRunner extends StandardVMDebugger {
 	 */
 	public MacOSXDebugVMRunner(IVMInstall vmInstance) {
 		super(vmInstance);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.StandardVMDebugger#run(org.eclipse.jdt.launching.VMRunnerConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		ILaunchConfiguration lconfig = launch.getLaunchConfiguration();
-		if(lconfig != null) {
-			startonfirstthread = lconfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true);
-		}
-		super.run(config, launch, monitor);
-	}
-	
-	@Override
-	protected String[] validateCommandLine(String[] cmdLine) {
-		return MacOSXLaunchingPlugin.wrap(cmdLine, startonfirstthread);
 	}
 }
