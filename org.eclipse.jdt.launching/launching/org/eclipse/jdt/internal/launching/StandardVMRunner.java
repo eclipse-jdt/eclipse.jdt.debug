@@ -145,8 +145,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if(config != null && Platform.OS_MACOSX.equals(Platform.getOS())) {
 			for (int i= 0; i < cmdLine.length; i++) {
 				if ("-ws".equals(cmdLine[i]) || cmdLine[i].indexOf("swt.jar") > -1 || cmdLine[i].indexOf("org.eclipse.swt") > -1) {   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-					boolean first = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, false);
-					return createSWTlauncher(cmdLine, cmdLine[0], first);
+					return createSWTlauncher(cmdLine, 
+							cmdLine[0], 
+							config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true));
 				}
 			}
 		}
