@@ -22,6 +22,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -148,6 +149,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 */
 	public Control createControl(Composite parent) {
 		fEditorParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		fEditorParent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fEditor = createEditor(fEditorParent);
 		fEditor.setMnemonics(false);
 		fEditor.addPropertyListener(new IPropertyListener() {
