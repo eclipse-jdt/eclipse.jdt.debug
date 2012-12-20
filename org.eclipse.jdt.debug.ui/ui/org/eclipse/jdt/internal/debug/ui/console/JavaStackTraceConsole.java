@@ -28,7 +28,9 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -45,6 +47,24 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Provides a stack trace console for Java stack traces
  */
 public class JavaStackTraceConsole extends TextConsole {
+	
+	/**
+	 * Removes the stack trace console hint text displayed when
+	 * the view is first opened.  Should be called when content is
+	 * first entered into the console.
+	 */
+	private static class JavaStackTraceConsoleCleaner implements IDocumentListener {
+
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			event.fDocument.removeDocumentListener(this);
+			// We must clear the document twice otherwise the ConsoleDocumentAdapter gets confused about where to insert text (Bug 396734)
+			event.fDocument.set(""); //$NON-NLS-1$
+			event.fDocument.set(""); //$NON-NLS-1$
+		}
+
+		public void documentChanged(DocumentEvent event) {
+		}
+	}
 	
 	/**
 	 * Provides a partitioner for this console type
@@ -108,6 +128,10 @@ public class JavaStackTraceConsole extends TextConsole {
                 fin.close();
             } catch (IOException e) {
             }
+        } else {
+        	IDocument doc = getDocument();
+        	doc.set(ConsoleMessages.JavaStackTraceConsole_0);
+        	doc.addDocumentListener(new JavaStackTraceConsoleCleaner());
 		}
     }
 
