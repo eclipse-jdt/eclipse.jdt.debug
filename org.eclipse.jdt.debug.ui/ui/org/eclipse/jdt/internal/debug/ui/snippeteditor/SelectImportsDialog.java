@@ -31,21 +31,17 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -53,7 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -138,19 +133,11 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	
 	private void createImportButtons(Composite container) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
-		
-		// button container
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		buttonContainer.setLayoutData(gd);
-		GridLayout buttonLayout = new GridLayout();
-		buttonLayout.numColumns = 1;
-		buttonLayout.marginHeight = 0;
-		buttonLayout.marginWidth = 0;
-		buttonContainer.setLayout(buttonLayout);
-		
+		Composite bcomp = SWTFactory.createComposite(container, container.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0);
+		GridLayout gl = (GridLayout) bcomp.getLayout();
+		gl.verticalSpacing = 0;
 		// Add type button
-		fAddTypeButton = SWTFactory.createPushButton(buttonContainer, 
+		fAddTypeButton = SWTFactory.createPushButton(bcomp, 
 				SnippetMessages.getString("SelectImportsDialog.Add_&Type_1"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2"),  //$NON-NLS-1$
 				null);
@@ -163,7 +150,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});
 		
 		// Add package button
-		fAddPackageButton = SWTFactory.createPushButton(buttonContainer, 
+		fAddPackageButton = SWTFactory.createPushButton(bcomp, 
 				SnippetMessages.getString("SelectImportsDialog.Add_&Package_3"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4"),  //$NON-NLS-1$
 				null);
@@ -176,7 +163,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});
 		
 		// Remove button
-		fRemoveImportsButton = SWTFactory.createPushButton(buttonContainer, 
+		fRemoveImportsButton = SWTFactory.createPushButton(bcomp, 
 				SnippetMessages.getString("SelectImportsDialog.&Remove_5"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6"),  //$NON-NLS-1$
 				null);
@@ -188,7 +175,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			}
 		});
 		fRemoveImportsButton.setEnabled(false);
-		
 	}
 	
 	private void removeImports() {
@@ -266,34 +252,18 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Font font = parent.getFont();
-		
-		Composite dialogComp = (Composite)super.createDialogArea(parent);
-		// top level container
-		Composite outer = new Composite(dialogComp, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		outer.setLayout(topLayout);
-		outer.setFont(font);
-		
 		setTitle(NLS.bind(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getEditorInput().getName()})); //$NON-NLS-1$
-		
-		GridData gd = new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		outer.setLayoutData(gd);
-		
-		// filter table
+		setMessage(NLS.bind(SnippetMessages.getString("SelectImportsDialog.add_remove_imports"), new String[]{fEditor.getEditorInput().getName()})); //$NON-NLS-1$
+		Composite outer = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		GridLayout gl = (GridLayout) outer.getLayout();
+		gl.marginLeft = 7;
+		gl.marginTop = 0;
+		gl.marginBottom = 0;
+		SWTFactory.createLabel(outer, SnippetMessages.getString("SelectImportsDialog.imports_heading"), 2); //$NON-NLS-1$
 		fImportsTable= new Table(outer, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		
-		TableLayout tableLayout= new TableLayout();
-		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
-		columnLayoutData[0]= new ColumnWeightData(100);		
-		tableLayout.addColumnData(columnLayoutData[0]);
-		fImportsTable.setLayout(tableLayout);
-		fImportsTable.setFont(font);
-		new TableColumn(fImportsTable, SWT.NONE);
-
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 150;
+		fImportsTable.setLayoutData(gd);
 		fImportsViewer = new TableViewer(fImportsTable);
 		fImportsViewer.setLabelProvider(new FilterLabelProvider());
 		fImportsViewer.setComparator(new FilterViewerComparator());
@@ -301,10 +271,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		fImportsViewer.setContentProvider(fImportContentProvider);
 		// input just needs to be non-null
 		fImportsViewer.setInput(this);
-		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		gd.widthHint = 100;
-		gd.heightHint= 300;
-		fImportsViewer.getTable().setLayoutData(gd);
 		fImportsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
@@ -315,10 +281,9 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				}
 			}
 		});		
-		
 		createImportButtons(outer);
 		applyDialogFont(outer);
-		return outer;
+		return parent;
 	}
 
 	/* (non-Javadoc)
