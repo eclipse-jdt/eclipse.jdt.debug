@@ -3676,6 +3676,12 @@ M4 = Platform-specific fourth key
                    property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
                    value="true">
              </systemTest>
+             <with
+                   variable="activeEditor">
+                <instanceof
+                      value="org.eclipse.ui.texteditor.ITextEditor">
+                </instanceof>
+             </with>
           </and>
        </enabledWhen>
     </handler>
