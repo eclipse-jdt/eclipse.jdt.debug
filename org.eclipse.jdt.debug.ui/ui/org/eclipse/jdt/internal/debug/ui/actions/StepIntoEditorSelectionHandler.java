@@ -1,0 +1,44 @@
+/*******************************************************************************
+ * Copyright (c) Jan 14, 2013 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jdt.internal.debug.ui.actions;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+/**
+ * Default handler for Step Into Editor Selection action
+ * 
+ * @since 3.6.200
+ */
+public class StepIntoEditorSelectionHandler extends AbstractHandler {
+
+	IDebugEventSetListener listener = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		if(editor != null) {
+			ISelection selection = editor.getEditorSite().getSelectionProvider().getSelection();
+			if(selection instanceof ITextSelection) {
+				StepIntoSelectionUtils.stepIntoSelection((ITextSelection) selection);
+			}
+		}
+		return null;
+	}
+}

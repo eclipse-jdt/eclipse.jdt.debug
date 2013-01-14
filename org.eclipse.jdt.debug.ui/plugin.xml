@@ -152,26 +152,6 @@
                id="org.eclipse.jdt.debug.ui.actions.AddExceptionBreakpoint">
          </action>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
-               label="%stepIntoSelectionAction.label"
-               helpContextId="step_into_selection_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-               menubarPath="org.eclipse.ui.run/jdtGroup"
-               enablesFor="*"
-               id="org.eclipse.jdt.debug.ui.actions.StepIntoSelection">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.jdt.debug.ui.actions.ForceReturn"
                class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
@@ -427,6 +407,74 @@
               tooltip="%OpenFromClipboardAction.tooltip"
               style="push">
         </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
+          <command
+                commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+                style="push">
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:#ClassFileEditorContext?before=additions">
+          <separator
+                name="java.debug">
+          </separator>
+          <command
+                commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                         value="true">
+                   </systemTest>
+                   <with
+                         variable="activeMenuSelection">
+                      <instanceof
+                            value="org.eclipse.jface.text.ITextSelection">
+                      </instanceof>
+                   </with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:#CompilationUnitEditorContext?before=additions">
+          <separator
+                name="java.debug">
+          </separator>
+          <command
+                commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.debuggerActive"
+                         value="true">
+                   </systemTest>
+                   <systemTest
+                         property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                         value="true">
+                   </systemTest>
+                   <with
+                         variable="activeMenuSelection">
+                      <instanceof
+                            value="org.eclipse.jface.text.ITextSelection">
+                      </instanceof>
+                   </with>
+                </and>
+             </visibleWhen>
+          </command>
        </menuContribution>
    </extension>
    <extension
@@ -956,7 +1004,7 @@
                icon="icons/full/elcl16/runtoline_co.gif"
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
                label="%runToLineAction.label"
-               menubarPath="additions">
+               menubarPath="java.debug">
          </action>
          <action
                label="%Execute.label"
@@ -964,7 +1012,7 @@
                helpContextId="execute_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-               menubarPath="additions"
+               menubarPath="java.debug"
                id="org.eclipse.jdt.debug.ui.cuPopup.Execute">
          </action>
          <action
@@ -973,7 +1021,7 @@
                helpContextId="display_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
-               menubarPath="additions"
+               menubarPath="java.debug"
                id="org.eclipse.jdt.debug.ui.cuPopup.Display">
          </action>
          <action
@@ -982,7 +1030,7 @@
                helpContextId="inspect_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
-               menubarPath="additions"
+               menubarPath="java.debug"
                id="org.eclipse.jdt.debug.ui.cuPopup.Inspect">
          </action>
          <action
@@ -990,7 +1038,7 @@
                icon="$nl$/icons/full/etool16/watch_exp.gif"
                helpContextId="watch_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-               menubarPath="additions"
+               menubarPath="java.debug"
                id="org.eclipse.jdt.debug.ui.cuPopup.Watch">
          </action>
       </viewerContribution>
@@ -1008,7 +1056,7 @@
                helpContextId="force_return_action_context"
                definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
                class="org.eclipse.jdt.internal.debug.ui.actions.ForceReturnAction"
-               menubarPath="additions"
+               menubarPath="java.debug"
                id="org.eclipse.jdt.debug.ui.cuPopup.ForceReturn">
          </action>
       </viewerContribution>
@@ -1027,7 +1075,7 @@
                helpContextId="instance_count_action_context"
                id="org.eclipse.jdt.debug.ui.cuPopup.InstanceCount"
                label="%instanceCount.label"
-               menubarPath="additions"
+               menubarPath="java.debug"
                tooltip="%instanceCount.tooltip">
          </action>
          <action
@@ -1037,38 +1085,10 @@
                icon="icons/full/elcl16/all_instances.gif"
                id="org.eclipse.jdt.debug.ui.cuPopup.AllInstances"
                label="%allInstances.label"
-               menubarPath="additions"
+               menubarPath="java.debug"
                tooltip="%allInstances.tooltip">
          </action>
       </viewerContribution>      
-      <viewerContribution
-            targetID="#CompilationUnitEditorContext"
-            id="org.eclipse.jdt.debug.ui.CUPopupActions">
-         <visibility>
-            <and>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.debuggerActive"
-                     value="true">
-               </systemProperty>
-               <systemProperty
-                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
-                        value="true">
-               </systemProperty>
-               <objectClass
-                     name="org.eclipse.jface.text.ITextSelection">
-               </objectClass>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
-               enablesFor="*"
-               helpContextId="step_into_selection_action_context"
-               id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
-               label="%stepIntoSelectionAction.label"
-               menubarPath="additions">
-         </action>
-      </viewerContribution>
       <viewerContribution
             targetID="#ClassFileEditorContext"
             id="org.eclipse.jdt.debug.ui.CFPopupActions">
@@ -1175,34 +1195,6 @@
                tooltip="%allInstances.tooltip">
          </action>
       </viewerContribution>      
-      <viewerContribution
-            targetID="#ClassFileEditorContext"
-            id="org.eclipse.jdt.debug.ui.CFPopupActions">
-         <visibility>
-            <and>
-               <systemProperty
-                     name="org.eclipse.jdt.debug.ui.debuggerActive"
-                     value="true">
-               </systemProperty>
-               <systemProperty
-                        name="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
-                        value="true">
-               </systemProperty>
-               <objectClass
-                     name="org.eclipse.jface.text.ITextSelection">
-               </objectClass>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
-               enablesFor="*"
-               helpContextId="step_into_selection_action_context"
-               id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
-               label="%stepIntoSelectionAction.label"
-               menubarPath="additions">
-         </action>
-       </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.core.IMethod"
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
@@ -2607,10 +2599,11 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint">
       </command>
       <command
-            name="%ActionDefinition.stepIntoSelection.name"
-            description="%ActionDefinition.stepIntoSelection.description"
             categoryId="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
+            description="%ActionDefinition.stepIntoSelection.description"
+            helpContextId="step_into_selection_action_context"
+            id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+            name="%ActionDefinition.stepIntoSelection.name">
       </command>
       <command
             name="%ActionDefinition.execute.name"
@@ -3667,5 +3660,24 @@ M4 = Platform-specific fourth key
             value="return getChildren();"
             type="org.eclipse.swt.widgets.Composite"
             description="%descriptionSWTComposite"/>
+ </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoEditorSelectionHandler"
+          commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
+       <enabledWhen>
+          <and>
+             <systemTest
+                   property="org.eclipse.jdt.debug.ui.debuggerActive"
+                   value="true">
+             </systemTest>
+             <systemTest
+                   property="org.eclipse.jdt.debug.ui.instanceof.IJavaStackFrame"
+                   value="true">
+             </systemTest>
+          </and>
+       </enabledWhen>
+    </handler>
  </extension>
 </plugin>

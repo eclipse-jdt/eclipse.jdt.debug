@@ -21,7 +21,9 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
@@ -40,20 +42,20 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	 */
 	class StepIntoSelectionHyperlink implements IHyperlink {
 		
-		private IRegion fRegion = null;
+		private ITextSelection fSelection = null;
 		
 		/**
 		 * Constructor
 		 * @param region
 		 */
-		public StepIntoSelectionHyperlink(IRegion region) {
-			fRegion = region;
+		public StepIntoSelectionHyperlink(ITextSelection selection) {
+			fSelection = selection;
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
 		 */
 		public IRegion getHyperlinkRegion() {
-			return fRegion;
+			return new Region(fSelection.getOffset(), fSelection.getLength());
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
@@ -71,9 +73,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
 		public void open() {
-			StepIntoSelectionActionDelegate delegate = new StepIntoSelectionActionDelegate(fRegion);
-			delegate.init(JDIDebugUIPlugin.getActiveWorkbenchWindow());
-			delegate.run(null);
+			StepIntoSelectionUtils.stepIntoSelection(fSelection);
 		}
 		
 	}
@@ -100,9 +100,10 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 					if(document != null) {
 						IRegion wregion = JavaWordFinder.findWord(document, offset);
 						if(wregion != null) {
-							IMethod method = StepIntoSelectionUtils.getMethod(new TextSelection(document, wregion.getOffset(), wregion.getLength()), element);
+							ITextSelection selection = new TextSelection(document, wregion.getOffset(), wregion.getLength());
+							IMethod method = StepIntoSelectionUtils.getMethod(selection, element);
 							if (method != null) {
-								return new IHyperlink[] {new StepIntoSelectionHyperlink(wregion)};
+								return new IHyperlink[] {new StepIntoSelectionHyperlink(selection)};
 							}
 						}
 					}

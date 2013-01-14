@@ -65,7 +65,6 @@ public class JDIMessages extends NLS {
 	public static String PrimitiveTypeImpl_Invalid_primitive_signature____1;
 	public static String PrimitiveTypeImpl___2;
 	public static String PrimitiveTypeImpl_A_PrimitiveType_does_not_have_modifiers_3;
-	public static String PrimitiveValueImpl_Invalid_Primitive_Value_encountered_1;
 	public static String PrimitiveValueImpl_Invalid_Primitive_Value_tag_encountered___2;
 
 	public static String ReferenceTypeImpl_26;
