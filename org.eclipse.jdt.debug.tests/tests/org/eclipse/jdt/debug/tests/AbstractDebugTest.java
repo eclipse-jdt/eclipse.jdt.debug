@@ -58,14 +58,17 @@ import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
@@ -608,6 +611,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get14Project() {
 		assert14Project();
 		return getJavaProject(ONE_FOUR_PROJECT_NAME);
+	}
+	
+	/**
+	 * Returns the {@link IBreakpointOrganizer} with the given id or <code>null</code>
+	 * if no such organizer exists
+	 * @param id
+	 * @return the {@link IBreakpointOrganizer} or <code>null</code>
+	 * @since 3.8.100
+	 */
+	protected IBreakpointOrganizer getOrganizer(String id) {
+		return BreakpointOrganizerManager.getDefault().getOrganizer(id);
 	}
 	
 	/**
@@ -2383,6 +2397,59 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return parts[0];
 	}
 	
+	/**
+	 * Opens the {@link IDebugView} with the given id, does nothing if no such view exists.
+	 * This method can return <code>null</code>
+	 * 
+	 * @param viewId
+	 * @return the handle to the {@link IDebugView} with the given id
+	 * @throws PartInitException 
+	 * @throws InterruptedException
+	 * @since 3.8.100
+	 */
+	protected IDebugView openDebugView(final String viewId) throws PartInitException, InterruptedException {
+		if(viewId != null) {
+			Display display = DebugUIPlugin.getStandardDisplay();
+			if (Thread.currentThread().equals(display.getThread())) {
+				return doShowDebugView(viewId);
+			}
+			final IDebugView[] view = new IDebugView[1];
+			WorkbenchJob job = new WorkbenchJob("Showing the debug view: "+viewId) {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					try {
+					view[0] = doShowDebugView(viewId);
+					}
+					catch(CoreException ce) {
+						return ce.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+			job.join();
+			return view[0];
+		}
+		return null;
+	}
+	
+	/**
+	 * Opens a debug view
+	 * @param viewId
+	 * @return return the debug view handle or <code>null</code>
+	 * @throws PartInitException
+	 * @since 3.8.100
+	 */
+	private IDebugView doShowDebugView(String viewId) throws PartInitException {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			assertNotNull("We shold have found the active page to open the debug view in", page);
+			return (IDebugView) page.showView(viewId);
+		}
+		return null;
+	}
+ 	
 	/**
 	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint
 	 * or <code>null</code> if none.
