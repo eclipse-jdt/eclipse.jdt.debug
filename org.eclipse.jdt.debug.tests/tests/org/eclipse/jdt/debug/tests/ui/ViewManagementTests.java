@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Tests view management.
  */
-public class ViewMangementTests extends AbstractDebugTest implements IPerspectiveListener3 {
+public class ViewManagementTests extends AbstractDebugTest implements IPerspectiveListener3 {
 
 	// view ids
 	/**
@@ -69,7 +69,7 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	 * Constructor
 	 * @param name
 	 */
-	public ViewMangementTests(String name) {
+	public ViewManagementTests(String name) {
 		super(name);
 	}
 		
@@ -292,7 +292,10 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 	 * 
 	 * @throws Exception
 	 */
-	public void testAutoCloseJavaPerspective() throws Exception {
+	//TODO: Disable test for now.  There is a race condition between activating and 
+	// closing of views.
+	//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398998
+/*	public void testAutoCloseJavaPerspective() throws Exception {
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
@@ -314,23 +317,21 @@ public class ViewMangementTests extends AbstractDebugTest implements IPerspectiv
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			assertTrue(buildRemainingEventsMessage(), checkComplete());
 			// terminate to auto close
-// TODO: Disable test for now.  There is a race condition between activating and 
-// closing of views.			
-//			synchronized (fEventLock) {
-//				expectingViewCloseEvents(window, new String[]{
-//						VIEW_TWO,
-//						IDebugUIConstants.ID_VARIABLE_VIEW,
-//						IDebugUIConstants.ID_BREAKPOINT_VIEW});
-//				thread.terminate();
-//				fEventLock.wait(DEFAULT_TIMEOUT);
-//			}
+			synchronized (fEventLock) {
+				expectingViewCloseEvents(window, new String[]{
+						VIEW_TWO,
+						IDebugUIConstants.ID_VARIABLE_VIEW,
+						IDebugUIConstants.ID_BREAKPOINT_VIEW});
+				thread.terminate();
+				fEventLock.wait(DEFAULT_TIMEOUT);
+			}
 			assertTrue(buildRemainingEventsMessage(), checkComplete());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
 		}		
-	}	
+	}*/	
 	
 	protected String buildRemainingEventsMessage() {
 		StringBuffer buffer = new StringBuffer();
