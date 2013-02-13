@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -382,15 +382,19 @@ public class VMDefinitionsContainer {
 			Element element = doc.createElement("libraryLocation");  //$NON-NLS-1$
 			element.setAttribute("jreJar", locations[i].getSystemLibraryPath().toString()); //$NON-NLS-1$
 			element.setAttribute("jreSrc", locations[i].getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
-
+			
 			IPath packageRootPath = locations[i].getPackageRootPath();
             if (packageRootPath != null) {
                 element.setAttribute("pkgRoot", packageRootPath.toString()); //$NON-NLS-1$
             }
             
-			URL url= locations[i].getJavadocLocation();
-			if (url != null) {
-				element.setAttribute("jreJavadoc", url.toExternalForm()); //$NON-NLS-1$
+			URL javadocURL= locations[i].getJavadocLocation();
+			if (javadocURL != null) {
+				element.setAttribute("jreJavadoc", javadocURL.toExternalForm()); //$NON-NLS-1$
+			}
+			URL indexURL = locations[i].getIndexLocation();
+			if(indexURL != null) {
+				element.setAttribute("jreIndex", indexURL.toExternalForm()); //$NON-NLS-1$
 			}
 			root.appendChild(element);
 		}
@@ -628,6 +632,8 @@ public class VMDefinitionsContainer {
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
 		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
 		String jreJavadoc= libLocationElement.getAttribute("jreJavadoc"); //$NON-NLS-1$
+		String jreIndex= libLocationElement.getAttribute("jreIndex"); //$NON-NLS-1$
+		// javadoc URL
 		URL javadocURL= null;
 		if (jreJavadoc.length() == 0) {
 			jreJavadoc= null;
@@ -635,11 +641,22 @@ public class VMDefinitionsContainer {
 			try {
 				javadocURL= new URL(jreJavadoc);
 			} catch (MalformedURLException e) {
-				LaunchingPlugin.log("Library location element is specified incorrectly.");  //$NON-NLS-1$
+				LaunchingPlugin.log("Library location javadoc element is specified incorrectly.");  //$NON-NLS-1$
 			}
 		}
+		// index URL
+		URL indexURL= null;
+		if (jreIndex.length() == 0) {
+			jreIndex= null;
+		} else {
+			try {
+				indexURL= new URL(jreIndex);
+			} catch (MalformedURLException e) {
+				LaunchingPlugin.log("Library location jre index element is specified incorrectly.");  //$NON-NLS-1$
+			}
+		}		
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
-			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot), javadocURL);
+			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot), javadocURL, indexURL);
 		}
 		LaunchingPlugin.log("Library location element is specified incorrectly.");  //$NON-NLS-1$
 		return null;

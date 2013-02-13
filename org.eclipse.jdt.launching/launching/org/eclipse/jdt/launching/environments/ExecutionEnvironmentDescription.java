@@ -88,6 +88,19 @@ public final class ExecutionEnvironmentDescription {
 	 */
 	public static final String JAVADOC_LOC = "-Dee.javadoc";  //$NON-NLS-1$
 	/**
+	 * Pre-built index location property in an execution environment description file.
+	 * <p>
+	 * Specifies the location for a pre-built search index. Must be a valid {@link URL}.
+	 * 
+	 * You can use <code>${ee.home}</code> and <code>'..'</code> segments to specify a file location
+	 * relative to the ee file.
+	 * 
+	 * If this property is not specified the default value of <code>null</code> will be used.
+	 * </p>
+	 * @since 3.7
+	 */
+	public static final String INDEX_LOC = "-Dee.index"; //$NON-NLS-1$
+	/**
 	 * Additional directories property name in an execution environment description file.
 	 */
 	public static final String ADDITIONAL_DIRS = "-Dee.additional.dirs";  //$NON-NLS-1$
@@ -232,11 +245,12 @@ public final class ExecutionEnvironmentDescription {
 			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
 			IPath src = getSourceLocation();
 			URL url = getJavadocLocation();
+			URL indexurl = getIndexLocation();
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
 				File lib = path.toFile(); 
 				if (lib.exists() && lib.isFile()) {
-					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url);
+					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url, indexurl);
 					boot.add(libraryLocation);
 				}
 			}
@@ -618,4 +632,13 @@ public final class ExecutionEnvironmentDescription {
 		return EEVMType.getJavadocLocation(fProperties);
 	}		
 	
+	/**
+	 * Returns the {@link URL} for the index location or <code>null</code> if one has not been set.
+	 * 
+	 * @return the index {@link URL} or <code>null</code>
+	 * @since 3.7.0
+	 */
+	private URL getIndexLocation() {
+		return EEVMType.getIndexLocation(fProperties);
+	}
 }

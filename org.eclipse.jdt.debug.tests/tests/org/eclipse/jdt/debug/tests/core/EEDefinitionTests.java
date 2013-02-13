@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,6 +155,26 @@ public class EEDefinitionTests extends AbstractDebugTest {
 			fail();
 		}
 		assertEquals("Incorrect javadoc location", expectedLocation, location);
+	}
+	
+	/**
+	 * Tests asking for the index from the EE file
+	 * 
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testIndexLocation() throws Exception {
+		File file = getEEFile();
+		assertNotNull("Missing EE file", file);
+		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+		URL location = EEVMType.getIndexLocation(ee.getProperties());
+		URL expectedLocation = null;
+		try {
+			expectedLocation = new URL("http://a.index.location");
+		} catch (MalformedURLException e) {
+			fail();
+		}
+		assertEquals("Incorrect index location", expectedLocation, location);
 	}
 	
 	/**

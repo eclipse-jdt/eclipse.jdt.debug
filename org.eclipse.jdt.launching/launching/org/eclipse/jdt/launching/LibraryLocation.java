@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public final class LibraryLocation {
 	private IPath fSystemLibrarySource;
 	private IPath fPackageRootPath;
 	private URL fJavadocLocation;
+	private URL fIndexLocation;
 	
 	/**
 	 * Creates a new library location.
@@ -64,15 +65,37 @@ public final class LibraryLocation {
 	 * @since 3.1
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation) {
-		if (libraryPath == null)
-			throw new IllegalArgumentException(LaunchingMessages.libraryLocation_assert_libraryNotNull); 
+		this(libraryPath, sourcePath, packageRoot, javadocLocation, null);
+	}		
 
+	/**
+	 * Creates a new library location.
+	 * 
+	 * @param libraryPath	The location of the JAR containing java.lang.Object
+	 * 					Must not be <code>null</code>.
+	 * @param sourcePath	The location of the zip file containing the sources for <code>library</code>
+	 * 					Must not be <code>null</code> (Use Path.EMPTY instead)
+	 * @param packageRoot The path inside the <code>source</code> zip file where packages names
+	 * 					  begin. If the source for java.lang.Object source is found at 
+	 * 					  "src/java/lang/Object.java" in the zip file, the 
+	 * 					  packageRoot should be "src"
+	 * 					  Must not be <code>null</code>. (Use Path.EMPTY or IPath.ROOT)
+	 * @param javadocLocation The location of the javadoc for <code>library</code>
+	 * @param indexLocation The location of the index for <code>library</code>
+	 * @throws IllegalArgumentException If the library path is <code>null</code>.
+	 * @since 3.7
+	 */
+	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation, URL indexLocation) {
+		if (libraryPath == null) {
+			throw new IllegalArgumentException(LaunchingMessages.libraryLocation_assert_libraryNotNull); 
+		}
 		fSystemLibrary= libraryPath;
 		fSystemLibrarySource= sourcePath;
 		fPackageRootPath= packageRoot;
 		fJavadocLocation= javadocLocation;
-	}		
-		
+		fIndexLocation = indexLocation;
+	}
+	
 	/**
 	 * Returns the JRE library jar location.
 	 * 
@@ -103,12 +126,23 @@ public final class LibraryLocation {
 	/**
 	 * Returns the Javadoc location associated with this Library location.
 	 * 
-	 * @return a url pointing to the Javadoc location associated with
+	 * @return a {@link URL} pointing to the Javadoc location associated with
 	 * 	this Library location, or <code>null</code> if none
 	 * @since 3.1
 	 */
 	public URL getJavadocLocation() {
 		return fJavadocLocation;
+	}
+	
+	/**
+	 * Returns the index location associated with this library location.
+	 * 
+	 * @return a {@link URL} pointing to the index location associated with
+	 * 	this Library location, or <code>null</code> if none
+	 * @since 3.7
+	 */
+	public URL getIndexLocation() {
+		return fIndexLocation;
 	}
 	
 	/* (non-Javadoc)
@@ -171,4 +205,13 @@ public final class LibraryLocation {
 		fSystemLibrarySource = source;
 	}
 
+	/**
+	 * Sets the index location to the given {@link URL}.
+	 * 
+	 * @param indexLoc
+	 * @since 3.7
+	 */
+	public void setIndexLocation(URL indexLoc) {
+		fIndexLocation = indexLoc;
+	}
 }
