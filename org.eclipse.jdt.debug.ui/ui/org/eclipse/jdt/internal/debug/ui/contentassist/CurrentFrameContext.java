@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.contentassist;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
@@ -66,7 +67,12 @@ public class CurrentFrameContext extends TypeContext {
             for (int i = 0; i < locals[0].length; i++) {
                 IJavaVariable var = (IJavaVariable) variables[index];
                 locals[0][i] = var.getName();
-                locals[1][i] = var.getJavaType().getName();
+                try {
+                	locals[1][i] = var.getJavaType().getName();
+                }
+                catch(DebugException de) {
+                	locals[1][i] = var.getReferenceTypeName();
+                }
                 index++;
             }
             return locals;
