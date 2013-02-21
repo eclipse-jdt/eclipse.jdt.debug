@@ -58,17 +58,23 @@ import org.eclipse.osgi.util.NLS;
  *   1.7.0.jdk/
  *     Contents/
  *       Home/
+ *         bin/
+ *         lib/
+ *         ...
  *         src.zip
  * </pre>
  * 
- * The directory structure for  Snow Leopard and Lion VMs is:
+ * The directory structure for Snow Leopard and Lion VMs is:
  * <pre>
  * /System/Library/Java/JavaVirtualMachines/
  *   1.6.0.jdk/
  *     Contents/
+ *     	 Classes/
  *       Home/
  *         src.zip
  * </pre>
+ * 
+ * @see http://developer.apple.com/library/mac/#qa/qa1170/_index.html
  * @see http://developer.apple.com/library/mac/#releasenotes/Java/JavaSnowLeopardUpdate3LeopardUpdate8RN/NewandNoteworthy/NewandNoteworthy.html#//apple_ref/doc/uid/TP40010380-CH4-SW1
  */
 public class MacOSXVMInstallType extends StandardVMType {
@@ -84,6 +90,36 @@ public class MacOSXVMInstallType extends StandardVMType {
 	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
 	/** The doc for 1.4.1 is kept in a sub directory of the above. */ 
 	private static final String JAVADOC_SUBDIR= "/doc/api";	//$NON-NLS-1$
+	/**
+	 * The name of the src.zip file for the JDK source
+	 * @since 3.2.200
+	 */
+	static final String SRC_ZIP = "src.zip"; //$NON-NLS-1$
+	/**
+	 * The name of the src.jar file for legacy JDK/JREs
+	 * @since 3.2.200
+	 */
+	static final String SRC_JAR = "src.jar"; //$NON-NLS-1$
+	/**
+	 * The name of the source used for libraries on the Mac
+	 * @since 3.2.200
+	 */
+	static final String SRC_NAME = "src"; //$NON-NLS-1$
+	/**
+	 * The name of the Contents folder found within a JRE/JDK folder
+	 * @since 3.2.200
+	 */
+	static final String JVM_CONTENTS = "Contents"; //$NON-NLS-1$
+	/**
+	 * The name of the Classes folder used to hold the libraries for a legacy JDK/JRE
+	 * @since 3.2.200
+	 */
+	static final String JVM_CLASSES = "Classes"; //$NON-NLS-1$
+	/**
+	 * The name of the Versions folder for legacy JRE/JDK installs
+	 * @since 3.2.200 
+	 */
+	static final String JVM_VERSIONS = "Versions"; //$NON-NLS-1$
 				
 	@Override
 	public String getName() {
@@ -147,18 +183,15 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 * @return file that points to the default JRE install
 	 */
 	private File detectInstallLocationOld() {
-		
 		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
 		if (javaVMName == null) {
 			return null;
 		}
-
 		if (!JVM_VERSIONS_FOLDER.exists() || !JVM_VERSIONS_FOLDER.isDirectory()) {
 			String message= NLS.bind(MacOSXLaunchingPlugin.getString("MacOSXVMType.error.jvmDirectoryNotFound"), JVM_VERSIONS_FOLDER);  //$NON-NLS-1$
 			LaunchingPlugin.log(message);
 			return null;
 		}
-
 		// find all installed VMs
 		File defaultLocation= null;
 		File[] versions= getAllVersionsOld();
@@ -232,6 +265,11 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 */
 	@Override
 	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
+		IPath rtjar = getDefaultSystemLibrary(installLocation);
+		if(rtjar.toFile().isFile()) {
+			//not a Mac OS VM, default to the standard VM type info collection
+			return super.getDefaultLibraryInfo(installLocation);
+		}
 		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
 		File lib1= new File(classes, "classes.jar"); //$NON-NLS-1$
 		File lib2= new File(classes, "ui.jar"); //$NON-NLS-1$
@@ -261,18 +299,24 @@ public class MacOSXVMInstallType extends StandardVMType {
 	 */
 	@Override
 	protected IPath getDefaultSystemLibrarySource(File libLocation) {
-		File parent= libLocation.getParentFile();
-		while (parent != null) {
-			File home= new File(parent, JVM_HOME);
-			File parentsrc= new File(home, "src.jar"); //$NON-NLS-1$
-			if (parentsrc.isFile()) {
-				setDefaultRootPath("src");//$NON-NLS-1$
-				return new Path(parentsrc.getPath());
+		File parent = libLocation.getParentFile();
+		File src = null;
+		//Walk the parent hierarchy, stop if we run out of parents or we hit the /Contents directory.
+		//For the new shape of JRE/JDKs we can stop once we hit the root Contents folder, for legacy versions
+		//we can stop when we hit the Versions folder
+		String pname = parent.getName();
+		while (parent != null && !JVM_CONTENTS.equals(pname) && !JVM_VERSIONS.equals(pname)) {
+			//In Mac OSX supplied JDK/JREs the /Home directory is co-located to the /Classes directory
+			if(JVM_CLASSES.equals(pname)) {
+				src = new File(parent.getParent(), JVM_HOME);
+				src = getSourceInParent(src);
 			}
-			parentsrc= new File(home, "src.zip"); //$NON-NLS-1$
-			if (parentsrc.isFile()) {
-				setDefaultRootPath(""); //$NON-NLS-1$
-				return new Path(parentsrc.getPath());
+			else {
+				src = getSourceInParent(parent);
+			}
+			if(src != null) {
+				setDefaultRootPath(SRC_NAME);
+				return new Path(src.getPath());
 			}
 			parent = parent.getParentFile();
 		}
@@ -280,6 +324,31 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return Path.EMPTY;
 	}
 
+	/**
+	 * Checks to see if <code>src.zip</code> or <code>src.jar</code> exists in the given parent 
+	 * folder. Returns <code>null</code> if it does not exist.
+	 * <br><br>
+	 * The newer naming of the archive is <code>src.zip</code> and the older (pre-1.6) is
+	 * <code>src.jar</code>
+	 * 
+	 * @param parent the parent directory
+	 * @return the {@link File} for the source archive or <code>null</code>
+	 * @since 3.2.200
+	 */
+	File getSourceInParent(File parent) {
+		if(parent.isDirectory()) {
+			File src = new File(parent, SRC_ZIP);
+			if(src.isFile()) {
+				return src;
+			}
+			src = new File(src, SRC_JAR);
+			if(src.isFile()) {
+				return src;
+			}
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#validateInstallLocation(java.io.File)
 	 */
