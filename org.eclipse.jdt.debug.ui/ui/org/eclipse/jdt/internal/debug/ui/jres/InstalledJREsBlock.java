@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -410,7 +410,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
             if (!isDuplicateName(name)) {
                 return name;
             }
-            
             if (name.matches(".*\\(\\d*\\)")) { //$NON-NLS-1$
                 int start = name.lastIndexOf('(');
                 int end = name.lastIndexOf(')');
@@ -784,13 +783,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				Iterator<Object> iterator = fVMs.iterator();
 				while (iterator.hasNext()) {
 					IVMInstall vm = (IVMInstall) iterator.next();
-					exists.add(vm.getInstallLocation().getPath());
+					exists.add(vm.getId());
 				}
 				VMStandin[] standins = new MacVMSearch().search(monitor);
 				for (int i = 0; i < standins.length; i++) {
 					//we should be comparing install paths, as the ID can be computed differently 
 					//based on if the VM is searched or added manually
-					if (!exists.contains(standins[i].getInstallLocation().getPath())) {
+					if (!exists.contains(standins[i].getId())) {
 						added.add(standins[i]);
 					}
 				}
