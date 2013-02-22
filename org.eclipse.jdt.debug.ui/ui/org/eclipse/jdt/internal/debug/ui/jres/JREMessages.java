@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -87,10 +87,6 @@ public class JREMessages extends NLS {
 	public static String AddVMDialog_23;
 
 	public static String MacVMSearch_0;
-
-	public static String MacVMSearch_1;
-
-	public static String MacVMSearch_2;
 
 	public static String VMLibraryBlock_12;
 
@@ -188,6 +184,8 @@ public class JREMessages extends NLS {
 	public static String JREsComboBlock_9;
 
 	public static String InstalledJREsBlock_19;
+
+	public static String InstalledJREsBlock_7;
 
 	public static String LibraryLabelProvider_0;
 

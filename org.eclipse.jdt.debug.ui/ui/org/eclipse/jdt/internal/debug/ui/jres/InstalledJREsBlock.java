@@ -38,11 +38,13 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -64,12 +66,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -149,8 +153,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * Label provider for installed JREs table.
 	 */
-	class VMLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class VMLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 
+		Font bold = null;
+		
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
@@ -161,6 +167,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					case 0:
 						if (isContributed(vm)) {
 							return NLS.bind(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
+						}
+						if(fVMList.getChecked(element)) {
+							return NLS.bind(JREMessages.InstalledJREsBlock_7, vm.getName());
 						}
 						return vm.getName();
 					case 1:
@@ -180,6 +189,31 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 			}
 			return null;
+		}
+
+		public Font getFont(Object element) {
+			if(fVMList.getChecked(element)) {
+				if (bold == null) {
+					Font dialogFont = JFaceResources.getDialogFont();
+					FontData[] fontData = dialogFont.getFontData();
+					for (int i = 0; i < fontData.length; i++) {
+						FontData data = fontData[i];
+						data.setStyle(SWT.BOLD);
+					}
+					Display display = JDIDebugUIPlugin.getStandardDisplay();
+					bold = new Font(display, fontData);
+				}
+				return bold;
+			}
+			return null;
+		}
+		
+		@Override
+		public void dispose() {
+			if(bold != null) {
+				bold.dispose();
+			}
+			super.dispose();
 		}
 
 	}	
@@ -219,6 +253,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					fVMList.setCheckedElements(new Object[]{jre});
 					fVMList.reveal(jre);
 				}
+				fVMList.refresh(true);
 				fireSelectionChanged();
 			}
 		}
@@ -254,6 +289,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByName();
+				fVMList.refresh(true);
 			}
 		});
 		int defaultwidth = 350/3 +1;
@@ -265,6 +301,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByLocation();
+				fVMList.refresh(true);
 			}
 		});
 		column.setWidth(defaultwidth);
@@ -275,6 +312,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sortByType();
+				fVMList.refresh(true);
 			}
 		});
 		column.setWidth(defaultwidth);
@@ -282,6 +320,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fVMList = new CheckboxTableViewer(fTable);			
 		fVMList.setLabelProvider(new VMLabelProvider());
 		fVMList.setContentProvider(new JREsContentProvider());
+		fVMList.setUseHashlookup(true);
 		// by default, sort by name
 		sortByName();
 		
@@ -397,6 +436,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
         } else {
         	fVMList.setSelection(selection);
         }
+        fVMList.refresh(true);
     }
 
 	/**
@@ -582,8 +622,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			VMStandin result = wizard.getResult();
 			if (result != null) {
 				fVMs.add(result);
+				//refresh from model
 				fVMList.refresh();
 				fVMList.setSelection(new StructuredSelection(result));
+				//ensure labels are updated
+				fVMList.refresh(true);
 			}
 		}
 	}
@@ -593,7 +636,10 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	public void vmAdded(IVMInstall vm) {
 		fVMs.add(vm);
+		//update from model
 		fVMList.refresh();
+		//update labels
+		fVMList.refresh(true);
 	}
 	
 	/**
@@ -631,13 +677,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					int index = fVMs.indexOf(vm);
 					fVMs.remove(index);
 					fVMs.add(index, result);
-					fVMList.refresh();
 					fVMList.setSelection(new StructuredSelection(result));
+					fVMList.refresh(true);
 				}
 			}
 		}
-		
-		
 	}
 	
 	/**
@@ -665,7 +709,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		for (int i = 0; i < vms.length; i++) {
 			fVMs.remove(vms[i]);
 		}
-		fVMList.refresh();
 		IStructuredSelection curr = (IStructuredSelection) getSelection();
 		if (!curr.equals(prev)) {
 			IVMInstall[] installs = getJREs();
@@ -676,6 +719,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				fireSelectionChanged();
 			}
 		}
+		fVMList.refresh();
+		fVMList.refresh(true);
 	}
 	
 	/**

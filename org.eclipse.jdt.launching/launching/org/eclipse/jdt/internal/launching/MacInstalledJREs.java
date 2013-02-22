@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Searches for installed JREs on the Mac.
@@ -45,81 +52,27 @@ public class MacInstalledJREs {
 	 */
 	private static final String PLIST_JVM_BUNDLE_ID = "JVMBundleID"; //$NON-NLS-1$
 	
-	static final JREDescriptor[] NO_DESCRIPTORS = new JREDescriptor[0];
+	public static final VMStandin[] NO_VMS = new VMStandin[0];
 	
 	/**
-	 * Describes an installed JRE on MacOS
+	 * Custom stand-in that allows us to provide a version
+	 * @since 3.7.0
 	 */
-	public class JREDescriptor {
-		String fName;
-		File fHome;
-		String fVersion;
-		String fId;
+	static class MacVMStandin extends VMStandin {
 		
-		/**
-		 * Constructs a new JRE descriptor 
-		 * 
-		 * @param home Home directory of the JRE
-		 * @param name JRE name
-		 * @param version JRE version
-		 * @param id the computed id of the JRE from the plist output
-		 */
-		public JREDescriptor(File home, String name, String version, String id) {
-			fHome = home;
-			fName = name;
-			fVersion = version;
-			fId = id;
-		}
+		String version = null;
 		
-		/**
-		 * Returns the home installation directory for this JRE.
-		 * 
-		 * @return home directory
-		 */
-		public File getHome() {
-			return fHome;
-		}
-		
-		/**
-		 * Returns the name of the JRE.
-		 * 
-		 * @return JRE name
-		 */
-		public String getName() {
-			return fName;
-		}
-		
-		/**
-		 * Returns the version of the JRE.
-		 * 
-		 * @return JRE version
-		 */
-		public String getVersion() {
-			return fVersion;
-		}
-		
-		/**
-		 * returns the computed id of the descriptor
-		 * 
-		 * @return the descriptor id
-		 * @since 3.8
-		 */
-		public String getId() {
-			return fId;
+		public MacVMStandin(IVMInstallType type, File location, String name, String version, String id) {
+			super(type, id);
+			setInstallLocation(location);
+			setName(name);
+			this.version = version;
+			// TODO Auto-generated constructor stub
 		}
 		
 		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof JREDescriptor) {
-				JREDescriptor jre = (JREDescriptor) obj;
-				return jre.fHome.equals(fHome) && jre.fName.equals(fName) && jre.fVersion.equals(fVersion) && fId.equals(jre.fId);
-			}
-			return false;
-		}
-		
-		@Override
-		public int hashCode() {
-			return fHome.hashCode() + fName.hashCode() + fVersion.hashCode();
+		public String getJavaVersion() {
+			return version;
 		}
 	}
 	
@@ -127,35 +80,44 @@ public class MacInstalledJREs {
 	 * Parses the XML output produced from "java_home -X" (see bug 325777), and return a collection
 	 * of descriptions of JRE installations.
 	 * 
-	 * @return array of JRE descriptions installed in the OS
+	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
+	 * @return array of {@link VMStandin}s installed in the OS
 	 * @exception CoreException if unable to parse the output or the executable does not exist
 	 */
-	public JREDescriptor[] getInstalledJREs() throws CoreException {
-		// locate the "java_home" executable
-		File java_home = new File(JAVA_HOME_PLIST);
-		if (!java_home.exists()) {
-			throw new CoreException(new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), "The java_home executable does not exist")); //$NON-NLS-1$
-		}
-		String[] cmdLine = new String[] {JAVA_HOME_PLIST, "-X"}; //$NON-NLS-1$
-		Process p = null;
+	public static VMStandin[] getInstalledJREs(IProgressMonitor monitor) throws CoreException {
+		SubMonitor smonitor = SubMonitor.convert(monitor);
 		try {
-			p = DebugPlugin.exec(cmdLine, null);
-			IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "JRE Install Detection"); //$NON-NLS-1$
-			for (int i= 0; i < 600; i++) {
-				// Wait no more than 30 seconds (600 * 50 milliseconds)
-				if (process.isTerminated()) {
-					break;
+			// locate the "java_home" executable
+			File java_home = new File(JAVA_HOME_PLIST);
+			if (!java_home.exists()) {
+				throw new CoreException(new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), "The java_home executable does not exist")); //$NON-NLS-1$
+			}
+			String[] cmdLine = new String[] {JAVA_HOME_PLIST, "-X"}; //$NON-NLS-1$
+			Process p = null;
+			try {
+				p = DebugPlugin.exec(cmdLine, null);
+				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "JRE Install Detection"); //$NON-NLS-1$
+				for (int i= 0; i < 600; i++) {
+					// Wait no more than 30 seconds (600 * 50 milliseconds)
+					if (process.isTerminated()) {
+						break;
+					}
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						// do nothing
+					}
 				}
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					// do nothing
+				return parseJREInfo(process, monitor);
+			} finally {
+				if (p != null) {
+					p.destroy();
 				}
 			}
-			return parseJREInfo(process);
-		} finally {
-			if (p != null) {
-				p.destroy();
+		}
+		finally {
+			if(!smonitor.isCanceled()) {
+				smonitor.done();
 			}
 		}
 	}
@@ -164,10 +126,11 @@ public class MacInstalledJREs {
 	 * Parses the output from 'java_home -X'.
 	 * 
 	 * @param process process with output from 'java_home -X'
+	 * @param the {@link IProgressMonitor} or <code>null</code>
 	 * @return array JRE descriptions installed in the OS
 	 * @exception CoreException if unable to parse the output
 	 */
-	private JREDescriptor[] parseJREInfo(IProcess process) throws CoreException {
+	private static VMStandin[] parseJREInfo(IProcess process, IProgressMonitor monitor) throws CoreException {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
 		String text = null;
 		if (streamsProxy != null) {
@@ -175,47 +138,70 @@ public class MacInstalledJREs {
 		}
 		if (text != null && text.length() > 0) {
 			ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
-			return parseJREInfo(stream);
+			return parseJREInfo(stream, monitor);
 		}
-		return NO_DESCRIPTORS;
+		return NO_VMS;
 	}
 	
 	/**
 	 * Parse {@link JREDescriptor}s from the given input stream. The stream is expected to be in the 
 	 * XML properties format.
 	 * 
+	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
 	 * @param stream
-	 * @return the array of {@link JREDescriptor}s or an empty array never <code>null</code>
+	 * @return the array of {@link VMStandin}s or an empty array never <code>null</code>
 	 * @since 3.8
 	 */
-	public JREDescriptor[] parseJREInfo(InputStream stream) {
+	public static VMStandin[] parseJREInfo(InputStream stream, IProgressMonitor monitor) {
+		SubMonitor smonitor = SubMonitor.convert(monitor, LaunchingMessages.MacInstalledJREs_0, 10);
 		try {
 			Object result = new PListParser().parse(stream);
 			if (result instanceof Object[]) {
 				Object[] maps = (Object[]) result;
-				List<JREDescriptor> jres= new ArrayList<JREDescriptor>();
-				for (int i = 0; i < maps.length; i++) {
-					Object object = maps[i];
-					if (object instanceof Map) {
-						Map<?, ?> map = (Map<?, ?>) object;
-						Object home = map.get(PLIST_JVM_HOME_PATH);
-						Object name = map.get(PLIST_JVM_NAME);
-						Object version = map.get(PLIST_JVM_VERSION);
-						if (home instanceof String && name instanceof String && version instanceof String) {
-							String ver = (String) version;
-							JREDescriptor descriptor = new JREDescriptor(new File((String)home), (String)name, (String)version, computeId(map, ver));
-							if (!jres.contains(descriptor)) { // remove duplicates
-								jres.add(descriptor);	
-							}
-						} 
-					} 
+				smonitor.setWorkRemaining(maps.length);
+				List<VMStandin> jres= new ArrayList<VMStandin>();
+				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
+				if(mactype != null) {
+					for (int i = 0; i < maps.length; i++) {
+						if(smonitor.isCanceled()) {
+							///stop processing and return what we found
+							return jres.toArray(new VMStandin[jres.size()]);
+						}
+						Object object = maps[i];
+						if (object instanceof Map) {
+							Map<?, ?> map = (Map<?, ?>) object;
+							Object home = map.get(PLIST_JVM_HOME_PATH);
+							Object name = map.get(PLIST_JVM_NAME);
+							Object version = map.get(PLIST_JVM_VERSION);
+							if (home instanceof String && name instanceof String && version instanceof String) {
+								smonitor.setTaskName(NLS.bind(LaunchingMessages.MacInstalledJREs_1, new String[] {(String) name, (String) version}));
+								String ver = (String) version;
+								File loc = new File((String)home);
+								//10.8.2+ can have more than one of the same VM, which will have the same name
+								//augment it with the version to make it easier to distinguish
+								StringBuffer namebuff = new StringBuffer(name.toString());
+								namebuff.append(" [").append(ver).append("]");  //$NON-NLS-1$//$NON-NLS-2$
+								MacVMStandin vm = new MacVMStandin(mactype, loc, namebuff.toString(), ver, computeId(map, ver));
+								vm.setJavadocLocation(mactype.getDefaultJavadocLocation(loc));
+								vm.setLibraryLocations(mactype.getDefaultLibraryLocations(loc));
+								vm.setVMArgs(mactype.getDefaultVMArguments(loc));
+								if (!jres.contains(vm)) { // remove duplicates
+									jres.add(vm);	
+								}
+							} 
+						}
+						smonitor.worked(1);
+					}
 				}
-				return jres.toArray(new JREDescriptor[jres.size()]);
+				return jres.toArray(new VMStandin[jres.size()]);
 			}
 		} catch (CoreException ce) {
 			LaunchingPlugin.log(ce);
 		}
-		return NO_DESCRIPTORS;
+		finally {
+			smonitor.done();
+		}
+		return NO_VMS;
 	}
 	
 	/**
@@ -226,7 +212,7 @@ public class MacInstalledJREs {
 	 * @return the id to use for the {@link JREDescriptor}
 	 * @since 3.8
 	 */
-	String computeId(Map<?, ?> map, String version) {
+	static String computeId(Map<?, ?> map, String version) {
 		Object o = map.get(PLIST_JVM_BUNDLE_ID);
 		if(o instanceof String) {
 			return (String) o;

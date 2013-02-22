@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.launching.MacInstalledJREs.JREDescriptor;
 import org.eclipse.jdt.internal.launching.MacInstalledJREs;
 import org.eclipse.jdt.internal.launching.PListParser;
+import org.eclipse.jdt.launching.VMStandin;
 
 /**
  * Tests the PList Parser.
@@ -109,7 +109,7 @@ public class PListParserTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests that we parse out the correct number of raw entries from the 'now leopard' ploist output
+	 * Tests that we parse out the correct number of raw entries from the 'now leopard' plist output
 	 * 
 	 * @throws Exception
 	 * @since 3.8
@@ -129,7 +129,7 @@ public class PListParserTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the 'old' style
+	 * Tests that we can parse out certain {@link VMStandin}s from the 'old' style
 	 * of plist output.
 	 * 
 	 * @throws Exception
@@ -139,13 +139,12 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 2 JRE descriptions", 2, desc.length);
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the 'snow leopard' style
+	 * Tests that we can parse out certain {@link VMStandin}s from the 'snow leopard' style
 	 * of plist output.
 	 * 
 	 * @throws Exception
@@ -155,13 +154,12 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-snowleopard.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 1 JRE description", 1, desc.length);
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the 'lion' style
+	 * Tests that we can parse out certain {@link VMStandin}s from the 'lion' style
 	 * of plist output.
 	 * 
 	 * @throws Exception
@@ -171,13 +169,12 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-lion.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 4 JRE descriptions", 4, desc.length);
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the plist
+	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - wrong data types.
 	 * <br><br>
 	 * <code>plist-bad1.xml</code> has a boolean value in place of the VM name for the 1.6 VM, 
@@ -190,14 +187,13 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-bad1.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
 		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad ***");
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the plist
+	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - missing element.
 	 * <br><br>
 	 * <code>plist-bad2.xml</code> is missing a key element - but still has the value for the key.
@@ -209,14 +205,13 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-bad2.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
 		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad2 ***");
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
 	
 	/**
-	 * Tests that we can parse out certain {@link JREDescriptor}s from the plist
+	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - corrupt XML syntax.
 	 * <br><br>
 	 * <code>plist-bad3.xml</code> has corrupt XML syntax
@@ -228,9 +223,8 @@ public class PListParserTests extends AbstractDebugTest {
 		File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/plist-bad3.xml"));
 		assertNotNull(file);
 		assertEquals(true, file.exists());
-		MacInstalledJREs mij = new MacInstalledJREs();
 		System.out.println("*** EXPECTED SAX EXCEPTION testParseJREDescriptorsBad3 ***");
-		JREDescriptor[] desc = mij.parseJREInfo(new FileInputStream(file));
+		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 0 JRE descriptions", 0, desc.length);
 	}
 }
