@@ -139,7 +139,12 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				IVMInstall install = getCurrentDefaultVM();
 				if (install == null) {
 					setValid(false);
-					setErrorMessage(JREMessages.JREsPreferencePage_13); 
+					if(fJREBlock.getJREs().length < 1) {
+						setErrorMessage(JREMessages.JREsPreferencePage_3);
+					}
+					else {
+						setErrorMessage(JREMessages.JREsPreferencePage_13); 
+					}
 				} else {
 					//if we change the VM make sure the compliance level supports 
 					//generated class files

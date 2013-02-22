@@ -19,12 +19,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -165,7 +168,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				IVMInstall vm= (IVMInstall)element;
 				switch(columnIndex) {
 					case 0:
-						if (isContributed(vm)) {
+						if (JavaRuntime.isContributedVMInstall(vm.getId())) {
 							return NLS.bind(JREMessages.InstalledJREsBlock_19, new String[]{vm.getName()});
 						}
 						if(fVMList.getChecked(element)) {
@@ -556,11 +559,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		int selectionCount= selection.size();
 		fEditButton.setEnabled(selectionCount == 1);
 		fCopyButton.setEnabled(selectionCount > 0);
-		if (selectionCount > 0 && selectionCount < fVMList.getTable().getItemCount()) {
+		if (selectionCount > 0 && selectionCount <= fVMList.getTable().getItemCount()) {
 			Iterator<IVMInstall> iterator = selection.iterator();
 			while (iterator.hasNext()) {
 				IVMInstall install = iterator.next();
-				if (isContributed(install)) {
+				if (JavaRuntime.isContributedVMInstall(install.getId())) {
 					fRemoveButton.setEnabled(false);
 					return;
 				}
@@ -570,15 +573,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			fRemoveButton.setEnabled(false);
 		}
 	}	
-	
-	/**
-	 * Returns if the specified VM install has been contributed
-	 * @param install
-	 * @return true if the specified VM is contributed, false otherwise
-	 */
-	private boolean isContributed(IVMInstall install) {
-		return JavaRuntime.isContributedVMInstall(install.getId());
-	}
 	
 	/**
 	 * Returns this block's control
@@ -635,11 +629,16 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @see IAddVMDialogRequestor#vmAdded(IVMInstall)
 	 */
 	public void vmAdded(IVMInstall vm) {
+		boolean makeselection = fVMs.size() < 1;
 		fVMs.add(vm);
 		//update from model
 		fVMList.refresh();
 		//update labels
 		fVMList.refresh(true);
+		//if we add a VM and none are selected, select one of them
+		if(makeselection) {
+			fireSelectionChanged();
+		}
 	}
 	
 	/**
@@ -664,7 +663,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		if (vm == null) {
 			return;
 		}
-		if (isContributed(vm)) {
+		if (JavaRuntime.isContributedVMInstall(vm.getId())) {
 			VMDetailsDialog dialog= new VMDetailsDialog(getShell(), vm);
 			dialog.open();
 		} else {
@@ -705,21 +704,21 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param vms
 	 */
 	public void removeJREs(IVMInstall[] vms) {
-		IStructuredSelection prev = (IStructuredSelection) getSelection();
 		for (int i = 0; i < vms.length; i++) {
 			fVMs.remove(vms[i]);
 		}
-		IStructuredSelection curr = (IStructuredSelection) getSelection();
-		if (!curr.equals(prev)) {
-			IVMInstall[] installs = getJREs();
-			if (curr.size() == 0 && installs.length == 1) {
-				// pick a default VM automatically
-				setSelection(new StructuredSelection(installs[0]));
-			} else {
-				fireSelectionChanged();
-			}
-		}
 		fVMList.refresh();
+		IStructuredSelection curr = (IStructuredSelection) getSelection();
+		IVMInstall[] installs = getJREs();
+		if(installs.length < 1) {
+			fPrevSelection = null;
+		}
+		if (curr.size() == 0 && installs.length == 1) {
+			// pick a default VM automatically
+			setSelection(new StructuredSelection(installs[0]));
+		} else {
+			fireSelectionChanged();
+		}
 		fVMList.refresh(true);
 	}
 	
@@ -830,13 +829,18 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 					IVMInstall vm = (IVMInstall) iterator.next();
 					exists.add(vm.getId());
 				}
-				VMStandin[] standins = new MacVMSearch().search(monitor);
-				for (int i = 0; i < standins.length; i++) {
-					//we should be comparing install paths, as the ID can be computed differently 
-					//based on if the VM is searched or added manually
-					if (!exists.contains(standins[i].getId())) {
-						added.add(standins[i]);
+				SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, 5);
+				VMStandin[] standins = null;
+				try {
+					standins = MacInstalledJREs.getInstalledJREs(localmonitor);
+					for (int i = 0; i < standins.length; i++) {
+						if (!exists.contains(standins[i].getId())) {
+							added.add(standins[i]);
+						}
 					}
+				}
+				catch(CoreException ce) {
+					JDIDebugUIPlugin.log(ce);
 				}
 				monitor.done();
 			}
@@ -857,7 +861,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			IVMInstall vm = iterator.next();
 			vmAdded(vm);
 		}
-
 	}
 
 	protected Shell getShell() {

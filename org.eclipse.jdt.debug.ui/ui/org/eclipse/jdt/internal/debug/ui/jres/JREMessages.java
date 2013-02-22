@@ -72,6 +72,8 @@ public class JREMessages extends NLS {
 	public static String JREsPreferencePage_10;
 	public static String JREsPreferencePage_13;
 
+	public static String JREsPreferencePage_3;
+
 	public static String addVMDialog_duplicateName;
 	public static String addVMDialog_enterLocation;
 	public static String addVMDialog_enterName;
