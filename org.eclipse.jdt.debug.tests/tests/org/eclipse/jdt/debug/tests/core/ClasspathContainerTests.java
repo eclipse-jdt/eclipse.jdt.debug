@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.index.JavaIndexer;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
@@ -162,4 +170,60 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		}
 	}	
 	
+	/**
+	 * Tests that an index can be added to a {@link LibraryLocation}
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
+	 * @since 3.8.100
+	 */
+	public void testJREContainerIndex() throws Exception {
+		// get the current VM
+		IVMInstall def = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
+		// generate an index for the first library location only (to save time - do not need an index for all libraries)
+		URL indexURL = this.getIndexForLibrary(libs[0]);
+		// clone the current VM, but only add the one library that was indexed
+		VMStandin newVMStandin = new VMStandin(def.getVMInstallType(), "index.jre");
+		newVMStandin.setName("JRE with pre-built index");
+		newVMStandin.setInstallLocation(def.getInstallLocation());
+		final LibraryLocation[] newLibs = new LibraryLocation[1];
+		newLibs[0] = new LibraryLocation(libs[0].getSystemLibraryPath(), libs[0].getSystemLibrarySourcePath(), libs[0].getPackageRootPath(), libs[0].getJavadocLocation(), indexURL);
+		newVMStandin.setLibraryLocations(newLibs);
+		IVMInstall newVM = newVMStandin.convertToRealVM();
+		// make sure the index URL is correct
+		assertEquals(indexURL, newVM.getLibraryLocations()[0].getIndexLocation());
+		// create the JRE container
+		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		JREContainer container = new JREContainer(newVM, containerPath, get14Project());
+		IClasspathEntry[] originalEntries = container.getClasspathEntries();
+		// There should only be 1 classpath entry (the 1 library added)
+		assertEquals(1, originalEntries.length);
+		IClasspathAttribute[] cpAttributes = originalEntries[0].getExtraAttributes();
+		String indexloc = null;
+		for (int i = 0; i < cpAttributes.length; i++) {
+			if(IClasspathAttribute.INDEX_LOCATION_ATTRIBUTE_NAME.equals(cpAttributes[i].getName())) {
+				indexloc = cpAttributes[i].getValue();
+				break;
+			}
+		}
+		assertNotNull("The index_location classpath attribue was not found", indexloc);
+		// and it should have a value of the original indexURL in its string form.
+		assertEquals(indexURL.toString(), indexloc);
+	}
+
+	/**
+	 * Generates and returns a {@link URL} to the index file for a given {@link LibraryLocation} into the state location
+	 */
+	private URL getIndexForLibrary(final LibraryLocation library) throws IOException, MalformedURLException {
+
+		// construct the path to the index file
+		File libraryFile = library.getSystemLibraryPath().toFile();
+		String indexName = libraryFile.getName() + ".index";
+		IPath indexPath = JavaTestPlugin.getDefault().getStateLocation().append(indexName);
+		// generate the index using JDT Core API
+		JavaIndexer.generateIndexForJar(libraryFile.getAbsolutePath(), indexPath.toOSString());
+		// return the index URL
+		URL indexURL = indexPath.toFile().toURI().toURL();
+		return indexURL;
+	} 
 }
