@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.jdt.launching" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.jdt.launching" id="executionEnvironments" name="Execution Environments"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Allows execution environments and execution environment analyzers to be contributed. An execution environment represents a kind of JRE - for example J2SE5. Analyzers are contributed to categorize JREs according to environments.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -41,9 +41,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -63,9 +63,9 @@
                <documentation>
                   a brief human-readable description of this execution environment
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="ruleParticipant" type="string">
@@ -73,9 +73,9 @@
                <documentation>
                   the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules last, preceeded by any &lt;code&gt;ruleParticipants&lt;/code&gt; contributed as elements. This attribute was added in the 3.3 release.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="profileProperties" type="string">
@@ -94,9 +94,9 @@
 &lt;li&gt;&lt;code&gt;org.eclipse.jdt.core.compiler.problem.enumIdentifier&lt;/code&gt; - severity of using &apos;enum&apos; as an identifier in source: error, warning, or ignore&lt;/li&gt;
 &lt;/ul&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -116,9 +116,9 @@
                <documentation>
                   a fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzer&lt;/code&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -143,27 +143,27 @@
                <documentation>
                   the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.jdt.launching.environments.IAccessRuleParticipant&lt;/code&gt;. When specified, this class is used to create access rules for VM libraries associated with this execution environment during classpath resolution. This participant creates rules before a &lt;code&gt;ruleParticipant&lt;/code&gt; contributed by an execution environment directly, allowing a participant to override an environment&apos;s default rules.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.environments.IAccessRuleParticipant"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Following is an example definition of an execution environment and analyzer.
 &lt;p&gt;
@@ -183,9 +183,9 @@
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          JDT (&lt;code&gt;org.eclispe.jdt.launching&lt;/code&gt;) provides definitions and an analyzer for the following execution environments. Since 3.5, a default access rule participant provides access rules for system packages assocaited with an execution environment. System packages are specified by an OSGi profile properties file (see &lt;code&gt;profileProperties&lt;/code&gt; above) via the &lt;code&gt;org.osgi.framework.system.packages&lt;/code&gt; property.
 &lt;ul&gt;
@@ -204,5 +204,17 @@
       </documentation>
    </annotation>
 
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005, 2008 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
 
 </schema>
