@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
 import org.eclipse.jdt.debug.test.stepping.StepFilterTests;
 import org.eclipse.jdt.debug.test.stepping.StepIntoSelectionTests;
@@ -151,7 +152,11 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
-		addTest(new TestSuite(PListParserTests.class));
+		
+	//mac specific tests
+		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
+			addTest(new TestSuite(PListParserTests.class));
+		}
 		
 	//Breakpoints tests
 		addTest(new TestSuite(DeferredBreakpointTests.class));
