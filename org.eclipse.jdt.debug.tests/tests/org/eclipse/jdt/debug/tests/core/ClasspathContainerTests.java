@@ -210,6 +210,31 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		// and it should have a value of the original indexURL in its string form.
 		assertEquals(indexURL.toString(), indexloc);
 	}
+	
+	/**
+	 * Tests that an index can be added to a {@link LibraryLocation} and that successive calls to
+	 * {@link JavaRuntime#getLibraryLocations(IVMInstall)} does not erase the index infos
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
+	 * @since 3.8.100
+	 */
+	public void testJREContainerIndex2() throws Exception {
+		// get the current VM
+		IVMInstall def = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
+		// generate an index for the first library location only (to save time - do not need an index for all libraries)
+		URL indexURL = this.getIndexForLibrary(libs[0]);
+		// clone the current VM, but only add the one library that was indexed
+		VMStandin newVMStandin = new VMStandin(def.getVMInstallType(), "index.jre");
+		newVMStandin.setName("JRE with pre-built index");
+		newVMStandin.setInstallLocation(def.getInstallLocation());
+		final LibraryLocation[] newLibs = new LibraryLocation[1];
+		newLibs[0] = new LibraryLocation(libs[0].getSystemLibraryPath(), libs[0].getSystemLibrarySourcePath(), libs[0].getPackageRootPath(), libs[0].getJavadocLocation(), indexURL);
+		newVMStandin.setLibraryLocations(newLibs);
+		IVMInstall newVM = newVMStandin.convertToRealVM();
+		libs = JavaRuntime.getLibraryLocations(newVM);
+		assertNotNull("There should be an index file for: "+libs[0].getSystemLibraryPath(), libs[0].getIndexLocation());
+	}
 
 	/**
 	 * Generates and returns a {@link URL} to the index file for a given {@link LibraryLocation} into the state location
