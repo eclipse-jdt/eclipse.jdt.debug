@@ -463,5 +463,11 @@
            id="org.eclipse.jdt.debug.tests.listener.global">
      </breakpointListener>
   </extension>
+  <extension
+        point="org.eclipse.jdt.launching.libraryLocationResolvers">
+     <resolver
+           class="org.eclipse.jdt.debug.testplugin.launching.TestLibraryResolver">
+     </resolver>
+  </extension>
 
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Allman - Bug 211648, Bug 156343 - Standard VM not supported on MacOS
+ *     Thomas Schindl - Bug 399798, StandardVMType should allow to contribute default source and Javadoc locations for ext libraries 
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -26,6 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -38,7 +41,9 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
@@ -90,6 +95,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	private static final String[] fgCandidateJavaFiles = {"javaw", "javaw.exe", "java", "java.exe", "j9w", "j9w.exe", "j9", "j9.exe"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	private static final String[] fgCandidateJavaLocations = {"bin" + File.separatorChar, JRE + File.separatorChar + "bin" + File.separatorChar}; //$NON-NLS-1$ //$NON-NLS-2$ 
 	
+	private static ILibraryLocationResolver[] fgLibraryLocationResolvers = null;
+	
 	/**
 	 * Starting in the specified VM install location, attempt to find the 'java' executable
 	 * file.  If found, return the corresponding <code>File</code> object, otherwise return
@@ -109,6 +116,31 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 		}		
 		return null;							
+	}
+	
+	/**
+	 * Returns the listing of {@link ILibraryLocationResolver}s
+	 * 
+	 * @return the known list of {@link ILibraryLocationResolver}s
+	 * @since 3.7.0
+	 */
+	private static ILibraryLocationResolver[] getLibraryLocationResolvers() {
+		if( fgLibraryLocationResolvers == null ) {
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_LIBRARY_LOCATION_RESOLVERS);
+			IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
+			List<ILibraryLocationResolver> resolvers = new ArrayList<ILibraryLocationResolver>(configs.length);
+			for( int i = 0; i < configs.length; i++ ) {
+				IConfigurationElement e = configs[i];
+				try {
+					resolvers.add((ILibraryLocationResolver) e.createExecutableExtension("class")); //$NON-NLS-1$
+				}
+				catch (CoreException e1) {
+					LaunchingPlugin.log(e1.getStatus());
+				}
+			}
+			fgLibraryLocationResolvers = resolvers.toArray(new ILibraryLocationResolver[0]);
+		}
+		return fgLibraryLocationResolvers;
 	}
 	
 	/* (non-Javadoc)
@@ -432,7 +464,22 @@ public class StandardVMType extends AbstractVMInstallType {
 								if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
 									try {
 										IPath libPath = new Path(jar.getCanonicalPath());
-										LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, null);
+										IPath sourcePath = Path.EMPTY;
+										IPath packageRoot = Path.EMPTY;
+										URL javadocLocation = null;
+										URL indexLocation = null;
+										for( ILibraryLocationResolver resolver : getLibraryLocationResolvers() ) {
+											try {
+												sourcePath = resolver.getSourcePath(libPath);
+												packageRoot = resolver.getPackageRoot(libPath);
+												javadocLocation = resolver.getJavadocLocation(libPath);
+												indexLocation = resolver.getIndexLocation(libPath);
+												break;
+											} catch(Exception e) {
+												LaunchingPlugin.log(e);
+											}
+										}
+										LibraryLocation library = new LibraryLocation(libPath, sourcePath, packageRoot, javadocLocation, indexLocation);
 										libraries.add(library);
 									} catch (IOException e) {
 										LaunchingPlugin.log(e);

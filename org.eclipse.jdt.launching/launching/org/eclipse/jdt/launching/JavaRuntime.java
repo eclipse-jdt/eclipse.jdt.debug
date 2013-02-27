@@ -152,7 +152,15 @@ public final class JavaRuntime {
 	 * @since 3.2
 	 */
 	public static final String EXTENSION_POINT_VM_INSTALLS = "vmInstalls";	 //$NON-NLS-1$
-		
+	
+	/**
+	 * Simple identifier constant (value <code>"libraryLocationResolvers"</code>) for the
+	 * Library Resolvers extension point
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EXTENSION_POINT_LIBRARY_LOCATION_RESOLVERS = "libraryLocationResolvers"; //$NON-NLS-1$
+	
 	/**
 	 * Classpath container used for a project's JRE
 	 * (value <code>"org.eclipse.jdt.launching.JRE_CONTAINER"</code>). A

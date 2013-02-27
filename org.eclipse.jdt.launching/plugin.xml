@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2010 IBM Corporation and others.
+     Copyright (c) 2005, 2013 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
    <extension-point id="vmInstallTypes" name="%vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
    <extension-point id="executionEnvironments" name="%executionEnvironments" schema="schema/executionEnvironments.exsd"/>
    <extension-point id="vmInstalls" name="%vmInstalls" schema="schema/vmInstalls.exsd"/>
+   <extension-point id="libraryLocationResolvers" name="%libraryLocationResolvers" schema="schema/libraryLocationResolvers.exsd"/>
 
 <!-- Extensions -->
    <extension
