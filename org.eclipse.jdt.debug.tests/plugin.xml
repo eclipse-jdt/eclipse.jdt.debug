@@ -466,7 +466,7 @@
   <extension
         point="org.eclipse.jdt.launching.libraryLocationResolvers">
      <resolver
-           class="org.eclipse.jdt.debug.testplugin.launching.TestLibraryResolver">
+           class="org.eclipse.jdt.debug.tests.core.VMInstallTests">
      </resolver>
   </extension>
 
