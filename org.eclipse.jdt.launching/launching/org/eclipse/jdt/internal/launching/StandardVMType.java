@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,6 +68,17 @@ public class StandardVMType extends AbstractVMInstallType {
 	private static final String BAR = "|"; //$NON-NLS-1$
 
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
+	
+	/**
+	 * Name filter for files ending in .jar or .zip
+	 * 
+	 * @since 3.7.0
+	 */
+	private static FilenameFilter fgArchiveFilter = new FilenameFilter() {
+		public boolean accept(File arg0, String arg1) {
+			return arg1.endsWith(".zip") || arg1.endsWith(".jar");  //$NON-NLS-1$//$NON-NLS-2$
+		}
+	};
 	
 	/**
 	 * The root path for the attached source
@@ -451,40 +463,33 @@ public class StandardVMType extends AbstractVMInstallType {
 		List<LibraryLocation> libraries = new ArrayList<LibraryLocation>();
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
-			if (extDir.exists() && extDir.isDirectory()) {
-				String[] names = extDir.list();
+			if (extDir.isDirectory()) {
+				String[] names = extDir.list(fgArchiveFilter);
 				if (names != null) {
 					for (int j = 0; j < names.length; j++) {
-						String name = names[j];
-						File jar = new File(extDir, name);
+						File jar = new File(extDir, names[j]);
 						if (jar.isFile()) {
-							int length = name.length();
-							if (length > 4) {
-								String suffix = name.substring(length - 4);
-								if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
+							try {
+								IPath libPath = new Path(jar.getCanonicalPath());
+								IPath sourcePath = Path.EMPTY;
+								IPath packageRoot = Path.EMPTY;
+								URL javadocLocation = null;
+								URL indexLocation = null;
+								for( ILibraryLocationResolver resolver : getLibraryLocationResolvers() ) {
 									try {
-										IPath libPath = new Path(jar.getCanonicalPath());
-										IPath sourcePath = Path.EMPTY;
-										IPath packageRoot = Path.EMPTY;
-										URL javadocLocation = null;
-										URL indexLocation = null;
-										for( ILibraryLocationResolver resolver : getLibraryLocationResolvers() ) {
-											try {
-												sourcePath = resolver.getSourcePath(libPath);
-												packageRoot = resolver.getPackageRoot(libPath);
-												javadocLocation = resolver.getJavadocLocation(libPath);
-												indexLocation = resolver.getIndexLocation(libPath);
-												break;
-											} catch(Exception e) {
-												LaunchingPlugin.log(e);
-											}
-										}
-										LibraryLocation library = new LibraryLocation(libPath, sourcePath, packageRoot, javadocLocation, indexLocation);
-										libraries.add(library);
-									} catch (IOException e) {
+										sourcePath = resolver.getSourcePath(libPath);
+										packageRoot = resolver.getPackageRoot(libPath);
+										javadocLocation = resolver.getJavadocLocation(libPath);
+										indexLocation = resolver.getIndexLocation(libPath);
+										break;
+									} catch(Exception e) {
 										LaunchingPlugin.log(e);
 									}
 								}
+								LibraryLocation library = new LibraryLocation(libPath, sourcePath, packageRoot, javadocLocation, indexLocation);
+								libraries.add(library);
+							} catch (IOException e) {
+								LaunchingPlugin.log(e);
 							}
 						}
 					}

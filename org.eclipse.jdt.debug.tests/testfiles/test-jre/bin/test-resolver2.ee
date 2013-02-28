@@ -1,0 +1,41 @@
+##################################################################################
+# Copyright (c) 2013 IBM Corporation and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#     IBM Corporation - initial API and implementation
+##################################################################################
+
+-Dee.executable=jrew.txt
+-Dee.executable.console=jre.txt
+
+-Dee.bootclasspath=../lib/classes.txt:../lib/others.txt
+-Dee.src=../lib/source/source.txt
+-Dee.src.map=../lib/endorsed/*.jar=../lib/source/*.txt:../lib/ext/ext?*.jar=../lib/source/source.txt:../lib/additional/*.???=../lib/source/source*source.???
+-Dee.javadoc=http://a.javadoc.location
+-Dee.additional.dirs=../lib/additional
+-Dee.ext.dirs=../lib/ext:../lib/opt-ext
+-Dee.endorsed.dirs=../lib/endorsed
+
+# all args should get passed through to command line
+-XspecialArg:123
+
+# tests an empty property
+-Dee.empty=
+
+# test new index attribute
+-Dee.index=http://a.index.location
+
+-Dee.language.level=1.7
+-Dee.class.library.level=J2SE-1.7
+-Dee.id=J2SE-1.7
+-Dee.name=Library Location Resolver Test JRE Definition
+-Dee.description=Foundation Specification v1.1
+-Dee.copyright=(c) Copyright IBM Corp. 2013  All Rights Reserved
+-Djava.home=..
+
+# all args should get passed through to command line
+-XspecialArg2=456

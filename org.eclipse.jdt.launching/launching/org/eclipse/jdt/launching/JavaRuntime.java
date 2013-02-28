@@ -1705,6 +1705,7 @@ public final class JavaRuntime {
                 } else {
                     javadocLocations[i]= defJavaDocLocation;
                 }
+                indexes[i] = dflts[i].getIndexLocation();
 				if (!libraryPaths[i].toFile().isFile()) {
 					libraryPaths[i]= Path.EMPTY;
 				}
