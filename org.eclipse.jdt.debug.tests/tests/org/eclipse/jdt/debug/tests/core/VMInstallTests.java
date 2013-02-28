@@ -12,8 +12,6 @@ package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -300,15 +298,10 @@ public class VMInstallTests extends AbstractDebugTest implements ILibraryLocatio
 		if(applies(libraryPath)) {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_javadoc.zip"));
 			if(file.isFile()) {
-				URI uri;
 				try {
-					uri = new URI("file", null, file.getAbsolutePath(), null);
-					return URIUtil.toURL(uri);
+					return URIUtil.toURL(file.toURI());
 				}
 				catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-				catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
@@ -323,15 +316,10 @@ public class VMInstallTests extends AbstractDebugTest implements ILibraryLocatio
 		if(applies(libraryPath)) {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_index.index"));
 			if(file.isFile()) {
-				URI uri;
 				try {
-					uri = new URI("file", null, file.getAbsolutePath(), null);
-					return URIUtil.toURL(uri);
+					return URIUtil.toURL(file.toURI());
 				}
 				catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-				catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}

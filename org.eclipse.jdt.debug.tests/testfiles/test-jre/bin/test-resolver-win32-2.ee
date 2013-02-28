@@ -29,3 +29,4 @@
 -Dee.name=Library Location Resolver Test JRE Definition
 -Dee.description=Foundation Specification v1.1
 -Dee.copyright=(c) Copyright IBM Corp. 2013  All Rights Reserved
+-Djava.home=..
