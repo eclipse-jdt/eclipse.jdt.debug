@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - bug 341232
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -137,7 +138,7 @@ public class EvaluationSourceGenerator {
 	}
 
 	private void createEvaluationSourceFromSource(String source, IType type,
-			boolean createInAStaticMethod, IJavaProject project)
+			int line, boolean createInAStaticMethod, IJavaProject project)
 			throws DebugException {
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(source.toCharArray());
@@ -146,7 +147,7 @@ public class EvaluationSourceGenerator {
 		parser.setCompilerOptions(options);
 		CompilationUnit unit = (CompilationUnit) parser.createAST(null);
 		SourceBasedSourceGenerator visitor = new SourceBasedSourceGenerator(
-				type, createInAStaticMethod, fLocalVariableTypeNames,
+				type, line, createInAStaticMethod, fLocalVariableTypeNames,
 				fLocalVariableNames, fCodeSnippet, sourceLevel);
 		unit.accept(visitor);
 
@@ -217,7 +218,7 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 
-	public String getSource(IJavaReferenceType type, IJavaProject javaProject,
+	public String getSource(IJavaReferenceType type, int line, IJavaProject javaProject,
 			boolean isStatic) throws CoreException {
 		if (fSource == null) {
 			IType iType = JavaDebugUtils.resolveType(type);
@@ -230,7 +231,7 @@ public class EvaluationSourceGenerator {
 				}
 				if (baseSource != null) {
 					createEvaluationSourceFromSource(baseSource, iType,
-							isStatic, javaProject);
+							line, isStatic, javaProject);
 				}
 			}
 			if (fSource == null) {

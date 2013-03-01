@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - bug 341232
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -336,7 +337,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			// }
 
 			unit = parseCompilationUnit(
-					mapper.getSource(receivingType, javaProject,
+					mapper.getSource(receivingType, frame.getLineNumber(), javaProject,
 							frame.isStatic()).toCharArray(),
 					mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
@@ -428,7 +429,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			if (javaTypes.length > 0) {
 				IJavaReferenceType recType = (IJavaReferenceType) javaTypes[0];
 				unit = parseCompilationUnit(
-						mapper.getSource(recType, getJavaProject(), false)
+						mapper.getSource(recType, -1, getJavaProject(), false)
 								.toCharArray(),
 						mapper.getCompilationUnitName(), javaProject);
 			} else {
@@ -493,7 +494,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		try {
 			unit = parseCompilationUnit(
-					mapper.getSource(type, javaProject, false).toCharArray(),
+					mapper.getSource(type, -1, javaProject, false).toCharArray(),
 					mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression = new InstructionSequence(snippet);

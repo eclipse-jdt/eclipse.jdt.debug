@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Moller - bug 341232
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IType;
@@ -131,6 +135,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private String fError;
 
 	private IType fType;
+	private int fLine;
 
 	private StringBuffer fSource;
 
@@ -149,7 +154,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private int fSourceMajorLevel;
 	private int fSourceMinorLevel;
 
-	private Set<String> fTypeParameters = new HashSet<String>();
+	private Stack<Map<String, String>> fTypeParameterStack = new Stack<Map<String, String>>();
+	private Map<String, String> fMatchingTypeParameters = null;
+	private CompilationUnit fCompilationUnit;
+	{
+		fTypeParameterStack.push(Collections.<String,String>emptyMap());
+	}
 
 	/**
 	 * if the <code>createInAnInstanceMethod</code> flag is set, the method
@@ -158,6 +168,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * 
 	 * @param type
 	 *            the root {@link IType}
+	 * @param sourcePosition
+	 *            the reference position in the type's source
 	 * @param createInAStaticMethod
 	 *            if the source should be generated
 	 * @param localTypesNames
@@ -170,10 +182,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 *            the desired source level
 	 */
 	public SourceBasedSourceGenerator(IType type,
-			boolean createInAStaticMethod, String[] localTypesNames,
+			int line, boolean createInAStaticMethod, String[] localTypesNames,
 			String[] localVariables, String codeSnippet, String sourceLevel) {
 		fRightTypeFound = false;
 		fType = type;
+		fLine = line;
 		fLocalVariableTypeNames = localTypesNames;
 		fLocalVariableNames = localVariables;
 		fCodeSnippet = codeSnippet;
@@ -243,8 +256,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 		// add type parameters as required
 		if (isSourceLevelGreaterOrEqual(1, 5)) {
-			if (!fTypeParameters.isEmpty()) {
-				Iterator<String> iterator = fTypeParameters.iterator();
+			Collection<String> activeTypeParameters = (fMatchingTypeParameters != null ? fMatchingTypeParameters : fTypeParameterStack.peek()).values();
+			if (!activeTypeParameters.isEmpty()) {
+				Iterator<String> iterator = activeTypeParameters.iterator();
 				buffer.append(Signature.C_GENERIC_START);
 				while (iterator.hasNext()) {
 					String name = iterator.next();
@@ -740,7 +754,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		if (type.isSimpleType()) {
 			String name = getQualifiedIdentifier(((SimpleType) type).getName());
 			if (!isSourceLevelGreaterOrEqual(1, 5)
-					&& fTypeParameters.contains(name)) {
+					&& fTypeParameterStack.peek().containsKey(name)) {
 				return "Object"; //$NON-NLS-1$
 			}
 			return name;
@@ -1008,6 +1022,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.MethodDeclaration)
+	 */
+	public void endVisit(MethodDeclaration node) {
+		fTypeParameterStack.pop();
+	}
+
 	/**
 	 * @see ASTVisitor#endVisit(TypeDeclaration)
 	 */
@@ -1015,6 +1036,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	public void endVisit(TypeDeclaration node) {
 
 		if (hasError()) {
+			fTypeParameterStack.pop();
 			return;
 		}
 
@@ -1027,6 +1049,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 		if (!fEvaluateNextEndTypeDeclaration) {
 			fEvaluateNextEndTypeDeclaration = true;
+			fTypeParameterStack.pop();
 			return;
 		}
 
@@ -1060,6 +1083,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				fLastTypeName = node.getName().getIdentifier();
 			}
 		}
+		fTypeParameterStack.pop();
 	}
 
 	/*
@@ -1254,6 +1278,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(CompilationUnit node) {
+		fCompilationUnit = node;
 		if (rightTypeFound()) {
 			return false;
 		}
@@ -1532,18 +1557,35 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(MethodDeclaration node) {
+		String name = node.getName().toString();
+		System.out.println(name);
+		int firstLine = fCompilationUnit.getLineNumber(node.getStartPosition());
+		int lastLine = fCompilationUnit.getLineNumber(node.getStartPosition() + node.getLength());
+		
 		List<TypeParameter> typeParameters = node.typeParameters();
-		if (!typeParameters.isEmpty()) {
-			Iterator<TypeParameter> iterator = typeParameters.iterator();
-			while (iterator.hasNext()) {
-				TypeParameter typeParameter = iterator.next();
-				fTypeParameters.add(typeParameter.toString());
-			}
+		pushTypeParameters(typeParameters);
+		if (isRightType(node.getParent()) && firstLine <= fLine && fLine <= lastLine) {
+				fMatchingTypeParameters  = fTypeParameterStack.peek();
 		}
 		if (rightTypeFound()) {
 			return false;
 		}
 		return true;
+	}
+
+	private void pushTypeParameters(List<TypeParameter> typeParameters) {
+		if (!typeParameters.isEmpty()) {
+			HashMap<String,String> newTypeParameters = new HashMap<String,String>(fTypeParameterStack.peek());
+			Iterator<TypeParameter> iterator = typeParameters.iterator();
+			while (iterator.hasNext()) {
+				TypeParameter typeParameter = iterator.next();
+				String boundName = typeParameter.getName().getIdentifier();
+				newTypeParameters.put(boundName, typeParameter.toString());
+			}
+			fTypeParameterStack.push(newTypeParameters); // Push the new "scope"
+		} else {
+			fTypeParameterStack.push(fTypeParameterStack.peek()); // Push the same
+		}
 	}
 
 	/**
@@ -1925,13 +1967,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	@Override
 	public boolean visit(TypeDeclaration node) {
 		List<TypeParameter> typeParameters = node.typeParameters();
-		if (!typeParameters.isEmpty()) {
-			Iterator<TypeParameter> iterator = typeParameters.iterator();
-			while (iterator.hasNext()) {
-				TypeParameter typeParameter = iterator.next();
-				fTypeParameters.add(typeParameter.getName().getIdentifier());
-			}
-		}
+		pushTypeParameters(typeParameters);
 		if (rightTypeFound()) {
 			fEvaluateNextEndTypeDeclaration = false;
 			return false;
