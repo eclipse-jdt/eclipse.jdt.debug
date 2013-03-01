@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
-import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpoints15Tests;
+import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithGenerics;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
@@ -183,7 +183,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
 			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
-			addTest(new TestSuite(ConditionalBreakpoints15Tests.class));
+			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
 		}
 		
 	//Sourcelookup tests

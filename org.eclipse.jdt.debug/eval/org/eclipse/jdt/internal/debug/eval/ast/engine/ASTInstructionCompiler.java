@@ -339,16 +339,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			return name.toString();
 		}
-		String typeName = typeBinding.getName();
-		int parameters = typeName.indexOf('<');
-		if (parameters >= 0) {
-			typeName = typeName.substring(0, parameters);
-		}
-		name = new StringBuffer(typeName);
+		//try it the old way
+		name = new StringBuffer(Signature.getTypeErasure(typeBinding.getName()));
 		IPackageBinding packageBinding = typeBinding.getPackage();
 		typeBinding = typeBinding.getDeclaringClass();
 		while (typeBinding != null) {
-			name.insert(0, '$').insert(0, typeBinding.getName());
+			name.insert(0, '$').insert(0, Signature.getTypeErasure(typeBinding.getName()));
 			typeBinding = typeBinding.getDeclaringClass();
 		}
 		if (packageBinding != null && !packageBinding.isUnnamed()) {
