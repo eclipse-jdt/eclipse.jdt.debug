@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -19,12 +20,12 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * 
  * @since 3.8
  */
-public class SnippetsWithGenericsEvalTests extends AbstractDebugTest {
+public class GenericsEvalTests extends AbstractDebugTest {
 
 	/**
 	 * @param name
 	 */
-	public SnippetsWithGenericsEvalTests(String name) {
+	public GenericsEvalTests(String name) {
 		super(name);
 	}
 
@@ -171,6 +172,88 @@ public class SnippetsWithGenericsEvalTests extends AbstractDebugTest {
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "new StepIntoSelectionWithGenerics<String>().new InnerClazz<Integer>().new InnerClazz2<Double>().hello()";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	public void testEvalGenerics9() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.ConditionalsNearGenerics";
+			createLineBreakpoint(32, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "char[] chars = name.toCharArray();";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	public void testEvalGeneric10() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.ConditionalsNearGenerics";
+			createLineBreakpoint(33, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "tokenize(Arrays.asList(1,2,3), name)";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	public void testEvalGeneric11() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.ConditionalsNearGenerics";
+			createLineBreakpoint(44, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "list.iterator()";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	public void testEvalGeneric12() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.ConditionalsNearGenerics";
+			ILineBreakpoint bp = createLineBreakpoint(56, type);
+			assertTrue("The breakpoint on line 56 must exist", bp.getMarker().exists());
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this.input";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	public void testEvalGeneric13() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.ConditionalsNearGenerics";
+			ILineBreakpoint bp = createLineBreakpoint(64, type);
+			assertTrue("The breakpoint on line 64 must exist", bp.getMarker().exists());
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "this.input";
 			doEval(thread, snippet);
 		}
 		finally {

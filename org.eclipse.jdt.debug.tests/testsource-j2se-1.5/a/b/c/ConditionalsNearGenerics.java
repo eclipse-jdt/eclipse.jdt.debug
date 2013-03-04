@@ -14,7 +14,7 @@ package a.b.c;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
+@SuppressWarnings("unused")
 public class ConditionalsNearGenerics {
 
 	private String name;
@@ -30,13 +30,17 @@ public class ConditionalsNearGenerics {
 
 	public void bug() throws Exception {
 		char[] chars = name.toCharArray();
-		System.out.println(chars);
-		tokenize(Arrays.asList(1,2,3), name);
+		Iterator<Integer> iter = tokenize(Arrays.asList(1,2,3), name);
+		while (iter.hasNext()) {
+			Integer number = iter.next();
+		}
 	}
 
-	//FIXME delete following method, then the breakpoint shall work
 	public <T extends Number> Iterator<T> tokenize(List<T> list, String input) {
-		new ItemIterator<Item>(input);
+		ItemIterator<Item> ii = new ItemIterator<Item>(input);
+		if(ii.hasNext()) {
+			ii.next();
+		}
 		return list.iterator();
 	}
 
@@ -50,22 +54,17 @@ public class ConditionalsNearGenerics {
 
 		public ItemIterator(String input) {
 			this.input = input;
-			System.out.println("From ItemIterator!");
 		}
 
-		@Override
 		public boolean hasNext() {
-			return false;
+			return true;
 		}
 
-		@Override
 		public T next() {
 			return null;
 		}
 
-		@Override
 		public void remove() {
 		}
-
 	}
 }

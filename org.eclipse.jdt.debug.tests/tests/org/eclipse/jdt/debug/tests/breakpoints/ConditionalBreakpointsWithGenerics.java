@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -48,19 +48,13 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	public void testDuplicateGenericTypes() throws Exception {
 		String typeName = "a.b.c.ConditionalsNearGenerics";
 		String innerTypeName = "a.b.c.ConditionalsNearGenerics.ItemIterator";
-		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(33, typeName, "false", true);
-		IJavaLineBreakpoint bp2 = createConditionalLineBreakpoint(39, typeName, "false", true);
-		IJavaLineBreakpoint bp3 = createConditionalLineBreakpoint(52, innerTypeName, "false", true);
-		IJavaLineBreakpoint bp4 = createConditionalLineBreakpoint(53, innerTypeName, "true", true);
+		createConditionalLineBreakpoint(33, typeName, "false", true);
+		createConditionalLineBreakpoint(44, typeName, "false", true);
+		ILineBreakpoint bp = createConditionalLineBreakpoint(56, innerTypeName, "true", true);
 		
 		IJavaThread thread= null;
 		try {
-			thread= launchToLineBreakpoint(typeName, bp4); // If compiled correctly, this will jump over bp1-bp3 !!
-
-			bp1.delete();
-			bp2.delete();
-			bp3.delete();
-			bp4.delete();
+			thread= launchToLineBreakpoint(typeName, bp); // If compiled correctly, this will jump over bp1-bp3 !!
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -208,7 +202,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		try {
 			String condition = "Iterator<Integer> i = tokenize(Arrays.asList(1, 2, 3), \"condition\");\n"+
 								"return i.hasNext();";
-			createConditionalLineBreakpoint(34, type, condition, true);
+			createConditionalLineBreakpoint(33, type, condition, true);
 			thread = launchToBreakpoint(type);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 		}

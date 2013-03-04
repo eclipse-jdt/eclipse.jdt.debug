@@ -74,6 +74,7 @@ import org.eclipse.jdt.debug.tests.core.VMInstallTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
@@ -184,6 +185,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
 			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
 			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
+			addTest(new TestSuite(GenericsEvalTests.class));
 		}
 		
 	//Sourcelookup tests
