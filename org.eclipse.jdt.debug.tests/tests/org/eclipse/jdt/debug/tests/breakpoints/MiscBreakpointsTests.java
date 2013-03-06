@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -29,6 +27,8 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	private static final String COMPILE_ERROR_CONTENTS = 
 	 "public class CompileError {\npublic static void main(String[] args) {\nString foo = \"foo\" + bar;\n}	\n}";
 
+	private static final String ORIGINAL_CONTENTS = "public class CompileError {\npublic static void main(String[] args) {\n}\n}";
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -72,10 +72,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		
 		IType type = get14Project().findType(typeName);
 		ICompilationUnit cu = type.getCompilationUnit();
-		IBuffer buffer = cu.getBuffer();
-		buffer.setContents(COMPILE_ERROR_CONTENTS);
-		cu.save(new NullProgressMonitor(), true);
-        waitForBuild();
+		setFileContents(cu, COMPILE_ERROR_CONTENTS);
 		
 		IJavaThread javaThread = null;
 		try {
@@ -89,6 +86,8 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
             getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
 			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
+			//restore the file to remove compile errors
+			setFileContents(cu, ORIGINAL_CONTENTS);
 		}		
 	}
 
@@ -104,10 +103,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		
 		IType type = get14Project().findType(typeName);
 		ICompilationUnit cu = type.getCompilationUnit();
-		IBuffer buffer = cu.getBuffer();
-		buffer.setContents(COMPILE_ERROR_CONTENTS);
-		cu.save(new NullProgressMonitor(), true);
-        waitForBuild();
+		setFileContents(cu, COMPILE_ERROR_CONTENTS);
 		
 		IJavaDebugTarget debugTarget = null;
 		try {
@@ -115,6 +111,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
+			setFileContents(cu, ORIGINAL_CONTENTS);
 		}		
 	}
 

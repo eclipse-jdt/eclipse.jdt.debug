@@ -261,4 +261,84 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testLineCommentEvalGenerics1() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(8, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testLineCommentEvalGenerics2() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(23, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "inner";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testLineCommentEvalGenerics3() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(27, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testLineCommentEvalGenerics4() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(31, type);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "!fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
 }

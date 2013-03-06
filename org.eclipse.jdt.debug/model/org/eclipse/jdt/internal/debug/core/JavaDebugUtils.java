@@ -237,29 +237,20 @@ public class JavaDebugUtils {
 				}
 				if (innerTypeName.length() > 0) {
 					try {
-						Integer.parseInt(innerTypeName.substring(0, 1)); // throws
-																			// NFE
-																			// if
-																			// not
-																			// an
-																			// integer
-
+						Integer.parseInt(innerTypeName.substring(0, 1)); // throws NFE if not an integer
 						// perform expensive lookup for anonymous types:
 						ASTParser parser = ASTParser.newParser(AST.JLS4);
 						parser.setResolveBindings(true);
 						parser.setSource(type.getTypeRoot());
-						CompilationUnit cu = (CompilationUnit) parser
-								.createAST(null);
+						CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 						cu.accept(new ASTVisitor(false) {
 							@Override
 							public boolean visit(AnonymousClassDeclaration node) {
 								ITypeBinding binding = node.resolveBinding();
 								if (binding == null)
 									return false;
-								if (qualifiedName.equals(binding
-										.getBinaryName()))
-									throw new ResultException((IType) binding
-											.getJavaElement());
+								if (qualifiedName.equals(binding.getBinaryName()))
+									throw new ResultException((IType) binding.getJavaElement());
 								return true;
 							}
 
@@ -268,10 +259,8 @@ public class JavaDebugUtils {
 								ITypeBinding binding = node.resolveBinding();
 								if (binding == null)
 									return false;
-								if (qualifiedName.equals(binding
-										.getBinaryName()))
-									throw new ResultException((IType) binding
-											.getJavaElement());
+								if (qualifiedName.equals(binding.getBinaryName()))
+									throw new ResultException((IType) binding.getJavaElement());
 								return true;
 							}
 						});

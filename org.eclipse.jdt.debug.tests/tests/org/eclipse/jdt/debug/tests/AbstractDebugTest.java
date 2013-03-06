@@ -74,6 +74,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -88,6 +89,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -177,7 +179,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"org.eclipse.debug.tests.targets.ThreadStack", "org.eclipse.debug.tests.targets.HcrClass", "org.eclipse.debug.tests.targets.StepIntoSelectionClass", 
 			"WatchItemTests", "ArrayTests", "ByteArrayTests", "PerfLoop", "Console80Chars", "ConsoleStackTrace", "ConsoleVariableLineLength", "StackTraces", 
 			"ConsoleInput", "PrintConcatenation", "VariableDetails", "org.eclipse.debug.tests.targets.ArrayDetailTests", "ArrayDetailTestsDef", "ForceReturnTests", 
-			"ForceReturnTestsTwo", "LogicalStructures", "BreakpointListenerTest", "LaunchHistoryTest", "LaunchHistoryTest2", "RunnableAppletImpl", "java6.AllInstancesTests"};
+			"ForceReturnTestsTwo", "LogicalStructures", "BreakpointListenerTest", "LaunchHistoryTest", "LaunchHistoryTest2", "RunnableAppletImpl", "java6.AllInstancesTests",
+			"bug329294"};
 	
 	/**
 	 * the default timeout
@@ -362,6 +365,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.IntegerAccess"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.StepIntoSelectionWithGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.ConditionalsNearGenerics"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug329294WithGenerics"));
 				loaded15 = true;
 				waitForBuild();
 	        }
@@ -549,6 +553,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		buf.write("Stack tace:\n");
 		e.printStackTrace(new PrintWriter(buf));
 		fail(buf.toString());
+	}
+	
+	/**
+	 * Sets the contents of the given {@link ICompilationUnit} to be the new contents provided
+	 * @param unit
+	 * @param contents the new {@link String} contents, cannot be <code>null</code>
+	 * @throws JavaModelException
+	 */
+	protected void setFileContents(ICompilationUnit unit, String contents) throws JavaModelException {
+		assertNotNull("You cannot set the new contents of an ICompilationUnit to null", contents);
+		IBuffer buffer = unit.getBuffer();
+		buffer.setContents(contents);
+		unit.save(null, true);
+		waitForBuild();
 	}
 	
 	/**

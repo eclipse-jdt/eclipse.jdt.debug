@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.SourceRange;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -309,12 +309,33 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 *         type name context, false otherwise
 	 */
 	private boolean isRightType(ASTNode node) {
-		SourceRange range = new SourceRange(node.getStartPosition(),
-				node.getLength());
-		try {
-			return fType.getSourceRange().equals(range);
-		} catch (JavaModelException e) {
-			JDIDebugPlugin.log(e.getStatus());
+		switch(node.getNodeType()) {
+			case ASTNode.ANNOTATION_TYPE_DECLARATION:
+			case ASTNode.ENUM_DECLARATION:
+			case ASTNode.TYPE_DECLARATION: {
+				AbstractTypeDeclaration decl = (AbstractTypeDeclaration) node;
+				if(fType.getElementName().equals(decl.getName().getIdentifier())) {
+					try {
+						return fType.getFlags() == decl.getModifiers();
+					}
+					catch(JavaModelException jme) {
+						return true;
+					}
+				}
+				break;
+			}
+			case ASTNode.CLASS_INSTANCE_CREATION: {
+				//we only get here when anonymous types are found
+				ClassInstanceCreation cic = (ClassInstanceCreation) node;
+				try {
+					ISourceRange name = fType.getNameRange();
+					return name.getOffset() >= cic.getStartPosition() && 
+							name.getOffset()+name.getLength() <= cic.getStartPosition()+cic.getLength();
+				} catch (JavaModelException e) {
+					JDIDebugPlugin.log(e.getStatus());
+				}
+				break;
+			}
 		}
 		return false;
 	}
@@ -1557,8 +1578,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		String name = node.getName().toString();
-		System.out.println(name);
 		int firstLine = fCompilationUnit.getLineNumber(node.getStartPosition());
 		int lastLine = fCompilationUnit.getLineNumber(node.getStartPosition() + node.getLength());
 		
