@@ -312,25 +312,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 		switch(node.getNodeType()) {
 			case ASTNode.ANNOTATION_TYPE_DECLARATION:
 			case ASTNode.ENUM_DECLARATION:
-			case ASTNode.TYPE_DECLARATION: {
-				AbstractTypeDeclaration decl = (AbstractTypeDeclaration) node;
-				if(fType.getElementName().equals(decl.getName().getIdentifier())) {
-					try {
-						return fType.getFlags() == decl.getModifiers();
-					}
-					catch(JavaModelException jme) {
-						return true;
-					}
-				}
-				break;
-			}
+			case ASTNode.TYPE_DECLARATION:
 			case ASTNode.CLASS_INSTANCE_CREATION: {
-				//we only get here when anonymous types are found
-				ClassInstanceCreation cic = (ClassInstanceCreation) node;
 				try {
 					ISourceRange name = fType.getNameRange();
-					return name.getOffset() >= cic.getStartPosition() && 
-							name.getOffset()+name.getLength() <= cic.getStartPosition()+cic.getLength();
+					return name.getOffset() >= node.getStartPosition() && 
+							name.getOffset()+name.getLength() <= node.getStartPosition()+node.getLength();
 				} catch (JavaModelException e) {
 					JDIDebugPlugin.log(e.getStatus());
 				}

@@ -188,7 +188,7 @@ public class EvaluationSourceGenerator {
 				options.put(key, JavaCore.IGNORE);
 			}
 		}
-		options.remove(JavaCore.COMPILER_TASK_TAGS);
+		options.put(JavaCore.COMPILER_TASK_TAGS, ""); //$NON-NLS-1$
 		return options;
 	}
 
