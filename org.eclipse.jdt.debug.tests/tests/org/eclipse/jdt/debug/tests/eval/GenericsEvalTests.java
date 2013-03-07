@@ -270,7 +270,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.bug329294WithGenerics";
-			createLineBreakpoint(8, type);
+			createLineBreakpoint(41, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "fInner1.innerBool";
@@ -290,7 +290,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.bug329294WithGenerics";
-			createLineBreakpoint(23, type);
+			createLineBreakpoint(61, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "inner";
@@ -310,7 +310,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.bug329294WithGenerics";
-			createLineBreakpoint(27, type);
+			createLineBreakpoint(65, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "fInner1.innerBool";
@@ -330,10 +330,110 @@ public class GenericsEvalTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			String type = "a.b.c.bug329294WithGenerics";
-			createLineBreakpoint(31, type);
+			createLineBreakpoint(69, type);
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "!fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testInnerEnumType1() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(11, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testInnerEnumType2() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(14, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "!fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testInnerEnumType3() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(23, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testInnerEnumType4() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(28, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "i2.fInner1.innerBool";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
+	 * @throws Exception
+	 */
+	public void testInnerEnumType5() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "a.b.c.bug329294WithGenerics";
+			createLineBreakpoint(33, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "!ei2.fInner1.innerBool";
 			doEval(thread, snippet);
 		}
 		finally {

@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.SourceRange;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -254,22 +255,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			buffer.append("static "); //$NON-NLS-1$
 		}
 
-		// add type parameters as required
-		if (isSourceLevelGreaterOrEqual(1, 5)) {
-			Collection<String> activeTypeParameters = (fMatchingTypeParameters != null ? fMatchingTypeParameters : fTypeParameterStack.peek()).values();
-			if (!activeTypeParameters.isEmpty()) {
-				Iterator<String> iterator = activeTypeParameters.iterator();
-				buffer.append(Signature.C_GENERIC_START);
-				while (iterator.hasNext()) {
-					String name = iterator.next();
-					buffer.append(name);
-					if (iterator.hasNext()) {
-						buffer.append(", "); //$NON-NLS-1$
-					}
-				}
-				buffer.append(Signature.C_GENERIC_END);
-			}
-		}
+		adddTypeParameters(buffer);
 
 		buffer.append("void "); //$NON-NLS-1$
 		buffer.append(getUniqueMethodName(RUN_METHOD_NAME, bodyDeclarations));
@@ -300,6 +286,31 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	}
 
 	/**
+	 * Adds generic type parameters as needed to the given buffer
+	 * 
+	 * @param buffer
+	 * @since 3.8.0
+	 */
+	void adddTypeParameters(StringBuffer buffer) {
+		if (isSourceLevelGreaterOrEqual(1, 5)) {
+			Collection<String> activeTypeParameters = (fMatchingTypeParameters != null ? fMatchingTypeParameters : fTypeParameterStack.peek()).values();
+			if (!activeTypeParameters.isEmpty()) {
+				Iterator<String> iterator = activeTypeParameters.iterator();
+				buffer.append(Signature.C_GENERIC_START);
+				while (iterator.hasNext()) {
+					String name = iterator.next();
+					buffer.append(name);
+					if (iterator.hasNext()) {
+						buffer.append(", "); //$NON-NLS-1$
+					}
+				}
+				buffer.append(Signature.C_GENERIC_END);
+				buffer.append(' ');
+			}
+		}
+	}
+	
+	/**
 	 * Returns if the specified {@link ASTNode} has the 'correct' parent type to
 	 * match the current type name context
 	 * 
@@ -309,20 +320,30 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 *         type name context, false otherwise
 	 */
 	private boolean isRightType(ASTNode node) {
-		switch(node.getNodeType()) {
-			case ASTNode.ANNOTATION_TYPE_DECLARATION:
-			case ASTNode.ENUM_DECLARATION:
-			case ASTNode.TYPE_DECLARATION:
-			case ASTNode.CLASS_INSTANCE_CREATION: {
-				try {
-					ISourceRange name = fType.getNameRange();
-					return name.getOffset() >= node.getStartPosition() && 
-							name.getOffset()+name.getLength() <= node.getStartPosition()+node.getLength();
-				} catch (JavaModelException e) {
-					JDIDebugPlugin.log(e.getStatus());
+		try {
+			switch(node.getNodeType()) {
+				case ASTNode.ANNOTATION_TYPE_DECLARATION:
+				case ASTNode.ENUM_DECLARATION:
+				case ASTNode.TYPE_DECLARATION: {
+					AbstractTypeDeclaration decl = (AbstractTypeDeclaration) node;
+					SimpleName name = decl.getName();
+					ISourceRange range = new SourceRange(name.getStartPosition(), name.getLength());
+					return fType.getNameRange().equals(range);
 				}
-				break;
+				case ASTNode.ANONYMOUS_CLASS_DECLARATION: {
+					return isRightType(node.getParent());
+				}
+				case ASTNode.CLASS_INSTANCE_CREATION: {
+					ClassInstanceCreation decl = (ClassInstanceCreation) node;
+					Type type = decl.getType();
+					ISourceRange name = fType.getNameRange();
+					return name.getOffset() >= type.getStartPosition() && 
+							name.getOffset()+name.getLength() <= type.getStartPosition()+type.getLength();
+				}
 			}
+		}
+		catch(JavaModelException jme) {
+			JDIDebugPlugin.log(jme);
 		}
 		return false;
 	}
@@ -861,11 +882,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 				fSource = new StringBuffer();
 
 				if (parent instanceof Initializer) {
-					createAnonymousEvalMethod(true, bodyDeclarations,
+					buildAnonymousEvalMethod(true, bodyDeclarations,
 							getTypeName(node.getType()), source);
 				} else if (parent instanceof MethodDeclaration) {
 					MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
-					createAnonymousEvalMethod(
+					buildAnonymousEvalMethod(
 							Flags.isStatic(enclosingMethodDeclaration
 									.getModifiers()), bodyDeclarations,
 							getTypeName(node.getType()), source);
@@ -921,11 +942,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 *            new method
 	 * @since 3.7
 	 */
-	void createAnonymousEvalMethod(boolean isstatic, List<BodyDeclaration> bodydecls,
+	void buildAnonymousEvalMethod(boolean isstatic, List<BodyDeclaration> bodydecls,
 			String typename, StringBuffer body) {
 		if (isstatic) {
 			fSource.append("static "); //$NON-NLS-1$
 		}
+		adddTypeParameters(fSource);
 		fSource.append("void "); //$NON-NLS-1$
 		fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodydecls));
 		fSource.append("() {\n"); //$NON-NLS-1$
