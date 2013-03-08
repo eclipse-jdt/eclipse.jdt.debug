@@ -52,6 +52,8 @@ public class EvaluationEngineMessages extends NLS {
 	public static String ASTInstructionCompiler_0;
 	public static String ASTInstructionCompiler_1;
 	public static String ASTInstructionCompiler_2;
+
+	public static String ASTInstructionCompiler_4;
 	public static String ASTInstructionCompiler_5;
 
 	static {

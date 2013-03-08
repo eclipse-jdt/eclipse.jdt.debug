@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
@@ -63,7 +64,7 @@ public class VariableDeclarationTests extends Tests {
 			init();
 			IValue value = eval("java.util.ArrayList i= new java.util.ArrayList(); return i;");
 			String typeName = value.getReferenceTypeName();
-			assertEquals("java.util.ArrayList : wrong type : ", "java.util.ArrayList", typeName);
+			assertEquals("java.util.ArrayList : wrong type : ", "java.util.ArrayList", Signature.getTypeErasure(typeName));
 		} finally {
 			end();
 		}
@@ -109,10 +110,10 @@ public class VariableDeclarationTests extends Tests {
 			init();
 			IValue value = eval("java.util.ArrayList[] i= new java.util.ArrayList[] {new java.util.ArrayList(), new java.util.ArrayList()}; return i;");
 			String typeName = value.getReferenceTypeName();
-			assertEquals("java.util.ArrayList[] : wrong type : ", "java.util.ArrayList[]", typeName);
+			assertEquals("java.util.ArrayList[] : wrong type : ", "java.util.ArrayList[]", Signature.getTypeErasure(typeName));
 			IValue cellValue = ((JDIArrayValue)value).getValue(0);
 			typeName = cellValue.getReferenceTypeName();
-			assertEquals("java.util.ArrayList[] : wrong type : ", "java.util.ArrayList", typeName);
+			assertEquals("java.util.ArrayList[] : wrong type : ", "java.util.ArrayList", Signature.getTypeErasure(typeName));
 		} finally {
 			end();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,6 +232,240 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			assertNotNull("Missing top frame", top);
 			assertTrue("Thread should be suspended", thread.isSuspended());
 			assertEquals("Wrong location", breakpoint.getLineNumber(), top.getLineNumber());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix1() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(true==true==true==true==true)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix2() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(true==true==true==true==true)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix3() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(true&&true&&true&&true&&true)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix4() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(true&&true&&true&&true&&true)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix5() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "true&&true||false", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix6() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(1<=2==true||false)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix7() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(1<=2==true||false)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix8() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(true != false && false)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix9() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(true != false && false)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix10() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(true||true||true||true||true)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix11() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(true||true||true||true||true)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix12() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "(true==true||true!=true&&true)", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}	
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testConditionalMultiInfix13() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		createConditionalLineBreakpoint(17, typeName, "!(true==true||true!=true&&true)", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("The program should have suspended on the coniditional breakpoint", thread);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

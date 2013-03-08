@@ -307,6 +307,6 @@ public class AutomatedSuite extends DebugSuite {
 	
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
-		addTest(EvalTestSuite.suite());
+		//addTest(EvalTestSuite.suite());
 	}
 }

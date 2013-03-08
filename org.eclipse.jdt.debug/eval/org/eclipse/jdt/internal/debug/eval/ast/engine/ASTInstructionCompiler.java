@@ -11,10 +11,13 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -113,6 +116,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.AndAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.AndOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.ArrayAllocation;
@@ -186,6 +190,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnsignedRightShiftOp
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Value;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorOperator;
+import org.eclipse.osgi.util.NLS;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -289,18 +294,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fStack.push(i);
 	}
 
-	private Instruction pop() {
-		return fStack.pop();
-	}
-
 	private void storeInstruction() {
-		Instruction instruction = pop();
-		fCounter++;
-		if (instruction instanceof CompoundInstruction) {
-			((CompoundInstruction) instruction).setEnd(fCounter);
+		Instruction instruction = null;
+		try {
+			instruction = fStack.pop();
 		}
-		fInstructions.add(instruction);
-		verbose("Add " + instruction.toString()); //$NON-NLS-1$
+		catch(EmptyStackException ese) {
+			JDIDebugPlugin.log(new Status(
+					IStatus.WARNING, 
+					JDIDebugPlugin.getUniqueIdentifier(), 
+					NLS.bind(EvaluationEngineMessages.ASTInstructionCompiler_4, fCounter),
+					ese));
+		}
+		if(instruction != null) {
+			fCounter++;
+			if (instruction instanceof CompoundInstruction) {
+				((CompoundInstruction) instruction).setEnd(fCounter);
+			}
+			fInstructions.add(instruction);
+			verbose("Add " + instruction.toString()); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -2675,7 +2688,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new NoOp(fCounter));
 				}
-				storeInstruction();
 				break;
 			default:
 				unrecognized = true;
@@ -2694,7 +2706,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				for (int i = operatorNumber - 1; i >= 0; i--) {
 					push(new NoOp(fCounter));
 				}
-				storeInstruction();
 				break;
 			default:
 				unrecognized = true;
@@ -2705,17 +2716,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			unrecognized = true;
 			break;
 		}
-
 		if (unrecognized) {
 			setHasError(true);
 			addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Unrecognized_infix_operator____13
 					+ opToken);
 		}
-
 		if (hasErrors()) {
 			return false;
 		}
-
+		//if we end up storing multiple known extended operands, push the last instruction
+		if(operatorNumber > 1) {
+			storeInstruction();
+		}
 		iterator = extendedOperands.iterator();
 
 		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) { // and
