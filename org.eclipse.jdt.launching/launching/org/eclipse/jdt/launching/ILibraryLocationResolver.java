@@ -36,7 +36,7 @@ public interface ILibraryLocationResolver {
 	 * For example, if the source for <code>java.lang.Object</code> source is found at <code>src/java/lang/Object.java</code> in the zip file, the package root 
 	 * would be <code>src</code>.
 	 * 
-	 * @param the path to the library
+	 * @param libraryPath the path to the library
 	 * @return the {@link IPath} to the root of the source or the empty path, never <code>null</code>
 	 */
 	public IPath getPackageRoot(IPath libraryPath);
