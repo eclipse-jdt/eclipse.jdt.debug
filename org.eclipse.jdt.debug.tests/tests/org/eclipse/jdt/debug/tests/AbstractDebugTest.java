@@ -366,6 +366,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.StepIntoSelectionWithGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.ConditionalsNearGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug329294WithGenerics"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug403028"));
 				loaded15 = true;
 				waitForBuild();
 	        }

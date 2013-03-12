@@ -115,6 +115,7 @@ import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
 import org.eclipse.jdt.debug.tests.ui.presentation.ModelPresentationTests;
+import org.eclipse.jdt.debug.tests.variables.DetailFormatterTests;
 import org.eclipse.jdt.debug.tests.variables.TestAnonymousInspect;
 import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
@@ -187,6 +188,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(StepIntoSelectionWithGenerics.class));
 			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
 			addTest(new TestSuite(GenericsEvalTests.class));
+			addTest(new TestSuite(DetailFormatterTests.class));
 		}
 		
 	//Sourcelookup tests

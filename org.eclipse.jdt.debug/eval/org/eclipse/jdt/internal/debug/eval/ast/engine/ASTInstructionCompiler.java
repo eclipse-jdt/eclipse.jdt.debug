@@ -758,7 +758,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 */
 	@Override
 	public void endVisit(CompilationUnit node) {
-
+		while(!fStack.isEmpty()) {
+			storeInstruction();
+		}
 	}
 
 	/**
@@ -2724,16 +2726,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (hasErrors()) {
 			return false;
 		}
-		//if we end up storing multiple known extended operands, push the last instruction
-		if(operatorNumber > 1) {
-			storeInstruction();
-		}
+		
 		iterator = extendedOperands.iterator();
 
-		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) { // and
-																				// and
-																				// operator
-
+		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) { 
 			boolean isOrOr = char0 == '|';
 
 			ConditionalJump[] conditionalJumps = new ConditionalJump[operatorNumber];

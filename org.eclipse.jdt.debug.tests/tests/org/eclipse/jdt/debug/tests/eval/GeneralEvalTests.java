@@ -381,4 +381,88 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testMultipleInfixEval14() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+			String snippet = "(true || !(true==true||true!=true&&true))";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of (true || !(true==true||true!=true&&true)) should be true", Boolean.parseBoolean(value.getValueString()));
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testMultipleInfixEval15() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+			String snippet = "(true && true || false || !(true==true||true!=true&&true))";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of (true && true || false || !(true==true||true!=true&&true)) should be true", Boolean.parseBoolean(value.getValueString()));
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
+	 * @throws Exception
+	 */
+	public void testMultipleInfixEval16() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+			String snippet = "(true && true || !(false&&true) || !(true==true||true!=true&&true))";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of (true && true || !(false&&true) || !(true==true||true!=true&&true)) should be true", Boolean.parseBoolean(value.getValueString()));
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
+	 * @throws Exception
+	 */
+	public void testCompoundCondition() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+			String snippet = "(true && true || !(false&&true) || !(true==true||true!=true&&true))";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of (true && true || !(false&&true) || !(true==true||true!=true&&true)) should be true", Boolean.parseBoolean(value.getValueString()));
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
 }

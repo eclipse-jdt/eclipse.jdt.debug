@@ -236,4 +236,39 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
+	
+	/**
+	 * Tests a breakpoint with a condition that includes generics from nested classes
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
+	 * @throws Exception
+	 */
+	public void testBreakpointWithGenericCondition4() throws Exception {
+		String type = "a.b.c.bug403028";
+		try {
+			String condition = "StringBuffer buf = new StringBuffer();"
+					+ "buf.append(\"{\");"
+					+ "Iterator i = this.entrySet().iterator();"
+					+ "boolean hasNext = i.hasNext();"
+					+ "while (hasNext) {"
+					+ "    Entry e = (Entry) (i.next());"
+					+ "    Object key = e.getKey();"
+					+ "    Object value = e.getValue();"
+					+ "    buf.append((key == this ?  \"(this Map)\" : key) + \"=\" + "
+					+ "            (value == this ? \"(this Map)\": value));"
+					+ "    hasNext = i.hasNext();"
+					+ "    if (hasNext)"
+					+ "        buf.append(\"\n,\");"
+					+ "}"
+					+ "buf.append(\"}\");"
+					+ "buf.toString();"
+					+ "return false;";
+			createConditionalLineBreakpoint(10, type, condition, false);
+			//should not suspend or throw an exception
+			launchToBreakpoint(type);
+		}
+		finally {
+			removeAllBreakpoints();
+		}
+	}
 }
