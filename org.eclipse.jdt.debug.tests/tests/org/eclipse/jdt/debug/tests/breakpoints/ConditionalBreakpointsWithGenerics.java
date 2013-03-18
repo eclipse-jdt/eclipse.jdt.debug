@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Jesper Steen Moller and others.
+ * Copyright (c) 2012, 2013 Jesper Steen Moller and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,6 +245,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	 */
 	public void testBreakpointWithGenericCondition4() throws Exception {
 		String type = "a.b.c.bug403028";
+		IJavaThread thread = null;
 		try {
 			String condition = "StringBuffer buf = new StringBuffer();"
 					+ "buf.append(\"{\");"
@@ -264,11 +265,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 					+ "buf.toString();"
 					+ "return false;";
 			createConditionalLineBreakpoint(10, type, condition, false);
-			//should not suspend or throw an exception
-			launchToBreakpoint(type);
+			thread = launchToBreakpoint(type);
 		}
 		finally {
 			removeAllBreakpoints();
+			terminateAndRemove(thread);
 		}
 	}
 }
