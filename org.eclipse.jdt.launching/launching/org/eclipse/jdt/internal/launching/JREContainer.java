@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -308,16 +309,8 @@ public class JREContainer implements IClasspathContainer {
 				if (rootPath.isEmpty()) {
 					rootPath = null;
 				}
-				URL javadocLocation = libs[i].getJavadocLocation();
-				if (overrideJavaDoc && javadocLocation == null) {
-					javadocLocation = vm.getJavadocLocation();
-				}
-				IClasspathAttribute[] attributes = null;
-				if (javadocLocation == null) {
-					attributes = new IClasspathAttribute[0];
-				} else {
-					attributes = new IClasspathAttribute[]{JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadocLocation.toExternalForm())};
-				}
+				// construct the classpath attributes for this library location
+				IClasspathAttribute[] attributes = JREContainer.buildClasspathAttributes(vm, libs[i], overrideJavaDoc);
 				IAccessRule[] libRules = null;
 				if (rules != null) {
 					libRules = rules[i];
@@ -334,6 +327,27 @@ public class JREContainer implements IClasspathContainer {
 		return cpEntries;		
 	}
 
+	private static IClasspathAttribute[] buildClasspathAttributes(final IVMInstall vm, final LibraryLocation lib, final boolean overrideJavaDoc) {
+	
+		List<IClasspathAttribute> classpathAttributes = new LinkedList<IClasspathAttribute>();
+		// process the javadoc location
+		URL javadocLocation = lib.getJavadocLocation();
+		if (overrideJavaDoc && javadocLocation == null) {
+			javadocLocation = vm.getJavadocLocation();
+		}
+		if(javadocLocation != null) {
+			IClasspathAttribute javadocCPAttribute = JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadocLocation.toExternalForm());
+			classpathAttributes.add(javadocCPAttribute);
+		}
+		// process the index location
+		URL indexLocation = lib.getIndexLocation();
+		if(indexLocation != null) {
+			IClasspathAttribute indexCPLocation = JavaCore.newClasspathAttribute(IClasspathAttribute.INDEX_LOCATION_ATTRIBUTE_NAME, indexLocation.toExternalForm());
+			classpathAttributes.add(indexCPLocation);
+		}
+		return classpathAttributes.toArray(new IClasspathAttribute[classpathAttributes.size()]);
+	}
+	
 	/**
 	 * Constructs a JRE classpath container on the given VM install
 	 * 

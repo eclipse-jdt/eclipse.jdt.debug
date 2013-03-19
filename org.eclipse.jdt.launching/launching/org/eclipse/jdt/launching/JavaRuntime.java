@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1678,6 +1678,7 @@ public final class JavaRuntime {
 		IPath[] sourcePaths;
 		IPath[] sourceRootPaths;
 		URL[] javadocLocations;
+		URL[] indexes;
 		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
             URL defJavaDocLocation = vm.getJavadocLocation();
@@ -1690,6 +1691,7 @@ public final class JavaRuntime {
 			sourcePaths = new IPath[dflts.length];
 			sourceRootPaths = new IPath[dflts.length];
 			javadocLocations= new URL[dflts.length];
+			indexes = new URL[dflts.length];
 			for (int i = 0; i < dflts.length; i++) {
 				libraryPaths[i]= dflts[i].getSystemLibraryPath();
                 if (defJavaDocLocation == null) {
@@ -1714,16 +1716,18 @@ public final class JavaRuntime {
 			sourcePaths = new IPath[locations.length];
 			sourceRootPaths = new IPath[locations.length];
 			javadocLocations= new URL[locations.length];
+			indexes = new URL[locations.length];
 			for (int i = 0; i < locations.length; i++) {
 				libraryPaths[i]= locations[i].getSystemLibraryPath();
 				sourcePaths[i]= locations[i].getSystemLibrarySourcePath();
 				sourceRootPaths[i]= locations[i].getPackageRootPath();
 				javadocLocations[i]= locations[i].getJavadocLocation();
+				indexes[i] = locations[i].getIndexLocation();
 			}
 		}
 		locations = new LibraryLocation[sourcePaths.length];
 		for (int i = 0; i < sourcePaths.length; i++) {
-			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i], javadocLocations[i]);
+			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i], javadocLocations[i], indexes[i]);
 		}
 		return locations;
 	}

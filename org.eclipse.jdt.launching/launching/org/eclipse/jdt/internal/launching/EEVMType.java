@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class EEVMType extends AbstractVMInstallType {
 				URL url = new URL(javadoc);
 				if ("file".equalsIgnoreCase(url.getProtocol())){ //$NON-NLS-1$
 					File file = new File(url.getFile());
-					url = file.getCanonicalFile().toURL();
+					url = file.getCanonicalFile().toURI().toURL();
 				}
 				return url;
 			} catch (MalformedURLException e){
@@ -81,6 +81,35 @@ public class EEVMType extends AbstractVMInstallType {
 		return null;
 	}	
 
+	/**
+	 * Returns the default index location specified in the properties or <code>null</code>
+	 * if none.
+	 * 
+	 * @param properties properties map
+	 * @return index location specified in the properties or <code>null</code> if none
+	 * @since 3.7.0
+	 */
+	public static URL getIndexLocation(Map<String, String> properties) {
+		String index = getProperty(ExecutionEnvironmentDescription.INDEX_LOC, properties); 
+		if (index != null && index.length() > 0){
+			try{
+				URL url = new URL(index);
+				if ("file".equalsIgnoreCase(url.getProtocol())){ //$NON-NLS-1$
+					File file = new File(url.getFile());
+					url = file.getCanonicalFile().toURI().toURL();
+				}
+				return url;
+			} catch (MalformedURLException e){
+				LaunchingPlugin.log(e);
+				return null;
+			} catch (IOException e){
+				LaunchingPlugin.log(e);
+				return null;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns a status indicating if the given definition file is valid.
 	 * 

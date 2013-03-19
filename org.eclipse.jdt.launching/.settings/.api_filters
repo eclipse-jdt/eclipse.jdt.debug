@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.launching" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Expected version problem - increasing the minor sement would have the same version as 4.3" id="924844039">
+            <message_arguments>
+                <message_argument value="3.6.102"/>
+                <message_argument value="3.6.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="launching/org/eclipse/jdt/launching/sourcelookup/LocalFileStorage.java" type="org.eclipse.jdt.launching.sourcelookup.LocalFileStorage">
         <filter comment="Known illegal extension" id="571473929">
             <message_arguments>
