@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -343,7 +343,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * Returns the index in the given array for the CLASSPATH variable
 	 * @param env the environment array or <code>null</code>
 	 * @return -1 or the index of the CLASSPATH variable
-	 * @since 3.6.200
+	 * @since 3.6.2
 	 */
 	int getCPIndex(String[] env) {
 		if(env != null) {
@@ -364,13 +364,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @param cp the raw classpath from the runner configuration
 	 * @param env the current environment
 	 * @return the modified environment or <code>null</code> if no changes were made
-	 * @sine 3.6.200
+	 * @sine 3.6.2
 	 */
-	String[] checkClasspath(List<String> args, String[] cp, String[] env) { 
+	String[] checkClasspath(List args, String[] cp, String[] env) { 
 		if(Platform.getOS().equals(Platform.OS_WIN32)) {
 			//count the complete command length
 			int size = 0;
-			for (String arg : args) {
+			for (Iterator iter = args.iterator(); iter.hasNext();) {
+				String arg = (String) iter.next();
 				if(arg != null) {
 					size += arg.length();
 				}
@@ -386,17 +387,17 @@ public class StandardVMRunner extends AbstractVMRunner {
 				String[] newenvp = null;
 				int index = -1;
 				if(env == null) {
-					Map<String, String> nenv = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
-					Entry<String, String> entry = null;
+					Map nenv = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+					Entry entry = null;
 					newenvp = new String[nenv.size()];
 					int idx = 0;
-					for (Iterator<Entry<String, String>> i = nenv.entrySet().iterator(); i.hasNext();) {
-						entry = i.next();
-						String value = entry.getValue();
+					for (Iterator i = nenv.entrySet().iterator(); i.hasNext();) {
+						entry = (Entry) i.next();
+						String value = (String) entry.getValue();
 						if(value == null) {
 							value = ""; //$NON-NLS-1$
 						}
-						String key = entry.getKey();
+						String key = (String) entry.getKey();
 						if(key.equalsIgnoreCase("CLASSPATH")) { //$NON-NLS-1$
 							index = idx;
 						}
