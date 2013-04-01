@@ -410,7 +410,7 @@
        </menuContribution>
        <menuContribution
              allPopups="false"
-             locationURI="menu:org.eclipse.ui.run?endof=emptyStepGroup">
+             locationURI="menu:org.eclipse.ui.run?endof=stepIntoGroup">
           <command
                 commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                 style="push">
