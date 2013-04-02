@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
@@ -88,22 +90,28 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	 * 
 	 * @throws CoreException if there is an error
 	 */
-	public static IResource getResource(ILaunchConfiguration candidate) throws CoreException {
+	static IResource getResource(ILaunchConfiguration candidate) throws CoreException {
 		IResource resource = null;
 		String pname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-		if(!EMPTY_STRING.equals(pname)) {
+		if(Path.ROOT.isValidSegment(pname)) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
 			String tname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 			if(!EMPTY_STRING.equals(tname)) {
-				if(project != null && project.exists() && project.isOpen()) {
+				if(project != null && project.isAccessible()) {
 					IJavaProject jproject = JavaCore.create(project);
 					if(jproject != null && jproject.exists()) {
 						tname = tname.replace('$', '.');
 						IType type = jproject.findType(tname);
 						if(type != null) {
-							resource = type.getUnderlyingResource();
-							if(resource == null) {
-								resource = (IResource) type.getAdapter(IResource.class);
+							try {
+								resource = type.getUnderlyingResource();
+								if(resource == null) {
+									resource = (IResource) type.getAdapter(IResource.class);
+								}
+							}
+							catch(JavaModelException jme) {
+								LaunchingPlugin.log(jme);
+								return null;
 							}
 						}
 					}
