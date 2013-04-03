@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.hcr;
 
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -105,6 +108,10 @@ import org.eclipse.jdt.core.dom.WildcardType;
 public class MethodSearchVisitor extends ASTVisitor {
 
 	/**
+	 * Class the method belongs to
+	 */
+	private String fClassName;
+	/**
 	 * Method to search for
 	 */
 	private String fName;
@@ -123,7 +130,8 @@ public class MethodSearchVisitor extends ASTVisitor {
 	 * @param methodSignature
 	 *            signature of the method to search for
 	 */
-	public void setTargetMethod(String methodName, String methodSignature) {
+	public void setTargetMethod(String className, String methodName, String methodSignature) {
+		fClassName = className;
 		fName = methodName;
 		fParameterTypes = Signature.getParameterTypes(methodSignature);
 		// convert parameter types same format that we get from the AST type
@@ -153,7 +161,26 @@ public class MethodSearchVisitor extends ASTVisitor {
 	 */
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		if (node.getName().getIdentifier().equals(fName)) {
+		ITypeBinding binding = null;
+		IMethodBinding mbinding = node.resolveBinding();
+		if(mbinding != null) {
+			binding = mbinding.getDeclaringClass();
+		}
+		else {
+			ASTNode parent = node.getParent();
+			if(parent instanceof AbstractTypeDeclaration) {
+				binding = ((AbstractTypeDeclaration) parent).resolveBinding();
+			}
+			else if(parent instanceof AnonymousClassDeclaration) {
+				binding = ((AnonymousClassDeclaration) parent).resolveBinding();
+			}
+		}
+		String typeName = null;
+		if (binding != null) {
+			typeName = binding.getQualifiedName();
+		}
+		// if no binding exists, the behaviour should be the same as without checking for type name
+		if (node.getName().getIdentifier().equals(fName) && (typeName == null || typeName.equals(fClassName))) {
 			IMethodBinding methodBinding = node.resolveBinding();
 			if (methodBinding != null) {
 				ITypeBinding[] typeBindings = methodBinding.getParameterTypes();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.hcr;
 
@@ -936,7 +937,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 								.getProject();
 						delta = getDelta(compilationUnit,
 								getLastProjectBuildTime(project));
-						if (!delta.hasChanged(frame.getName(),
+						
+						String typeName = frame.getDeclaringTypeName();
+						typeName = typeName.replace('$', '.');
+						
+						if (!delta.hasChanged(typeName, frame.getName(),
 								frame.getSignature())) {
 							continue;
 						}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.hcr;
 
@@ -119,7 +120,7 @@ public class CompilationUnitDelta {
 	 * </ul>
 	 * after the initial timestamp.
 	 */
-	public boolean hasChanged(String methodName, String signature) {
+	public boolean hasChanged(String className, String methodName, String signature) {
 		if (!fHasHistory) {
 			return false; // optimistic: we have no history, so assume that
 							// member hasn't changed
@@ -128,11 +129,10 @@ public class CompilationUnitDelta {
 			return true; // pessimistic: unable to build parse trees
 		}
 		MethodSearchVisitor visitor = new MethodSearchVisitor();
-		MethodDeclaration prev = findMethod(fPrevAst, visitor, methodName,
+		MethodDeclaration prev = findMethod(fPrevAst, visitor, className, methodName,
 				signature);
 		if (prev != null) {
-			MethodDeclaration curr = findMethod(fCurrentAst, visitor,
-					methodName, signature);
+			MethodDeclaration curr = findMethod(fCurrentAst, visitor, className, methodName, signature);
 			if (curr != null) {
 				return !getMatcher().match(prev, curr);
 			}
@@ -141,8 +141,8 @@ public class CompilationUnitDelta {
 	}
 
 	private MethodDeclaration findMethod(CompilationUnit cu,
-			MethodSearchVisitor visitor, String name, String signature) {
-		visitor.setTargetMethod(name, signature);
+			MethodSearchVisitor visitor, String className, String name, String signature) {
+		visitor.setTargetMethod(className, name, signature);
 		cu.accept(visitor);
 		return visitor.getMatch();
 	}
@@ -155,7 +155,6 @@ public class CompilationUnitDelta {
 	 * in case of failure.
 	 */
 	private CompilationUnit parse(InputStream input, ICompilationUnit cu) {
-
 		char[] buffer = readString(input);
 		if (buffer != null) {
 			if (fParser == null) {
