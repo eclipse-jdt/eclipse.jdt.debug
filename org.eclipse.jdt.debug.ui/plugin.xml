@@ -414,6 +414,19 @@
           <command
                 commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                 style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <with
+                      variable="activeContexts">
+                   <iterate
+                         ifEmpty="false"
+                         operator="or">
+                      <equals
+                            value="org.eclipse.debug.ui.debugActionSet">
+                      </equals>
+                   </iterate>
+                </with>
+             </visibleWhen>
           </command>
        </menuContribution>
        <menuContribution
