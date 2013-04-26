@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,26 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.viewers.StructuredViewer;
+
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
+
+import org.eclipse.jdt.core.IJavaProject;
+
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
+
+import org.eclipse.jdt.ui.JavaElementComparator;
 
 /**
  * A dialog for selecting projects to add to a classpath or source
@@ -125,5 +134,16 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	@Override
 	protected String getViewerLabel() {
 		return ActionMessages.ProjectSelectionDialog_0;
+	}
+
+	/*
+	 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
+	 * @since 3.9
+	 */
+	@Override
+	protected StructuredViewer createViewer(Composite parent) {
+		StructuredViewer viewer = super.createViewer(parent);
+		viewer.setComparator(new JavaElementComparator());
+		return viewer;
 	}
 }
