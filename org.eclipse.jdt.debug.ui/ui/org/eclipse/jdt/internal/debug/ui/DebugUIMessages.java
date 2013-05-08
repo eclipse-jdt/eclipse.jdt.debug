@@ -76,7 +76,6 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDetailFormattersManager_6;
 
 	public static String JavaDetailFormattersManager_7;
-	public static String JavaDetailFormattersManager_9;
 
 	public static String JavaHotCodeReplaceListener_0;
 
