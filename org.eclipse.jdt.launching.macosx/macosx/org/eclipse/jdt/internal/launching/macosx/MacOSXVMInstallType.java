@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,36 +101,56 @@ public class MacOSXVMInstallType extends StandardVMType {
 	@Override
 	public File detectInstallLocation() {
 		try {
-			// find all installed VMs
-			File defaultLocation= null;
-			JREDescriptor[] jres= new MacInstalledJREs().getInstalledJREs();
-			for (int i= 0; i < jres.length; i++) {
-				JREDescriptor descripor = jres[i];
-				String name = jres[i].getName();
-				File home= descripor.getHome();
-				String id= descripor.getId();
-				if (home.exists()) {
-					boolean isDefault= i == 0;
-					IVMInstall install= findVMInstall(id);
-					if (install == null) {
-						VMStandin vm= new VMStandin(this, id);
-						vm.setInstallLocation(home);
-						String format= MacOSXLaunchingPlugin.getString(isDefault
-								? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
-										: "MacOSXVMType.jvmName");				//$NON-NLS-1$
-										vm.setName(MessageFormat.format(format, new Object[] { name } ));
-						vm.setLibraryLocations(getDefaultLibraryLocations(home));
-						vm.setJavadocLocation(getDefaultJavadocLocation(home));
-						install= vm.convertToRealVM();
+			// try to find the VM used to launch Eclipse
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=407402
+			File defaultLocation = getJavaHomeLocation();
+			MacInstalledJREs mjres = new MacInstalledJREs();
+			JREDescriptor[] vms = mjres.getInstalledJREs();
+			File firstLocation = null;
+			IVMInstall firstInstall = null;
+			IVMInstall defaultInstall = null;
+			for (int i= 0; i < vms.length; i++) {
+				VMStandin vm = mjres.convertDescriptorToStandin(this, vms[i]);
+				File location = vm.getInstallLocation();
+				IVMInstall install = findVMInstall(vm.getId());
+				if (install == null) {
+					install= vm.convertToRealVM();
+				}
+				if (i == 0) {
+					firstLocation = location;
+					firstInstall = install;
+				}
+				if (defaultInstall == null && defaultLocation != null && defaultLocation.equals(location)) {
+					defaultInstall = install;
+				}
+			}
+			
+			// determine the default VM
+			if (defaultInstall == null) {
+				if (defaultLocation != null) {
+					// prefer the VM used to launch Eclipse
+					String version = System.getProperty("java.version"); //$NON-NLS-1$
+					VMStandin standin = new VMStandin(this, String.valueOf(System.currentTimeMillis()));
+					standin.setInstallLocation(defaultLocation);
+					String name = null;
+					if(version == null) {
+						name = MacOSXLaunchingPlugin.getString("MacOSXVMType.jvm"); //$NON-NLS-1$
 					}
-					if (isDefault) {
-						defaultLocation= home;
-						try {
-							JavaRuntime.setDefaultVMInstall(install, null);
-						} catch (CoreException e) {
-							LaunchingPlugin.log(e);
-						}
+					else {
+						name = MessageFormat.format(MacOSXLaunchingPlugin.getString("MacOSXVMType.jvmWithVersion"), new Object[] {version}); //$NON-NLS-1$
 					}
+					standin.setName(name);
+					defaultInstall = standin.convertToRealVM();
+				} else {
+					defaultInstall = firstInstall;
+					defaultLocation = firstLocation;
+				}
+			}
+			if (defaultInstall != null) {
+				try {
+					JavaRuntime.setDefaultVMInstall(defaultInstall, null);
+				} catch (CoreException e) {
+					LaunchingPlugin.log(e);
 				}
 			}
 			return defaultLocation;
@@ -138,6 +158,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			MacOSXLaunchingPlugin.getDefault().getLog().log(e.getStatus());
 			return detectInstallLocationOld();
 		}
+
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -51,7 +50,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	
 	/**
 	 * Constants for common {@link String}s
-	 * @since 3.7 
+	 * @since 3.6.102
 	 */
 	private static final String RT_JAR = "rt.jar"; //$NON-NLS-1$
 	private static final String SRC = "src"; //$NON-NLS-1$
@@ -79,7 +78,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * <br><br>
 	 * Map&lt;{@link String}, {@link LibraryLocation}&gt;
 	 * 
-	 * @since 3.7
+	 * @since 3.6.102
 	 */
 	private static Map<String, List<LibraryLocation>> fgDefaultLibLocs = new HashMap<String, List<LibraryLocation>>();
 	
@@ -184,11 +183,23 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
-		// do not detect on the Mac OS
-		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
+		// We want a Mac OSX VM install so don't process the install location for this type
+		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
 			return null;
-		}		
-		
+		}
+		return getJavaHomeLocation();
+	}
+
+	/**
+	 * Returns the VM install location using the <code>java.home</code> system
+	 * property or <code>null</code>.
+	 * 
+	 * @return the install location of this type of VM based off of the
+	 *  <code>java.home</code> system property, or <code>null</code> if not found
+	 * 
+	 * @since 3.6.102
+	 */
+	protected File getJavaHomeLocation() {
 		// Retrieve the 'java.home' system property.  If that directory doesn't exist, 
 		// return null.
 		File javaHome; 

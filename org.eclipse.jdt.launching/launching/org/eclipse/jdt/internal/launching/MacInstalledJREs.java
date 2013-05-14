@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.VMStandin;
 
 /**
  * Searches for installed JREs on the Mac.
@@ -121,6 +124,26 @@ public class MacInstalledJREs {
 		public int hashCode() {
 			return fHome.hashCode() + fName.hashCode() + fVersion.hashCode();
 		}
+	}
+	
+	/**
+	 * Converts the given {@link JREDescriptor} to a {@link VMStandin}. Returns <code>null</code>
+	 * if the conversion cannot be completed. This method does not convert the {@link VMStandin} to 
+	 * a real {@link IVMInstall}.
+	 * 
+	 * @param type the kind of VM to make
+	 * @param jre the descriptor to convert
+	 * @return a new {@link VMStandin} or <code>null</code>
+	 * @since 3.6.102
+	 */
+	public VMStandin convertDescriptorToStandin(IVMInstallType type, JREDescriptor jre) {
+		if(type != null && jre != null) {
+			VMStandin vm = new VMStandin(type, jre.getId());
+			vm.setInstallLocation(jre.getHome());
+			vm.setName(jre.getName());
+			return vm;
+		}
+		return null;
 	}
 	
 	/**
