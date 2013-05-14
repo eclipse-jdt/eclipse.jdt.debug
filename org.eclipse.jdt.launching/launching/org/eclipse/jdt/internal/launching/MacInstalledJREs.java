@@ -58,7 +58,7 @@ public class MacInstalledJREs {
 	 * Custom stand-in that allows us to provide a version
 	 * @since 3.7.0
 	 */
-	static class MacVMStandin extends VMStandin {
+	public static class MacVMStandin extends VMStandin {
 		
 		String version = null;
 		
@@ -67,7 +67,6 @@ public class MacInstalledJREs {
 			setInstallLocation(location);
 			setName(name);
 			this.version = version;
-			// TODO Auto-generated constructor stub
 		}
 		
 		@Override

@@ -46,7 +46,6 @@ import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -228,11 +227,23 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
-		// do not detect on the Mac OS
-		if (Platform.getOS().equals(Constants.OS_MACOSX)) {
+		// We want a Mac OSX VM install so don't process the install location for this type
+		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
 			return null;
-		}		
-		
+		}
+		return getJavaHomeLocation();
+	}
+
+	/**
+	 * Returns the VM install location using the <code>java.home</code> system
+	 * property or <code>null</code>.
+	 * 
+	 * @return the install location of this type of VM based off of the
+	 *  <code>java.home</code> system property, or <code>null</code> if not found
+	 * 
+	 * @since 3.7
+	 */
+	protected File getJavaHomeLocation() {
 		// Retrieve the 'java.home' system property.  If that directory doesn't exist, 
 		// return null.
 		File javaHome; 
@@ -273,7 +284,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		
 		return javaHome;
 	}
-
+	
 	/**
 	 * Return an <code>IPath</code> corresponding to the single library file containing the
 	 * standard Java classes for most VMs version 1.2 and above.

@@ -135,23 +135,51 @@ public class MacOSXVMInstallType extends StandardVMType {
 	@Override
 	public File detectInstallLocation() {
 		try {
+			// try to find the VM used to launch Eclipse
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=407402
+			File defaultLocation = getJavaHomeLocation();
+			
 			// find all installed VMs
-			File defaultLocation = null;
 			VMStandin[] vms = MacInstalledJREs.getInstalledJREs(null);
-			File location = null;
+			File firstLocation = null;
+			IVMInstall firstInstall = null;
+			IVMInstall defaultInstall = null;
 			for (int i= 0; i < vms.length; i++) {
-				location = vms[i].getInstallLocation();
+				File location = vms[i].getInstallLocation();
 				IVMInstall install = findVMInstall(vms[i].getId());
 				if (install == null) {
 					install= vms[i].convertToRealVM();
 				}
 				if (i == 0) {
-					defaultLocation = location;
-					try {
-						JavaRuntime.setDefaultVMInstall(install, null);
-					} catch (CoreException e) {
-						LaunchingPlugin.log(e);
-					}
+					firstLocation = location;
+					firstInstall = install;
+				}
+				if (defaultInstall == null && defaultLocation != null && defaultLocation.equals(location)) {
+					defaultInstall = install;
+				}
+			}
+			
+			// determine the default VM
+			if (defaultInstall == null) {
+				if (defaultLocation != null) {
+					// prefer the VM used to launch Eclipse
+					String version = System.getProperty("java.version"); //$NON-NLS-1$
+					VMStandin standin = new MacInstalledJREs.MacVMStandin(this,
+							defaultLocation,
+							version == null ? Messages.MacOSXVMInstallType_jre : NLS.bind(Messages.MacOSXVMInstallType_jre_version, version),
+							(version == null ? "???" : version),  //$NON-NLS-1$
+							String.valueOf(System.currentTimeMillis()));
+					defaultInstall = standin.convertToRealVM();
+				} else {
+					defaultInstall = firstInstall;
+					defaultLocation = firstLocation;
+				}
+			}
+			if (defaultInstall != null) {
+				try {
+					JavaRuntime.setDefaultVMInstall(defaultInstall, null);
+				} catch (CoreException e) {
+					LaunchingPlugin.log(e);
 				}
 			}
 			return defaultLocation;

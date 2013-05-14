@@ -17,6 +17,8 @@ public class Messages extends NLS {
 	public static String MacOSXVMInstallType_0;
 	public static String MacOSXVMInstallType_1;
 	public static String MacOSXVMInstallType_2;
+	public static String MacOSXVMInstallType_jre;
+	public static String MacOSXVMInstallType_jre_version;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
