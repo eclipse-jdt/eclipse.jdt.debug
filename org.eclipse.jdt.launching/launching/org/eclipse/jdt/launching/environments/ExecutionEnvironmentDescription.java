@@ -580,7 +580,7 @@ public final class ExecutionEnvironmentDescription {
 	 * found source path.
 	 * 
 	 * @param srcMap mapping of library location regexs to source location regexs
-	 * @param libraries list of (@link LibraryLocation} objects to update with source locations
+	 * @param libraries list of {@link LibraryLocation} objects to update with source locations
 	 * @see #getSourceMap()
 	 */
 	private void addSourceLocationsToLibraries(Map<String, String> srcMap, List<LibraryLocation> libraries){
