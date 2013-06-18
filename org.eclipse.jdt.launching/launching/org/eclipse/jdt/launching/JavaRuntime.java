@@ -2791,6 +2791,8 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_6;
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
             		compliance = JavaCore.VERSION_1_7;
+            	} else if(javaVersion.startsWith(JavaCore.VERSION_1_8)) {
+            		compliance = JavaCore.VERSION_1_8;
             	}
             	if (compliance != null) {
 	                Hashtable<String, String> options= JavaCore.getOptions();
