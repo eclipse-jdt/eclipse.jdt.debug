@@ -918,8 +918,9 @@ public final class JavaRuntime {
 						return entries;
 					}
 				} else {
-					if (isOptional(entry.getClasspathEntry()))
+					if (isOptional(entry.getClasspathEntry())) {
 						return new IRuntimeClasspathEntry[] {};
+					}
 					abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null);
 				}
 				break;
@@ -944,11 +945,13 @@ public final class JavaRuntime {
 				String location = entry.getLocation();
 				if (location != null) {
 					File file = new File(location);
-					if (file.exists())
+					if (file.exists()) {
 						break;
+					}
 				}
-				if (isOptional(entry.getClasspathEntry()))
+				if (isOptional(entry.getClasspathEntry())) {
 					return new IRuntimeClasspathEntry[] {};
+				}
 				abort(NLS.bind(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[] { entry.getPath().toString() }), null);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
@@ -2791,8 +2794,10 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_6;
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
             		compliance = JavaCore.VERSION_1_7;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_1_8)) {
+					compliance = JavaCore.VERSION_1_8;
 				} else {
-					compliance = JavaCore.VERSION_1_7; // use latest by default
+					compliance = JavaCore.VERSION_1_8; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();
