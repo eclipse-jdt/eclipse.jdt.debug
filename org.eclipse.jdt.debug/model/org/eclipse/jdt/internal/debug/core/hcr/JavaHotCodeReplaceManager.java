@@ -925,7 +925,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		ICompilationUnit compilationUnit = null;
 		CompilationUnitDelta delta = null;
 		IProject project = null;
-		for (int j = frames.size() - 1; j >= 0; j--) {
+		for (int j = 0; j < frames.size(); j++) {
 			frame = (JDIStackFrame) frames.get(j);
 			if (containsChangedType(frame, replacedClassNames)) {
 				// smart drop to frame support

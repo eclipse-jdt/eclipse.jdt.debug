@@ -180,7 +180,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"WatchItemTests", "ArrayTests", "ByteArrayTests", "PerfLoop", "Console80Chars", "ConsoleStackTrace", "ConsoleVariableLineLength", "StackTraces", 
 			"ConsoleInput", "PrintConcatenation", "VariableDetails", "org.eclipse.debug.tests.targets.ArrayDetailTests", "ArrayDetailTestsDef", "ForceReturnTests", 
 			"ForceReturnTestsTwo", "LogicalStructures", "BreakpointListenerTest", "LaunchHistoryTest", "LaunchHistoryTest2", "RunnableAppletImpl", "java6.AllInstancesTests",
-			"bug329294", "bug401270"};
+			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
+			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
+			"org.eclipse.debug.tests.targets.HcrClass9"};
 	
 	/**
 	 * the default timeout

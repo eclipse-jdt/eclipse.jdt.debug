@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
+import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.debug.tests.TestAgainException;
 
@@ -32,6 +33,7 @@ public class HcrTests extends AbstractDebugTest {
 	class HCRListener implements IJavaHotCodeReplaceListener {
 		
 		boolean notified = false;
+		IJavaDebugTarget target = null;
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener#hotCodeReplaceFailed(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.debug.core.DebugException)
@@ -46,6 +48,7 @@ public class HcrTests extends AbstractDebugTest {
 		 */
 		public synchronized void hotCodeReplaceSucceeded(IJavaDebugTarget target) {
 			notified = true;
+			this.target = target;
 			notifyAll();
 		}
 
@@ -285,4 +288,925 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}		
 	}	
+	
+	/**
+	 * Tests HCR in a local type with the same name as the enclosing 
+	 * method
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRLocalType() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
+		createLineBreakpoint(33, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass2.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Local#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Local#run\"" + contents.substring(index + 13);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR in a local type
+	 * @throws Exception
+	 * 
+	 * @since 3.8.100
+	 */
+	public void testHCRLocalType2() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
+		createLineBreakpoint(37, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass2.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Local#run2()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Local#run2\"" + contents.substring(index + 14);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$2$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR in a local type defined in a constructor
+	 * @throws Exception
+	 * 
+	 * @since 3.8.100
+	 */
+	public void testHCRLocalType3() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
+		createLineBreakpoint(19, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$1$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass2.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass2.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"CLocal#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"CLocal#run\"" + contents.substring(index + 14);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the local type", "org.eclipse.debug.tests.targets.HcrClass2$1$Local",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR in an anonymous type with the same name as the method 
+	 * where the anonymous type was defined
+	 * 
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRAnonymousType() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
+		createLineBreakpoint(34, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$2",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 34", 34, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass3.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Anon#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$2",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 34", 34, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR in an anonymous type defined in a method
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRAnonymousType2() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
+		createLineBreakpoint(44, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$3",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 44", 44, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass3.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Anon#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$3",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 44", 44, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR in an anonymous type defined in a constructor
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRAnonymousType3() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
+		createLineBreakpoint(24, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$1",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass3.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass3.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Anon#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the anonymous type", "org.eclipse.debug.tests.targets.HcrClass3$1",  frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on a method called from a constructor
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRConstructor() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
+		createLineBreakpoint(21, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We shoud be stopped on line 21", 21, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass4.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass4.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"HcrClass4#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"HcrClass4#run\"" + contents.substring(index + 17);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We shoud be stopped on line 21", 21, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR within a constructor
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRConstructor2() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
+		createLineBreakpoint(16, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the constuctor method", "<init>",  frame.getMethodName());
+				assertEquals("We shoud be stopped on line 16", 16, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass4.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass4.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Constructor\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Construct\"" + contents.substring(index + 13);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the constructor method", "<init>",  frame.getMethodName());
+				//after HCR constructors re-enter
+				assertEquals("We shoud be stopped on line 15", 15, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an inner type method with the same name as the enclosing type
+	 * method it was called from
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerType() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
+		createLineBreakpoint(23, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass5.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"InnerClass#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"InnerClass#run\"" + contents.substring(index + 18);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an inner type method
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerType2() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
+		createLineBreakpoint(27, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run2() method", "run2",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass5.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"InnerClass#run2()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"InnerClass#run2\"" + contents.substring(index + 19);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run2() method", "run2",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 27", 27, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on a constructor in an inner type
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerType3() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
+		createLineBreakpoint(18, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the <init> method", "<init>",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 18", 18, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass5.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Constructor\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Construct\"" + contents.substring(index + 13);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the <init> method", "<init>",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5$InnerClass type", "org.eclipse.debug.tests.targets.HcrClass5$InnerClass", frame.getDeclaringTypeName());
+				//after HCR constructors re-enter
+				assertEquals("We shoud be stopped on line 17", 17, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an enclosing method called from an inner type
+	 * method with the same name
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerType4() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
+		createLineBreakpoint(33, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass5.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"LocalHCR#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"LocalHCR#run\"" + contents.substring(index + 16);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 33", 33, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an enclosing method called from an inner type
+	 * method
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerType5() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
+		createLineBreakpoint(37, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the outerrun() method", "outerrun",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass5.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass5.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"LocalHCR#outerrun()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"LocalHCR#outerrun\"" + contents.substring(index +21);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the outerrun method", "outerrun",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass5 type", "org.eclipse.debug.tests.targets.HcrClass5", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 37", 37, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on a local type defined in an inner type
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRLocalInner() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass9";
+		createLineBreakpoint(19, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass9$1$Local type", "org.eclipse.debug.tests.targets.HcrClass9$1$Local", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass9.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass9.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Inner$Local#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Inner$Local#run\"" + contents.substring(index +19);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass9$1$Local type", "org.eclipse.debug.tests.targets.HcrClass9$1$Local", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on a local type defined in an anonymous type
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRLocalAnonymous() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass8";
+		createLineBreakpoint(24, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass8$1$Local type", "org.eclipse.debug.tests.targets.HcrClass8$1$Local", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass8.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass8.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Inner$Local#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Inner$Local#run\"" + contents.substring(index +19);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass8$1$Local type", "org.eclipse.debug.tests.targets.HcrClass8$1$Local", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 24", 24, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an inner type defined in a local type
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRInnerLocal() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass7";
+		createLineBreakpoint(19, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass7$1$Local$Inner type", "org.eclipse.debug.tests.targets.HcrClass7$1$Local$Inner", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass7.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass7.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Local$Inner#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Local$Inner#run\"" + contents.substring(index +19);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass7$1$Local$Inner type", "org.eclipse.debug.tests.targets.HcrClass7$1$Local$Inner", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 19", 19, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+	
+	/**
+	 * Tests HCR on an anonymous type defined in a local type
+	 * @throws Exception
+	 * @since 3.8.100
+	 */
+	public void testHCRAnnonymousLocal() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass6";
+		createLineBreakpoint(23, typeName);		
+		HCRListener listener = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run() method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass6$1 type", "org.eclipse.debug.tests.targets.HcrClass6$1", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+				ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "HcrClass6.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass6.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"Local$Inner#run()\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Local$Inner#run\"" + contents.substring(index +19);
+				buffer.setContents(newCode);
+				
+				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
+				cu.commitWorkingCopy(false, null);
+				waitForBuild();
+				thread = (IJavaThread) waiter.waitForEvent();
+				assertTrue("Listener should have been notified", listener.waitNotification());
+				assertNotNull("HCR should have not failed", listener.target);
+				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
+				frame = (IJavaStackFrame) thread.getTopStackFrame();
+				assertEquals("We should be stopped in the run method", "run",  frame.getMethodName());
+				assertEquals("We should be stopped in the HcrClass6$1 type", "org.eclipse.debug.tests.targets.HcrClass6$1", frame.getDeclaringTypeName());
+				assertEquals("We shoud be stopped on line 23", 23, frame.getLineNumber());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
 }
