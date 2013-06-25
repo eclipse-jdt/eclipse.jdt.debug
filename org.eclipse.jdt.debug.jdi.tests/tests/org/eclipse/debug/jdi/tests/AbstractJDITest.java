@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import junit.framework.Test;
@@ -657,14 +658,35 @@ public abstract class AbstractJDITest extends TestCase {
 	private void launchCommandLineTarget() {
 		try {
 			if (fProxyCmd != null) {
-				fLaunchedProxy = Runtime.getRuntime().exec(fProxyCmd);
+				fLaunchedProxy = Runtime.getRuntime().exec(parseCommand(fProxyCmd));
 			}
-			fLaunchedVM = Runtime.getRuntime().exec(fVmCmd);
+			fLaunchedVM = Runtime.getRuntime().exec(parseCommand(fVmCmd));
 		} catch (IOException e) {
 			throw new Error("Could not launch the VM because " + e.getMessage());
 		}
 	}
 
+	/**
+	 * Parse the command {@link String} to make sure we use
+	 * {@link Runtime#exec(String[])}.
+	 * 
+	 * @param command
+	 * @return the array of items from the command {@link String}
+	 * @since 4.3
+	 */
+	String[] parseCommand(String command) {
+		StringTokenizer tokenizer = new StringTokenizer(command);
+		String[] commandArray = new String[tokenizer.countTokens()];
+		//first token is the command
+		if(tokenizer.hasMoreTokens()) {
+			commandArray[0] = tokenizer.nextToken();
+		}
+		for (int i= 1; tokenizer.hasMoreTokens(); i++) {
+			commandArray[i] = tokenizer.nextToken();
+		}
+		return commandArray;
+	}
+	
 	/**
 	 * Launches the target J9 VM.
 	 */
