@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -22,8 +21,6 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.code.ConvertAnonymousToNestedRefactoring;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -32,11 +29,8 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 	public ConvertNonPublicAnonymousTypeToNestedUnitTests(String name) {
 		super(name);
 	}
-
 	
 	public void testLineBreakpoint() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			String 	src = "src", 
 					pack = "a.b.c",
@@ -67,8 +61,6 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 	}//end testBreakPoint	
 
 	public void testMethodBreakpoint() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			String 	src = "src", 
 					pack = "a.b.c",
@@ -97,8 +89,6 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 	}//end testBreakPoint
 	
 	public void testWatchpoint() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			String 	src = "src", 
 					pack = "a.b.c",
@@ -128,8 +118,6 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 	}//end testBreakPoint	
 		
 	public void testClassLoadpoint() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			String 	src = "src", 
 					pack = "a.b.c",
@@ -158,7 +146,6 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 			
 //////////////////////////////////////////////////////////////////////////////////////	
 	private Refactoring setupRefactor(String root, String packageName, String cuName, String targetName) throws Exception {
-		
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IType type = (IType)getMember(cunit,targetName);
@@ -183,15 +170,4 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 		ref.setClassName("NewAnonymousClass");		
 		return ref;
 	}
-	
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		waitForBuild();
-	}	
-	
 }

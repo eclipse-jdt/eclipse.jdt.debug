@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -24,8 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameTypeProcessor;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
@@ -34,21 +31,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 
 	public RenameNonPublicTypeUnitTests(String name) {
 		super(name);
-	}
-
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		try {
-			ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		} catch (NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		waitForBuild();
 	}
 	
 	/**
@@ -59,9 +41,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @param targetLineage
 	 * @throws Exception
 	 */
-	protected void runClassLoadBreakpointTest(String src, String pack, String cunit,
-			String fullTargetName) throws Exception {
-		cleanTestFiles();		
+	protected void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
 			//create breakpoint to test
@@ -91,9 +71,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @param lineNumber
 	 * @throws Exception
 	 */
-	protected void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName,
-			int lineNumber) throws Exception {
-		cleanTestFiles();
+	protected void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, int lineNumber) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
 			//create breakpoint to test
@@ -124,9 +102,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @param methodName
 	 * @throws Exception
 	 */
-	protected void runMethodBreakpointTest(String src, String pack, String cunit, 
-			String fullTargetName, String methodName) throws Exception {
-		cleanTestFiles();
+	protected void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String methodName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
 			//create breakpoint to test
@@ -157,9 +133,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @param fieldName
 	 * @throws Exception
 	 */
-	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName,
-			String fieldName) throws Exception {
-		cleanTestFiles();		
+	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String fieldName) throws Exception {
 		String targetLineage = pack +"."+"RenamedType";
 		try {
 			//create breakpoint to test
@@ -269,7 +243,6 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName) throws Exception {
-		cleanTestFiles();		
 		String newTypeName = "RenamedType",
 		fullTargetName = pack + "."+ targetName;
 		try {

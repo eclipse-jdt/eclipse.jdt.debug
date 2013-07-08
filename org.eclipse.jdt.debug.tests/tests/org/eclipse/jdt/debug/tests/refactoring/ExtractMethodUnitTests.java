@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -20,8 +19,6 @@ import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -32,8 +29,6 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 	}
 
 	public void testExtractionFromPublicType() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			int lineNumber = 21;
 			int newLineNumber = 25;
@@ -58,8 +53,6 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 	}//end testLineBreakPoint
 	
 	public void testExtractionFromNonPublicType() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			int lineNumber = 40;
 			int newLineNumber = 44;
@@ -84,8 +77,6 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 	}//end testLineBreakPoint
 	
 	public void testExtractionFromInternalType() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			int lineNumber = 29;
 			int newLineNumber = 32;
@@ -130,15 +121,4 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 		}
 		return ref;
 	}
-
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		waitForBuild();
-	}	
-	
 }
