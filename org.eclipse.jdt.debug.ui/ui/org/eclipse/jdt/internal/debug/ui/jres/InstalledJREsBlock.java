@@ -31,8 +31,10 @@ import org.eclipse.jdt.internal.launching.MacInstalledJREs;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -95,6 +97,71 @@ import org.eclipse.swt.widgets.TableColumn;
 public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProvider {
 	
 	/**
+	 * A listener to know if another page has added a VM install
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=237709
+	 * @since 3.6.300
+	 */
+	class InstallListener implements IVMInstallChangedListener {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+			//do nothing, we do not want other bundles changing the default JRE this way
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
+		 */
+		public void vmChanged(PropertyChangeEvent event) {
+			//do nothing, we do not want other bundles making VM install edits without user interaction
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmAdded(IVMInstall vm) {
+			if(!fVMs.contains(vm)) {
+				fVMs.add(vm);
+				doRefresh();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmRemoved(IVMInstall vm) {
+			//do nothing, we do not want other bundles removing VM installs without user interaction
+		}
+		
+		/**
+		 * Refreshes the VM listing after a VM install notification, might not happen on the UI thread
+		 */
+		void doRefresh() {
+			Display display = Display.getDefault();
+			if(display.getThread().equals(Thread.currentThread())) {
+				fVMList.refresh();
+			}
+			else {
+				display.syncExec(new Runnable() {
+					public void run() {
+						fVMList.refresh();
+					}
+				});
+			}
+		}
+	}
+	
+	/**
+	 * Listener for VM changes while the page is open, to ensure we have the latest set 
+	 * of {@link IVMInstall}s at all times
+	 * 
+	 * @since 3.6.300
+	 */
+	IVMInstallChangedListener fListener = new InstallListener();
+	
+	/**
 	 * This block's control
 	 */
 	private Composite fControl;
@@ -102,7 +169,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * VMs being displayed
 	 */
-	private List<Object> fVMs = new ArrayList<Object>(); 
+	private List<IVMInstall> fVMs = new ArrayList<IVMInstall>(); 
 	
 	/**
 	 * The main list control
@@ -403,6 +470,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		fillWithWorkspaceJREs();
 		enableButtons();
 		fAddButton.setEnabled(JavaRuntime.getVMInstallTypes().length > 0);
+		
+		JavaRuntime.addVMInstallChangedListener(fListener);
 	}
 	
 	/**
@@ -646,7 +715,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	public boolean isDuplicateName(String name) {
 		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm = (IVMInstall)fVMs.get(i);
+			IVMInstall vm = fVMs.get(i);
 			if (vm.getName().equals(name)) {
 				return true;
 			}
@@ -741,14 +810,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		// ignore installed locations
 		final Set<File> exstingLocations = new HashSet<File>();
-		Iterator<Object> iter = fVMs.iterator();
-		while (iter.hasNext()) {
-			exstingLocations.add(((IVMInstall)iter.next()).getInstallLocation());
+		for (IVMInstall vm : fVMs) {
+			exstingLocations.add(vm.getInstallLocation());
 		}
 		
 		// search
 		final File rootDir = new File(path);
-		final List<Object> locations = new ArrayList<Object>();
+		final List<File> locations = new ArrayList<File>();
 		final List<IVMInstallType> types = new ArrayList<IVMInstallType>();
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
@@ -789,10 +857,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			String messagePath = path.replaceAll("&", "&&"); // @see bug 29855  //$NON-NLS-1$//$NON-NLS-2$
 			MessageDialog.openInformation(getShell(), JREMessages.InstalledJREsBlock_12, NLS.bind(JREMessages.InstalledJREsBlock_13, new String[]{messagePath})); // 
 		} else {
-			iter = locations.iterator();
 			Iterator<IVMInstallType> iter2 = types.iterator();
-			while (iter.hasNext()) {
-				File location = (File)iter.next();
+			for(File location: locations) {
 				IVMInstallType type = iter2.next();
 				AbstractVMInstall vm = new VMStandin(type, createUniqueId(type));
 				String name = location.getName();
@@ -812,7 +878,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				vmAdded(vm);
 			}
 		}
-		
 	}
 	
 	/**
@@ -824,9 +889,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				Set<String> exists = new HashSet<String>();
-				Iterator<Object> iterator = fVMs.iterator();
-				while (iterator.hasNext()) {
-					IVMInstall vm = (IVMInstall) iterator.next();
+				for (IVMInstall vm : fVMs) {
 					exists.add(vm.getId());
 				}
 				SubMonitor localmonitor = SubMonitor.convert(monitor, JREMessages.MacVMSearch_0, 5);
@@ -855,10 +918,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			// canceled
 			return;
 		}
-		
-		Iterator<VMStandin> iterator = added.iterator();
-		while (iterator.hasNext()) {
-			IVMInstall vm = iterator.next();
+		for(VMStandin vm: added) {
 			vmAdded(vm);
 		}
 	}
@@ -890,7 +950,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * @param types
 	 * @param ignore
 	 */
-	protected void search(File directory, List<Object> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
+	protected void search(File directory, List<File> found, List<IVMInstallType> types, Set<File> ignore, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -1053,6 +1113,15 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		}
 		setJREs(standins.toArray(new IVMInstall[standins.size()]));	
+	}
+	
+	/**
+	 * Disposes the block and any listeners
+	 * 
+	 * @since 3.6.300
+	 */
+	public void dispose() {
+		JavaRuntime.removeVMInstallChangedListener(fListener);
 	}
 		
 }

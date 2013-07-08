@@ -303,4 +303,13 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	private IVMInstall getCurrentDefaultVM() {
 		return fJREBlock.getCheckedJRE();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		fJREBlock.dispose();
+	}
 }
