@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -21,8 +20,6 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameCompilationUnitProcessor;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
@@ -33,16 +30,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		super(name);
 	}
 
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		waitForBuild();
-	}
-	
 	/**
 	 * @param src
 	 * @param pack
@@ -52,7 +39,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	 * @throws Exception
 	 */
 	private void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage) throws Exception {
-		cleanTestFiles();		
 		try {
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
@@ -82,7 +68,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	 * @throws Exception
 	 */
 	private void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetsParentName, int lineNumber) throws Exception {
-		cleanTestFiles();
 		try {
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
@@ -113,7 +98,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	 * @throws Exception
 	 */
 	private void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage, String methodName) throws Exception {
-		cleanTestFiles();
 		try {
 			//create breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
@@ -144,7 +128,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	 * @throws Exception
 	 */
 	private void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String newTargetLineage, String fieldName) throws Exception {
-		cleanTestFiles();		
 		try {
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
@@ -166,13 +149,10 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	}
 	
 	private Refactoring setupRefactor(String root, String packageName, String cuName) throws Exception {
-		
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
-				
 		JavaRenameProcessor proc = new RenameCompilationUnitProcessor(cunit);
 		proc.setNewElementName("RenamedCompilationUnit.java");
-			
 		RenameRefactoring ref= new RenameRefactoring(proc);
 		
 		//setup final refactoring conditions
@@ -185,8 +165,6 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 		
 		return ref;
 	}
-	
-	//////////////////////////////////////////////////////////////////////////////////////	
 	
 	public void testInnerAnonmyousTypeClassLoadpoint() throws Exception {
 			String 	src = "src", 

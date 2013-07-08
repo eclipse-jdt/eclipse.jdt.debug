@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,19 +11,13 @@
 package org.eclipse.jdt.debug.tests.refactoring;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgDestinationFactory;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
-import org.eclipse.jdt.internal.corext.refactoring.reorg.IReorgPolicy.IMovePolicy;
-import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
-import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
 
 /**
@@ -67,21 +61,6 @@ public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
 	 */
 	protected void refactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException, Exception {
 		JavaMoveProcessor processor = setupRefactor(javaProject, type);
-		executeRefactoring(new MoveRefactoring(processor), RefactoringStatus.WARNING);
+		performRefactor(new MoveRefactoring(processor));
 	}
-	
-	protected void executeRefactoring(Refactoring refactoring, int maxSeverity) throws Exception {
-		PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-		waitForBuild();
-		// Flush the undo manager to not count any already existing undo objects
-		// into the heap consumption
-		RefactoringCore.getUndoManager().flush();
-
-		ResourcesPlugin.getWorkspace().run(operation, null);
-
-		assertEquals(true, operation.getConditionStatus().getSeverity() <= maxSeverity);
-		assertEquals(true, operation.getValidationStatus().isOK());
-
-		RefactoringCore.getUndoManager().flush();
-	}	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
@@ -18,8 +17,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.PushDownRefactoringProcessor;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 
@@ -30,8 +27,6 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 	}
 
 	public void testWatchPoint() throws Exception {
-		cleanTestFiles();
-		
 		try {
 			//create Breakpoint to test
 			createWatchpoint("a.b.c.Movee", "anInt", true, true);
@@ -75,13 +70,4 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 
 		return ref;
 	}
-
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());
-		waitForBuild();
-	}	
-
 }

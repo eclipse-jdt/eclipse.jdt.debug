@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -19,8 +18,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameFieldProcessor;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
@@ -31,18 +28,6 @@ public class RenameFieldUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		try {
-			ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		} catch (NullPointerException e) { e.printStackTrace(); }
-		waitForBuild();
-	}
-	
 	/**
 	 * @param src
 	 * @param pack
@@ -52,7 +37,6 @@ public class RenameFieldUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
-		cleanTestFiles();		
 		String newFieldName = "renamedField";
 		try {
 			//create breakpoint to test

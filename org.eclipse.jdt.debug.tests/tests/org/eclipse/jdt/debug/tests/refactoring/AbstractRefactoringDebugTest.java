@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -27,6 +28,10 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeNameRequestor;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
+import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
+import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 
 /**
  * Common refactoring utils.
@@ -37,6 +42,38 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 
 	public AbstractRefactoringDebugTest(String name) {
 		super(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		cleanTestFiles();
+	}
+	
+	/**
+	 * Performs the given refactoring. If a {@link ResourceException} occurs during the refactoring,
+	 * we trap it and throw a {@link TestAgainException} to try the test again.
+	 * 
+	 * @param refactoring
+	 * @throws Exception
+	 */
+	public void performRefactor(final Refactoring refactoring) throws Exception {
+		if(refactoring == null) {
+			return;
+		}
+		PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
+		try {
+			ResourcesPlugin.getWorkspace().run(op, new NullProgressMonitor());
+			waitForBuild();
+			assertEquals(true, op.getValidationStatus().isOK());
+		}
+		catch(ResourceException re) {
+			//try the test again - the tests reset the workspace to remove any half-moved / change files
+			throw new TestAgainException(re.getLocalizedMessage());
+		}
 	}
 	
 	/**
