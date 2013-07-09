@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -72,7 +73,13 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		}
 		catch(ResourceException re) {
 			//try the test again - the tests reset the workspace to remove any half-moved / change files
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=412486
 			throw new TestAgainException(re.getLocalizedMessage());
+		}
+		catch(JavaModelException jme) {
+			//try the test again - the tests reset the workspace to remove any half-moved / change files
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=183206
+			throw new TestAgainException(jme.getLocalizedMessage());
 		}
 	}
 	
