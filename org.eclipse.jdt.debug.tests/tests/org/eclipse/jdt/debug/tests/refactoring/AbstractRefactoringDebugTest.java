@@ -81,6 +81,11 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=183206
 			throw new TestAgainException(jme.getLocalizedMessage());
 		}
+		catch(CoreException ce) {
+			//try the test again - the tests reset the workspace to remove any half-moved / change files
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=412486
+			throw new TestAgainException(ce.getLocalizedMessage());
+		}
 	}
 	
 	/**
