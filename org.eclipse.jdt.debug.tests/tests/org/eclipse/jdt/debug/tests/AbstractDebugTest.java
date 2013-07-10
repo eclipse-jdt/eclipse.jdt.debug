@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -154,6 +156,7 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.service.prefs.BackingStoreException;
 
 import com.sun.jdi.InternalException;
 
@@ -252,7 +255,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertWelcomeScreenClosed();
 	}
 
-	synchronized void setPreferences() {
+	synchronized void setPreferences() throws BackingStoreException {
 		if(!loadedPrefs) {
 	        IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore();
 	        // Don't prompt for perspective switching
@@ -292,6 +295,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	            if(window instanceof WorkbenchWindow){
 	                ((WorkbenchWindow) window).showHeapStatus(false);
 	            }
+	        }
+	        
+	        //make sure we are auto-refreshing external workspace changes
+	        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+	        if(node != null) {
+	        	node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, true);
+	        	node.putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+	        	node.flush();
 	        }
 	        loadedPrefs = true;
 		}
