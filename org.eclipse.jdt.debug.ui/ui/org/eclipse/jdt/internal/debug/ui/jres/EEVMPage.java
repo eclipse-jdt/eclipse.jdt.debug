@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,7 +134,10 @@ public class EEVMPage extends AbstractVMInstallPage {
 		fEEFile.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fIgnoreCallbacks) {
-					if (validateDefinitionFile().isOK()) {
+					if(fVM == null) {
+						reloadDefinitionFile();
+					}
+					else if(validateDefinitionFile().isOK()) {
 						reloadDefinitionFile();
 					}
 				}
@@ -190,20 +193,13 @@ public class EEVMPage extends AbstractVMInstallPage {
 				s = new StatusInfo(IStatus.ERROR, JREMessages.EEVMPage_5); 
 			} else {
 				final IStatus[] temp = new IStatus[1];
-				final VMStandin[] vm = new VMStandin[1];
-				final File tempFile = file; 
 				Runnable r = new Runnable() {
 					public void run() {
-						try {
-							vm[0] = JavaRuntime.createVMFromDefinitionFile(tempFile, fVM.getName(), fVM.getId());
-							IStatus status = vm[0].getVMInstallType().validateInstallLocation(vm[0].getInstallLocation());
-							if (status.getSeverity() != IStatus.ERROR) {
-								temp[0] = Status.OK_STATUS;
-							} else {
-								temp[0] = status;
-							}
-						} catch (CoreException e) {
-							temp[0] = e.getStatus();
+						IStatus status = fVM.getVMInstallType().validateInstallLocation(fVM.getInstallLocation());
+						if (status.getSeverity() != IStatus.ERROR) {
+							temp[0] = Status.OK_STATUS;
+						} else {
+							temp[0] = status;
 						}
 					}
 				};
@@ -388,6 +384,4 @@ public class EEVMPage extends AbstractVMInstallPage {
 	protected IStatus[] getVMStatus() {
 		return fFieldStatus;
 	}
-	
-	
 }
