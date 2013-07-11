@@ -48,6 +48,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -69,6 +70,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -223,7 +225,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * Label provider for installed JREs table.
 	 */
-	class VMLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
+	class VMLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider, IColorProvider {
 
 		Font bold = null;
 		
@@ -284,6 +286,30 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 				bold.dispose();
 			}
 			super.dispose();
+		}
+
+		public Color getForeground(Object element) {
+			if (isUnmodifiable(element)) {
+				Display display = Display.getCurrent();
+				return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			}
+			return null;
+		}
+
+		public Color getBackground(Object element) {
+			if (isUnmodifiable(element)) {
+				Display display = Display.getCurrent();
+				return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			}
+			return null;
+		}
+		
+		boolean isUnmodifiable(Object element) {
+			if(element instanceof IVMInstall) {
+				IVMInstall vm = (IVMInstall) element;
+				return JavaRuntime.isContributedVMInstall(vm.getId());
+			}
+			return false;
 		}
 
 	}	
