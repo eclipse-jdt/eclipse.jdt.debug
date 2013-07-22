@@ -11,19 +11,20 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -35,10 +36,22 @@ import org.eclipse.jdt.launching.VMStandin;
 /**
  * Tests for installed VMs
  */
-public class VMInstallTests extends AbstractDebugTest implements ILibraryLocationResolver {
+public class VMInstallTests extends AbstractDebugTest {
+
+	private static boolean isTesting = false;
 	
-	static boolean isTesting = false;
-	
+	static boolean applies(IPath path) {
+		if (!isTesting)
+			return false;
+
+		for (int i = 0; i < path.segmentCount(); i++) {
+			if ("ext".equals(path.segment(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public VMInstallTests() {
 		super("VM Install tests");
 	}
@@ -198,7 +211,7 @@ public class VMInstallTests extends AbstractDebugTest implements ILibraryLocatio
 				IPath path = locs[i].getSystemLibraryPath();
 				if(applies(path)) {
 					locpath = path.toString();
-					assertTrue("The original source path should be set on the ext lib ["+locpath+"]", 
+					assertTrue("The original source path should be set on the ext lib [" + locpath + "]",
 							locs[i].getSystemLibrarySourcePath().toString().indexOf("source.txt") > -1);
 				}
 			}
@@ -219,7 +232,7 @@ public class VMInstallTests extends AbstractDebugTest implements ILibraryLocatio
 			IPath path = locs[i].getSystemLibraryPath();
 			if(applies(path)) {
 				locpath = path.toString();
-				assertTrue("There should be a source path ending in test_resolver_src.zip on the ext lib ["+locpath+"]", 
+				assertTrue("There should be a source path ending in test_resolver_src.zip on the ext lib [" + locpath + "]",
 						locs[i].getSystemLibrarySourcePath().toString().indexOf("test_resolver_src.zip") > -1);
 				IPath root = locs[i].getPackageRootPath();
 				assertTrue("The source root path should be 'src' for ext lib ["+locpath+"]", root.toString().equals("src"));
@@ -268,71 +281,4 @@ public class VMInstallTests extends AbstractDebugTest implements ILibraryLocatio
 		return buffer.toString();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getPackageRoot(org.eclipse.core.runtime.IPath)
-	 */
-	public IPath getPackageRoot(IPath libraryPath) {
-		if(applies(libraryPath)) {
-	 		return new Path("src");
-		}
-		return Path.EMPTY;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getSourcePath(org.eclipse.core.runtime.IPath)
-	 */
-	public IPath getSourcePath(IPath libraryPath) {
-		if(applies(libraryPath)) {
-			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_src.zip"));
-			if(file.isFile()) {
-				return new Path(file.getAbsolutePath());
-			}
-		}
-		return Path.EMPTY;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getJavadocLocation(org.eclipse.core.runtime.IPath)
-	 */
-	public URL getJavadocLocation(IPath libraryPath) {
-		if(applies(libraryPath)) {
-			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_javadoc.zip"));
-			if(file.isFile()) {
-				try {
-					return URIUtil.toURL(file.toURI());
-				}
-				catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getIndexLocation(org.eclipse.core.runtime.IPath)
-	 */
-	public URL getIndexLocation(IPath libraryPath) {
-		if(applies(libraryPath)) {
-			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_index.index"));
-			if(file.isFile()) {
-				try {
-					return URIUtil.toURL(file.toURI());
-				}
-				catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-	
-	boolean applies(IPath path) {
-		for (int i = 0; i < path.segmentCount(); i++) {
-			if("ext".equals(path.segment(i))) {
-				return isTesting;
-			}
-		}
-		return false;
-	}
 }
