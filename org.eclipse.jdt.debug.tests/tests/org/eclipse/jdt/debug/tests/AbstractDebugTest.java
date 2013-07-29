@@ -1437,6 +1437,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
 		IType type = getType(typeName);
+		assertNotNull("Could not find the requested IType: "+typeName, type);
 		return createLineBreakpoint(type, lineNumber);
 	}
 	
@@ -1474,6 +1475,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String packageName, String cuName, String typeName) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
+		assertNotNull("Could not find the requested IType: "+typeName, type);
 		return createLineBreakpoint(type, lineNumber);
 	}
 	
@@ -1486,28 +1488,27 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber) throws Exception {
+		assertNotNull("You cannot create a line breakpoint for a null IType", type);
 		IMember member = null;
-		if (type != null) {
-			IJavaElement sourceElement = null;
-			String source = null;
-			if (type.isBinary()) {
-				IClassFile classFile = type.getClassFile();
-				source = classFile.getSource();
-				sourceElement = classFile;
+		IJavaElement sourceElement = null;
+		String source = null;
+		if (type.isBinary()) {
+			IClassFile classFile = type.getClassFile();
+			source = classFile.getSource();
+			sourceElement = classFile;
+		} else {
+			ICompilationUnit unit = type.getCompilationUnit();
+			source = unit.getSource();
+			sourceElement = unit;
+		}
+		// translate line number to offset
+		if (source != null) {
+			Document document = new Document(source);
+			IRegion region = document.getLineInformation(lineNumber);
+			if (sourceElement instanceof ICompilationUnit) {
+				member = (IMember) ((ICompilationUnit)sourceElement).getElementAt(region.getOffset());
 			} else {
-				ICompilationUnit unit = type.getCompilationUnit();
-				source = unit.getSource();
-				sourceElement = unit;
-			}
-			// translate line number to offset
-			if (source != null) {
-				Document document = new Document(source);
-				IRegion region = document.getLineInformation(lineNumber);
-				if (sourceElement instanceof ICompilationUnit) {
-					member = (IMember) ((ICompilationUnit)sourceElement).getElementAt(region.getOffset());
-				} else {
-					member = (IMember) ((IClassFile)sourceElement).getElementAt(region.getOffset());
-				}
+				member = (IMember) ((IClassFile)sourceElement).getElementAt(region.getOffset());
 			}
 		}
 		Map<String, Object> map = getExtraBreakpointAttributes(member);
