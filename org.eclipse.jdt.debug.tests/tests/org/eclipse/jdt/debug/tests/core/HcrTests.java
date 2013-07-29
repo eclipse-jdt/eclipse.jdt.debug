@@ -110,7 +110,7 @@ public class HcrTests extends AbstractDebugTest {
 		if (index >= 0) {
 			String newCode = contents.substring(0, index) + "\"One\"" + contents.substring(index + 5);
 			buffer.setContents(newCode);
-			cu.commitWorkingCopy(false, null);
+			cu.commitWorkingCopy(true, null);
 			waitForBuild();
 		}
 	}	
@@ -150,7 +150,7 @@ public class HcrTests extends AbstractDebugTest {
 				
 				// save contents
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				waiter.waitForEvent();
 	
@@ -161,7 +161,7 @@ public class HcrTests extends AbstractDebugTest {
 					// terminate & restore, and try again - @see bug 287084
 					thread.terminate();
 					buffer.setContents(originalContent);
-					cu.commitWorkingCopy(false, null);
+					cu.commitWorkingCopy(true, null);
 					throw new TestAgainException("Retest - the correct method name was not present after HCR");
 				}
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
@@ -222,7 +222,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				// save contents
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				assertTrue("Listener should have been notified", listener.waitNotification());
 			} else {
@@ -275,7 +275,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				// save contents
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				assertTrue("Specific listener should have been notified", listener2.waitNotification());
 				assertFalse("General listener should not have been notified", listener.wasNotified());
@@ -323,7 +323,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -376,7 +376,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -429,7 +429,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -483,7 +483,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -535,7 +535,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -587,7 +587,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -639,7 +639,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -691,7 +691,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -747,7 +747,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -802,7 +802,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -857,7 +857,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -914,7 +914,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -970,7 +970,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -1025,7 +1025,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -1080,7 +1080,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -1135,7 +1135,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
@@ -1190,7 +1190,7 @@ public class HcrTests extends AbstractDebugTest {
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
-				cu.commitWorkingCopy(false, null);
+				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
 				assertTrue("Listener should have been notified", listener.waitNotification());
