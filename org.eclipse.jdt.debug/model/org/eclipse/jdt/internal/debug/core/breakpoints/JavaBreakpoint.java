@@ -745,13 +745,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Remove all requests that this breakpoint has installed in the given debug
 	 * target.
 	 */
-	protected void removeRequests(final JDIDebugTarget target)
-			throws CoreException {
+	protected void removeRequests(final JDIDebugTarget target) throws CoreException {
 		// removing was previously done is a workspace runnable, but that is
 		// not possible since it can be a resource callback (marker deletion)
-		// that
-		// causes a breakpoint to be removed
-		ArrayList<EventRequest> requests = (ArrayList<EventRequest>) getRequests(target).clone();
+		// that causes a breakpoint to be removed
+		ArrayList<EventRequest> requests = new ArrayList<EventRequest>(getRequests(target));
 		// Iterate over a copy of the requests since this list of requests
 		// can be changed in other threads which would cause an
 		// ConcurrentModificationException
@@ -760,9 +758,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		while (iter.hasNext()) {
 			req = iter.next();
 			try {
-				if (target.isAvailable() && !isExpired(req)) { // cannot delete
-																// an expired
-																// request
+				if (target.isAvailable() && !isExpired(req)) {
 					EventRequestManager manager = target
 							.getEventRequestManager();
 					if (manager != null) {

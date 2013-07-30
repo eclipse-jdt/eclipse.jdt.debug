@@ -405,7 +405,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getHotSwapTargets() {
-		return (List<JDIDebugTarget>) fHotSwapTargets.clone();
+		return new ArrayList<JDIDebugTarget>(fHotSwapTargets);
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * code replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getNoHotSwapTargets() {
-		return (List<JDIDebugTarget>) fNoHotSwapTargets.clone();
+		return new ArrayList<JDIDebugTarget>(fNoHotSwapTargets);
 	}
 
 	/**

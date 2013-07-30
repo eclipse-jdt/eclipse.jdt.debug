@@ -101,6 +101,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Threads contained in this debug target. When a thread starts it is added
 	 * to the list. When a thread ends it is removed from the list.
+	 * 
+	 * TODO investigate making this a synchronized collection, to remove all this copying
+	 * @see #getThreadIterator()
 	 */
 	private ArrayList<JDIThread> fThreads;
 
@@ -350,7 +353,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	private Iterator<JDIThread> getThreadIterator() {
 		List<JDIThread> threadList;
 		synchronized (fThreads) {
-			threadList = (List<JDIThread>) fThreads.clone();
+			//TODO investigate making fThreads be a synchronized collection, to remove all this copying
+			threadList = new ArrayList<JDIThread>(fThreads);
 		}
 		return threadList.iterator();
 	}
@@ -1558,8 +1562,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
+		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
 			try {
@@ -1576,8 +1579,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * target.
 	 */
 	protected void reinstallAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
+		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
 			try {
@@ -2507,8 +2509,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if (!isAvailable()) {
 			return;
 		}
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
+		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
 			try {
