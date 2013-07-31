@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -555,26 +555,25 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 *                if unable to retrieve the attribute
 	 */
 	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
-		Map<String, Object> map = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,(Map<String, Object>) null);
+		Map<String, String> map = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,(Map<String, String>) null);
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		if(map != null) {
+			attributes.putAll(map);
+		}
 		String[][] paths = getBootpathExt(configuration);
 		String[] pre = paths[0];
 		String[] boot = paths[1];
 		String[] app = paths[2];
-		if (pre != null || app != null || boot != null) {
-			if (map == null) {
-				map = new HashMap<String, Object>(3);
-			}
-			if (pre != null) {
-				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, pre);
-			}
-			if (app != null) {
-				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND, app);
-			}
-			if (boot != null) {
-				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, boot);
-			}
+		if (pre != null) {
+			attributes.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, pre);
 		}
-		return map;
+		if (app != null) {
+			attributes.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND, app);
+		}
+		if (boot != null) {
+			attributes.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, boot);
+		}
+		return attributes;
 	}
 	/**
 	 * Returns the working directory specified by the given launch

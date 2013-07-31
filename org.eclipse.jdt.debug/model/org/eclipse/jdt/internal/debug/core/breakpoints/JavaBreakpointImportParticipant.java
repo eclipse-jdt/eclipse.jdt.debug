@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,7 +471,7 @@ public class JavaBreakpointImportParticipant implements
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
 	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
 	 */
-	public boolean matches(Map attributes, IBreakpoint breakpoint)
+	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint)
 			throws CoreException {
 		if (attributes == null || breakpoint == null) {
 			return false;
