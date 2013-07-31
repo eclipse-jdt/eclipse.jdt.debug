@@ -1562,9 +1562,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints()); 
+		for(IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				breakpoint.removeFromTarget(this);
 			} catch (CoreException e) {
@@ -1579,9 +1579,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * target.
 	 */
 	protected void reinstallAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		for(IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				breakpoint.addToTarget(this);
 			} catch (CoreException e) {
@@ -2509,9 +2509,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if (!isAvailable()) {
 			return;
 		}
-		Iterator<IBreakpoint> breakpoints = getBreakpoints().iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		for(IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				if (enabled) {
 					breakpoint.addToTarget(this);
