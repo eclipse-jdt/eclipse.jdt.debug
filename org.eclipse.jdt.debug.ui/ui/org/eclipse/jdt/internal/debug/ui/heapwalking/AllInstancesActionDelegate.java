@@ -231,9 +231,6 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
                         statusLine.setMessage(true, null, null);
                     }
                 }
-                if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-                    JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
-                }
             }
         });
     }

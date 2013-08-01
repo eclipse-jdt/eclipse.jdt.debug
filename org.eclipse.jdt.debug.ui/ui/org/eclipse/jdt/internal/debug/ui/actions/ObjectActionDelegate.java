@@ -16,7 +16,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
@@ -74,7 +73,6 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 			IViewSite viewSite = ((IViewPart)fPart).getViewSite();
 			IStatusLineManager manager = viewSite.getActionBars().getStatusLineManager();
 			manager.setErrorMessage(message);
-			Display.getCurrent().beep();
 		}
 	}
 	

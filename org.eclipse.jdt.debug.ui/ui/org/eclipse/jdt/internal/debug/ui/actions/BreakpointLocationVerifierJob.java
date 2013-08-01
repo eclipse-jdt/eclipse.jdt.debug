@@ -31,7 +31,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 
@@ -236,9 +235,6 @@ public class BreakpointLocationVerifierJob extends Job {
 			public void run() {
 				if (fStatusLine != null) {
 					fStatusLine.setMessage(true, message, null);
-				}
-				if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-					Display.getCurrent().beep();
 				}
 			}
 		});

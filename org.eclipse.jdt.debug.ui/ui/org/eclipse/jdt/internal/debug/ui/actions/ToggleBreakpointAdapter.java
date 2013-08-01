@@ -132,9 +132,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                         statusLine.setMessage(true, null, null);
                     }
                 }
-                if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-                    JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
-                }
             }
         });
     }

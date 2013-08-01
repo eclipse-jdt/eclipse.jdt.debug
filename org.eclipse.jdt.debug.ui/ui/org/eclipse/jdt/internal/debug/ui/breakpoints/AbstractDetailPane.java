@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2012 IBM Corporation and others.
+ *  Copyright (c) 2009, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -216,7 +215,6 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 		} catch (CoreException e) {
 			if (statusLine != null) {
 				statusLine.setErrorMessage(e.getMessage());
-				Display.getCurrent().beep();
 			} else {
 				JDIDebugUIPlugin.log(e.getStatus());
 			}
@@ -240,8 +238,9 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 			if (activePart instanceof IEditorPart) {
 				IEditorPart activeEditorPart= (IEditorPart)activePart;
 				IEditorActionBarContributor contributor= activeEditorPart.getEditorSite().getActionBarContributor();
-				if (contributor instanceof EditorActionBarContributor)
+				if (contributor instanceof EditorActionBarContributor) {
 					return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
+				}
 			}
 			// no active part
 			return site.getActionBars().getStatusLineManager();

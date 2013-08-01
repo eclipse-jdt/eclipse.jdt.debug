@@ -83,8 +83,6 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		} catch (JavaModelException x) {
 			JDIDebugUIPlugin.log(x);
 		}
-		
-		getShell().getDisplay().beep();		
 	}
 	
 	protected void setEditor(JavaSnippetEditor contentEditor) {

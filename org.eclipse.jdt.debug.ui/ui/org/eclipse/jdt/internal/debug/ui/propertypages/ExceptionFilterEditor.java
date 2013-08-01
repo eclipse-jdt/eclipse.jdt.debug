@@ -341,7 +341,6 @@ public class ExceptionFilterEditor {
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText = trimmedValue;
 			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14); 
-			fEditorText.getDisplay().beep();
 			return;
 			// otherwise, commit the new value if not a duplicate
 		} else {

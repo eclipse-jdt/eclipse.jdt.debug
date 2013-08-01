@@ -349,7 +349,6 @@ public class StepIntoSelectionUtils {
 				statusLine.setMessage(true, message, null);
 			}
 		}		
-		JDIDebugUIPlugin.getStandardDisplay().beep();		
 	}
 	
 	/**

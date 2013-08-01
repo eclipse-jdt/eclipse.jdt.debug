@@ -74,19 +74,17 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	}
 	
 	/**
-	 * Shows a dialog for resolving an ambigous java element.
-	 * Utility method that can be called by subclassers.
+	 * Shows a dialog for resolving an ambiguous java element.
+	 * Utility method that can be called by sub-classes.
 	 */
 	protected IJavaElement selectJavaElement(List<IJavaElement> elements, Shell shell, String title, String message) {
-		
 		int nResults= elements.size();
-		
-		if (nResults == 0)
+		if (nResults == 0) {
 			return null;
-		
-		if (nResults == 1)
+		}
+		if (nResults == 1) {
 			return elements.get(0);
-		
+		}
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED
 						| JavaElementLabelProvider.SHOW_ROOT;
@@ -95,7 +93,6 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 		dialog.setElements(elements.toArray());
-		
 		if (dialog.open() == Window.OK) {
 			Object[] selection= dialog.getResult();
 			if (selection != null && selection.length > 0) {
@@ -113,7 +110,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	
 	/**
 	 * Filters out source references from the given code resolve results.
-	 * A utility method that can be called by subclassers. 
+	 * A utility method that can be called by sub-classes. 
 	 */
 	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
@@ -142,8 +139,6 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		} catch (JavaModelException x) {
 			JDIDebugUIPlugin.log(x);
 		}
-		
-		getShell().getDisplay().beep();		
 	}
 	/**
 	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
