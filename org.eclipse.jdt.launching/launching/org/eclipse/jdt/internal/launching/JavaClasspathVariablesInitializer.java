@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
 package org.eclipse.jdt.internal.launching;
 
  
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,21 +69,11 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 				if (newPath == null) {
 					return;
 				}
-				IWorkspace workspace= ResourcesPlugin.getWorkspace();
-				IWorkspaceDescription wsDescription= workspace.getDescription();				
-				boolean wasAutobuild= wsDescription.isAutoBuilding();
 				try {
-					setAutobuild(workspace, false);
-					setJREVariable(newPath, variable);	
-				} catch (CoreException ce) {
-					LaunchingPlugin.log(ce);
-					return;
-				} finally {
-					try {
-						setAutobuild(workspace, wasAutobuild);
-					} catch (CoreException ce) {
-						LaunchingPlugin.log(ce);
-					}
+					setJREVariable(newPath, variable);
+				}
+				catch (CoreException e) {
+					LaunchingPlugin.log(e);
 				}
 			}
 		}
@@ -94,16 +81,6 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 	
 	private void setJREVariable(IPath newPath, String var) throws CoreException {
 		JavaCore.setClasspathVariable(var, newPath, getMonitor());
-	}
-	
-	private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
-		IWorkspaceDescription wsDescription= ws.getDescription();
-		boolean oldState= wsDescription.isAutoBuilding();
-		if (oldState != newState) {
-			wsDescription.setAutoBuilding(newState);
-			ws.setDescription(wsDescription);
-		}
-		return oldState;
 	}
 	
 	protected IProgressMonitor getMonitor() {
