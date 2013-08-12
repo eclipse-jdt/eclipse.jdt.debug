@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,10 +133,8 @@ public class EEVMPage extends AbstractVMInstallPage {
 		});
 		fEEFile.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (!fIgnoreCallbacks) {
-					if (validateDefinitionFile().isOK()) {
-						reloadDefinitionFile();
-					}
+				if (!fIgnoreCallbacks && validateDefinitionFile().isOK()) {
+					initializeFields();
 				}
 			}
 		});
@@ -181,34 +179,36 @@ public class EEVMPage extends AbstractVMInstallPage {
 	private IStatus validateDefinitionFile() {
 		String locationName = fEEFile.getText();
 		IStatus s = null;
-		File file = null;
 		if (locationName.length() == 0) {
 			s = new StatusInfo(IStatus.WARNING, JREMessages.EEVMPage_4); 
 		}  else {
-			file = new File(locationName);
+			final File file = new File(locationName);
 			if (!file.exists()) {
 				s = new StatusInfo(IStatus.ERROR, JREMessages.EEVMPage_5); 
 			} else {
 				final IStatus[] temp = new IStatus[1];
-				final VMStandin[] vm = new VMStandin[1];
-				final File tempFile = file; 
+				final VMStandin[] standin = new VMStandin[1];
 				Runnable r = new Runnable() {
 					public void run() {
 						try {
-							vm[0] = JavaRuntime.createVMFromDefinitionFile(tempFile, fVM.getName(), fVM.getId());
-							IStatus status = vm[0].getVMInstallType().validateInstallLocation(vm[0].getInstallLocation());
+							standin[0] = JavaRuntime.createVMFromDefinitionFile(file, fVM.getName(), fVM.getId());
+							IStatus status = standin[0].getVMInstallType().validateInstallLocation(standin[0].getInstallLocation());
 							if (status.getSeverity() != IStatus.ERROR) {
 								temp[0] = Status.OK_STATUS;
 							} else {
 								temp[0] = status;
 							}
-						} catch (CoreException e) {
-							temp[0] = e.getStatus();
+						}
+						catch (CoreException e) {
+							e.printStackTrace();
 						}
 					}
 				};
 				BusyIndicator.showWhile(getShell().getDisplay(), r);
 				s = temp[0];
+				if (s.isOK()) {
+					fVM = standin[0];
+				}
 			}
 		}
 		setDefinitionFileStatus(s);
@@ -216,38 +216,6 @@ public class EEVMPage extends AbstractVMInstallPage {
 		return s;
 	}
 	
-	/**
-	 * Initializes the JRE attributes from the definition file
-	 */
-	private void reloadDefinitionFile() {
-		IStatus s = Status.OK_STATUS;
-		File file = getDefinitionFile();
-		if (file != null && file.exists()) {
-			final IStatus[] temp = new IStatus[1];
-			final VMStandin[] vm = new VMStandin[1];
-			final File tempFile = file; 
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						vm[0] = JavaRuntime.createVMFromDefinitionFile(tempFile, fVM.getName(), fVM.getId());
-						temp[0] = Status.OK_STATUS;
-					} catch (CoreException e) {
-						temp[0] = e.getStatus();
-					}
-				}
-			};
-			BusyIndicator.showWhile(getShell().getDisplay(), r);
-			s = temp[0];
-			if (s.isOK()) {
-				fVM = vm[0];
-			}
-		}
-		if (s.isOK() && file != null) {
-			initializeFields();
-		}
-		setDefinitionFileStatus(s);
-	}	
-
 	/**
 	 * Validates the entered name of the VM
 	 */
@@ -333,16 +301,17 @@ public class EEVMPage extends AbstractVMInstallPage {
 			fIgnoreCallbacks = true;
 			fLibraryBlock.setSelection(fVM);
 			fVMName.setText(fVM.getName());
+			fVMName.setSelection(fVM.getName().length());
 			String eePath = fVM.getAttribute(EEVMInstall.ATTR_DEFINITION_FILE);
 			if (eePath != null) {
 				fEEFile.setText(eePath);
+				fEEFile.setSelection(eePath.length());
 			}
 			String vmArgs = fVM.getVMArgs();
 			if (vmArgs != null) {
 				fVMArgs.setText(vmArgs);
 			}
 			validateVMName();
-			validateDefinitionFile();
 		} finally {
 			fIgnoreCallbacks = false;
 		}
@@ -388,6 +357,4 @@ public class EEVMPage extends AbstractVMInstallPage {
 	protected IStatus[] getVMStatus() {
 		return fFieldStatus;
 	}
-	
-	
 }
