@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2007 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 		ILaunchConfigurationTabGroup javagroup = getJavaLaunchGroup();
 		assertNotNull("java tab group cannot be null", javagroup); //$NON-NLS-1$
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_RUN_LAUNCH_GROUP), ILaunchManager.RUN_MODE);
-		assertTrue("There must be 11 tabs, 7 defaults and 4 contributed", javagroup.getTabs().length == 11); //$NON-NLS-1$
+		assertTrue("There must be at least 11 tabs", javagroup.getTabs().length >= 11); //$NON-NLS-1$
 	}
 	
 	/**

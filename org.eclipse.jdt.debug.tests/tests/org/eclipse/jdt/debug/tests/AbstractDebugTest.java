@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -2354,6 +2355,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+		Set<String> modes = new HashSet<String>();
+		modes.add(ILaunchManager.RUN_MODE);
+		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
+		modes = new HashSet<String>();
+		modes.add(ILaunchManager.DEBUG_MODE);
+		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
         Map<String, String> map = new HashMap<String, String>(1);
@@ -2370,6 +2377,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(containername), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+		Set<String> modes = new HashSet<String>();
+		modes.add(ILaunchManager.RUN_MODE);
+		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
+		modes = new HashSet<String>();
+		modes.add(ILaunchManager.DEBUG_MODE);
+		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
         Map<String, String> map = new HashMap<String, String>(1);

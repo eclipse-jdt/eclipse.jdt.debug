@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,6 +23,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IAccessRule;
@@ -42,7 +44,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * 
  * @since 3.1
  */
-@SuppressWarnings("deprecation")
 public class JavaLibraryPathTests extends AbstractDebugTest {
 	
 	public JavaLibraryPathTests(String name) {
@@ -123,7 +124,10 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testVMArgsForRequiredProjectExplicitPath");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "PathTests1");
-		ILaunchConfigurationDelegate delegate = type.getDelegate(ILaunchManager.DEBUG_MODE);
+		HashSet<String> modes = new HashSet<String>();
+		modes.add(ILaunchManager.DEBUG_MODE);
+		ILaunchDelegate d = type.getPreferredDelegate(modes);
+		ILaunchConfigurationDelegate delegate = d.getDelegate();
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
 		String arguments = launcher.getVMArguments(workingCopy);
@@ -145,7 +149,10 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testVMArgsForRequiredProjectExplicitPath");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "PathTests1");
-		ILaunchConfigurationDelegate delegate = type.getDelegate(ILaunchManager.DEBUG_MODE);
+		HashSet<String> modes = new HashSet<String>();
+		modes.add(ILaunchManager.DEBUG_MODE);
+		ILaunchDelegate d = type.getPreferredDelegate(modes);
+		ILaunchConfigurationDelegate delegate = d.getDelegate();
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
 		String arguments = launcher.getVMArguments(workingCopy);
