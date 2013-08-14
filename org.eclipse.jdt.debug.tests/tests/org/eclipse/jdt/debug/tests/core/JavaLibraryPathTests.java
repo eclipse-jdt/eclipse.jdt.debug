@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import java.io.File;
-import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -124,9 +124,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testVMArgsForRequiredProjectExplicitPath");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "PathTests1");
-		HashSet<String> modes = new HashSet<String>();
-		modes.add(ILaunchManager.DEBUG_MODE);
-		ILaunchDelegate d = type.getPreferredDelegate(modes);
+		ILaunchDelegate d = ((LaunchManager) getLaunchManager()).getLaunchDelegate(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationDelegate delegate = d.getDelegate();
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
@@ -149,9 +147,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "testVMArgsForRequiredProjectExplicitPath");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "PathTests1");
-		HashSet<String> modes = new HashSet<String>();
-		modes.add(ILaunchManager.DEBUG_MODE);
-		ILaunchDelegate d = type.getPreferredDelegate(modes);
+		ILaunchDelegate d = ((LaunchManager) getLaunchManager()).getLaunchDelegate(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationDelegate delegate = d.getDelegate();
 		assertTrue(delegate instanceof JavaLaunchDelegate);
 		JavaLaunchDelegate launcher = (JavaLaunchDelegate) delegate;
