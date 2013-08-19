@@ -198,11 +198,11 @@ public class AppletParametersTab extends JavaLaunchTab {
 				}
 
 				String key = (String) element;
-				@SuppressWarnings("unchecked")
 				Map<String, String> params = (Map<String, String>) fViewer.getInput();
 				Object object = params.get(key);
-				if (object != null)
+				if (object != null) {
 					return object.toString();
+				}
 				return null;
 			}
 			public void addListener(ILabelProviderListener listener) {
@@ -268,7 +268,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	private void handleParametersEditButtonSelected() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		String key = (String) selection.getFirstElement();
-		@SuppressWarnings("unchecked")
 		Map<String, String> params = (Map<String, String>) fViewer.getInput();
 		String value = params.get(key);
 		
@@ -286,7 +285,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 		Object[] keys = selection.toArray();
 		for (int i = 0; i < keys.length; i++) {
 			String key = (String) keys[i];
-			@SuppressWarnings("unchecked")
 			Map<String, String> params = (Map<String, String>) fViewer.getInput();
 			params.remove(key);			
 		}
@@ -326,7 +324,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 			return;
 		}
 		String[] nameValuePair = dialog.getNameValuePair();
-		@SuppressWarnings("unchecked")
 		Map<String, String> params = (Map<String, String>) fViewer.getInput();
 		params.remove(key);
 		params.put(nameValuePair[0], nameValuePair[1]);
@@ -337,7 +334,6 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
-	@SuppressWarnings("unchecked")
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		try {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, Integer.parseInt(getWidthText()));
@@ -398,8 +394,9 @@ public class AppletParametersTab extends JavaLaunchTab {
 		Map<String, String> input = new HashMap<String, String>();
 		try {
 			 Map<String, String> params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) null);
-             if (params != null)
-                 input.putAll(params);
+             if (params != null) {
+				input.putAll(params);
+			}
 		} catch (CoreException e) {
 		}
 		
