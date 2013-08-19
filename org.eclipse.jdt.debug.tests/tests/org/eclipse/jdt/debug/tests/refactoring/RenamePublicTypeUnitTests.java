@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -24,8 +23,6 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.rename.JavaRenameProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.rename.RenameTypeProcessor;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
@@ -36,16 +33,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		super(name);
 	}
 
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		if(refactoring==null)
-			return;
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());//maybe SubPM?
-		waitForBuild();
-	}
-	
 	/**
 	 * @param src
 	 * @param pack
@@ -55,7 +42,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runClassLoadBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage) throws Exception {
-		cleanTestFiles();		
 		try {
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
@@ -86,7 +72,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runExceptionBreakpointTest(String src, String pack, String cunit, String targetName, String exceptionName) throws Exception {
-		cleanTestFiles();		
 		try {
 			//create breakpoint to test
 			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(exceptionName, true, true);
@@ -117,7 +102,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runLineBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, int lineNumber) throws Exception {
-		cleanTestFiles();
 		try {
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
@@ -148,7 +132,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runMethodBreakpointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String methodName) throws Exception {
-		cleanTestFiles();
 		try {
 			//create breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
@@ -179,7 +162,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected void runWatchPointTest(String src, String pack, String cunit, String fullTargetName, String targetLineage, String fieldName) throws Exception {
-		cleanTestFiles();		
 		try {
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
@@ -200,9 +182,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		}
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////////
-	
-
 	/**
 	 * 
 	 * @param root
@@ -213,7 +192,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName, String type) throws Exception {
-		
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMember target = getMember(cunit, type);
@@ -227,7 +205,6 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		proc.setNewElementName("RenamedType");
 			
 		RenameRefactoring ref= new RenameRefactoring(proc);
-		
 		//setup final refactoring conditions
 		RefactoringStatus refactoringStatus= ref.checkAllConditions(new NullProgressMonitor());
 		if(!refactoringStatus.isOK())

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.refactoring;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IJavaProject;
@@ -21,8 +20,6 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.corext.refactoring.structure.MoveInnerToTopRefactoring;
 import org.eclipse.jdt.internal.ui.preferences.JavaPreferencesSettings;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 
 public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTest {
@@ -32,8 +29,6 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 	}
 
 	public void testLineBreakPoint() throws Exception {
-		cleanTestFiles();
-				
 		try {
 			int lineNumber = 29;
 			//create breakpoint to test
@@ -57,8 +52,6 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 	
 	
 	public void testMethodBreakPoint() throws Exception {
-		cleanTestFiles();
-		
 		try {
 			//create Breakpoint to test
 			createMethodBreakpoint("a.b.c.Movee$InnerType", "innerTypeMethod", "()V", true, false);
@@ -79,8 +72,6 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 	}//end testBreakPoint
 	
 	public void testWatchPoint() throws Exception {
-		cleanTestFiles();
-		
 		try {
 			//create Breakpoint to test
 			createWatchpoint("a.b.c.Movee$InnerType", "innerTypeInt", true, true);
@@ -101,8 +92,6 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 	}//end testBreakPoint
 	
 	public void testClassLoadBreakPoint() throws Exception {
-		cleanTestFiles();
-		
 		try {
 			//create Breakpoint to test
 			createClassPrepareBreakpoint("a.b.c.Movee$InnerType");
@@ -121,10 +110,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 		}
 	}//end testBreakPoint
 	
-/////////////////////////////////////////
-	
 	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
-		
 		IJavaProject javaProject = get14Project();
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IType clas= parentClas.getType(className);
@@ -134,14 +120,4 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 
 		return ref;
 	}
-
-	protected final void performRefactor(final Refactoring refactoring) throws Exception {
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
-		refactoring.checkFinalConditions(new NullProgressMonitor());
-		PerformChangeOperation perform= new PerformChangeOperation(create);
-		ResourcesPlugin.getWorkspace().run(perform, new NullProgressMonitor());
-		waitForBuild();
-	}	
-	
 }
-
