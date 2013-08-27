@@ -20,4 +20,7 @@
   <artifactId>org.eclipse.jdt.debug.tests</artifactId>
   <version>3.8.200-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
+  <properties>
+    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+  </properties>
 </project>
