@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2012 IBM Corporation and others.
+ *  Copyright (c) 2010, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.junit.Assert;
 
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 
@@ -105,7 +107,7 @@ public class OpenFromClipboardTests extends TestCase {
 
 			// add rt.jar
 			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-			assertNotNull("No default JRE", vm);
+			Assert.assertNotNull("No default JRE", vm);
 			JavaProjectHelper.addContainerEntry(javaProject, new Path(JavaRuntime.JRE_CONTAINER));
 			return javaProject;
 		}
