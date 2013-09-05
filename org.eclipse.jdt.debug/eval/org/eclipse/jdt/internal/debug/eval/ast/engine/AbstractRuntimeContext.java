@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	 * 
 	 * @return the java.lang.Class type
 	 * @throws CoreException
-	 *             if unable to retrive the type
+	 *             if unable to retrieve the type
 	 */
 	protected IJavaClassType getJavaLangClass() throws CoreException {
 		if (fJavaLangClass == null) {
