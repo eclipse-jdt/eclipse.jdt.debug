@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stepan Vavra - Bug 419316 - All References or All instances may throw NPE in Eclipse
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -57,7 +58,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 		try {
 			IJavaType[] javaTypes = ((JDIDebugTarget) root.getDebugTarget())
 					.getJavaTypes("java.lang.Object[]"); //$NON-NLS-1$
-			if (javaTypes.length > 0) {
+			if (javaTypes != null && javaTypes.length > 0) {
 				fType = javaTypes[0];
 			}
 		} catch (DebugException e) {
