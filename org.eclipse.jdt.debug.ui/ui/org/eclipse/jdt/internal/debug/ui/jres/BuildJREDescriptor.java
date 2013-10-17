@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+
 
 /**
  * JRE Descriptor used for the JRE container wizard page.
@@ -23,7 +26,9 @@ public class BuildJREDescriptor extends JREDescriptor {
 	 */
 	@Override
 	public String getDescription() {
-		return NLS.bind(JREMessages.BuildJREDescriptor_0, new String[]{JavaRuntime.getDefaultVMInstall().getName()}); 
+		IVMInstall defaultVMInstall = JavaRuntime.getDefaultVMInstall();
+		return defaultVMInstall != null ? NLS.bind(JREMessages.BuildJREDescriptor_0, new String[] { defaultVMInstall.getName() })
+				: JREMessages.BuildJREDescriptor_1;
 	}
 
 }

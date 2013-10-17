@@ -26,6 +26,7 @@ public class JREMessages extends NLS {
 	public static String AddVMInstallWizard_0;
 
 	public static String BuildJREDescriptor_0;
+	public static String BuildJREDescriptor_1;
 
 	public static String InstalledJREsBlock_0;
 	public static String InstalledJREsBlock_1;
