@@ -13,16 +13,13 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.ui.JavaUI;
+
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener3;
 import org.eclipse.ui.IViewReference;
@@ -31,10 +28,22 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+
+import org.eclipse.jdt.ui.JavaUI;
+
 /**
  * Tests view management.
  */
 public class ViewManagementTests extends AbstractDebugTest implements IPerspectiveListener3 {
+
+	// See https://bugs.eclipse.org/398998
+	private static final boolean HAS_BUG_398998 = Util.isMac();
 
 	// view ids
 	/**
@@ -193,6 +202,10 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * @throws Exception
 	 */
 	public void testAutoOpenDebugPerspective() throws Exception {
+		if (HAS_BUG_398998) {
+			return;
+		}
+
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
@@ -221,7 +234,11 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * 
 	 * @throws Exception
 	 */
-	/*public void testAutoCloseDebugPerspective() throws Exception {
+	public void testAutoCloseDebugPerspective() throws Exception {
+		if (HAS_BUG_398998) {
+			return;
+		}
+
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
@@ -250,7 +267,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
 		}		
-	}*/	
+	}
 	
 	/**
 	 * Tests that context views auto-open in java perspective.
@@ -292,10 +309,11 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * 
 	 * @throws Exception
 	 */
-	//TODO: Disable test for now.  There is a race condition between activating and 
-	// closing of views.
-	//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398998
-/*	public void testAutoCloseJavaPerspective() throws Exception {
+	public void testAutoCloseJavaPerspective() throws Exception {
+		if (HAS_BUG_398998) {
+			return;
+		}
+
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
@@ -331,7 +349,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
 		}		
-	}*/	
+	}
 	
 	protected String buildRemainingEventsMessage() {
 		StringBuffer buffer = new StringBuffer();
