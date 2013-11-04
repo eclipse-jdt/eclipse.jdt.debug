@@ -13,12 +13,14 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Test;
+
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.test.OrderedTestSuite;
 
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Util;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener3;
@@ -42,8 +44,12 @@ import org.eclipse.jdt.ui.JavaUI;
  */
 public class ViewManagementTests extends AbstractDebugTest implements IPerspectiveListener3 {
 
-	// See https://bugs.eclipse.org/398998
-	private static final boolean HAS_BUG_398998 = Util.isMac();
+	public static Test suite() {
+		return new OrderedTestSuite(ViewManagementTests.class);
+	}
+
+	// See https://bugs.eclipse.org/420778
+	private static final boolean HAS_BUG_420778 = true;
 
 	// view ids
 	/**
@@ -202,7 +208,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * @throws Exception
 	 */
 	public void testAutoOpenDebugPerspective() throws Exception {
-		if (HAS_BUG_398998) {
+		if (HAS_BUG_420778) {
 			return;
 		}
 
@@ -235,7 +241,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * @throws Exception
 	 */
 	public void testAutoCloseDebugPerspective() throws Exception {
-		if (HAS_BUG_398998) {
+		if (HAS_BUG_420778) {
 			return;
 		}
 
@@ -276,6 +282,10 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * @throws Exception
 	 */
 	public void testAutoOpenJavaPerspective() throws Exception {
+		if (HAS_BUG_420778) {
+			return;
+		}
+
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
@@ -310,7 +320,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 * @throws Exception
 	 */
 	public void testAutoCloseJavaPerspective() throws Exception {
-		if (HAS_BUG_398998) {
+		if (HAS_BUG_420778) {
 			return;
 		}
 
