@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -60,7 +59,7 @@ public class ExceptionInspector implements IDebugContextListener, IPreferenceCha
 			prefs.addPreferenceChangeListener(this);
 		}
 		boolean doit = Platform.getPreferencesService().getBoolean(
-				JDIDebugPlugin.getUniqueIdentifier(), 
+JDIDebugUIPlugin.getUniqueIdentifier(),
 				IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
 				false, 
 				null);
@@ -127,7 +126,7 @@ public class ExceptionInspector implements IDebugContextListener, IPreferenceCha
 		if (IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION.equals(event.getKey())) {
 			IDebugContextManager manager = DebugUITools.getDebugContextManager();
 			boolean doit = Platform.getPreferencesService().getBoolean(
-					JDIDebugPlugin.getUniqueIdentifier(), 
+JDIDebugUIPlugin.getUniqueIdentifier(),
 					IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
 					false, 
 					null);
