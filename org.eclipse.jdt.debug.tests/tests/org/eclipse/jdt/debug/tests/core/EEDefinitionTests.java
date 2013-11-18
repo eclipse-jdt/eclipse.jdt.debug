@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper S Moller - Bug 421938: [1.8] ExecutionEnvironmentDescription#getVMArguments does not preserve VM arguments
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
@@ -199,13 +200,14 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		String defaultVMArguments = description.getVMArguments();
 		String[] expected = new String[] {
 				"-XspecialArg:123",
-				"-XspecialArg2=456"
+				"-XspecialArg2=456",
+				"-XspecialArg3=789"
 		};
 		int prev = -1;
 		for (int i = 0; i < expected.length; i++) {
 			int next = defaultVMArguments.indexOf(expected[i]);
-			assertTrue("Missing argument: " + expected[i],  next >= 0);
-			assertTrue("Wrong argument order: " + expected[i],  next > prev);
+			assertTrue("Missing argument: " + expected[i] + ": was: " + defaultVMArguments,  next >= 0);
+			assertTrue("Wrong argument order: " + expected[i] + ": " + defaultVMArguments,  next > prev);
 			prev = next;
 		}
 	}

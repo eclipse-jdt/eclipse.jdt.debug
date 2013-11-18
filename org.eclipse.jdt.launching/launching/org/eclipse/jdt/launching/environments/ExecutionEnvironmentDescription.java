@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper S Moller - Bug 421938: [1.8] ExecutionEnvironmentDescription#getVMArguments does not preserve VM arguments
  *******************************************************************************/
 package org.eclipse.jdt.launching.environments;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -365,7 +367,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @exception CoreException if unable to read the file
 	 */
 	private void initProperties(File eeFile) throws CoreException {
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new LinkedHashMap<String, String>();
 		String eeHome = eeFile.getParentFile().getAbsolutePath();
 		BufferedReader bufferedReader = null;
 		try {
@@ -410,7 +412,7 @@ public final class ExecutionEnvironmentDescription {
 		// resolve things with ${ee.home} in them
 		fProperties = properties; // needs to be done to resolve
 		Iterator<Entry<String, String>> entries = properties.entrySet().iterator();
-		Map<String, String> resolved = new HashMap<String, String>(properties.size()); 
+		Map<String, String> resolved = new LinkedHashMap<String, String>(properties.size()); 
 		while (entries.hasNext()) {
 			Entry<String, String> entry = entries.next();
 			String key = entry.getKey();
