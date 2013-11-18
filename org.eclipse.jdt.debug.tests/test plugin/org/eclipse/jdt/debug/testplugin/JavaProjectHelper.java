@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class JavaProjectHelper {
 	public static final String J2SE_1_5_EE_NAME = "J2SE-1.5";
 	public static final String JAVA_SE_1_6_EE_NAME = "JavaSE-1.6";
 	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
+	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
 	
 	/**
 	 * path to the test src for 'testprograms'
@@ -383,8 +384,8 @@ public class JavaProjectHelper {
 	/**
 	 * Sets the given compiler compliance on the given {@link IJavaProject}
 	 * <br><br>
-	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6} and 
-	 * {@link JavaCore#VERSION_1_7} for more information on accepted compliances
+	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6}, 
+	 * {@link JavaCore#VERSION_1_7} and {@link JavaCore#VERSION_1_8} for more information on accepted compliances
 	 * 
 	 * @param project
 	 * @param compliance
@@ -393,6 +394,7 @@ public class JavaProjectHelper {
 		Map<String, String> map = JavaCore.getOptions();
 		map.put(JavaCore.COMPILER_COMPLIANCE, compliance);
 		map.put(JavaCore.COMPILER_SOURCE, compliance);
+		map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
 		project.setOptions(map);
 	}
 	
@@ -411,6 +413,9 @@ public class JavaProjectHelper {
 		}
 		else if(JAVA_SE_1_7_EE_NAME.equals(ee)) {
 			setCompliance(project, JavaCore.VERSION_1_7);
+		}
+		else if(JAVA_SE_1_8_EE_NAME.equals(ee)) {
+			setCompliance(project, JavaCore.VERSION_1_8);
 		}
 	}
 	
