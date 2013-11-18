@@ -13,10 +13,8 @@ package org.eclipse.jdt.debug.tests.refactoring;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
@@ -93,17 +91,13 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 	 * @throws CoreException
 	 */
 	protected void cleanTestFiles() throws CoreException {
-		IWorkspaceRunnable cleaner = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				waitUntilIndexesReady();
-				try {
-					doClean();
-				} catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", 0, "Error", e));
-				}
-			}
-		};
-		ResourcesPlugin.getWorkspace().run(cleaner, null);
+		waitUntilIndexesReady();
+		try {
+			doClean();
+			waitForBuild();
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", 0, "Error", e));
+		}
 	}
 
 	/**
