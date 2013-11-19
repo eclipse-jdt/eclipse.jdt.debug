@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class TestAll {
 		// Run the other tests
 		Enumeration<Class<?>> enumeration= classes.elements();
 		while (enumeration.hasMoreElements()) {
-			Class<VirtualMachineTest> testClass= (Class<VirtualMachineTest>)enumeration.nextElement();
+			Class<?> testClass= enumeration.nextElement();
 			test= run(result, testClass, arguments, info);
 			info= test.getVMInfo(); // In case the test has changed this info
 		}
@@ -130,17 +130,17 @@ public class TestAll {
 	 * Returns null if there was a problem with the arguments.
 	 * @see AbstractJDITest for details on the arguments.
 	 */
-	private static AbstractJDITest run(junit.framework.TestResult result, Class<VirtualMachineTest> testClass, String[] arguments, VMInformation info) throws Throwable {
+	private static AbstractJDITest run(junit.framework.TestResult result, Class<?> testClass, String[] arguments, VMInformation info) throws Throwable {
 		// Create test
 		Class<?>[] argTypes= {};
-		Constructor<VirtualMachineTest> construct = null;
+		Constructor<?> construct = null;
 		try {
 			construct = testClass.getConstructor(argTypes);
 		} catch (NoSuchMethodException e) {
 		}
 		AbstractJDITest test = null;
 		try {
-			test = construct.newInstance(new Object[]{});
+			test = (AbstractJDITest) construct.newInstance(new Object[] {});
 		} catch (InstantiationException e) {
 		} catch (IllegalAccessException e) {
 		} catch (InvocationTargetException e) {
