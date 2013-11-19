@@ -20,6 +20,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.icu.text.MessageFormat;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VirtualMachine;
+
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -31,15 +52,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -50,6 +63,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
@@ -62,22 +76,13 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.util.IClassFileReader;
 import org.eclipse.jdt.core.util.ISourceAttribute;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
+
 import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-
-import com.ibm.icu.text.MessageFormat;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.VirtualMachine;
 
 /**
  * The hot code replace manager listens for changes to class files and notifies
@@ -405,7 +410,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getHotSwapTargets() {
-		return (List<JDIDebugTarget>) fHotSwapTargets.clone();
+		return new ArrayList<JDIDebugTarget>(fHotSwapTargets);
 	}
 
 	/**
@@ -413,7 +418,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * code replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getNoHotSwapTargets() {
-		return (List<JDIDebugTarget>) fNoHotSwapTargets.clone();
+		return new ArrayList<JDIDebugTarget>(fNoHotSwapTargets);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
- 
+
 /**
  * This tab appears for java applet launch configurations and allows the user to edit
  * applet-specific attributes such as width, height, name & applet parameters.
@@ -198,10 +198,11 @@ public class AppletParametersTab extends JavaLaunchTab {
 				}
 
 				String key = (String) element;
-				Map<String, String> params = (Map<String, String>) fViewer.getInput();
+				Map<String, String> params = getViewerInput();
 				Object object = params.get(key);
-				if (object != null)
+				if (object != null) {
 					return object.toString();
+				}
 				return null;
 			}
 			public void addListener(ILabelProviderListener listener) {
@@ -267,7 +268,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	private void handleParametersEditButtonSelected() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		String key = (String) selection.getFirstElement();
-		Map<String, String> params = (Map<String, String>) fViewer.getInput();
+		Map<String, String> params = getViewerInput();
 		String value = params.get(key);
 		
 		NameValuePairDialog dialog =
@@ -284,7 +285,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		Object[] keys = selection.toArray();
 		for (int i = 0; i < keys.length; i++) {
 			String key = (String) keys[i];
-			Map<String, String> params = (Map<String, String>) fViewer.getInput();
+			Map<String, String> params = getViewerInput();
 			params.remove(key);			
 		}
 		fViewer.refresh();
@@ -323,13 +324,18 @@ public class AppletParametersTab extends JavaLaunchTab {
 			return;
 		}
 		String[] nameValuePair = dialog.getNameValuePair();
-		Map<String, String> params = (Map<String, String>) fViewer.getInput();
+		Map<String, String> params = getViewerInput();
 		params.remove(key);
 		params.put(nameValuePair[0], nameValuePair[1]);
 		fViewer.refresh();
 		updateLaunchConfigurationDialog();	
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private Map<String, String> getViewerInput() {
+		return (Map<String, String>) fViewer.getInput();
+	}
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
@@ -343,7 +349,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		} catch (NumberFormatException e) {
 		}
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, fNameText.getText());
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) fViewer.getInput());
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, getViewerInput());
 	}
 
 	/**
@@ -393,8 +399,9 @@ public class AppletParametersTab extends JavaLaunchTab {
 		Map<String, String> input = new HashMap<String, String>();
 		try {
 			 Map<String, String> params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) null);
-             if (params != null)
-                 input.putAll(params);
+             if (params != null) {
+				input.putAll(params);
+			}
 		} catch (CoreException e) {
 		}
 		

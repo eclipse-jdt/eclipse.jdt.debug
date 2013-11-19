@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,56 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IBreakpointManagerListener;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IDisconnect;
-import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.jdi.TimeoutException;
-import org.eclipse.jdi.internal.VirtualMachineImpl;
-import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
-import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaThreadGroup;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.eval.EvaluationManager;
-import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
-import org.eclipse.jdt.internal.debug.core.EventDispatcher;
-import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
-import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.InternalException;
@@ -90,6 +40,61 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
+import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaThreadGroup;
+import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
+
+import org.eclipse.jdt.core.IJavaProject;
+
+import org.eclipse.jdt.internal.debug.core.EventDispatcher;
+import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+
 /**
  * Debug target for JDI debug model.
  */
@@ -99,8 +104,11 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		IDebugEventSetListener {
 
 	/**
-	 * Threads contained in this debug target. When a thread starts it is added
-	 * to the list. When a thread ends it is removed from the list.
+	 * Threads contained in this debug target. When a thread starts it is added to the list. When a thread ends it is removed from the list.
+	 * 
+	 * TODO investigate making this a synchronized collection, to remove all this copying
+	 * 
+	 * @see #getThreadIterator()
 	 */
 	private ArrayList<JDIThread> fThreads;
 
@@ -350,7 +358,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	private Iterator<JDIThread> getThreadIterator() {
 		List<JDIThread> threadList;
 		synchronized (fThreads) {
-			threadList = (List<JDIThread>) fThreads.clone();
+			// TODO investigate making fThreads be a synchronized collection, to remove all this copying
+			threadList = new ArrayList<JDIThread>(fThreads);
 		}
 		return threadList.iterator();
 	}
@@ -1558,10 +1567,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		for (IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				breakpoint.removeFromTarget(this);
 			} catch (CoreException e) {
@@ -1576,10 +1584,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * target.
 	 */
 	protected void reinstallAllBreakpoints() {
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		for (IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				breakpoint.addToTarget(this);
 			} catch (CoreException e) {
@@ -2507,10 +2514,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if (!isAvailable()) {
 			return;
 		}
-		Iterator<IBreakpoint> breakpoints = ((ArrayList<IBreakpoint>) ((ArrayList<IBreakpoint>) getBreakpoints())
-				.clone()).iterator();
-		while (breakpoints.hasNext()) {
-			JavaBreakpoint breakpoint = (JavaBreakpoint) breakpoints.next();
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		for (IBreakpoint bp : list) {
+			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
 				if (enabled) {
 					breakpoint.addToTarget(this);
