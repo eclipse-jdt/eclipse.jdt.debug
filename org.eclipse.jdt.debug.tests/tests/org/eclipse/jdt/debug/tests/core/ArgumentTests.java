@@ -86,11 +86,6 @@ public class ArgumentTests extends AbstractDebugTest {
 		 */
 		public String getOutput() {
 			// wait to be closed
-			String output = buffer.toString();
-			if(output != null && output.length() > 0) {
-				fLock.notifyAll();
-				return output;
-			}
 		    synchronized (fLock) {
 		    	if (!closed) {
 			        try {
