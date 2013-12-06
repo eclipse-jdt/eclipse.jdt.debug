@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 				fCaught = fCaughtButton.getSelection();
 			}
 		});
+		((GridData) fCaughtButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		fUncaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_16, null, fUncaught, 1);
 		fUncaughtButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
@@ -72,6 +73,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 				fUncaught = fUncaughtButton.getSelection();
 			}
 		});
+		((GridData) fUncaughtButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		return comp;
 	}
 	
