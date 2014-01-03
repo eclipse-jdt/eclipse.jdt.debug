@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.w3c.dom.Document;
@@ -80,10 +79,12 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * 					parameters are <code>null</code>.
 	 */
 	public AbstractVMInstall(IVMInstallType type, String id) {
-		if (type == null)
-			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_typeNotNull); 
-		if (id == null)
-			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_idNotNull); 
+		if (type == null) {
+			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_typeNotNull);
+		} 
+		if (id == null) {
+			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_idNotNull);
+		} 
 		fType= type;
 		fId= id;
 	}
@@ -356,23 +357,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			// launch VM to evaluate properties
 			File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
 			if (file != null && file.exists()) {
-				String javaVersion = getJavaVersion();
-				boolean hasXMLSupport = false;
-				if (javaVersion != null) {
-					hasXMLSupport = true;
-					if (javaVersion.startsWith(JavaCore.VERSION_1_1) ||
-							javaVersion.startsWith(JavaCore.VERSION_1_2) ||
-							javaVersion.startsWith(JavaCore.VERSION_1_3)) {
-						hasXMLSupport = false;
-					}
-				}
-				String mainType = null;
-				if (hasXMLSupport) {
-					mainType = "org.eclipse.jdt.internal.launching.support.SystemProperties"; //$NON-NLS-1$
-				} else {
-					mainType = "org.eclipse.jdt.internal.launching.support.LegacySystemProperties"; //$NON-NLS-1$
-				}
-				VMRunnerConfiguration config = new VMRunnerConfiguration(mainType, new String[]{file.getAbsolutePath()});
+				VMRunnerConfiguration config = new VMRunnerConfiguration("org.eclipse.jdt.internal.launching.support.LegacySystemProperties", new String[] { file.getAbsolutePath() });//$NON-NLS-1$
 				IVMRunner runner = getVMRunner(ILaunchManager.RUN_MODE);
 				if (runner == null) {
 					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
