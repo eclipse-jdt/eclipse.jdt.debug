@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -468,9 +468,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @return the singleton instance of <code>LaunchingPlugin</code>
 	 */
 	public static LaunchingPlugin getDefault() {
-		if(fgLaunchingPlugin == null) {
-			fgLaunchingPlugin = new LaunchingPlugin();
-		}
 		return fgLaunchingPlugin;
 	}
 	
@@ -1240,7 +1237,9 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	private static String getExternalForm(URL url) {
 		String externalForm = url.toExternalForm();
 		if (externalForm == null)
+		 {
 			return ""; //$NON-NLS-1$
+		}
 		externalForm = externalForm.trim();
 		if (externalForm.endsWith("/")) { //$NON-NLS-1$
 			// Remove the trailing slash
