@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2791,25 +2791,27 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_6;
             	} else if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
             		compliance = JavaCore.VERSION_1_7;
-            	}
-            	if (compliance != null) {
-	                Hashtable<String, String> options= JavaCore.getOptions();
+				} else {
+					compliance = JavaCore.VERSION_1_7; // use latest by default
+				}
 
-	                org.osgi.service.prefs.Preferences bundleDefaults = BundleDefaultsScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
+            	Hashtable<String, String> options= JavaCore.getOptions();
 
-	                boolean isDefault =
-	                	equals(JavaCore.COMPILER_COMPLIANCE, options, bundleDefaults) &&
-	                	equals(JavaCore.COMPILER_SOURCE, options, bundleDefaults) &&
-	                	equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults) &&
-	                	equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults) &&
-	                	equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
-	                // only update the compliance settings if they are default settings, otherwise the
-	                // settings have already been modified by a tool or user
-	                if (isDefault) {
-	                	JavaCore.setComplianceOptions(compliance, options);
-	                    JavaCore.setOptions(options);
-	                }
+            	org.osgi.service.prefs.Preferences bundleDefaults = BundleDefaultsScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
+
+            	boolean isDefault =
+            			equals(JavaCore.COMPILER_COMPLIANCE, options, bundleDefaults) &&
+            			equals(JavaCore.COMPILER_SOURCE, options, bundleDefaults) &&
+            			equals(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options, bundleDefaults) &&
+            			equals(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options, bundleDefaults) &&
+            			equals(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options, bundleDefaults);
+            	// only update the compliance settings if they are default settings, otherwise the
+            	// settings have already been modified by a tool or user
+            	if (isDefault) {
+            		JavaCore.setComplianceOptions(compliance, options);
+            		JavaCore.setOptions(options);
             	}
+
             }
         }
 	}
