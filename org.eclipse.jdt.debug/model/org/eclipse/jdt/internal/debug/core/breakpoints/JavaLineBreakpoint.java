@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Igor Fedorenko - Bug 368212 - JavaLineBreakpoint.computeJavaProject does not let ISourceLocator evaluate the stackFrame
+ *     Jesper MÃ¸ller  - Bug 422016 - [1.8] Having reference expressions or lambdas in file triggers warning for missing line numbers
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
@@ -31,6 +32,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdi.internal.AccessibleImpl;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -348,6 +350,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		try {
 			locations = type.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException aie) {
+			if ((type.modifiers() & (AccessibleImpl.MODIFIER_ACC_SYNTHETIC | AccessibleImpl.MODIFIER_SYNTHETIC)) != 0) {
+				return null;
+			}
+			
 			IStatus status = new Status(
 					IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(),
