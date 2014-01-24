@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Igor Fedorenko - Bug 368212 - JavaLineBreakpoint.computeJavaProject does not let ISourceLocator evaluate the stackFrame
- *     Jesper MÃ¸ller  - Bug 422016 - [1.8] Having reference expressions or lambdas in file triggers warning for missing line numbers
+ *     Jesper Møller  - Bug 422016 - [1.8] Having reference expressions or lambdas in file triggers warning for missing line numbers
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
