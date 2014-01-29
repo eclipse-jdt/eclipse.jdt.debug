@@ -1,12 +1,17 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
+ *  
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
@@ -32,6 +37,7 @@ import org.eclipse.jdt.debug.tests.eval.FloatAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.FloatOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.IntAssignmentOperatorsTests;
 import org.eclipse.jdt.debug.tests.eval.IntOperatorsTests;
+import org.eclipse.jdt.debug.tests.eval.Java8Tests;
 import org.eclipse.jdt.debug.tests.eval.LabelTests;
 import org.eclipse.jdt.debug.tests.eval.LocalVarAssignmentTests;
 import org.eclipse.jdt.debug.tests.eval.LocalVarValueTests;
@@ -125,6 +131,7 @@ public class EvalTestSuite extends TestSuite {
 	public EvalTestSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		// Tests included in the automated suite
+		addTest(new TestSuite(Java8Tests.class));
 		addTest(new TestSuite(TestsOperators1.class));
 		addTest(new TestSuite(TestsOperators2.class));
 		addTest(new TestSuite(TestsArrays.class));

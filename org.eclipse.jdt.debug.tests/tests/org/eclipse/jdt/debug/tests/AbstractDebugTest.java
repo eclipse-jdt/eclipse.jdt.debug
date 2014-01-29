@@ -1,13 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jesper Steen Moller - bug 341232
+ *     Jesper Steen Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
+ *     Jesper Steen Møller - bug 341232
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
@@ -173,6 +178,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_FOUR_PROJECT_CLOSED_NAME = "ClosedDebugTests";
 	public static final String ONE_FIVE_PROJECT_NAME = "OneFive";
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
+	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
@@ -187,7 +193,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9"};
-	
+
+	final String[] LAUNCH_CONFIG_NAMES_1_8 = {"LargeSourceFile"};
+
 	/**
 	 * the default timeout
 	 */
@@ -217,6 +225,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loaded14 = false;
 	private static boolean loaded15 = false;
 	private static boolean loaded17 = false;
+	private static boolean loaded18 = false;
 	private static boolean loadedEE = false;
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
@@ -247,6 +256,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		loaded15 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_SEVEN_PROJECT_NAME);
 		loaded17 = pro.exists();
+		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_EIGHT_PROJECT_NAME);
+		loaded18 = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_JRE_PROJECT_NAME);
 		loadedJRE = pro.exists();
 		pro = ResourcesPlugin.getWorkspace().getRoot().getProject(BOUND_EE_PROJECT_NAME);
@@ -412,6 +423,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        	jp = createProject(ONE_SEVEN_PROJECT_NAME, JavaProjectHelper.TEST_1_7_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, LiteralTests17.LITERAL_TYPE_NAME));
 	    		loaded17 = true;
+	    		waitForBuild();
+	        }
+        }
+        catch(Exception e) {
+        	try {
+        		if(jp != null) {
+		        	jp.getProject().delete(true,  true, null);
+		        	for (int i = 0; i < cfgs.size(); i++) {
+						cfgs.get(i).delete();
+					}
+        		}
+        	}
+        	catch (CoreException ce) {
+        		//ignore
+			}
+			handleProjectCreationException(e, ONE_SEVEN_PROJECT_NAME, jp);
+        }
+	}
+	
+	/**
+	 * Creates the Java 1.8 compliant project
+	 */
+	synchronized void assert18Project() {
+		IJavaProject jp = null;
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
+        try {
+	        if (!loaded18) {
+	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
+	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
+	    		loaded18 = true;
 	    		waitForBuild();
 	        }
         }
@@ -677,6 +718,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject get17Project() {
 		assert17Project();
 		return getJavaProject(ONE_SEVEN_PROJECT_NAME);
+	}
+
+	/**
+	 * Returns the 'OneSeven' project.
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject get18Project() {
+		assert18Project();
+		return getJavaProject(ONE_EIGHT_PROJECT_NAME);
 	}
 	
 	/**
@@ -2619,7 +2670,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			while(listener.getResult() == null && System.currentTimeMillis() < timeout) {
 				Thread.sleep(100);
 			}
-			assertFalse("The evaluation should not have errors", listener.getResult().hasErrors());
+			IEvaluationResult result = listener.getResult();
+			assertNull("The evaluation should not have exception : " + result.getException(), result.getException());
+
+			String firstError = result.hasErrors() ? result.getErrorMessages()[0] : "";
+			assertFalse("The evaluation should not have errors : " + firstError, result.hasErrors());
 			return listener.getResult().getValue();
 		}
 		finally {
