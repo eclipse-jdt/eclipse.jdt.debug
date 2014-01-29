@@ -1,12 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -26,6 +31,7 @@ import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -150,8 +156,16 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	private Method concreteMethodByName(ReferenceType refType, String selector,
 			String signature) throws DebugException {
 		if (refType instanceof ClassType) {
-			return ((ClassType) refType).concreteMethodByName(selector,
+			Method m = ((ClassType) refType).concreteMethodByName(selector,
 					signature);
+			if (m != null) return m;
+			
+			for (InterfaceType iface : ((ClassType) refType).allInterfaces()) {
+				List<Method> matches = iface.methodsByName(selector, signature);
+				for (Method ifaceMethod : matches) {
+					if (! ifaceMethod.isAbstract()) return ifaceMethod;
+				}
+			}
 		}
 		if (refType instanceof ArrayType) {
 			// the jdi spec specifies that all methods on methods return an

@@ -1,12 +1,17 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
 
@@ -71,6 +76,10 @@ public class JavaProjectHelper {
 	 * path to the 1.7 test source
 	 */
 	public static final IPath TEST_1_7_SRC_DIR= new Path("java7");
+	/**
+	 * path to the 1.8 test source
+	 */
+	public static final IPath TEST_1_8_SRC_DIR= new Path("java8");
 	
 	/**
 	 * path to the compiler error java file
@@ -109,7 +118,7 @@ public class JavaProjectHelper {
 	/**
 	 * Returns if the current running system is compatible with the given Java minor version
 	 * 
-	 * @param ver the version to test - either 4, 5, 6 or 7
+	 * @param ver the version to test - either 4, 5, 6, 7 or 8
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
 	static boolean isCompatible(int ver) {
