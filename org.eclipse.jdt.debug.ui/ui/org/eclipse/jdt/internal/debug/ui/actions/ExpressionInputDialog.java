@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -343,33 +343,11 @@ public class ExpressionInputDialog extends TrayDialog {
         return fSourceViewer.getDocument().get();
     }
     
-    /**
-     * Disposes the source viewer. This method is intended to be overridden
-     * by subclasses.
-     */
-    protected void dispose() {
-    	if(fActivation != null) {
-    		fService.deactivateHandler(fActivation);
-    	}
-    	if (fSourceViewer != null) {
-	    	fSourceViewer.getDocument().removeDocumentListener(fDocumentListener);
-	    	fSourceViewer.getTextWidget().dispose();
-		    fSourceViewer.dispose();
-		    fSourceViewer= null;
-		}
-    	if (fSourceViewerComposite != null){
-    		fSourceViewerComposite.dispose();
-    		fSourceViewerComposite = null;
-    	}
-	    fDocumentListener= null;
-	    fCompletionProcessor= null;
-    }
-
-  
-    /**
-     * Returns the text entered by the user or <code>null</code> if the user cancelled.
-     * @return the text entered by the user or <code>null</code> if the user cancelled
-     */
+	/**
+	 * Returns the text entered by the user or <code>null</code> if the user cancelled.
+	 * 
+	 * @return the text entered by the user or <code>null</code> if the user cancelled
+	 */
     public String getResult() {
         return fResult;
     }
@@ -400,7 +378,20 @@ public class ExpressionInputDialog extends TrayDialog {
      */
     @Override
 	public boolean close() {
-        dispose();
+		if (fActivation != null) {
+			fService.deactivateHandler(fActivation);
+		}
+		if (fSourceViewer != null) {
+			fSourceViewer.getDocument().removeDocumentListener(fDocumentListener);
+			fSourceViewer.dispose();
+			fSourceViewer = null;
+		}
+		if (fSourceViewerComposite != null) {
+			fSourceViewerComposite.dispose();
+			fSourceViewerComposite = null;
+		}
+		fDocumentListener = null;
+		fCompletionProcessor = null;
         return super.close();
     }
     
