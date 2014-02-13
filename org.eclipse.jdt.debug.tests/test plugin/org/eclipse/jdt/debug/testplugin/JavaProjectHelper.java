@@ -88,6 +88,15 @@ public class JavaProjectHelper {
 	
 	public static final String JRE_CONTAINER_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER";
 
+	
+	/**
+	 * Returns if the currently running VM is version compatible with Java 8
+	 * 
+	 * @return <code>true</code> if a Java 8 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava8Compatible() {
+		return isCompatible(8);
+	}
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
 	 * 

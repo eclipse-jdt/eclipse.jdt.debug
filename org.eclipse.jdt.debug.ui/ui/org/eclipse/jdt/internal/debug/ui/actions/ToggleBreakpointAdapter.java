@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,14 +242,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     if(!(selection instanceof IStructuredSelection)) {
                     	selection = translateToMembers(part, selection);
                     }
-                    if(isInterface(selection, part)) {
-                    	report(ActionMessages.ToggleBreakpointAdapter_7, part);
-                    	return Status.OK_STATUS;
-                    }
+                    boolean isInterface = isInterface(selection, part);
                     if (selection instanceof IStructuredSelection) {
-                        IMethod[] members = getMethods((IStructuredSelection) selection);
+                    	IMethod[] members = getMethods((IStructuredSelection) selection, isInterface);
                         if (members.length == 0) {
-                            report(ActionMessages.ToggleBreakpointAdapter_9, part); 
+                        	if(isInterface)
+                        		report(ActionMessages.ToggleBreakpointAdapter_6, part); 
+                        	else
+                        		report(ActionMessages.ToggleBreakpointAdapter_9, part); 
                             return Status.OK_STATUS;
                         }
                         IJavaBreakpoint breakpoint = null;
@@ -333,11 +333,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             	if(!(selection instanceof IStructuredSelection)) {
             		sel = translateToMembers(part, selection);
             	}
-            	if(isInterface(sel, part)) {
-            		report(ActionMessages.ToggleBreakpointAdapter_6, part);
-                	return Status.OK_STATUS;
-            	}
-                if(sel instanceof IStructuredSelection) {
+            	if(sel instanceof IStructuredSelection) {
                 	IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
                 	IType type = null;
                 	if(member.getElementType() == IJavaElement.TYPE) {
@@ -610,7 +606,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	}
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
-            return getMethods(ss).length > 0;
+            return getMethods(ss, isInterface(selection, part)).length > 0;
         }
         return (selection instanceof ITextSelection) && isMethod((ITextSelection) selection, part);
     }
@@ -660,7 +656,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @param selection the selection to get the methods from
      * @return an array of the methods from the selection or an empty array
      */
-    protected IMethod[] getMethods(IStructuredSelection selection) {
+    protected IMethod[] getMethods(IStructuredSelection selection,  boolean isInterace) {
         if (selection.isEmpty()) {
             return new IMethod[0];
         }
@@ -671,7 +667,37 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             try {
                 if (thing instanceof IMethod) {
                 	IMethod method = (IMethod) thing;
-                	if (!Flags.isAbstract(method.getFlags())) {
+                	if(isInterace){
+                		if (Flags.isDefaultMethod(method.getFlags()) || Flags.isStatic(method.getFlags())) 
+                    		methods.add(method);
+                	}
+                	else if (!Flags.isAbstract(method.getFlags())) {
+                		methods.add(method);
+                	}
+                }
+            } 
+            catch (JavaModelException e) {}
+        }
+        return methods.toArray(new IMethod[methods.size()]);
+    }
+    
+    /**
+     * Returns the methods from the selection, or an empty array
+     * @param selection the selection to get the methods from
+     * @return an array of the methods from the selection or an empty array
+     */
+    protected IMethod[] getInterfaceMethods(IStructuredSelection selection) {
+        if (selection.isEmpty()) {
+            return new IMethod[0];
+        }
+        List<IMethod> methods = new ArrayList<IMethod>(selection.size());
+        Iterator<?> iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            Object thing = iterator.next();
+            try {
+                if (thing instanceof IMethod) {
+                	IMethod method = (IMethod) thing;
+                	if (Flags.isDefaultMethod(method.getFlags())) {
                 		methods.add(method);
                 	}
                 }

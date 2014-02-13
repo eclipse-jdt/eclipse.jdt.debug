@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointLocationVerificationTests;
 import org.eclipse.jdt.debug.tests.breakpoints.BreakpointWorkingSetTests;
-import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithGenerics;
 import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsTests;
+import org.eclipse.jdt.debug.tests.breakpoints.ConditionalBreakpointsWithGenerics;
 import org.eclipse.jdt.debug.tests.breakpoints.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
@@ -38,6 +38,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.RunToLineTests;
 import org.eclipse.jdt.debug.tests.breakpoints.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
+import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
@@ -182,6 +183,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
+		if (JavaProjectHelper.isJava8Compatible()) {
+			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
+		}
 		if (JavaProjectHelper.isJava5Compatible()) {
 			addTest(new TestSuite(MethodBreakpointTests15.class));
 			addTest(new TestSuite(TestIntegerAccessUnboxing15.class));
