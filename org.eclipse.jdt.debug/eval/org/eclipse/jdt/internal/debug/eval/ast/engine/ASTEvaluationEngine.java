@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,6 @@ import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -47,7 +46,6 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
@@ -130,7 +128,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			IEvaluationListener listener, int evaluationDetail,
 			boolean hitBreakpoints) throws DebugException {
 		traceCaller(snippet, frame.getThread());
-		checkInterface(frame);
 		ICompiledExpression expression = getCompiledExpression(snippet, frame);
 		evaluateExpression(expression, frame, listener, evaluationDetail,
 				hitBreakpoints);
@@ -179,24 +176,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				buf.append(thread.toString());
 			}
 			JDIDebugOptions.trace(buf.toString());
-		}
-	}
-
-	/**
-	 * Checks if the stack frame is declared in an interface an aborts if so.
-	 * 
-	 * @param frame
-	 *            stack frame
-	 * @throws DebugException
-	 *             if declaring type is an interface
-	 */
-	private void checkInterface(IJavaStackFrame frame) throws DebugException {
-		if (frame.getReferenceType() instanceof IJavaInterfaceType) {
-			IStatus status = new Status(IStatus.ERROR,
-					JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED,
-					EvaluationEngineMessages.ASTEvaluationEngine_0, null);
-			throw new DebugException(status);
 		}
 	}
 

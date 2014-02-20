@@ -452,6 +452,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        if (!loaded18) {
 	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
+	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }

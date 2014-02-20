@@ -16,6 +16,7 @@
 package org.eclipse.jdt.debug.tests.eval;
 
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -52,6 +53,29 @@ public class Java8Tests extends AbstractDebugTest {
 			thread = launchToBreakpoint(type);
 			assertNotNull("The program did not suspend", thread);
 			String snippet = "strings.stream()";
+			doEval(thread, snippet);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+	
+	/**
+	 * Evaluates a snippet in the context of  interface method
+	 * generic statement
+	 * 
+	 * @throws Exception
+	 */
+	public void testEvalInterfaceMethod() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "EvalTestIntf18";
+			IJavaLineBreakpoint bp = createLineBreakpoint(23, "", "EvalTestIntf18.java", "Intf18");
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "a + 2";
 			doEval(thread, snippet);
 		}
 		finally {
