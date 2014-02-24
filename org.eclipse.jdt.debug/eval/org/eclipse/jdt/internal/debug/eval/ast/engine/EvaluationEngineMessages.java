@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Jesper Steen Moller - 427089: [1.8] Change value in Variables view with lambda or method reference
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -55,6 +56,9 @@ public class EvaluationEngineMessages extends NLS {
 
 	public static String ASTInstructionCompiler_4;
 	public static String ASTInstructionCompiler_5;
+
+	public static String ASTInstructionCompiler_Lambda_expressions_cannot_be_used_in_an_evaluation_expression;
+	public static String ASTInstructionCompiler_Reference_expressions_cannot_be_used_in_an_evaluation_expression;
 
 	static {
 		// load message values from bundle file
