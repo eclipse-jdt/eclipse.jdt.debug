@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jesper Steen Moller - bug 341232
+ *     Jesper Steen Moller - Bugs 341232, 427089
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -330,7 +330,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private CompilationUnit parseCompilationUnit(char[] source,
 			String unitName, IJavaProject project) {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
