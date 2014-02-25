@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,10 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 
 /**
@@ -66,7 +68,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 						if (root.isArchive()) {
 							rootResource = project.getFile(root.getElementName());
 						} else {
-							rootResource = project.getFolder(root.getElementName());
+							rootResource = project.getFolder(getRootName(root));
 						}
 					}
 					IPackageFragmentRoot destRoot = destProject.getPackageFragmentRoot(rootResource);
@@ -89,4 +91,17 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 		}
 	}
 	
+	/*
+	 * (non-Javadoc) returns the root folder path. root.getElementName() does not work if src folder has layers of folders
+	 */
+	private String getRootName(IPackageFragmentRoot root) {
+		try {
+			IResource resource = root.getCorrespondingResource();
+			return resource.getFullPath().removeFirstSegments(1).toString();
+		}
+		catch (JavaModelException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return root.getElementName();
+	}
 }
