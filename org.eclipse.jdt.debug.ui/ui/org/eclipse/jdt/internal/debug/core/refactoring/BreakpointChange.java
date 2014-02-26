@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportContainer;
@@ -56,6 +57,7 @@ public abstract class BreakpointChange extends Change {
 	private int fSuspendPolicy;
 	private IJavaThread[] fThreadFilters;
 	private boolean fEnabled;
+	private String fWorkingSetNames;
 
 	/**
 	 * Constructor
@@ -70,6 +72,7 @@ public abstract class BreakpointChange extends Change {
 		fSuspendPolicy = breakpoint.getSuspendPolicy();
 		fThreadFilters = breakpoint.getThreadFilters();
 		fEnabled = breakpoint.isEnabled();
+		fWorkingSetNames = (String) breakpoint.getMarker().getAttribute(IInternalDebugUIConstants.WORKING_SET_NAME);
 	}
 	
 	/**
@@ -280,5 +283,13 @@ public abstract class BreakpointChange extends Change {
 	 */
 	protected String getBreakpointLabel(IBreakpoint breakpoint) {
 		return JDIDebugUIPlugin.getDefault().getModelPresentation().getText(breakpoint);
+	}
+	
+	/**
+	 * Returns the original breakpoint working set names
+	 * @return the original breakpoint working set names
+	 */
+	protected String getOriginalWorkingSets() {
+		return fWorkingSetNames;
 	}
 }

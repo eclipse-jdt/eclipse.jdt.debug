@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
@@ -73,6 +74,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destMethod);
+		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		IResource resource = BreakpointUtils.getBreakpointResource(destMethod);
 		int[] range = getNewLineNumberAndRange(destMethod);
 		IJavaMethodBreakpoint breakpoint = JDIDebugModel.createMethodBreakpoint(

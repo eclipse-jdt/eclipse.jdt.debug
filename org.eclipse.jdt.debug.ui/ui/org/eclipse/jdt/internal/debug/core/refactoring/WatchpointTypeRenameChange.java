@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
@@ -62,6 +63,7 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destinationField);
+		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets()); // creating breakpoint in the original working set
 		IResource resource = BreakpointUtils.getBreakpointResource(destinationField);
 		int[] range = getNewLineNumberAndRange(destinationField);
 		IJavaWatchpoint breakpoint = JDIDebugModel.createWatchpoint(
