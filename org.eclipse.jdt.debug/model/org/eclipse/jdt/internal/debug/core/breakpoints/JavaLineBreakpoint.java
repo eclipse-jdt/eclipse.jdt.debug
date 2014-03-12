@@ -48,6 +48,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
@@ -350,7 +351,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		try {
 			locations = type.locationsOfLine(lineNumber);
 		} catch (AbsentInformationException aie) {
-			if ((type.modifiers() & (AccessibleImpl.MODIFIER_ACC_SYNTHETIC | AccessibleImpl.MODIFIER_SYNTHETIC)) != 0) {
+			if (((type.modifiers() & (AccessibleImpl.MODIFIER_ACC_SYNTHETIC | AccessibleImpl.MODIFIER_SYNTHETIC)) != 0)||(type instanceof InterfaceType)) {
 				return null;
 			}
 			
