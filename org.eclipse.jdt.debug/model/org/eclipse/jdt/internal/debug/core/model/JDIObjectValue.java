@@ -5,10 +5,6 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -158,12 +154,16 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		if (refType instanceof ClassType) {
 			Method m = ((ClassType) refType).concreteMethodByName(selector,
 					signature);
-			if (m != null) return m;
+			if (m != null) {
+				return m;
+			}
 			
 			for (InterfaceType iface : ((ClassType) refType).allInterfaces()) {
 				List<Method> matches = iface.methodsByName(selector, signature);
 				for (Method ifaceMethod : matches) {
-					if (! ifaceMethod.isAbstract()) return ifaceMethod;
+					if (! ifaceMethod.isAbstract()) {
+						return ifaceMethod;
+					}
 				}
 			}
 		}
@@ -220,11 +220,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				}
 			}
 
-			if (enclosingThis != null)
+			if (enclosingThis != null) {
 				return ((JDIObjectValue) (new JDIFieldVariable(
 						(JDIDebugTarget) getDebugTarget(), enclosingThis,
 						getUnderlyingObject(), fLogicalParent)).getValue())
 						.getField(name, false);
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(
 					MessageFormat.format(
