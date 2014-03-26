@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.breakpoints;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -85,5 +88,46 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}	
-		
+
+	/**
+	 * @throws Exception
+	 */
+	public void testGenericArrayEntryBreakpoints() throws Exception {
+		String typeName = "a.b.c.GenericMethodEntryTest";
+		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
+		// func(T[] arr, int m, int n) - entry
+		bps.add(createMethodBreakpoint(typeName, "func", "([Ljava/lang/Comparable;II)I", true, false));
+		// func(int m, int n)
+		bps.add(createMethodBreakpoint(typeName, "func", "(II)I", true, false));
+		// func(T t, int m, int n)
+		bps.add(createMethodBreakpoint(typeName, "func", "(Ljava/lang/Comparable;II)I", true, false));
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("should hit entry breakpoint first", bps.get(0), hit);
+
+			// onto the next breakpoint
+
+			thread = resume(thread);
+			hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("should hit exit breakpoint second", bps.get(1), hit);
+
+			// onto the next breakpoint
+
+			thread = resume(thread);
+			hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("should hit exit breakpoint second", bps.get(2), hit);
+
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }

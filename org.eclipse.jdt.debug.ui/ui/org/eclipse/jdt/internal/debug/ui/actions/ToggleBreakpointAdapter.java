@@ -1023,7 +1023,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					return "Ljava/lang/Object;"; //$NON-NLS-1$
 				}
 				String bound = Signature.createTypeSignature(bounds[0], false);
-				return resolveTypeSignature(method, bound);
+				return Signature.createArraySignature(resolveTypeSignature(method, bound), count);
     		}
             // the type name cannot be resolved
             return null;
