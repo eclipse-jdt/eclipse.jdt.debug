@@ -362,6 +362,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				if (runner == null) {
 					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 				}
+				config.setVMArguments(new String[] { "-Xmx4m" });
 				config.setProgramArguments(properties);
 				Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 				if (monitor.isCanceled()) {
