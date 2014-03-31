@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Michael Allman - Bug 211648, Bug 156343 - Standard VM not supported on MacOS
  *     Thomas Schindl - Bug 399798, StandardVMType should allow to contribute default source and Javadoc locations for ext libraries 
+ *     Mikhail Kalkov - Bug 414285, On systems with large RAM, evaluateSystemProperties and generateLibraryInfo fail for 64-bit JREs
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -325,8 +326,9 @@ public class StandardVMType extends AbstractVMInstallType {
 		}
 		// if we didn't find any of the normal source files, look for J9 source
 		IPath result = checkForJ9LibrarySource(libLocation);
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 		// check for <lib>-src.jar pattern
 		IPath libName = new Path(libLocation.getName());
 		String extension = libName.getFileExtension();
@@ -594,7 +596,8 @@ public class StandardVMType extends AbstractVMInstallType {
 		File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
 		if (file != null && file.exists()) {
 			String javaExecutablePath = javaExecutable.getAbsolutePath();
-			String[] cmdLine = new String[] {javaExecutablePath, "-Xmx4m", "-classpath", file.getAbsolutePath(), "org.eclipse.jdt.internal.launching.support.LibraryDetector"};  //$NON-NLS-1$ //$NON-NLS-2$
+			String[] cmdLine = new String[] { javaExecutablePath,
+					"-Xmx4m", "-classpath", file.getAbsolutePath(), "org.eclipse.jdt.internal.launching.support.LibraryDetector" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			Process p = null;
 			try {
 				String envp[] = null;

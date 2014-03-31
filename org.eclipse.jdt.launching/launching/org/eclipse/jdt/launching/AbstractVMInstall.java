@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikhail Kalkov - Bug 414285, On systems with large RAM, evaluateSystemProperties and generateLibraryInfo fail for 64-bit JREs
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -362,7 +363,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				if (runner == null) {
 					abort(LaunchingMessages.AbstractVMInstall_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 				}
-				config.setVMArguments(new String[] { "-Xmx4m" });
+				config.setVMArguments(new String[] { "-Xmx4m" }); //$NON-NLS-1$
 				config.setProgramArguments(properties);
 				Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 				if (monitor.isCanceled()) {
