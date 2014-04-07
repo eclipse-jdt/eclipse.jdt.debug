@@ -736,18 +736,20 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public static URL getDefaultJavadocLocation(String version) {
 		try {
-			if(version.startsWith(JavaCore.VERSION_1_8)) {
-				return new URL("http://download.oracle.com/javase/8/docs/api/"); //$NON-NLS-1$
+			if (version.startsWith(JavaCore.VERSION_1_8)) {
+				return new URL("http://docs.oracle.com/javase/8/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_7)) {
-				return new URL("http://download.oracle.com/javase/7/docs/api/"); //$NON-NLS-1$
+				return new URL("http://docs.oracle.com/javase/7/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_6)) {
-				return new URL("http://download.oracle.com/javase/6/docs/api/"); //$NON-NLS-1$
+				return new URL("http://docs.oracle.com/javase/6/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_5)) {
-				return new URL("http://download.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
+				return new URL("http://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_4)) {
-				return new URL("http://download.oracle.com/javase/1.4.2/docs/api/"); //$NON-NLS-1$
+				// archived: http://download.oracle.com/javase/1.4.2/docs/api/
+				return new URL("http://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			} else if (version.startsWith(JavaCore.VERSION_1_3)) {
-				return new URL("http://download.oracle.com/javase/1.3/docs/api/"); //$NON-NLS-1$
+				// archived: http://download.oracle.com/javase/1.3/docs/api/
+				return new URL("http://docs.oracle.com/javase/1.5.0/docs/api/"); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
 		}
