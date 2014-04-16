@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#getVMs()
 	 */
-	public IVMInstall[] getVMInstalls() {
+	public synchronized IVMInstall[] getVMInstalls() {
 		IVMInstall[] vms= new IVMInstall[fVMs.size()];
 		return fVMs.toArray(vms);
 	}
@@ -59,12 +59,14 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see IVMType#disposeVM(String)
 	 */
 	public void disposeVMInstall(String id) {
-		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= fVMs.get(i);
-			if (vm.getId().equals(id)) {
-				fVMs.remove(i);
-				JavaRuntime.fireVMRemoved(vm);
-				return;
+		synchronized (this) {
+			for (int i= 0; i < fVMs.size(); i++) {
+				IVMInstall vm= fVMs.get(i);
+				if (vm.getId().equals(id)) {
+					fVMs.remove(i);
+					JavaRuntime.fireVMRemoved(vm);
+					return;
+				}
 			}
 		}
 	}
@@ -74,10 +76,12 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see IVMType#getVM(String)
 	 */
 	public IVMInstall findVMInstall(String id) {
-		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= fVMs.get(i);
-			if (vm.getId().equals(id)) {
-				return vm;
+		synchronized (this) {
+			for (int i = 0; i < fVMs.size(); i++) {
+				IVMInstall vm = fVMs.get(i);
+				if (vm.getId().equals(id)) {
+					return vm;
+				}
 			}
 		}
 		return null;
@@ -92,8 +96,11 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 			String format= LaunchingMessages.vmInstallType_duplicateVM; 
 			throw new IllegalArgumentException(NLS.bind(format, new String[] { id }));
 		}
-		IVMInstall vm= doCreateVMInstall(id);
-		fVMs.add(vm);
+		IVMInstall vm = null;
+		synchronized (this) {
+			vm = doCreateVMInstall(id);
+			fVMs.add(vm);
+		}
 		return vm;
 	}
 	
@@ -138,10 +145,12 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see org.eclipse.jdt.launching.IVMInstallType#findVMInstallByName(java.lang.String)
 	 */
 	public IVMInstall findVMInstallByName(String name) {
-		for (int i= 0; i < fVMs.size(); i++) {
-			IVMInstall vm= fVMs.get(i);
-			if (vm.getName().equals(name)) {
-				return vm;
+		synchronized (this) {
+			for (int i = 0; i < fVMs.size(); i++) {
+				IVMInstall vm = fVMs.get(i);
+				if (vm.getName().equals(name)) {
+					return vm;
+				}
 			}
 		}
 		return null;
