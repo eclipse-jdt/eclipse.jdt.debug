@@ -38,6 +38,7 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.Standard11xVM;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -366,7 +367,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 					abort(NLS.bind(LaunchingMessages.AbstractVMInstall_0, ""), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 				}
 				if (!(this instanceof Standard11xVM)) {
-					config.setVMArguments(new String[] { "-Xmx4m" }); //$NON-NLS-1$
+					config.setVMArguments(new String[] { StandardVMType.MIN_VM_SIZE });
 				}
 				config.setProgramArguments(properties);
 				Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
