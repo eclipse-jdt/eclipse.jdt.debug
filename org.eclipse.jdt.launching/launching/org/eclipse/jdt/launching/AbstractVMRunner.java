@@ -95,7 +95,10 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		// see https://bugs.eclipse.org/387504 , workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6511002
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			String[] winCmdLine = new String[cmdLine.length];
-			for (int i = 0; i < cmdLine.length; i++) {
+			if(cmdLine.length > 0) {
+				winCmdLine[0] = cmdLine[0];
+			}
+			for (int i = 1; i < cmdLine.length; i++) {
 				winCmdLine[i] = winQuote(cmdLine[i]);
 			}
 			cmdLine = winCmdLine;
