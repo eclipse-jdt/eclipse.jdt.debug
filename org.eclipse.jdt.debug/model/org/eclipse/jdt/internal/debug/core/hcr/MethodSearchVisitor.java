@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
- *     Jacob Saoumi - Bug 434695 - Hot Code Replace drops some frames in case of anonymous classes
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.hcr;
 
@@ -179,9 +178,6 @@ public class MethodSearchVisitor extends ASTVisitor {
 		String typeName = null;
 		if (binding != null) {
 			typeName = binding.getQualifiedName();
-			if ((typeName == null || "".equals(typeName)) && binding.getBinaryName() != null) { //$NON-NLS-1$
-				typeName = binding.getBinaryName().replace('$', '.');
-			}
 		}
 		// if no binding exists, the behaviour should be the same as without checking for type name
 		if (node.getName().getIdentifier().equals(fName) && (typeName == null || typeName.equals(fClassName))) {
