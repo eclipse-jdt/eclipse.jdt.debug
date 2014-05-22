@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -477,15 +477,16 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("HcrClass3.java does not exist", cu.exists());
 				IBuffer buffer = cu.getBuffer();
 				String contents = buffer.getContents();
-				int index = contents.indexOf("\"Anon#run()\"");
+				int index = contents.indexOf("\"TEST_RUN1\"");
 				assertTrue("Could not find code to replace", index > 0);
-				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				thread = (IJavaThread) waiter.waitForEvent();
+				assertNotNull("Thread did not suspend after HCR", thread);
 				assertTrue("Listener should have been notified", listener.waitNotification());
 				assertNotNull("HCR should have not failed", listener.target);
 				assertTrue("the thread should be suspended again after the HCR", thread.isSuspended());
@@ -529,9 +530,9 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("HcrClass3.java does not exist", cu.exists());
 				IBuffer buffer = cu.getBuffer();
 				String contents = buffer.getContents();
-				int index = contents.indexOf("\"Anon#run()\"");
+				int index = contents.indexOf("\"TEST_RUN2\"");
 				assertTrue("Could not find code to replace", index > 0);
-				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
@@ -581,9 +582,9 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("HcrClass3.java does not exist", cu.exists());
 				IBuffer buffer = cu.getBuffer();
 				String contents = buffer.getContents();
-				int index = contents.indexOf("\"Anon#run()\"");
+				int index = contents.indexOf("\"TEST_RUN3\"");
 				assertTrue("Could not find code to replace", index > 0);
-				String newCode = contents.substring(0, index) + "\"Anon#run\"" + contents.substring(index + 12);
+				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
 				
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
