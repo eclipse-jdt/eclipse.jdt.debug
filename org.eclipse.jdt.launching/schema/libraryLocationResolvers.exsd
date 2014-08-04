@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.jdt.launching" xmlns="http://www.w3.org/2001/XMLSchema">
-<annotation>
+    <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.jdt.launching" id="libraryLocationResolvers" name="Library Location Resolver"/>
       </appInfo>
@@ -88,26 +88,6 @@
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         
-
-
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         JDT does not provide any specific library location resolvers.
       </documentation>
    </annotation>
 

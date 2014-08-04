@@ -313,5 +313,11 @@
                resolver="org.eclipse.jdt.internal.launching.ProjectClasspathVariableResolver">
          </variable>
       </extension>
+      <extension
+            point="org.eclipse.jdt.launching.libraryLocationResolvers">
+         <resolver
+               class="org.eclipse.jdt.internal.launching.JavaFxLibraryResolver">
+         </resolver>
+      </extension>
      
 </plugin>

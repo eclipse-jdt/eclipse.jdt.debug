@@ -497,13 +497,15 @@ public class StandardVMType extends AbstractVMInstallType {
 								IPath packageRoot = Path.EMPTY;
 								URL javadocLocation = null;
 								URL indexLocation = null;
-								for( ILibraryLocationResolver resolver : getLibraryLocationResolvers() ) {
+								for (ILibraryLocationResolver resolver : getLibraryLocationResolvers()) {
 									try {
 										sourcePath = resolver.getSourcePath(libPath);
 										packageRoot = resolver.getPackageRoot(libPath);
 										javadocLocation = resolver.getJavadocLocation(libPath);
 										indexLocation = resolver.getIndexLocation(libPath);
-										break;
+										if (sourcePath != Path.EMPTY || packageRoot != Path.EMPTY || javadocLocation != null || indexLocation != null) {
+											break;
+										}
 									} catch(Exception e) {
 										LaunchingPlugin.log(e);
 									}
