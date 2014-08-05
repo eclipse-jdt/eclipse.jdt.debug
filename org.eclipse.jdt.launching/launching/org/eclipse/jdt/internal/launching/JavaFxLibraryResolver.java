@@ -20,7 +20,7 @@ import org.eclipse.jdt.launching.ILibraryLocationResolver;
 
 public class JavaFxLibraryResolver implements ILibraryLocationResolver {
 
-	private static final String JFXRT_JAR = "jfxrt.jar"; //$NON-NLS-1$
+	public static final String JFXRT_JAR = "jfxrt.jar"; //$NON-NLS-1$
 	private static final String JAVAFX_SRC_ZIP = "javafx-src.zip"; //$NON-NLS-1$
 	private static final String JAVAFX_8_JAVADOC = "http://docs.oracle.com/javase/8/javafx/api/"; //$NON-NLS-1$
 

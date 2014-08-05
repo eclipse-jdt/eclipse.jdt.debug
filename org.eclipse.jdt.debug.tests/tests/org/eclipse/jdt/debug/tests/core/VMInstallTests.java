@@ -16,15 +16,13 @@ import java.util.Map;
 
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jdt.internal.launching.JavaFxLibraryResolver;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
@@ -46,7 +44,7 @@ public class VMInstallTests extends AbstractDebugTest {
 
 		for (int i = 0; i < path.segmentCount(); i++) {
 			if ("ext".equals(path.segment(i))) {
-				return true;
+				return !JavaFxLibraryResolver.JFXRT_JAR.equals(path.lastSegment());
 			}
 		}
 		return false;

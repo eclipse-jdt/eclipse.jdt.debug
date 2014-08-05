@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -149,6 +151,13 @@ public class StandardVMType extends AbstractVMInstallType {
 		if( fgLibraryLocationResolvers == null ) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_LIBRARY_LOCATION_RESOLVERS);
 			IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
+			// The "libraryLocationResolvers" extension point doesn't have any conflict resolution.
+			// Sorting by namespace at least makes makes the order predictable.
+			Arrays.sort(configs, new Comparator<IConfigurationElement>() {
+				public int compare(IConfigurationElement e1, IConfigurationElement e2) {
+					return e1.getNamespaceIdentifier().compareTo(e2.getNamespaceIdentifier());
+				}
+			});
 			List<ILibraryLocationResolver> resolvers = new ArrayList<ILibraryLocationResolver>(configs.length);
 			for( int i = 0; i < configs.length; i++ ) {
 				IConfigurationElement e = configs[i];
