@@ -46,11 +46,10 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		fEditor= editor;
 		setResources();
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
-        
-        
-        IHandler handler = new ActionHandler(this);
-		IHandlerService service = (IHandlerService) editor.getSite().getService(IHandlerService.class);
-        service.activateHandler(IJavaEditorActionDefinitionIds.OPEN_EDITOR, handler);
+
+		IHandler handler = new ActionHandler(this);
+		IHandlerService service = editor.getSite().getService(IHandlerService.class);
+		service.activateHandler(IJavaEditorActionDefinitionIds.OPEN_EDITOR, handler);
 	}
 	
 	protected void setResources() {
@@ -99,8 +98,9 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 				nResults= selection.length;
 				for (int i= 0; i < nResults; i++) {
 					Object current= selection[i];
-					if (current instanceof IJavaElement)
+					if (current instanceof IJavaElement) {
 						return (IJavaElement) current;
+					}
 				}
 			}
 		}		
@@ -116,8 +116,9 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		int nResults= codeResolveResults.length;
 		List<IJavaElement> refs= new ArrayList<IJavaElement>(nResults);
 		for (int i= 0; i < nResults; i++) {
-			if (codeResolveResults[i] instanceof ISourceReference)
+			if (codeResolveResults[i] instanceof ISourceReference) {
 				refs.add(codeResolveResults[i]);
+			}
 		}
 		return refs;
 	}

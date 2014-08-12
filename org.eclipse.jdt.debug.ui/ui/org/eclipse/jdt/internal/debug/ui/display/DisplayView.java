@@ -291,8 +291,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			
 		};
 
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-        fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
+		fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
 	}
 	
 	/**
@@ -329,8 +329,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	private IUndoContext getUndoContext() {
 		IUndoManager undoManager= fSourceViewer.getUndoManager();
-		if (undoManager instanceof IUndoManagerExtension)
+		if (undoManager instanceof IUndoManagerExtension) {
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		}
 		return null;
 	}
 
@@ -484,8 +485,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	
 	protected void updateSelectionDependentActions() {
 		Iterator<String> iterator= fSelectionActions.iterator();
-		while (iterator.hasNext())
+		while (iterator.hasNext()) {
 			updateAction(iterator.next());
+		}
 	}
 
 
@@ -518,8 +520,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fSourceViewer = null;
 		}
 		
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-        handlerService.deactivateHandler(fHandlerActivation);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
+		handlerService.deactivateHandler(fHandlerActivation);
 		
 		super.dispose();
 	}

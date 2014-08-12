@@ -44,10 +44,10 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		fEditor= editor;
 		setResources();
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-        
-        ActionHandler handler = new ActionHandler(this);
-        IHandlerService handlerService = (IHandlerService) editor.getSite().getService(IHandlerService.class);
-        handlerService.activateHandler(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY, handler);
+
+		ActionHandler handler = new ActionHandler(this);
+		IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
+		handlerService.activateHandler(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY, handler);
 	}
 	
 	protected void setResources() {
