@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     SAP SE - Support hyperlinks for stack entries with method signature
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
@@ -201,20 +202,22 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 
 	/**
 	 * Returns the fully qualified name of the type to open
-	 * 
-	 * @param linkText the complete text of the link to be parsed
+	 *
+	 * @param linkText
+	 *            the complete text of the link to be parsed
 	 * @return fully qualified type name
-	 * @exception CoreException if unable to parse the type name
+	 * @exception CoreException
+	 *                if unable to parse the type name
 	 */
 	protected String getTypeName(String linkText) throws CoreException {
-        int start = linkText.indexOf('(');
+		int start = linkText.lastIndexOf('(');
         int end = linkText.indexOf(':');
         if (start >= 0 && end > start) {
             //linkText could be something like packageA.TypeB(TypeA.java:45)
             //need to look in packageA.TypeA for line 45 since TypeB is defined
-            //in TypeA.java 
+            //in TypeA.java
             //Inner classes can be ignored because we're using file and line number
-            
+
             // get File name (w/o .java)
             String typeName = linkText.substring(start + 1, end);
             typeName = JavaCore.removeJavaLikeExtension(typeName);

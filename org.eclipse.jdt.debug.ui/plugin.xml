@@ -6,14 +6,15 @@
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
+         SAP SE - Support hyperlinks for stack entries with method signature
  -->
 
 <plugin>
 
-    
+
 <!-- Extensions Points -->
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
    <extension-point id="vmInstallPages" name="%vmInstallPage" schema="schema/vmInstallPages.exsd"/>
@@ -3340,14 +3341,14 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
    </extension>
-   
-   
+
+
    <!--Java Stack Trace Pattern Matchers-->
    <extension
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            regex="\(\S*${java_extensions_regex}\S*\)"
+            regex="\(\w*${java_extensions_regex}\S*\)"
             qualifier="${java_extensions_regex}"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
