@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,8 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	            for (int j = 0; j < breakpoints.length; j++) {
 	                IJavaBreakpoint breakpoint = (IJavaBreakpoint) breakpoints[j];
 	                if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
-	                    if (breakpoint.getTypeName().equals(type.getFullyQualifiedName())) {
+						String typeName = breakpoint.getTypeName();
+						if (typeName != null && typeName.equals(type.getFullyQualifiedName())) {
 	                        exists = true;
 	                        break;
 	                    }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -239,11 +239,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected String getEnclosingReferenceTypeName() throws CoreException {
 		String name = getTypeName();
-		int index = name.indexOf('$');
-		if (index == -1) {
-			return name;
+		if (name != null) {
+			int index = name.indexOf('$');
+			if (index == -1) {
+				return name;
+			}
+			return name.substring(0, index);
 		}
-		return name.substring(0, index);
+		return null;
 	}
 
 	/**
@@ -1010,8 +1013,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void fireAdding(IJavaDebugTarget target) {
 		JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
-		if (plugin != null)
+		if (plugin != null) {
 			plugin.fireBreakpointAdding(target, this);
+		}
 	}
 
 	/**

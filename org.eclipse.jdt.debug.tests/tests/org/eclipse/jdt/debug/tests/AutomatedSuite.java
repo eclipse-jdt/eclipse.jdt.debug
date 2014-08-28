@@ -40,6 +40,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
+import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.core.ArgumentTests;
@@ -164,6 +165,7 @@ public class AutomatedSuite extends DebugSuite {
 		}
 		
 	//Breakpoints tests
+		addTest(new TestSuite(TypeNameBreakpointTests.class));
 		addTest(new TestSuite(DeferredBreakpointTests.class));
 		addTest(new TestSuite(ConditionalBreakpointsTests.class));
 		addTest(new TestSuite(HitCountBreakpointsTests.class));

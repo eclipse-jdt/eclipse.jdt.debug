@@ -422,4 +422,25 @@ public class JavaDebugUtils {
 		}
 		return null;
 	}
+
+	/**
+	 * Returns if the type names are equal, where being equals means:
+	 * <ul>
+	 * <li>The names are non-null and equal</li>
+	 * <li>The names are both null</li>
+	 * </ul>
+	 * 
+	 * @param name1
+	 *            The first name
+	 * @param name2
+	 *            The second name
+	 * @return If the type names are equal
+	 * @since 3.8.100
+	 */
+	public static boolean typeNamesEqual(String name1, String name2) {
+		if (name1 == null) {
+			return name2 == null;
+		}
+		return name1.equals(name2);
+	}
 }

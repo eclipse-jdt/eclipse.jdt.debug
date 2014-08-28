@@ -362,8 +362,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} else if (!qualified) {
 						int index = exName.lastIndexOf('.');
 						exName = exName.substring(index + 1);
-					} 
-					args = new String[] {thread.getName(), exName};
+					}
+					if (exName != null) {
+						args = new String[] { thread.getName(), exName };
+					}
 				} else if (breakpoint instanceof IJavaWatchpoint) {
 					IJavaWatchpoint wp = (IJavaWatchpoint)breakpoint;
 					String fieldName = wp.getFieldName();
@@ -652,7 +654,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else {
 			typeName = breakpoint.getTypeName();
 		}
-		if (!qualified) {
+		if (!qualified && typeName != null) {
 			int index= typeName.lastIndexOf('.');
 			if (index != -1) {
 				typeName= typeName.substring(index + 1);
@@ -1079,14 +1081,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaVariable javaVariable= (IJavaVariable) element.getAdapter(IJavaVariable.class);
 		if (javaVariable != null) {
 			try {
-				if (javaVariable.isLocal())
+				if (javaVariable.isLocal()) {
 					return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_LOCAL_VARIABLE);
-				if (javaVariable.isPublic())
+				}
+				if (javaVariable.isPublic()) {
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PUBLIC);
-				if (javaVariable.isProtected())
+				}
+				if (javaVariable.isProtected()) {
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PROTECTED);
-				if (javaVariable.isPrivate())
+				}
+				if (javaVariable.isPrivate()) {
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PRIVATE);
+				}
 			} catch (DebugException e) {
 			    // no need to log errors - elements may no longer exist by the time we render them
 			}
@@ -1553,7 +1559,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getExceptionBreakpointText(IJavaExceptionBreakpoint breakpoint) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		String typeName = breakpoint.getTypeName();
-		buffer.append(getQualifiedName(typeName));
+		if (typeName != null) {
+			buffer.append(getQualifiedName(typeName));
+		}
 		appendHitCount(breakpoint, buffer);
 		appendSuspendPolicy(breakpoint, buffer);
 		//TODO remove the cast once the API freeze has thawed
@@ -1586,11 +1594,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getLineBreakpointText(IJavaLineBreakpoint breakpoint) throws CoreException {
-
 		String typeName= breakpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuffer label= new StringBuffer();
-		label.append(getQualifiedName(typeName));
+		if (typeName != null) {
+			label.append(getQualifiedName(typeName));
+		}
 		appendLineNumber(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
@@ -1609,7 +1618,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getClassPrepareBreakpointText(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
 		String typeName= breakpoint.getTypeName();
 		StringBuffer label = new StringBuffer();
-		label.append(getQualifiedName(typeName));
+		if (typeName != null) {
+			label.append(getQualifiedName(typeName));
+		}
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint, label);
 		return label.toString();
@@ -1674,11 +1685,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 		
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
-		
 		String typeName= watchpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(watchpoint);
 		StringBuffer label= new StringBuffer();
-		label.append(getQualifiedName(typeName));
+		if (typeName != null) {
+			label.append(getQualifiedName(typeName));
+		}
 		appendHitCount(watchpoint, label);
 		appendSuspendPolicy(watchpoint,label);
 		appendThreadFilter(watchpoint, label);
@@ -1705,11 +1717,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}	
 
 	protected String getMethodBreakpointText(IJavaMethodBreakpoint methodBreakpoint) throws CoreException {
-		
 		String typeName= methodBreakpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(methodBreakpoint);
 		StringBuffer label= new StringBuffer();
-		label.append(getQualifiedName(typeName));
+		if (typeName != null) {
+			label.append(getQualifiedName(typeName));
+		}
 		appendHitCount(methodBreakpoint, label);
 		appendSuspendPolicy(methodBreakpoint,label);
 		appendThreadFilter(methodBreakpoint, label);

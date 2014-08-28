@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaClassPrepareBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
@@ -805,8 +806,7 @@ public class JDIDebugModel {
 			if (marker != null && marker.exists()
 					&& marker.getType().equals(markerType)) {
 				String breakpointTypeName = breakpoint.getTypeName();
-				if (breakpointTypeName.equals(typeName)
-						|| breakpointTypeName.startsWith(typeName + '$')) {
+				if (JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$'))) {
 					if (breakpoint.getLineNumber() == lineNumber) {
 						return breakpoint;
 					}
@@ -852,8 +852,7 @@ public class JDIDebugModel {
 			if (marker != null && marker.exists()
 					&& marker.getType().equals(markerType)) {
 				String breakpointTypeName = breakpoint.getTypeName();
-				if ((breakpointTypeName.equals(typeName) || breakpointTypeName
-						.startsWith(typeName + '$'))
+				if ((JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$')))
 						&& breakpoint.getLineNumber() == lineNumber
 						&& resource.equals(marker.getResource())) {
 					return breakpoint;
@@ -864,13 +863,13 @@ public class JDIDebugModel {
 	}
 
 	/**
-	 * Returns the preference store for this plug-in or <code>null</code> if the
-	 * store is not available.
-	 * <br><br>
-	 * The Preferences class has been deprecated and clients should directly be using the 
-	 * InstanceScope node for JDIDebugPlugin rather than this convenience method.
-	 * <br><br>
+	 * Returns the preference store for this plug-in or <code>null</code> if the store is not available. <br>
+	 * <br>
+	 * The Preferences class has been deprecated and clients should directly be using the InstanceScope node for JDIDebugPlugin rather than this
+	 * convenience method. <br>
+	 * <br>
 	 * For example:
+	 * 
 	 * <pre>
 	 * IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 	 * if(node != null) {
@@ -882,6 +881,7 @@ public class JDIDebugModel {
 	 * @since 2.0
 	 * @deprecated the {@link Preferences} class has been deprecated, use the {@link IEclipsePreferences} accessors instead
 	 */
+	@Deprecated
 	public static Preferences getPreferences() {
 		JDIDebugPlugin deflt = JDIDebugPlugin.getDefault();
 		if (deflt != null) {
@@ -910,6 +910,7 @@ public class JDIDebugModel {
 	 * @since 2.0
 	 * @deprecated the {@link Preferences} class has been deprecated, use the {@link IEclipsePreferences} accessors instead
 	 */
+	@Deprecated
 	public static void savePreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(node != null) {

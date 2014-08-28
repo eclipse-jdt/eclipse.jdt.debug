@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
 import org.eclipse.jdt.ui.SharedASTProvider;
@@ -190,9 +191,8 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			IMarker marker = breakpoint.getMarker();
 			if (marker != null && marker.exists() && marker.getType().equals(markerType) && currentmarker.getId() != marker.getId()) {
 				String breakpointTypeName = breakpoint.getTypeName();
-				if ((breakpointTypeName.equals(typeName) || breakpointTypeName.startsWith(typeName + '$')) &&
-					breakpoint.getLineNumber() == lineNumber &&
-					resource.equals(marker.getResource())) {
+				if ((JavaDebugUtils.typeNamesEqual(breakpointTypeName, typeName) || (breakpointTypeName != null && breakpointTypeName.startsWith(typeName + '$')))
+						&& breakpoint.getLineNumber() == lineNumber && resource.equals(marker.getResource())) {
 						return breakpoint;
 				}
 			}
