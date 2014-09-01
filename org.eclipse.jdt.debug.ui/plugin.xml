@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2012 IBM Corporation and others.
+     Copyright (c) 2005, 2014 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -3646,25 +3646,6 @@ M4 = Platform-specific fourth key
           argumentSelector="org.eclipse.jdt.internal.debug.ui.launcher.ProjectClasspathArgumentSelector"
           variableName="project_classpath">
     </variablePresentation>
- </extension>
- <extension
-       point="org.eclipse.ui.trace.traceComponents">
-    <component
-          id="org.eclipse.jdt.debug.core.component"
-          label="%JDTDebugCoreTrace.name">
-       <bundle
-             consumed="true"
-             name="org.eclipse.jdt.debug">
-       </bundle>
-    </component>
-    <component
-          id="org.eclipse.jdt.launching.component"
-          label="%JDTLaunchingTrace.name">
-       <bundle
-             consumed="true"
-             name="org.eclipse.jdt.launching">
-       </bundle>
-    </component>
  </extension>
  <extension
        point="org.eclipse.jdt.debug.javaLogicalStructures">
