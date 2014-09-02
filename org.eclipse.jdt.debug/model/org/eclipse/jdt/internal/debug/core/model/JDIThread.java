@@ -34,6 +34,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -2549,8 +2550,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						.isFilterConstructors();
 				boolean filterSetters = getJavaDebugTarget().isFilterSetters();
 				boolean filterGetters = getJavaDebugTarget().isFilterGetters();
+				IStepFilter[] contributedFilters = DebugPlugin.getStepFilters(JDIDebugPlugin.getUniqueIdentifier());
 				if (!(filterStatics || filterSynthetics || filterConstructors
-						|| filterGetters || filterSetters)) {
+ || filterGetters || filterSetters || contributedFilters.length > 0)) {
 					return false;
 				}
 
@@ -2560,6 +2562,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						|| (filterGetters && JDIMethod.isGetterMethod(method))
 						|| (filterSetters && JDIMethod.isSetterMethod(method))) {
 					return true;
+				}
+				for (int i = 0; i < contributedFilters.length; i++) {
+					if (contributedFilters[i].isFiltered(method)) {
+						return true;
+					}
 				}
 			}
 

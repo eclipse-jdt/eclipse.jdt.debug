@@ -469,5 +469,12 @@
            class="org.eclipse.jdt.debug.tests.core.VMInstallTestsLibraryLocationResolver">
      </resolver>
   </extension>
+  <extension
+        point="org.eclipse.debug.core.stepFilters">
+     <stepFilter
+           class="org.eclipse.jdt.debug.test.stepping.TestContributedStepFilter"
+           modelIdentifier="org.eclipse.jdt.debug">
+     </stepFilter>
+  </extension>
 
 </plugin>

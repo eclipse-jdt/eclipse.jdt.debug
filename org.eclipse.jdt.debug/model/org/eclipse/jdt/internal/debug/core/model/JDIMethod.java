@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Jesper Steen Moller and others.
+ * Copyright (c) 2010, 2014 Jesper Steen Moller and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Jesper Steen Moller - initial API and implementation
+ *     IBM Corporation - Bug fixing
  *******************************************************************************/
 
 package org.eclipse.jdt.internal.debug.core.model;
@@ -19,7 +20,7 @@ import com.sun.jdi.Method;
  * @author jmoeller2
  * 
  */
-public abstract class JDIMethod {
+public class JDIMethod {
 
 	// Known Java byte codes, from the JVM spec
 	private static final int ALOAD_0 = 0x2a;
@@ -81,7 +82,10 @@ public abstract class JDIMethod {
 	 * @return true if the method is a simple getter
 	 */
 	public static boolean isGetterMethod(Method method) {
-		if (!(method.name().startsWith("get") || method.name().startsWith("is")))return false; //$NON-NLS-1$  //$NON-NLS-2$
+		if (!(method.name().startsWith("get") || method.name().startsWith("is"))) //$NON-NLS-1$ //$NON-NLS-2$
+		 {
+			return false;
+		}
 
 		byte[] bytecodes = method.bytecodes();
 		return bytecodes.length == 5 && (bytecodes[0] & 0xFF) == ALOAD_0
@@ -101,8 +105,9 @@ public abstract class JDIMethod {
 	 * @return true if the method is a simple setter
 	 */
 	public static boolean isSetterMethod(Method method) {
-		if (!method.name().startsWith("set")) //$NON-NLS-1$
+		if (!method.name().startsWith("set")) { //$NON-NLS-1$
 			return false;
+		}
 
 		byte[] bytecodes = method.bytecodes();
 		return bytecodes.length == 6 && (bytecodes[0] & 0xFF) == ALOAD_0

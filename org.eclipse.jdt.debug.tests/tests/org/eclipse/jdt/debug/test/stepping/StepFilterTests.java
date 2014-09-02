@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -289,6 +289,37 @@ public class StepFilterTests extends AbstractDebugTest {
 			resetStepFilters();
 		}				
 	}	
+
+	/**
+	 * Tests filtering from a contributed filter
+	 * 
+	 * @throws Exception
+	 * @since 3.8.300
+	 */
+	public void testContributedFilter1() throws Exception {
+		String typeName = "TestContributedStepFilterClass";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo,"
+				+ fOriginalInactiveFilters);
+		ILineBreakpoint bp = createLineBreakpoint(17, typeName);
+		bp.setEnabled(true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Wrong line number", 17, stackFrame.getLineNumber());
+			thread = stepIntoWithFilters(stackFrame);
+			assertNotNull("We should have stepped over the method call", thread);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("Wrong line number", 18, stackFrame.getLineNumber());
+			assertEquals("Should be in main", "main", stackFrame.getMethodName());
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			resetStepFilters();
+		}
+	}
 
 	/**
 	 * Reset the step filtering preferences
