@@ -356,9 +356,17 @@ public class JavaDebugUtils {
 		ILaunch launch = frame.getLaunch();
 		if(launch != null) {
 			try {
-				IJavaElement element = resolveJavaElement(frame, launch);
+				Object sourceElement = resolveSourceElement(frame, launch);
+				IJavaElement element = getJavaElement(sourceElement);
 				if(element != null) {
 					return element.getJavaProject();
+				}
+				// If Source element is not a Java element
+				if (sourceElement instanceof IResource) {
+					IJavaProject project = JavaCore.create(((IResource) sourceElement).getProject());
+					if (project.exists()) {
+						return project;
+					}
 				}
 			}
 			catch(CoreException ce) {
