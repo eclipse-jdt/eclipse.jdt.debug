@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -598,8 +598,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		Iterator<JDIThread> it = getThreadIterator();
 		while (it.hasNext()) {
 			IThread thread = it.next();
-			if (thread.canResume())
+			if (thread.canResume()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -941,8 +942,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		Iterator<JDIThread> iter = getThreadIterator();
 		while (iter.hasNext()) {
 			JDIThread thread = iter.next();
-			if (thread.getUnderlyingThread().equals(tr))
+			if (thread.getUnderlyingThread().equals(tr)) {
 				return thread;
+			}
 		}
 		return null;
 	}
@@ -1952,7 +1954,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				boolean suspendVote, EventSet eventSet) {
 			ThreadReference thread = ((ThreadStartEvent) event).thread();
 			try {
-				if (thread.isCollected()) {
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=443727
+				// the backing ThreadReference could be read in as null
+				if (thread == null || thread.isCollected()) {
 					return false;
 				}
 			} catch (VMDisconnectedException exception) {
