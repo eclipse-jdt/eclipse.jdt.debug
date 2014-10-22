@@ -897,12 +897,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								fieldName = javaField.getElementName();
 								int f = javaField.getFlags();
 								boolean fin = Flags.isFinal(f);
+								if (fin) {
+									fin = javaField.getConstant() != null; // watch point is allowed if no constant value
+								}
 								allowed = !(fin) & !(Flags.isStatic(f) & fin);
 							} else if (element instanceof IJavaFieldVariable) {
 								IJavaFieldVariable var = (IJavaFieldVariable) element;
 								typeName = var.getDeclaringType().getName();
 								fieldName = var.getName();
 								boolean fin = var.isFinal();
+								if (fin) {
+									fin = javaField.getConstant() != null; // watch point is allowed if no constant value
+								}
 								allowed = !(fin) & !(var.isStatic() & fin);
 							}
 	                        breakpoint = getWatchpoint(typeName, fieldName);

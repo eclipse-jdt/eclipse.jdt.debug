@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,14 +185,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	}
 
 	/**
-	 * Return the line number of the computed valid location, if the location
-	 * type is LOCATION_LINE.
+	 * Return the line number of the computed valid location
 	 */
 	public int getLineLocation() {
-		if (fLocationType == LOCATION_LINE) {
-			return fLineLocation;
+		if (fLocationType == LOCATION_NOT_FOUND) {
+			return -1;
 		}
-		return -1;
+		return fLineLocation;
 	}
 
 	/**
@@ -731,17 +730,28 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					int line = lineNumber(offset);
 					if(Flags.isFinal(node.getModifiers())) {
 						if(init != null) {
-							if (line == fLineNumber && isReplacedByConstantValue(init)) {
+							if (line == fLineNumber) {
+								if (isReplacedByConstantValue(init)) {
+									fLocationType = LOCATION_LINE;
+								} else {
+									fLocationType = LOCATION_FIELD;
+								}
 								fMemberOffset = offset;
 								fLineLocation = line;
-								fLocationType = LOCATION_LINE;
 								fLocationFound = true;
 								fTypeName = computeTypeName(node);
 								return false;
 							}
 						}
 						else {
-							//if it is an uninitialized final field, try to find the next executable line
+							if (line == fLineNumber) {
+								fMemberOffset = offset;
+								fLineLocation = line;
+								fLocationType = LOCATION_FIELD;
+								fLocationFound = true;
+								fTypeName = computeTypeName(node);
+								return false;
+							}
 							return false;
 						}
 					}
@@ -750,6 +760,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 						// contains the name of the field
 						if (line == fLineNumber) {
 							fMemberOffset = offset;
+							fLineLocation = line;
 							fLocationType = LOCATION_FIELD;
 							fLocationFound = true;
 							return false;
@@ -1369,10 +1380,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(VariableDeclarationFragment node) {
 		Expression initializer = node.getInitializer();
 		if (visit(node, false)) {
-			int startLine = lineNumber(node.getName().getStartPosition());
+			int offset = node.getName().getStartPosition();
+			int line = lineNumber(offset);
 			if (initializer != null) {
-				if (fLineNumber == startLine) {
-						fLineLocation = startLine;
+				if (fLineNumber == line) {
+					fLineLocation = line;
 						fLocationFound = true;
 						fLocationType = LOCATION_LINE;
 						fTypeName = computeTypeName(node);
@@ -1381,19 +1393,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				initializer.accept(this);
 			} else {
 				// the variable has no initializer
-				int offset = node.getName().getStartPosition();
 				// check if the breakpoint is to be set on the line which
 				// contains the name of the field
-				ASTNode parent = node.getParent();
-				if(parent.getNodeType() == ASTNode.FIELD_DECLARATION) {
-					//if the parent field is final and we are not initializing, find the next executable line
-					if(Flags.isFinal(((FieldDeclaration)parent).getModifiers())) {
-						return false;
-					}
-				}
-				if (lineNumber(offset) == fLineNumber) {
+				if (line == fLineNumber) {
 					fMemberOffset = offset;
+					fLineLocation = line;
 					fLocationType = LOCATION_FIELD;
+					fTypeName = computeTypeName(node);
 					fLocationFound = true;
 					return false;
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -297,4 +297,39 @@ public class WatchpointTests extends AbstractDebugTest {
 			getBreakpointManager().setEnabled(true);
 		}		
 	}	
+
+	/**
+	 * Tests that a watchpoint set to be skipped is indeed skipped
+	 * 
+	 * @throws Exception
+	 */
+	public void testFinalWatchpoint() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984";
+
+		IJavaWatchpoint wp = createWatchpoint(typeName, "fWorkingValues", true, true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			IStackFrame frame = thread.getTopStackFrame();
+			assertNotNull("No watchpoint", hit);
+
+			// should be modification
+			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			// line 27
+			assertEquals("Should be on line 15", 15, frame.getLineNumber());
+
+			getBreakpointManager().setEnabled(false);
+			resumeAndExit(thread);
+
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}
+	}
 }

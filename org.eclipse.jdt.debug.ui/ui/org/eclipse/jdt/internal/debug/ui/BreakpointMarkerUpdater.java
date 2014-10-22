@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
@@ -109,6 +110,10 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, document.getLineOfOffset(position.getOffset())+1, true, true);
 			unit.accept(loc);
 			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_NOT_FOUND) {
+				return false;
+			}
+			// Remove the watch point if it is not a valid watch point now
+			if (loc.getLocationType() != ValidBreakpointLocationLocator.LOCATION_FIELD && breakpoint instanceof IJavaWatchpoint) {
 				return false;
 			}
 			int line = loc.getLineLocation();

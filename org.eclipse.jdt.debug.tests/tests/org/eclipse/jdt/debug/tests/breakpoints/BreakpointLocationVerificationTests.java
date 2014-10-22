@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -110,27 +110,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Tests setting a line breakpoint on a final field with an Expression as an initializer
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 * 
-	 * @throws Exception
-	 */
-	public void testFinalFieldWithTypeDecl2() throws Exception {
-		testLocation(15, 15, "FinalBreakpointLocations");
-	}
-	
-	/**
-	 * Tests setting a line breakpoint on a final field with an Expression as an initializer looking
-	 * for best match
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
-	 * 
-	 * @throws Exception
-	 */
-	public void testFinalFieldWithTypeDecl2a() throws Exception {
-		testLocation(15, 15, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
-	}
-	
-	/**
 	 * Tests setting a line breakpoint on an inner type member for the initializer of 
 	 * a final local field variable
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=376354
@@ -150,7 +129,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFinalFieldWithTypeDecl3a() throws Exception {
-		testLocation(17, 17, "FinalBreakpointLocations");
+		testLocation(17, 17, "FinalBreakpointLocations", "FinalBreakpointLocations", true);
 	}
 	
 	/**
@@ -252,7 +231,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalField() throws Exception {
-		testLocation(12, 14, "BreakpointsLocationBug344984");
+		testLocation(13, 13, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984");
 	}
 	
 	/**
@@ -261,7 +240,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testFieldLocationOnFinalFielda() throws Exception {
-		testLocation(12, 14, "BreakpointsLocationBug344984", "BreakpointsLocationBug344984", true);
+		testLocation(13, 13, "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", "org.eclipse.debug.tests.targets.BreakpointsLocationBug344984", true);
 	}
 	
 	/**
