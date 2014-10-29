@@ -188,7 +188,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * Return the line number of the computed valid location
 	 */
 	public int getLineLocation() {
-		if (fLocationType == LOCATION_NOT_FOUND) {
+		if (fLocationType == LOCATION_NOT_FOUND || fLocationType == LOCATION_METHOD) {
 			return -1;
 		}
 		return fLineLocation;
