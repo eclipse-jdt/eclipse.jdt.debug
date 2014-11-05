@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Aditya Aswani (Samsung) - Incorrect syntax highlighting in scrapbook
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.display;
 
@@ -16,6 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.contentassist.CurrentFrameContext;
 import org.eclipse.jdt.internal.debug.ui.contentassist.JavaDebugContentAssistProcessor;
 import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -36,7 +38,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 				new ChainedPreferenceStore(new IPreferenceStore[] {
 						PreferenceConstants.getPreferenceStore(),
 						EditorsUI.getPreferenceStore()}),
-				null, null);
+				null, IJavaPartitions.JAVA_PARTITIONING);
 	}
 	
 	/**

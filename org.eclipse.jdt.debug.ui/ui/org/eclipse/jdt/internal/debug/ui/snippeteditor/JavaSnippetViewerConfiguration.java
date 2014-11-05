@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Aditya Aswani (Samsung) - Incorrect syntax highlighting in scrapbook
  *******************************************************************************/
 
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,7 +32,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguration {
 	
 	public JavaSnippetViewerConfiguration(JavaTextTools tools, IPreferenceStore preferenceStore, JavaSnippetEditor editor) {
-		super(tools.getColorManager(), preferenceStore, editor, null);
+		super(tools.getColorManager(), preferenceStore, editor, IJavaPartitions.JAVA_PARTITIONING);
 	}
 	
 	/**
