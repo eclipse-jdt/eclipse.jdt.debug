@@ -3565,6 +3565,7 @@ M4 = Platform-specific fourth key
           class="org.eclipse.jdt.internal.debug.ui.BreakpointMarkerUpdater"
           id="org.eclipse.jdt.debug.ui.bpMarkerUpdater"
           markerType="org.eclipse.jdt.debug.javaBreakpointMarker">
+          <required-updater id="org.eclipse.ui.texteditor.BasicMarkerUpdater"/>
     </updater>
  </extension>
  <extension
