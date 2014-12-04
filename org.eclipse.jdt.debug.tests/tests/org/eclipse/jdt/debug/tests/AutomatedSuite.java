@@ -46,6 +46,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
 import org.eclipse.jdt.debug.tests.console.ConsoleTerminateAllActionTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.console.JavaStackTraceConsoleTest;
+import org.eclipse.jdt.debug.tests.core.AlternateStratumTests;
 import org.eclipse.jdt.debug.tests.core.ArgumentTests;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
@@ -198,6 +199,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(ConditionalBreakpointsWithGenerics.class));
 			addTest(new TestSuite(GenericsEvalTests.class));
 			addTest(new TestSuite(DetailFormatterTests.class));
+			addTest(new TestSuite(AlternateStratumTests.class));
 		}
 		
 	//Sourcelookup tests

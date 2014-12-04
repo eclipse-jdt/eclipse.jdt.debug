@@ -15,7 +15,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
@@ -33,7 +31,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -46,6 +43,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
@@ -299,21 +297,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (launch == null) {
 			return null;
 		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
+		try {
+			return JavaDebugUtils.resolveJavaElement(stackFrame, launch);
+		}
+		catch (CoreException e) {
 			return null;
 		}
-		
-		Object sourceElement = locator.getSourceElement(stackFrame);
-		if (sourceElement instanceof IJavaElement) {
-			return (IJavaElement) sourceElement;
-		} else if (sourceElement instanceof IResource) {
-			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
-			if (project.exists()) {
-				return project;
-			}
-		}			
-		return null;
 	}
 	
 	/**
@@ -413,11 +402,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (launch == null) {
 			return false;
 		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
+		Object sourceElement;
+		try {
+			sourceElement = JavaDebugUtils.resolveSourceElement(stackFrame, launch);
+		}
+		catch (CoreException e) {
 			return false;
 		}
-		Object sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement == null) {
 			return false;
 		}

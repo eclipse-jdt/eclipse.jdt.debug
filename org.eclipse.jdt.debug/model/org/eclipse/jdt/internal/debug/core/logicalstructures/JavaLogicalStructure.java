@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,13 +21,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -45,6 +39,7 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.ibm.icu.text.MessageFormat;
@@ -288,34 +283,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			if (stackFrame == null) {
 				return value;
 			}
-
-			// find the project the snippets will be compiled in.
-			ISourceLocator locator = javaValue.getLaunch().getSourceLocator();
-			Object sourceElement = locator.getSourceElement(stackFrame);
-			if (sourceElement == null && locator instanceof ISourceLookupDirector) {
-				String[] sourcePaths = type.getSourcePaths(null);
-				if (sourcePaths != null && sourcePaths.length > 0) {
-					sourceElement = ((ISourceLookupDirector) locator)
-							.getSourceElement(sourcePaths[0]);
-				}
-			}
-			if (sourceElement != null) {
-				if (!(sourceElement instanceof IJavaElement)
-						&& sourceElement instanceof IAdaptable) {
-					sourceElement = ((IAdaptable) sourceElement)
-							.getAdapter(IJavaElement.class);
-				}
-			}
-			IJavaProject project = null;
-			if (sourceElement instanceof IJavaElement) {
-				project = ((IJavaElement) sourceElement).getJavaProject();
-			} else if (sourceElement instanceof IResource) {
-				IJavaProject resourceProject = JavaCore
-						.create(((IResource) sourceElement).getProject());
-				if (resourceProject.exists()) {
-					project = resourceProject;
-				}
-			}
+			IJavaProject project = JavaDebugUtils.resolveJavaProject(stackFrame);
 			if (project == null) {
 				return value;
 			}

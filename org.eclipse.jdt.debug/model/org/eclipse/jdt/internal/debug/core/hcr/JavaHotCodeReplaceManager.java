@@ -48,7 +48,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -1037,27 +1036,19 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		if (launch == null) {
 			return null;
 		}
-		ISourceLocator locator = launch.getSourceLocator();
-		if (locator == null) {
+		try {
+			IJavaElement sourceElement = JavaDebugUtils.resolveJavaElement(frame, launch);
+			if (sourceElement instanceof IType) {
+				return ((IType) sourceElement).getCompilationUnit();
+			}
+			if (sourceElement instanceof ICompilationUnit) {
+				return (ICompilationUnit) sourceElement;
+			}
 			return null;
 		}
-		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
-		String def = target.getDefaultStratum();
-		target.setDefaultStratum("Java"); //$NON-NLS-1$
-		Object sourceElement = locator.getSourceElement(frame);
-		target.setDefaultStratum(def);
-		if (!(sourceElement instanceof IJavaElement)
-				&& sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable) sourceElement)
-					.getAdapter(IJavaElement.class);
+		catch (CoreException e) {
+			return null;
 		}
-		if (sourceElement instanceof IType) {
-			return ((IType) sourceElement).getCompilationUnit();
-		}
-		if (sourceElement instanceof ICompilationUnit) {
-			return (ICompilationUnit) sourceElement;
-		}
-		return null;
 	}
 
 	/**
@@ -1175,8 +1166,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			if (resource != null) {
 				switch (resource.getType()) {
 				case IResource.FILE:
-					if (0 == (delta.getFlags() & IResourceDelta.CONTENT))
+					if (0 == (delta.getFlags() & IResourceDelta.CONTENT)) {
 						return false;
+					}
 					if (CLASS_FILE_EXTENSION.equals(resource.getFullPath()
 							.getFileExtension())) {
 						IPath localLocation = resource.getLocation();

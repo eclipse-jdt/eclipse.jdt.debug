@@ -17,14 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -34,6 +31,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -234,22 +232,6 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 	 * (copied from JavaWatchExpressionDelegate)
 	 */
 	private IJavaProject getProject(IJavaStackFrame javaStackFrame) {
-		ILaunch launch = javaStackFrame.getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null) {
-			return null;
-		}
-
-		Object sourceElement = locator.getSourceElement(javaStackFrame);
-		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
-		}
-		if (sourceElement instanceof IJavaElement) {
-			return ((IJavaElement) sourceElement).getJavaProject();
-		}
-		return null;
+		return JavaDebugUtils.resolveJavaProject(javaStackFrame);
 	}
 }
