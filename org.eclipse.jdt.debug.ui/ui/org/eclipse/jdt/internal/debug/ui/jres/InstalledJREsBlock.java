@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,25 +19,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.launching.MacInstalledJREs;
-import org.eclipse.jdt.launching.AbstractVMInstall;
-import org.eclipse.jdt.launching.AbstractVMInstallType;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallChangedListener;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.PropertyChangeEvent;
-import org.eclipse.jdt.launching.VMStandin;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -64,28 +76,23 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.debug.internal.ui.SWTFactory;
+
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs;
+
+import org.eclipse.jdt.launching.AbstractVMInstall;
+import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
+import org.eclipse.jdt.launching.VMStandin;
+
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -209,6 +216,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	public static final String MACOSX_VM_TYPE_ID = "org.eclipse.jdt.internal.launching.macosx.MacOSXType"; //$NON-NLS-1$
 	
+	private String fVMListTimeStamp;
+
 	/** 
 	 * Content provider to show a list of JREs
 	 */ 
@@ -1142,6 +1151,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	}
 	
 	/**
+	 * Initializes time stamp with current JRE page details 
+	 */
+	void initializeTimeStamp() {
+		fVMListTimeStamp = getEncodedVMInstalls();
+	}
+
+	/**
 	 * Disposes the block and any listeners
 	 * 
 	 * @since 3.6.300
@@ -1149,5 +1165,51 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	public void dispose() {
 		JavaRuntime.removeVMInstallChangedListener(fListener);
 	}
-		
+
+
+	private StringBuffer appendVMAttributes(IVMInstall vmInstall, StringBuffer buf) {
+		if (vmInstall != null) {
+			String str = vmInstall.getName();
+			buf.append('[').append(str.length()).append(']').append(str);
+			str = vmInstall.getVMInstallType().getName();
+			buf.append('[').append(str.length()).append(']').append(str);
+			if (vmInstall.getVMArguments() != null) {
+				str = vmInstall.getVMArguments().toString();
+				buf.append('[').append(str.length()).append(']').append(str);
+			}
+			str = vmInstall.getInstallLocation().getAbsolutePath();
+			buf.append('[').append(str.length()).append(']').append(str).append(';');
+			;
+		} else {
+			buf.append('[').append(']').append(';');
+		}
+		return buf;
+	}
+
+	private String getEncodedVMInstalls() {
+		StringBuffer buf = new StringBuffer();
+		IVMInstall vmInstall = getCheckedJRE();
+
+		int nElements = fVMs.size();
+		buf.append('[').append(nElements).append(']');
+		for (int i = 0; i < nElements; i++) {
+			IVMInstall elem = fVMs.get(i);
+			if (elem == vmInstall)
+			 {
+				buf.append('[').append("defaultVM").append(']'); //$NON-NLS-1$
+			}
+			appendVMAttributes(elem, buf);
+		}
+		return buf.toString();
+	}
+
+	/**
+	 * Checks if JRE block has changed.
+	 * 
+	 * @return <code>true</code> if JRE block has changed, <code>false</code> otherwise
+	 */
+	public boolean hasChangesInDialog() {
+		String currSettings = getEncodedVMInstalls();
+		return !currSettings.equals(fVMListTimeStamp);
+	}
 }
