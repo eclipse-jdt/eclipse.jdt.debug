@@ -1179,7 +1179,6 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 			str = vmInstall.getInstallLocation().getAbsolutePath();
 			buf.append('[').append(str.length()).append(']').append(str).append(';');
-			;
 		} else {
 			buf.append('[').append(']').append(';');
 		}
