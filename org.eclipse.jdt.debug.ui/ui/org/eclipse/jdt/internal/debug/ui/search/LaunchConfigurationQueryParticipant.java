@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Ecliptical Software Inc. and others.
+ * Copyright (c) 2007, 2015 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,35 +16,46 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.variables.VariablesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.variables.VariablesPlugin;
+
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.jface.viewers.ILabelProvider;
+
+import org.eclipse.ui.PartInitException;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
+
+import org.eclipse.search.ui.text.Match;
+
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
+
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.IMatchPresentation;
 import org.eclipse.jdt.ui.search.IQueryParticipant;
 import org.eclipse.jdt.ui.search.ISearchRequestor;
 import org.eclipse.jdt.ui.search.PatternQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.search.ui.text.Match;
-import org.eclipse.ui.PartInitException;
 
 /**
  * This class provides a search participant to find class references in the 
@@ -143,7 +154,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	 * search chars to Java RegEx chars
 	 */
 	private String quotePattern(String pattern) {
-		StringTokenizer t = new StringTokenizer(pattern, ".?*$", true); //$NON-NLS-1$
+		StringTokenizer t = new StringTokenizer(pattern, ".?*$()", true); //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		String token = null;
 		while (t.hasMoreTokens()) {
@@ -159,6 +170,14 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 					break;
 				}
 				case '$': {
+					buf.append('\\');
+					break;
+				}
+				case '(': {
+					buf.append('\\');
+					break;
+				}
+				case ')': {
 					buf.append('\\');
 					break;
 				}
