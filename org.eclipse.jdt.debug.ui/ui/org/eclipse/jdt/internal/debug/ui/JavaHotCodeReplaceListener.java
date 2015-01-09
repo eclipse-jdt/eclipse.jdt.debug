@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,29 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.viewers.ILabelProvider;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
+import org.eclipse.debug.ui.DebugUITools;
+
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
+
 public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
+
+	private HotCodeReplaceErrorDialog fHotCodeReplaceFailedErrorDialog = null;
 
 	private ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
 
@@ -86,10 +94,22 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				if (display.isDisposed()) {
 					return;
 				}
+				if (fHotCodeReplaceFailedErrorDialog != null) {
+					Shell shell = fHotCodeReplaceFailedErrorDialog.getShell();
+					if (shell != null && !shell.isDisposed()) {
+						return;
+					}
+				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				HotCodeReplaceErrorDialog dialog= new HotCodeReplaceErrorDialog(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target);
-				dialog.setBlockOnOpen(false);
-				dialog.open();
+				fHotCodeReplaceFailedErrorDialog = new HotCodeReplaceErrorDialog(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target) {
+					@Override
+					public boolean close() {
+						fHotCodeReplaceFailedErrorDialog = null;
+						return super.close();
+					}
+				};
+				fHotCodeReplaceFailedErrorDialog.setBlockOnOpen(false);
+				fHotCodeReplaceFailedErrorDialog.open();
 			}
 		});
 	}
