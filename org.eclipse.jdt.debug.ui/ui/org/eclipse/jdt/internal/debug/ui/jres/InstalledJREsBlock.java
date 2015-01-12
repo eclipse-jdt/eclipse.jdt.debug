@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1173,9 +1173,12 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			buf.append('[').append(str.length()).append(']').append(str);
 			str = vmInstall.getVMInstallType().getName();
 			buf.append('[').append(str.length()).append(']').append(str);
-			if (vmInstall.getVMArguments() != null) {
-				str = vmInstall.getVMArguments().toString();
-				buf.append('[').append(str.length()).append(']').append(str);
+			if (vmInstall.getVMArguments() != null && vmInstall.getVMArguments().length > 0) {
+				buf.append('[').append(vmInstall.getVMArguments().length).append(']');
+				for (int i = 0; i < vmInstall.getVMArguments().length; i++) {
+					str = vmInstall.getVMArguments()[i];
+					buf.append('[').append(str.length()).append(']').append(str);
+				}
 			}
 			str = vmInstall.getInstallLocation().getAbsolutePath();
 			buf.append('[').append(str.length()).append(']').append(str).append(';');
