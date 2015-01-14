@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -349,7 +349,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			JDIDebugTarget target) {
 		List<Location> locations = null;
 		try {
-			locations = type.locationsOfLine(lineNumber);
+			locations = type.locationsOfLine(JavaDebugUtils.JAVA_STRATUM, null, lineNumber);
 		} catch (AbsentInformationException aie) {
 			if (((type.modifiers() & (AccessibleImpl.MODIFIER_ACC_SYNTHETIC | AccessibleImpl.MODIFIER_SYNTHETIC)) != 0)||(type instanceof InterfaceType)) {
 				return null;
