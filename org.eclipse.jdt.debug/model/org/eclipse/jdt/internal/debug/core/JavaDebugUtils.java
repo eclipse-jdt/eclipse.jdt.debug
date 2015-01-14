@@ -52,7 +52,7 @@ import com.sun.jdi.VMDisconnectedException;
 public class JavaDebugUtils {
 
 	// The value must match org.eclipse.jdi.internal.VirtualMachineImpl#JAVA_STRATUM_NAME}
-	public static String JAVA_STRATUM = "Java"; //$NON-NLS-1$
+	public static final String JAVA_STRATUM = "Java"; //$NON-NLS-1$
 
 	/**
 	 * Resolves and returns a type from the Java model that corresponds to the
