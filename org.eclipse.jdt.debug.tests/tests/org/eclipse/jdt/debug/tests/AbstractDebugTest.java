@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
@@ -2376,12 +2377,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
                 IVariable variable2 = variables[i];
                 System.out.println("\t" + presentation.getText(variable2)); //$NON-NLS-1$
             }
-            if (!frame.isStatic()) {
-                variables = frame.getThis().getVariables();
-                for (int i = 0; i < variables.length; i++) {
-                    IVariable variable2 = variables[i];
-                    System.out.println("\t" + presentation.getText(variable2)); //$NON-NLS-1$
-                }
+			if (!frame.isStatic() && !frame.isNative()) {
+				IJavaObject ths = frame.getThis();
+				if (ths != null) {
+					variables = ths.getVariables();
+					for (int i = 0; i < variables.length; i++) {
+						IVariable variable2 = variables[i];
+						System.out.println("\t" + presentation.getText(variable2)); //$NON-NLS-1$
+					}
+				}
             }
         }
         return variable;

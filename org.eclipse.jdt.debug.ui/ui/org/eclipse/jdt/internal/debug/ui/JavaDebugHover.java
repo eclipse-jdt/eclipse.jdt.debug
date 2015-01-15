@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -333,10 +334,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								}
             		    	}
             		    } else {
-            		    	if (!frame.isStatic()) {
+							if (!frame.isStatic() && !frame.isNative()) {
             		    		// ensure that we only resolve a field access on 'this':
-            		    		if (!(codeAssist instanceof ITypeRoot))
-            		    			return null;
+            		    		if (!(codeAssist instanceof ITypeRoot)) {
+									return null;
+								}
             		    		ITypeRoot typeRoot = (ITypeRoot) codeAssist;
             		    		ASTNode root= SharedASTProvider.getAST(typeRoot, SharedASTProvider.WAIT_NO, null);
             		    		if (root == null) {
@@ -346,8 +348,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 									root = parser.createAST(null);
             		    		}
             		    		ASTNode node = NodeFinder.perform(root, hoverRegion.getOffset(), hoverRegion.getLength());
-            		    		if (node == null)
-            		    			return null;
+            		    		if (node == null) {
+									return null;
+								}
 								StructuralPropertyDescriptor locationInParent = node.getLocationInParent();
 								if (locationInParent == FieldAccess.NAME_PROPERTY) {
 									FieldAccess fieldAccess = (FieldAccess) node.getParent();
@@ -360,7 +363,10 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    		
             		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
             		    		typeSignature = typeSignature.replace('.', '/');
-            		    		variable = frame.getThis().getField(field.getElementName(), typeSignature);
+								IJavaObject ths = frame.getThis();
+								if (ths != null) {
+									variable = ths.getField(field.getElementName(), typeSignature);
+								}
             		    	}
             		    }
             		    if (variable != null) {
