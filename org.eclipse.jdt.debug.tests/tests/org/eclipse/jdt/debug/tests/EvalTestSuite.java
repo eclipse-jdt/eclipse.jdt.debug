@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ import org.eclipse.jdt.debug.tests.eval.StaticFieldValueTests;
 import org.eclipse.jdt.debug.tests.eval.StaticFieldValueTests2;
 import org.eclipse.jdt.debug.tests.eval.StringPlusAssignmentOpTests;
 import org.eclipse.jdt.debug.tests.eval.StringPlusOpTests;
+import org.eclipse.jdt.debug.tests.eval.TestsAnonymousClassVariable;
 import org.eclipse.jdt.debug.tests.eval.TestsArrays;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
@@ -228,6 +229,7 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(VariableDeclarationTests.class));
 		addTest(new TestSuite(LoopTests.class));
 		addTest(new TestSuite(LabelTests.class));
+		addTest(new TestSuite(TestsAnonymousClassVariable.class));
 		
 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
@@ -388,6 +389,18 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             							&& frame.getArgumentTypeNames().size() == method.getNumberOfParameters()) {
             						equal = true;
             					}
+            					else { // Finding variables in anonymous class
+									int index = frame.getDeclaringTypeName().indexOf('$');
+									if (index > 0) {
+										String name = frame.getDeclaringTypeName().substring(index + 1);
+										try {
+											Integer.getInteger(name);
+											return findLocalVariable(frame, ASTEvaluationEngine.ANONYMOUS_VAR_PREFIX + var.getElementName());
+										}
+										catch (NumberFormatException ex) {
+										}
+									}
+								}
             				}
             				// find variable if equal or method is a Lambda Method
             				if (equal || method.isLambdaMethod()) {

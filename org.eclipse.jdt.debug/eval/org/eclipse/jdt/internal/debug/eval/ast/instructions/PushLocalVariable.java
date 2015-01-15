@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris West (Faux) - Bug 45507
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
@@ -14,8 +15,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.osgi.util.NLS;
 
@@ -48,7 +52,15 @@ public class PushLocalVariable extends SimpleInstruction {
 				return;
 			}
 		}
-
+		// For anonymous classes, getting variables from outer class
+		final IJavaObject innerThis = context.getThis();
+		if (null != innerThis) {
+			IJavaFieldVariable f = innerThis.getField(ASTEvaluationEngine.ANONYMOUS_VAR_PREFIX + getName(), false);
+			if (null != f) {
+				push(f);
+				return;
+			}
+		}
 		throw new CoreException(
 				new Status(
 						IStatus.ERROR,

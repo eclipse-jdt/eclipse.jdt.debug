@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - Bugs 341232, 427089
+ *     Chris West (Faux) - Bug 45507
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -29,6 +30,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -62,7 +64,7 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
-
+	public static final String ANONYMOUS_VAR_PREFIX = "val$"; //$NON-NLS-1$
 	private IJavaProject fProject;
 
 	private IJavaDebugTarget fDebugTarget;
@@ -274,30 +276,54 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		CompilationUnit unit = null;
 		try {
 			IJavaVariable[] localsVar = context.getLocals();
+			IJavaObject thisClass = context.getThis();
+			IVariable[] innerClassFields; // For anonymous classes, getting variables from outer class
+			if (null != thisClass) {
+				innerClassFields = thisClass.getVariables();
+			} else {
+				innerClassFields = new IVariable[0];
+			}
 			int numLocalsVar = localsVar.length;
 			Set<String> names = new HashSet<String>();
 			// ******
 			// to hide problems with local variable declare as instance of Local
 			// Types
 			// and to remove locals with duplicate names
-			IJavaVariable[] locals = new IJavaVariable[numLocalsVar];
+			// IJavaVariable[] locals = new IJavaVariable[numLocalsVar];
+			IJavaVariable[] locals = new IJavaVariable[numLocalsVar + innerClassFields.length];
+			String[] localVariablesWithNull = new String[numLocalsVar + innerClassFields.length];
 			int numLocals = 0;
 			for (int i = 0; i < numLocalsVar; i++) {
 				if (!isLocalType(localsVar[i].getSignature())
 						&& !names.contains(localsVar[i].getName())) {
-					locals[numLocals++] = localsVar[i];
+					locals[numLocals] = localsVar[i];
 					names.add(localsVar[i].getName());
+					localVariablesWithNull[numLocals++] = localsVar[i].getName();
+				}
+			}
+			// Adding outer class variables to inner class scope
+			for (int i = 0; i < innerClassFields.length; i++) {
+				IVariable var = innerClassFields[i];
+				if (var instanceof IJavaVariable && var.getName().startsWith(ANONYMOUS_VAR_PREFIX)) {
+					String name = var.getName().substring(ANONYMOUS_VAR_PREFIX.length());
+					if (!names.contains(name)) {
+						locals[numLocals] = (IJavaVariable) var;
+						names.add(name);
+						localVariablesWithNull[numLocals++] = name;
+					}
 				}
 			}
 			// to solve and remove
 			// ******
 			String[] localTypesNames = new String[numLocals];
-			String[] localVariables = new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
-				localVariables[i] = locals[i].getName();
 				localTypesNames[i] = Signature.toString(
 						locals[i].getGenericSignature()).replace('/', '.');
 			}
+			// Copying local variables removing the nulls in the last
+			// String[] localVariables = Arrays.clonesub(localVariablesWithNull, names.size());
+			String[] localVariables = new String[names.size()];
+			System.arraycopy(localVariablesWithNull, 0, localVariables, 0, localVariables.length);
 			mapper = new EvaluationSourceGenerator(localTypesNames,
 					localVariables, snippet);
 			// Compile in context of declaring type to get proper visibility of
