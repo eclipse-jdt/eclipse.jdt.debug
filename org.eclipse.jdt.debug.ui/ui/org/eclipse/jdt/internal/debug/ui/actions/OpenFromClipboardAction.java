@@ -193,7 +193,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			return;
 		}
 
-		String trimmedText = inputText.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String trimmedText = inputText.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Object> matches = new ArrayList<Object>();
 		int line = 0;
 		try {
@@ -315,8 +315,8 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			return line;
 		}
 		case STACK_TRACE_LINE: {
-			int index1 = s.indexOf('(');
-			int index2 = s.indexOf(')');
+			int index1 = s.lastIndexOf('(');
+			int index2 = s.lastIndexOf(')');
 			String typeLine = s.substring(index1 + 1, index2).trim();
 			int index = typeLine.indexOf(':');
 			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
