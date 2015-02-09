@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Holger Schill - Bug 455199 - [debug] Debugging doesn't work properly when inner classes are used
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
@@ -119,7 +120,9 @@ public class BinaryBasedSourceGenerator {
 			source.append(' ');
 			source.append(fLocalVariableNames[i]);
 			if (i + 1 < length)
+			 {
 				source.append(", "); //$NON-NLS-1$
+			}
 		}
 		source.append(") throws Throwable {"); //$NON-NLS-1$
 		source.append('\n');
@@ -297,15 +300,15 @@ public class BinaryBasedSourceGenerator {
 			} else if (referenceType instanceof InterfaceType) {
 				if (buffer != null) {
 					source.append("abstract class "); //$NON-NLS-1$
-					source.append(getSimpleName(typeName)).append(
-							"___ implements "); //$NON-NLS-1$
+					source.append(getSimpleName(typeName)).append("___ implements "); //$NON-NLS-1$
 					source.append(typeName.replace('$', '.')).append(" {\n"); //$NON-NLS-1$
 					fCodeSnippetPosition += source.length();
 					source.append(buffer).append("}\n"); //$NON-NLS-1$
+					return source;
 				}
-
-				return source;
-			}
+				source.append("interface "); //$NON-NLS-1$
+				source.append(getSimpleName(typeName));
+				}
 		}
 
 		source.append(" {\n"); //$NON-NLS-1$
