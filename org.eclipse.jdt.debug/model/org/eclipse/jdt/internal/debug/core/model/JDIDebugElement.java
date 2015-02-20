@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.DebugElement;
@@ -21,9 +22,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.debug.core.model.ITerminate;
+
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -66,22 +69,23 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IDebugElement.class) {
-			return this;
+			return (T) this;
 		}
 		if (adapter == IStepFilters.class) {
-			return getDebugTarget();
+			return (T) getDebugTarget();
 		}
 		if (adapter == IDebugTarget.class) {
-			return getDebugTarget();
+			return (T) getDebugTarget();
 		}
 		if (adapter == ITerminate.class) {
-			return getDebugTarget();
+			return (T) getDebugTarget();
 		}
 		if (adapter == IJavaDebugTarget.class) {
-			return getJavaDebugTarget();
+			return (T) getJavaDebugTarget();
 		}
 		return super.getAdapter(adapter);
 	}
