@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -787,7 +787,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
         // it so the variables view will update for any structure changes.
         IAdaptable selected = DebugUITools.getDebugContext();
         if (selected != null) {
-            IJavaStackFrame frame= (IJavaStackFrame) selected.getAdapter(IJavaStackFrame.class);
+			IJavaStackFrame frame = selected.getAdapter(IJavaStackFrame.class);
             if (frame != null) {
                 DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { 
                         new DebugEvent(frame, DebugEvent.CHANGE)

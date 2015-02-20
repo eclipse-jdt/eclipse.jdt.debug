@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,8 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
         if (adapterType.equals(IBreakpointTypeCategory.class)) {
             if (adaptableObject instanceof IJavaStratumLineBreakpoint) {
                 IJavaStratumLineBreakpoint stratumBreakpoint = (IJavaStratumLineBreakpoint) adaptableObject;
@@ -73,7 +74,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
                             }
                             fStratumTypes.put(stratum, type);
                         }
-                        return type;
+						return (T) type;
                     }
                 } catch (CoreException e) {
                 }                
@@ -98,7 +99,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
 	            		fOtherTypes.put(type, category);
 	            	}
             	}
-            	return category;
+				return (T) category;
             }
         }
         return null;
@@ -107,7 +108,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
-    public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
         return new Class[]{IBreakpointTypeCategory.class};
     }
 	

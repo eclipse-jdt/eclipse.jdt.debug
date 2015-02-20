@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			fListener.watchEvaluationFinished(null);	
 		} else {
 			// consult the adapter in case of a wrappered debug model
-			final IJavaStackFrame javaStackFrame =(IJavaStackFrame) ((IAdaptable)frame).getAdapter(IJavaStackFrame.class);
+			final IJavaStackFrame javaStackFrame = ((IAdaptable) frame).getAdapter(IJavaStackFrame.class);
 			if (javaStackFrame != null) {
 				doEvaluation(javaStackFrame);
 			} else {

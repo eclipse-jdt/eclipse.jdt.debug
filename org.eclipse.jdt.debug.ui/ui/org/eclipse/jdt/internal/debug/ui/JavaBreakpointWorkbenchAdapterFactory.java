@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,12 +25,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Adapter factory for java breakpoints.
  */
+@SuppressWarnings("unchecked")
 public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof IJavaBreakpoint)) {
 			return null;
 		}
-		return new IWorkbenchAdapter() {
+		return (T) new IWorkbenchAdapter() {
 			private JavaElementLabelProvider fJavaLabelProvider;
 
 			public Object[] getChildren(Object o) {
@@ -118,7 +119,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 		};
 	}
 
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class };
 	}
 }

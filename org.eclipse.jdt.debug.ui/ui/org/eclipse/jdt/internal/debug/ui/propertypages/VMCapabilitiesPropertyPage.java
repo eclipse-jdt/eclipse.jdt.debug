@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,14 +176,14 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 		Object obj = getElement();
 		IDebugTarget target = null;
 		if(obj instanceof IDebugElement) {
-			target = (IDebugTarget) ((IDebugElement)obj).getAdapter(IDebugTarget.class);
+			target = ((IDebugElement) obj).getAdapter(IDebugTarget.class);
 		}
 		else if(obj instanceof IProcess) {
-			target = (IDebugTarget) ((IProcess)obj).getAdapter(IDebugTarget.class);
+			target = ((IProcess) obj).getAdapter(IDebugTarget.class);
 		}
 		if(target != null) {
 			if(!target.isTerminated() && !target.isDisconnected()) {
-				IJavaDebugTarget dtarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
+				IJavaDebugTarget dtarget = target.getAdapter(IJavaDebugTarget.class);
 				if(dtarget instanceof JDIDebugTarget) {
 					return (VirtualMachineImpl) ((JDIDebugTarget)target).getVM();
 				}

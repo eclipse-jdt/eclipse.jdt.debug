@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,7 +100,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
      */
     private void fillMenu(Menu m) {
         IStackFrame frame = (IStackFrame) fSelection.getFirstElement();
-        final IJavaStackFrame javaStackFrame = (IJavaStackFrame) frame.getAdapter(IJavaStackFrame.class);
+		final IJavaStackFrame javaStackFrame = frame.getAdapter(IJavaStackFrame.class);
         if (javaStackFrame != null) {
 	        try {
 	            IJavaReferenceType declaringType = javaStackFrame.getReferenceType();
@@ -136,7 +136,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
                 }
                 DebugEvent event = new DebugEvent(frame, DebugEvent.CHANGE, DebugEvent.CONTENT);
                 DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{event});
-                ISourceDisplay display = (ISourceDisplay) frame.getAdapter(ISourceDisplay.class);
+                ISourceDisplay display = frame.getAdapter(ISourceDisplay.class);
                 if (display != null) {
                 	display.displaySource(frame, fPart.getSite().getPage(), true);
                 }

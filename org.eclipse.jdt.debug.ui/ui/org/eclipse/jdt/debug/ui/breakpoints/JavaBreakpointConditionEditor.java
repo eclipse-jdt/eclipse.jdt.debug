@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,8 +217,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				setBreakpoint(null);
 			}
 			if (hasConditionHistory()) {
-				if (!sameBreakpoint)
+				if (!sameBreakpoint) {
 					fReplaceConditionInHistory= false;
+				}
 				initializeConditionHistoryDropDown();
 			}
 		} finally {
@@ -360,8 +361,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int historyIndex= fConditionHistory.getSelectionIndex() - 1;
-					if (historyIndex >= 0 && historyIndex != fSeparatorIndex)
+					if (historyIndex >= 0 && historyIndex != fSeparatorIndex) {
 						fViewer.getDocument().set(getConditionHistory()[historyIndex]);
+					}
 				}
 			});
 			GridData data= new GridData(GridData.FILL_HORIZONTAL);
@@ -404,7 +406,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 				return null;
 			}
 		};
-		fHandlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		fHandlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		fViewer.getControl().addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -459,8 +461,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			fBreakpoint.setConditionEnabled(fConditional.getSelection());
 			fBreakpoint.setConditionSuspendOnTrue(fWhenTrue.getSelection());
 			setDirty(false);
-			if (hasConditionHistory())
+			if (hasConditionHistory()) {
 				updateConditionHistories();
+			}
 		}
 	}
 	
@@ -511,8 +514,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		if (fBreakpointsViewSite == null) {
 			fUndoActivation= fHandlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, fUndoHandler);
 			fRedoActivation= fHandlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, fRedoHandler);
-		} else
+		} else {
 			registerViewerUndoRedoActions();
+		}
 	}
 
 	private void deactivateHandlers() {
@@ -568,8 +572,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			Color color = fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fViewer.getTextWidget().setBackground(color);			
 		}
-		if (hasConditionHistory())
+		if (hasConditionHistory()) {
 			fConditionHistory.setEnabled(enabled);
+		}
 	}
 
 	/**
@@ -651,8 +656,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	private void updateConditionHistories() {
 		String newItem= fViewer.getDocument().get();
-		if (newItem.length() == 0)
+		if (newItem.length() == 0) {
 			return;
+		}
 
 		// Update local history
 		Stack<String> localHistory= fLocalConditionHistory.get(fBreakpoint);
@@ -666,8 +672,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 		// Update global history
 		String[] globalItems= readConditionHistory(fConditionHistoryDialogSettings);
-		if (globalItems.length > 0 && newItem.equals(globalItems[0]))
+		if (globalItems.length > 0 && newItem.equals(globalItems[0])) {
 			return;
+		}
 
 		if (!fReplaceConditionInHistory) {
 			String[] tempItems= new String[globalItems.length + 1];
@@ -713,8 +720,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		int count= 0;
 		outer: for (int i= 0; i < length; i++) {
 			for (int j= 0; j < i; j++) {
-				if (conditions[i].equals(conditions[j]))
+				if (conditions[i].equals(conditions[j])) {
 					break outer;
+				}
 			}
 			dialogSettings.put(DS_KEY_HISTORY_ENTRY_PREFIX + count, conditions[i]);
 			count= count + 1;
@@ -755,8 +763,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	}
 
 	private void registerViewerUndoRedoActions() {
-		if (!fViewer.getTextWidget().isFocusControl())
+		if (!fViewer.getTextWidget().isFocusControl()) {
 			return;
+		}
 
 		disposeViewerUndoRedoActions();
 		IUndoContext undoContext= getUndoContext();
@@ -782,14 +791,16 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 */
 	private IUndoContext getUndoContext() {
 		IUndoManager undoManager= ((ITextViewerExtension6)fViewer).getUndoManager();
-		if (undoManager instanceof IUndoManagerExtension)
+		if (undoManager instanceof IUndoManagerExtension) {
 			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		}
 		return null;
 	}
 
 	private void checkIfUsedInBreakpointsView() {
-		if (fBreakpointsViewSite != null)
+		if (fBreakpointsViewSite != null) {
 			return;
+		}
 
 		IWorkbenchWindow activeWorkbenchWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null && activeWorkbenchWindow.getActivePage().getActivePart() != null) {

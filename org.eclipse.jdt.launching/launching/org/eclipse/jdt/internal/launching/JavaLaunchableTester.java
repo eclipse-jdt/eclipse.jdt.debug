@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -575,7 +575,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (PROPERTY_IS_CONTAINER.equals(property)) {
 			if (receiver instanceof IAdaptable) {
-				IResource resource = (IResource)((IAdaptable)receiver).getAdapter(IResource.class);
+				IResource resource = ((IAdaptable) receiver).getAdapter(IResource.class);
 				if (resource != null) {
 					return resource instanceof IContainer;
 				}
@@ -584,7 +584,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		IJavaElement element = null;
 		if (receiver instanceof IAdaptable) {
-			element = (IJavaElement) ((IAdaptable)receiver).getAdapter(IJavaElement.class);
+			element = ((IAdaptable) receiver).getAdapter(IJavaElement.class);
 			if(element != null) {
 				if(!element.exists()) {
 					return false;

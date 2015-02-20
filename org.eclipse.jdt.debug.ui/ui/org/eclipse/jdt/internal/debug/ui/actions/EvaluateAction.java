@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,7 +137,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				IDebugView a = (IDebugView)activePart.getAdapter(IDebugView.class);
+				IDebugView a = activePart.getAdapter(IDebugView.class);
 				if (a != null) {
 					if (a.getViewer() != null) {
 						ISelection s = a.getViewer().getSelection();
@@ -300,8 +300,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			return null;
 		}
 		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null)
+		if (locator == null) {
 			return null;
+		}
 		
 		Object sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement instanceof IJavaElement) {
@@ -455,7 +456,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				}
 				if (view != null) {
 					page.bringToTop(view);
-					return (IDataDisplay)view.getAdapter(IDataDisplay.class);
+					return view.getAdapter(IDataDisplay.class);
 				}			
 			}
 		}
@@ -466,7 +467,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected IDataDisplay getDirectDataDisplay() {
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
-			IDataDisplay display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
+			IDataDisplay display= part.getAdapter(IDataDisplay.class);
 			if (display != null) {
 				IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 				if (page != null) {
@@ -484,7 +485,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				IDataDisplay display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
+				IDataDisplay display= activePart.getAdapter(IDataDisplay.class);
 				if (display != null) {
 					return display;
 				}	
@@ -802,10 +803,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @return associated style text widget or <code>null</code>
 	 */
 	public static StyledText getStyledText(IWorkbenchPart part) {
-		ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
+		ITextViewer viewer = part.getAdapter(ITextViewer.class);
 		StyledText textWidget = null;
 		if (viewer == null) {
-			Control control = (Control) part.getAdapter(Control.class);
+			Control control = part.getAdapter(Control.class);
 			if (control instanceof StyledText) {
 				textWidget = (StyledText) control;
 			}

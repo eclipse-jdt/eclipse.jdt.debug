@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,8 +229,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		protected void block() {
 			if (fDisplay == Display.getCurrent()) {
 				while (fContinueEventDispatching) {
-					if (!fDisplay.readAndDispatch())
+					if (!fDisplay.readAndDispatch()) {
 						fDisplay.sleep();
+					}
 				}
 			}
 		}		
@@ -1187,7 +1188,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
      */
 	public IFile getFile() {
 		IEditorInput input= getEditorInput();
-		return (IFile) input.getAdapter(IFile.class);
+		return input.getAdapter(IFile.class);
 	}
 	
 	/* (non-Javadoc)
@@ -1272,8 +1273,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		IPath path= dialog.getResult();
 		
 		if (path == null) {
-			if (progressMonitor != null)
+			if (progressMonitor != null) {
 				progressMonitor.setCanceled(true);
+			}
 			return;
 		}
 			

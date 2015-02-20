@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,13 +89,14 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
-	public Object getAdapter(Object obj, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object obj, Class<T> adapterType) {
 		if (adapterType.isInstance(obj)) {
-			return obj;
+			return (T) obj;
 		}
 		if (adapterType == IWorkbenchAdapter.class) {
 			if (obj instanceof IJavaSourceLocation) {
-				return new SourceLocationPropertiesAdapter();
+				return (T) new SourceLocationPropertiesAdapter();
 			}
 		}
 		return null;
@@ -104,7 +105,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] {
 			IWorkbenchAdapter.class,
 		};

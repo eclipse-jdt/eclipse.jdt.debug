@@ -89,7 +89,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	protected IJavaStackFrame getFrame() {
 	    IAdaptable adaptable = DebugUITools.getDebugContext();
 		if (adaptable != null) {
-			return (IJavaStackFrame)adaptable.getAdapter(IJavaStackFrame.class);
+			return adaptable.getAdapter(IJavaStackFrame.class);
 		}
 		return null;
 	}

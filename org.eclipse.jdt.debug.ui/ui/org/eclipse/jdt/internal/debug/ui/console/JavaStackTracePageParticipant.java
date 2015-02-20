@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    public <T> T getAdapter(Class<T> adapter) {
         return null;
     }
 
@@ -69,7 +69,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 	public void activated() {
         // add EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         
         IHandler formatHandler = new AbstractHandler() {
             public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -80,7 +80,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         
         fHandlerActivation = handlerService.activateHandler("org.eclipse.jdt.ui.edit.text.java.format", formatHandler); //$NON-NLS-1$
 		
-        IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
+        IContextService contextService = workbench.getAdapter(IContextService.class);
         fContextActivation = contextService.activateContext("org.eclipse.jdt.ui.javaEditorScope"); //$NON-NLS-1$
 	}
 
@@ -91,12 +91,12 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         // remove EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (fHandlerActivation != null){
-			IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+			IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
 			handlerService.deactivateHandler(fHandlerActivation);
 			fHandlerActivation = null;
 		}
         if (fContextActivation != null){
-        	IContextService contextService = (IContextService) workbench.getAdapter(IContextService.class);
+        	IContextService contextService = workbench.getAdapter(IContextService.class);
         	contextService.deactivateContext(fContextActivation);
         	fContextActivation = null;
         }

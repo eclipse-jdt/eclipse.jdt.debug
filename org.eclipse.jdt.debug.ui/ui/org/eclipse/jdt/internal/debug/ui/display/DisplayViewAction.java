@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,9 @@ public class DisplayViewAction extends Action implements IUpdate {
 	 */
 	@Override
 	public void run() {
-		if (fOperationCode != -1 && fOperationTarget != null)
+		if (fOperationCode != -1 && fOperationTarget != null) {
 			fOperationTarget.doOperation(fOperationCode);
+		}
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class DisplayViewAction extends Action implements IUpdate {
 	 */
 	public void update() {
 		if (fOperationTarget == null && fTargetProvider != null && fOperationCode != -1){
-			fOperationTarget= (ITextOperationTarget) fTargetProvider.getAdapter(ITextOperationTarget.class);
+			fOperationTarget = fTargetProvider.getAdapter(ITextOperationTarget.class);
 		}
 	
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));

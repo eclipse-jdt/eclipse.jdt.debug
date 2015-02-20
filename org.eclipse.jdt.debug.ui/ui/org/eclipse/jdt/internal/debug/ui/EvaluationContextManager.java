@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,7 +260,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 					if (ss.size() == 1) {
 						Object element = ss.getFirstElement();
 						if (element instanceof IAdaptable) {
-							IJavaStackFrame frame = (IJavaStackFrame)((IAdaptable)element).getAdapter(IJavaStackFrame.class);
+							IJavaStackFrame frame = ((IAdaptable) element).getAdapter(IJavaStackFrame.class);
 							boolean instOf = element instanceof IJavaStackFrame || element instanceof IJavaThread;
 							if (frame != null) {
 								// do not consider scrapbook frames

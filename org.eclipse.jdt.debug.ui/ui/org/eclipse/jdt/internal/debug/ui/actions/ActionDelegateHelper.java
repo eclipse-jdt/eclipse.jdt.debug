@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		IEditorInput editorInput= editor.getEditorInput();
 		IMember m= null;
 		try {
-			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
+			IClassFile classFile = editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
 				IJavaElement e= classFile.getElementAt(currentSelection.getOffset());
 				if (e instanceof IMember) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1339,7 +1339,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	public void launchRemoved(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (IDebugTarget debugTarget : debugTargets) {
-			IJavaDebugTarget jt = (IJavaDebugTarget) debugTarget
+			IJavaDebugTarget jt = debugTarget
 					.getAdapter(IJavaDebugTarget.class);
 			if (jt != null) {
 				deregisterTarget((JDIDebugTarget) jt);
@@ -1356,7 +1356,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (IDebugTarget debugTarget : debugTargets) {
-			IJavaDebugTarget jt = (IJavaDebugTarget) debugTarget
+			IJavaDebugTarget jt = debugTarget
 					.getAdapter(IJavaDebugTarget.class);
 			if (jt != null) {
 				JDIDebugTarget target = (JDIDebugTarget) jt;
@@ -1398,7 +1398,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				Object source = event.getSource();
 				if (source instanceof IAdaptable
 						&& source instanceof IDebugTarget) {
-					IJavaDebugTarget jt = (IJavaDebugTarget) ((IAdaptable) source)
+					IJavaDebugTarget jt = ((IAdaptable) source)
 							.getAdapter(IJavaDebugTarget.class);
 					if (jt != null) {
 						deregisterTarget((JDIDebugTarget) jt);
@@ -1420,7 +1420,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		for (ILaunch launche : launches) {
 			IDebugTarget[] targets = launche.getDebugTargets();
 			for (IDebugTarget debugTarget : targets) {
-				IJavaDebugTarget jt = (IJavaDebugTarget) debugTarget
+				IJavaDebugTarget jt = debugTarget
 						.getAdapter(IJavaDebugTarget.class);
 				if (jt != null) {
 					if (((JDIDebugTarget) jt).isAvailable()) {

@@ -128,7 +128,7 @@ public class JavaDebugUtils {
 		}
 		IJavaStackFrame frame = null;
 		if (object instanceof IAdaptable) {
-			frame = (IJavaStackFrame) ((IAdaptable) object)
+			frame = ((IAdaptable) object)
 					.getAdapter(IJavaStackFrame.class);
 		}
 		String typeName = null;
@@ -250,20 +250,24 @@ public class JavaDebugUtils {
 							@Override
 							public boolean visit(AnonymousClassDeclaration node) {
 								ITypeBinding binding = node.resolveBinding();
-								if (binding == null)
+								if (binding == null) {
 									return false;
-								if (qualifiedName.equals(binding.getBinaryName()))
+								}
+								if (qualifiedName.equals(binding.getBinaryName())) {
 									throw new ResultException((IType) binding.getJavaElement());
+								}
 								return true;
 							}
 
 							@Override
 							public boolean visit(TypeDeclaration node) {
 								ITypeBinding binding = node.resolveBinding();
-								if (binding == null)
+								if (binding == null) {
 									return false;
-								if (qualifiedName.equals(binding.getBinaryName()))
+								}
+								if (qualifiedName.equals(binding.getBinaryName())) {
 									throw new ResultException((IType) binding.getJavaElement());
+								}
 								return true;
 							}
 						});
@@ -314,7 +318,7 @@ public class JavaDebugUtils {
 		if (sourceElement instanceof IJavaElement) {
 			javaElement = (IJavaElement) sourceElement;
 		} else if (sourceElement instanceof IAdaptable) {
-			javaElement = (IJavaElement) ((IAdaptable) sourceElement).getAdapter(IJavaElement.class);
+			javaElement = ((IAdaptable) sourceElement).getAdapter(IJavaElement.class);
 		}
 		if (javaElement == null && sourceElement instanceof IResource) {
 			javaElement = JavaCore.create((IResource) sourceElement);

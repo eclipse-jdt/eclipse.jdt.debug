@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 							if (ss.size() == 1) {
 								Object firstElement = ss.getFirstElement();
 								if (firstElement instanceof IAdaptable) {
-									IJavaStackFrame frame = (IJavaStackFrame) ((IAdaptable)firstElement).getAdapter(IJavaStackFrame.class);
+									IJavaStackFrame frame = ((IAdaptable) firstElement).getAdapter(IJavaStackFrame.class);
 									if (frame != null) {
 										IJavaThread thread = (IJavaThread)frame.getThread();
 										try {

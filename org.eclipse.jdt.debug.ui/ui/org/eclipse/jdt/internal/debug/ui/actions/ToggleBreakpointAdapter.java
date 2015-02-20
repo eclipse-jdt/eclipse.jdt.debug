@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     protected void report(final String message, final IWorkbenchPart part) {
         JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
-                IEditorStatusLine statusLine = (IEditorStatusLine) part.getAdapter(IEditorStatusLine.class);
+                IEditorStatusLine statusLine = part.getAdapter(IEditorStatusLine.class);
                 if (statusLine != null) {
                     if (message != null) {
                         statusLine.setMessage(true, message, null);
@@ -246,10 +246,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     if (selection instanceof IStructuredSelection) {
                     	IMethod[] members = getMethods((IStructuredSelection) selection, isInterface);
                         if (members.length == 0) {
-                        	if(isInterface)
-                        		report(ActionMessages.ToggleBreakpointAdapter_6, part); 
-                        	else
-                        		report(ActionMessages.ToggleBreakpointAdapter_9, part); 
+                        	if(isInterface) {
+								report(ActionMessages.ToggleBreakpointAdapter_6, part);
+							} else {
+								report(ActionMessages.ToggleBreakpointAdapter_9, part);
+							} 
                             return Status.OK_STATUS;
                         }
                         IJavaBreakpoint breakpoint = null;
@@ -648,7 +649,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	if (part instanceof ITextEditor) {
     		return (ITextEditor) part;
     	}
-    	return (ITextEditor) part.getAdapter(ITextEditor.class);
+    	return part.getAdapter(ITextEditor.class);
     }
 
     /**
@@ -668,8 +669,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 if (thing instanceof IMethod) {
                 	IMethod method = (IMethod) thing;
                 	if(isInterace){
-                		if (Flags.isDefaultMethod(method.getFlags()) || Flags.isStatic(method.getFlags())) 
-                    		methods.add(method);
+                		if (Flags.isDefaultMethod(method.getFlags()) || Flags.isStatic(method.getFlags())) {
+							methods.add(method);
+						}
                 	}
                 	else if (!Flags.isAbstract(method.getFlags())) {
                 		methods.add(method);
@@ -1058,7 +1060,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      */
     protected static IResource getResource(IEditorPart editor) {
         IEditorInput editorInput = editor.getEditorInput();
-        IResource resource = (IResource) editorInput.getAdapter(IFile.class);
+        IResource resource = editorInput.getAdapter(IFile.class);
         if (resource == null) {
             resource = ResourcesPlugin.getWorkspace().getRoot();
         }
@@ -1076,7 +1078,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return handle or <code>null</code>
      */
     protected IMethod getMethodHandle(IEditorPart editorPart, String typeName, String methodName, String signature) throws CoreException {
-        IJavaElement element = (IJavaElement) editorPart.getEditorInput().getAdapter(IJavaElement.class);
+        IJavaElement element = editorPart.getEditorInput().getAdapter(IJavaElement.class);
         IType type = null;
         if (element instanceof ICompilationUnit) {
             IType[] types = ((ICompilationUnit) element).getAllTypes();
@@ -1239,7 +1241,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @since 3.4
      */
     private ITypeRoot getTypeRoot(IEditorInput input) {
-    	ITypeRoot root = (ITypeRoot) input.getAdapter(IClassFile.class);
+		ITypeRoot root = input.getAdapter(IClassFile.class);
     	if(root == null) {
     		 IWorkingCopyManager manager = JavaUI.getWorkingCopyManager();
              root = manager.getWorkingCopy(input);
@@ -1342,15 +1344,17 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						MessageDialogWithToggle dialog= MessageDialogWithToggle.openOkCancelConfirm(shell, ActionMessages.ToggleBreakpointAdapter_confirmDeleteTitle,
 								ActionMessages.ToggleBreakpointAdapter_confirmDeleteMessage, ActionMessages.ToggleBreakpointAdapter_confirmDeleteShowAgain, false,
 								null, null);
-						if (dialog.getToggleState())
+						if (dialog.getToggleState()) {
 							prefs.putBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, false);
+						}
 						result[0]= dialog.getReturnCode() == IDialogConstants.OK_ID;
 					}
 				});
 			}
 		}
-		if (result[0])
+		if (result[0]) {
 			DebugUITools.deleteBreakpoints(new IBreakpoint[] { breakpoint }, shell, monitor);
+		}
 	}
 
     /*
@@ -1374,7 +1378,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if((event.stateMask & SWT.MOD2) > 0) {
 				ITextEditor editor = getTextEditor(part);
 				if(editor != null) {
-					IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+					IVerticalRulerInfo info = editor.getAdapter(IVerticalRulerInfo.class);
 					if(info != null) {
 						IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
 						if(bp != null) {
@@ -1387,7 +1391,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			else if((event.stateMask & SWT.MOD1) > 0) {
 				ITextEditor editor = getTextEditor(part);
 				if(editor != null) {
-					IVerticalRulerInfo info = (IVerticalRulerInfo) editor.getAdapter(IVerticalRulerInfo.class);
+					IVerticalRulerInfo info = editor.getAdapter(IVerticalRulerInfo.class);
 					if(info != null) {
 						IBreakpoint bp = BreakpointUtils.getBreakpointFromEditor(editor, info);
 						if(bp != null) {

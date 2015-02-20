@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 			try {
 				JDIReferenceListValue referenceList = new JDIReferenceListValue((IJavaObject) var.getValue());
 				InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
-						getAnchor((IDebugView) getPart().getAdapter(IDebugView.class)), 
+ getAnchor(getPart().getAdapter(IDebugView.class)), 
 						PopupInspectAction.ACTION_DEFININITION_ID,
 						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
 				ipd.open();

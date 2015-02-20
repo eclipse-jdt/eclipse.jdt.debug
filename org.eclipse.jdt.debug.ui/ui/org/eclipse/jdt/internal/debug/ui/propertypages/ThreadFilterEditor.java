@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class ThreadFilterEditor {
 		IThread[] threads;
 		IJavaThread thread;
 		for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-			target = (IJavaDebugTarget)targets[i].getAdapter(IJavaDebugTarget.class);
+			target = targets[i].getAdapter(IJavaDebugTarget.class);
 			if (target != null) {
 				try {
 					if (fThreadViewer.getChecked(target)) {
@@ -115,7 +115,7 @@ public class ThreadFilterEditor {
 		try {
 			IDebugTarget[] targets= getDebugTargets();
 			for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-				IJavaDebugTarget target = (IJavaDebugTarget)targets[i].getAdapter(IJavaDebugTarget.class);
+				IJavaDebugTarget target = targets[i].getAdapter(IJavaDebugTarget.class);
 				if (target != null) {
 					IJavaThread filteredThread= fPage.getBreakpoint().getThreadFilter(target);
 					if (filteredThread != null) {
@@ -287,7 +287,7 @@ public class ThreadFilterEditor {
 		 */
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IDebugTarget) {
-				IJavaDebugTarget target = (IJavaDebugTarget)((IDebugTarget)parent).getAdapter(IJavaDebugTarget.class);
+				IJavaDebugTarget target = ((IDebugTarget)parent).getAdapter(IJavaDebugTarget.class);
 				if (target != null) {
 					try {
 						return ((IJavaDebugTarget)parent).getThreads();
@@ -304,7 +304,7 @@ public class ThreadFilterEditor {
 				for (int i= 0, numLaunches= launches.length; i < numLaunches; i++) {
 					targets= launches[i].getDebugTargets();
 					for (int j= 0, numTargets= targets.length; j < numTargets; j++) {
-						target= (IJavaDebugTarget)targets[j].getAdapter(IJavaDebugTarget.class);
+						target= targets[j].getAdapter(IJavaDebugTarget.class);
 						if (target != null && !target.isDisconnected() && !target.isTerminated()) {
 							children.add(target);
 						}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 				if(selectedElement instanceof IType) {
 					IAdaptable adapt = DebugUITools.getDebugContext();
 					if(adapt != null) {
-						IJavaDebugTarget target = (IJavaDebugTarget) adapt.getAdapter(IJavaDebugTarget.class);
+						IJavaDebugTarget target = adapt.getAdapter(IJavaDebugTarget.class);
 						if(target != null) {
 							IType itype = (IType) selectedElement;
 							IJavaType[] types = target.getJavaTypes(itype.getFullyQualifiedName());
@@ -223,7 +223,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     protected void report(final String message, final IWorkbenchPart part) {
         JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
-                IEditorStatusLine statusLine = (IEditorStatusLine) part.getAdapter(IEditorStatusLine.class);
+                IEditorStatusLine statusLine = part.getAdapter(IEditorStatusLine.class);
                 if (statusLine != null) {
                     if (message != null) {
                         statusLine.setMessage(true, message, null);
@@ -243,7 +243,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     protected Point getAnchor() {
     	
     	// If it's a debug view (variables or expressions), get the location of the selected item
-    	IDebugView debugView = (IDebugView)getPart().getAdapter(IDebugView.class);
+    	IDebugView debugView = getPart().getAdapter(IDebugView.class);
 		if (debugView != null){
 			Control control = debugView.getViewer().getControl();
 			if (control instanceof Tree) {
@@ -257,7 +257,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		}
 		
 		//resolve the current control
-    	Control widget = (Control)getPart().getAdapter(Control.class);
+		Control widget = getPart().getAdapter(Control.class);
     	if (widget == null){
     		if(getPart() instanceof PageBookView) {
 	    		//could be the outline view
@@ -320,7 +320,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     	if (part instanceof ITextEditor) {
     		return (ITextEditor) part;
     	}
-    	return (ITextEditor) part.getAdapter(ITextEditor.class);
+    	return part.getAdapter(ITextEditor.class);
     }	
     
     /* (non-Javadoc)

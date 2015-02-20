@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,40 +47,41 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IElementLabelProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
-				return fgLPVariable; 
+				return (T) fgLPVariable;
 			}
 			if (adaptableObject instanceof IJavaStackFrame) {
-				return fgLPFrame;
+				return (T) fgLPFrame;
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
-				return fgLPExpression;
+				return (T) fgLPExpression;
 			}
 		}
 		if (IElementContentProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
-				return fgCPVariable;
+				return (T) fgCPVariable;
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
-				return fgCPExpression;
+				return (T) fgCPExpression;
 			}
 			if (adaptableObject instanceof IJavaValue) {
-				return fgCPExpression;
+				return (T) fgCPExpression;
 			}
 		}
 		if (IWatchExpressionFactoryAdapter.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaVariable) {
-				return fgWEVariable;
+				return (T) fgWEVariable;
 			}
 			if (adaptableObject instanceof JavaInspectExpression) {
-				return fgWEVariable;
+				return (T) fgWEVariable;
 			}
 		}
 		if (IElementMementoProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IJavaStackFrame) {
-				return fgMPStackFrame;
+				return (T) fgMPStackFrame;
 			}
 		}
 		return null;
@@ -89,7 +90,7 @@ public class JavaDebugElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] {IElementLabelProvider.class, IElementContentProvider.class, IWatchExpressionFactoryAdapter.class, IElementMementoProvider.class};
 	}
 }

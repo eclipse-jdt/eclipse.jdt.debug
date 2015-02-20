@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,7 +263,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
-		IJavaElement je = (IJavaElement) input.getAdapter(IJavaElement.class);
+		IJavaElement je = input.getAdapter(IJavaElement.class);
 		if (je != null) {
 			searchAndLaunch(new Object[] {je}, mode, getTypeSelectionTitle(), getEditorEmptyMessage());
 		}
@@ -309,7 +309,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	 * @return containing resource or <code>null</code>
 	 */
 	private IResource getLaunchableResource(IAdaptable adaptable) {
-		IJavaElement je = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+		IJavaElement je = adaptable.getAdapter(IJavaElement.class);
 		if (je != null) {
 			return je.getResource();
 		}

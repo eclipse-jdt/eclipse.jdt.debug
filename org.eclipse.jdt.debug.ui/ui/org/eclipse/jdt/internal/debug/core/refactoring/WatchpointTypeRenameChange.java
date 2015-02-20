@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 				for (int i = 0; i < similarDeclarations.length; i++) {
 					IJavaElement element = similarDeclarations[i];
 					if (element.equals(originalField)) {
-						IJavaElementMapper elementMapper = (IJavaElementMapper) fProcessor.getAdapter(IJavaElementMapper.class);
+						IJavaElementMapper elementMapper = fProcessor.getAdapter(IJavaElementMapper.class);
 						destinationField = (IField) elementMapper.getRefactoredJavaElement(originalField);
 						break;
 					}

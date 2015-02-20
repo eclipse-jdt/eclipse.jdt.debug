@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,7 +188,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		});
 		
 		String labelText = null;
-        IBindingService bindingService = (IBindingService) workbench.getAdapter(IBindingService.class);
+		IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST);
         if (binding != null) {
             labelText = NLS.bind(DebugUIMessages.DetailFormatterDialog_17, new String[] { binding });
@@ -213,7 +213,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				return null;
 			}
 		};
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
         
 		checkValues();
@@ -387,7 +387,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	@Override
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-        IHandlerService handlerService = (IHandlerService) workbench.getAdapter(IHandlerService.class);
+        IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         handlerService.deactivateHandler(fHandlerActivation);
 		fSnippetViewer.dispose();
 		return super.close();

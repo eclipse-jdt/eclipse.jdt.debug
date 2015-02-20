@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,26 +32,27 @@ public class MonitorsAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		
     	if (IElementContentProvider.class.equals(adapterType)) {
     		if (adaptableObject instanceof IJavaThread) {
-	        	return getThreadPresentation();
+				return (T) getThreadPresentation();
 	        }
     		if (adaptableObject instanceof IJavaStackFrame) {
-    			return fgCPFrame;
+				return (T) fgCPFrame;
     		}
     		if (adaptableObject instanceof JavaOwnedMonitor) {
-    			return getOwnedMonitorContentProvider();
+				return (T) getOwnedMonitorContentProvider();
     		}
     		if (adaptableObject instanceof JavaWaitingThread) {
-    			return getWaitingThreadContentProvider();
+				return (T) getWaitingThreadContentProvider();
     		}
     		if (adaptableObject instanceof JavaContendedMonitor) {
-    			return getContendedMonitorContentProvider();
+				return (T) getContendedMonitorContentProvider();
     		}
     		if (adaptableObject instanceof JavaOwningThread) {
-    			return getOwningThreadContentProvider();
+				return (T) getOwningThreadContentProvider();
     		}
     	}
         return null;
@@ -60,7 +61,7 @@ public class MonitorsAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
-    public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
         return new Class[] {IElementContentProvider.class};
     }
 

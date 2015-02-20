@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,7 +221,7 @@ public class StepIntoSelectionUtils {
 		// see bug 65489 - get the run-to-line adapter from the editor
 		IRunToLineTarget runToLineAction = null;
 		if (editor != null) {
-			runToLineAction  = (IRunToLineTarget) editor.getAdapter(IRunToLineTarget.class);
+			runToLineAction  = editor.getAdapter(IRunToLineTarget.class);
 			if (runToLineAction == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				if (adapterManager.hasAdapter(editor,   IRunToLineTarget.class.getName())) { 
@@ -344,7 +344,7 @@ public class StepIntoSelectionUtils {
 	 */
 	static void showErrorMessage(IEditorPart editor, String message) {	
 		if (editor != null) {
-			IEditorStatusLine statusLine= (IEditorStatusLine) editor.getAdapter(IEditorStatusLine.class);
+			IEditorStatusLine statusLine = editor.getAdapter(IEditorStatusLine.class);
 			if (statusLine != null) {
 				statusLine.setMessage(true, message, null);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class JavaStackFrameActionFilter implements IActionFilter {
 	public boolean testAttribute(Object target, String name, String value) {
 		IJavaStackFrame frame = null;
 		if (target instanceof IStackFrame) {
-			frame = (IJavaStackFrame) ((IStackFrame)target).getAdapter(IJavaStackFrame.class);
+			frame = ((IStackFrame) target).getAdapter(IJavaStackFrame.class);
 		}
 		if (frame != null) {
 			if (name.equals("DropToFrameActionFilter") //$NON-NLS-1$
