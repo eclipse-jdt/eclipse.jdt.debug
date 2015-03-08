@@ -125,10 +125,21 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Pattern to match a line from a stack trace e.g.
+	 * <code>(Assert.java:41)</code>
+	 */
+	private static final String STACK_TRACE_PARENTHESIZED_PATTERN = "\\(" + WS + JAVA_FILE_LINE_PATTERN + WS + "\\)"; //$NON-NLS-1$ //$NON-NLS-2$
+
+	/**
+	 * Pattern to match a line from a stack trace e.g.
 	 * <code> at org.eclipse.core.runtime.Assert.isLegal(Assert.java:41)</code>
 	 */
-	private static final String STACK_TRACE_LINE_PATTERN = "[^()]*?(" + STRICT_QUALIFIED_NAME_PATTERN + ")" + WS + "\\(" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ WS + JAVA_FILE_LINE_PATTERN + WS + "\\)"; //$NON-NLS-1$
+	private static final String STACK_TRACE_LINE_PATTERN = "[^()]*?" + STACK_TRACE_PARENTHESIZED_PATTERN; //$NON-NLS-1$
+
+	/**
+	 * Pattern to match a line from a stack trace e.g.
+	 * <code> at org.eclipse.core.runtime.Assert.isLegal(Assert.java:41)</code>
+	 */
+	private static final String STACK_TRACE_QUALIFIED_LINE_PATTERN = "[^()]*?(" + STRICT_QUALIFIED_NAME_PATTERN + ")" + WS + STACK_TRACE_PARENTHESIZED_PATTERN; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Pattern to match a method e.g.
@@ -322,7 +333,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 			String lineNumber = typeLine.substring(index + 1, typeLine.length()).trim();
 			int line = (Integer.valueOf(lineNumber)).intValue();
 
-			Pattern pattern = Pattern.compile(STACK_TRACE_LINE_PATTERN);
+			Pattern pattern = Pattern.compile(STACK_TRACE_QUALIFIED_LINE_PATTERN);
 			Matcher matcher = pattern.matcher(s);
 			if (matcher.find()) {
 				String qualifiedName = matcher.group(1);
