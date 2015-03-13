@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,6 +250,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#allLineLocations()
 	 */
+	@Override
 	public List<Location> allLineLocations() throws AbsentInformationException {
 		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
@@ -257,6 +258,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#arguments()
 	 */
+	@Override
 	public List<LocalVariable> arguments() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
 			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9);
@@ -280,6 +282,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @return Returns a text representation of all declared argument types of
 	 *         this method.
 	 */
+	@Override
 	public List<String> argumentTypeNames() {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
@@ -310,6 +313,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Returns the list containing the type of each argument.
 	 */
+	@Override
 	public List<Type> argumentTypes() throws ClassNotLoadedException {
 		if (fArgumentTypes != null) {
 			return fArgumentTypes;
@@ -329,6 +333,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @return Returns an array containing the bytecodes for this method.
 	 */
+	@Override
 	public byte[] bytecodes() {
 		if (fByteCodes != null) {
 			return fByteCodes;
@@ -384,6 +389,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 *         {@link Method} is less than, equal to, or greater than the specified
 	 *         {@link Method}.
 	 */
+	@Override
 	public int compareTo(Method method) {
 		if (method == null || !method.getClass().equals(this.getClass()))
 			throw new ClassCastException(
@@ -410,6 +416,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isAbstract()
 	 */
+	@Override
 	public boolean isAbstract() {
 		return (fModifierBits & MODIFIER_ACC_ABSTRACT) != 0;
 	}
@@ -417,6 +424,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isConstructor()
 	 */
+	@Override
 	public boolean isConstructor() {
 		return name().equals("<init>"); //$NON-NLS-1$
 	}
@@ -424,6 +432,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isNative()
 	 */
+	@Override
 	public boolean isNative() {
 		return (fModifierBits & MODIFIER_ACC_NATIVE) != 0;
 	}
@@ -431,6 +440,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isStaticInitializer()
 	 */
+	@Override
 	public boolean isStaticInitializer() {
 		return name().equals("<clinit>"); //$NON-NLS-1$
 	}
@@ -438,6 +448,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isSynchronized()
 	 */
+	@Override
 	public boolean isSynchronized() {
 		return (fModifierBits & MODIFIER_ACC_SYNCHRONIZED) != 0;
 	}
@@ -445,6 +456,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#locationOfCodeIndex(long)
 	 */
+	@Override
 	public Location locationOfCodeIndex(long index) {
 		if (isAbstract() || isNative()) {
 			return null;
@@ -462,6 +474,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#locationsOfLine(int)
 	 */
+	@Override
 	public List<Location> locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
@@ -469,6 +482,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#returnType()
 	 */
+	@Override
 	public Type returnType() throws ClassNotLoadedException {
 		int startIndex = signature().lastIndexOf(')') + 1; // Signature position
 															// is just after
@@ -481,6 +495,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#returnTypeName()
 	 */
+	@Override
 	public String returnTypeName() {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
@@ -496,6 +511,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#variables()
 	 */
+	@Override
 	public List<LocalVariable> variables() throws AbsentInformationException {
 		if (isNative() || isAbstract()) {
 			throw new AbsentInformationException(JDIMessages.MethodImpl_No_local_variable_information_available_9);
@@ -606,6 +622,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#variablesByName(java.lang.String)
 	 */
+	@Override
 	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
 		Iterator<LocalVariable> iter = variables().iterator();
 		List<LocalVariable> result = new ArrayList<LocalVariable>();
@@ -621,6 +638,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/**
 	 * @see com.sun.jdi.Locatable#location()
 	 */
+	@Override
 	public Location location() {
 		if (isAbstract()) {
 			return null;
@@ -791,6 +809,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 *      isObsolete on JDK 1.4 will never return true for a non-zero method
 	 *      ID. The query is therefore not needed
 	 */
+	@Override
 	public boolean isObsolete() {
 		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 4)) {
 			return fMethodID.value() == 0;
@@ -801,6 +820,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#allLineLocations(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public List<Location> allLineLocations(String stratum, String sourceName)	throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return Collections.EMPTY_LIST;
@@ -837,6 +857,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#locationsOfLine(java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public List<Location> locationsOfLine(String stratum, String sourceName,
 			int lineNumber) throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
@@ -881,6 +902,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isBridge()
 	 */
+	@Override
 	public boolean isBridge() {
 		return (fModifierBits & MODIFIER_ACC_BRIDGE) != 0;
 	}
@@ -888,6 +910,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#isVarArgs()
 	 */
+	@Override
 	public boolean isVarArgs() {
 		// TODO: remove this test when j9 solve its problem
 		// it returns invalid 1.5 flags for 1.4 classes.

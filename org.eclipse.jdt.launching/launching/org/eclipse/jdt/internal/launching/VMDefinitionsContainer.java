@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -432,22 +432,18 @@ public class VMDefinitionsContainer {
 	 */
 	public static void parseXMLIntoContainer(InputStream inputStream, VMDefinitionsContainer container) throws IOException {
 
-		// Wrapper the stream for efficient parsing
-		InputStream stream= new BufferedInputStream(inputStream);
 
 		// Do the parsing and obtain the top-level node
 		Element config= null;		
-		try {
+		// Wrapper the stream for efficient parsing
+		try (InputStream stream = new BufferedInputStream(inputStream)) {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {
 			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); 
 		} catch (ParserConfigurationException e) {
-			stream.close();
 			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); 
-		} finally {
-			stream.close();
 		}
 		
 		// If the top-level node wasn't what we expected, bail out

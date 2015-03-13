@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -103,6 +103,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public synchronized void launchesTerminated(ILaunch[] launches) {
 		terminated = true;
 		notifyAll();
@@ -111,6 +112,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public synchronized void launchesRemoved(ILaunch[] launches) {
 		removed = true;
 		notifyAll();
@@ -119,6 +121,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public synchronized void launchesAdded(ILaunch[] launches) {
 		added = true;
 		notifyAll();
@@ -127,6 +130,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public synchronized void launchesChanged(ILaunch[] launches) {}
 
 }

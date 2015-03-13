@@ -139,6 +139,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 			final int hitCount, final boolean register, final Map<String, Object> attributes,
 			final String markerType) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 
 				// create the marker
@@ -352,6 +353,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getPattern()
 	 */
+	@Override
 	public String getPattern() throws CoreException {
 		return ensureMarker().getAttribute(PATTERN, "*"); //$NON-NLS-1$
 	}
@@ -362,6 +364,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourceName()
 	 */
+	@Override
 	public String getSourceName() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);
 	}
@@ -371,6 +374,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getStratum()
 	 */
+	@Override
 	public String getStratum() throws CoreException {
 		return (String) ensureMarker().getAttribute(STRATUM);
 	}
@@ -381,6 +385,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourcePath()
 	 */
+	@Override
 	public String getSourcePath() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_PATH);
 	}

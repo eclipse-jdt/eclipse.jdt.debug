@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -335,11 +335,9 @@ public class TypeHierarchyTestsGenerator extends TestGenerator {
 		
 		code.append("}\n");
 		
-		Writer file = new FileWriter(new File("TypeHierarchy_" + lineNumber + "_" + hitCount + ".java").getAbsoluteFile());
-		
-		file.write(code.toString());
-		
-		file.close();
+		try (Writer file = new FileWriter(new File("TypeHierarchy_" + lineNumber + "_" + hitCount + ".java").getAbsoluteFile())) {
+			file.write(code.toString());
+		}
 		
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -121,6 +122,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fSourceButton.setEnabled(false);
 		fSourceButton.addSelectionListener(this);
 		fLibraryViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection sel = (IStructuredSelection)event.getViewer().getSelection();
 				Object obj = sel.getFirstElement();
@@ -242,6 +244,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		boolean completed = true; 
 		Object source= e.getSource();
@@ -271,6 +274,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {}
 
 	/**
@@ -342,6 +346,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}

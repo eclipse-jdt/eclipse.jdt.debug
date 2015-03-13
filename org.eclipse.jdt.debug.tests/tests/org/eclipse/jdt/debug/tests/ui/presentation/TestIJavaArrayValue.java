@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		return null;
 	}
@@ -47,6 +48,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
+	@Override
 	public IVariable[] getVariables(int offset, int length) throws DebugException {
 		return null;
 	}
@@ -54,6 +56,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
+	@Override
 	public int getSize() throws DebugException {
 		return size;
 	}
@@ -61,6 +64,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
+	@Override
 	public int getInitialOffset() {
 		return 0;
 	}
@@ -68,6 +72,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#getValues()
 	 */
+	@Override
 	public IJavaValue[] getValues() throws DebugException {
 		return values;
 	}
@@ -75,6 +80,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#getValue(int)
 	 */
+	@Override
 	public IJavaValue getValue(int index) throws DebugException {
 		if(values != null && index > -1 && index < values.length) {
 			return values[index];
@@ -85,6 +91,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#getLength()
 	 */
+	@Override
 	public int getLength() throws DebugException {
 		return (values != null ? values.length : 0);
 	}
@@ -92,6 +99,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValue(int, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
+	@Override
 	public void setValue(int index, IJavaValue value) throws DebugException {
 		if(values != null && index > -1 && index < values.length) {
 			values[index] = value;
@@ -101,6 +109,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValues(org.eclipse.jdt.debug.core.IJavaValue[])
 	 */
+	@Override
 	public void setValues(IJavaValue[] values) throws DebugException {
 		this.values = values;
 	}
@@ -108,6 +117,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValues(int, int, org.eclipse.jdt.debug.core.IJavaValue[], int)
 	 */
+	@Override
 	public void setValues(int offset, int length, IJavaValue[] values, int startOffset) throws DebugException {
 	}
 }

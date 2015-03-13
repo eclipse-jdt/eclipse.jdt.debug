@@ -27,6 +27,7 @@ import org.eclipse.ui.IActionFilter;
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object obj, Class<T> adapterType) {
 		if (adapterType.isInstance(obj)) {
@@ -52,6 +53,7 @@ import org.eclipse.ui.IActionFilter;
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {
 			IActionFilter.class 

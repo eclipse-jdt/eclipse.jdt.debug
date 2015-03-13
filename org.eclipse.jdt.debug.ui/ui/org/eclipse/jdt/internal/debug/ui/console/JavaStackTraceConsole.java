@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,11 +56,13 @@ public class JavaStackTraceConsole extends TextConsole {
             getDocument().setDocumentPartitioner(this);
         }
 
-        public boolean isReadOnly(int offset) {
+        @Override
+		public boolean isReadOnly(int offset) {
             return false;
         }
 
-        public StyleRange[] getStyleRanges(int offset, int length) {
+        @Override
+		public StyleRange[] getStyleRanges(int offset, int length) {
             return null;
         }
 
@@ -71,7 +73,8 @@ public class JavaStackTraceConsole extends TextConsole {
 
     private JavaStackTraceConsolePartitioner partitioner = new JavaStackTraceConsolePartitioner();
     private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
             if (property.equals(IDebugUIConstants.PREF_CONSOLE_FONT)) {
                 setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
@@ -95,16 +98,14 @@ public class JavaStackTraceConsole extends TextConsole {
 	void initializeDocument() {
         File file = new File(FILE_NAME);
         if (file.exists()) {
-            try {
+			try (InputStream fin = new BufferedInputStream(new FileInputStream(file))) {
                 int len = (int) file.length();
                 byte[] b = new byte[len];
-                InputStream fin = new BufferedInputStream(new FileInputStream(file));
                 int read = 0;
                 while (read < len) {
                     read += fin.read(b);
                 }
                 getDocument().set(new String(b));
-                fin.close();
             } catch (IOException e) {
             }
         } else {
@@ -134,14 +135,12 @@ public class JavaStackTraceConsole extends TextConsole {
      * Saves the backing document for this console
      */
     void saveDocument() {
-        try {
+		try (FileOutputStream fout = new FileOutputStream(FILE_NAME)) {
             IDocument document = getDocument();
             if (document != null) {
                 if (document.getLength() > 0) {
                     String contents = document.get();
-                    FileOutputStream fout = new FileOutputStream(FILE_NAME);
                     fout.write(contents.getBytes());
-                    fout.close();
                 } else {
                     File file = new File(FILE_NAME);
                     file.delete();
@@ -221,7 +220,9 @@ public class JavaStackTraceConsole extends TextConsole {
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (token.length() == 0)
-                continue; // paranoid
+			 {
+				continue; // paranoid
+			}
             char c = token.charAt(0);
             // handle delimiters
             switch (c) {

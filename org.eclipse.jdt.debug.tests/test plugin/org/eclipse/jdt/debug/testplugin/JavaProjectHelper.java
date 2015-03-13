@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -355,14 +355,8 @@ public class JavaProjectHelper {
 	public static IPackageFragmentRoot addLibraryWithImport(IJavaProject jproject, IPath jarPath, IPath sourceAttachPath, IPath sourceAttachRoot) throws IOException, CoreException {
 		IProject project= jproject.getProject();
 		IFile newFile= project.getFile(jarPath.lastSegment());
-		InputStream inputStream= null;
-		try {
-			inputStream= new FileInputStream(jarPath.toFile()); 
+		try (InputStream inputStream = new FileInputStream(jarPath.toFile())) {
 			newFile.create(inputStream, true, null);
-		} finally {
-			if (inputStream != null) {
-				try { inputStream.close(); } catch (IOException e) { }
-			}
 		}				
 		return addLibrary(jproject, newFile.getFullPath(), sourceAttachPath, sourceAttachRoot);
 	}	
@@ -599,6 +593,7 @@ public class JavaProjectHelper {
 		/**
 		 * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
 		 */
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	

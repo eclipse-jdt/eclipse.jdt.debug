@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
     
@@ -168,16 +169,19 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 		});
 		fFormatterListViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				((DetailFormatter)event.getElement()).setEnabled(event.getChecked());
 			}
 		});
 		fFormatterListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updatePage((IStructuredSelection)event.getSelection());
 			}
 		});
 		fFormatterListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					editType();
@@ -230,6 +234,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fAddFormatterButton.setFont(font);
 		setButtonLayoutData(fAddFormatterButton);
 		fAddFormatterButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				addType();
 			}
@@ -242,6 +247,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fEditFormatterButton.setFont(font);
 		setButtonLayoutData(fEditFormatterButton);
 		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				editType();
 			}
@@ -255,6 +261,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fRemoveFormatterButton.setFont(font);
 		setButtonLayoutData(fRemoveFormatterButton);
 		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				removeTypes();
 			}
@@ -452,6 +459,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		/**
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fDetailFormattersSet.toArray();
 		}
@@ -463,12 +471,14 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

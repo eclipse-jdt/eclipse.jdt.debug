@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,6 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestSuite;
-
-import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.test.OrderedTestSuite;
-
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -32,9 +20,17 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
+import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.OrderedTestSuite;
+
+import junit.framework.TestSuite;
 
 /**
  * Tests console input.
@@ -170,7 +166,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		fLinesRead.clear();
 		final IDocument document = console.getDocument();
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
                 } catch (BadLocationException e) {
@@ -206,7 +203,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	private void append(IConsole console, final String text) throws Exception {
 		final IDocument document = console.getDocument();
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     document.replace(document.getLength(), 0, text);
                 } catch (BadLocationException e) {
@@ -226,7 +224,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	private void deleteAll(IConsole console) throws Exception {
 		final IDocument document = console.getDocument();
 		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     document.replace(0, document.getLength(), "");
                 } catch (BadLocationException e) {
@@ -240,12 +239,14 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
+	@Override
 	public void init(IConsole console) {
 		synchronized (fConsoleLock) {
 			fConsole = console;
@@ -257,6 +258,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void lineAppended(IRegion line) {
 		if (fStarted) {
 			synchronized (fLinesRead) {
@@ -274,6 +276,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
+	@Override
 	public void consoleClosed() {
 	    synchronized (fLock) {
 			fStopped = true;
@@ -315,14 +318,16 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 	private void spinEventLoop() {
 		final Display display= DebugUIPlugin.getStandardDisplay();
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				while (display.readAndDispatch()) {
 				}
 			}
 		};
-		if (Display.getCurrent() == display)
+		if (Display.getCurrent() == display) {
 			runnable.run();
-		else
+		} else {
 			display.syncExec(runnable);
+		}
 	}
 }

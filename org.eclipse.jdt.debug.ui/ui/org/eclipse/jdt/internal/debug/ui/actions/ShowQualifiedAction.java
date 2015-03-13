@@ -59,6 +59,7 @@ public class ShowQualifiedAction extends ViewFilterAction {
 			if (pres != null) {
 				pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, (getValue() ? Boolean.TRUE : Boolean.FALSE));
 				BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						viewer.refresh();
 						IPreferenceStore store = getPreferenceStore();

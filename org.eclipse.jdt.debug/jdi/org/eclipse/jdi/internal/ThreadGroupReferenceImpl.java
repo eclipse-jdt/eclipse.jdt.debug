@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#name()
 	 */
+	@Override
 	public String name() {
 		if (fName != null) {
 			return fName;
@@ -88,6 +89,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#parent()
 	 */
+	@Override
 	public ThreadGroupReference parent() {
 		if (fParent != fgUnsetParent) {
 			return fParent;
@@ -111,6 +113,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#resume()
 	 */
+	@Override
 	public void resume() {
 		Iterator<ThreadReference> iter = allThreads().iterator();
 		while (iter.hasNext()) {
@@ -122,6 +125,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#suspend()
 	 */
+	@Override
 	public void suspend() {
 		Iterator<ThreadReference> iter = allThreads().iterator();
 		while (iter.hasNext()) {
@@ -173,6 +177,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#threadGroups()
 	 */
+	@Override
 	public List<ThreadGroupReference> threadGroups() {
 		return childrenInfo().childThreadGroups;
 	}
@@ -180,6 +185,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadGroupReference#threads()
 	 */
+	@Override
 	public List<ThreadReference> threads() {
 		return childrenInfo().childThreads;
 	}

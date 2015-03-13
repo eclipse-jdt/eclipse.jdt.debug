@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see IStorageEditorInput#getStorage()
 	 */
+	@Override
 	public IStorage getStorage() {
 		return fStorage;
 	}
@@ -44,6 +45,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see IEditorInput#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_CUNIT);
 	}
@@ -51,6 +53,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see IEditorInput#getName()
 	 */
+	@Override
 	public String getName() {
 		return getStorage().getName();
 	}
@@ -58,6 +61,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see IEditorInput#getPersistable()
 	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
@@ -65,6 +69,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	/**
 	 * @see IEditorInput#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return getStorage().getFullPath().toOSString();
 	}

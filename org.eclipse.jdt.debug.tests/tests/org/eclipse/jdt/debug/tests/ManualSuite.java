@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@ package org.eclipse.jdt.debug.tests;
 
 import java.util.Enumeration;
 
+import org.eclipse.jdt.debug.tests.core.RemoteJavaApplicationTests;
+import org.eclipse.swt.widgets.Display;
+
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-
-import org.eclipse.jdt.debug.tests.core.RemoteJavaApplicationTests;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests that are to be run manually by the debug team, in addition to
@@ -65,10 +65,12 @@ public class ManualSuite extends TestSuite {
 		Thread thread = null;
 		try {
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
-				  		if (result.shouldStop() )
-				  			break;
+				  		if (result.shouldStop() ) {
+							break;
+						}
 						Test test= e.nextElement();
 						runTest(test, result);
 					}					
@@ -84,8 +86,9 @@ public class ManualSuite extends TestSuite {
 				
 		while (fTesting) {
 			try {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}			

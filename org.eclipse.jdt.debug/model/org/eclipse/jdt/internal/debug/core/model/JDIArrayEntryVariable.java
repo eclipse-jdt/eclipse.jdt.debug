@@ -92,6 +92,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	/**
 	 * @see IVariable#getName()
 	 */
+	@Override
 	public String getName() {
 		return "[" + getIndex() + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
@@ -137,6 +138,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			if (fReferenceTypeName == null) {
@@ -172,6 +174,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	/**
 	 * @see IJavaVariable#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return ((ArrayType) getArrayReference().type())
@@ -192,6 +195,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		try {
 			ReferenceType referenceType = getArrayReference().referenceType();

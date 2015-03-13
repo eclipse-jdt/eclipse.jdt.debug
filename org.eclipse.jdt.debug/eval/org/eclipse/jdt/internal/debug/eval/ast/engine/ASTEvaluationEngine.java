@@ -88,6 +88,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		 * org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse
 		 * .debug.core.DebugEvent[])
 		 */
+		@Override
 		public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 			if (events.length == 1) {
 				DebugEvent event = events[0];
@@ -126,6 +127,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame,
 	 * org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
+	@Override
 	public void evaluate(String snippet, IJavaStackFrame frame,
 			IEvaluationListener listener, int evaluationDetail,
 			boolean hitBreakpoints) throws DebugException {
@@ -144,6 +146,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.core.IJavaThread,
 	 * org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
+	@Override
 	public void evaluate(String snippet, IJavaObject thisContext,
 			IJavaThread thread, IEvaluationListener listener,
 			int evaluationDetail, boolean hitBreakpoints) throws DebugException {
@@ -190,6 +193,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame,
 	 * org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
+	@Override
 	public void evaluateExpression(ICompiledExpression expression,
 			IJavaStackFrame frame, IEvaluationListener listener,
 			int evaluationDetail, boolean hitBreakpoints) throws DebugException {
@@ -209,6 +213,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.core.IJavaThread,
 	 * org.eclipse.jdt.debug.eval.IEvaluationListener, int, boolean)
 	 */
+	@Override
 	public void evaluateExpression(ICompiledExpression expression,
 			IJavaObject thisContext, IJavaThread thread,
 			IEvaluationListener listener, int evaluationDetail,
@@ -267,6 +272,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame)
 	 */
+	@Override
 	public ICompiledExpression getCompiledExpression(String snippet,
 			IJavaStackFrame frame) {
 		IJavaProject javaProject = getJavaProject();
@@ -460,6 +466,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaObject)
 	 */
+	@Override
 	public ICompiledExpression getCompiledExpression(String snippet,
 			IJavaObject thisContext) {
 		try {
@@ -484,6 +491,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaType)
 	 */
+	@Override
 	public ICompiledExpression getCompiledExpression(String snippet,
 			IJavaReferenceType type) {
 		if (type instanceof IJavaArrayType) {
@@ -578,6 +586,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * 
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getJavaProject()
 	 */
+	@Override
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
@@ -587,6 +596,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * 
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getDebugTarget()
 	 */
+	@Override
 	public IJavaDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
@@ -596,6 +606,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * 
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
@@ -624,6 +635,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			fHitBreakpoints = hitBreakpoints;
 		}
 
+		@Override
 		public void run() {
 			if (JDIDebugOptions.DEBUG_AST_EVAL) {
 				StringBuffer buf = new StringBuffer();
@@ -682,6 +694,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				CoreException fException;
 				boolean fTerminated = false;
 
+				@Override
 				public void run(IJavaThread jt, IProgressMonitor pm) {
 					EventFilter filter = new EventFilter();
 					try {
@@ -714,15 +727,18 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					}
 				}
 
+				@Override
 				public void terminate() {
 					fTerminated = true;
 					interpreter.stop();
 				}
 
+				@Override
 				public boolean canTerminate() {
 					return true;
 				}
 
+				@Override
 				public boolean isTerminated() {
 					return false;
 				}

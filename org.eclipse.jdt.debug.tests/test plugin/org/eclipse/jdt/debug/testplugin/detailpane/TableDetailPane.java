@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 			fListener = listener;
 		}
 
+		@Override
 		public void run() {
 			fModelPresentation.computeDetail(fValue, fListener);		
 		}
@@ -81,6 +82,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite workbenchPartSite) {
 		fWorkbenchPartSite = workbenchPartSite;
 		
@@ -90,6 +92,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fComposite = new Composite(parent, SWT.NONE);
 		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -97,10 +100,12 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 		fTable = new Table(fComposite,SWT.FULL_SELECTION);
 		fTable.addSelectionListener(new SelectionListener(){
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = fTable.getSelectionIndex();
 				if (index >= 0){
@@ -126,9 +131,11 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 		fWordWrapButton.setText("Word Wrap");
 		fWordWrapButton.setSelection(false);
 		fWordWrapButton.addSelectionListener(new SelectionListener(){
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fText.getTextWidget().setWordWrap(fWordWrapButton.getSelection());
 			}
@@ -140,6 +147,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection element) {
 		
 		if (element != null){
@@ -176,6 +184,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus(){
 		if (fText != null){
 			fText.getTextWidget().setFocus();
@@ -187,14 +196,20 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if (fComposite != null) fComposite.dispose();
-		if (fModelPresentation != null) fModelPresentation.dispose();
+		if (fComposite != null) {
+			fComposite.dispose();
+		}
+		if (fModelPresentation != null) {
+			fModelPresentation.dispose();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return DESCRIPTION;
 	}
@@ -202,6 +217,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
+	@Override
 	public String getID() {
 		return ID;
 	}
@@ -209,6 +225,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -220,6 +237,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 	 */
+	@Override
 	public void detailComputed(IValue value, final String result){
 		WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
 			@Override

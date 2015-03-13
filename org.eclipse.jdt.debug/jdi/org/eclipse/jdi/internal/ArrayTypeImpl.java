@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/**
 	 * @return Returns the JNI signature of the components of this array class.
 	 */
+	@Override
 	public String componentSignature() {
 		return signature().substring(1);
 	}
@@ -98,6 +99,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns the type of the array components.
 	 * @throws ClassNotLoadedException if the class has not been loaded
 	 */
+	@Override
 	public Type componentType() throws ClassNotLoadedException {
 		if (fComponentType == null) {
 			fComponentType = TypeImpl.create(virtualMachineImpl(),
@@ -109,6 +111,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	/**
 	 * @return Returns a text representation of the component type.
 	 */
+	@Override
 	public String componentTypeName() {
 		if (fComponentTypeName == null) {
 			fComponentTypeName = signatureToName(componentSignature());
@@ -121,6 +124,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Creates and returns a new instance of this array class in the
 	 *         target VM.
 	 */
+	@Override
 	public ArrayReference newInstance(int length) {
 		// Note that this information should not be cached.
 		initJdwpRequest();

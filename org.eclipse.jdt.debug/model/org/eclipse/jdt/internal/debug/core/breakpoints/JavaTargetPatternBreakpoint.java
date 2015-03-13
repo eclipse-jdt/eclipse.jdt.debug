@@ -61,6 +61,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 			final Map<String, Object> attributes, final String markerType)
 			throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 
 				// create the marker
@@ -219,6 +220,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaTargetPatternBreakpoint#getPattern(IJavaDebugTarget)
 	 */
+	@Override
 	public String getPattern(IJavaDebugTarget target) {
 		if (fPatterns != null) {
 			return fPatterns.get(target);
@@ -229,6 +231,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaTargetPatternBreakpoint#setPattern(IJavaDebugTarget, String)
 	 */
+	@Override
 	public void setPattern(IJavaDebugTarget target, String pattern)
 			throws CoreException {
 		if (fPatterns == null) {
@@ -246,6 +249,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaTargetPatternBreakpoint#getSourceName()
 	 */
+	@Override
 	public String getSourceName() throws CoreException {
 		return (String) ensureMarker().getAttribute(SOURCE_NAME);
 	}

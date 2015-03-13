@@ -87,6 +87,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 			throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
 				setMarker(resource.createMarker(JAVA_CLASS_PREPARE_BREAKPOINT));
@@ -242,6 +243,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint#getMemberType()
 	 */
+	@Override
 	public int getMemberType() throws CoreException {
 		return ensureMarker().getAttribute(MEMBER_TYPE,
 				IJavaClassPrepareBreakpoint.TYPE_CLASS);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		if (getDirectory() == null) {
 			return null;
@@ -152,6 +153,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
@@ -163,6 +165,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
 		try {

@@ -46,6 +46,7 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#isCandidate()
 	 */
+	@Override
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
 		String pName = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		if(pName.equals(EMPTY_STRING)) {
@@ -129,6 +130,7 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#migrate(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = candidate.getWorkingCopy();
 		updateResourceMapping(wc);

@@ -210,6 +210,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				// Make sure that all events in the asynchronous event queue
 				// are dispatched.
 				fDisplay.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						// do nothing
 					}
@@ -243,6 +244,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	private IPartListener2 fActivationListener = new IPartListener2() {
 
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 			if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(partRef.getId())) { //$NON-NLS-1$
 				System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -251,24 +253,31 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 		}
 		
@@ -465,6 +474,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	
 	protected boolean performIncrementalBuild() {
 		IRunnableWithProgress r= new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
 					getJavaProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
@@ -613,6 +623,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 
 	protected void fireEvalStateChanged() {
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				Shell shell= getShell();
 				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
@@ -659,6 +670,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
+	@Override
 	public void evaluationComplete(IEvaluationResult result) {
 			boolean severeErrors = false;
 			if (result.hasErrors()) {
@@ -693,6 +705,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	protected void showExpressionView() {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				if (page != null) {
@@ -779,6 +792,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		
 		final String message = resultString.toString();
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					getSourceViewer().getDocument().replace(fSnippetEnd, 0, message);
@@ -816,6 +830,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 	 */
+	@Override
 	public synchronized void detailComputed(IValue value, final String result) {
 		fResult= result;
 		this.notifyAll();
@@ -831,6 +846,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					getSourceViewer().getDocument().replace(fSnippetStart, 0, errorString.toString());
@@ -844,7 +860,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	
 	private void showExpression(final JavaInspectExpression expression) {
 	    Runnable r = new Runnable() {
-	        public void run() {
+	        @Override
+			public void run() {
 	            new InspectPopupDialog(getShell(), EvaluateAction.getPopupAnchor(getSourceViewer().getTextWidget()), PopupInspectAction.ACTION_DEFININITION_ID, expression).open();
 	        }
 	    };
@@ -868,6 +885,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		
 		final String message = bos.toString();
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					getSourceViewer().getDocument().replace(fSnippetEnd, 0, message);
@@ -886,6 +904,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			String eName= ref.referenceType().name();
 			final String message= SnippetMessages.getFormattedString("SnippetEditor.exception", eName); //$NON-NLS-1$
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						getSourceViewer().getDocument().replace(fSnippetEnd, 0, message);
@@ -1025,6 +1044,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		
 	protected void evaluationEnds() {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				fEvaluating= false;
 				setTitleImage();
@@ -1058,6 +1078,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	/**
 	 * @see IDebugEventFilter#filterDebugEvents(DebugEvent[])
 	 */	
+	@Override
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent e = events[i];
@@ -1069,6 +1090,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 						if (e.getKind() == DebugEvent.TERMINATE) {
 							setThread(null);
 							Runnable r = new Runnable() {
+								@Override
 								public void run() {
 									vmTerminated();
 								}
@@ -1174,6 +1196,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fLaunchedVMArgs = getVMArgsAttribute();
 		fLaunchedVM = getVMInstall();
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				ScrapbookLauncher.getDefault().launch(getFile());
 			}
@@ -1409,6 +1432,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	
 	protected void showAndSelect(final String text, final int offset) {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					getSourceViewer().getDocument().replace(offset, 0, text);
@@ -1427,6 +1451,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public Object getAdapter(Class required) {
 		if (required == IShowInTargetList.class) {
 			return new IShowInTargetList() {
+				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
 				}

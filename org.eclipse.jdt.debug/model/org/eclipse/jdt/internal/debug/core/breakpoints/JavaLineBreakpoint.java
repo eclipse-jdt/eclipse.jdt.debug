@@ -141,6 +141,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			final Map<String, Object> attributes, final String markerType)
 			throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 
 				// create the marker
@@ -247,6 +248,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
@@ -256,6 +258,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
+	@Override
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
@@ -265,6 +268,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}
@@ -466,6 +470,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#supportsCondition()
 	 */
+	@Override
 	public boolean supportsCondition() {
 		return true;
 	}
@@ -475,6 +480,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#getCondition()
 	 */
+	@Override
 	public String getCondition() throws CoreException {
 		return ensureMarker().getAttribute(CONDITION, null);
 	}
@@ -486,6 +492,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setCondition(java.lang
 	 * .String)
 	 */
+	@Override
 	public void setCondition(String condition) throws CoreException {
 		// Clear the cached compiled expressions
 		fCompiledExpressions.clear();
@@ -521,6 +528,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionEnabled()
 	 */
+	@Override
 	public boolean isConditionEnabled() throws CoreException {
 		return ensureMarker().getAttribute(CONDITION_ENABLED, false);
 	}
@@ -532,6 +540,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionEnabled(boolean
 	 * )
 	 */
+	@Override
 	public void setConditionEnabled(boolean conditionEnabled)
 			throws CoreException {
 		setAttributes(new String[] { CONDITION_ENABLED },
@@ -574,6 +583,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionSuspendOnTrue()
 	 */
+	@Override
 	public boolean isConditionSuspendOnTrue() throws DebugException {
 		return ensureMarker().getAttribute(CONDITION_SUSPEND_ON_TRUE, true);
 	}
@@ -585,6 +595,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionSuspendOnTrue
 	 * (boolean)
 	 */
+	@Override
 	public void setConditionSuspendOnTrue(boolean suspendOnTrue)
 			throws CoreException {
 		if (isConditionSuspendOnTrue() != suspendOnTrue) {

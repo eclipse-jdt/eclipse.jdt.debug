@@ -50,6 +50,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		ITextEditor textEditor = getTextEditor(part);
 		String errorMessage = null;
@@ -69,6 +70,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					final int[] lineNumber = new int[1];
 					final ITextSelection textSelection = (ITextSelection) selection;
 					Runnable r = new Runnable() {
+						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
 							ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -114,6 +116,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 	    if (target instanceof IDebugElement && target.canResume()) {
             IDebugElement element = (IDebugElement) target;

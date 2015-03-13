@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,6 +82,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite p) {
 		// create a composite with standard margins and spacing
 		Composite composite = new Composite(p, SWT.NONE);
@@ -125,6 +126,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		initializeFields();
 	//add the listeners now to prevent them from monkeying with initialized settings
 		fVMName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fIgnoreCallbacks) {
 					validateVMName();
@@ -132,6 +134,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 			}
 		});
 		fEEFile.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fIgnoreCallbacks && validateDefinitionFile().isOK()) {
 					initializeFields();
@@ -139,7 +142,9 @@ public class EEVMPage extends AbstractVMInstallPage {
 			}
 		});
 		folders.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell());
 				dialog.setFilterExtensions(new String[]{"*.ee"}); //$NON-NLS-1$
@@ -189,6 +194,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 				final IStatus[] temp = new IStatus[1];
 				final VMStandin[] standin = new VMStandin[1];
 				Runnable r = new Runnable() {
+					@Override
 					public void run() {
 						try {
 							standin[0] = JavaRuntime.createVMFromDefinitionFile(file, fVM.getName(), fVM.getId());

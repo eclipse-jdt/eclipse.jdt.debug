@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,6 +361,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * loaded type in the target VM a ReferenceType will be placed in the
 	 * returned list.
 	 */
+	@Override
 	public List<ReferenceType> allClasses() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -413,6 +414,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * in the target VM, a ThreadReference that mirrors it is placed in the
 	 * list.
 	 */
+	@Override
 	public List<ThreadReference> allThreads() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -521,6 +523,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @see com.sun.jdi.VirtualMachine#canForceEarlyReturn()
 	 * @since 3.3
 	 */
+	@Override
 	public boolean canForceEarlyReturn() {
 		getCapabilities();
 		return fCanForceEarlyReturn;
@@ -530,6 +533,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports the retrieval of a
 	 *         method's bytecodes.
 	 */
+	@Override
 	public boolean canGetBytecodes() {
 		getCapabilities();
 		return fCanGetBytecodes;
@@ -539,6 +543,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports the retrieval of the
 	 *         monitor for which a thread is currently waiting.
 	 */
+	@Override
 	public boolean canGetCurrentContendedMonitor() {
 		getCapabilities();
 		return fCanGetCurrentContendedMonitor;
@@ -548,6 +553,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @see com.sun.jdi.VirtualMachine#canGetInstanceInfo()
 	 * @since 3.3
 	 */
+	@Override
 	public boolean canGetInstanceInfo() {
 		getCapabilities();
 		return fCanGetInstanceInfo;
@@ -557,6 +563,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @see com.sun.jdi.VirtualMachine#canGetMethodReturnValues()
 	 * @since 3.3
 	 */
+	@Override
 	public boolean canGetMethodReturnValues() {
 		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
@@ -565,6 +572,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports the retrieval of the
 	 *         monitor information for an object.
 	 */
+	@Override
 	public boolean canGetMonitorInfo() {
 		getCapabilities();
 		return fCanGetMonitorInfo;
@@ -574,6 +582,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @see com.sun.jdi.VirtualMachine#canGetMonitorFrameInfo()
 	 * @since 3.3
 	 */
+	@Override
 	public boolean canGetMonitorFrameInfo() {
 		getCapabilities();
 		return fCanGetMonitorFrameInfo;
@@ -583,6 +592,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports the retrieval of the
 	 *         monitors owned by a thread.
 	 */
+	@Override
 	public boolean canGetOwnedMonitorInfo() {
 		getCapabilities();
 		return fCanGetOwnedMonitorInfo;
@@ -592,6 +602,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports the query of the
 	 *         synthetic attribute of a method or field.
 	 */
+	@Override
 	public boolean canGetSyntheticAttribute() {
 		getCapabilities();
 		return fCanGetSyntheticAttribute;
@@ -601,6 +612,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @see com.sun.jdi.VirtualMachine#canRequestMonitorEvents()
 	 * @since 3.3
 	 */
+	@Override
 	public boolean canRequestMonitorEvents() {
 		getCapabilities();
 		return fCanRequestMonitorEvents;
@@ -610,6 +622,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports watchpoints for
 	 *         field access.
 	 */
+	@Override
 	public boolean canWatchFieldAccess() {
 		getCapabilities();
 		return fCanWatchFieldAccess;
@@ -619,6 +632,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * @return Returns true if this implementation supports watchpoints for
 	 *         field modification.
 	 */
+	@Override
 	public boolean canWatchFieldModification() {
 		getCapabilities();
 		return fCanWatchFieldModification;
@@ -662,6 +676,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#classesByName(java.lang.String)
 	 */
+	@Override
 	public List<ReferenceType> classesByName(String name) {
 		String signature = TypeImpl.classNameToSignature(name);
 		return classesBySignature(signature);
@@ -670,6 +685,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/**
 	 * Invalidates this virtual machine mirror.
 	 */
+	@Override
 	public void dispose() {
 		initJdwpRequest();
 		try {
@@ -685,6 +701,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#eventQueue()
 	 */
+	@Override
 	public EventQueue eventQueue() {
 		return fEventQueue;
 	}
@@ -692,6 +709,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#eventRequestManager()
 	 */
+	@Override
 	public EventRequestManager eventRequestManager() {
 		return fEventReqMgr;
 	}
@@ -707,6 +725,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/**
 	 * Causes the mirrored VM to terminate with the given error code.
 	 */
+	@Override
 	public void exit(int exitCode) {
 		initJdwpRequest();
 		try {
@@ -727,6 +746,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(byte)
 	 */
+	@Override
 	public ByteValue mirrorOf(byte value) {
 		return new ByteValueImpl(virtualMachineImpl(), new Byte(value));
 	}
@@ -734,6 +754,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(char)
 	 */
+	@Override
 	public CharValue mirrorOf(char value) {
 		return new CharValueImpl(virtualMachineImpl(), new Character(value));
 	}
@@ -741,6 +762,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(double)
 	 */
+	@Override
 	public DoubleValue mirrorOf(double value) {
 		return new DoubleValueImpl(virtualMachineImpl(), new Double(value));
 	}
@@ -748,6 +770,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(float)
 	 */
+	@Override
 	public FloatValue mirrorOf(float value) {
 		return new FloatValueImpl(virtualMachineImpl(), new Float(value));
 	}
@@ -755,6 +778,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(int)
 	 */
+	@Override
 	public IntegerValue mirrorOf(int value) {
 		return new IntegerValueImpl(virtualMachineImpl(), new Integer(value));
 	}
@@ -762,6 +786,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(long)
 	 */
+	@Override
 	public LongValue mirrorOf(long value) {
 		return new LongValueImpl(virtualMachineImpl(), new Long(value));
 	}
@@ -769,6 +794,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(short)
 	 */
+	@Override
 	public ShortValue mirrorOf(short value) {
 		return new ShortValueImpl(virtualMachineImpl(), new Short(value));
 	}
@@ -776,6 +802,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(boolean)
 	 */
+	@Override
 	public BooleanValue mirrorOf(boolean value) {
 		return new BooleanValueImpl(virtualMachineImpl(),
 				Boolean.valueOf(value));
@@ -784,6 +811,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOf(java.lang.String)
 	 */
+	@Override
 	public StringReference mirrorOf(String value) {
 		initJdwpRequest();
 		try {
@@ -809,6 +837,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#mirrorOfVoid()
 	 */
+	@Override
 	public VoidValue mirrorOfVoid() {
 		return new VoidValueImpl(this);
 	}
@@ -816,6 +845,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#process()
 	 */
+	@Override
 	public Process process() {
 		return fLaunchedProcess;
 	}
@@ -831,6 +861,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#resume()
 	 */
+	@Override
 	public void resume() {
 		initJdwpRequest();
 		try {
@@ -845,6 +876,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#setDebugTraceMode(int)
 	 */
+	@Override
 	public void setDebugTraceMode(int traceFlags) {
 		// We don't have trace info.
 	}
@@ -852,6 +884,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#suspend()
 	 */
+	@Override
 	public void suspend() {
 		initJdwpRequest();
 		try {
@@ -865,6 +898,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#topLevelThreadGroups()
 	 */
+	@Override
 	public List<ThreadGroupReference> topLevelThreadGroups() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -891,6 +925,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#name()
 	 */
+	@Override
 	public String name() {
 		getVersionInfo();
 		return fVMName;
@@ -899,6 +934,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#version()
 	 */
+	@Override
 	public String version() {
 		getVersionInfo();
 		return fVMVersion;
@@ -907,6 +943,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#description()
 	 */
+	@Override
 	public String description() {
 		getVersionInfo();
 		return fVersionDescription;
@@ -1033,6 +1070,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.hcr.VirtualMachine#canReloadClasses()
 	 */
+	@Override
 	public boolean canReloadClasses() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_RELOAD_CLASSES];
@@ -1049,6 +1087,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canGetClassFileVersion()
 	 */
+	@Override
 	public boolean canGetClassFileVersion() {
 		return isJdwpVersionGreaterOrEqual(1, 6);
 	}
@@ -1056,6 +1095,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canGetConstantPool()
 	 */
+	@Override
 	public boolean canGetConstantPool() {
 		getCapabilities();
 		return fCanGetConstantPool;
@@ -1064,6 +1104,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.hcr.VirtualMachine#canDoReturn()
 	 */
+	@Override
 	public boolean canDoReturn() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_DO_RETURN];
@@ -1072,6 +1113,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.hcr.VirtualMachine#canReenterOnExit()
 	 */
+	@Override
 	public boolean canReenterOnExit() {
 		getHCRCapabilities();
 		return fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT];
@@ -1080,6 +1122,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.hcr.VirtualMachine#classesHaveChanged(java.lang.String[])
 	 */
+	@Override
 	public int classesHaveChanged(String[] names) {
 		checkHCRSupported();
 		// We convert the class/interface names to signatures.
@@ -1177,6 +1220,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.VirtualMachine#setRequestTimeout(int)
 	 */
+	@Override
 	public void setRequestTimeout(int timeout) {
 		fRequestTimeout = timeout;
 	}
@@ -1184,6 +1228,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.VirtualMachine#getRequestTimeout()
 	 */
+	@Override
 	public int getRequestTimeout() {
 		return fRequestTimeout;
 	}
@@ -1201,6 +1246,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 				|| (fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
 	}
 
+	@Override
 	public void redefineClasses(Map<? extends ReferenceType, byte[]> typesToBytes) {
 		if (!canRedefineClasses()) {
 			throw new UnsupportedOperationException();
@@ -1273,6 +1319,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canRedefineClasses()
 	 */
+	@Override
 	public boolean canRedefineClasses() {
 		getCapabilities();
 		return fCanRedefineClasses;
@@ -1281,6 +1328,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canUseInstanceFilters()
 	 */
+	@Override
 	public boolean canUseInstanceFilters() {
 		getCapabilities();
 		return fCanUseInstanceFilters;
@@ -1289,6 +1337,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canAddMethod()
 	 */
+	@Override
 	public boolean canAddMethod() {
 		getCapabilities();
 		return fCanAddMethod;
@@ -1297,6 +1346,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canUnrestrictedlyRedefineClasses()
 	 */
+	@Override
 	public boolean canUnrestrictedlyRedefineClasses() {
 		getCapabilities();
 		return fCanUnrestrictedlyRedefineClasses;
@@ -1305,6 +1355,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#canUseSourceNameFilters()
 	 */
+	@Override
 	public boolean canUseSourceNameFilters() {
 		getCapabilities();
 		return fCanUseSourceNameFilters;
@@ -1313,6 +1364,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canPopFrames()
 	 */
+	@Override
 	public boolean canPopFrames() {
 		getCapabilities();
 		return fCanPopFrames;
@@ -1321,6 +1373,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canGetSourceDebugExtension()
 	 */
+	@Override
 	public boolean canGetSourceDebugExtension() {
 		getCapabilities();
 		return fCanGetSourceDebugExtension;
@@ -1329,6 +1382,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#canRequestVMDeathEvent()
 	 */
+	@Override
 	public boolean canRequestVMDeathEvent() {
 		getCapabilities();
 		return fCanRequestVMDeathEvent;
@@ -1342,6 +1396,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/*
 	 * @see VirtualMachine#setDefaultStratum(String)
 	 */
+	@Override
 	public void setDefaultStratum(String stratum) {
 		fDefaultStratum = stratum;
 
@@ -1373,6 +1428,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#getDefaultStratum()
 	 */
+	@Override
 	public String getDefaultStratum() {
 		return fDefaultStratum;
 	}
@@ -1380,6 +1436,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachine#instanceCounts(java.util.List)
 	 */
+	@Override
 	public long[] instanceCounts(List<? extends ReferenceType> refTypes) {
 		if (refTypes == null) {
 			throw new NullPointerException(JDIMessages.VirtualMachineImpl_2);
@@ -1539,6 +1596,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	 * 
 	 * @see com.sun.jdi.VirtualMachine#canBeModified()
 	 */
+	@Override
 	public boolean canBeModified() {
 		return true;
 	}

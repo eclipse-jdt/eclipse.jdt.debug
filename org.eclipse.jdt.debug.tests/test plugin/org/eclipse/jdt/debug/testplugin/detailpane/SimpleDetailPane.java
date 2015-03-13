@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.testplugin.detailpane;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -56,6 +57,7 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		theLabel = new Label(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -97,6 +99,7 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection selection) {
 		if (selection == null || selection.size() == 0){
 			theLabel.setBackground(theLabel.getParent().getBackground());
@@ -131,16 +134,26 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if (colorPrivate != null) colorPrivate.dispose();
-		if (colorProtected != null) colorProtected.dispose();
-		if (colorPublic != null) colorPublic.dispose();
-		if (colorOther != null) colorOther.dispose();
+		if (colorPrivate != null) {
+			colorPrivate.dispose();
+		}
+		if (colorProtected != null) {
+			colorProtected.dispose();
+		}
+		if (colorPublic != null) {
+			colorPublic.dispose();
+		}
+		if (colorOther != null) {
+			colorOther.dispose();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return DESCRIPTION;
 	}
@@ -148,6 +161,7 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getID()
 	 */
+	@Override
 	public String getID() {
 		return ID;
 	}
@@ -155,6 +169,7 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
+	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -162,12 +177,14 @@ public class SimpleDetailPane implements IDetailPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite partSite) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus() {
 		return false;
 	}

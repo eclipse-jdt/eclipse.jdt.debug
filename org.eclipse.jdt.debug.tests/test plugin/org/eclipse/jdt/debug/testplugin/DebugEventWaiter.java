@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public synchronized void handleDebugEvents(DebugEvent[] events) {
 		//printReceived(events);
 		for (int i = 0; i < events.length; i++) {
@@ -152,8 +153,9 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 			}
 		}
 		unregister();
-		if (fEvent == null)
+		if (fEvent == null) {
 			return null;
+		}
 		return fEvent.getSource();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,24 +54,28 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
 		 */
+		@Override
 		public IRegion getHyperlinkRegion() {
 			return new Region(fSelection.getOffset(), fSelection.getLength());
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
 		 */
+		@Override
 		public String getHyperlinkText() {
 			return ActionMessages.StepIntoSelectionHyperlinkDetector_0;
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
 		 */
+		@Override
 		public String getTypeLabel() {
 			return null;
 		}
 		/**
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
+		@Override
 		public void open() {
 			StepIntoSelectionUtils.stepIntoSelection(fSelection);
 		}
@@ -81,6 +85,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	/**
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
+	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
 		if(editor != null && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {

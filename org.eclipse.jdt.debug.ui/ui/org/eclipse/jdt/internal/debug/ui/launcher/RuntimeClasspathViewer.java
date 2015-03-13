@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
@@ -61,12 +62,14 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
@@ -100,6 +103,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
+	@Override
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		fEntries.clear();
 		for (int i = 0; i < entries.length; i++) {
@@ -112,6 +116,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] getEntries() {
 		return fEntries.toArray(new IRuntimeClasspathEntry[fEntries.size()]);
 	}
@@ -119,6 +124,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
+	@Override
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		IStructuredSelection sel = (IStructuredSelection)getSelection();
 		if (sel.isEmpty()) {
@@ -155,6 +161,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fEnabled;
 	}
@@ -179,6 +186,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
 	 */
+	@Override
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -189,6 +197,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
+	@Override
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		return fEntries.indexOf(entry);
 	}
@@ -196,6 +205,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getShell()
 	 */
+	@Override
 	public Shell getShell() {
 		return getControl().getShell();
 	}
@@ -203,6 +213,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#updateSelection(int, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public boolean updateSelection(int actionType, IStructuredSelection selection) {
 		return isEnabled();
 	}

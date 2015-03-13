@@ -40,6 +40,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(getPreferenceKey()) ||
 					event.getProperty().equals(getCompositeKey())) {
@@ -57,6 +58,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 		fAction.setChecked(getPreferenceValue());
@@ -67,6 +69,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -74,6 +77,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getPreferenceStore().removePropertyChangeListener(fListener);
 	}
@@ -81,6 +85,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -88,6 +93,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		StructuredViewer viewer = getStructuredViewer();
 		ViewerFilter[] filters = viewer.getFilters();
@@ -112,6 +118,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

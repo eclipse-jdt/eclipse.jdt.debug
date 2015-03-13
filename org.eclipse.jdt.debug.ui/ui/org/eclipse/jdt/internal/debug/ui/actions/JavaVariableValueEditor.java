@@ -27,7 +27,8 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#editVariable(org.eclipse.debug.core.model.IVariable, org.eclipse.swt.widgets.Shell)
      */
-    public boolean editVariable(IVariable variable, Shell shell) {
+    @Override
+	public boolean editVariable(IVariable variable, Shell shell) {
         String signature= null;
         try {
             signature= getSignature(variable);
@@ -50,7 +51,8 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
      */
-    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+    @Override
+	public boolean saveVariable(IVariable variable, String expression, Shell shell) {
         // set the value of chars directly if expression is a single character (not an expression to evaluate)
     	if (expression.length() == 1 && variable instanceof IJavaVariable){
     		IJavaVariable javaVariable = (IJavaVariable)variable;

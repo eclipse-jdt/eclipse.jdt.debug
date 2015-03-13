@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,33 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 
 public class BundleWizardPage1 extends BundleWizardBasePage {
@@ -114,8 +128,9 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 						dd.setMessage(Util.getString("page1.appFolder.browseDialog.message")); //$NON-NLS-1$
 						dd.setText(Util.getString("page1.appFolder.browseDialog.title")); //$NON-NLS-1$
 						String name= dd.open();
-						if (name != null)
+						if (name != null) {
 							fLocation.setText(name);
+						}
 					}
 				});
 		
@@ -126,8 +141,9 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			Composite c8= createComposite(g6, 4);
 			
 				fJVMVersion= new Combo(c8, SWT.READ_ONLY);
-				for (int i= 0; i < JVMS.length; i++)
+				for (int i= 0; i < JVMS.length; i++) {
 					fJVMVersion.add(JVMS[i]);
+				}
 				fJVMVersion.setText(JVMS[4]);
 				hookField(fJVMVersion, JVMVERSION);
 				createLabel(c8, "      ", GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
@@ -146,8 +162,9 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 						fd.setText(Util.getString("page1.appIcon.chooseDialog.title")); //$NON-NLS-1$
 						fd.setFilterExtensions(new String[] { "icns" }); //$NON-NLS-1$
 						String name= fd.open();
-						if (name != null)
+						if (name != null) {
 							fIconFileName.setText(name);
+						}
 					}
 				});
 			
@@ -159,17 +176,26 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		initCombo(fLaunchConfigs);
 	}
 	
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fAppName != null)
+		 {
 			fAppName.setText(fBundleDescription.get(APPNAME, "")); //$NON-NLS-1$
+		}
 		if (fMainClass != null)
+		 {
 			fMainClass.setText(fBundleDescription.get(MAINCLASS, "")); //$NON-NLS-1$
+		}
 		if (fJVMVersion != null)
+		 {
 			fJVMVersion.setText(fBundleDescription.get(JVMVERSION, "")); //$NON-NLS-1$
-		if (fUseSWT != null)
+		}
+		if (fUseSWT != null) {
 			fUseSWT.setSelection(fBundleDescription.get(USES_SWT, false));
+		}
 	}
 	
+	@Override
 	public boolean isPageComplete() {
 		return fAppName != null && fAppName.getText().length() > 0 && fLocation.getText().length() > 0;
 	}
@@ -184,14 +210,16 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			ILaunchConfiguration[] configurations= manager.getLaunchConfigurations(type);
 			for (int i= 0; i < configurations.length; i++) {
 				ILaunchConfiguration configuration= configurations[i];
-				if (BundleDescription.verify(configuration))
+				if (BundleDescription.verify(configuration)) {
 					configs.add(configuration);
+				}
 			}
 		} catch (CoreException e) {
 			//
 		}
 		fConfigurations= configs.toArray(new ILaunchConfiguration[configs.size()]);
 		Arrays.sort(fConfigurations, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				ILaunchConfiguration lc1= (ILaunchConfiguration) o1;
 				ILaunchConfiguration lc2= (ILaunchConfiguration) o2;

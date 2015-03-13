@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#getVMs()
 	 */
+	@Override
 	public synchronized IVMInstall[] getVMInstalls() {
 		IVMInstall[] vms= new IVMInstall[fVMs.size()];
 		return fVMs.toArray(vms);
@@ -58,6 +59,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#disposeVM(String)
 	 */
+	@Override
 	public void disposeVMInstall(String id) {
 		synchronized (this) {
 			for (int i= 0; i < fVMs.size(); i++) {
@@ -75,6 +77,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#getVM(String)
 	 */
+	@Override
 	public IVMInstall findVMInstall(String id) {
 		synchronized (this) {
 			for (int i = 0; i < fVMs.size(); i++) {
@@ -91,6 +94,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#createVM(String)
 	 */
+	@Override
 	public IVMInstall createVMInstall(String id) throws IllegalArgumentException {
 		if (findVMInstall(id) != null) {
 			String format= LaunchingMessages.vmInstallType_duplicateVM; 
@@ -129,6 +133,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 *		a <code>Hashtable</code>, or <code>null</code>.
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		fId= config.getAttribute("id"); //$NON-NLS-1$
 	}
@@ -137,6 +142,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Subclasses should not override this method.
 	 * @see IVMType#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -144,6 +150,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#findVMInstallByName(java.lang.String)
 	 */
+	@Override
 	public IVMInstall findVMInstallByName(String name) {
 		synchronized (this) {
 			for (int i = 0; i < fVMs.size(); i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,15 +34,18 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 	private IJavaThread fThread;
 	private boolean fTerminated;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fThread == null) {
 			return;
 		}
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		Thread timerThread= new Thread(new Runnable() {
+			@Override
 			public void run() {
 				fTerminated= false;
 				try {
@@ -54,6 +57,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 					fTerminated= true;
 					final Display display= JDIDebugUIPlugin.getStandardDisplay();
 						display.asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.TerminateEvaluationActionTerminate_Evaluation_1, null, 
 									ActionMessages.TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0); 
@@ -73,6 +77,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection)selection;
@@ -90,6 +95,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 		fThread= thread;
 	}
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		DebugEvent event;
 		for (int i= 0, numEvents= events.length; i < numEvents; i++) {

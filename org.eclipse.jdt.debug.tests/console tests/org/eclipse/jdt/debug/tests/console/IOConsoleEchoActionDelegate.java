@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,29 +38,34 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
     /**
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         final IOConsole console = new IOConsole("IO Test Console", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
         new Thread(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 runTest(console);
             }
         }, "IOConsole Test Thread").start(); //$NON-NLS-1$
@@ -75,7 +80,8 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         
         final IOConsoleInputStream in = console.getInputStream();
         display.asyncExec(new Runnable() {
-            public void run() {        
+            @Override
+			public void run() {        
                 in.setColor(display.getSystemColor(SWT.COLOR_BLUE));
             }
         });
@@ -84,7 +90,8 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         
         final IOConsoleOutputStream out = console.newOutputStream(); 
         Display.getDefault().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));     
                 out.setFontStyle(SWT.ITALIC);
             }
@@ -113,13 +120,15 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
     /**
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
     }
 
     /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
     }
 
 }

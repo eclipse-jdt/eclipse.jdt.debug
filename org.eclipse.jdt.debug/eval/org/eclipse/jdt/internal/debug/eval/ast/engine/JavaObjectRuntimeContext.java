@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getVM()
 	 */
+	@Override
 	public IJavaDebugTarget getVM() {
 		return (IJavaDebugTarget) fThisObject.getDebugTarget();
 	}
@@ -57,6 +58,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getThis()
 	 */
+	@Override
 	public IJavaObject getThis() {
 		return fThisObject;
 	}
@@ -64,6 +66,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getReceivingType()
 	 */
+	@Override
 	public IJavaReferenceType getReceivingType() throws CoreException {
 		return (IJavaReferenceType) getThis().getJavaType();
 	}
@@ -71,6 +74,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getLocals()
 	 */
+	@Override
 	public IJavaVariable[] getLocals() {
 		return new IJavaVariable[0];
 	}
@@ -78,6 +82,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#getThread()
 	 */
+	@Override
 	public IJavaThread getThread() {
 		return fThread;
 	}
@@ -85,6 +90,7 @@ public class JavaObjectRuntimeContext extends AbstractRuntimeContext {
 	/**
 	 * @see IRuntimeContext#isConstructor()
 	 */
+	@Override
 	public boolean isConstructor() {
 		return false;
 	}

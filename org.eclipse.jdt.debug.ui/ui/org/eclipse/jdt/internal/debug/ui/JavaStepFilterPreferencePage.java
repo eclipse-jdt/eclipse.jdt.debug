@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,13 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			initTableState(false);
 		}
 		
+		@Override
 		public Object[] getElements(Object inputElement) {return getAllFiltersFromTable();}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
+		@Override
 		public void dispose() {}		
 	}
 	
@@ -119,6 +122,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {}
 	
 	/**
@@ -138,9 +142,11 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 		fUseStepFiltersButton = SWTFactory.createCheckButton(container,	DebugUIMessages.JavaStepFilterPreferencePage__Use_step_filters,	null, DebugUITools.isUseStepFilters(), 2);
 		fUseStepFiltersButton.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setPageEnablement(fUseStepFiltersButton.getSelection());
 				}
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {}
 			}
 		);
@@ -153,11 +159,13 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fTableViewer.setInput(getAllStoredFilters(false));
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				((Filter)event.getElement()).setChecked(event.getChecked());
 			}
 		});
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection.isEmpty()) {
@@ -260,6 +268,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Filter_9, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Key_in_the_name_of_a_new_step_filter_10, null);
 		fAddFilterButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				addFilter();
 			}
@@ -269,6 +278,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Type____11, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_Java_type_and_add_it_to_step_filters_12, null);
 		fAddTypeButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				addType();
 			}
@@ -278,6 +288,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage_Add__Package____13, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Choose_a_package_and_add_it_to_step_filters_14, null);
 		fAddPackageButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				addPackage();
 			}
@@ -288,6 +299,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage_Remove_all_selected_step_filters_16, 
 				null);
 		fRemoveFilterButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				removeFilters();
 			}
@@ -306,6 +318,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage__Select_All_1, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Selects_all_step_filters_2, null);
 		fSelectAllButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(true);
 			}
@@ -315,6 +328,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 				DebugUIMessages.JavaStepFilterPreferencePage_Deselect_All_3, 
 				DebugUIMessages.JavaStepFilterPreferencePage_Deselects_all_step_filters_4, null);
 		fDeselectAllButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				fTableViewer.setAllChecked(false);
 			}

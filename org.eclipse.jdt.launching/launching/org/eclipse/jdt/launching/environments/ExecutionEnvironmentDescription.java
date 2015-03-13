@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -369,10 +369,7 @@ public final class ExecutionEnvironmentDescription {
 	private void initProperties(File eeFile) throws CoreException {
 		Map<String, String> properties = new LinkedHashMap<String, String>();
 		String eeHome = eeFile.getParentFile().getAbsolutePath();
-		BufferedReader bufferedReader = null;
-		try {
-			FileReader reader = new FileReader(eeFile); 
-			bufferedReader = new BufferedReader(reader);
+		try (FileReader reader = new FileReader(eeFile); BufferedReader bufferedReader = new BufferedReader(reader);) {
 			String line = bufferedReader.readLine();
 			while (line != null) {
 				if (!line.startsWith("#")) { //$NON-NLS-1$
@@ -398,13 +395,6 @@ public final class ExecutionEnvironmentDescription {
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN,
 					NLS.bind(LaunchingMessages.ExecutionEnvironmentDescription_1,new String[]{eeFile.getPath()}), e));
-		} finally {
-			try {
-				if (bufferedReader != null) {
-					 bufferedReader.close();
-				}
-			} catch (IOException e) {
-			}				
 		}
 		if (!properties.containsKey(EE_HOME)) {
 			properties.put(EE_HOME, eeHome);

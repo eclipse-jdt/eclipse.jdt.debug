@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,13 +50,17 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 		if (getBreakpoint() != null) {
 			PropertyDialogAction action= 
 				new PropertyDialogAction(getEditor().getEditorSite(), new ISelectionProvider() {
+					@Override
 					public void addSelectionChangedListener(ISelectionChangedListener listener) {
 					}
+					@Override
 					public ISelection getSelection() {
 						return new StructuredSelection(getBreakpoint());
 					}
+					@Override
 					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 					}
+					@Override
 					public void setSelection(ISelection selection) {
 					}
 				});
@@ -67,6 +71,7 @@ public class JavaBreakpointPropertiesRulerAction extends RulerBreakpointAction i
 	/**
 	 * @see IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		fBreakpoint = null;
 		IBreakpoint breakpoint = getBreakpoint();

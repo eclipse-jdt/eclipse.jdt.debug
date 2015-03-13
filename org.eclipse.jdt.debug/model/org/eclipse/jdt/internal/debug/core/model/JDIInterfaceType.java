@@ -41,6 +41,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getImplementors()
 	 */
+	@Override
 	public IJavaClassType[] getImplementors() throws DebugException {
 		try {
 			List<ClassType> implementorList = ((InterfaceType) getUnderlyingType())
@@ -73,6 +74,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSubInterfaces()
 	 */
+	@Override
 	public IJavaInterfaceType[] getSubInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> subList = ((InterfaceType) getUnderlyingType())
@@ -105,6 +107,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSuperInterfaces()
 	 */
+	@Override
 	public IJavaInterfaceType[] getSuperInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> superList = ((InterfaceType) getUnderlyingType())

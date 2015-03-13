@@ -103,6 +103,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return fMonitor.getModelIdentifier();
 	}
@@ -110,6 +111,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fMonitor.getDebugTarget();
 	}
@@ -117,6 +119,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fMonitor.getLaunch();
 	}
@@ -156,6 +159,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
@@ -163,6 +167,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
@@ -170,6 +175,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}
@@ -177,6 +183,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		IThread thread = getParentThread();
 		if(thread != null) {
@@ -188,6 +195,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		IThread thread = getParentThread();
 		if(thread != null) {
@@ -199,6 +207,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		IThread thread = getParentThread();
 		if(thread != null) {
@@ -210,6 +219,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		IThread thread = getParentThread();
 		if(thread != null) {
@@ -220,6 +230,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		IThread thread = getParentThread();
 		if(thread != null) {

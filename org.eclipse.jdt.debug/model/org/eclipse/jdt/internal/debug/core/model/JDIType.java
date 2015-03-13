@@ -120,6 +120,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 	/**
 	 * @see IJavaType#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return getUnderlyingType().signature();
@@ -164,6 +165,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 	/**
 	 * @see IJavaType#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		try {
 			return getUnderlyingType().name();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,6 +225,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getType()
 	 */
+	@Override
 	public int getType() {
 		return fType;
 	}
@@ -252,6 +253,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getClasspathEntry()
 	 */
+	@Override
 	public IClasspathEntry getClasspathEntry() {
 		return fClasspathEntry;
 	}
@@ -259,6 +261,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
@@ -297,6 +300,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		IClasspathEntry entry = getClasspathEntry();
 		return entry != null ? entry.getPath() : fInvalidPath;
@@ -305,6 +309,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		switch (getType()) {
 			case CONTAINER:
@@ -348,6 +353,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentPath() {
 		IClasspathEntry entry = getClasspathEntry();
 		return entry != null ? entry.getSourceAttachmentPath() : null;
@@ -356,6 +362,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
+	@Override
 	public void setSourceAttachmentPath(IPath path) {
 		if (path != null && path.isEmpty()) {
 			path = null;
@@ -366,6 +373,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentRootPath() {
 		IClasspathEntry entry = getClasspathEntry();
 		IPath path = entry != null ? getClasspathEntry().getSourceAttachmentRootPath() : null;
@@ -378,6 +386,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentRootPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSourceAttachmentRootPath(IPath path) {
 		if (path != null && path.isEmpty()) {
 			path = null;
@@ -410,6 +419,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#setClasspathProperty(int)
 	 */
+	@Override
 	public void setClasspathProperty(int location) {
 		fClasspathProperty = location;
 	}
@@ -417,6 +427,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathProperty()
 	 */
+	@Override
 	public int getClasspathProperty() {
 		return fClasspathProperty;
 	}
@@ -424,6 +435,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 
 		IPath path = null;
@@ -479,6 +491,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getVariableName()
 	 */
+	@Override
 	public String getVariableName() {
 		if (getType() == IRuntimeClasspathEntry.VARIABLE || getType() == IRuntimeClasspathEntry.CONTAINER) {
 			return getPath().segment(0);
@@ -545,6 +558,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentLocation()
 	 */
+	@Override
 	public String getSourceAttachmentLocation() {
 		IPath path = null;
 		switch (getType()) {
@@ -564,6 +578,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
 	 */
+	@Override
 	public String getSourceAttachmentRootLocation() {
 		IPath path = null;
 		switch (getType()) {
@@ -633,6 +648,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
 	 */
+	@Override
 	public IJavaProject getJavaProject() {
 		return fJavaProject;
 	}

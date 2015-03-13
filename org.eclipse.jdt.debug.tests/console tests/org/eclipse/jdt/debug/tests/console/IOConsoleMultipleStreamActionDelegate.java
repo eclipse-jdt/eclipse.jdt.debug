@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,24 +41,28 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
     /**
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action) {}
+    @Override
+	public void init(IAction action) {}
 
     /**
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose() {}
+    @Override
+	public void dispose() {}
 
     /**
      * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
      */
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
      run(action);
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         runTest();
     }
     
@@ -79,7 +83,8 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
         final IOConsoleInputStream in = console.getInputStream();
         final IOConsoleOutputStream echo = console.newOutputStream(); 
         display.asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 in.setColor(display.getSystemColor(SWT.COLOR_BLUE));
                 echo.setColor(display.getSystemColor(SWT.COLOR_RED));
             }
@@ -92,7 +97,8 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
         
     private void startOutputThread(final IOConsoleOutputStream out) {   
         new Thread(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 int i = 1;
                 PrintStream ps = new PrintStream(out);
                 ps.println("Enter 'XXX' to stop"); //$NON-NLS-1$
@@ -111,7 +117,8 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
     
     private void startInputReadThread(final InputStream in, final OutputStream out) {
        new Thread(new Runnable() {
-           public void run() {
+           @Override
+		public void run() {
 	           try {
 		           byte b[] = new byte[1024];
 		           while(!ended) {
@@ -134,10 +141,12 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
     /**
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection) {}
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {}
 
     /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {}
+    @Override
+	public void init(IWorkbenchWindow window) {}
 }

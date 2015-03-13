@@ -151,6 +151,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			final Map<String, Object> attributes) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
 				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
@@ -243,6 +244,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see IJavaExceptionBreakpoint#isCaught()
 	 */
+	@Override
 	public boolean isCaught() throws CoreException {
 		return ensureMarker().getAttribute(CAUGHT, false);
 	}
@@ -250,6 +252,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see IJavaExceptionBreakpoint#setCaught(boolean)
 	 */
+	@Override
 	public void setCaught(boolean caught) throws CoreException {
 		if (caught == isCaught()) {
 			return;
@@ -291,6 +294,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see IJavaExceptionBreakpoint#isUncaught()
 	 */
+	@Override
 	public boolean isUncaught() throws CoreException {
 		return ensureMarker().getAttribute(UNCAUGHT, false);
 	}
@@ -298,6 +302,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see IJavaExceptionBreakpoint#setUncaught(boolean)
 	 */
+	@Override
 	public void setUncaught(boolean uncaught) throws CoreException {
 		if (uncaught == isUncaught()) {
 			return;
@@ -314,6 +319,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see IJavaExceptionBreakpoint#isChecked()
 	 */
+	@Override
 	public boolean isChecked() throws CoreException {
 		return ensureMarker().getAttribute(CHECKED, false);
 	}
@@ -488,6 +494,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName
 	 * ()
 	 */
+	@Override
 	public String getExceptionTypeName() {
 		return fExceptionName;
 	}
@@ -496,6 +503,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * @see IJavaExceptionBreakpoint#getFilters()
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public String[] getFilters() {
 		String[] iFilters = getInclusionFilters();
@@ -510,6 +518,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public void setFilters(String[] filters, boolean inclusive)
 			throws CoreException {
@@ -598,6 +607,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public boolean isInclusiveFiltered() throws CoreException {
 		return ensureMarker().getAttribute(INCLUSION_FILTERS, "").length() > 0; //$NON-NLS-1$
@@ -657,6 +667,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExclusionFilters()
 	 */
+	@Override
 	public String[] getExclusionFilters() {
 		return getExclusionClassFilters();
 	}
@@ -664,6 +675,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getInclusionFilters()
 	 */
+	@Override
 	public String[] getInclusionFilters() {
 		return getInclusionClassFilters();
 	}
@@ -671,6 +683,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setExclusionFilters(String[])
 	 */
+	@Override
 	public void setExclusionFilters(String[] filters) throws CoreException {
 		String serializedFilters = serializeList(filters);
 
@@ -689,6 +702,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setInclusionFilters(String[])
 	 */
+	@Override
 	public void setInclusionFilters(String[] filters) throws CoreException {
 		String serializedFilters = serializeList(filters);
 

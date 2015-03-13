@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Alternate";
 	}
@@ -63,16 +64,19 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}	
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		launchConfigurationChanged(configuration);
 	}
@@ -80,6 +84,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fAlternateModeCheckBox.getSelection()) {
 			configuration.addModes(getModes());
@@ -92,11 +97,13 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		fAlternateModeCheckBox = new Button(parent, SWT.CHECK);
 		fAlternateModeCheckBox.setText("Check &me for 'alternate' mode");
@@ -121,12 +128,14 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationChanged(final ILaunchConfiguration configuration) {
 		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
 			setWidget(configuration);
 		}
 		else {
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					setWidget(configuration);
 				}

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.debug.tests; singleton:=true
-Bundle-Version: 3.8.300.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-ClassPath: javadebugtests.jar
 Bundle-Activator: org.eclipse.jdt.debug.testplugin.JavaTestPlugin
 Bundle-Vendor: %providerName
@@ -49,5 +49,5 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.jdt.core.manipulation,
  org.eclipse.core.filesystem
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BundleShape: dir

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class VerticalRulerInfoStub implements IVerticalRulerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return null;
 	}
@@ -34,6 +35,7 @@ public class VerticalRulerInfoStub implements IVerticalRulerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		return fLineNumber;
 	}
@@ -41,6 +43,7 @@ public class VerticalRulerInfoStub implements IVerticalRulerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getWidth()
 	 */
+	@Override
 	public int getWidth() {
 		return 0;
 	}
@@ -48,6 +51,7 @@ public class VerticalRulerInfoStub implements IVerticalRulerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
 	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		return 0;
 	}

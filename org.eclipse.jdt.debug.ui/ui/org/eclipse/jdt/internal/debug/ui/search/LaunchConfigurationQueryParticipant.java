@@ -16,46 +16,35 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.variables.VariablesPlugin;
-
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-
-import org.eclipse.ui.PartInitException;
-
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
-
-import org.eclipse.search.ui.text.Match;
-
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
-
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.IMatchPresentation;
 import org.eclipse.jdt.ui.search.IQueryParticipant;
 import org.eclipse.jdt.ui.search.ISearchRequestor;
 import org.eclipse.jdt.ui.search.PatternQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.ui.PartInitException;
 
 /**
  * This class provides a search participant to find class references in the 
@@ -75,6 +64,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.search.IQueryParticipant#estimateTicks(org.eclipse.jdt.ui.search.QuerySpecification)
 	 */
+	@Override
 	public int estimateTicks(QuerySpecification query) {
 		if (isValid(query)) {
 			return 50;
@@ -85,6 +75,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.search.IQueryParticipant#getUIParticipant()
 	 */
+	@Override
 	public synchronized IMatchPresentation getUIParticipant() {
 		if (uiParticipant == null) {
 			uiParticipant = new UIParticipant();
@@ -95,6 +86,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.search.IQueryParticipant#search(org.eclipse.jdt.ui.search.ISearchRequestor, org.eclipse.jdt.ui.search.QuerySpecification, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void search(ISearchRequestor requestor, QuerySpecification query, IProgressMonitor monitor) throws CoreException {
 		if (!isValid(query)) {
 			return;
@@ -293,6 +285,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.search.IMatchPresentation#createLabelProvider()
 		 */
+		@Override
 		public ILabelProvider createLabelProvider() {
 			return DebugUITools.newDebugModelPresentation();
 		}
@@ -300,6 +293,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.search.IMatchPresentation#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 		 */
+		@Override
 		public void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 			Object o = match.getElement();
 			if (o instanceof ILaunchConfiguration) {

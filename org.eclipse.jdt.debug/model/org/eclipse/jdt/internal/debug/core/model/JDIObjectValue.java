@@ -61,6 +61,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, boolean)
 	 */
+	@Override
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread, boolean superSend)
 			throws DebugException {
@@ -106,6 +107,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
 	 */
+	@Override
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread, String typeSignature)
 			throws DebugException {
@@ -197,6 +199,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * boolean)
 	 */
+	@Override
 	public IJavaFieldVariable getField(String name, boolean superField)
 			throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
@@ -242,6 +245,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * java.lang.String)
 	 */
+	@Override
 	public IJavaFieldVariable getField(String name,
 			String declaringTypeSignature) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
@@ -381,6 +385,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
+	@Override
 	public IJavaThread[] getWaitingThreads() throws DebugException {
 		List<JDIThread> waiting = new ArrayList<JDIThread>();
 		try {
@@ -407,6 +412,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
 	 */
+	@Override
 	public IJavaThread getOwningThread() throws DebugException {
 		IJavaThread owningThread = null;
 		try {
@@ -452,6 +458,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
+	@Override
 	public long getUniqueId() throws DebugException {
 		try {
 			ObjectReference underlyingObject = getUnderlyingObject();
@@ -475,6 +482,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
+	@Override
 	public IJavaObject[] getReferringObjects(long max) throws DebugException {
 		// The cached references should be reloaded if the suspend count has
 		// changed, or the maximum entries has changed
@@ -532,6 +540,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
 	 */
+	@Override
 	public void disableCollection() throws DebugException {
 		if (getJavaDebugTarget().supportsSelectiveGarbageCollection()) {
 			try {
@@ -552,6 +561,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
+	@Override
 	public void enableCollection() throws DebugException {
 		if (getJavaDebugTarget().supportsSelectiveGarbageCollection()) {
 			try {

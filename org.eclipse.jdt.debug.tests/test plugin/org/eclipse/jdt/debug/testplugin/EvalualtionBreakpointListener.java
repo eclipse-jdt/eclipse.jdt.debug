@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.jdt.debug.testplugin;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -31,6 +29,8 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Test for breakpoint listener extension. Performs an evaluation while voting
@@ -103,12 +103,14 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
+	@Override
 	public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
+	@Override
 	public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
 		COMPILATION_ERRORS.add(breakpoint);
 	}
@@ -116,6 +118,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 	 */
+	@Override
 	public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
 		RUNTIME_ERRORS.add(breakpoint);
 	}
@@ -123,6 +126,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
+	@Override
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		HIT = true;
 		final Object lock = new Object();
@@ -130,6 +134,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 		if (PROJECT != null && EXPRESSION != null) {
 			IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(PROJECT, (IJavaDebugTarget) thread.getDebugTarget());
 			IEvaluationListener listener = new IEvaluationListener(){
+				@Override
 				public void evaluationComplete(IEvaluationResult result) {
 					RESULT = result;
 					synchronized (lock) {
@@ -154,12 +159,14 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
+	@Override
 	public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
+	@Override
 	public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		REMOVED = true;
 		synchronized (REMOVE_LOCK) {
@@ -170,6 +177,7 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 	 */
+	@Override
 	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 		return IJavaBreakpointListener.DONT_CARE;
 	}

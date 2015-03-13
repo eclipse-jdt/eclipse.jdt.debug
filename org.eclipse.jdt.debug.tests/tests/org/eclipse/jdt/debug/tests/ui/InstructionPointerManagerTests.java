@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, restore);
 			Runnable cleanup = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
                 }
@@ -137,7 +138,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, restore);
 			Runnable cleanup = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
                 }
@@ -182,7 +184,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		
 		// Close all editors
 	    Runnable closeAll = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                 activeWorkbenchWindow.getActivePage().closeAllEditors(false);
                 activeWorkbenchWindow.addPerspectiveListener(getPerspectiveListener());
@@ -208,7 +211,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         
         // Find and select the top stack frame of the other thread
         Runnable openParent = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
                 Object[] newSegments = new Object[4];
             	newSegments[0] = target1.getLaunch();
@@ -238,7 +242,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         
         // Select the same stack frame and make sure IPC count doesn't change
         Runnable selectSameStackFrame = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
                 Object[] newSegments = new Object[4];
             	newSegments[0] = target1.getLaunch();
@@ -261,7 +266,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         
         // Select the next stack frame in the same thread
         Runnable selectSecondStackFrame = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
                 Object[] newSegments = new Object[4];
             	newSegments[0] = target1.getLaunch();
@@ -294,7 +300,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	
        // Select the stack frame from the new debug target displaying ThreadStack
        Runnable openOtherDebugTarget = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
                 ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
                 Object[] newSegments = new Object[4];
@@ -333,7 +340,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        
        // Select the other thread from the new target displaying ClassTwo
        Runnable openOtherThread = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	IDebugView debugView = (IDebugView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.debug.ui.DebugView");
                 Object[] newSegments = new Object[4];
             	newSegments[0] = target2.getLaunch();
@@ -381,7 +389,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 
        // Close the editor displaying ThreadStack.java if it is open
 	   Runnable closeEditor2 = new Runnable() {
-           public void run() {
+           @Override
+		public void run() {
                IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                IEditorReference[] editors = activeWorkbenchWindow.getActivePage().getEditorReferences();
                for (int i = 0; i < editors.length; i++) {
@@ -402,7 +411,8 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 
        // Close all editors
 	   Runnable closeAllEditors = new Runnable() {
-           public void run() {
+           @Override
+		public void run() {
                IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                activeWorkbenchWindow.getActivePage().closeAllEditors(false);
 			}
@@ -448,6 +458,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		
 		// Synchronize with the UI thread so we know that the annotations have finished
 		Runnable runner = new Runnable(){
+			@Override
 			public void run() {
 				// Do nothing, just waiting for the UI thread to finish annotations
 			}
@@ -465,6 +476,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		
 		// Synchronize with the UI thread so we know that the annotations have finished
 		Runnable runner = new Runnable(){
+			@Override
 			public void run() {
 				// Do nothing, just waiting for the UI thread to finish annotations
 			}
@@ -477,12 +489,15 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		private String fTypeName = IInternalDebugCoreConstants.EMPTY_STRING;
 		private String fTitle = IInternalDebugCoreConstants.EMPTY_STRING;
 		
+		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {}
+		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
 			
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 		 */
+		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
             if (partRef.getTitle().equals(fTitle) && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
             	IEditorPart editor = (IEditorPart) partRef.getPart(true);
@@ -524,17 +539,25 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	}
 	
 	class MyPartListener implements IPartListener2{
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {}
 	
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 			IEditorPart editor = (IEditorPart) partRef.getPart(true);
         	if (editor instanceof ITextEditor){
@@ -555,6 +578,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	
 	class MyAnnotationListener implements IAnnotationModelListener, IAnnotationModelListenerExtension{
 
+		@Override
 		public void modelChanged(AnnotationModelEvent event) {
 			Annotation[] annotations = event.getAddedAnnotations();
 			for (int i = 0; i < annotations.length; i++) {
@@ -578,6 +602,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 			}	
 		}
 
+		@Override
 		public void modelChanged(IAnnotationModel model) {}
 	}
 }

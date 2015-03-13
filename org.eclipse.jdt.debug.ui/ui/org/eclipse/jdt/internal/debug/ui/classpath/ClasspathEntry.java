@@ -27,6 +27,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
 	 */
+	@Override
 	public IJavaProject getJavaProject() {
 		return entry.getJavaProject();
 	}
@@ -71,6 +72,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
+	@Override
 	public int getType() {
 		return entry.getType();
 	}
@@ -78,6 +80,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		return entry.getMemento(); 
 	}
@@ -85,6 +88,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return entry.getPath();
 	}
@@ -92,6 +96,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return entry.getResource();
 	}
@@ -99,6 +104,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentPath() {
 		return entry.getSourceAttachmentPath();
 	}
@@ -106,6 +112,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSourceAttachmentPath(IPath path) {
 		entry.setSourceAttachmentPath(path);
 	}
@@ -113,6 +120,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentRootPath() {
 		return entry.getSourceAttachmentRootPath();
 	}
@@ -120,6 +128,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentRootPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSourceAttachmentRootPath(IPath path) {
 		entry.setSourceAttachmentRootPath(path);
 		
@@ -128,6 +137,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathProperty()
 	 */
+	@Override
 	public int getClasspathProperty() {
 		return entry.getClasspathProperty();
 	}
@@ -135,6 +145,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setClasspathProperty(int)
 	 */
+	@Override
 	public void setClasspathProperty(int location) {
 		entry.setClasspathProperty(location);
 		
@@ -143,6 +154,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return entry.getLocation();
 	}
@@ -150,6 +162,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentLocation()
 	 */
+	@Override
 	public String getSourceAttachmentLocation() {
 		return entry.getSourceAttachmentLocation();
 	}
@@ -157,6 +170,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
 	 */
+	@Override
 	public String getSourceAttachmentRootLocation() {
 		return entry.getSourceAttachmentRootLocation();
 	}
@@ -164,6 +178,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getVariableName()
 	 */
+	@Override
 	public String getVariableName() {
 		return entry.getVariableName();
 	}
@@ -171,6 +186,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathEntry()
 	 */
+	@Override
 	public org.eclipse.jdt.core.IClasspathEntry getClasspathEntry() {
 		return entry.getClasspathEntry();
 	}
@@ -206,6 +222,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return getParent() instanceof ClasspathGroup;
 	}
@@ -213,6 +230,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (getDelegate() instanceof IAdaptable) {
 			return ((IAdaptable) getDelegate()).getAdapter(adapter);

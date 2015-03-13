@@ -294,8 +294,10 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			}
 		});
 		fDocumentListener = new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				setDirty(PROP_CONDITION);
 			}
@@ -389,18 +391,21 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		gc.dispose();
 		fViewer.getControl().setLayoutData(gd);
 		fContentAssistHandler= new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				return null;
 			}
 		};
 		fUndoHandler= new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 				fViewer.doOperation(ITextOperationTarget.UNDO);
 				return null;
 			}
 		};
 		fRedoHandler= new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 				fViewer.doOperation(ITextOperationTarget.REDO);
 				return null;
@@ -418,6 +423,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			}				
 		});
 		parent.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}

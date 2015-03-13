@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
+	@Override
 	public void initializeFrom(Element memento) throws CoreException {
 		String name = memento.getAttribute("project"); //$NON-NLS-1$
 		if (name == null) {
@@ -90,12 +91,14 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
+	@Override
 	public String getTypeId() {
 		return TYPE_ID;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
+	@Override
 	public int getType() {
 		return OTHER;
 	}
@@ -131,6 +134,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
 		List<Object> classpathEntries = new ArrayList<Object>(5);
@@ -322,6 +326,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
+	@Override
 	public String getName() {
 		if (isExportedEntriesOnly()) {
 			return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});

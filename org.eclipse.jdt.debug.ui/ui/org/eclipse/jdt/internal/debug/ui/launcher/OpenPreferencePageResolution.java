@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return this.description;
 	}
@@ -57,6 +58,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
@@ -64,6 +66,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return this.label;
 	}
@@ -71,6 +74,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
 		UIJob job = new UIJob(""){ //$NON-NLS-1$
 			@Override

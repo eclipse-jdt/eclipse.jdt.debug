@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IExpression#getExpressionText()
 	 */
+	@Override
 	public String getExpressionText() {
 		return fExpression;
 	}
@@ -86,6 +87,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IExpression#getValue()
 	 */
+	@Override
 	public IValue getValue() {
 		return fValue;
 	}
@@ -93,6 +95,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		IValue value= getValue();
 		if (value != null) {
@@ -109,6 +112,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return getDebugTarget().getModelIdentifier();
 	}
@@ -116,6 +120,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return getDebugTarget().getLaunch();
 	}
@@ -123,6 +128,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -149,6 +155,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see IExpression#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);		
 	}
@@ -156,6 +163,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
 	 */
+	@Override
 	public boolean hasErrors() {
 		return fResult != null && fResult.hasErrors();
 	}
@@ -163,6 +171,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	/**
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
 	 */	
+	@Override
 	public String[] getErrorMessages() {	
 		return getErrorMessages(fResult);
 	}

@@ -71,6 +71,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((IExecutionEnvironment)inputElement).getCompatibleVMs();
 		}
@@ -78,12 +79,14 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
@@ -99,6 +102,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -205,6 +209,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fJREsViewer = new CheckboxTableViewer(table);
 		fJREsViewer.setContentProvider(new JREsContentProvider());
 		fJREsViewer.setLabelProvider(new JREsEnvironmentLabelProvider(new JREsEnvironmentLabelProvider.IExecutionEnvironmentProvider() {		
+			@Override
 			public IExecutionEnvironment getEnvironment() {
 				return (IExecutionEnvironment) fJREsViewer.getInput();
 			}
@@ -222,12 +227,14 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fDescription = text;
 					
 		fProfilesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleEESelectionAndJREViewer((IStructuredSelection) event.getSelection());
 			}
 		});
 		
 		fJREsViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked()) {
 					Object element = event.getElement();

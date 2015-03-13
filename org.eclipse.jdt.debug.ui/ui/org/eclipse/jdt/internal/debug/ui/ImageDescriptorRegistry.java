@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
@@ -59,17 +57,20 @@ public class ImageDescriptorRegistry {
 	 *  if the image descriptor can't create the requested image.
 	 */
 	public Image get(ImageDescriptor descriptor) {
-		if (descriptor == null)
+		if (descriptor == null) {
 			descriptor= ImageDescriptor.getMissingImageDescriptor();
+		}
 			
 		Image result= fRegistry.get(descriptor);
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 	
 		Assert.isTrue(fDisplay == JDIDebugUIPlugin.getStandardDisplay(), DebugUIMessages.ImageDescriptorRegistry_Allocating_image_for_wrong_display_1); 
 		result= descriptor.createImage();
-		if (result != null)
+		if (result != null) {
 			fRegistry.put(descriptor, result);
+		}
 		return result;
 	}
 
@@ -86,8 +87,10 @@ public class ImageDescriptorRegistry {
 	
 	private void hookDisplay() {
 		fDisplay.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 			fDisplay.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					dispose();
 				}	

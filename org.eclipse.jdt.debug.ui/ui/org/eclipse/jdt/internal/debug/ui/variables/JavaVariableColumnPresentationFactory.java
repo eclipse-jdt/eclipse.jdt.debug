@@ -26,6 +26,7 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		if (isApplicable(context, element)) {
 			return new JavaVariableColumnPresentation();
@@ -36,6 +37,7 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
 	 */
+	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		if (isApplicable(context, element)) {
 			return JavaVariableColumnPresentation.JAVA_VARIABLE_COLUMN_PRESENTATION;

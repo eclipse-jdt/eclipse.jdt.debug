@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
 		try {
 			String title = LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1; 
@@ -48,6 +49,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 			}
 
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 						try {
 							JavaRuntime.setDefaultVMInstall(vm, monitor);
@@ -75,6 +77,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5; 
 	}

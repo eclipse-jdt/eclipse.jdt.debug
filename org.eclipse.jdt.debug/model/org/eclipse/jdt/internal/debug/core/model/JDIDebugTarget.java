@@ -463,6 +463,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		// begin handling/dispatching events after the creation event is handled
 		// by all listeners
 		plugin.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				EventDispatcher dispatcher = getEventDispatcher();
 				if (dispatcher != null) {
@@ -580,6 +581,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IDebugTarget#getThreads()
 	 */
+	@Override
 	public IThread[] getThreads() {
 		synchronized (fThreads) {
 			return fThreads.toArray(new IThread[0]);
@@ -589,6 +591,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return (isSuspended() || canResumeThreads()) && isAvailable()
 				&& !isPerformingHotCodeReplace();
@@ -614,6 +617,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		if (isAvailable()) {
 			// allow suspend when one or more threads are currently running
@@ -631,6 +635,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return supportsTerminate() && isAvailable();
 	}
@@ -686,6 +691,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#supportsHotCodeReplace()
 	 */
+	@Override
 	public boolean supportsHotCodeReplace() {
 		return supportsJ9HotCodeReplace() || supportsJDKHotCodeReplace();
 	}
@@ -693,6 +699,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#supportsInstanceBreakpoints()
 	 */
+	@Override
 	public boolean supportsInstanceBreakpoints() {
 		if (isAvailable()
 				&& JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] { 1,
@@ -866,6 +873,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#isOutOfSynch()
 	 */
+	@Override
 	public boolean isOutOfSynch() throws DebugException {
 		Iterator<JDIThread> threads = getThreadIterator();
 		while (threads.hasNext()) {
@@ -880,6 +888,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#mayBeOutOfSynch()
 	 */
+	@Override
 	public boolean mayBeOutOfSynch() {
 		Iterator<JDIThread> threads = getThreadIterator();
 		while (threads.hasNext()) {
@@ -958,6 +967,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IDebugElement#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		if (fName == null) {
 			setName(getVMName());
@@ -994,6 +1004,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IDebugTarget#getProcess()
 	 */
+	@Override
 	public IProcess getProcess() {
 		return fProcess;
 	}
@@ -1027,6 +1038,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return fSuspended;
 	}
@@ -1051,6 +1063,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return fTerminated;
 	}
@@ -1215,6 +1228,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		// if a client calls resume, then we should resume on a VMStart event in
 		// case
@@ -1270,6 +1284,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(IBreakpoint)
 	 */
+	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		return breakpoint instanceof IJavaBreakpoint;
 	}
@@ -1282,6 +1297,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @param breakpoint
 	 *            the breakpoint added to the breakpoint manager
 	 */
+	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		if (!isAvailable()) {
 			return;
@@ -1315,6 +1331,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @param breakpoint
 	 *            the breakpoint that has changed
 	 */
+	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
@@ -1326,6 +1343,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @param breakpoint
 	 *            the breakpoint has been removed from the breakpoint manager.
 	 */
+	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (!isAvailable()) {
 			return;
@@ -1348,6 +1366,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ISuspendResume
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		if (isSuspended()) {
 			IThread[] threads = getThreads();
@@ -1451,6 +1470,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		if (!isAvailable()) {
 			return;
@@ -1623,6 +1643,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#findVariable(String)
 	 */
+	@Override
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		IThread[] threads = getThreads();
 		for (IThread thread2 : threads) {
@@ -1715,6 +1736,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#getJavaTypes(String)
 	 */
+	@Override
 	public IJavaType[] getJavaTypes(String name) throws DebugException {
 		try {
 			// get java.lang.Class
@@ -1787,6 +1809,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(boolean)
 	 */
+	@Override
 	public IJavaValue newValue(boolean value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1799,6 +1822,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(byte)
 	 */
+	@Override
 	public IJavaValue newValue(byte value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1811,6 +1835,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(char)
 	 */
+	@Override
 	public IJavaValue newValue(char value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1823,6 +1848,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(double)
 	 */
+	@Override
 	public IJavaValue newValue(double value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1835,6 +1861,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(float)
 	 */
+	@Override
 	public IJavaValue newValue(float value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1847,6 +1874,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(int)
 	 */
+	@Override
 	public IJavaValue newValue(int value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1859,6 +1887,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(long)
 	 */
+	@Override
 	public IJavaValue newValue(long value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1871,6 +1900,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(short)
 	 */
+	@Override
 	public IJavaValue newValue(short value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1883,6 +1913,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#newValue(String)
 	 */
+	@Override
 	public IJavaValue newValue(String value) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -1895,6 +1926,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#nullValue()
 	 */
+	@Override
 	public IJavaValue nullValue() {
 		return JDIValue.createValue(this, null);
 	}
@@ -1902,6 +1934,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#voidValue()
 	 */
+	@Override
 	public IJavaValue voidValue() {
 		return new JDIVoidValue(this);
 	}
@@ -1957,6 +1990,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 *            the target in which the thread started
 		 * @return <code>true</code> - the thread should be resumed
 		 */
+		@Override
 		public boolean handleEvent(Event event, JDIDebugTarget target,
 				boolean suspendVote, EventSet eventSet) {
 			ThreadReference thread = ((ThreadStartEvent) event).thread();
@@ -1994,6 +2028,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * (com.sun.jdi.event.Event,
 		 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
+		@Override
 		public void eventSetComplete(Event event, JDIDebugTarget target,
 				boolean suspend, EventSet eventSet) {
 			// do nothing
@@ -2057,6 +2092,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 *            the target in which the thread died
 		 * @return <code>true</code> - the thread should be resumed
 		 */
+		@Override
 		public boolean handleEvent(Event event, JDIDebugTarget target,
 				boolean suspendVote, EventSet eventSet) {
 			ThreadReference ref = ((ThreadDeathEvent) event).thread();
@@ -2088,6 +2124,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * (com.sun.jdi.event.Event,
 		 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, boolean)
 		 */
+		@Override
 		public void eventSetComplete(Event event, JDIDebugTarget target,
 				boolean suspend, EventSet eventSet) {
 			// do nothing
@@ -2158,6 +2195,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
+	@Override
 	public boolean supportsStorageRetrieval() {
 		return false;
 	}
@@ -2165,6 +2203,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
+	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length)
 			throws DebugException {
 		notSupported(JDIDebugModelMessages.JDIDebugTarget_does_not_support_storage_retrieval);
@@ -2176,6 +2215,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		if (!isAvailable()) {
 			return;
@@ -2191,12 +2231,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
@@ -2223,6 +2265,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#getStepFilters()
 	 */
+	@Override
 	public String[] getStepFilters() {
 		return fStepFilters;
 	}
@@ -2230,6 +2273,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#isFilterConstructors()
 	 */
+	@Override
 	public boolean isFilterConstructors() {
 		return (fStepFilterMask & FILTER_CONSTRUCTORS) > 0;
 	}
@@ -2237,6 +2281,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#isFilterStaticInitializers()
 	 */
+	@Override
 	public boolean isFilterStaticInitializers() {
 		return (fStepFilterMask & FILTER_STATIC_INITIALIZERS) > 0;
 	}
@@ -2244,6 +2289,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#isFilterSynthetics()
 	 */
+	@Override
 	public boolean isFilterSynthetics() {
 		return (fStepFilterMask & FILTER_SYNTHETICS) > 0;
 	}
@@ -2253,6 +2299,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#isStepThruFilters()
 	 */
+	@Override
 	public boolean isStepThruFilters() {
 		return (fStepFilterMask & STEP_THRU_FILTERS) > 0;
 	}
@@ -2268,6 +2315,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#setFilterConstructors(boolean)
 	 */
+	@Override
 	public void setFilterConstructors(boolean filter) {
 		if (filter) {
 			fStepFilterMask = fStepFilterMask | FILTER_CONSTRUCTORS;
@@ -2280,6 +2328,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#setFilterStaticInitializers(boolean)
 	 */
+	@Override
 	public void setFilterStaticInitializers(boolean filter) {
 		if (filter) {
 			fStepFilterMask = fStepFilterMask | FILTER_STATIC_INITIALIZERS;
@@ -2292,6 +2341,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#setFilterSynthetics(boolean)
 	 */
+	@Override
 	public void setFilterSynthetics(boolean filter) {
 		if (filter) {
 			fStepFilterMask = fStepFilterMask | FILTER_SYNTHETICS;
@@ -2306,6 +2356,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#setStepThruFilters(boolean)
 	 */
+	@Override
 	public void setStepThruFilters(boolean thru) {
 		if (thru) {
 			fStepFilterMask = fStepFilterMask | STEP_THRU_FILTERS;
@@ -2314,10 +2365,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 	}
 
+	@Override
 	public boolean isFilterGetters() {
 		return (fStepFilterMask & FILTER_GETTERS) > 0;
 	}
 
+	@Override
 	public void setFilterGetters(boolean filter) {
 		if (filter) {
 			fStepFilterMask = fStepFilterMask | FILTER_GETTERS;
@@ -2326,10 +2379,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 	}
 
+	@Override
 	public boolean isFilterSetters() {
 		return (fStepFilterMask & FILTER_SETTERS) > 0;
 	}
 
+	@Override
 	public void setFilterSetters(boolean filter) {
 		if (filter) {
 			fStepFilterMask = fStepFilterMask | FILTER_SETTERS;
@@ -2341,6 +2396,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#setStepFilters(String[])
 	 */
+	@Override
 	public void setStepFilters(String[] list) {
 		fStepFilters = list;
 	}
@@ -2348,6 +2404,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#setStepFiltersEnabled(boolean)
 	 */
+	@Override
 	public void setStepFiltersEnabled(boolean enabled) {
 		if (enabled) {
 			fStepFilterMask = fStepFilterMask | STEP_FILTERS_ENABLED;
@@ -2360,6 +2417,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IDebugTarget#hasThreads()
 	 */
+	@Override
 	public boolean hasThreads() {
 		return fThreads.size() > 0;
 	}
@@ -2429,6 +2487,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsMonitorInformation()
 	 */
+	@Override
 	public boolean supportsMonitorInformation() {
 		if (!isAvailable()) {
 			return false;
@@ -2452,6 +2511,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see IJavaDebugTarget#isPerformingHotCodeReplace()
 	 */
+	@Override
 	public boolean isPerformingHotCodeReplace() {
 		return fIsPerformingHotCodeReplace;
 	}
@@ -2462,6 +2522,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsAccessWatchpoints()
 	 */
+	@Override
 	public boolean supportsAccessWatchpoints() {
 		VirtualMachine vm = getVM();
 		if (isAvailable() && vm != null) {
@@ -2477,6 +2538,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsModificationWatchpoints
 	 * ()
 	 */
+	@Override
 	public boolean supportsModificationWatchpoints() {
 		VirtualMachine vm = getVM();
 		if (isAvailable() && vm != null) {
@@ -2488,6 +2550,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#setDefaultStratum()
 	 */
+	@Override
 	public void setDefaultStratum(String stratum) {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -2495,6 +2558,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 	}
 
+	@Override
 	public String getDefaultStratum() {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -2508,6 +2572,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IStepFilters#supportsStepFilters()
 	 */
+	@Override
 	public boolean supportsStepFilters() {
 		return isAvailable();
 	}
@@ -2516,6 +2581,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * When the breakpoint manager disables, remove all registered breakpoints
 	 * requests from the VM. When it enables, reinstall them.
 	 */
+	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
 		if (!isAvailable()) {
 			return;
@@ -2542,6 +2608,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
 	 * .debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (events.length == 1) {
 			DebugEvent event = events[0];
@@ -2610,6 +2677,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getThreadGroups()
 	 */
+	@Override
 	public IJavaThreadGroup[] getRootThreadGroups() throws DebugException {
 		try {
 			VirtualMachine vm = getVM();
@@ -2639,6 +2707,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getAllThreadGroups()
 	 */
+	@Override
 	public IJavaThreadGroup[] getAllThreadGroups() throws DebugException {
 		synchronized (fGroups) {
 			return fGroups
@@ -2652,6 +2721,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsInstanceRetrieval()
 	 */
+	@Override
 	public boolean supportsInstanceRetrieval() {
 		VirtualMachine vm = getVM();
 		if (vm != null) {
@@ -2691,6 +2761,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsForceReturn()
 	 */
+	@Override
 	public boolean supportsForceReturn() {
 		VirtualMachine machine = getVM();
 		if (machine == null) {
@@ -2705,6 +2776,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#
 	 * supportsSelectiveGarbageCollection()
 	 */
+	@Override
 	public boolean supportsSelectiveGarbageCollection() {
 		return fSupportsDisableGC;
 	}
@@ -2725,6 +2797,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
 	 */
+	@Override
 	public String getVMName() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {
@@ -2746,6 +2819,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVersion()
 	 */
+	@Override
 	public String getVersion() throws DebugException {
 		VirtualMachine vm = getVM();
 		if (vm == null) {
@@ -2767,6 +2841,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#refreshState()
 	 */
+	@Override
 	public void refreshState() throws DebugException {
 		if (isTerminated() || isDisconnected()) {
 			return;
@@ -2877,6 +2952,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#sendCommand(byte, byte,
 	 * byte[])
 	 */
+	@Override
 	public byte[] sendCommand(byte commandSet, byte commandId, byte[] data)
 			throws DebugException {
 		try {
@@ -2894,6 +2970,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#addHotCodeReplaceListener
 	 * (org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
 	 */
+	@Override
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		fHCRListeners.add(listener);
 	}
@@ -2905,6 +2982,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#removeHotCodeReplaceListener
 	 * (org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
 	 */
+	@Override
 	public void removeHotCodeReplaceListener(
 			IJavaHotCodeReplaceListener listener) {
 		fHCRListeners.remove(listener);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fWorkbench= workbench;
 		fSelection= selection;
@@ -74,8 +75,9 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	private static ImageDescriptor createWizardImageDescriptor(String name) {
 		try {
 			URL baseUrl= MacOSXUILaunchingPlugin.getDefault().getBundle().getEntry("/icons/full/wizban/"); //$NON-NLS-1$	
-			if (baseUrl != null)
+			if (baseUrl != null) {
 				return ImageDescriptor.createFromURL(new URL(baseUrl, name));
+			}
 		} catch (MalformedURLException e) {
 			// fall through
 		}

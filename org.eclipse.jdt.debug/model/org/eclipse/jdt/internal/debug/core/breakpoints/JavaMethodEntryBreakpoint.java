@@ -75,6 +75,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 			final int charStart, final int charEnd, final int hitCount,
 			final boolean register, final Map<String, Object> attributes) throws CoreException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
 				setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
@@ -116,6 +117,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodEntryBreakpoint#getMethodName()
 	 */
+	@Override
 	public String getMethodName() {
 		return fMethodName;
 	}
@@ -123,6 +125,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodEntryBreakpoint#getMethodSignature()
 	 */
+	@Override
 	public String getMethodSignature() {
 		return fMethodSignature;
 	}

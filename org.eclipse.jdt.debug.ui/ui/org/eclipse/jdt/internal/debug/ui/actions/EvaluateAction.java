@@ -189,6 +189,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
+	@Override
 	public void evaluationComplete(final IEvaluationResult result) {
 		// if plug-in has shutdown, ignore - see bug# 8693
 		if (JDIDebugUIPlugin.getDefault() == null) {
@@ -233,7 +234,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		setNewTargetPart(getTargetPart());
         
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+            @Override
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 if (stackFrame.isSuspended()) {
                     IJavaElement javaElement= getJavaElement(stackFrame);
                     if (javaElement != null) {
@@ -585,6 +587,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		update();
 		run();
@@ -593,6 +596,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) { 
 		setAction(action);
 	}	
@@ -600,6 +604,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		disposeDebugModelPresentation();
 		IWorkbenchWindow win = getWindow();
@@ -611,6 +616,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		setWindow(window);
 		IWorkbenchPage page= window.getActivePage();
@@ -655,6 +661,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setAction(action);
 		setTargetPart(targetEditor);
@@ -663,6 +670,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		setTargetPart(part);
 	}
@@ -670,12 +678,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getTargetPart()) {
 			setTargetPart(null);
@@ -688,18 +698,21 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
 	
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		setTargetPart(view);
 	}
@@ -735,6 +748,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		setAction(action);
 		setTargetPart(targetPart);
@@ -752,6 +766,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
 	 */
+	@Override
 	public void snippetStateChanged(JavaSnippetEditor editor) {
 		if (editor != null && !editor.isEvaluating() && editor.getFile() != null) {
 			update();

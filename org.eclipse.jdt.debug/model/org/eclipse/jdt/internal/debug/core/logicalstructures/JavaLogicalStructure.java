@@ -109,6 +109,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		 * org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete
 		 * (org.eclipse.jdt.debug.eval.IEvaluationResult)
 		 */
+		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			synchronized (this) {
 				fResult = result;
@@ -259,6 +260,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#providesLogicalStructure(IValue)
 	 */
+	@Override
 	public boolean providesLogicalStructure(IValue value) {
 		if (!(value instanceof IJavaObject)) {
 			return false;
@@ -269,6 +271,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#getLogicalStructure(IValue)
 	 */
+	@Override
 	public IValue getLogicalStructure(IValue value) throws CoreException {
 		if (!(value instanceof IJavaObject)) {
 			return value;
@@ -500,6 +503,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 * org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription
 	 * (org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public String getDescription(IValue value) {
 		return getDescription();
 	}
@@ -509,6 +513,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 * 
 	 * @see org.eclipse.debug.core.ILogicalStructureType#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
@@ -540,6 +545,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 * 
 	 * @see org.eclipse.debug.core.ILogicalStructureType#getId()
 	 */
+	@Override
 	public String getId() {
 		return JDIDebugPlugin.getUniqueIdentifier() + fType + fDescription;
 	}

@@ -206,9 +206,11 @@ public class ExpressionInputDialog extends TrayDialog {
 		document.set(getInitialText(fVariable));	
 		
 		fDocumentListener= new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {
+            @Override
+			public void documentAboutToBeChanged(DocumentEvent event) {
             }
-            public void documentChanged(DocumentEvent event) {
+            @Override
+			public void documentChanged(DocumentEvent event) {
                 refreshValidState(fSourceViewer);
             }
         };
@@ -222,6 +224,7 @@ public class ExpressionInputDialog extends TrayDialog {
      */
     private void activateHandler(){
     	IHandler handler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 				fSourceViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				return null;

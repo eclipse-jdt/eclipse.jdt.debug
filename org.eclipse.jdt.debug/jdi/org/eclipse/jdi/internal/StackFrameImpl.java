@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#getValue(com.sun.jdi.LocalVariable)
 	 */
+	@Override
 	public Value getValue(LocalVariable variable)
 			throws IllegalArgumentException, InvalidStackFrameException,
 			VMMismatchException {
@@ -77,6 +78,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#getValues(java.util.List)
 	 */
+	@Override
 	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) throws IllegalArgumentException,
 			InvalidStackFrameException, VMMismatchException {
 		// Note that this information should not be cached.
@@ -159,6 +161,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#getArgumentValues()
 	 */
+	@Override
 	public List<Value> getArgumentValues() throws InvalidStackFrameException {
 		if (!thread().isSuspended()) {
 			throw new InvalidStackFrameException(
@@ -184,6 +187,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#location()
 	 */
+	@Override
 	public Location location() {
 		return fLocation;
 	}
@@ -191,6 +195,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#setValue(com.sun.jdi.LocalVariable, com.sun.jdi.Value)
 	 */
+	@Override
 	public void setValue(LocalVariable var, Value value)
 			throws InvalidTypeException, ClassNotLoadedException {
 		// Note that this information should not be cached.
@@ -232,6 +237,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#thisObject()
 	 */
+	@Override
 	public ObjectReference thisObject() throws InvalidStackFrameException {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -259,6 +265,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#thread()
 	 */
+	@Override
 	public ThreadReference thread() {
 		return fThread;
 	}
@@ -266,6 +273,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#visibleVariableByName(java.lang.String)
 	 */
+	@Override
 	public LocalVariable visibleVariableByName(String name)
 			throws AbsentInformationException {
 		Iterator<LocalVariable> iter = visibleVariables().iterator();
@@ -282,6 +290,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.StackFrame#visibleVariables()
 	 */
+	@Override
 	public List<LocalVariable> visibleVariables() throws AbsentInformationException {
 		List<LocalVariable> variables = fLocation.method().variables();
 		Iterator<LocalVariable> iter = variables.iterator();

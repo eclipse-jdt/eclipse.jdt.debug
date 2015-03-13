@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public boolean booleanValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue();
@@ -51,6 +52,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public char charValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (char) 1 : (char) 0;
@@ -63,6 +65,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public byte byteValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (byte) 1 : (byte) 0;
@@ -75,6 +78,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public double doubleValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (double) 1 : (double) 0;
@@ -87,6 +91,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public float floatValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (float) 1 : (float) 0;
@@ -99,6 +104,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public int intValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (int) 1 : (int) 0;
@@ -111,6 +117,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public long longValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (long) 1 : (long) 0;
@@ -123,6 +130,7 @@ public abstract class PrimitiveValueImpl extends ValueImpl implements PrimitiveV
 	/**
 	 * @return Returns Primitive Value converted to required type.
 	 */
+	@Override
 	public short shortValue() {
 		if (fValue instanceof Boolean)
 			return ((Boolean) fValue).booleanValue() ? (short) 1 : (short) 0;

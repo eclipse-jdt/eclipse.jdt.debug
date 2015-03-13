@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public abstract class WatchpointEventImpl extends LocatableEventImpl implements
 	/**
 	 * Returns the field that is about to be accessed/modified.
 	 */
+	@Override
 	public Field field() {
 		return fField;
 	}
@@ -66,6 +67,7 @@ public abstract class WatchpointEventImpl extends LocatableEventImpl implements
 	/**
 	 * Returns the object whose field is about to be accessed/modified.
 	 */
+	@Override
 	public ObjectReference object() {
 		return fObjectReference;
 	}
@@ -73,6 +75,7 @@ public abstract class WatchpointEventImpl extends LocatableEventImpl implements
 	/**
 	 * Current value of the field.
 	 */
+	@Override
 	public Value valueCurrent() {
 		// Note: if field is static, fObjectReference will be null.
 		if (fObjectReference == null)

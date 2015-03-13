@@ -87,6 +87,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (getValue()) {
 			// if showing system threads, no need to worry about displaying/hiding
@@ -111,6 +112,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 			try {
 				if (thread.isSystemThread()) {
 					Runnable r = new Runnable() {
+						@Override
 						public void run() {
 							getStructuredViewer().refresh();
 						}

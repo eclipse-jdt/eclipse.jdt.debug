@@ -51,7 +51,8 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#editVariable(org.eclipse.debug.core.model.IVariable, org.eclipse.swt.widgets.Shell)
      */
-    public boolean editVariable(IVariable variable, Shell shell) {
+    @Override
+	public boolean editVariable(IVariable variable, Shell shell) {
         try {
             IJavaVariable javaVariable = (IJavaVariable) variable;
             String signature = javaVariable.getSignature();
@@ -81,7 +82,8 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
      */
-    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+    @Override
+	public boolean saveVariable(IVariable variable, String expression, Shell shell) {
         IJavaVariable javaVariable = (IJavaVariable) variable;
         String signature= null;
         try {
@@ -154,7 +156,8 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 final IEvaluationResult[] results= new IEvaluationResult[1];
                 IAstEvaluationEngine engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) thread.getDebugTarget());
                 IEvaluationListener listener= new IEvaluationListener() {
-                    public void evaluationComplete(IEvaluationResult result) {
+                    @Override
+					public void evaluationComplete(IEvaluationResult result) {
                         synchronized (JavaObjectValueEditor.this) {
                             results[0]= result;
                             JavaObjectValueEditor.this.notifyAll();

@@ -261,6 +261,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
 		IJavaElement je = input.getAdapter(IJavaElement.class);
@@ -272,6 +273,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
+	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, getTypeSelectionTitle(), getSelectionEmptyMessage());
@@ -281,6 +283,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public IResource getLaunchableResource(IEditorPart editorpart) {
 		return getLaunchableResource(editorpart.getEditorInput());
 	}
@@ -288,6 +291,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -319,6 +323,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
 		// let the framework resolve configurations based on resource mapping
 		return null;
@@ -327,6 +332,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		// let the framework resolve configurations based on resource mapping
 		return null;

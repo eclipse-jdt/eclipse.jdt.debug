@@ -43,6 +43,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpressionDelegate#getValue(java.lang.String, org.eclipse.debug.core.model.IDebugElement)
 	 */
+	@Override
 	public void evaluateExpression(String expression, IDebugElement context, IWatchExpressionListener listener) {
 		fExpressionText= expression;
 		fListener= listener;
@@ -108,6 +109,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			fStackFrame= frame;
 		}
 		
+		@Override
 		public void run() {
 			IJavaProject project = JavaDebugUtils.resolveJavaProject(fStackFrame);
 			if (project == null) {
@@ -117,20 +119,26 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) fStackFrame.getDebugTarget());
 			// the evaluation listener
 			IEvaluationListener listener= new IEvaluationListener() {
+				@Override
 				public void evaluationComplete(final IEvaluationResult result) {
 					IWatchExpressionResult watchResult= new IWatchExpressionResult() {
+						@Override
 						public IValue getValue() {
 							return result.getValue();
 						}
+						@Override
 						public boolean hasErrors() {
 							return result.hasErrors();
 						}
+						@Override
 						public String[] getErrorMessages() {
 							return JavaInspectExpression.getErrorMessages(result);
 						}
+						@Override
 						public String getExpressionText() {
 							return result.getSnippet();
 						}
+						@Override
 						public DebugException getException() {
 							return result.getException();
 						}

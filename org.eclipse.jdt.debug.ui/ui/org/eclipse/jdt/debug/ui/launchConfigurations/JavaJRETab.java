@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	
 	// Selection changed listener (checked JRE)
 	private IPropertyChangeListener fCheckListener = new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			handleSelectedJREChanged();
 		}
@@ -109,6 +110,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		Composite topComp = SWTFactory.createComposite(parent, font, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -145,6 +147,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		setLaunchConfigurationWorkingCopy(config);
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
@@ -174,6 +177,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fJREBlock.isDefaultJRE()) {
@@ -313,6 +317,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	/**
 	 * @see ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LauncherMessages.JavaJRETab__JRE_1; 
 	}

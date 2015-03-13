@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,10 +124,11 @@ public class MainClass extends Date implements Runnable, Printable {
 	 * @return a string object representing the specified interger value
 	 */
 	private static String invoke1(int x, Object o) {
-		if (o == null)
+		if (o == null) {
 			return (new Integer(x)).toString();
-		else
+		} else {
 			return "";
+		}
 	}
 	/** 
 	 * For invocation tests
@@ -172,15 +173,17 @@ public class MainClass extends Date implements Runnable, Printable {
 		fMainThread = Thread.currentThread();
 
 		// Prevent this thread from dying
-		while (true)
+		while (true) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
+		}
 	}
 	/**
 	 * @see org.eclipse.debug.jdi.tests.program.Printable#print(java.io.OutputStream)
 	 */
+	@Override
 	public void print(OutputStream out) {
 		String string = fInt++ +". " + fString;
 		PrintWriter writer = new PrintWriter(out);
@@ -279,14 +282,16 @@ public class MainClass extends Date implements Runnable, Printable {
 	/**
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		try {
 			Thread t = Thread.currentThread();
 			MainClass o = new OtherClass();
 			// The front-end tests use the class load event to determine that the program has started
 
-			if (CONSTANT == 2)
+			if (CONSTANT == 2) {
 				System.out.println("CONSTANT=2");
+			}
 
 			while (true) {
 				printAndSignal();
@@ -305,8 +310,9 @@ public class MainClass extends Date implements Runnable, Printable {
 	 *	Trigger an access watchpoint event for the front-end.
 	 */
 	private void triggerAccessWatchpointEvent() {
-		if (fBool)
+		if (fBool) {
 			System.out.println("fBool is true");
+		}
 	}
 	/**
 	 *	Trigger a breakpoint event for the front-end.
@@ -379,9 +385,9 @@ public class MainClass extends Date implements Runnable, Printable {
 		fEventType = "";
 
 		/* Trigger event according to the field fEventType */
-		if (eventType.equals(""))
+		if (eventType.equals("")) {
 			return;
-		else if(eventType.equals("refclassload")) {
+		} else if(eventType.equals("refclassload")) {
 			new RefClass();
 		}
 		else if(eventType.equals("fooreturn")) {
@@ -416,42 +422,43 @@ public class MainClass extends Date implements Runnable, Printable {
 			getBoolean();
 		} else if (eventType.equals("getLong")) {
 			getLong();
-		} else if (eventType.equals("AccessWatchpointEvent"))
+		} else if (eventType.equals("AccessWatchpointEvent")) {
 			triggerAccessWatchpointEvent();
-		else if (eventType.equals("StaticAccessWatchpointEvent"))
+		} else if (eventType.equals("StaticAccessWatchpointEvent")) {
 			triggerStaticAccessWatchpointEvent();
-		else if (eventType.equals("BreakpointEvent"))
+		} else if (eventType.equals("BreakpointEvent")) {
 			triggerBreakpointEvent();
-		else if (eventType.equals("ClassPrepareEvent"))
+		} else if (eventType.equals("ClassPrepareEvent")) {
 			triggerClassPrepareEvent();
-		else if (eventType.equals("ClassPrepareEvent1"))
+		} else if (eventType.equals("ClassPrepareEvent1")) {
 			triggerClassPrepareEvent1();
-		else if (eventType.equals("ClassPrepareEvent2"))
+		} else if (eventType.equals("ClassPrepareEvent2")) {
 			triggerClassPrepareEvent2();
-		else if (eventType.equals("ClassPrepareEvent3"))
+		} else if (eventType.equals("ClassPrepareEvent3")) {
 			triggerClassPrepareEvent3();
-		else if (eventType.equals("ClassPrepareEvent4"))
+		} else if (eventType.equals("ClassPrepareEvent4")) {
 			triggerClassPrepareEvent4();
-		else if (eventType.equals("ClassPrepareEvent5"))
+		} else if (eventType.equals("ClassPrepareEvent5")) {
 			triggerClassPrepareEvent5();
-		else if (eventType.equals("ClassPrepareEvent6"))
+		} else if (eventType.equals("ClassPrepareEvent6")) {
 			triggerClassPrepareEvent6();
-		else if (eventType.equals("ClassPrepareEvent7"))
+		} else if (eventType.equals("ClassPrepareEvent7")) {
 			triggerClassPrepareEvent7();
-		else if (eventType.equals("ClassPrepareEvent8"))
+		} else if (eventType.equals("ClassPrepareEvent8")) {
 			triggerClassPrepareEvent8();
-		else if (eventType.equals("ExceptionEvent"))
+		} else if (eventType.equals("ExceptionEvent")) {
 			triggerExceptionEvent();
-		else if (eventType.equals("ModificationWatchpointEvent"))
+		} else if (eventType.equals("ModificationWatchpointEvent")) {
 			triggerModificationWatchpointEvent();
-		else if (eventType.equals("StaticModificationWatchpointEvent"))
+		} else if (eventType.equals("StaticModificationWatchpointEvent")) {
 			triggerStaticModificationWatchpointEvent();
-		else if (eventType.equals("ThreadStartEvent"))
+		} else if (eventType.equals("ThreadStartEvent")) {
 			triggerThreadStartEvent();
-		else if (eventType.equals("ThreadDeathEvent"))
+		} else if (eventType.equals("ThreadDeathEvent")) {
 			triggerThreadDeathEvent();
-		else
+		} else {
 			System.out.println("Unknown event type: " + eventType);
+		}
 	}
 	
 	/**
@@ -459,6 +466,7 @@ public class MainClass extends Date implements Runnable, Printable {
 	 */
 	private void triggerExceptionEvent() {
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				throw new Error();
 			}
@@ -476,8 +484,9 @@ public class MainClass extends Date implements Runnable, Printable {
 	 * for the front-end.
 	 */
 	private void triggerStaticAccessWatchpointEvent() {
-		if (fObject == null)
+		if (fObject == null) {
 			System.out.println("fObject is null");
+		}
 	}
 	/**
 	 * Trigger a modification watchpoint event of a static field
@@ -499,10 +508,12 @@ public class MainClass extends Date implements Runnable, Printable {
 		new Thread("Test Thread Start Event").start();
 	}
 	private void useLocalVars(Thread t, MainClass o) {
-		if (t == null)
+		if (t == null) {
 			System.out.println("t is null");
-		if (o == null)
+		}
+		if (o == null) {
 			System.out.println("o is null");
+		}
 
 	}
 }

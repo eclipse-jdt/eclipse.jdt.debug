@@ -130,6 +130,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */	
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
 		thread.queueRunnable(new Runnable() {
+			@Override
 			public void run() {
 				resolveFormatter(objectValue, thread, listener);
 			}
@@ -433,6 +434,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST) ||
@@ -456,6 +458,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -468,18 +471,21 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
 			ILaunch launch = launches[i];
@@ -590,6 +596,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fListener= listener;
 		}
 		
+		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			if (result.hasErrors()) {
 				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1); 
@@ -650,6 +657,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 			
 			IEvaluationRunnable eval = new IEvaluationRunnable() {
+				@Override
 				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
 					StringBuffer buf= new StringBuffer();
 					if (objectValue instanceof IJavaArray) {

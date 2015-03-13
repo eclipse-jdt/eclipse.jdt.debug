@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -189,7 +189,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
      */
     protected void launchWorkingCopyAndWait(final ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 DebugUITools.launch(workingCopy, ILaunchManager.RUN_MODE);
             }
         };
@@ -206,7 +207,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
      */
-    public void consoleClosed() {
+    @Override
+	public void consoleClosed() {
         if (fStarted) {
             stopMeasuring();
         }
@@ -219,7 +221,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
      */
-    public void init(IConsole console) {
+    @Override
+	public void init(IConsole console) {
         if (!fWarmingUp) {
             fStarted = true;
             startMeasuring();
@@ -229,12 +232,14 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
      */
-    public void lineAppended(IRegion line) {
+    @Override
+	public void lineAppended(IRegion line) {
     }
 
     /**
      * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 		 */
+		@Override
 		public IClasspathEntry[] getClasspathEntries() {
 			return entries;
 		}
@@ -51,6 +52,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return "Fake";
 		}
@@ -58,6 +60,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
 		 */
+		@Override
 		public int getKind() {
 			return IClasspathContainer.K_DEFAULT_SYSTEM;
 		}
@@ -65,6 +68,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
 		 */
+		@Override
 		public IPath getPath() {
 			return new Path(JavaRuntime.JRE_CONTAINER);
 		}

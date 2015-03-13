@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,6 +341,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				try {
 					ret[0] = element.createExecutableExtension(classAttribute);
@@ -411,9 +412,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		new ExceptionInspector();
 		
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
+			@Override
 			public void doneSaving(ISaveContext sc) {}
+			@Override
 			public void prepareToSave(ISaveContext sc)	throws CoreException {}
+			@Override
 			public void rollback(ISaveContext sc) {}
+			@Override
 			public void saving(ISaveContext sc) throws CoreException {
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
 				if(prefs != null) {
@@ -497,8 +502,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public static Display getStandardDisplay() {
 		Display display;
 		display= Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display= Display.getDefault();
+		}
 		return display;		
 	}
 	
@@ -540,6 +546,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		final JavaModelException[] exception= new JavaModelException[1];
 		final boolean[] monitorCanceled = new boolean[] {false};
 		IRunnableWithProgress r= new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				try {
 					Set<String> packageNameSet= new HashSet<String>();
@@ -652,6 +659,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
 		final boolean [] result = new boolean[] { false };
 		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());

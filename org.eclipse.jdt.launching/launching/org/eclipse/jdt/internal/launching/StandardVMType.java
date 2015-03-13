@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @since 3.7.0
 	 */
 	private static FilenameFilter fgArchiveFilter = new FilenameFilter() {
+		@Override
 		public boolean accept(File arg0, String arg1) {
 			return arg1.endsWith(".zip") || arg1.endsWith(".jar");  //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -154,6 +155,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			// The "libraryLocationResolvers" extension point doesn't have any conflict resolution.
 			// Sorting by namespace at least makes makes the order predictable.
 			Arrays.sort(configs, new Comparator<IConfigurationElement>() {
+				@Override
 				public int compare(IConfigurationElement e1, IConfigurationElement e2) {
 					return e1.getNamespaceIdentifier().compareTo(e2.getNamespaceIdentifier());
 				}
@@ -176,6 +178,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchingMessages.StandardVMType_Standard_VM_3; 
 	}
@@ -245,6 +248,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
 	 */
+	@Override
 	public File detectInstallLocation() {
 		// We want a Mac OSX VM install so don't process the install location for this type
 		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
@@ -399,6 +403,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
 	 */
+	@Override
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
 		//NOTE: We do not add libraries from the "endorsed" directory explicitly, as
 		//the bootpath contains these entries already (if they exist).
@@ -577,6 +582,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
+	@Override
 	public IStatus validateInstallLocation(File javaHome) {
 		IStatus status = null;
 		File javaExecutable = findJavaExecutable(javaHome);

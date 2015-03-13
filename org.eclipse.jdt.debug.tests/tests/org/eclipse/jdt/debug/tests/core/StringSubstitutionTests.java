@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -310,8 +310,9 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				assertTrue("Expected cycle to cause exception", false);
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
-				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
-					throw ce;				
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
+					throw ce;
+				}				
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2});
@@ -336,8 +337,9 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				assertTrue("Expected cycle to cause exception", false);
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
-				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
-					throw ce;				
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
+					throw ce;
+				}				
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2});
@@ -368,8 +370,9 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				assertTrue("Expected cycle to cause exception", false);
 			} catch (CoreException ce){
 				IStatus status = ce.getStatus();
-				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR)
-					throw ce;				
+				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
+					throw ce;
+				}				
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2, var3});
@@ -487,6 +490,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesAdded(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
+	@Override
 	public void variablesAdded(IValueVariable[] variables) {
 		fAdded = variables;
 	}
@@ -494,6 +498,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesChanged(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
+	@Override
 	public void variablesChanged(IValueVariable[] variables) {
 		fChanged = variables;
 	}
@@ -501,6 +506,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener#variablesRemoved(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
+	@Override
 	public void variablesRemoved(IValueVariable[] variables) {
 		fRemoved = variables;
 	}
@@ -766,6 +772,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	protected void setSelection(final IResource resource) {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
 				assertNotNull("the active workbench window page should not be null", page);

@@ -41,6 +41,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getChildren(Object)
 		 */
+		@Override
 		public Object[] getChildren(Object o) {
 			return new Object[0];
 		}
@@ -48,6 +49,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 		 */
+		@Override
 		public ImageDescriptor getImageDescriptor(Object o) {
 			if (o instanceof JavaProjectSourceLocation) {
 				return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -62,6 +64,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getLabel(Object)
 		 */
+		@Override
 		public String getLabel(Object o) {
 			if (o instanceof JavaProjectSourceLocation) {
 				return fJavaElementLabelProvider.getText(((JavaProjectSourceLocation)o).getJavaProject());
@@ -81,6 +84,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		/**
 		 * @see IWorkbenchAdapter#getParent(Object)
 		 */
+		@Override
 		public Object getParent(Object o) {
 			return null;
 		}
@@ -89,6 +93,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object obj, Class<T> adapterType) {
 		if (adapterType.isInstance(obj)) {
@@ -105,6 +110,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	/**
 	 * @see IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {
 			IWorkbenchAdapter.class,

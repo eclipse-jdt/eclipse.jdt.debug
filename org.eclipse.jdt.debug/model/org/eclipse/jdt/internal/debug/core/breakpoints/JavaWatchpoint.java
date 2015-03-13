@@ -109,6 +109,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 			final int charEnd, final int hitCount, final boolean add,
 			final Map<String, Object> attributes) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				setMarker(resource.createMarker(JAVA_WATCHPOINT));
 
@@ -304,6 +305,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
 	 */
+	@Override
 	public boolean isAccess() throws CoreException {
 		return ensureMarker().getAttribute(ACCESS, false);
 	}
@@ -321,6 +323,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 *                underlying marker
 	 * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
 	 */
+	@Override
 	public void setAccess(boolean access) throws CoreException {
 		if (access == isAccess()) {
 			return;
@@ -337,6 +340,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
 	 */
+	@Override
 	public boolean isModification() throws CoreException {
 		return ensureMarker().getAttribute(MODIFICATION, false);
 	}
@@ -354,6 +358,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 *                underlying marker
 	 * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
 	 */
+	@Override
 	public void setModification(boolean modification) throws CoreException {
 		if (modification == isModification()) {
 			return;
@@ -452,6 +457,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaWatchpoint#getFieldName()
 	 */
+	@Override
 	public String getFieldName() throws CoreException {
 		return ensureMarker().getAttribute(FIELD_NAME, null);
 	}
@@ -509,6 +515,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaWatchpoint#isAccessSuspend(IDebugTarget)
 	 */
+	@Override
 	public boolean isAccessSuspend(IDebugTarget target) {
 		Integer lastEventType = fLastEventTypes.get(target);
 		if (lastEventType == null) {
@@ -551,6 +558,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
 	 */
+	@Override
 	public boolean supportsAccess() {
 		return true;
 	}
@@ -560,6 +568,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
 	 */
+	@Override
 	public boolean supportsModification() {
 		return true;
 	}

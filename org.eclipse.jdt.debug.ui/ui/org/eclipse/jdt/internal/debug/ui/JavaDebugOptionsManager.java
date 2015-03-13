@@ -307,6 +307,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
@@ -502,6 +503,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * 
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -540,12 +542,14 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/**
 	 * @see IJavaBreakpointListener#addingBreakpoint(IJavaDebugTarget, IJavaBreakpoint)
 	 */
+	@Override
 	public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
 	/**
 	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaBreakpoint, IJavaType)
 	 */
+	@Override
 	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 		return DONT_CARE;
 	}
@@ -553,6 +557,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/**
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */
+	@Override
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		return DONT_CARE;
 	}
@@ -560,12 +565,14 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/**
 	 * @see IJavaBreakpointListener#breakpointInstalled(IJavaDebugTarget, IJavaBreakpoint)
 	 */
+	@Override
 	public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
 	/**
 	 * @see IJavaBreakpointListener#breakpointRemoved(IJavaDebugTarget, IJavaBreakpoint)
 	 */
+	@Override
 	public void breakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 	
@@ -603,6 +610,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasRuntimeException(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.debug.core.DebugException)
 	 */
+	@Override
 	public void breakpointHasRuntimeException(final IJavaLineBreakpoint breakpoint, final DebugException exception) {
 		IStatus status;
 		Throwable wrappedException= exception.getStatus().getException();
@@ -619,6 +627,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
+	@Override
 	public void breakpointHasCompilationErrors(final IJavaLineBreakpoint breakpoint, final Message[] errors) {
 		StringBuffer message= new StringBuffer();
 		Message error;
@@ -638,6 +647,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 		}
 		final String message= NLS.bind(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (display.isDisposed()) {
 					return;
@@ -679,12 +689,14 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * 
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		launchChanged(launch);
 	}
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 		activate();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);		
@@ -693,6 +705,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 	}
 	
@@ -701,6 +714,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * 
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
 		// if a breakpoint is added, but already has a message, do not update it
 		List<IBreakpoint> update = new ArrayList<IBreakpoint>();
@@ -726,6 +740,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 */
 	private void updateBreakpointMessages(final IBreakpoint[] breakpoints) {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint = breakpoints[i];
@@ -756,6 +771,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * 
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(
 		IBreakpoint[] breakpoints,
 		IMarkerDelta[] deltas) {
@@ -766,6 +782,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(
 		IBreakpoint[] breakpoints,
 		IMarkerDelta[] deltas) {
@@ -774,7 +791,8 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener#logicalStructuresChanged()
      */
-    public void logicalStructuresChanged() {
+    @Override
+	public void logicalStructuresChanged() {
     	variableViewSettingsChanged();
     }
     

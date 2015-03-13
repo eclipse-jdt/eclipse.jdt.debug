@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,6 +162,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * @return Returns the value of the property with the specified key.
 	 */
+	@Override
 	public Object getProperty(Object key) {
 		if (fPropertyMap == null) {
 			return null;
@@ -173,6 +174,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Add an arbitrary key/value "property" to this request.
 	 */
+	@Override
 	public void putProperty(Object key, Object value) {
 		if (fPropertyMap == null)
 			fPropertyMap = new HashMap<Object, Object>();
@@ -202,6 +204,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Disables event request.
 	 */
+	@Override
 	public synchronized void disable() {
 		if (!isEnabled())
 			return;
@@ -235,6 +238,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Enables event request.
 	 */
+	@Override
 	public synchronized void enable() {
 		if (isEnabled())
 			return;
@@ -281,6 +285,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * @return Returns whether event request is enabled.
 	 */
+	@Override
 	public synchronized final boolean isEnabled() {
 		return fRequestID != null;
 	}
@@ -288,6 +293,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Disables or enables event request.
 	 */
+	@Override
 	public void setEnabled(boolean enable) {
 		if (enable)
 			enable();
@@ -307,6 +313,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Sets suspend policy.
 	 */
+	@Override
 	public void setSuspendPolicy(int suspendPolicy) {
 		fSuspendPolicy = (byte) suspendPolicy;
 		if (isEnabled()) {
@@ -318,6 +325,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * @return Returns suspend policy.
 	 */
+	@Override
 	public int suspendPolicy() {
 		return fSuspendPolicy;
 	}
@@ -332,6 +340,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Sets countfilter.
 	 */
+	@Override
 	public void addCountFilter(int count) throws InvalidRequestStateException {
 		checkDisabled();
 		if (fCountFilters == null)

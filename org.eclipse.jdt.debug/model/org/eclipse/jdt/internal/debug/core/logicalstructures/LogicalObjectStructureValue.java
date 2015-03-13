@@ -51,6 +51,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, boolean)
 	 */
+	@Override
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread, boolean superSend)
 			throws DebugException {
@@ -65,6 +66,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
 	 */
+	@Override
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread, String typeSignature)
 			throws DebugException {
@@ -78,6 +80,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * boolean)
 	 */
+	@Override
 	public IJavaFieldVariable getField(String name, boolean superField)
 			throws DebugException {
 		return fObject.getField(name, superField);
@@ -89,6 +92,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * java.lang.String)
 	 */
+	@Override
 	public IJavaFieldVariable getField(String name, String typeSignature)
 			throws DebugException {
 		return fObject.getField(name, typeSignature);
@@ -99,6 +103,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		return fObject.getSignature();
 	}
@@ -108,6 +113,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		return fObject.getGenericSignature();
 	}
@@ -117,6 +123,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
+	@Override
 	public IJavaType getJavaType() throws DebugException {
 		return fObject.getJavaType();
 	}
@@ -126,6 +133,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return fObject.getReferenceTypeName();
 	}
@@ -135,6 +143,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		return fObject.getValueString();
 	}
@@ -144,6 +153,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return fObject.isAllocated();
 	}
@@ -153,6 +163,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() {
 		return fVariables;
 	}
@@ -162,6 +173,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() {
 		return fVariables.length > 0;
 	}
@@ -171,6 +183,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return fObject.getModelIdentifier();
 	}
@@ -180,6 +193,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fObject.getDebugTarget();
 	}
@@ -189,6 +203,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fObject.getLaunch();
 	}
@@ -198,6 +213,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return fObject.getAdapter(adapter);
 	}
@@ -207,6 +223,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
+	@Override
 	public IJavaThread[] getWaitingThreads() throws DebugException {
 		return null;
 	}
@@ -216,6 +233,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
 	 */
+	@Override
 	public IJavaThread getOwningThread() throws DebugException {
 		return null;
 	}
@@ -225,6 +243,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
+	@Override
 	public IJavaObject[] getReferringObjects(long max) throws DebugException {
 		return fObject.getReferringObjects(max);
 	}
@@ -234,6 +253,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
 	 */
+	@Override
 	public void disableCollection() throws DebugException {
 		fObject.disableCollection();
 	}
@@ -243,6 +263,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
+	@Override
 	public void enableCollection() throws DebugException {
 		fObject.enableCollection();
 	}
@@ -252,6 +273,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
+	@Override
 	public long getUniqueId() throws DebugException {
 		return fObject.getUniqueId();
 	}
@@ -261,6 +283,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
+	@Override
 	public boolean isNull() {
 		return false;
 	}

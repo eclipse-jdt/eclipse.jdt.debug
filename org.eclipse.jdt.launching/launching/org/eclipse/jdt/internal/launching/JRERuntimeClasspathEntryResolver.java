@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall jre = null;
 		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
@@ -63,6 +64,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		IVMInstall jre = null;
 		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
@@ -165,6 +167,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)
 	 */
+	@Override
 	public IVMInstall resolveVMInstall(IClasspathEntry entry) {
 		switch (entry.getEntryKind()) {
 			case IClasspathEntry.CPE_VARIABLE:
@@ -186,6 +189,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver2#isVMInstallReference(org.eclipse.jdt.core.IClasspathEntry)
 	 */
+	@Override
 	public boolean isVMInstallReference(IClasspathEntry entry) {
 		switch (entry.getEntryKind()) {
 			case IClasspathEntry.CPE_VARIABLE:

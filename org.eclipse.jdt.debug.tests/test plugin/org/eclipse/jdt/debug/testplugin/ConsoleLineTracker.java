@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fDelegate != null) {
 			fDelegate.dispose();
@@ -49,6 +50,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
+	@Override
 	public synchronized void init(IConsole console) {
 		fConsole= console;
 		if (fDelegate != null) {
@@ -67,6 +69,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void lineAppended(IRegion line) {
 		if (fDelegate != null) {
 			fDelegate.lineAppended(line);
@@ -76,6 +79,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
+	@Override
 	public void consoleClosed() {
 		if (fDelegate != null && fConsole != null) {
 			fDelegate.consoleClosed();

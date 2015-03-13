@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(org.eclipse.jdt.launching.IRuntimeClasspathEntry, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
 		IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(configuration);
@@ -45,6 +46,7 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(org.eclipse.jdt.launching.IRuntimeClasspathEntry, org.eclipse.jdt.core.IJavaProject)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
 		IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(null);
@@ -61,6 +63,7 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver#resolveVMInstall(org.eclipse.jdt.core.IClasspathEntry)
 	 */
+	@Override
 	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException {
 		return null;
 	}

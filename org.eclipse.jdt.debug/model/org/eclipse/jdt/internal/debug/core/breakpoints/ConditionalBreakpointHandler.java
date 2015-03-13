@@ -77,6 +77,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 			fBreakpoint = breakpoint;
 		}
 
+		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			fVote = determineVote(result);
 			synchronized (fLock) {
@@ -164,18 +165,22 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 		}
 	}
 
+	@Override
 	public void addingBreakpoint(IJavaDebugTarget target,
 			IJavaBreakpoint breakpoint) {
 	}
 
+	@Override
 	public void breakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint,
 			Message[] errors) {
 	}
 
+	@Override
 	public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint,
 			DebugException exception) {
 	}
 
+	@Override
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (breakpoint instanceof IJavaLineBreakpoint) {
 			JavaLineBreakpoint lineBreakpoint = (JavaLineBreakpoint) breakpoint;
@@ -250,14 +255,17 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 		return SUSPEND;
 	}
 
+	@Override
 	public void breakpointInstalled(IJavaDebugTarget target,
 			IJavaBreakpoint breakpoint) {
 	}
 
+	@Override
 	public void breakpointRemoved(IJavaDebugTarget target,
 			IJavaBreakpoint breakpoint) {
 	}
 
+	@Override
 	public int installingBreakpoint(IJavaDebugTarget target,
 			IJavaBreakpoint breakpoint, IJavaType type) {
 		return 0;

@@ -173,6 +173,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		fTypeNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fTypeSearched= false;
 				checkValues();
@@ -182,6 +183,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		Button typeSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				selectType();
 			}
@@ -205,6 +207,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
        
 		// Set up content assist in the viewer
         IHandler handler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				if (fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
 					findCorrespondingType();
@@ -249,8 +252,10 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		document.set(fDetailFormatter.getSnippet());
 		
 		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				checkValues();
 			}
@@ -374,6 +379,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	/**
 	 * Return the type object which corresponds to the given name.
 	 */
+	@Override
 	public IType getType() {
 		if (!fTypeSearched) {
 			findCorrespondingType();

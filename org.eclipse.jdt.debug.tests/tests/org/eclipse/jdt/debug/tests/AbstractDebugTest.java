@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -166,6 +164,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.sun.jdi.InternalException;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for launch configurations
@@ -2127,6 +2127,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IEvaluationResult evaluate(String snippet, IJavaThread thread) throws Exception {
 		class Listener implements IEvaluationListener {
 			IEvaluationResult fResult;
+			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
 			}
@@ -2151,6 +2152,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
+	@Override
 	public void evaluationComplete(IEvaluationResult result) {
 		fEvaluationResult = result;
 	}
@@ -2579,10 +2581,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		final Object lock = new Object();
 		final IBreakpoint[] breakpoints = new IBreakpoint[1];
 		IBreakpointListener listener = new IBreakpointListener() {
+			@Override
 			public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 			}
+			@Override
 			public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 			}
+			@Override
 			public void breakpointAdded(IBreakpoint breakpoint) {
 				synchronized (lock) {
 					breakpoints[0] = breakpoint;
@@ -2605,7 +2610,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected void closeAllEditors() {
 	    Runnable closeAll = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                 activeWorkbenchWindow.getActivePage().closeAllEditors(false);
             }
@@ -2660,6 +2666,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		class Listener implements IEvaluationListener {
 			IEvaluationResult fResult;
 			
+			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
 			}

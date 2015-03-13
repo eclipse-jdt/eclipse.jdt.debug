@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite p) {
 		// create a composite with standard margins and spacing
 		Composite composite = new Composite(p, SWT.NONE);
@@ -121,17 +122,21 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	
 	//add the listeners now to prevent them from monkeying with initialized settings
 		fVMName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateVMName();
 			}
 		});
 		fJRERoot.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateJRELocation();
 			}
 		});
 		folders.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				File file = new File(fJRERoot.getText());
@@ -185,6 +190,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 				final IStatus[] temp = new IStatus[1];
 				final File tempFile = file; 
 				Runnable r = new Runnable() {
+					@Override
 					public void run() {
 						temp[0] = fVM.getVMInstallType().validateInstallLocation(tempFile);
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getAttribute()
 	 */
+	@Override
 	public String[] getAttribute() {
 		return new String[] {IMarker.LINE_NUMBER};
 	}
@@ -78,6 +79,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getMarkerType()
 	 */
+	@Override
 	public String getMarkerType() {
 		return "org.eclipse.debug.core.breakpointMarker"; //$NON-NLS-1$
 	}
@@ -85,6 +87,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IMarkerUpdater#updateMarker(org.eclipse.core.resources.IMarker, org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position)
 	 */
+	@Override
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 		if(position.isDeleted()) {
 			return false;

@@ -51,6 +51,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		return null;
 	}
@@ -60,6 +61,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		return null;
 	}
@@ -69,6 +71,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
+	@Override
 	public IJavaType getJavaType() throws DebugException {
 		return null;
 	}
@@ -78,6 +81,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return ""; //$NON-NLS-1$
 	}
@@ -87,6 +91,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		return fMessages[0];
 	}
@@ -96,6 +101,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return false;
 	}
@@ -105,6 +111,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		IVariable[] variables = new IVariable[fMessages.length];
 		for (int i = 0; i < variables.length; i++) {
@@ -127,6 +134,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return false;
 	}
@@ -136,6 +144,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
@@ -145,6 +154,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fValue.getDebugTarget();
 	}
@@ -154,6 +164,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return getDebugTarget().getLaunch();
 	}
@@ -163,6 +174,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
@@ -172,6 +184,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
+	@Override
 	public boolean isNull() {
 		return false;
 	}

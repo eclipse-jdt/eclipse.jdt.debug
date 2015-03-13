@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,13 +97,13 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		synchronized (fZipFileCache) {
 			Iterator<ZipFile> iter = fZipFileCache.values().iterator();
 			while (iter.hasNext()) {
-				ZipFile file = iter.next();
-				synchronized (file) {
-					try {
+				try (ZipFile file = iter.next()) {
+					synchronized (file) {
 						file.close();
-					} catch (IOException e) {
-						LaunchingPlugin.log(e);
 					}
+				}
+				catch (IOException e) {
+					LaunchingPlugin.log(e);
 				}
 			}
 			fZipFileCache.clear();
@@ -150,6 +150,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
+	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		try {
 			if (getArchive() == null) {
@@ -310,6 +311,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("archiveSourceLocation"); //$NON-NLS-1$
@@ -325,6 +327,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
 		try {

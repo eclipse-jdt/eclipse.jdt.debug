@@ -61,6 +61,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getAvailableStrata()
 	 */
+	@Override
 	public String[] getAvailableStrata() {
 		List<String> strata = getReferenceType().availableStrata();
 		return strata.toArray(new String[strata.size()]);
@@ -80,6 +81,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getDefaultStratum()
 	 */
+	@Override
 	public String getDefaultStratum() throws DebugException {
 		try {
 			return getReferenceType().defaultStratum();
@@ -96,6 +98,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getField(java.lang.String)
 	 */
+	@Override
 	public IJavaFieldVariable getField(String name) throws DebugException {
 		try {
 			ReferenceType type = (ReferenceType) getUnderlyingType();
@@ -118,6 +121,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassObject()
 	 */
+	@Override
 	public IJavaClassObject getClassObject() throws DebugException {
 		try {
 			ReferenceType type = (ReferenceType) getUnderlyingType();
@@ -139,6 +143,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getAllFieldNames()
 	 */
+	@Override
 	public String[] getAllFieldNames() throws DebugException {
 		if (fAllFields == null) {
 			try {
@@ -164,6 +169,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getDeclaredFieldNames()
 	 */
+	@Override
 	public String[] getDeclaredFieldNames() throws DebugException {
 		if (fDeclaredFields == null) {
 			try {
@@ -190,6 +196,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getSourcePaths(java.lang
 	 * .String)
 	 */
+	@Override
 	public String[] getSourcePaths(String stratum) throws DebugException {
 		try {
 			List<String> sourcePaths = getReferenceType().sourcePaths(stratum);
@@ -208,6 +215,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceName()
 	 */
+	@Override
 	public String getSourceName() throws DebugException {
 		try {
 			return getReferenceType().sourceName();
@@ -226,6 +234,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceNames(java.lang
 	 * .String)
 	 */
+	@Override
 	public String[] getSourceNames(String stratum) throws DebugException {
 		try {
 			List<String> sourceNames = getReferenceType().sourceNames(stratum);
@@ -244,6 +253,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassLoaderObject()
 	 */
+	@Override
 	public IJavaObject getClassLoaderObject() throws DebugException {
 		try {
 			ReferenceType type = (ReferenceType) getUnderlyingType();
@@ -338,6 +348,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		return getReferenceType().genericSignature();
 	}
@@ -347,6 +358,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstances(long)
 	 */
+	@Override
 	public IJavaObject[] getInstances(long max) throws DebugException {
 		try {
 			List<ObjectReference> list = getReferenceType().instances(max);
@@ -367,6 +379,7 @@ public abstract class JDIReferenceType extends JDIType implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstanceCount()
 	 */
+	@Override
 	public long getInstanceCount() throws DebugException {
 		JDIDebugTarget target = getJavaDebugTarget();
 		if (target.supportsInstanceRetrieval()) {

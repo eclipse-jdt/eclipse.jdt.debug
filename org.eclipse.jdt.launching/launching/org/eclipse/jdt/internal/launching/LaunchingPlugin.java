@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,6 +209,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		/**
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 			fDefaultChanged = true;
 		}
@@ -216,12 +217,14 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		/**
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void vmAdded(IVMInstall vm) {
 		}
 
 		/**
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 		 */
+		@Override
 		public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 			String property = event.getProperty();
 			IVMInstall vm = (IVMInstall)event.getSource();
@@ -260,6 +263,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		/**
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void vmRemoved(IVMInstall vm) {
 		}
 	
@@ -274,6 +278,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		
 		protected void doit(IProgressMonitor monitor) throws CoreException {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor1) throws CoreException {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					monitor1.beginTask(LaunchingMessages.LaunchingPlugin_0, projects.length + 1);
@@ -528,9 +533,13 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
+			@Override
 			public void doneSaving(ISaveContext context1) {}
+			@Override
 			public void prepareToSave(ISaveContext context1)	throws CoreException {}
+			@Override
 			public void rollback(ISaveContext context1) {}
+			@Override
 			public void saving(ISaveContext context1) throws CoreException {
 				try {
 					InstanceScope.INSTANCE.getNode(ID_PLUGIN).flush();
@@ -745,6 +754,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		if (!fBatchingChanges) {
 			VMChanges changes = new VMChanges();
@@ -756,12 +766,14 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void vmAdded(IVMInstall vm) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 	 */
+	@Override
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 		if (!fBatchingChanges) {
 			VMChanges changes = new VMChanges();
@@ -773,6 +785,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void vmRemoved(IVMInstall vm) {
 		if (!fBatchingChanges) {
 			VMChanges changes = new VMChanges();
@@ -784,6 +797,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		ArchiveSourceLocation.closeArchives();
 	}
@@ -877,7 +891,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Saves the library info in a local workspace state location
 	 */
 	private static void saveLibraryInfo() {
-		OutputStream stream= null;
 		try {
 			String xml = getLibraryInfoAsXML();
 			IPath libPath = getDefault().getStateLocation();
@@ -886,19 +899,13 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			stream = new BufferedOutputStream(new FileOutputStream(file));
-			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
+				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			}
 		} catch (IOException e) {
 			log(e);
 		}  catch (CoreException e) {
 			log(e);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e1) {
-				}
-			}
 		}
 	}
 	
@@ -1047,7 +1054,6 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 */
 	private static void writeInstallInfo() {
 		if(fgInstallTimeMap != null) {
-			OutputStream stream= null;
 			try {
 				Document doc = DebugPlugin.newDocument();
 				Element root = doc.createElement("dirs");    //$NON-NLS-1$
@@ -1073,19 +1079,13 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 				if (!file.exists()) {
 					file.createNewFile();
 				}
-				stream = new BufferedOutputStream(new FileOutputStream(file));
-				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+				try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file))) {
+					stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+				}
 			} catch (IOException e) {
 				log(e);
 			}  catch (CoreException e) {
 				log(e);
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e1) {
-					}
-				}
 			}
 		}
 	}
@@ -1132,6 +1132,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		ArchiveSourceLocation.closeArchives();
 	}
@@ -1139,18 +1140,21 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -1252,6 +1256,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		String property = event.getKey();
 		if (property.equals(JavaRuntime.PREF_VM_XML)) {
@@ -1264,6 +1269,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
+	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_JRE_CONTAINER = DEBUG && options.getBooleanOption(DEBUG_JRE_CONTAINER_FLAG, false);

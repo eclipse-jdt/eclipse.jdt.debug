@@ -21,6 +21,7 @@ public class JavaStackFrameActionFilter implements IActionFilter {
 	/**
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(Object, String, String)
 	 */
+	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		IJavaStackFrame frame = null;
 		if (target instanceof IStackFrame) {

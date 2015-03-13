@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public interface Connector {
 	 * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/connect/Connector.StringArgument.html
 	 */
 	public interface StringArgument extends Connector.Argument {
+		@Override
 		public boolean isValid(String arg1);
 	}
 	/**
@@ -45,6 +46,7 @@ public interface Connector {
 	public interface IntegerArgument extends Connector.Argument {
 		public int intValue();
 		public boolean isValid(int arg1);
+		@Override
 		public boolean isValid(String arg1);
 		public int max();
 		public int min();
@@ -56,6 +58,7 @@ public interface Connector {
 	 */
 	public interface BooleanArgument extends Connector.Argument {
 		public boolean booleanValue();
+		@Override
 		public boolean isValid(String arg1);
 		public void setValue(boolean arg1);
 		public String stringValueOf(boolean arg1);
@@ -65,6 +68,7 @@ public interface Connector {
 	 */
 	public interface SelectedArgument extends Connector.Argument {
 		public List<String> choices();
+		@Override
 		public boolean isValid(String arg1);
 	}
 }

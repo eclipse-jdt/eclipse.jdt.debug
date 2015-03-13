@@ -46,6 +46,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	/**
 	 * @see IJavaArray#getValues()
 	 */
+	@Override
 	public IJavaValue[] getValues() throws DebugException {
 		List<Value> list = getUnderlyingValues();
 
@@ -62,6 +63,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	/**
 	 * @see IJavaArray#getValue(int)
 	 */
+	@Override
 	public IJavaValue getValue(int index) throws DebugException {
 		Value v = getUnderlyingValue(index);
 		return JDIValue.createValue((JDIDebugTarget) getDebugTarget(), v);
@@ -70,6 +72,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	/**
 	 * @see IJavaArray#getLength()
 	 */
+	@Override
 	public synchronized int getLength() throws DebugException {
 		if (fLength == -1) {
 			try {
@@ -87,6 +90,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	/**
 	 * @see IJavaArray#setValue(int, IJavaValue)
 	 */
+	@Override
 	public void setValue(int index, IJavaValue value) throws DebugException {
 		try {
 			getArrayReference().setValue(index,
@@ -185,6 +189,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
+	@Override
 	public int getSize() throws DebugException {
 		return getLength();
 	}
@@ -194,6 +199,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		if (offset >= getLength()) {
 			requestFailed(JDIDebugModelMessages.JDIArrayValue_6, null);
@@ -207,6 +213,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
+	@Override
 	public IVariable[] getVariables(int offset, int length)
 			throws DebugException {
 		if (offset >= getLength()) {
@@ -230,6 +237,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
+	@Override
 	public int getInitialOffset() {
 		return 0;
 	}
@@ -250,6 +258,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * @see org.eclipse.jdt.debug.core.IJavaArray#setValues(int, int,
 	 * org.eclipse.jdt.debug.core.IJavaValue[], int)
 	 */
+	@Override
 	public void setValues(int offset, int length, IJavaValue[] values,
 			int startOffset) throws DebugException {
 		try {
@@ -286,6 +295,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	 * org.eclipse.jdt.debug.core.IJavaArray#setValues(org.eclipse.jdt.debug
 	 * .core.IJavaValue[])
 	 */
+	@Override
 	public void setValues(IJavaValue[] values) throws DebugException {
 		int length = Math.min(values.length, getSize());
 		setValues(0, length, values, 0);

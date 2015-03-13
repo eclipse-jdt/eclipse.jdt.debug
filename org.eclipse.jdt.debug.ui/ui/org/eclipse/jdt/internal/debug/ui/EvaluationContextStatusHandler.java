@@ -29,6 +29,7 @@ public class EvaluationContextStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) {
 		if (source instanceof IDebugElement) {
 			IDebugElement element = (IDebugElement) source;

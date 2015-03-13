@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#editVariable(org.eclipse.debug.core.model.IVariable, org.eclipse.swt.widgets.Shell)
      */
-    public boolean editVariable(IVariable variable, Shell shell) {
+    @Override
+	public boolean editVariable(IVariable variable, Shell shell) {
         try {
             String name= variable.getName();
             String title= ActionMessages.JavaPrimitiveValueEditor_0; 
@@ -83,7 +84,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
      */
-    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+    @Override
+	public boolean saveVariable(IVariable variable, String expression, Shell shell) {
         return false;
     }
 
@@ -114,7 +116,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
         /* (non-Javadoc)
          * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
          */
-        public String isValid(String newText) {
+        @Override
+		public String isValid(String newText) {
             String type= null;
             switch (fSignature.charAt(0)) {
 	        	case 'B':

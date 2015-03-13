@@ -27,6 +27,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 @SuppressWarnings("unchecked")
 public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
+	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof IJavaBreakpoint)) {
 			return null;
@@ -34,10 +35,12 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 		return (T) new IWorkbenchAdapter() {
 			private JavaElementLabelProvider fJavaLabelProvider;
 
+			@Override
 			public Object[] getChildren(Object o) {
 				return null;
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor(Object object) {
 				return null;
 			}
@@ -48,6 +51,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 			 * in situations where the user is changing values (like the title bar
 			 * of the property dialog).
 			 */
+			@Override
 			public String getLabel(Object o) {
 				if (!(o instanceof IJavaBreakpoint)) {
 					return null;
@@ -106,6 +110,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 				return label.toString();
 			}
 
+			@Override
 			public Object getParent(Object o) {
 				return null;
 			}
@@ -119,6 +124,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 		};
 	}
 
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class };
 	}

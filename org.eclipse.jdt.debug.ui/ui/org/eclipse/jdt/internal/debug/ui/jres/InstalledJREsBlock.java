@@ -19,37 +19,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
-
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.MacInstalledJREs;
+import org.eclipse.jdt.launching.AbstractVMInstall;
+import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
+import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -76,23 +64,28 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-
-import org.eclipse.debug.internal.ui.SWTFactory;
-
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.launching.MacInstalledJREs;
-
-import org.eclipse.jdt.launching.AbstractVMInstall;
-import org.eclipse.jdt.launching.AbstractVMInstallType;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallChangedListener;
-import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.PropertyChangeEvent;
-import org.eclipse.jdt.launching.VMStandin;
-
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
@@ -116,6 +109,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 			//do nothing, we do not want other bundles changing the default JRE this way
 		}
@@ -123,6 +117,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 		 */
+		@Override
 		public void vmChanged(PropertyChangeEvent event) {
 			//do nothing, we do not want other bundles making VM install edits without user interaction
 		}
@@ -130,6 +125,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void vmAdded(IVMInstall vm) {
 			if(!fVMs.contains(vm)) {
 				fVMs.add(vm);
@@ -140,6 +136,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 		 */
+		@Override
 		public void vmRemoved(IVMInstall vm) {
 			//do nothing, we do not want other bundles removing VM installs without user interaction
 		}
@@ -154,6 +151,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 			else {
 				display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						fVMList.refresh();
 					}
@@ -222,11 +220,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Content provider to show a list of JREs
 	 */ 
 	class JREsContentProvider implements IStructuredContentProvider {		
+		@Override
 		public Object[] getElements(Object input) {
 			return fVMs.toArray();
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
+		@Override
 		public void dispose() {
 		}
 	}
@@ -241,6 +242,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/**
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IVMInstall) {
 				IVMInstall vm= (IVMInstall)element;
@@ -265,6 +267,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		/**
 		 * @see ITableLabelProvider#getColumnImage(Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
@@ -272,6 +275,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return null;
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			if(fVMList.getChecked(element)) {
 				if (bold == null) {
@@ -297,6 +301,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			super.dispose();
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			if (isUnmodifiable(element)) {
 				Display display = Display.getCurrent();
@@ -305,6 +310,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			return null;
 		}
 
+		@Override
 		public Color getBackground(Object element) {
 			if (isUnmodifiable(element)) {
 				Display display = Display.getCurrent();
@@ -326,6 +332,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionListeners.add(listener);
 	}
@@ -333,6 +340,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		return new StructuredSelection(fVMList.getCheckedElements());
 	}
@@ -340,6 +348,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionListeners.remove(listener);
 	}
@@ -347,6 +356,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			if (!selection.equals(fPrevSelection)) {
@@ -430,12 +440,14 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		sortByName();
 		
 		fVMList.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent evt) {
 				enableButtons();
 			}
 		});
 		
 		fVMList.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked()) {
 					setCheckedJRE((IVMInstall)event.getElement());
@@ -446,6 +458,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		});
 		
 		fVMList.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent e) {
 				if (!fVMList.getSelection().isEmpty()) {
 					editVM();
@@ -467,6 +480,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fAddButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_3, null); 
 		fAddButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				addVM();
 			}
@@ -474,6 +488,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fEditButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_4, null); 
 		fEditButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				editVM();
 			}
@@ -481,6 +496,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fCopyButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_16, null); 
 		fCopyButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				copyVM();
 			}
@@ -488,6 +504,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fRemoveButton= SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_5, null); 
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				removeVMs();
 			}
@@ -497,6 +514,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fSearchButton = SWTFactory.createPushButton(buttons, JREMessages.InstalledJREsBlock_6, null); 
 		fSearchButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				search();
 			}
@@ -732,6 +750,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * @see IAddVMDialogRequestor#vmAdded(IVMInstall)
 	 */
+	@Override
 	public void vmAdded(IVMInstall vm) {
 		boolean makeselection = fVMs.size() < 1;
 		fVMs.add(vm);
@@ -748,6 +767,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * @see IAddVMDialogRequestor#isDuplicateName(String)
 	 */
+	@Override
 	public boolean isDuplicateName(String name) {
 		for (int i= 0; i < fVMs.size(); i++) {
 			IVMInstall vm = fVMs.get(i);
@@ -855,6 +875,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		final List<IVMInstallType> types = new ArrayList<IVMInstallType>();
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(JREMessages.InstalledJREsBlock_11, IProgressMonitor.UNKNOWN); 
 				search(rootDir, locations, types, exstingLocations, monitor);
@@ -922,6 +943,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void doMacSearch() {
 		final List<VMStandin> added = new ArrayList<VMStandin>();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				Set<String> exists = new HashSet<String>();
 				for (IVMInstall vm : fVMs) {

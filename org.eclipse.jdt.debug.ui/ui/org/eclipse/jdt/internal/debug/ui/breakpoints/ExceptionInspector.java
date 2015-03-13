@@ -71,6 +71,7 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 	/**
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			IWorkbenchPart part = event.getDebugContextProvider().getPart();
@@ -122,6 +123,7 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION.equals(event.getKey())) {
 			IDebugContextManager manager = DebugUITools.getDebugContextManager();

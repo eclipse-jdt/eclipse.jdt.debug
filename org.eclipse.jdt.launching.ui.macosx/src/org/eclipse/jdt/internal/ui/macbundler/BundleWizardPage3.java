@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,17 @@ package org.eclipse.jdt.internal.ui.macbundler;
 
 import java.util.Enumeration;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 
 public class BundleWizardPage3 extends BundleWizardBasePage {
@@ -68,9 +71,11 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 		col1.setWidth(150);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (fProperties == null)
+		if (fProperties == null) {
 			return;
+		}
 		fIdentifier.setText(fBundleDescription.get(IDENTIFIER, "")); //$NON-NLS-1$
 		fSignature.setText(fBundleDescription.get(SIGNATURE, "")); //$NON-NLS-1$
 		fVMOptions.setText(fBundleDescription.get(VMOPTIONS, "")); //$NON-NLS-1$
@@ -88,6 +93,7 @@ public class BundleWizardPage3 extends BundleWizardBasePage {
 		}		
 	}
 	
+	@Override
 	public boolean isPageComplete() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,11 +55,13 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	
 	private IPreferenceChangeListener fPrefListeners = new IPreferenceChangeListener() {
 		
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
 				refresh(true);
 			} else {
 				DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+					@Override
 					public void run() {
 						refresh(true);
 					}
@@ -93,6 +95,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 			}
 		});
 		getTree().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 				if(prefs != null) {
@@ -109,6 +112,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
+	@Override
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
 		resolveCurrentParent(getSelection());
@@ -121,6 +125,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] getEntries() {
 		return getClasspathContentProvider().getModel().getAllEntries();
 	}
@@ -128,6 +133,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
+	@Override
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
 		IStructuredSelection sel = (IStructuredSelection) getSelection();
@@ -174,6 +180,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
@@ -199,6 +206,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
 	 */
+	@Override
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -209,6 +217,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
+	@Override
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		IClasspathEntry[] entries= getClasspathContentProvider().getBootstrapClasspathEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -232,6 +241,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getShell()
 	 */
+	@Override
 	public Shell getShell() {
 		return getControl().getShell();
 	}
@@ -243,6 +253,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#updateSelection(int, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public boolean updateSelection(int actionType, IStructuredSelection selection) {
 		
 		if (selection.isEmpty()) {

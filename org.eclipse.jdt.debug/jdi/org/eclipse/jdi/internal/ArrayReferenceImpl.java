@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 * @throws IndexOutOfBoundsException if the index is outside the bounds of the array
 	 * @returns Returns an array component value.
 	 */
+	@Override
 	public Value getValue(int index) throws IndexOutOfBoundsException {
 		return getValues(index, 1).get(0);
 	}
@@ -75,6 +76,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	/**
 	 * @return all of the components in this array.
 	 */
+	@Override
 	public List<Value> getValues() {
 		return getValues(0, -1);
 	}
@@ -88,6 +90,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 * @throws IndexOutOfBoundsException if the index is outside the bounds of the array
 	 * @returns Returns a range of array components.
 	 */
+	@Override
 	public List<Value> getValues(int firstIndex, int length)
 			throws IndexOutOfBoundsException {
 
@@ -219,6 +222,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	/**
 	 * @return Returns the number of components in this array.
 	 */
+	@Override
 	public int length() {
 		if (fLength == -1) {
 			initJdwpRequest();
@@ -253,6 +257,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 *             not loaded or has been GC'd
 	 * @see #setValues(int, List, int, int)
 	 */
+	@Override
 	public void setValue(int index, Value value) throws InvalidTypeException,
 			ClassNotLoadedException {
 		ArrayList<Value> list = new ArrayList<Value>(1);
@@ -273,6 +278,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 *             not loaded or has been GC'd
 	 * @see #setValues(int, List, int, int)
 	 */
+	@Override
 	public void setValues(List<? extends Value> values) throws InvalidTypeException,
 			ClassNotLoadedException {
 		setValues(0, values, 0, -1);
@@ -297,6 +303,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 *             thrown if the class type for the {@link ArrayReference} is
 	 *             not loaded or has been GC'd
 	 */
+	@Override
 	public void setValues(int index, List<? extends Value> values, int srcIndex, int length)
 			throws InvalidTypeException, ClassNotLoadedException {
 		if (values == null || values.size() == 0) {

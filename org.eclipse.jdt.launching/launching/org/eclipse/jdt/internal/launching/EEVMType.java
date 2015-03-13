@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,6 +151,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#detectInstallLocation()
 	 */
+	@Override
 	public File detectInstallLocation() {
 		return null;
 	}
@@ -158,6 +159,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getDefaultLibraryLocations(java.io.File)
 	 */
+	@Override
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocationOrDefinitionFile) {
 		return new LibraryLocation[0];
 	}
@@ -165,6 +167,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchingMessages.EEVMType_2;
 	}
@@ -172,6 +175,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
+	@Override
 	public IStatus validateInstallLocation(File installLocation) {
 		if (installLocation.exists()) {
 			return new Status(IStatus.INFO, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.EEVMType_4);

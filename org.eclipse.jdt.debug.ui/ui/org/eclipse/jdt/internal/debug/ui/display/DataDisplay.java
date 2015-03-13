@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class DataDisplay implements IDataDisplay {
 	/**
 	 * @see IDataDisplay#clear()
 	 */
+	@Override
 	public void clear() {
 		IDocument document= getTextViewer().getDocument();
 		if (document != null) {
@@ -49,6 +50,7 @@ public class DataDisplay implements IDataDisplay {
 	/**
 	 * @see IDataDisplay#displayExpression(String)
 	 */
+	@Override
 	public void displayExpression(String expression) {
 		IDocument document= fTextViewer.getDocument();
 		int offset= document.getLength();
@@ -68,6 +70,7 @@ public class DataDisplay implements IDataDisplay {
 	/**
 	 * @see IDataDisplay#displayExpressionValue(String)
 	 */
+	@Override
 	public void displayExpressionValue(String value) {
 		value= System.getProperty("line.separator") + '\t' + value; //$NON-NLS-1$
 		ITextSelection selection= (ITextSelection)fTextViewer.getSelectionProvider().getSelection();

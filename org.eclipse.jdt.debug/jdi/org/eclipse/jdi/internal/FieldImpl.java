@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(Field object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
 			throw new ClassCastException(JDIMessages.FieldImpl_Can__t_compare_field_to_given_object_1);
@@ -105,6 +106,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	/**
 	 * @return Returns a text representation of the declared type.
 	 */
+	@Override
 	public String typeName() {
 		if (fTypeName == null) {
 			fTypeName = TypeImpl.signatureToName(signature());
@@ -115,6 +117,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	/**
 	 * @return Returns the type of the this Field.
 	 */
+	@Override
 	public Type type() throws ClassNotLoadedException {
 		if (fType == null) {
 			fType = TypeImpl.create(virtualMachineImpl(), signature(),
@@ -126,6 +129,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	/**
 	 * @return Returns true if object is transient.
 	 */
+	@Override
 	public boolean isTransient() {
 		return (fModifierBits & MODIFIER_ACC_TRANSIENT) != 0;
 	}
@@ -133,6 +137,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	/**
 	 * @return Returns true if object is volatile.
 	 */
+	@Override
 	public boolean isVolatile() {
 		return (fModifierBits & MODIFIER_ACC_VOLITILE) != 0;
 	}
@@ -216,6 +221,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 		return mirror;
 	}
 
+	@Override
 	public boolean isEnumConstant() {
 		return (fModifierBits & MODIFIER_ACC_ENUM) != 0;
 	}

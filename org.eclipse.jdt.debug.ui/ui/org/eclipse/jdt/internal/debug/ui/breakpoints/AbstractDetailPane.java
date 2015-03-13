@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2013 IBM Corporation and others.
+ *  Copyright (c) 2009, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane3#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
+	@Override
 	public void addPropertyListener(IPropertyListener listener) {
 		fListeners.add(listener);
 	}
@@ -78,6 +79,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane3#removePropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
+	@Override
 	public void removePropertyListener(IPropertyListener listener) {
 		fListeners.remove(listener);
 	}
@@ -104,18 +106,22 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
+	@Override
 	public void init(IWorkbenchPartSite partSite) {
 		fSite = partSite;
 	}
 
+	@Override
 	public String getID() {
 		return fId;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getDescription() {
 		return fDescription;
 	}
@@ -123,6 +129,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fEditor = null;
 		fSite = null;
@@ -146,12 +153,14 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		fEditorParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fEditorParent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fEditor = createEditor(fEditorParent);
 		fEditor.setMnemonics(false);
 		fEditor.addPropertyListener(new IPropertyListener() {
+			@Override
 			public void propertyChanged(Object source, int propId) {
 				if (fAutoSaveProperties.contains(new Integer(propId))) {
 					try {
@@ -177,6 +186,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		// do nothing
 	}
@@ -184,6 +194,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -191,6 +202,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
+	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return isDirty() && fEditor.getStatus().isOK();
 	}
@@ -198,6 +210,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
+	@Override
 	public boolean setFocus() {
 		return false;
 	}
@@ -205,6 +218,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		IStatusLineManager statusLine = getStatusLine();
 		if (statusLine != null) {
@@ -251,6 +265,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return fEditor != null && fEditor.isDirty();
 	}
@@ -267,6 +282,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void display(IStructuredSelection selection) {
 		// clear status line
 		IStatusLineManager statusLine = getStatusLine();

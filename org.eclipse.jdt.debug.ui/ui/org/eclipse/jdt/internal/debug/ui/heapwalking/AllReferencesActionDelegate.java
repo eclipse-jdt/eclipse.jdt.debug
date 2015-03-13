@@ -45,6 +45,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 
 	protected IWorkbenchWindow fWindow;
 	
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection currentSelection = getCurrentSelection();
 		if (currentSelection != null && (currentSelection.getFirstElement() instanceof IJavaVariable)){
@@ -86,6 +87,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
 	}

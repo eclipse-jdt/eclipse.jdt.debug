@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,12 @@ public class JavaFxLibraryResolver implements ILibraryLocationResolver {
 		return JFXRT_JAR.equals(libraryPath.lastSegment());
 	}
 
+	@Override
 	public IPath getPackageRoot(IPath libraryPath) {
 		return Path.EMPTY;
 	}
 
+	@Override
 	public IPath getSourcePath(IPath libraryPath) {
 		if (isJavaFx(libraryPath)) {
 			File parent = libraryPath.toFile().getParentFile();
@@ -46,6 +48,7 @@ public class JavaFxLibraryResolver implements ILibraryLocationResolver {
 		return Path.EMPTY;
 	}
 
+	@Override
 	public URL getJavadocLocation(IPath libraryPath) {
 		if (isJavaFx(libraryPath)) {
 			/*
@@ -62,6 +65,7 @@ public class JavaFxLibraryResolver implements ILibraryLocationResolver {
 		return null;
 	}
 
+	@Override
 	public URL getIndexLocation(IPath libraryPath) {
 		return null;
 	}

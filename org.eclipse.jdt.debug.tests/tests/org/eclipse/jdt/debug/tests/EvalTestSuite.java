@@ -17,10 +17,6 @@ package org.eclipse.jdt.debug.tests;
 
 import java.util.Enumeration;
 
-import junit.framework.Test;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-
 import org.eclipse.jdt.debug.tests.eval.ArrayAllocationTests;
 import org.eclipse.jdt.debug.tests.eval.ArrayAssignmentTests;
 import org.eclipse.jdt.debug.tests.eval.ArrayValueTests;
@@ -106,6 +102,10 @@ import org.eclipse.jdt.debug.tests.eval.TypeHierarchy_68_3;
 import org.eclipse.jdt.debug.tests.eval.VariableDeclarationTests;
 import org.eclipse.jdt.debug.tests.eval.XfixOperatorsTests;
 import org.eclipse.swt.widgets.Display;
+
+import junit.framework.Test;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI.
@@ -246,10 +246,12 @@ public class EvalTestSuite extends TestSuite {
 		Thread thread = null;
 		try {
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					for (Enumeration<Test> e= tests(); e.hasMoreElements(); ) {
-				  		if (result.shouldStop() )
-				  			break;
+				  		if (result.shouldStop() ) {
+							break;
+						}
 						runTest(e.nextElement(), result);
 					}					
 					fTesting = false;
@@ -264,8 +266,9 @@ public class EvalTestSuite extends TestSuite {
 				
 		while (fTesting) {
 			try {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}			

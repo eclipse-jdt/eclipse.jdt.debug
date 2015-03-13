@@ -33,6 +33,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
@@ -40,6 +41,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return null;
 	}
@@ -47,6 +49,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return null;
 	}
@@ -54,6 +57,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
@@ -61,6 +65,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaType#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		return sig;
 	}
@@ -68,6 +73,7 @@ public class TestIJavaType implements IJavaType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaType#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return name;
 	}

@@ -143,6 +143,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			final int charStart, final int charEnd, final int hitCount,
 			final boolean register, final Map<String, Object> attributes) throws CoreException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
 				setMarker(resource.createMarker(JAVA_METHOD_BREAKPOINT));
@@ -411,6 +412,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#isEntrySuspend(IDebugTarget)
 	 */
+	@Override
 	public boolean isEntrySuspend(IDebugTarget target) {
 		Integer lastEventType = fLastEventTypes.get(target);
 		if (lastEventType == null) {
@@ -533,6 +535,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodName()
 	 */
+	@Override
 	public String getMethodName() {
 		return fMethodName;
 	}
@@ -544,6 +547,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodSignature
 	 * ()
 	 */
+	@Override
 	public String getMethodSignature() {
 		return fMethodSignature;
 	}
@@ -551,6 +555,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#isEntry()
 	 */
+	@Override
 	public boolean isEntry() throws CoreException {
 		return ensureMarker().getAttribute(ENTRY, false);
 	}
@@ -558,6 +563,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#isExit()
 	 */
+	@Override
 	public boolean isExit() throws CoreException {
 		return ensureMarker().getAttribute(EXIT, false);
 	}
@@ -565,6 +571,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#isNative()
 	 */
+	@Override
 	public boolean isNativeOnly() throws CoreException {
 		return ensureMarker().getAttribute(NATIVE, false);
 	}
@@ -572,6 +579,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#setEntry(boolean)
 	 */
+	@Override
 	public void setEntry(boolean entry) throws CoreException {
 		if (isEntry() != entry) {
 			setAttribute(ENTRY, entry);
@@ -587,6 +595,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#setExit(boolean)
 	 */
+	@Override
 	public void setExit(boolean exit) throws CoreException {
 		if (isExit() != exit) {
 			setAttribute(EXIT, exit);
@@ -602,6 +611,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * @see IJavaMethodBreakpoint#setNativeOnly(boolean)
 	 */
+	@Override
 	public void setNativeOnly(boolean nativeOnly) throws CoreException {
 		if (isNativeOnly() != nativeOnly) {
 			setAttribute(NATIVE, nativeOnly);

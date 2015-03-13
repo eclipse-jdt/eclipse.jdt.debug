@@ -33,6 +33,7 @@ public class MemberActionFilter implements IActionFilter {
 	/**
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(Object, String, String)
 	 */
+	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		if (name.equals("MemberActionFilter")) { //$NON-NLS-1$
 			if (target instanceof IMember) {

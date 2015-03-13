@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		fErrorMessages = new HashMap<Object, String>();
 	}
@@ -80,10 +81,13 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
 		fAllInstancesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllInstancesMaxCount.addModifyListener(new ModifyListener(){
+			@Override
 			public void modifyText(ModifyEvent e) {
 				try{
 					int result = Integer.parseInt(fAllInstancesMaxCount.getText());
-					if (result < 0) throw new NumberFormatException();
+					if (result < 0) {
+						throw new NumberFormatException();
+					}
 					clearErrorMessage(fAllInstancesMaxCount);
 				} catch (NumberFormatException exception){
 					setErrorMessage(fAllInstancesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);
@@ -95,10 +99,13 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
 		fAllReferencesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllReferencesMaxCount.addModifyListener(new ModifyListener(){
+			@Override
 			public void modifyText(ModifyEvent e) {
 				try{
 					int result = Integer.parseInt(fAllReferencesMaxCount.getText());
-					if (result < 0) throw new NumberFormatException();
+					if (result < 0) {
+						throw new NumberFormatException();
+					}
 					clearErrorMessage(fAllReferencesMaxCount);
 				} catch (NumberFormatException exception){
 					setErrorMessage(fAllReferencesMaxCount, DebugUIMessages.HeapWalkingPreferencePage_6);

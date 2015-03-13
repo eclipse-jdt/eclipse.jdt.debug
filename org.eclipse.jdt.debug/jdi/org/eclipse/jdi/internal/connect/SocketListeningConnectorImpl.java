@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	/**
 	 * @return Returns the default arguments.
 	 */
+	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
 		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(1);
 
@@ -122,6 +123,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns the address at which the connector is listening for a
 	 *         connection.
 	 */
+	@Override
 	public String startListening(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		String result = null;
@@ -138,6 +140,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.connect.ListeningConnector#stopListening(java.util.Map)
 	 */
+	@Override
 	public void stopListening(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException {
 		((SocketTransportImpl) fTransport).stopListening();
 	}
@@ -147,6 +150,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * 
 	 * @return Returns a connected Virtual Machine.
 	 */
+	@Override
 	public VirtualMachine accept(Map<String, ? extends Connector.Argument> connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		SocketConnection connection = (SocketConnection) ((SocketTransportImpl) fTransport)
@@ -158,6 +162,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns whether this listening connector supports multiple
 	 *         connections for a single argument map.
 	 */
+	@Override
 	public boolean supportsMultipleConnections() {
 		return true;
 	}

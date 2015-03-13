@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class VMTypePage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		
@@ -116,6 +117,7 @@ public class VMTypePage extends WizardPage {
         fTypesViewer.setLabelProvider(new TypeLabelProvider());
 		fTypesViewer.setComparator(new ViewerComparator());
 		fTypesViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				setPageComplete(true);
 				updateNextPage();
@@ -123,6 +125,7 @@ public class VMTypePage extends WizardPage {
 			}
 		});
 		fTypesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent event) {
 				if (event.getSelection().isEmpty()){
 					setPageComplete(false);

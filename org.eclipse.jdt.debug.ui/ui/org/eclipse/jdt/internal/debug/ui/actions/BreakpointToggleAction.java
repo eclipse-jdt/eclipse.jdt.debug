@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getStructuredSelection();
 		Iterator<IJavaBreakpoint> itr= selection.iterator();
@@ -61,6 +62,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
 		if (selection.isEmpty()) {
@@ -159,12 +161,14 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
 
 	/**
 	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
 			IStructuredSelection selection= getStructuredSelection();
@@ -184,6 +188,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 	
@@ -206,18 +211,21 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getPart()) {
 			getBreakpointManager().removeBreakpointListener(this);
@@ -228,18 +236,21 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
 	
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		IWorkbenchPart oldPart= getPart();
 		if (oldPart != null) {

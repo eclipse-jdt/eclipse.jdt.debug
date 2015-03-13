@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,11 +63,13 @@ public abstract class ConnectorImpl implements Connector {
 	 * @return Returns a human-readable description of this connector and its
 	 *         purpose.
 	 */
+	@Override
 	public abstract String description();
 
 	/**
 	 * @return Returns a short identifier for the connector.
 	 */
+	@Override
 	public abstract String name();
 
 	/**
@@ -81,6 +83,7 @@ public abstract class ConnectorImpl implements Connector {
 	 * @return Returns the transport mechanism used by this connector to
 	 *         establish connections with a target VM.
 	 */
+	@Override
 	public Transport transport() {
 		return fTransport;
 	}
@@ -128,6 +131,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#name()
 		 */
+		@Override
 		public String name() {
 			return fName;
 		}
@@ -135,6 +139,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#description()
 		 */
+		@Override
 		public String description() {
 			return fDescription;
 		}
@@ -142,6 +147,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#label()
 		 */
+		@Override
 		public String label() {
 			return fLabel;
 		}
@@ -149,6 +155,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#mustSpecify()
 		 */
+		@Override
 		public boolean mustSpecify() {
 			return fMustSpecify;
 		}
@@ -156,16 +163,19 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#value()
 		 */
+		@Override
 		public abstract String value();
 
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#setValue(java.lang.String)
 		 */
+		@Override
 		public abstract void setValue(String value);
 
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.Argument#isValid(java.lang.String)
 		 */
+		@Override
 		public abstract boolean isValid(String value);
 
 		@Override
@@ -246,6 +256,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#intValue()
 		 */
+		@Override
 		public int intValue() {
 			return fValue.intValue();
 		}
@@ -253,6 +264,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#setValue(int)
 		 */
+		@Override
 		public void setValue(int value) {
 			fValue = new Integer(value);
 		}
@@ -260,6 +272,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#min()
 		 */
+		@Override
 		public int min() {
 			return fMin;
 		}
@@ -267,6 +280,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#max()
 		 */
+		@Override
 		public int max() {
 			return fMax;
 		}
@@ -274,6 +288,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#isValid(int)
 		 */
+		@Override
 		public boolean isValid(int value) {
 			return fMin <= value && value <= fMax;
 		}
@@ -281,6 +296,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.IntegerArgument#stringValueOf(int)
 		 */
+		@Override
 		public String stringValueOf(int value) {
 			return new Integer(value).toString();
 		}
@@ -318,6 +334,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.BooleanArgument#booleanValue()
 		 */
+		@Override
 		public boolean booleanValue() {
 			return fValue.booleanValue();
 		}
@@ -325,6 +342,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.BooleanArgument#setValue(boolean)
 		 */
+		@Override
 		public void setValue(boolean value) {
 			fValue = Boolean.valueOf(value);
 		}
@@ -332,6 +350,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.BooleanArgument#stringValueOf(boolean)
 		 */
+		@Override
 		public String stringValueOf(boolean value) {
 			return Boolean.valueOf(value).toString();
 		}
@@ -350,6 +369,7 @@ public abstract class ConnectorImpl implements Connector {
 		/* (non-Javadoc)
 		 * @see com.sun.jdi.connect.Connector.SelectedArgument#choices()
 		 */
+		@Override
 		public List<String> choices() {
 			return fChoices;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * Prevents garbage collection for this object.
 	 */
+	@Override
 	public void disableCollection() {
 		initJdwpRequest();
 		try {
@@ -106,6 +107,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * Permits garbage collection for this object.
 	 */
+	@Override
 	public void enableCollection() {
 		initJdwpRequest();
 		try {
@@ -168,6 +170,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns an ThreadReference for the thread, if any, which
 	 *         currently owns this object's monitor.
 	 */
+	@Override
 	public ThreadReference owningThread()
 			throws IncompatibleThreadStateException {
 		return monitorInfo().owner;
@@ -177,6 +180,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns the number times this object's monitor has been entered
 	 *         by the current owning thread.
 	 */
+	@Override
 	public int entryCount() throws IncompatibleThreadStateException {
 		return monitorInfo().entryCount;
 	}
@@ -185,6 +189,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns a List containing a ThreadReference for each thread
 	 *         currently waiting for this object's monitor.
 	 */
+	@Override
 	public List<ThreadReference> waitingThreads() throws IncompatibleThreadStateException {
 		return monitorInfo().waiters;
 	}
@@ -193,6 +198,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns the value of a given instance or static field in this
 	 *         object.
 	 */
+	@Override
 	public Value getValue(Field field) {
 		ArrayList<Field> list = new ArrayList<Field>(1);
 		list.add(field);
@@ -209,6 +215,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public List<ObjectReference> referringObjects(long maxReferrers)
 			throws UnsupportedOperationException, IllegalArgumentException {
 		try {
@@ -260,6 +267,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns the value of multiple instance and/or static fields in
 	 *         this object.
 	 */
+	@Override
 	public Map<Field, Value> getValues(List<? extends Field> allFields) {
 		// if the field list is empty, nothing to do.
 		if (allFields.isEmpty()) {
@@ -376,6 +384,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * 
 	 * @return Returns a Value mirror of the invoked method's return value.
 	 */
+	@Override
 	public Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException {
@@ -470,6 +479,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns if this object has been garbage collected in the target
 	 *         VM.
 	 */
+	@Override
 	public boolean isCollected() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -506,6 +516,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * @return Returns the ReferenceType that mirrors the type of this object.
 	 */
+	@Override
 	public ReferenceType referenceType() {
 		if (fReferenceType != null) {
 			return fReferenceType;
@@ -537,6 +548,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * Sets the value of a given instance or static field in this object.
 	 */
+	@Override
 	public void setValue(Field field, Value value) throws InvalidTypeException,
 			ClassNotLoadedException {
 		// Note that this information should not be cached.
@@ -579,6 +591,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/**
 	 * @return Returns a unique identifier for this ObjectReference.
 	 */
+	@Override
 	public long uniqueID() {
 		return fObjectID.value();
 	}

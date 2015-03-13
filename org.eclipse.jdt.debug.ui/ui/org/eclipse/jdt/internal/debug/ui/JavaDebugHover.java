@@ -68,6 +68,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setEditor(IEditorPart editor) {
 	    fEditor = editor;
 	}
@@ -75,6 +76,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return JavaWordFinder.findWord(textViewer.getDocument(), offset);
 	}
@@ -97,6 +99,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object object = getHoverInfo2(textViewer, hoverRegion);
 		if (object instanceof IVariable) {	
@@ -230,6 +233,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new ExpressionInformationControlCreator();
 	}
@@ -237,6 +241,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 	    IJavaStackFrame frame = getFrame();
 	    if (frame != null) {

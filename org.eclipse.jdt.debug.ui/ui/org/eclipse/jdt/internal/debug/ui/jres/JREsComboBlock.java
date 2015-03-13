@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,6 +218,7 @@ public class JREsComboBlock {
 		
 		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				showPrefPage(ExecutionEnvironmentsPreferencePage.ID);
 			}
@@ -262,6 +263,7 @@ public class JREsComboBlock {
 				
 		fManageButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_2, null); 
 		fManageButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				showPrefPage(JREsPreferencePage.ID); 
 			}
@@ -340,6 +342,7 @@ public class JREsComboBlock {
 		fVMs.addAll(jres);
 		// sort by name
 		Collections.sort(fVMs, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				IVMInstall left = (IVMInstall)o1;
 				IVMInstall right = (IVMInstall)o2;

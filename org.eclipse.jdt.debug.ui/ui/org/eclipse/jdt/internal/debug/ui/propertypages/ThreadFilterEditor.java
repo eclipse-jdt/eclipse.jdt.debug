@@ -141,6 +141,7 @@ public class ThreadFilterEditor {
 	}
 	
 	class CheckHandler implements ICheckStateListener {	
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object element= event.getElement();
 			if (element instanceof IDebugTarget) {
@@ -285,6 +286,7 @@ public class ThreadFilterEditor {
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IDebugTarget) {
 				IJavaDebugTarget target = ((IDebugTarget)parent).getAdapter(IJavaDebugTarget.class);
@@ -318,6 +320,7 @@ public class ThreadFilterEditor {
 		/**
 		 * @see ITreeContentProvider#getParent(Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IThread) {
 				return ((IThread)element).getDebugTarget();
@@ -334,6 +337,7 @@ public class ThreadFilterEditor {
 		/**
 		 * @see ITreeContentProvider#hasChildren(Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IStackFrame) {
 				return false;
@@ -353,6 +357,7 @@ public class ThreadFilterEditor {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
@@ -360,12 +365,14 @@ public class ThreadFilterEditor {
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

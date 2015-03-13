@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,12 +147,14 @@ public class ExceptionFilterEditor {
 		gd.heightHint = 100;
 		fFilterViewer.getTable().setLayoutData(gd);
 		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Filter filter = (Filter) event.getElement();
 				fFilterContentProvider.toggleFilter(filter);
 			}
 		});
 		fFilterViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection.isEmpty()) {
@@ -325,6 +327,7 @@ public class ExceptionFilterEditor {
 		// traverse away to dialog's default button.  Without this, hitting
 		// CR in the text field closes the entire dialog.
 		text.addListener(SWT.Traverse, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				event.doit = false;
 			}
@@ -400,6 +403,7 @@ public class ExceptionFilterEditor {
 			fNewTableItem = null;
 			fTableEditor.setEditor(null, null, 0);
 			fEditorText.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fEditorText.dispose();
 					fEditorText = null;
@@ -556,6 +560,7 @@ public class ExceptionFilterEditor {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fFilters.toArray();
 		}
@@ -563,12 +568,14 @@ public class ExceptionFilterEditor {
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension#canCreateWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
+	@Override
 	public boolean canCreateWatchExpression(IVariable variable) {
 		if (variable instanceof JDIReferenceListVariable || variable instanceof JDIReferenceListEntryVariable ||
 				variable instanceof JDIArrayEntryVariable || variable instanceof IndexedVariablePartition){
@@ -49,6 +50,7 @@ public class JavaWatchExpressionFilter implements IWatchExpressionFactoryAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter#createWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
+	@Override
 	public String createWatchExpression(IVariable variable) throws CoreException {
 		return variable.getName();
 	}

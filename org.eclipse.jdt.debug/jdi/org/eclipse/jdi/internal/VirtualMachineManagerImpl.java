@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,6 +89,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#majorInterfaceVersion()
 	 */
+	@Override
 	public int majorInterfaceVersion() {
 		return MAJOR_INTERFACE_VERSION;
 	}
@@ -96,6 +97,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#minorInterfaceVersion()
 	 */
+	@Override
 	public int minorInterfaceVersion() {
 		return MINOR_INTERFACE_VERSION;
 	}
@@ -170,6 +172,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#connectedVirtualMachines()
 	 */
+	@Override
 	public List<VirtualMachine> connectedVirtualMachines() {
 		return fConnectedVMs;
 	}
@@ -177,6 +180,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#allConnectors()
 	 */
+	@Override
 	public List<Connector> allConnectors() {
 		List<Connector> result = new ArrayList<Connector>(attachingConnectors());
 		result.addAll(launchingConnectors());
@@ -187,6 +191,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#attachingConnectors()
 	 */
+	@Override
 	public List<AttachingConnector> attachingConnectors() {
 		ArrayList<AttachingConnector> list = new ArrayList<AttachingConnector>(1);
 		list.add(new SocketAttachingConnectorImpl(this));
@@ -196,6 +201,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#launchingConnectors()
 	 */
+	@Override
 	public List<LaunchingConnector> launchingConnectors() {
 		ArrayList<LaunchingConnector> list = new ArrayList<LaunchingConnector>(2);
 		list.add(new SocketLaunchingConnectorImpl(this));
@@ -206,6 +212,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#listeningConnectors()
 	 */
+	@Override
 	public List<ListeningConnector> listeningConnectors() {
 		ArrayList<ListeningConnector> list = new ArrayList<ListeningConnector>(1);
 		list.add(new SocketListeningConnectorImpl(this));
@@ -215,6 +222,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#defaultConnector()
 	 */
+	@Override
 	public LaunchingConnector defaultConnector() {
 		return new SocketLaunchingConnectorImpl(this);
 	}
@@ -230,6 +238,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#createVirtualMachine(com.sun.jdi.connect.spi.Connection)
 	 */
+	@Override
 	public VirtualMachine createVirtualMachine(Connection connection) throws IOException {
 		VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
 		return vmImpl;
@@ -238,6 +247,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.VirtualMachineManager#createVirtualMachine(com.sun.jdi.connect.spi.Connection, java.lang.Process)
 	 */
+	@Override
 	public VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException {
 		VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
 		vmImpl.setLaunchedProcess(process);

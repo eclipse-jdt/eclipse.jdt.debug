@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/**
 	 * @see IVMConnector#getIdentifier()
 	 */
+	@Override
 	public String getIdentifier() {
 		return IJavaLaunchConfigurationConstants.ID_SOCKET_ATTACH_VM_CONNECTOR;
 	}
@@ -78,6 +79,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/**
 	 * @see IVMConnector#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchingMessages.SocketAttachConnector_Standard__Socket_Attach__4; 
 	}
@@ -99,6 +101,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void connect(Map<String, String> arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -196,6 +199,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#getDefaultArguments()
 	 */
+	@Override
 	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException {
 		Map<String, Connector.Argument> def = getAttachingConnector().defaultArguments();
 		Connector.IntegerArgument arg = (Connector.IntegerArgument)def.get("port"); //$NON-NLS-1$
@@ -206,6 +210,7 @@ public class SocketAttachConnector implements IVMConnector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#getArgumentOrder()
 	 */
+	@Override
 	public List<String> getArgumentOrder() {
 		List<String> list = new ArrayList<String>(2);
 		list.add("hostname"); //$NON-NLS-1$

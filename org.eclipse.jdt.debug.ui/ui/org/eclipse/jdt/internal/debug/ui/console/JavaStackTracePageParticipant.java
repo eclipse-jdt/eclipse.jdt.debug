@@ -40,7 +40,8 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(org.eclipse.ui.part.IPageBookViewPage, org.eclipse.ui.console.IConsole)
      */
-    public void init(IPageBookViewPage page, IConsole console) {
+    @Override
+	public void init(IPageBookViewPage page, IConsole console) {
         fCloseAction = new CloseConsoleAction(console);
         
         IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
@@ -52,27 +53,31 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         deactivated();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public <T> T getAdapter(Class<T> adapter) {
+    @Override
+	public <T> T getAdapter(Class<T> adapter) {
         return null;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
 	 */
+	@Override
 	public void activated() {
         // add EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         
         IHandler formatHandler = new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 fFormatAction.run(null);
                 return null;
             }
@@ -87,6 +92,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
 	 */
+	@Override
 	public void deactivated() {
         // remove EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();

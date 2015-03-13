@@ -289,6 +289,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
+	@Override
 	public int getInitialOffset() {
 		return 0;
 	}
@@ -298,6 +299,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
+	@Override
 	public int getSize() throws DebugException {
 		return getVariables().length;
 	}
@@ -307,6 +309,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
+	@Override
 	public IVariable getVariable(int offset) throws DebugException {
 		IVariable[] variables = getVariables();
 		if (offset < variables.length) {
@@ -321,6 +324,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	 * 
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
+	@Override
 	public IVariable[] getVariables(int offset, int length)
 			throws DebugException {
 		IVariable[] variables = getVariables();

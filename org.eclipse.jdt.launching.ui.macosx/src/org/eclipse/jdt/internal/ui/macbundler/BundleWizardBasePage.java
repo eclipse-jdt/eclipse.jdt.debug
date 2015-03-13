@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,26 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 
 public abstract class BundleWizardBasePage extends DialogPage implements IWizardPage, BundleAttributes, IPropertyChangeListener {
@@ -56,10 +67,11 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	 */
 	@Override
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
 			enterPage();
-		else
+		} else {
 			leavePage();
+		}
 		super.setVisible(visible);
 	}
 	
@@ -75,8 +87,9 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	public Image getImage() {
         Image result = super.getImage();
 
-        if (result == null && fWizard != null)
-            return fWizard.getDefaultPageImage();
+        if (result == null && fWizard != null) {
+			return fWizard.getDefaultPageImage();
+		}
 
         return result;
     }
@@ -84,6 +97,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	final public void createControl(Composite parent) {
 		
 		Composite c= new Composite(parent, SWT.NULL);
@@ -122,8 +136,9 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	Text createText(Composite parent, String key, int lines) {
 		Text t= new Text(parent, SWT.BORDER);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		if (lines == 2)
+		if (lines == 2) {
 			gd.heightHint= 30;
+		}
 		t.setLayoutData(gd);	
 		hookField(t, key);
 		return t;
@@ -146,8 +161,9 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 
 	Button createButton(Composite parent, int flags, String text) {
 		Button b= new Button(parent, flags);
-		if (text != null)
+		if (text != null) {
 			b.setText(text);
+		}
 		return b;
 	}
 
@@ -162,6 +178,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	
 	void hookField(final Text tf, final String key) {
 		tf.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fBundleDescription.setValue(key, tf.getText());
 				checkIfPageComplete();
@@ -171,6 +188,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 		
 	void hookField(final Combo tf, final String key) {
 		tf.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fBundleDescription.setValue(key, tf.getText());
 				checkIfPageComplete();
@@ -190,8 +208,9 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	
 	final void checkIfPageComplete() {
 		IWizardContainer c= (fWizard != null) ? fWizard.getContainer() : null;
-		if (c != null && this == c.getCurrentPage())
+		if (c != null && this == c.getCurrentPage()) {
 			c.updateButtons();
+		}
 	}
 
 	/////////////////////////////////////////////////////////
@@ -199,6 +218,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete() && getNextPage() != null;
 	}
@@ -206,6 +226,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getName()
 	 */
+	@Override
 	public String getName() {
 		return Util.getString(fKey + ".title"); //$NON-NLS-1$;
 	}
@@ -213,26 +234,32 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
-		if (fWizard == null)
+		if (fWizard == null) {
 			return null;
+		}
 		return fWizard.getNextPage(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getPreviousPage()
 	 */
+	@Override
 	public IWizardPage getPreviousPage() {
-		if (fPreviousPage != null)
+		if (fPreviousPage != null) {
 			return fPreviousPage;
-		if (fWizard != null)
+		}
+		if (fWizard != null) {
 			return fWizard.getPreviousPage(this);
+		}
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getWizard()
 	 */
+	@Override
 	public IWizard getWizard() {
 		return fWizard;
 	}
@@ -240,6 +267,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#setPreviousPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
+	@Override
 	public void setPreviousPage(IWizardPage page) {
 		fPreviousPage= page;
 	}
@@ -247,6 +275,7 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
 	 */
+	@Override
 	public void setWizard(IWizard newWizard) {
 		fWizard= newWizard;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getValue()
 	 */
+	@Override
 	public IJavaValue getValue() {
 		return fValue;
 	}
@@ -95,6 +96,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#hasProblems()
 	 */
+	@Override
 	public boolean hasErrors() {
 		return getErrors().length > 0 || getException() != null;
 	}
@@ -103,6 +105,7 @@ public class EvaluationResult implements IEvaluationResult {
 	 * @see IEvaluationResult#getProblems()
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public Message[] getErrors() {
 		Message[] messages = new Message[fErrors.size()];
@@ -116,6 +119,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationResult#getErrorMessages()
 	 */
+	@Override
 	public String[] getErrorMessages() {
 		return fErrors.toArray(new String[fErrors.size()]);
 	}
@@ -123,6 +127,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getSnippet()
 	 */
+	@Override
 	public String getSnippet() {
 		return fSnippet;
 	}
@@ -140,6 +145,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getException()
 	 */
+	@Override
 	public DebugException getException() {
 		return fException;
 	}
@@ -158,6 +164,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getThread()
 	 */
+	@Override
 	public IJavaThread getThread() {
 		return fThread;
 	}
@@ -175,6 +182,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getEvaluationEngine()
 	 */
+	@Override
 	public IEvaluationEngine getEvaluationEngine() {
 		return fEngine;
 	}
@@ -201,6 +209,7 @@ public class EvaluationResult implements IEvaluationResult {
 	 * 
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationResult#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return fTerminated;
 	}

@@ -22,6 +22,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#moveChild(int)
 	 */
+	@Override
 	public void moveChild(boolean up, IClasspathEntry child) {
 		int index= childEntries.indexOf(child);
 		int direction= 1;
@@ -36,6 +37,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
 	 */
+	@Override
 	public IClasspathEntry[] getEntries() {
 		return childEntries.toArray(new IClasspathEntry[childEntries.size()]);
 	}
@@ -43,6 +45,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.IClasspathEntry#hasEntries()
 	 */
+	@Override
 	public boolean hasEntries() {
 		return !childEntries.isEmpty();
 	}
@@ -50,6 +53,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.IClasspathEntry#getParent()
 	 */
+	@Override
 	public IClasspathEntry getParent() {
 		return parent;
 	}

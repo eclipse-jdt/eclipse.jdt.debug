@@ -219,6 +219,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		List<IProject> projects = getBuiltProjects(event);
 		if (!projects.isEmpty()) {
@@ -310,6 +311,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		final List<JDIDebugTarget> noHotSwapTargets = getNoHotSwapTargets();
 		if (!hotSwapTargets.isEmpty()) {
 			Runnable runnable = new Runnable() {
+				@Override
 				public void run() {
 					doHotCodeReplace(hotSwapTargets, resources, qualifiedNames);
 				}
@@ -318,6 +320,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		}
 		if (!noHotSwapTargets.isEmpty()) {
 			Runnable runnable = new Runnable() {
+				@Override
 				public void run() {
 					notifyUnsupportedHCR(noHotSwapTargets, resources,
 							qualifiedNames);
@@ -1157,6 +1160,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		 * If the associated resource is a class file which has been changed,
 		 * record it.
 		 */
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null
 					|| 0 == (delta.getKind() & IResourceDelta.CHANGED)) {
@@ -1328,6 +1332,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (IDebugTarget debugTarget : debugTargets) {
@@ -1345,6 +1350,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * 
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget[] debugTargets = launch.getDebugTargets();
 		for (IDebugTarget debugTarget : debugTargets) {
@@ -1373,6 +1379,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * 
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 		launchAdded(launch);
 	}
@@ -1384,6 +1391,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
 	 * .debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.TERMINATE) {

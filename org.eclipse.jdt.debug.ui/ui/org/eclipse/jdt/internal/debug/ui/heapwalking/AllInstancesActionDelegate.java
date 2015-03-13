@@ -77,6 +77,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (getPart() != null){
 			ISelectionProvider provider = getPart().getSite().getSelectionProvider();
@@ -222,7 +223,8 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
      */
     protected void report(final String message, final IWorkbenchPart part) {
         JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IEditorStatusLine statusLine = part.getAdapter(IEditorStatusLine.class);
                 if (statusLine != null) {
                     if (message != null) {
@@ -326,6 +328,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setActivePart(action, targetEditor);	
 	}
@@ -333,6 +336,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
 	}

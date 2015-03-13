@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -152,6 +152,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getExecutionEnvironments()
 	 */
+	@Override
 	public synchronized IExecutionEnvironment[] getExecutionEnvironments() {
 		initializeExtensions();
 		return fEnvironments.toArray(new IExecutionEnvironment[fEnvironments.size()]);
@@ -171,6 +172,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getEnvironment(java.lang.String)
 	 */
+	@Override
 	public synchronized IExecutionEnvironment getEnvironment(String id) {
 		initializeExtensions();
 		return fEnvironmentsMap.get(id);
@@ -192,6 +194,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 			fEnvironments = new TreeSet<IExecutionEnvironment>(new Comparator<IExecutionEnvironment>() {
+				@Override
 				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
 					return o1.getId().compareTo(o2.getId());
 				}
@@ -353,6 +356,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		// nothing
 	}
@@ -360,6 +364,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 	 */
+	@Override
 	public synchronized void vmChanged(PropertyChangeEvent event) {
 		IVMInstall vm = (IVMInstall) event.getSource();
 		if (vm instanceof VMStandin) {
@@ -372,6 +377,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public synchronized void vmAdded(IVMInstall vm) {
 		// TODO: progress reporting?
 		if (vm instanceof VMStandin) {
@@ -383,6 +389,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public synchronized void vmRemoved(IVMInstall vm) {
 		if (vm instanceof VMStandin) {
 			return;
@@ -406,6 +413,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		// don't respond to myself
 		if (fIsUpdatingDefaults) {

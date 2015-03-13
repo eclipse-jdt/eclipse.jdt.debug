@@ -91,6 +91,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	 * 
 	 * @see IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() throws DebugException {
 		Value currentValue = getCurrentValue();
 		if (fValue == null) {
@@ -117,6 +118,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -124,6 +126,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IValueModification#setValue(String)
 	 */
+	@Override
 	public void setValue(String expression) throws DebugException {
 		notSupported(JDIDebugModelMessages.JDIVariable_does_not_support_value_modification);
 	}
@@ -131,6 +134,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IValueModification#setValue(IValue)
 	 */
+	@Override
 	public void setValue(IValue value) throws DebugException {
 		notSupported(JDIDebugModelMessages.JDIVariable_does_not_support_value_modification);
 	}
@@ -138,6 +142,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IValueModification#verifyValue(String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		return false;
 	}
@@ -145,6 +150,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IValueModification#verifyValue(IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		return false;
 	}
@@ -152,6 +158,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isSynthetic()
 	 */
+	@Override
 	public boolean isSynthetic() {
 		return false;
 	}
@@ -159,6 +166,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isPublic()
 	 */
+	@Override
 	public boolean isPublic() throws DebugException {
 		return false;
 	}
@@ -166,6 +174,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isPrivate()
 	 */
+	@Override
 	public boolean isPrivate() throws DebugException {
 		return false;
 	}
@@ -173,6 +182,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isProtected()
 	 */
+	@Override
 	public boolean isProtected() throws DebugException {
 		return false;
 	}
@@ -180,6 +190,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isPackagePrivate()
 	 */
+	@Override
 	public boolean isPackagePrivate() {
 		return false;
 	}
@@ -187,6 +198,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isStatic()
 	 */
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
@@ -194,6 +206,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaModifiers#isFinal()
 	 */
+	@Override
 	public boolean isFinal() {
 		return false;
 	}
@@ -201,6 +214,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
+	@Override
 	public boolean isLocal() {
 		return false;
 	}
@@ -208,6 +222,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IJavaVariable#getJavaType()
 	 */
+	@Override
 	public IJavaType getJavaType() throws DebugException {
 		return JDIType.createType((JDIDebugTarget) getDebugTarget(),
 				getUnderlyingType());
@@ -263,6 +278,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * @see IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() {
 		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
 	}

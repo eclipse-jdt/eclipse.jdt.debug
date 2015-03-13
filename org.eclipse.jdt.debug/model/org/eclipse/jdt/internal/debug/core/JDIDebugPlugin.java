@@ -274,16 +274,20 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		new JDIDebugOptions(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),
 				new ISaveParticipant() {
+					@Override
 					public void doneSaving(ISaveContext c) {
 					}
 
+					@Override
 					public void prepareToSave(ISaveContext c)
 							throws CoreException {
 					}
 
+					@Override
 					public void rollback(ISaveContext c) {
 					}
 
+					@Override
 					public void saving(ISaveContext c) throws CoreException {
 						IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
 						if(node != null) {
@@ -356,6 +360,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(JDIDebugModel.PREF_REQUEST_TIMEOUT)) {
 			int value = Platform.getPreferencesService().getInt(
@@ -592,12 +597,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 		}
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			switch (fKind) {
 			case ADDING:
@@ -660,12 +667,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 		}
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			fInstall = fInstall
 					| getListener().installingBreakpoint(fTarget,
@@ -716,12 +725,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
+		@Override
 		public void handleException(Throwable exception) {
 		}
 
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
+		@Override
 		public void run() throws Exception {
 			if (fThread instanceof JDIThread) {
 				if (((JDIThread) fThread).hasClientRequestedSuspend()) {

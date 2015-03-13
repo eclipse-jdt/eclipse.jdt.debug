@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,6 +124,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createAccessWatchpointRequest(com.sun.jdi.Field)
 	 */
+	@Override
 	public AccessWatchpointRequest createAccessWatchpointRequest(Field field) {
 		FieldImpl fieldImpl = (FieldImpl)field;
 		AccessWatchpointRequestImpl req = new AccessWatchpointRequestImpl(virtualMachineImpl());
@@ -135,6 +136,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createBreakpointRequest(com.sun.jdi.Location)
 	 */
+	@Override
 	public BreakpointRequest createBreakpointRequest(Location location) throws VMMismatchException {
 		LocationImpl locImpl = (LocationImpl)location;
 		BreakpointRequestImpl req = new BreakpointRequestImpl(virtualMachineImpl());
@@ -146,6 +148,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createClassPrepareRequest()
 	 */
+	@Override
 	public ClassPrepareRequest createClassPrepareRequest() {
 		ClassPrepareRequestImpl req = new ClassPrepareRequestImpl(virtualMachineImpl());
 		CLASS_PREPARE_TYPE.requests.add(req);
@@ -155,6 +158,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createClassUnloadRequest()
 	 */
+	@Override
 	public ClassUnloadRequest createClassUnloadRequest() {
 		ClassUnloadRequestImpl req = new ClassUnloadRequestImpl(virtualMachineImpl());
 		CLASS_UNLOAD_TYPE.requests.add(req);
@@ -164,6 +168,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createExceptionRequest(com.sun.jdi.ReferenceType, boolean, boolean)
 	 */
+	@Override
 	public ExceptionRequest createExceptionRequest(ReferenceType refType, boolean notifyCaught, boolean notifyUncaught) {
 		ReferenceTypeImpl refTypeImpl = (ReferenceTypeImpl)refType;
 		ExceptionRequestImpl req = new ExceptionRequestImpl(virtualMachineImpl());
@@ -175,6 +180,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMethodEntryRequest()
 	 */
+	@Override
 	public MethodEntryRequest createMethodEntryRequest() {
 		MethodEntryRequestImpl req = new MethodEntryRequestImpl(virtualMachineImpl());
 		METHOD_ENTRY_TYPE.requests.add(req);
@@ -184,6 +190,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMethodExitRequest()
 	 */
+	@Override
 	public MethodExitRequest createMethodExitRequest() {
 		MethodExitRequestImpl req = new MethodExitRequestImpl(virtualMachineImpl());
 		METHOD_EXIT_TYPE.requests.add(req);
@@ -193,6 +200,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMonitorContendedEnteredRequest()
 	 */
+	@Override
 	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
 		MonitorContendedEnteredRequestImpl req = new MonitorContendedEnteredRequestImpl(virtualMachineImpl());
 		MONITOR_CONTENDED_ENTERED_TYPE.requests.add(req);
@@ -202,6 +210,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMonitorContendedEnterRequest()
 	 */
+	@Override
 	public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
 		MonitorContendedEnterRequestImpl req = new MonitorContendedEnterRequestImpl(virtualMachineImpl());
 		MONITOR_CONTENDED_ENTER_TYPE.requests.add(req);
@@ -211,6 +220,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMonitorWaitedRequest()
 	 */
+	@Override
 	public MonitorWaitedRequest createMonitorWaitedRequest() {
 		MonitorWaitedRequestImpl req = new MonitorWaitedRequestImpl(virtualMachineImpl());
 		MONITOR_WAITED_TYPE.requests.add(req);
@@ -220,6 +230,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createMonitorWaitRequest()
 	 */
+	@Override
 	public MonitorWaitRequest createMonitorWaitRequest() {
 		MonitorWaitRequestImpl req = new MonitorWaitRequestImpl(virtualMachineImpl());
 		MONITOR_WAIT_TYPE.requests.add(req);
@@ -229,6 +240,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createModificationWatchpointRequest(com.sun.jdi.Field)
 	 */
+	@Override
 	public ModificationWatchpointRequest createModificationWatchpointRequest(Field field) {
 		FieldImpl fieldImpl = (FieldImpl)field;
 		ModificationWatchpointRequestImpl req = new ModificationWatchpointRequestImpl(virtualMachineImpl());
@@ -240,6 +252,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createStepRequest(com.sun.jdi.ThreadReference, int, int)
 	 */
+	@Override
 	public StepRequest createStepRequest(ThreadReference thread, int size, int depth) throws DuplicateRequestException, ObjectCollectedException {
 	   	ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
 		StepRequestImpl req = new StepRequestImpl(virtualMachineImpl());		
@@ -251,6 +264,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createThreadDeathRequest()
 	 */
+	@Override
 	public ThreadDeathRequest createThreadDeathRequest() {
 		ThreadDeathRequestImpl req = new ThreadDeathRequestImpl(virtualMachineImpl());
 		THREAD_DEATH_TYPE.requests.add(req);
@@ -260,6 +274,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#createThreadStartRequest()
 	 */
+	@Override
 	public ThreadStartRequest createThreadStartRequest() {
 		ThreadStartRequestImpl req = new ThreadStartRequestImpl(virtualMachineImpl());
 		THREAD_START_TYPE.requests.add(req);
@@ -269,6 +284,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/*
 	 * @see EventRequestManager#createVMDeathRequest()
 	 */
+	@Override
 	public VMDeathRequest createVMDeathRequest() {
 		VMDeathRequestImpl req = new VMDeathRequestImpl(virtualMachineImpl());
 		VM_DEATH_TYPE.requests.add(req);
@@ -278,6 +294,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdi.hcr.EventRequestManager#createReenterStepRequest(com.sun.jdi.ThreadReference)
 	 */
+	@Override
 	public org.eclipse.jdi.hcr.ReenterStepRequest createReenterStepRequest(ThreadReference thread) {
 		virtualMachineImpl().checkHCRSupported();
 	   	ThreadReferenceImpl threadImpl = (ThreadReferenceImpl)thread;
@@ -340,6 +357,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#deleteAllBreakpoints()
 	 */
+	@Override
 	public void deleteAllBreakpoints() {
 		EventRequestImpl.clearAllBreakpoints(this);
 		BREAKPOINT_TYPE.clear();
@@ -361,6 +379,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#deleteEventRequest(com.sun.jdi.request.EventRequest)
 	 */
+	@Override
 	public void deleteEventRequest(EventRequest req) {
 		// Disable request, note that this also causes the event request to be removed from fEnabledRequests.
 		try {
@@ -406,6 +425,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#deleteEventRequests(java.util.List)
 	 */
+	@Override
 	public void deleteEventRequests(List<? extends EventRequest> requests) throws VMMismatchException {
 		Iterator<? extends EventRequest> iter = requests.iterator();
 		while(iter.hasNext()) {
@@ -417,6 +437,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#accessWatchpointRequests()
 	 */
+	@Override
 	public List<AccessWatchpointRequest> accessWatchpointRequests() {
 		return ACCESS_WATCHPOINT_TYPE.getUnmodifiableList();
 	}
@@ -424,6 +445,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#breakpointRequests()
 	 */
+	@Override
 	public List<BreakpointRequest> breakpointRequests() {
 		return BREAKPOINT_TYPE.getUnmodifiableList();
 	}
@@ -431,6 +453,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#classPrepareRequests()
 	 */
+	@Override
 	public List<ClassPrepareRequest> classPrepareRequests() {
 		return CLASS_PREPARE_TYPE.getUnmodifiableList();
 	}
@@ -438,6 +461,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#classUnloadRequests()
 	 */
+	@Override
 	public List<ClassUnloadRequest> classUnloadRequests() {
 		return CLASS_UNLOAD_TYPE.getUnmodifiableList();
 	}
@@ -445,6 +469,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#exceptionRequests()
 	 */
+	@Override
 	public List<ExceptionRequest> exceptionRequests() {
 		return EXCEPTION_TYPE.getUnmodifiableList();
 	}
@@ -452,6 +477,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#methodEntryRequests()
 	 */
+	@Override
 	public List<MethodEntryRequest> methodEntryRequests() {
 		return METHOD_ENTRY_TYPE.getUnmodifiableList();
 	}
@@ -459,6 +485,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#methodExitRequests()
 	 */
+	@Override
 	public List<MethodExitRequest> methodExitRequests() {
 		return METHOD_EXIT_TYPE.getUnmodifiableList();
 	}
@@ -466,6 +493,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#modificationWatchpointRequests()
 	 */
+	@Override
 	public List<ModificationWatchpointRequest> modificationWatchpointRequests() {
 		return MODIFICATION_WATCHPOINT_TYPE.getUnmodifiableList();
 	}
@@ -473,6 +501,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#stepRequests()
 	 */
+	@Override
 	public List<StepRequest> stepRequests() {
 		return STEP_TYPE.getUnmodifiableList();
 	}
@@ -480,6 +509,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#threadDeathRequests()
 	 */
+	@Override
 	public List<ThreadDeathRequest> threadDeathRequests() {
 		return THREAD_DEATH_TYPE.getUnmodifiableList();
 	}
@@ -487,6 +517,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#threadStartRequests()
 	 */
+	@Override
 	public List<ThreadStartRequest> threadStartRequests() {
 		return THREAD_START_TYPE.getUnmodifiableList();
 	}
@@ -494,6 +525,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#vmDeathRequests()
 	 */
+	@Override
 	public List<VMDeathRequest> vmDeathRequests() {
 		return VM_DEATH_TYPE.getUnmodifiableList();
 	}
@@ -501,6 +533,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.request.EventRequestManager#monitorContendedEnterRequests()
 	 */
+	@Override
 	public List<MonitorContendedEnterRequest> monitorContendedEnterRequests() {
 		return MONITOR_CONTENDED_ENTER_TYPE.getUnmodifiableList();
 	}
@@ -508,21 +541,24 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
     /* (non-Javadoc)
      * @see com.sun.jdi.request.EventRequestManager#monitorContendedEnteredRequests()
      */
-    public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
+    @Override
+	public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
     	return MONITOR_CONTENDED_ENTERED_TYPE.getUnmodifiableList();
     }
     
     /* (non-Javadoc)
      * @see com.sun.jdi.request.EventRequestManager#monitorWaitRequests()
      */
-    public List<MonitorWaitRequest> monitorWaitRequests() {
+    @Override
+	public List<MonitorWaitRequest> monitorWaitRequests() {
     	return MONITOR_WAIT_TYPE.getUnmodifiableList();
     }
 
     /* (non-Javadoc)
      * @see com.sun.jdi.request.EventRequestManager#monitorWaitedRequests()
      */
-    public List<MonitorWaitedRequest> monitorWaitedRequests() {
+    @Override
+	public List<MonitorWaitedRequest> monitorWaitedRequests() {
     	return MONITOR_WAITED_TYPE.getUnmodifiableList();
     }
 	

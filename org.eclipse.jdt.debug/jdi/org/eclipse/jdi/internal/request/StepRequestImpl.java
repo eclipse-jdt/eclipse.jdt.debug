@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	/**
 	 * @return Returns the relative call stack limit.
 	 */
+	@Override
 	public int depth() {
 		return fThreadStepFilters.get(0).fThreadStepDepth;
 	}
@@ -46,6 +47,7 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	/**
 	 * @return Returns the size of each step.
 	 */
+	@Override
 	public int size() {
 		return fThreadStepFilters.get(0).fThreadStepSize;
 	}
@@ -53,6 +55,7 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	/**
 	 * @return Returns ThreadReference of thread in which to step.
 	 */
+	@Override
 	public ThreadReference thread() {
 		return fThreadStepFilters.get(0).fThread;
 	}

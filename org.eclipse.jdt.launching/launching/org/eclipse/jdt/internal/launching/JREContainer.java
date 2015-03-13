@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,16 +196,19 @@ public class JREContainer implements IClasspathContainer {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 			 */
+			@Override
 			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 			 */
+			@Override
 			public void vmAdded(IVMInstall newVm) {}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 			 */
+			@Override
 			public void vmChanged(PropertyChangeEvent event) {
 				if (event.getSource() != null) {
 					fgClasspathEntries.remove(event.getSource());
@@ -216,6 +219,7 @@ public class JREContainer implements IClasspathContainer {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 			 */
+			@Override
 			public void vmRemoved(IVMInstall removedVm) {
 				fgClasspathEntries.remove(removedVm);
 				removeRuleEntry(removedVm);
@@ -373,6 +377,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */
+	@Override
 	public IClasspathEntry[] getClasspathEntries() {
 		if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 			LaunchingPlugin.trace("<JRE_CONTAINER> getClasspathEntries() " + this.toString()); //$NON-NLS-1$
@@ -390,6 +395,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * @see IClasspathContainer#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		String environmentId = JavaRuntime.getExecutionEnvironmentId(getPath());
 		String tag = null;
@@ -404,6 +410,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * @see IClasspathContainer#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return IClasspathContainer.K_DEFAULT_SYSTEM;
 	}
@@ -411,6 +418,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * @see IClasspathContainer#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return fPath;
 	}

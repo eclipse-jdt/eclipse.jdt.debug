@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns modifier bits.
 	 */
+	@Override
 	public int modifiers() {
 		return fModifierBits;
 	}
@@ -63,6 +64,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns the type in which this component was declared.
 	 */
+	@Override
 	public ReferenceType declaringType() {
 		return fDeclaringType;
 	}
@@ -70,6 +72,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns true if type component is final.
 	 */
+	@Override
 	public boolean isFinal() {
 		return (fModifierBits & MODIFIER_ACC_FINAL) != 0;
 	}
@@ -77,6 +80,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns true if type component is static.
 	 */
+	@Override
 	public boolean isStatic() {
 		return (fModifierBits & MODIFIER_ACC_STATIC) != 0;
 	}
@@ -84,6 +88,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns true if type component is synthetic.
 	 */
+	@Override
 	public boolean isSynthetic() {
 		return (fModifierBits & (MODIFIER_SYNTHETIC | MODIFIER_ACC_SYNTHETIC)) != 0;
 	}
@@ -91,6 +96,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return Returns text representation of this type.
 	 */
+	@Override
 	public String name() {
 		return fName;
 	}
@@ -98,6 +104,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 	/**
 	 * @return JNI-style signature for this type.
 	 */
+	@Override
 	public String signature() {
 		return fSignature;
 	}
@@ -110,6 +117,7 @@ public abstract class TypeComponentImpl extends AccessibleImpl implements
 		return fName;
 	}
 
+	@Override
 	public String genericSignature() {
 		return fGenericSignature;
 	}

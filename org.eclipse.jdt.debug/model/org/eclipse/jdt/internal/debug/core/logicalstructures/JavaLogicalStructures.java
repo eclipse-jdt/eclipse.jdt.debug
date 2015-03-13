@@ -81,6 +81,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 		 */
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (PREF_JAVA_LOGICAL_STRUCTURES.equals(event.getKey())) {
 				initUserDefinedJavaLogicalStructures();
@@ -273,6 +274,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		fListeners.remove(listener);
 	}
 
+	@Override
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		if (!(value instanceof IJavaObject)) {
 			return new ILogicalStructureType[0];

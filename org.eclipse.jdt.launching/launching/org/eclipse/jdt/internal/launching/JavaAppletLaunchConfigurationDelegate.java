@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -37,7 +35,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -82,21 +79,12 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			if (!file.exists()) {
 				// copy it to the working directory
 				File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
-				BufferedOutputStream outputStream= null;
-				try {
+			try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
 					byte[] bytes = getFileByteContent(test);
-					outputStream = new BufferedOutputStream(new FileOutputStream(file));
 					outputStream.write(bytes);
 				} catch (IOException e) {
 					return "";//$NON-NLS-1$
-				} finally {
-					if (outputStream != null) {
-						try {
-							outputStream.close();
-						} catch (IOException e1) {
-						}
-					}
-				}
+			}
 			}
 		return "-Djava.security.policy=java.policy.applet";//$NON-NLS-1$
 	}
@@ -110,9 +98,8 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * @return the new HTML file
 	 */
 	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
-		FileOutputStream stream = null;
 		File tempFile = null;
-		try {
+		try (FileOutputStream stream = new FileOutputStream(tempFile)) {
 			String encoding = getLaunchManager().getEncoding(configuration);
 			String name = getAppletMainTypeName(configuration);
 			StringBuffer buf = new StringBuffer();
@@ -148,17 +135,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			buf.append("</html>\n"); //$NON-NLS-1$
 
 			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$
-			stream = new FileOutputStream(tempFile);
 			stream.write(buf.toString().getBytes(encoding));
 		} catch(IOException e) {
 		} catch(CoreException e) {
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch(IOException e) {
-				}
-			}
 		}
 		
 		return tempFile;
@@ -167,19 +146,21 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	private String getQuotedString(String string) {
 		int singleQuotes = count(string, '\'');
 		int doubleQuotes = count(string, '"');
-		if (doubleQuotes == 0)
+		if (doubleQuotes == 0) {
 			return '"' + string + '"';
-		else if (singleQuotes == 0)
+		} else if (singleQuotes == 0) {
 			return '\'' + string + '\'';
-		else
+		} else {
 			return '"' + convertToHTMLContent(string) + '"';
+		}
 	}
 	
 	private static int count(String string, char character) {
 		int count = 0;
 		for (int i = 0; i < string.length(); i++) {
-			if (string.charAt(i) == character)
+			if (string.charAt(i) == character) {
 				count++;
+			}
 		}
 		return count;
 	}
@@ -195,8 +176,9 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		int previous = 0;
 		int current = text.indexOf(c, previous);
 
-		if (current == -1)
+		if (current == -1) {
 			return text;
+		}
 
 		StringBuffer buffer = new StringBuffer();
 		while (current > -1) {
@@ -266,17 +248,8 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * @throws IOException if a problem occurred reading the file.
 	 */
 	protected static byte[] getFileByteContent(File file) throws IOException {
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(new FileInputStream(file));
+		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
 			return getInputStreamAsByteArray(stream, (int) file.length());
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 	

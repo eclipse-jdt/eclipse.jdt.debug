@@ -49,6 +49,7 @@ public class JDIThisVariable extends JDIVariable {
 	/**
 	 * @see IVariable#getName()
 	 */
+	@Override
 	public String getName() {
 		return "this"; //$NON-NLS-1$
 	}
@@ -56,6 +57,7 @@ public class JDIThisVariable extends JDIVariable {
 	/**
 	 * @see IJavaVariable#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return retrieveValue().type().signature();
@@ -75,6 +77,7 @@ public class JDIThisVariable extends JDIVariable {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		return getSignature();
 	}
@@ -82,6 +85,7 @@ public class JDIThisVariable extends JDIVariable {
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			return getValue().getReferenceTypeName();

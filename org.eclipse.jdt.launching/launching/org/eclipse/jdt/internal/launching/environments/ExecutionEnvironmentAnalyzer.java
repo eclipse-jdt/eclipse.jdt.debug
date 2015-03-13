@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,10 +77,12 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 	}
+	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		ArrayList<CompatibleEnvironment> result = new ArrayList<CompatibleEnvironment>();
-		if (!(vm instanceof IVMInstall2))
+		if (!(vm instanceof IVMInstall2)) {
 			return new CompatibleEnvironment[0];
+		}
 		IVMInstall2 vm2 = (IVMInstall2) vm;
 		List<String> types = null;
 		if (EEVMType.ID_EE_VM_TYPE.equals(vm.getVMInstallType().getId())) {
@@ -93,40 +95,44 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion == null) {
 				// We have a contributed VM type. Check to see if its a foundation VM, if we can.
-				if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
+				if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {
 					types = getTypes(CDC_FOUNDATION_1_0);
-				else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
+				} else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) {
 					types = getTypes(CDC_FOUNDATION_1_1);
+				}
 			} else {
-				if (javaVersion.startsWith("1.8")) //$NON-NLS-1$
+				if (javaVersion.startsWith("1.8")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_8);
-				else if (javaVersion.startsWith("1.7")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.7")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_7);
-				else if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.6")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_6);
-				else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.5")) { //$NON-NLS-1$
 					types = getTypes(J2SE_1_5);
-				else if (javaVersion.startsWith("1.4")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.4")) { //$NON-NLS-1$
 					types = getTypes(J2SE_1_4);
-				else if (javaVersion.startsWith("1.3")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.3")) { //$NON-NLS-1$
 					types = getTypes(J2SE_1_3);
-				else if (javaVersion.startsWith("1.2")) //$NON-NLS-1$
+				} else if (javaVersion.startsWith("1.2")) { //$NON-NLS-1$
 					types = getTypes(J2SE_1_2);
-				else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
-					if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm))
+				} else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
+					if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) {
 						types = getTypes(CDC_FOUNDATION_1_1);
-					else
+					} else {
 						types = getTypes(JRE_1_1);
+					}
 				} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
-					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
+					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {
 						types = getTypes(CDC_FOUNDATION_1_0);
+					}
 				}
 			}
 		}
 
 		if (types != null) {
-			for (int i=0; i < types.size(); i++)
+			for (int i=0; i < types.size(); i++) {
 				addEnvironment(result, types.get(i), i ==0);
+			}
 		}
 		return result.toArray(new CompatibleEnvironment[result.size()]);
 	}
@@ -137,11 +143,14 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private boolean isFoundation(Map<String, String> properties) {
 		for (int i=0; i < VM_PROPERTIES.length; i++) {
 			String value = properties.get(VM_PROPERTIES[i]);
-			if (value == null)
+			if (value == null) {
 				continue;
-			for (StringTokenizer tokenizer = new StringTokenizer(value); tokenizer.hasMoreTokens(); )
-				if (FOUNDATION.equalsIgnoreCase(tokenizer.nextToken()))
+			}
+			for (StringTokenizer tokenizer = new StringTokenizer(value); tokenizer.hasMoreTokens(); ) {
+				if (FOUNDATION.equalsIgnoreCase(tokenizer.nextToken())) {
 					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -159,8 +168,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private void addEnvironment(ArrayList<CompatibleEnvironment> result, String id, boolean strict) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(id);
-		if (env != null)
+		if (env != null) {
 			result.add(new CompatibleEnvironment(env, strict));
+		}
 	}
 	
 	// first entry in the list is the perfect match
@@ -169,8 +179,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		result.add(type);
 		String[] values = mappings.get(type);
 		if (values != null) {
-			for (int i=0; i<values.length; i++)
+			for (int i=0; i<values.length; i++) {
 				result.addAll(getTypes(values[i]));
+			}
 		}
 		return result;
 	}

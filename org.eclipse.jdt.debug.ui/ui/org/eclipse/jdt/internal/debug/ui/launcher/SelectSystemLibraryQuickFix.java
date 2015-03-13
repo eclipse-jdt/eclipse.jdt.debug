@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
 		try {
 			handleContainerResolutionError(fOldPath, fProject);
@@ -70,6 +71,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		}
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					IPath newPath = containerEntry.getPath();
@@ -102,6 +104,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()}); 
 	}

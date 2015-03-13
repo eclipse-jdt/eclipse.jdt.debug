@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,9 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		fCaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_15, null, fCaught, 1);
 		fCaughtButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCaught = fCaughtButton.getSelection();
 			}
@@ -68,7 +70,9 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 		((GridData) fCaughtButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		fUncaughtButton = SWTFactory.createCheckButton(comp, BreakpointMessages.AddExceptionDialog_16, null, fUncaught, 1);
 		fUncaughtButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fUncaught = fUncaughtButton.getSelection();
 			}
@@ -83,6 +87,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 	@Override
 	public ISelectionStatusValidator getSelectionValidator() {
 		return new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				if(selection.length == 1) {
 					try {

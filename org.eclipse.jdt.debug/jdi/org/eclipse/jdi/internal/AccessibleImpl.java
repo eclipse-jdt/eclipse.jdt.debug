@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	/**
 	 * @return Returns true if object is package private.
 	 */
+	@Override
 	public boolean isPackagePrivate() {
 		return !(isPrivate() || isPublic() || isProtected());
 	}
@@ -92,6 +93,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	/**
 	 * @return Returns true if object is private.
 	 */
+	@Override
 	public boolean isPrivate() {
 		return (modifiers() & MODIFIER_ACC_PRIVATE) != 0;
 	}
@@ -99,6 +101,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	/**
 	 * @return Returns true if object is public.
 	 */
+	@Override
 	public boolean isPublic() {
 		return (modifiers() & MODIFIER_ACC_PUBLIC) != 0;
 	}
@@ -106,6 +109,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	/**
 	 * @return Returns true if object is protected.
 	 */
+	@Override
 	public boolean isProtected() {
 		return (modifiers() & MODIFIER_ACC_PROTECTED) != 0;
 	}

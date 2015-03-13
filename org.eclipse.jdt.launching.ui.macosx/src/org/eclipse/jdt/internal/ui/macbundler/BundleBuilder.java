@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,28 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.*;
-
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 public class BundleBuilder implements BundleAttributes {
@@ -42,8 +53,9 @@ public class BundleBuilder implements BundleAttributes {
 		File tmp_dir= new File(bd.get(DESTINATIONDIRECTORY));
 		String app_dir_name= bd.get(APPNAME) + ".app";	//$NON-NLS-1$
 		File app_dir= new File(tmp_dir, app_dir_name);
-		if (app_dir.exists())
+		if (app_dir.exists()) {
 			deleteDir(app_dir);
+		}
 		app_dir= createDir(tmp_dir, app_dir_name, false);
 		
 		File contents_dir= createDir(app_dir, "Contents", false);	//$NON-NLS-1$
@@ -51,8 +63,9 @@ public class BundleBuilder implements BundleAttributes {
 
 		File macos_dir= createDir(contents_dir, "MacOS", false);	//$NON-NLS-1$
 		String launcher_path= bd.get(LAUNCHER);
-		if (launcher_path == null)
-			throw new IOException();		
+		if (launcher_path == null) {
+			throw new IOException();
+		}		
 		String launcher= copyFile(macos_dir, launcher_path, null);
 		
 		File resources_dir= createDir(contents_dir, "Resources", false);	//$NON-NLS-1$
@@ -97,10 +110,14 @@ public class BundleBuilder implements BundleAttributes {
 		String iconName= null;
 		String appName= fBundleDescription.get(APPNAME, null);
 		if (appName != null)
+		 {
 			iconName= appName + ".icns"; //$NON-NLS-1$
+		}
 		String fname= copyFile(resources_dir, fBundleDescription.get(ICONFILE, null), iconName);
 		if (fname != null)
+		 {
 			pair(dict, "CFBundleIconFile", null, fname); //$NON-NLS-1$
+		}
 		
 		pair(dict, "CFBundleIdentifier", IDENTIFIER, null); //$NON-NLS-1$
 		pair(dict, "CFBundleName", APPNAME, null); //$NON-NLS-1$
@@ -117,7 +134,9 @@ public class BundleBuilder implements BundleAttributes {
 		pair(jdict, "WorkingDirectory", WORKINGDIR, null); //$NON-NLS-1$
 		
 		if (fBundleDescription.get(USES_SWT, false))
+		 {
 			addTrue(jdict, "StartOnMainThread"); //$NON-NLS-1$
+		}
 		
 		String arguments= fBundleDescription.get(ARGUMENTS, null);
 		if (arguments != null) {
@@ -141,8 +160,9 @@ public class BundleBuilder implements BundleAttributes {
 			for (int i= 0; i < ris.length; i++) {
 				ResourceInfo ri= ris[i];
 				String e= processClasspathEntry(java_dir, ri.fPath, id);
-				if (cp.length() > 0)
+				if (cp.length() > 0) {
 					cp.append(':');
+				}
 				cp.append(e);
 			}
 			add(jdict, "ClassPath", cp.toString()); //$NON-NLS-1$
@@ -157,9 +177,7 @@ public class BundleBuilder implements BundleAttributes {
 		}
 
 		File info= new File(contents_dir, "Info.plist"); //$NON-NLS-1$
-		FileOutputStream fos= new FileOutputStream(info);
-		BufferedOutputStream fOutputStream= new BufferedOutputStream(fos);
-		try {
+		try (FileOutputStream fos = new FileOutputStream(info); BufferedOutputStream fOutputStream = new BufferedOutputStream(fos);) {
 			// Write the document to the stream
 			Transformer transformer= TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//Apple Computer//DTD PLIST 1.0//EN"); //$NON-NLS-1$
@@ -173,9 +191,6 @@ public class BundleBuilder implements BundleAttributes {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
 			System.err.println("createInfoPList: could not transform to XML"); //$NON-NLS-1$
-		}
-		finally {
-			fOutputStream.close();
 		}
 	}
 	
@@ -218,10 +233,11 @@ public class BundleBuilder implements BundleAttributes {
 	
 	private void pair(Element dict, String outkey, String inkey, String dflt) {
 		String value= null;
-		if (inkey != null)
+		if (inkey != null) {
 			value= fBundleDescription.get(inkey, dflt);
-		else
+		} else {
 			value= dflt;
+		}
 		if (value != null && value.trim().length() > 0) {
 			add(dict, outkey, value);
 		}
@@ -243,16 +259,17 @@ public class BundleBuilder implements BundleAttributes {
 	
 	private void createPkgInfo(File contents_dir) throws IOException {
 		File pkgInfo= new File(contents_dir, "PkgInfo"); //$NON-NLS-1$
-		FileOutputStream os= new FileOutputStream(pkgInfo);
-		os.write(("APPL" + fBundleDescription.get(SIGNATURE, "????")).getBytes());	//$NON-NLS-1$ //$NON-NLS-2$
-		os.close();
+		try (FileOutputStream os = new FileOutputStream(pkgInfo)) {
+			os.write(("APPL" + fBundleDescription.get(SIGNATURE, "????")).getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 		
 	private static void deleteDir(File dir) {
 		File[] files= dir.listFiles();
 		if (files != null) {
-			for (int i= 0; i < files.length; i++)
+			for (int i= 0; i < files.length; i++) {
 				deleteDir(files[i]);
+			}
 		}
 		dir.delete();
 	}
@@ -260,22 +277,26 @@ public class BundleBuilder implements BundleAttributes {
 	private File createDir(File parent_dir, String dir_name, boolean remove) throws IOException {
 		File dir= new File(parent_dir, dir_name);
 		if (dir.exists()) {
-			if (!remove)
+			if (!remove) {
 				return dir;
+			}
 			deleteDir(dir);
 		}
 		if (! dir.mkdir())
+		 {
 			throw new IOException("cannot create dir " + dir_name); //$NON-NLS-1$
+		}
 		return dir;
 	}
 	
 	private String copyFile(File todir, String fromPath, String toname) throws IOException {
 		if (toname == null) {
 			int pos= fromPath.lastIndexOf('/');
-			if (pos >= 0)
+			if (pos >= 0) {
 				toname= fromPath.substring(pos+1);
-			else
+			} else {
 				toname= fromPath;
+			}
 		}
 		File to= new File(todir, toname);
 		fProcesses.add(Runtime.getRuntime().exec(new String[] { "/bin/cp", fromPath, to.getAbsolutePath() }));	//$NON-NLS-1$

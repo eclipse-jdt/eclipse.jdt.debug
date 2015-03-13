@@ -49,6 +49,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread)
 	 */
+	@Override
 	public IJavaObject newInstance(String signature, IJavaValue[] args,
 			IJavaThread thread) throws DebugException {
 		if (getUnderlyingType() instanceof ClassType) {
@@ -93,6 +94,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread)
 	 */
+	@Override
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread) throws DebugException {
 		if (getUnderlyingType() instanceof ClassType) {
@@ -154,6 +156,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getSuperclass()
 	 */
+	@Override
 	public IJavaClassType getSuperclass() throws DebugException {
 		try {
 			ClassType superclazz = ((ClassType) getUnderlyingType())
@@ -177,6 +180,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getAllInterfaces()
 	 */
+	@Override
 	public IJavaInterfaceType[] getAllInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType())
@@ -207,6 +211,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getInterfaces()
 	 */
+	@Override
 	public IJavaInterfaceType[] getInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType()).interfaces();
@@ -236,6 +241,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#isEnum()
 	 */
+	@Override
 	public boolean isEnum() {
 		return ((ClassType) getReferenceType()).isEnum();
 	}

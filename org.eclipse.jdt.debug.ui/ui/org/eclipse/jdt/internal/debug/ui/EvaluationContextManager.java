@@ -71,6 +71,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	
 	public static void startup() {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				if (fgManager == null) {
 					fgManager = new EvaluationContextManager();
@@ -90,6 +91,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		fActiveWindow = window;
 	}
@@ -97,18 +99,21 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 	}
 
@@ -249,6 +254,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		return frame;
 	}
 	
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			IWorkbenchPart part = event.getDebugContextProvider().getPart();

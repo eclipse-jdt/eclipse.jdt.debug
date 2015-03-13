@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,21 +41,12 @@ public class SocketUtil {
 	public static int findUnusedLocalPort(String host, int searchFrom, int searchTo) {
 
 		for (int i= 0; i < 10; i++) {
-			Socket s= null;
 			int port= getRandomPort(searchFrom, searchTo);
-			try {
-				s= new Socket(host, port);
+			try (Socket s= new Socket(host, port)){
 			} catch (ConnectException e) {
 				return port;
 			} catch (IOException e) {
-			} finally {
-				if (s != null) {
-					try {
-						s.close();
-					} catch (IOException ioe) {
-					}
-				}
-			}
+			} 
 		}
 		return -1;
 	}
@@ -71,18 +62,9 @@ public class SocketUtil {
 	 * @since 3.0
 	 */
 	public static int findFreePort() {
-		ServerSocket socket= null;
-		try {
-			socket= new ServerSocket(0);
+		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
 		} catch (IOException e) { 
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return -1;		
 	}	

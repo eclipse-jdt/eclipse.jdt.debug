@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,12 +56,15 @@ public abstract class AbstractJavaMainTab extends JavaLaunchTab {
  */
 private class WidgetListener implements ModifyListener, SelectionListener {
 	
+	@Override
 	public void modifyText(ModifyEvent e) {
 		updateLaunchConfigurationDialog();
 	}
 	
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {/*do nothing*/}
 	
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Object source = e.getSource();
 		if (source == fProjButton) {

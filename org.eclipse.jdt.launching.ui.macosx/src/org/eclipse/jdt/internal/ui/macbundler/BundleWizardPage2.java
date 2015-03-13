@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.macbundler;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 
 public class BundleWizardPage2 extends BundleWizardBasePage {
@@ -103,32 +110,39 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 			ResourceInfo ri= (ResourceInfo) ti.getData();
 			if (fBundleDescription.removeResource(ri, b)) {
 				int ix= table.indexOf(ti);
-				if (ix >= 0)
+				if (ix >= 0) {
 					table.remove(ix);
+				}
 			}
 		}
 		removeButton.setEnabled(table.getSelectionCount() > 0);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fWorkingDir != null)
+		 {
 			fWorkingDir.setText(fBundleDescription.get(WORKINGDIR, "")); //$NON-NLS-1$
+		}
 
 		if (fClassPath != null) {
 			fClassPath.removeAll();
 			ResourceInfo[] ris= fBundleDescription.getResources(true);
-			for (int i= 0; i < ris.length; i++)
+			for (int i= 0; i < ris.length; i++) {
 				add(fClassPath, ris[i]);
+			}
 		}
 		
 		if (fResources != null) {
 			fResources.removeAll();
 			ResourceInfo[] ris= fBundleDescription.getResources(false);
-			for (int i= 0; i < ris.length; i++)
+			for (int i= 0; i < ris.length; i++) {
 				add(fResources, ris[i]);
+			}
 		}
 	}
 		
+	@Override
 	public boolean isPageComplete() {
 		return true;
 	}

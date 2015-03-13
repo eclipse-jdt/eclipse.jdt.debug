@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 			final IWorkbenchPart focusPart= page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				shell.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						ISelection selection= new StructuredSelection(file);
 						((ISetSelectionTarget) focusPart).selectReveal(selection);
@@ -88,8 +89,9 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 	protected boolean validatePage() {
 		// check whether file with extension doesn't exist
 		boolean valid= super.validatePage();
-		if (!valid)
+		if (!valid) {
 			return false;
+		}
 		
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 		IPath containerPath= getContainerFullPath();

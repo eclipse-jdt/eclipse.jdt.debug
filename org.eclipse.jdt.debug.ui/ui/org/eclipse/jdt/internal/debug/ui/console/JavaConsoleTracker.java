@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,16 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.IConsole)
      */
-    public void connect(TextConsole console) {
+    @Override
+	public void connect(TextConsole console) {
 	    fConsole = console;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
      */
-    public void disconnect() {
+    @Override
+	public void disconnect() {
         fConsole = null;
     }
     
@@ -48,7 +50,8 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
-    public void matchFound(PatternMatchEvent event) {
+    @Override
+	public void matchFound(PatternMatchEvent event) {
         try {
             int offset = event.getOffset();
             int length = event.getLength();

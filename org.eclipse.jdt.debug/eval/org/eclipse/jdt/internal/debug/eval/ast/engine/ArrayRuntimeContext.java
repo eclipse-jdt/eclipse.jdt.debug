@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getVM()
 	 */
+	@Override
 	public IJavaDebugTarget getVM() {
 		return (IJavaDebugTarget) fArray.getDebugTarget();
 	}
@@ -65,6 +66,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThis()
 	 */
+	@Override
 	public IJavaObject getThis() throws CoreException {
 		return null;
 	}
@@ -75,6 +77,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#
 	 * getReceivingType()
 	 */
+	@Override
 	public IJavaReferenceType getReceivingType() throws CoreException {
 		if (fReceivingType == null) {
 			IJavaType[] javaTypes = getVM().getJavaTypes("java.lang.Object"); //$NON-NLS-1$
@@ -98,6 +101,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getLocals
 	 * ()
 	 */
+	@Override
 	public IJavaVariable[] getLocals() throws CoreException {
 		return new IJavaVariable[] { fLocalArray };
 	}
@@ -109,6 +113,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThread
 	 * ()
 	 */
+	@Override
 	public IJavaThread getThread() {
 		return fThread;
 	}
@@ -120,6 +125,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#isConstructor
 	 * ()
 	 */
+	@Override
 	public boolean isConstructor() throws CoreException {
 		return false;
 	}

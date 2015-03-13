@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		Group group = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
 		fMainText = SWTFactory.createSingleText(group, 1);
 		fMainText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -66,8 +67,10 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		ControlAccessibleListener.addListener(fMainText, group.getText());
 		fSearchButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_2, null); 
 		fSearchButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSearchButtonSelected();
 			}

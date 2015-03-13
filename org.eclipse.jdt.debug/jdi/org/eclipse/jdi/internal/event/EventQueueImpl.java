@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
 	/*
 	 * @return Returns next EventSet from Virtual Machine.
 	 */
+	@Override
 	public EventSet remove() throws InterruptedException {
 		return remove(PacketReceiveManager.TIMEOUT_INFINITE);
 	}
@@ -50,6 +51,7 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
 	 * @return Returns next EventSet from Virtual Machine, returns null if times
 	 * out.
 	 */
+	@Override
 	public EventSet remove(long timeout) throws InterruptedException {
 		// Return a received EventSet or null if no EventSet is received in
 		// time.

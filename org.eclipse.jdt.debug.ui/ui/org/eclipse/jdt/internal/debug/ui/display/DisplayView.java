@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		/**
 		 * @see IDataDisplay#clear()
 		 */
+		@Override
 		public void clear() {
 			IDocument document= fSourceViewer.getDocument();
 			if (document != null) {
@@ -104,6 +105,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		/**
 		 * @see IDataDisplay#displayExpression(String)
 		 */
+		@Override
 		public void displayExpression(String expression) {
 			IDocument document= fSourceViewer.getDocument();
 			int offset= document.getLength();
@@ -123,6 +125,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		/**
 		 * @see IDataDisplay#displayExpressionValue(String)
 		 */
+		@Override
 		public void displayExpressionValue(String value) {
 			value= System.getProperty("line.separator") + '\t' + value; //$NON-NLS-1$
 			ITextSelection selection= (ITextSelection)fSourceViewer.getSelection();
@@ -179,6 +182,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -208,11 +212,13 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			/**
 			 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 			 */
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 			/**
 			 * @see IDocumentListener#documentChanged(DocumentEvent)
 			 */
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				updateAction(ActionFactory.FIND.getId());
 			}
@@ -284,6 +290,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		getViewSite().getActionBars().updateActionBars();
 
 		IHandler handler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				fContentAssistAction.run();
 				return null;
@@ -477,6 +484,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	
 	protected final ISelectionChangedListener getSelectionChangedListener() {
 		return new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					updateSelectionDependentActions();
 				}
@@ -500,12 +508,14 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/**
 	 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 	}
 
 	/**
 	 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		oldInput.removeDocumentListener(fDocumentListener);
 	}
@@ -529,6 +539,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (partRef instanceof IViewReference && changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
 			String id = ((IViewReference) partRef).getId();
@@ -546,12 +557,14 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
+	@Override
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
+	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	}
 

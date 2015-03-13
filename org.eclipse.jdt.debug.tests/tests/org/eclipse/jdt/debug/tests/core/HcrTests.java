@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class HcrTests extends AbstractDebugTest {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener#hotCodeReplaceFailed(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.debug.core.DebugException)
 		 */
+		@Override
 		public synchronized void hotCodeReplaceFailed(IJavaDebugTarget target, DebugException exception) {
 			notified = true;
 			notifyAll();
@@ -46,6 +47,7 @@ public class HcrTests extends AbstractDebugTest {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener#hotCodeReplaceSucceeded(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 		 */
+		@Override
 		public synchronized void hotCodeReplaceSucceeded(IJavaDebugTarget target) {
 			notified = true;
 			this.target = target;
@@ -55,6 +57,7 @@ public class HcrTests extends AbstractDebugTest {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener#obsoleteMethods(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 		 */
+		@Override
 		public synchronized void obsoleteMethods(IJavaDebugTarget target) {
 			notified = true;
 			notifyAll();

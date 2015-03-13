@@ -62,6 +62,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		checkToSetTextEditor(part);
 	}
@@ -69,12 +70,14 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 
 	/**
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getTextEditor()) {
 			cleanup();
@@ -84,12 +87,14 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {		
 	}
 
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
 
@@ -170,6 +175,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IWindowListener#windowActivated(IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		if (fCurrentWindow != null) {
 			fCurrentWindow.getPartService().removePartListener(this);
@@ -186,6 +192,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IWindowListener#windowClosed(IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		if (fCurrentWindow == window) {
 			fCurrentWindow= null;
@@ -196,12 +203,14 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	/**
 	 * @see IWindowListener#windowDeactivated(IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	/**
 	 * @see IWindowListener#windowOpened(IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 	}
 	

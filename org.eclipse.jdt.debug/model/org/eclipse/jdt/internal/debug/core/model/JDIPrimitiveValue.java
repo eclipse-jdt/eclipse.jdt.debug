@@ -44,6 +44,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getBooleanValue()
 	 */
+	@Override
 	public boolean getBooleanValue() {
 		return getUnderlyingPrimitiveValue().booleanValue();
 	}
@@ -51,6 +52,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getByteValue()
 	 */
+	@Override
 	public byte getByteValue() {
 		return getUnderlyingPrimitiveValue().byteValue();
 	}
@@ -58,6 +60,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getCharValue()
 	 */
+	@Override
 	public char getCharValue() {
 		return getUnderlyingPrimitiveValue().charValue();
 	}
@@ -65,6 +68,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getDoubleValue()
 	 */
+	@Override
 	public double getDoubleValue() {
 		return getUnderlyingPrimitiveValue().doubleValue();
 	}
@@ -72,6 +76,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getFloatValue()
 	 */
+	@Override
 	public float getFloatValue() {
 		return getUnderlyingPrimitiveValue().floatValue();
 	}
@@ -79,6 +84,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getIntValue()
 	 */
+	@Override
 	public int getIntValue() {
 		return getUnderlyingPrimitiveValue().intValue();
 	}
@@ -86,6 +92,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getLongValue()
 	 */
+	@Override
 	public long getLongValue() {
 		return getUnderlyingPrimitiveValue().longValue();
 	}
@@ -93,6 +100,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 	/*
 	 * @see IJavaPrimitiveValue#getShortValue()
 	 */
+	@Override
 	public short getShortValue() {
 		return getUnderlyingPrimitiveValue().shortValue();
 	}

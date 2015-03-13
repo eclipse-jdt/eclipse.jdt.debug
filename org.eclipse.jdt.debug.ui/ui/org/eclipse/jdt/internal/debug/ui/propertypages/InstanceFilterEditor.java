@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,7 @@ public class InstanceFilterEditor {
 	
 	class CheckHandler implements ICheckStateListener {	
 		
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			fInstanceViewer.setChecked(event.getElement(), event.getChecked());
 		}
@@ -129,6 +130,7 @@ public class InstanceFilterEditor {
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IJavaBreakpoint) {
 				try {
@@ -143,6 +145,7 @@ public class InstanceFilterEditor {
 		/**
 		 * @see ITreeContentProvider#getParent(Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IJavaObject) {
 				return fBreakpoint;
@@ -153,6 +156,7 @@ public class InstanceFilterEditor {
 		/**
 		 * @see ITreeContentProvider#hasChildren(Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IJavaBreakpoint) {
 				return getChildren(element).length > 0;
@@ -163,6 +167,7 @@ public class InstanceFilterEditor {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
@@ -170,12 +175,14 @@ public class InstanceFilterEditor {
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,6 +250,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		if (stackFrame instanceof IJavaStackFrame) {
 			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
@@ -372,6 +373,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document doc = DebugPlugin.newDocument();
 		Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
@@ -390,6 +392,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, configuration);
@@ -399,6 +402,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;
 		try {

@@ -24,6 +24,7 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType == IShowInSource.class) {
@@ -43,6 +44,7 @@ public class JavaDebugShowInAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[]{IShowInSource.class, IShowInTargetList.class};
 	}

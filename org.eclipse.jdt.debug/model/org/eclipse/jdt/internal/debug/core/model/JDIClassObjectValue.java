@@ -35,6 +35,7 @@ public class JDIClassObjectValue extends JDIObjectValue implements
 	/**
 	 * @see IJavaClassObject#getInstanceType()
 	 */
+	@Override
 	public IJavaType getInstanceType() {
 		return JDIType.createType((JDIDebugTarget) getDebugTarget(),
 				getUnderlyingClassObject().reflectedType());

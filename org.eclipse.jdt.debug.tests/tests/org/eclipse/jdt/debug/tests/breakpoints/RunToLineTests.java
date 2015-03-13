@@ -55,6 +55,7 @@ public class RunToLineTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 		 */
+		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
             if (partRef.getTitle().equals("Breakpoints.java") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
                 synchronized (fLock) {
@@ -67,12 +68,14 @@ public class RunToLineTests extends AbstractDebugTest {
 		/**
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 		 */
+		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		}
 
 		/**
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 		 */
+		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
 		}
 	}
@@ -127,7 +130,8 @@ public class RunToLineTests extends AbstractDebugTest {
 		try {
 		    // close all editors
 		    Runnable closeAll = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     activeWorkbenchWindow.getActivePage().closeAllEditors(false);
                     activeWorkbenchWindow.addPerspectiveListener(listener);
@@ -145,6 +149,7 @@ public class RunToLineTests extends AbstractDebugTest {
             }
 			if (fEditor == null) {
 				Runnable r = new Runnable() {				
+					@Override
 					public void run() {
 						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
@@ -160,7 +165,8 @@ public class RunToLineTests extends AbstractDebugTest {
 			final Exception[] exs = new Exception[1];
 			final IJavaThread suspendee = thread;
 			Runnable r = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     ITextEditor editor = (ITextEditor) fEditor;
 					IRunToLineTarget adapter = editor.getAdapter(IRunToLineTarget.class);
                     assertNotNull("no run to line adapter", adapter);
@@ -191,7 +197,8 @@ public class RunToLineTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, restore);
 		    Runnable cleanup = new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     activeWorkbenchWindow.removePerspectiveListener(listener);
                 }

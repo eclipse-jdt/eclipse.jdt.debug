@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 	/**
 	 * @see IRuntimeClasspathProvider#computeUnresolvedClasspath(ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		return getProvider().computeUnresolvedClasspath(configuration);
 	}
@@ -59,6 +60,7 @@ public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 	/**
 	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		return getProvider().resolveClasspath(entries, configuration);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getCurrentSelection();
 		if (selection == null) {
@@ -188,6 +189,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			char[][] typeNames) throws JavaModelException {
 		final IType[] result = { null };
 		TypeNameMatchRequestor requestor= new TypeNameMatchRequestor() {
+			@Override
 			public void acceptTypeNameMatch(TypeNameMatch match) {
 				if (result[0] == null) {
 					result[0]= match.getType();

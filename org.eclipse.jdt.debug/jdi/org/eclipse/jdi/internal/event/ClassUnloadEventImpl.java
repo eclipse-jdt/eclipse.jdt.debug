@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent 
 	/**
 	 * @return Returns the name of the class that has been unloaded.
 	 */
+	@Override
 	public String className() {
 		return TypeImpl.signatureToName(fSignature);
 	}
@@ -66,6 +67,7 @@ public class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent 
 	 * @return Returns the JNI-style signature of the class that has been
 	 *         unloaded.
 	 */
+	@Override
 	public String classSignature() {
 		return fSignature;
 	}

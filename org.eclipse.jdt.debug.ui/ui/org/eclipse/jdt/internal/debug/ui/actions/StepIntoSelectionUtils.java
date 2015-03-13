@@ -237,6 +237,7 @@ public class StepIntoSelectionUtils {
 			/**
 			 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 			 */
+			@Override
 			public void handleDebugEvents(DebugEvent[] events) {
 				for (int i = 0; i < events.length; i++) {
 					DebugEvent event = events[i];
@@ -266,6 +267,7 @@ public class StepIntoSelectionUtils {
 							DebugPlugin plugin = DebugPlugin.getDefault();
 							plugin.removeDebugEventListener(this);
 							plugin.asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									try {
 										doStepIn(editor, frame, method);

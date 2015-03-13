@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		return getConfigurations();
 	}
@@ -40,6 +41,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
 		return getConfigurations();
 	}
@@ -61,6 +63,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		return null;//ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -68,6 +71,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public IResource getLaunchableResource(IEditorPart editorpart) {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -75,6 +79,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
+	@Override
 	public void launch(ISelection selection, String mode) {
 		performLaunch(mode);
 	}
@@ -82,6 +87,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		performLaunch(mode);
 	}

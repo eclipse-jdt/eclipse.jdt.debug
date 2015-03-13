@@ -93,6 +93,7 @@ public class BreakpointListenerManager {
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
+		@Override
 		public void addingBreakpoint(IJavaDebugTarget target,
 				IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
@@ -122,6 +123,7 @@ public class BreakpointListenerManager {
 		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
 		 * org.eclipse.jdt.core.dom.Message[])
 		 */
+		@Override
 		public void breakpointHasCompilationErrors(
 				IJavaLineBreakpoint breakpoint, Message[] errors) {
 			IJavaBreakpointListener delegate = getDelegate();
@@ -138,6 +140,7 @@ public class BreakpointListenerManager {
 		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
 		 * org.eclipse.debug.core.DebugException)
 		 */
+		@Override
 		public void breakpointHasRuntimeException(
 				IJavaLineBreakpoint breakpoint, DebugException exception) {
 			IJavaBreakpointListener delegate = getDelegate();
@@ -154,6 +157,7 @@ public class BreakpointListenerManager {
 		 * org.eclipse.jdt.debug.core.IJavaThread,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
+		@Override
 		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
 			if (delegate != null) {
@@ -170,6 +174,7 @@ public class BreakpointListenerManager {
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
+		@Override
 		public void breakpointInstalled(IJavaDebugTarget target,
 				IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
@@ -186,6 +191,7 @@ public class BreakpointListenerManager {
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
+		@Override
 		public void breakpointRemoved(IJavaDebugTarget target,
 				IJavaBreakpoint breakpoint) {
 			IJavaBreakpointListener delegate = getDelegate();
@@ -203,6 +209,7 @@ public class BreakpointListenerManager {
 		 * org.eclipse.jdt.debug.core.IJavaBreakpoint,
 		 * org.eclipse.jdt.debug.core.IJavaType)
 		 */
+		@Override
 		public int installingBreakpoint(IJavaDebugTarget target,
 				IJavaBreakpoint breakpoint, IJavaType type) {
 			IJavaBreakpointListener delegate = getDelegate();

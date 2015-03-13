@@ -97,6 +97,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IJavaFieldVariable#getDeclaringType()
 	 */
+	@Override
 	public IJavaType getDeclaringType() {
 		return JDIType.createType((JDIDebugTarget) getDebugTarget(),
 				fField.declaringType());
@@ -105,6 +106,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IVariable#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		try {
 			return getField().name();
@@ -155,6 +157,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IJavaVariable#isVolatile()
 	 */
+	@Override
 	public boolean isVolatile() {
 		return getField().isVolatile();
 	}
@@ -162,6 +165,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IJavaVariable#isTransient()
 	 */
+	@Override
 	public boolean isTransient() {
 		return getField().isTransient();
 	}
@@ -225,6 +229,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		String genericSignature = getField().genericSignature();
 		if (genericSignature != null) {
@@ -241,6 +246,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	/**
 	 * @see IJavaVariable#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return getField().signature();
@@ -260,6 +266,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		try {
 			String genericSignature = fField.genericSignature();
@@ -367,6 +374,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaFieldVariable#getObject()
 	 */
+	@Override
 	public IJavaObject getReceiver() {
 		ObjectReference objectReference = getObjectReference();
 		if (objectReference == null) {
@@ -376,6 +384,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 				objectReference);
 	}
 
+	@Override
 	public IJavaReferenceType getReceivingType() {
 		return (IJavaReferenceType) JDIType.createType(getJavaDebugTarget(),
 				getReferenceType());

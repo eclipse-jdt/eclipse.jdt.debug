@@ -93,6 +93,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
@@ -419,6 +420,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
+	@Override
 	public boolean canDisconnect() {
 		return getDebugTarget().canDisconnect();
 	}
@@ -426,6 +428,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
+	@Override
 	public void disconnect() throws DebugException {
 		getDebugTarget().disconnect();
 	}
@@ -433,6 +436,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
+	@Override
 	public boolean isDisconnected() {
 		return getDebugTarget().isDisconnected();
 	}

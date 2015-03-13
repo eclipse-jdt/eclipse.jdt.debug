@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 		List<IBreakpoint> added = new ArrayList<IBreakpoint>();
 		List<IBreakpoint> removed = new ArrayList<IBreakpoint>();
 
+		@Override
 		public void breakpointAdded(IBreakpoint breakpoint) {
 			synchronized (added) {
 				added.add(breakpoint);
@@ -50,6 +51,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 			}
 		}
 
+		@Override
 		public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 			synchronized (removed) {
 				removed.add(breakpoint);
@@ -57,6 +59,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 			}
 		}
 
+		@Override
 		public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		}
 		
@@ -109,6 +112,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 	protected void toggleBreakpoint(final IPath externalFile, final int line) throws Exception {
 		final Exception[] exs = new Exception[1];
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					File file = JavaTestPlugin.getDefault().getFileInPlugin(externalFile);

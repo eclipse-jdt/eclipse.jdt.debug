@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			checkbox.setSelection(true);
 			fHitCountEnabled = true;
 			checkbox.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fHitCountEnabled = checkbox.getSelection();
 					getText().setEnabled(fHitCountEnabled);
@@ -77,6 +78,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					}
 				}
 				
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
@@ -93,6 +95,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getCurrentSelection();
 		if (selection == null) {
@@ -125,6 +128,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		String message= ActionMessages.BreakpointHitCountAction__Enter_the_new_hit_count_for_the_breakpoint__3; 
 		IInputValidator validator= new IInputValidator() {
 			int hitCount= -1;
+			@Override
 			public String isValid(String value) {
 				try {
 					hitCount= Integer.valueOf(value.trim()).intValue();

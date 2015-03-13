@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -130,13 +131,16 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		fCompliance.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fCompliance.setVisible(false);
 		fCompliance.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {openCompliancePreferencePage();}
 		});
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		initDefaultVM();
 		fJREBlock.initializeTimeStamp();
 		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IVMInstall install = getCurrentDefaultVM();
 				if (install == null) {
@@ -242,6 +246,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	public boolean performOk() {
 		final boolean[] canceled = new boolean[] {false};
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				IVMInstall defaultVM = getCurrentDefaultVM();
 				IVMInstall[] vms = fJREBlock.getJREs();

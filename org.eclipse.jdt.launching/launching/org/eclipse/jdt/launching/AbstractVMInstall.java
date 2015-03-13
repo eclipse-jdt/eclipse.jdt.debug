@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -105,6 +106,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -113,6 +115,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#setName(String)
 	 */
+	@Override
 	public void setName(String name) {
 		if (!name.equals(fName)) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_NAME, fName, name);
@@ -127,6 +130,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#getInstallLocation()
 	 */
+	@Override
 	public File getInstallLocation() {
 		return fInstallLocation;
 	}
@@ -135,6 +139,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#setInstallLocation(File)
 	 */
+	@Override
 	public void setInstallLocation(File installLocation) {
 		if (!installLocation.equals(fInstallLocation)) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION, fInstallLocation, installLocation);
@@ -149,6 +154,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#getVMInstallType()
 	 */
+	@Override
 	public IVMInstallType getVMInstallType() {
 		return fType;
 	}
@@ -156,6 +162,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see IVMInstall#getVMRunner(String)
 	 */
+	@Override
 	public IVMRunner getVMRunner(String mode) {
 		return null;
 	}
@@ -163,6 +170,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#getLibraryLocations()
 	 */
+	@Override
 	public LibraryLocation[] getLibraryLocations() {
 		return fSystemLibraryDescriptions;
 	}
@@ -170,6 +178,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#setLibraryLocations(org.eclipse.jdt.launching.LibraryLocation[])
 	 */
+	@Override
 	public void setLibraryLocations(LibraryLocation[] locations) {
 		if (locations == fSystemLibraryDescriptions) {
 			return;
@@ -206,6 +215,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#getJavadocLocation()
 	 */
+	@Override
 	public URL getJavadocLocation() {
 		return fJavadocLocation;
 	}
@@ -213,6 +223,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#setJavadocLocation(java.net.URL)
 	 */
+	@Override
 	public void setJavadocLocation(URL url) {
 		if (url == fJavadocLocation) {
 			return;
@@ -268,6 +279,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see org.eclipse.jdt.launching.IVMInstall#getDefaultVMArguments()
 	 * @since 3.0
 	 */
+	@Override
 	public String[] getVMArguments() {
 		String args = getVMArgs();
 		if (args == null) {
@@ -281,6 +293,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @see org.eclipse.jdt.launching.IVMInstall#setDefaultVMArguments(java.lang.String[])
 	 * @since 3.0
 	 */
+	@Override
 	public void setVMArguments(String[] vmArgs) {
 		if (vmArgs == null) {
 			setVMArgs(null);
@@ -298,14 +311,16 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall2#getVMArgs()
      */
-    public String getVMArgs() {
+    @Override
+	public String getVMArgs() {
         return fVMArgs;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall2#setVMArgs(java.lang.String)
      */
-    public void setVMArgs(String vmArgs) {
+    @Override
+	public void setVMArgs(String vmArgs) {
         if (fVMArgs == null) {
             if (vmArgs == null) {
                 // No change
@@ -326,13 +341,15 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
      * Subclasses should override.
      * @see org.eclipse.jdt.launching.IVMInstall2#getJavaVersion()
      */
-    public String getJavaVersion() {
+    @Override
+	public String getJavaVersion() {
         return null;
     }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall3#evaluateSystemProperties(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Map<String, String> evaluateSystemProperties(String[] properties, IProgressMonitor monitor) throws CoreException {
 		//locate the launching support jar - it contains the main program to run
 		if (monitor == null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,6 +99,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(LocalVariable variable) {
 		if (variable == null || !variable.getClass().equals(this.getClass()))
 			throw new ClassCastException(
@@ -130,10 +131,12 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	/**
 	 * @return Returns true if this variable is an argument to its method.
 	 */
+	@Override
 	public boolean isArgument() {
 		return fIsArgument;
 	}
 
+	@Override
 	public boolean isVisible(StackFrame frame) throws IllegalArgumentException,
 			VMMismatchException {
 		checkVM(frame);
@@ -161,6 +164,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	/**
 	 * @return Returns the name of the local variable.
 	 */
+	@Override
 	public String name() {
 		return fName;
 	}
@@ -168,6 +172,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	/**
 	 * @return Returns the signature of the local variable.
 	 */
+	@Override
 	public String signature() {
 		return fSignature;
 	}
@@ -175,6 +180,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	/**
 	 * @return Returns the type of the this LocalVariable.
 	 */
+	@Override
 	public Type type() throws ClassNotLoadedException {
 		if (fType == null) {
 			fType = TypeImpl.create(virtualMachineImpl(), fSignature, method()
@@ -187,6 +193,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 	 * @return Returns a text representation of the declared type of this
 	 *         variable.
 	 */
+	@Override
 	public String typeName() {
 		if (fTypeName == null) {
 			fTypeName = TypeImpl.signatureToName(fSignature);
@@ -223,6 +230,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable, Comp
 		return fName;
 	}
 
+	@Override
 	public String genericSignature() {
 		return fGenericSignature;
 	}

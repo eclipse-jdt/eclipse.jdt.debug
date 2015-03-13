@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -332,6 +332,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		fAddCallbacks++;
 		fTotalAdded++;
@@ -340,6 +341,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		fChangeCallabcks++;
 		fTotalChanged++;
@@ -348,6 +350,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		fRemoveCallbacks++;
 		fTotalRemoved++;
@@ -356,6 +359,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		fAddCallbacks++;
 		fTotalAdded += breakpoints.length;		
@@ -364,6 +368,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		fChangeCallabcks++;
 		fTotalChanged += breakpoints.length;
@@ -372,6 +377,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 	/**
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		fRemoveCallbacks++;
 		fTotalRemoved += breakpoints.length;			

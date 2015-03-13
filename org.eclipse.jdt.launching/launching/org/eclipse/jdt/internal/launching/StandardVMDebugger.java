@@ -106,6 +106,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 			fConnectionMap = map;
 		}
 		
+		@Override
 		public void run() {
 			try {
 				fVirtualMachine = fConnector.accept(fConnectionMap);
@@ -547,12 +548,14 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 * Returns the default 'com.sun.jdi.SocketListen' connector
 	 * @return the {@link ListeningConnector}
 	 */
+	@SuppressWarnings("nls")
 	protected ListeningConnector getConnector() {
 		List<ListeningConnector> connectors= Bootstrap.virtualMachineManager().listeningConnectors();
 		for (int i= 0; i < connectors.size(); i++) {
 			ListeningConnector c= connectors.get(i);
-			if ("com.sun.jdi.SocketListen".equals(c.name())) //$NON-NLS-1$
+			if ("com.sun.jdi.SocketListen".equals(c.name())) {
 				return c;
+			}
 		}
 		return null;
 	}

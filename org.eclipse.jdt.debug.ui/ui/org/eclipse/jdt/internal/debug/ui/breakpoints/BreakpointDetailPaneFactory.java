@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneTypes(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
 		HashSet<String> set = new HashSet<String>();
 		if (selection.size() == 1) {
@@ -65,6 +66,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public String getDefaultDetailPane(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			IBreakpoint b = (IBreakpoint) selection.getFirstElement();
@@ -89,6 +91,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#createDetailPane(java.lang.String)
 	 */
+	@Override
 	public IDetailPane createDetailPane(String paneID) {
 		if (LineBreakpointDetailPane.DETAIL_PANE_LINE_BREAKPOINT.equals(paneID)) {
 			return new LineBreakpointDetailPane();
@@ -111,6 +114,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneName(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneName(String paneID) {
 		return getNameMap().get(paneID);
 	}
@@ -118,6 +122,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneDescription(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneDescription(String paneID) {
 		return getNameMap().get(paneID);
 	}

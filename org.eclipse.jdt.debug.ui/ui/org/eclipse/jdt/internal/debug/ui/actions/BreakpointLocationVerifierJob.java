@@ -232,6 +232,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	 */
 	protected void report(final String message) {
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (fStatusLine != null) {
 					fStatusLine.setMessage(true, message, null);

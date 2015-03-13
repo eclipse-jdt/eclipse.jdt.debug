@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class VMListener implements IVMInstallChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 		fChanged = true;
 	}
@@ -34,6 +35,7 @@ public class VMListener implements IVMInstallChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void vmAdded(IVMInstall vm) {
 		fChanged = true;
 	}
@@ -41,6 +43,7 @@ public class VMListener implements IVMInstallChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
 	 */
+	@Override
 	public void vmChanged(PropertyChangeEvent event) {
 		fChanged = true;
 	}
@@ -48,6 +51,7 @@ public class VMListener implements IVMInstallChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 	 */
+	@Override
 	public void vmRemoved(IVMInstall vm) {
 		fChanged = true;
 	}

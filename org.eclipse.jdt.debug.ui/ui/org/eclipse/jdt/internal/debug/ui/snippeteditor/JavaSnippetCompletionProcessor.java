@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
@@ -72,6 +73,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		if (fValidator == null) {
 			fValidator= new JavaParameterListValidator();
@@ -82,6 +84,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
@@ -89,6 +92,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
@@ -96,6 +100,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
 			setErrorMessage(null);
@@ -140,6 +145,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fProposalAutoActivationSet;
 	}

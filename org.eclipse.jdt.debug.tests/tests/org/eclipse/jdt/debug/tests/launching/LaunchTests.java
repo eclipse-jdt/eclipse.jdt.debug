@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -110,6 +110,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public synchronized void launchRemoved(ILaunch launch) {
 		removed = true;
 		notifyAll();
@@ -118,6 +119,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public synchronized void launchAdded(ILaunch launch) {
 		added = true;
 		notifyAll();
@@ -126,6 +128,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public synchronized void launchChanged(ILaunch launch) {}
 
 }

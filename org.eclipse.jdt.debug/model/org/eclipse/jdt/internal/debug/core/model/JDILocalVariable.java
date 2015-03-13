@@ -65,6 +65,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * @see IVariable#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		try {
 			return getLocal().name();
@@ -111,6 +112,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			String genericSignature = getLocal().genericSignature();
@@ -143,6 +145,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * @see IJavaVariable#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return getLocal().signature();
@@ -162,6 +165,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		try {
 			String genericSignature = fLocal.genericSignature();

@@ -82,6 +82,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return fThread.getModelIdentifier();
 	}
@@ -89,6 +90,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fThread.getDebugTarget();
 	}
@@ -96,6 +98,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fThread.getLaunch();
 	}
@@ -126,6 +129,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
@@ -133,6 +137,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
@@ -140,6 +145,7 @@ public class JavaOwningThread extends PlatformObject implements IDebugElement, I
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}

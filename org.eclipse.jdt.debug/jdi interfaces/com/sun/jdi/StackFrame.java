@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Map;
 public interface StackFrame extends Mirror, Locatable {
 	public Value getValue(LocalVariable arg1);
 	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> arg1);
+	@Override
 	public Location location();
 	public void setValue(LocalVariable arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public ObjectReference thisObject();

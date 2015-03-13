@@ -28,6 +28,7 @@ public class TargetAdapterFactory implements IAdapterFactory{
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(IModelProxyFactory.class)) {
@@ -46,6 +47,7 @@ public class TargetAdapterFactory implements IAdapterFactory{
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[]{
 				IModelProxyFactory.class,

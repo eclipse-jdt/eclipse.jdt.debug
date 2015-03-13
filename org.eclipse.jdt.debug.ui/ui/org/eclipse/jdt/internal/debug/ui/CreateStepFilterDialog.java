@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,15 +99,17 @@ public class CreateStepFilterDialog extends StatusDialog {
 		text.setFont(container.getFont());
 		
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateChange();
-				if (!filterValid) 
-					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.CreateStepFilterDialog_4)); 
-				else if (isDuplicateFilter(text.getText().trim())) {
+				if (!filterValid) {
+					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.CreateStepFilterDialog_4));
+				} else if (isDuplicateFilter(text.getText().trim())) {
 					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.CreateStepFilterDialog_5)); 
 					return;
-				} else 
-					updateStatus(new StatusInfo());		
+				} else {
+					updateStatus(new StatusInfo());
+				}		
 			}
 		});
 	
@@ -129,9 +131,11 @@ public class CreateStepFilterDialog extends StatusDialog {
 	}
 	
 	private boolean isDuplicateFilter(String trimmedValue) {
-		for (int i=0; i<existingFilters.length; i++)
-			if(existingFilters[i].getName().equals(trimmedValue))
+		for (int i=0; i<existingFilters.length; i++) {
+			if(existingFilters[i].getName().equals(trimmedValue)) {
 				return true;
+			}
+		}
 		return false;
 	}
 	/**

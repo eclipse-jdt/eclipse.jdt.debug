@@ -194,6 +194,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#getThread()
 	 */
+	@Override
 	public IThread getThread() {
 		return fThread;
 	}
@@ -201,6 +202,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return getThread().canResume();
 	}
@@ -208,6 +210,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		return getThread().canSuspend();
 	}
@@ -215,6 +218,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#canStepInto()
 	 */
+	@Override
 	public boolean canStepInto() {
 		try {
 			return exists() && isTopStackFrame() && !isObsolete()
@@ -228,6 +232,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#canStepOver()
 	 */
+	@Override
 	public boolean canStepOver() {
 		return exists() && !isObsolete() && getThread().canStepOver();
 	}
@@ -235,6 +240,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#canStepReturn()
 	 */
+	@Override
 	public boolean canStepReturn() {
 		try {
 			if (!exists() || isObsolete() || !getThread().canStepReturn()) {
@@ -275,6 +281,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		List<IJavaVariable> list = getVariables0();
 		return list.toArray(new IVariable[list.size()]);
@@ -324,6 +331,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						}
 						Collections.sort(fVariables,
 								new Comparator<IJavaVariable>() {
+									@Override
 									public int compare(IJavaVariable a, IJavaVariable b) {
 										JDIFieldVariable v1 = (JDIFieldVariable) a;
 										JDIFieldVariable v2 = (JDIFieldVariable) b;
@@ -364,6 +372,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return getMethodName();
 	}
@@ -371,6 +380,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getArgumentTypeNames()
 	 */
+	@Override
 	public List<String> getArgumentTypeNames() throws DebugException {
 		try {
 			Method underlyingMethod = getUnderlyingMethod();
@@ -402,6 +412,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -421,6 +432,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#isStepping()
 	 */
+	@Override
 	public boolean isStepping() {
 		return getThread().isStepping();
 	}
@@ -428,6 +440,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return getThread().isSuspended();
 	}
@@ -435,6 +448,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		getThread().resume();
 	}
@@ -442,6 +456,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#stepInto()
 	 */
+	@Override
 	public void stepInto() throws DebugException {
 		if (!canStepInto()) {
 			return;
@@ -452,6 +467,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#stepOver()
 	 */
+	@Override
 	public void stepOver() throws DebugException {
 		if (!canStepOver()) {
 			return;
@@ -466,6 +482,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStep#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws DebugException {
 		if (!canStepReturn()) {
 			return;
@@ -486,6 +503,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		getThread().suspend();
 	}
@@ -587,6 +605,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.debug.core.model.IDropToFrame#canDropToFrame()
 	 */
+	@Override
 	public boolean canDropToFrame() {
 		return supportsDropToFrame();
 	}
@@ -594,6 +613,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#supportsDropToFrame()
 	 */
+	@Override
 	public boolean supportsDropToFrame() {
 		JDIThread thread = (JDIThread) getThread();
 		JDIDebugTarget target = (JDIDebugTarget) thread.getDebugTarget();
@@ -671,6 +691,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#dropToFrame()
 	 */
+	@Override
 	public void dropToFrame() throws DebugException {
 		if (supportsDropToFrame()) {
 			((JDIThread) getThread()).dropToFrame(this);
@@ -690,6 +711,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#findVariable(String)
 	 */
+	@Override
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isNative()) {
 			return null;
@@ -794,6 +816,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			return getUnderlyingMethod().signature();
@@ -811,6 +834,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getDeclaringTypeName()
 	 */
+	@Override
 	public String getDeclaringTypeName() throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -834,6 +858,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getReceivingTypeName()
 	 */
+	@Override
 	public String getReceivingTypeName() throws DebugException {
 		if (fStackFrame == null || fReceivingTypeName == null) {
 			try {
@@ -864,6 +889,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getMethodName()
 	 */
+	@Override
 	public String getMethodName() throws DebugException {
 		try {
 			return getUnderlyingMethod().name();
@@ -881,6 +907,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isNative()
 	 */
+	@Override
 	public boolean isNative() throws DebugException {
 		return getUnderlyingMethod().isNative();
 	}
@@ -888,6 +915,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isConstructor()
 	 */
+	@Override
 	public boolean isConstructor() throws DebugException {
 		return getUnderlyingMethod().isConstructor();
 	}
@@ -895,6 +923,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isStaticInitializer()
 	 */
+	@Override
 	public boolean isStaticInitializer() throws DebugException {
 		return getUnderlyingMethod().isStaticInitializer();
 	}
@@ -902,6 +931,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isFinal()
 	 */
+	@Override
 	public boolean isFinal() throws DebugException {
 		return getUnderlyingMethod().isFinal();
 	}
@@ -909,6 +939,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isSynchronized()
 	 */
+	@Override
 	public boolean isSynchronized() throws DebugException {
 		return getUnderlyingMethod().isSynchronized();
 	}
@@ -916,6 +947,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isSynthetic()
 	 */
+	@Override
 	public boolean isSynthetic() throws DebugException {
 		return getUnderlyingMethod().isSynthetic();
 	}
@@ -923,6 +955,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isPublic()
 	 */
+	@Override
 	public boolean isPublic() throws DebugException {
 		return getUnderlyingMethod().isPublic();
 	}
@@ -930,6 +963,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isPrivate()
 	 */
+	@Override
 	public boolean isPrivate() throws DebugException {
 		return getUnderlyingMethod().isPrivate();
 	}
@@ -937,6 +971,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isProtected()
 	 */
+	@Override
 	public boolean isProtected() throws DebugException {
 		return getUnderlyingMethod().isProtected();
 	}
@@ -944,6 +979,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isPackagePrivate()
 	 */
+	@Override
 	public boolean isPackagePrivate() throws DebugException {
 		return getUnderlyingMethod().isPackagePrivate();
 	}
@@ -951,6 +987,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaModifiers#isStatic()
 	 */
+	@Override
 	public boolean isStatic() throws DebugException {
 		return getUnderlyingMethod().isStatic();
 	}
@@ -958,6 +995,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getSourceName()
 	 */
+	@Override
 	public String getSourceName() throws DebugException {
 		synchronized (fThread) {
 			return getSourceName(fLocation);
@@ -1008,6 +1046,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isOutOfSynch()
 	 */
+	@Override
 	public boolean isOutOfSynch() throws DebugException {
 		if (fIsOutOfSynch) {
 			return true;
@@ -1028,6 +1067,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isObsolete()
 	 */
+	@Override
 	public boolean isObsolete() {
 		if (!JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] { 1, 4 })
 				|| !((JDIDebugTarget) getDebugTarget()).hasHCROccurred()) {
@@ -1054,6 +1094,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return exists() && getThread().canTerminate()
 				|| getDebugTarget().canTerminate();
@@ -1062,6 +1103,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getThread().isTerminated();
 	}
@@ -1069,6 +1111,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		if (getThread().canTerminate()) {
 			getThread().terminate();
@@ -1142,6 +1185,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getLocalVariables()
 	 */
+	@Override
 	public IJavaVariable[] getLocalVariables() throws DebugException {
 		List<LocalVariable> list = getUnderlyingVisibleVariables();
 		IJavaVariable[] locals = new IJavaVariable[list.size()];
@@ -1154,6 +1198,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getThis()
 	 */
+	@Override
 	public IJavaObject getThis() throws DebugException {
 		IJavaObject receiver = null;
 		if (!isStatic() && !isNative()) {
@@ -1171,6 +1216,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see IStackFrame#getRegisterGroups()
 	 */
+	@Override
 	public IRegisterGroup[] getRegisterGroups() {
 		return new IRegisterGroup[0];
 	}
@@ -1178,6 +1224,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#getDeclaringType()
 	 */
+	@Override
 	public IJavaClassType getDeclaringType() throws DebugException {
 		Method method = getUnderlyingMethod();
 		try {
@@ -1201,6 +1248,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getReferenceType()
 	 */
+	@Override
 	public IJavaReferenceType getReferenceType() throws DebugException {
 		Method method = getUnderlyingMethod();
 		try {
@@ -1221,6 +1269,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see IStackFrame#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() {
 		return -1;
 	}
@@ -1230,6 +1279,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see IStackFrame#getCharStart()
 	 */
+	@Override
 	public int getCharStart() {
 		return -1;
 	}
@@ -1246,6 +1296,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#wereLocalsAvailable()
 	 */
+	@Override
 	public boolean wereLocalsAvailable() {
 		return fLocalsAvailable;
 	}
@@ -1268,6 +1319,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#hasRegisterGroups()
 	 */
+	@Override
 	public boolean hasRegisterGroups() {
 		return false;
 	}
@@ -1275,6 +1327,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IStackFrame#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return getVariables0().size() > 0;
 	}
@@ -1282,6 +1335,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.debug.core.model.IFilteredStep#canStepWithFilters()
 	 */
+	@Override
 	public boolean canStepWithFilters() {
 		if (canStepInto()) {
 			String[] filters = getJavaDebugTarget().getStepFilters();
@@ -1293,6 +1347,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.debug.core.model.IFilteredStep#stepWithFilters()
 	 */
+	@Override
 	public void stepWithFilters() throws DebugException {
 		((IJavaThread) getThread()).stepWithFilters();
 	}
@@ -1300,6 +1355,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath(java.lang.String)
 	 */
+	@Override
 	public String getSourcePath(String stratum) throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -1318,6 +1374,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath()
 	 */
+	@Override
 	public String getSourcePath() throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -1338,6 +1395,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame#getLineNumber(java.lang.String
 	 * )
 	 */
+	@Override
 	public int getLineNumber(String stratum) throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -1359,6 +1417,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame#getSourceName(java.lang.String
 	 * )
 	 */
+	@Override
 	public String getSourceName(String stratum) throws DebugException {
 		synchronized (fThread) {
 			try {
@@ -1380,6 +1439,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#isVarargs()
 	 */
+	@Override
 	public boolean isVarArgs() throws DebugException {
 		return getUnderlyingMethod().isVarArgs();
 	}
@@ -1389,6 +1449,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#canForceReturn()
 	 */
+	@Override
 	public boolean canForceReturn() {
 		if (getJavaDebugTarget().supportsForceReturn() && isSuspended()) {
 			try {
@@ -1417,6 +1478,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame#forceReturn(org.eclipse.jdt
 	 * .debug.core.IJavaValue)
 	 */
+	@Override
 	public void forceReturn(IJavaValue value) throws DebugException {
 		if (isTopStackFrame()) {
 			fThread.forceReturn(value);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class ForceReturnAction extends EvaluateAction {
 		// error with evaluation
 		if (result.hasErrors()) {
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (display.isDisposed()) {
 						return;
@@ -60,6 +61,7 @@ public class ForceReturnAction extends EvaluateAction {
 			frame.forceReturn(value);
 			if (!Signature.SIG_VOID.equals(value)) {
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (display.isDisposed()) {
 							return;
@@ -73,6 +75,7 @@ public class ForceReturnAction extends EvaluateAction {
 		} catch (DebugException e) {
 			final IStatus status = e.getStatus();
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (display.isDisposed()) {
 						return;

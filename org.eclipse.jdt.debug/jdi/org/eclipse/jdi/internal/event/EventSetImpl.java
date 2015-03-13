@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @return Returns iterator over events.
 	 */
+	@Override
 	public EventIterator eventIterator() {
 		return new EventIteratorImpl(fEvents.listIterator());
 	}
@@ -75,6 +76,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @return Returns which threads were suspended by this composite event.
 	 */
+	@Override
 	public int suspendPolicy() {
 		switch (fSuspendPolicy) {
 		case EventRequestImpl.SUSPENDPOL_NONE_JDWP:
@@ -93,6 +95,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * Resumes threads that were suspended by this event set.
 	 */
+	@Override
 	public void resume() {
 		switch (fSuspendPolicy) {
 		case EventRequestImpl.SUSPENDPOL_NONE_JDWP:
@@ -183,6 +186,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection
 	 */
+	@Override
 	public boolean contains(Object event) {
 		return fEvents.contains(event);
 	}
@@ -190,6 +194,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/* (non-Javadoc)
 	 * @see java.util.Collection#containsAll(java.util.Collection)
 	 */
+	@Override
 	public boolean containsAll(Collection<?> events) {
 		return fEvents.containsAll(events);
 	}
@@ -214,6 +219,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection
 	 */
+	@Override
 	public boolean isEmpty() {
 		return fEvents.isEmpty();
 	}
@@ -221,6 +227,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection#iterator()
 	 */
+	@Override
 	public Iterator<Event> iterator() {
 		return fEvents.iterator();
 	}
@@ -228,6 +235,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection#size()
 	 */
+	@Override
 	public int size() {
 		return fEvents.size();
 	}
@@ -235,6 +243,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection#toArray()
 	 */
+	@Override
 	public Object[] toArray() {
 		return fEvents.toArray();
 	}
@@ -244,6 +253,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException
 	 *                always thrown since EventSets are unmodifiable.
 	 */
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);
@@ -254,6 +264,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException
 	 *                always thrown since EventSets are unmodifiable.
 	 */
+	@Override
 	public boolean remove(Object arg1) {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);
@@ -264,6 +275,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException
 	 *                always thrown since EventSets are unmodifiable.
 	 */
+	@Override
 	public boolean removeAll(Collection<?> arg1) {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);
@@ -274,6 +286,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * @exception UnsupportedOperationException
 	 *                always thrown since EventSets are unmodifiable.
 	 */
+	@Override
 	public boolean retainAll(Collection<?> arg1) {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);
@@ -282,6 +295,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/* (non-Javadoc)
 	 * @see java.util.Collection#toArray(T[])
 	 */
+	@Override
 	public <T> T[] toArray(T[] a) {
 		return fEvents.toArray(a);
 	}
@@ -289,6 +303,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/* (non-Javadoc)
 	 * @see java.util.Collection#add(java.lang.Object)
 	 */
+	@Override
 	public boolean add(Event o) {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);
@@ -297,6 +312,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/* (non-Javadoc)
 	 * @see java.util.Collection#addAll(java.util.Collection)
 	 */
+	@Override
 	public boolean addAll(Collection<? extends Event> c) {
 		throw new UnsupportedOperationException(
 				EventMessages.EventSetImpl_EventSets_are_unmodifiable_3);

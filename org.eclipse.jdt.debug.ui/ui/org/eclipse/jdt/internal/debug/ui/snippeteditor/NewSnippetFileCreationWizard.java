@@ -64,6 +64,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fSelection= selection;
 		setDefaultPageImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_WIZBAN_NEWSCRAPPAGE));

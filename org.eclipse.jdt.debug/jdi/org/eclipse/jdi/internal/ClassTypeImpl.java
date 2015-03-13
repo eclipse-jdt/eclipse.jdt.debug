@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,6 +119,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	 * @return Returns a the single non-abstract Method visible from this class
 	 *         that has the given name and signature.
 	 */
+	@Override
 	public Method concreteMethodByName(String name, String signature) {
 		/*
 		 * Recursion is used to find the method: The methods of its own (own
@@ -147,6 +148,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ClassType#invokeMethod(com.sun.jdi.ThreadReference, com.sun.jdi.Method, java.util.List, int)
 	 */
+	@Override
 	public Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException {
@@ -225,6 +227,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ClassType#newInstance(com.sun.jdi.ThreadReference, com.sun.jdi.Method, java.util.List, int)
 	 */
+	@Override
 	public ObjectReference newInstance(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException,
 			InvocationException {
@@ -303,6 +306,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/**
 	 * Assigns a value to a static field. .
 	 */
+	@Override
 	public void setValue(Field field, Value value) throws InvalidTypeException,
 			ClassNotLoadedException {
 		// Note that this information should not be cached.
@@ -345,6 +349,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ClassType#subclasses()
 	 */
+	@Override
 	public List<ClassType> subclasses() {
 		// Note that this information should not be cached.
 		List<ClassType> subclasses = new ArrayList<ClassType>();
@@ -369,6 +374,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ClassType#superclass()
 	 */
+	@Override
 	public ClassType superclass() {
 		if (fSuperclass != null)
 			return fSuperclass;
@@ -443,6 +449,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		return mirror;
 	}
 
+	@Override
 	public boolean isEnum() {
 		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 5)) {
 			// there is no modifier for this ... :(

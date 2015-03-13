@@ -49,6 +49,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() {
 		return fValue;
 	}
@@ -56,6 +57,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -63,6 +65,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return fReferenceType.getName();
 	}
@@ -70,6 +73,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
@@ -77,6 +81,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
@@ -84,6 +89,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
@@ -91,6 +97,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fDebugTarget.getLaunch();
 	}
@@ -98,6 +105,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(String)
 	 */
+	@Override
 	public void setValue(String expression) throws DebugException {
 		throw new DebugException(
 				new Status(
@@ -111,6 +119,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(IValue)
 	 */
+	@Override
 	public void setValue(IValue value) {
 		fValue = value;
 	}
@@ -118,6 +127,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
@@ -125,6 +135,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(IValue)
 	 */
+	@Override
 	public boolean verifyValue(IValue value) throws DebugException {
 		throw new DebugException(
 				new Status(
@@ -138,6 +149,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(String)
 	 */
+	@Override
 	public boolean verifyValue(String expression) throws DebugException {
 		throw new DebugException(
 				new Status(
@@ -151,6 +163,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
@@ -158,6 +171,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getJavaType()
 	 */
+	@Override
 	public IJavaType getJavaType() {
 		return fReferenceType;
 	}
@@ -165,6 +179,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		return fReferenceType.getSignature();
 	}
@@ -172,6 +187,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isFinal()
 	 */
+	@Override
 	public boolean isFinal() {
 		return false;
 	}
@@ -179,6 +195,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPackagePrivate()
 	 */
+	@Override
 	public boolean isPackagePrivate() {
 		return false;
 	}
@@ -186,6 +203,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
 	 */
+	@Override
 	public boolean isPrivate() {
 		return false;
 	}
@@ -193,6 +211,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
 	 */
+	@Override
 	public boolean isProtected() {
 		return false;
 	}
@@ -200,6 +219,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
 	 */
+	@Override
 	public boolean isPublic() {
 		return true;
 	}
@@ -207,6 +227,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isStatic()
 	 */
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
@@ -214,6 +235,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isSynthetic()
 	 */
+	@Override
 	public boolean isSynthetic() {
 		return true;
 	}
@@ -221,6 +243,7 @@ public class InterpreterVariable implements IJavaVariable {
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
+	@Override
 	public boolean isLocal() {
 		return false;
 	}
@@ -230,6 +253,7 @@ public class InterpreterVariable implements IJavaVariable {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		return getSignature();
 	}

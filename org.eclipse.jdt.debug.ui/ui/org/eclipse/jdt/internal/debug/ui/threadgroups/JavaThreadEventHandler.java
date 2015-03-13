@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		if (control instanceof Tree) {
 			fTree = (Tree) control;
 			fTree.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fTree.addTreeListener(JavaThreadEventHandler.this);
 				}
@@ -133,6 +134,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		return super.addPathToThread(delta, thread);
 	}
 	
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
 			fDisplayMonitors= JDIDebugUIPreferenceInitializer.getBoolean(event);
@@ -245,6 +247,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.TreeListener#treeCollapsed(org.eclipse.swt.events.TreeEvent)
 	 */
+	@Override
 	public void treeCollapsed(TreeEvent e) {
 		// when the user collapses a thread, remove it from the 'next thread to select queue'
 		Widget widget = e.item;
@@ -260,6 +263,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.TreeListener#treeExpanded(org.eclipse.swt.events.TreeEvent)
 	 */
+	@Override
 	public void treeExpanded(TreeEvent e) {
 		// when the expands a thread, add it back to the 'next thread to select queue'
 		Widget widget = e.item;

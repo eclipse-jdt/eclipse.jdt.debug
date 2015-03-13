@@ -81,6 +81,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return fThread.getModelIdentifier();
 	}
@@ -88,6 +89,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fThread.getDebugTarget();
 	}
@@ -95,6 +97,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return fThread.getLaunch();
 	}
@@ -102,6 +105,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if(adapter == IDebugTarget.class) {
@@ -124,6 +128,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
@@ -131,6 +136,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
@@ -138,6 +144,7 @@ public class JavaWaitingThread implements IDebugElement, ITerminate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}

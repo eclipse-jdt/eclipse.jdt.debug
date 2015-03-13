@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		HeapWalkingManager.getDefault().setShowReferenceInVarView(action.isChecked());
 		// If the current target doesn't support instance retrieval, warn the user that turning the option on will not do anything.
@@ -57,6 +58,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 		action.setChecked(HeapWalkingManager.getDefault().isShowReferenceInVarView());
@@ -69,6 +71,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IDebugView){
 			fView = (IDebugView)view;
@@ -78,12 +81,14 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
@@ -94,6 +99,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -101,6 +107,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW.equals(event.getKey()) || JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT.equals(event.getKey())){
 			if (fAction != null){

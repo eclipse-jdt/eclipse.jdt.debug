@@ -49,6 +49,7 @@ public class Timer {
 	public Timer() {
 		setTimeout(Integer.MAX_VALUE);
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				while (isAlive()) {
 					boolean interrupted = false;

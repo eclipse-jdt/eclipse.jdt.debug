@@ -59,6 +59,7 @@ public class DisplayViewAction extends Action implements IUpdate {
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.
 	 */
+	@Override
 	public void update() {
 		if (fOperationTarget == null && fTargetProvider != null && fOperationCode != -1){
 			fOperationTarget = fTargetProvider.getAdapter(ITextOperationTarget.class);

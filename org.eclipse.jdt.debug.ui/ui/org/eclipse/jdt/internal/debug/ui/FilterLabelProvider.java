@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 	/**
 	 * @see ITableLabelProvider#getColumnText(Object, int)
 	 */
+	@Override
 	public String getColumnText(Object object, int column) {
 		if (column == 0) {
 			return ((Filter) object).getName();
@@ -49,6 +50,7 @@ public class FilterLabelProvider extends LabelProvider implements ITableLabelPro
 	/**
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object object, int column) {
 		String name = ((Filter) object).getName();
 		if (name.endsWith("*") || name.equals("(default package)")) { //$NON-NLS-1$ //$NON-NLS-2$

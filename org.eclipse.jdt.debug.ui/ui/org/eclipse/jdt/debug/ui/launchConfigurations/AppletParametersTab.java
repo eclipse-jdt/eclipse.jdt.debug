@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 		 */
+		@Override
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
@@ -118,6 +119,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {	
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		setControl(comp);
@@ -178,20 +180,25 @@ public class AppletParametersTab extends JavaLaunchTab {
 		});
 		
 		fViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				Map<?, ?> params = (Map<?, ?>) inputElement;
 				return params.keySet().toArray();
 			}
+			@Override
 			public void dispose() {
 			}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
 	
 		fViewer.setLabelProvider(new ITableLabelProvider() {
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
+			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				if (columnIndex == 0) {
 					return element.toString();
@@ -205,13 +212,17 @@ public class AppletParametersTab extends JavaLaunchTab {
 				}
 				return null;
 			}
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
+			@Override
 			public void dispose() {
 			}
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
@@ -339,6 +350,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		try {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, Integer.parseInt(getWidthText()));
@@ -371,6 +383,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 	
@@ -411,6 +424,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LauncherMessages.appletlauncher_argumenttab_name; 
 	}	

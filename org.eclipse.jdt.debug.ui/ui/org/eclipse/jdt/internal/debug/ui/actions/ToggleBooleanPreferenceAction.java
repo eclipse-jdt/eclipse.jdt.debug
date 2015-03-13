@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public abstract class ToggleBooleanPreferenceAction extends ViewFilterAction {
 	public void run(IAction action) {
 		final StructuredViewer viewer = getStructuredViewer();
 		BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				// note, this uses the pref key, not the composite key - the prefs are global, not view specific.
 				IPreferenceStore store = getPreferenceStore();

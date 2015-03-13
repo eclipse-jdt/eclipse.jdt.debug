@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,6 +198,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see ICodeSnippetRequestor#acceptClassFiles(byte[][], String[][], String)
 	 */
+	@Override
 	public boolean acceptClassFiles(byte[][] classFileBytes,
 			String[][] classFileCompoundNames, String codeSnippetClassName) {
 		try {
@@ -218,6 +219,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 		return true;
 	}
 
+	@Override
 	public void run(IJavaThread thread, IProgressMonitor monitor) {
 		IJavaObject codeSnippetInstance = null;
 		try {
@@ -353,6 +355,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see ICodeSnippetRequestor#acceptProblem(IMarker, String, int)
 	 */
+	@Override
 	public void acceptProblem(IMarker problemMarker, String fragmentSource,
 			int fragmentKind) {
 		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
@@ -364,6 +367,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see IEvaluationEngine#getDebugTarget()
 	 */
+	@Override
 	public IJavaDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
@@ -381,6 +385,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see IEvaluationEngine#getJavaProject()
 	 */
+	@Override
 	public IJavaProject getJavaProject() {
 		return fJavaProject;
 	}
@@ -418,6 +423,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread,
 	 *      IEvaluationListener)
 	 */
+	@Override
 	public void evaluate(String snippet, IJavaThread thread,
 			IEvaluationListener listener, boolean hitBreakpoints)
 			throws DebugException {
@@ -437,6 +443,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						LocalEvaluationEngine.this
@@ -467,6 +474,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame,
 	 *      IEvaluationListener, int)
 	 */
+	@Override
 	public void evaluate(String snippet, IJavaStackFrame frame,
 			IEvaluationListener listener, int evaluationDetail,
 			boolean hitBreakpoints) throws DebugException {
@@ -514,6 +522,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						LocalEvaluationEngine.this
@@ -582,6 +591,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread,
 	 *      IEvaluationListener, int)
 	 */
+	@Override
 	public void evaluate(String snippet, IJavaObject thisContext,
 			IJavaThread thread, IEvaluationListener listener,
 			int evaluationDetail, boolean hitBreakpoints) throws DebugException {
@@ -609,6 +619,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						LocalEvaluationEngine.this
@@ -703,6 +714,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * 
 	 * @see IEvaluationEngine#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fDisposed = true;
 		ENGINE_COUNT--;
@@ -874,9 +886,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 				if (!classFile.exists()) {
 					classFile.createNewFile();
 				}
-				FileOutputStream stream = new FileOutputStream(classFile);
-				stream.write(classFiles[i]);
-				stream.close();
+				try (FileOutputStream stream = new FileOutputStream(classFile)) {
+					stream.write(classFiles[i]);
+				}
 				LocalEvaluationEngine.this.addSnippetFile(classFile);
 			} catch (IOException e) {
 				throw new DebugException(
@@ -1302,6 +1314,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see IClassFileEvaluationEngine#getImports()
 	 */
+	@Override
 	public String[] getImports() {
 		return getEvaluationContext().getImports();
 	}
@@ -1309,6 +1322,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * @see IClassFileEvaluationEngine#setImports(String[])
 	 */
+	@Override
 	public void setImports(String[] imports) {
 		getEvaluationContext().setImports(imports);
 	}

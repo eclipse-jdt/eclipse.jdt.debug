@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return false;
 	}
@@ -86,6 +87,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document doc= DebugPlugin.newDocument();
 		Element root = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
@@ -115,6 +117,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return null;
 	}
@@ -126,6 +129,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return null;
 	}
@@ -133,36 +137,42 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentPath() {
 		return sourceAttachmentPath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSourceAttachmentPath(IPath path) {
 		sourceAttachmentPath = path;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
+	@Override
 	public IPath getSourceAttachmentRootPath() {
 		return rootSourcePath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setSourceAttachmentRootPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSourceAttachmentRootPath(IPath path) {
 		rootSourcePath = path;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathProperty()
 	 */
+	@Override
 	public int getClasspathProperty() {
 		return classpathProperty;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setClasspathProperty(int)
 	 */
+	@Override
 	public void setClasspathProperty(int property) {
 		classpathProperty = property;
 	}
@@ -173,6 +183,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return null;
 	}
@@ -183,6 +194,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentLocation()
 	 */
+	@Override
 	public String getSourceAttachmentLocation() {
 		return null;
 	}
@@ -192,6 +204,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
 	 */
+	@Override
 	public String getSourceAttachmentRootLocation() {
 		return null;
 	}
@@ -202,6 +215,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getVariableName()
 	 */
+	@Override
 	public String getVariableName() {
 		return null;
 	}
@@ -212,12 +226,14 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathEntry()
 	 */
+	@Override
 	public IClasspathEntry getClasspathEntry() {
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
 	 */
+	@Override
 	public IJavaProject getJavaProject() {
 		return fJavaProject;
 	}

@@ -116,6 +116,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		if (fValue == null) {
 			return JDIDebugModelMessages.JDIValue_null_4;
@@ -167,6 +168,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			if (fValue == null) {
@@ -219,6 +221,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		List<IJavaVariable> list = getVariablesList();
 		return list.toArray(new IVariable[list.size()]);
@@ -275,6 +278,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 							fLogicalParent));
 				}
 				Collections.sort(fVariables, new Comparator<IJavaVariable>() {
+					@Override
 					public int compare(IJavaVariable a, IJavaVariable b) {
 						return sortChildren(a, b);
 					}
@@ -331,6 +335,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		if (fAllocated) {
 			if (fValue instanceof ObjectReference) {
@@ -358,6 +363,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IJavaValue#getSignature()
 	 */
+	@Override
 	public String getSignature() throws DebugException {
 		try {
 			if (fValue != null) {
@@ -380,6 +386,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
+	@Override
 	public String getGenericSignature() throws DebugException {
 		try {
 			if (fValue != null) {
@@ -428,6 +435,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IJavaValue#getJavaType()
 	 */
+	@Override
 	public IJavaType getJavaType() throws DebugException {
 		return JDIType.createType((JDIDebugTarget) getDebugTarget(),
 				getUnderlyingType());
@@ -468,6 +476,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * @see IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return getVariablesList().size() > 0;
 	}
@@ -499,6 +508,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
+	@Override
 	public boolean isNull() {
 		return false;
 	}

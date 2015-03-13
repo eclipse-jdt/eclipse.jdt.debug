@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,10 @@ package com.sun.jdi;
  * See http://docs.oracle.com/javase/6/docs/jdk/api/jpda/jdi/com/sun/jdi/LocalVariable.html
  */
 public interface LocalVariable extends Mirror, Comparable<LocalVariable> {
+	@Override
 	public boolean equals(Object arg1);
 	public String genericSignature();
+	@Override
 	public int hashCode();
 	public boolean isArgument();
 	public boolean isVisible(StackFrame arg1);

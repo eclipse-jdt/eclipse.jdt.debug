@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -557,6 +557,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a list containing each visible and unambiguous Method in
 	 *         this type.
 	 */
+	@Override
 	public List<Method> visibleMethods() {
 		if (fVisibleMethods != null)
 			return fVisibleMethods;
@@ -604,6 +605,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *         its super-classes, implemented interfaces, and/or
 	 *         super-interfaces.
 	 */
+	@Override
 	public List<Method> allMethods() {
 		if (fAllMethods != null)
 			return fAllMethods;
@@ -701,6 +703,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a list containing each visible and unambiguous Field in
 	 *         this type.
 	 */
+	@Override
 	public List<Field> visibleFields() {
 		if (fVisibleFields != null)
 			return fVisibleFields;
@@ -743,6 +746,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *         its super-classes, implemented interfaces, and/or
 	 *         super-interfaces.
 	 */
+	@Override
 	public List<Field> allFields() {
 		if (fAllFields != null)
 			return fAllFields;
@@ -782,6 +786,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns the class loader object which loaded the class
 	 *         corresponding to this type.
 	 */
+	@Override
 	public ClassLoaderReference classLoader() {
 		if (fClassLoader != null)
 			return fClassLoader;
@@ -806,6 +811,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns the class object that corresponds to this type in the
 	 *         target VM.
 	 */
+	@Override
 	public ClassObjectReference classObject() {
 		if (fClassObject != null)
 			return fClassObject;
@@ -850,6 +856,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if initialization failed for this class.
 	 */
+	@Override
 	public boolean failedToInitialize() {
 		return (status() & JDWP_CLASS_STATUS_ERROR) != 0;
 	}
@@ -857,6 +864,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if this type has been initialized.
 	 */
+	@Override
 	public boolean isInitialized() {
 		return (status() & JDWP_CLASS_STATUS_INITIALIZED) != 0;
 	}
@@ -864,6 +872,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if this type has been prepared.
 	 */
+	@Override
 	public boolean isPrepared() {
 		return (status() & JDWP_CLASS_STATUS_PREPARED) != 0;
 	}
@@ -871,6 +880,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if this type has been verified.
 	 */
+	@Override
 	public boolean isVerified() {
 		return (status() & JDWP_CLASS_STATUS_VERIFIED) != 0;
 	}
@@ -878,6 +888,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns the visible Field with the given non-ambiguous name.
 	 */
+	@Override
 	public Field fieldByName(String name) {
 		Iterator<Field> iter = visibleFields().iterator();
 		while (iter.hasNext()) {
@@ -891,6 +902,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns a list containing each Field declared in this type.
 	 */
+	@Override
 	public List<Field> fields() {
 		if (fFields != null) {
 			return fFields;
@@ -966,6 +978,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns the Value of a given static Field in this type.
 	 */
+	@Override
 	public Value getValue(Field field) {
 		ArrayList<Field> list = new ArrayList<Field>(1);
 		list.add(field);
@@ -975,6 +988,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return a Map of the requested static Field objects with their Value.
 	 */
+	@Override
 	public Map<Field, Value> getValues(List<? extends Field> fields) {
 		// if the field list is empty, nothing to do
 		if (fields.isEmpty()) {
@@ -1045,6 +1059,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 *         {@link ReferenceType} is less than, equal to, or greater than the specified
 	 *         {@link ReferenceType}.
 	 */
+	@Override
 	public int compareTo(ReferenceType type) {
 		if (type == null || !type.getClass().equals(this.getClass()))
 			throw new ClassCastException(JDIMessages.ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4);
@@ -1054,6 +1069,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if the type was declared abstract.
 	 */
+	@Override
 	public boolean isAbstract() {
 		return (modifiers() & MODIFIER_ACC_ABSTRACT) != 0;
 	}
@@ -1061,6 +1077,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if the type was declared final.
 	 */
+	@Override
 	public boolean isFinal() {
 		return (modifiers() & MODIFIER_ACC_FINAL) != 0;
 	}
@@ -1068,6 +1085,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns true if the type was declared static.
 	 */
+	@Override
 	public boolean isStatic() {
 		return (modifiers() & MODIFIER_ACC_STATIC) != 0;
 	}
@@ -1075,6 +1093,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#locationsOfLine(int)
 	 */
+	@Override
 	public List<Location> locationsOfLine(int line) throws AbsentInformationException {
 		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
@@ -1083,6 +1102,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a list containing each Method declared directly in this
 	 *         type.
 	 */
+	@Override
 	public List<Method> methods() {
 		// Note that ArrayReference overwrites this method by returning an empty
 		// list.
@@ -1125,6 +1145,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a List containing each visible Method that has the given
 	 *         name.
 	 */
+	@Override
 	public List<Method> methodsByName(String name) {
 		List<Method> elements = new ArrayList<Method>();
 		Iterator<Method> iter = visibleMethods().iterator();
@@ -1141,6 +1162,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a List containing each visible Method that has the given
 	 *         name and signature.
 	 */
+	@Override
 	public List<Method> methodsByName(String name, String signature) {
 		List<Method> elements = new ArrayList<Method>();
 		Iterator<Method> iter = visibleMethods().iterator();
@@ -1193,6 +1215,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns a List containing each ReferenceType declared within this
 	 *         type.
 	 */
+	@Override
 	public List<ReferenceType> nestedTypes() {
 		// Note that the VM gives an empty reply on RT_NESTED_TYPES, therefore
 		// we search for the
@@ -1219,6 +1242,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns an identifying name for the source corresponding to the
 	 *         declaration of this type.
 	 */
+	@Override
 	public String sourceName() throws AbsentInformationException {
 		// sourceNames list in never empty, an AbsentInformationException is
 		// thrown
@@ -1231,6 +1255,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @return Returns the CRC-32 of the given reference type, undefined if
 	 *         unknown.
 	 */
+	@Override
 	public int getClassFileVersion() {
 		virtualMachineImpl().checkHCRSupported();
 		if (fGotClassFileVersion)
@@ -1258,6 +1283,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns whether the CRC-32 of the given reference type is known.
 	 */
+	@Override
 	public boolean isVersionKnown() {
 		getClassFileVersion();
 		return fIsVersionKnown;
@@ -1266,6 +1292,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @return Returns whether the reference type is HCR-eligible.
 	 */
+	@Override
 	public boolean isHCREligible() {
 		getClassFileVersion();
 		return fIsHCREligible;
@@ -1328,6 +1355,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#allLineLocations()
 	 */
+	@Override
 	public List<Location> allLineLocations() throws AbsentInformationException {
 		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
@@ -1472,6 +1500,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @see ReferenceType#sourceNames(String)
 	 */
+	@Override
 	public List<String> sourceNames(String stratumId) throws AbsentInformationException {
 		List<String> list = new ArrayList<String>();
 		Stratum stratum = getStratum(stratumId);
@@ -1498,6 +1527,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @see ReferenceType#sourcePaths(String)
 	 */
+	@Override
 	public List<String> sourcePaths(String stratumId) throws AbsentInformationException {
 		List<String> list = new ArrayList<String>();
 		Stratum stratum = getStratum(stratumId);
@@ -1524,6 +1554,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * @see ReferenceType#sourceDebugExtension()
 	 */
+	@Override
 	public String sourceDebugExtension() throws AbsentInformationException {
 		if (isSourceDebugExtensionAvailable()) {
 			return fSmap;
@@ -1537,6 +1568,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#allLineLocations(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public List<Location> allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
 		Iterator<Method> allMethods = methods().iterator();
 		if (stratum == null) { // if stratum not defined use the default stratum
@@ -1577,6 +1609,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#locationsOfLine(java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public List<Location> locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
 		Iterator<Method> allMethods = methods().iterator();
 		List<Location> locations = new ArrayList<Location>();
@@ -1606,6 +1639,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#availableStrata()
 	 */
+	@Override
 	public List<String> availableStrata() {
 		List<String> list = new ArrayList<String>();
 		// The strata defined in the SMAP.
@@ -1620,6 +1654,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#defaultStratum()
 	 */
+	@Override
 	public String defaultStratum() {
 		if (isSourceDebugExtensionAvailable()) {
 			return fDefaultStratumId;
@@ -2049,6 +2084,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * 
 	 * @since java 1.5
 	 */
+	@Override
 	public String genericSignature() {
 		if (fGenericSignatureKnown) {
 			return fGenericSignature;
@@ -2105,6 +2141,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ReferenceType#instances(long)
 	 */
+	@Override
 	public List<ObjectReference> instances(long maxInstances) {
 		try {
 			int max = (int) maxInstances;
@@ -2156,6 +2193,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @see com.sun.jdi.ReferenceType#majorVersion()
 	 * @since 3.3
 	 */
+	@Override
 	public int majorVersion() {
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -2193,6 +2231,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @see com.sun.jdi.ReferenceType#minorVersion()
 	 * @since 3.3
 	 */
+	@Override
 	public int minorVersion() {
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -2231,6 +2270,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @see com.sun.jdi.ReferenceType#constantPoolCount()
 	 * @since 3.3
 	 */
+	@Override
 	public int constantPoolCount() {
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -2268,6 +2308,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * @see com.sun.jdi.ReferenceType#constantPool()
 	 * @since 3.3
 	 */
+	@Override
 	public byte[] constantPool() {
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();

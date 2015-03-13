@@ -161,6 +161,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
+	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		Object res = findSourceElement(stackFrame);
 		if (res == null && fAllowedToAsk) {
@@ -243,6 +244,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 */
 	private void showDebugSourcePage(final IJavaStackFrame frame) {
 		Runnable prompter = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					String message = NLS.bind(LauncherMessages.JavaUISourceLocator_selectprojects_message, new String[] {frame.getDeclaringTypeName()});
@@ -275,6 +277,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * @see IPersistableSourceLocator#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		String memento = fSourceLocator.getMemento();
 		String handle = fJavaProject.getHandleIdentifier();
@@ -294,6 +297,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration)
 		throws CoreException {
 		fSourceLocator.initializeDefaults(configuration);
@@ -305,6 +309,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * @see IPersistableSourceLocator#initializeFromMemento(String)
 	 */
+	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		if (memento.startsWith("<project>")) { //$NON-NLS-1$
 			int index = memento.indexOf("</project>"); //$NON-NLS-1$

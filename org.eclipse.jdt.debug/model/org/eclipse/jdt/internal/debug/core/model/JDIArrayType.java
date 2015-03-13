@@ -37,6 +37,7 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 	/**
 	 * @see IJavaArrayType#newInstance(int)
 	 */
+	@Override
 	public IJavaArray newInstance(int size) throws DebugException {
 		try {
 			ArrayReference ar = ((ArrayType) getUnderlyingType())
@@ -56,6 +57,7 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 	/**
 	 * @see IJavaArray#getComponentType()
 	 */
+	@Override
 	public IJavaType getComponentType() throws DebugException {
 		try {
 			Type type = ((ArrayType) getUnderlyingType()).componentType();

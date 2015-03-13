@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
 		 */
+		@Override
 		public String generateName(String name) {
 			return null;
 		}
@@ -61,6 +62,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
 		 */
+		@Override
 		public String getMode() {
 			return ILaunchManager.DEBUG_MODE;
 		}
@@ -68,6 +70,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getTabs()
 		 */
+		@Override
 		public ILaunchConfigurationTab[] getTabs() {
 			return new ILaunchConfigurationTab[] {fWorkingDirBlock};
 		}
@@ -75,6 +78,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
 		 */
+		@Override
 		public ILaunchConfigurationTab getActiveTab() {
 			return fWorkingDirBlock;
 		}
@@ -82,12 +86,14 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
 		 */
+		@Override
 		public void setName(String name) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateButtons()
 		 */
+		@Override
 		public void updateButtons() {
 			
 		}
@@ -95,6 +101,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
 		 */
+		@Override
 		public void updateMessage() {
 			setValid(isValid());
 			setMessage(getMessage());
@@ -104,18 +111,21 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 		 */
+		@Override
 		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 		 */
+		@Override
 		public void setActiveTab(ILaunchConfigurationTab tab) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
 		 */
+		@Override
 		public void setActiveTab(int index) {
 		}
 	}

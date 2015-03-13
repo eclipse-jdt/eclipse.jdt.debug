@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 	 */
 	protected void blockMnemonicWithoutModifier(Button button) {
 		button.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit == true && e.stateMask != SWT.MOD3) {
 					e.doit= false;
@@ -110,6 +111,7 @@ public class HotCodeReplaceErrorDialog extends ErrorDialogWithToggle {
 			final String[] operation = new String[1];
 			ex[0] = null;
 			Runnable r = new Runnable() {
+				@Override
 				public void run() {
 					try {
 						if (id == TERMINATE_ID) {

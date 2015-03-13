@@ -74,6 +74,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i= 0; i < events.length; i++) {
 			DebugEvent debugEvent= events[i];
@@ -233,6 +234,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 
 	class DetectDeadlock implements Runnable {
+		@Override
 		public void run() {
 			JavaMonitorThread[] threads= getJavaMonitorThreads();
 			JavaMonitor[] monitors= getJavaMonitors();
@@ -283,6 +285,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
 			fIsEnabled= JDIDebugUIPreferenceInitializer.getBoolean(event);

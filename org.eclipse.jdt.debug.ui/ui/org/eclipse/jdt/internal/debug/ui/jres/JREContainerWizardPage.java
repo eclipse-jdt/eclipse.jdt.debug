@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 20010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#finish()
 	 */
+	@Override
 	public boolean finish() {
 		IPath path = fJREBlock.getPath();
 		fSelection = JavaCore.newContainerEntry(path);		
@@ -60,6 +61,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#getSelection()
 	 */
+	@Override
 	public IClasspathEntry getSelection() {
 		return fSelection;
 	}
@@ -67,6 +69,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#setSelection(org.eclipse.jdt.core.IClasspathEntry)
 	 */
+	@Override
 	public void setSelection(IClasspathEntry containerEntry) {
 		fSelection = containerEntry;
 		initializeFromSelection();
@@ -92,6 +95,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fJREBlock = new JREsComboBlock(false);
@@ -102,6 +106,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJREBlock.getControl().setLayoutData(gd);
 		setControl(composite);
 		fJREBlock.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				IStatus status = fJREBlock.getStatus();
 				if (status.isOK()) {

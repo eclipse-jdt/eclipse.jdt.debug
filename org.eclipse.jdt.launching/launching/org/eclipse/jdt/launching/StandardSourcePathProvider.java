@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,9 +109,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
         if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
             String location = entry.getLocation();
             if (location != null) {
-                JarFile jar = null;
-                try {
-                    jar = new JarFile(location, false);
+				try (JarFile jar = new JarFile(location, false);) {
                     Manifest manifest = jar.getManifest();
                     if (manifest != null) {
                         Attributes mainAttributes = manifest.getMainAttributes();
@@ -134,14 +132,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
                         }
                     }
                 } catch (IOException e) {
-                } finally {
-                    if (jar != null) {
-                        try {
-                            jar.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                }
+				}
             }
         }
     }
@@ -161,28 +152,32 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 
         @Override
 		public void add(int index, IRuntimeClasspathEntry element) {
-            if (set.add(element))
-                super.add(index, element);
+            if (set.add(element)) {
+				super.add(index, element);
+			}
         }
 
         @Override
 		public boolean add(IRuntimeClasspathEntry o) {
-            if (set.add(o))
-                return super.add(o);
+            if (set.add(o)) {
+				return super.add(o);
+			}
             return false;
         }
 
         @Override
         public boolean addAll(Collection<? extends IRuntimeClasspathEntry> c) {
-        	if (set.addAll(c))
-                return super.addAll(c);
+        	if (set.addAll(c)) {
+				return super.addAll(c);
+			}
             return false;
         }
 
         @Override
 		public boolean addAll(int index, Collection<? extends IRuntimeClasspathEntry> c) {
-            if (set.addAll(c))
-                return super.addAll(index, c);
+            if (set.addAll(c)) {
+				return super.addAll(index, c);
+			}
             return false;
         }
 
@@ -211,15 +206,17 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 
         @Override
 		protected void removeRange(int fromIndex, int toIndex) {
-            for (int index = fromIndex; index<=toIndex; index++)
-                remove(index);
+            for (int index = fromIndex; index<=toIndex; index++) {
+				remove(index);
+			}
         }
 
         @Override
 		public IRuntimeClasspathEntry set(int index, IRuntimeClasspathEntry element) {
             set.remove(element);
-            if (set.add(element))
-                return super.set(index, element);
+            if (set.add(element)) {
+				return super.set(index, element);
+			}
             return null; //should not happen.
         }        
     }

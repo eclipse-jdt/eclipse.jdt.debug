@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * @returns Returns an ObjectReference for the monitor, if any, for which
 	 *          this thread is currently waiting.
 	 */
+	@Override
 	public ObjectReference currentContendedMonitor()
 			throws IncompatibleThreadStateException {
 		if (!virtualMachine().canGetCurrentContendedMonitor()) {
@@ -143,6 +144,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * @see com.sun.jdi.ThreadReference#forceEarlyReturn(com.sun.jdi.Value)
 	 * @since 3.3
 	 */
+	@Override
 	public void forceEarlyReturn(Value value) throws InvalidTypeException,
 			ClassNotLoadedException, IncompatibleThreadStateException {
 		if (!virtualMachineImpl().canBeModified()) {
@@ -200,6 +202,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * @returns Returns the StackFrame at the given index in the thread's
 	 *          current call stack.
 	 */
+	@Override
 	public StackFrame frame(int index) throws IncompatibleThreadStateException {
 		return frames(index, 1).get(0);
 	}
@@ -207,6 +210,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * @see com.sun.jdi.ThreadReference#frameCount()
 	 */
+	@Override
 	public int frameCount() throws IncompatibleThreadStateException {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -236,6 +240,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#frames()
 	 */
+	@Override
 	public List<StackFrame> frames() throws IncompatibleThreadStateException {
 		return frames(0, -1);
 	}
@@ -243,6 +248,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#frames(int, int)
 	 */
+	@Override
 	public List<StackFrame> frames(int start, int length) throws IndexOutOfBoundsException,
 			IncompatibleThreadStateException {
 		// Note that this information should not be cached.
@@ -291,6 +297,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#interrupt()
 	 */
+	@Override
 	public void interrupt() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -304,6 +311,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#isAtBreakpoint()
 	 */
+	@Override
 	public boolean isAtBreakpoint() {
 		return isSuspended() && fIsAtBreakpoint;
 	}
@@ -311,6 +319,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -340,6 +349,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#name()
 	 */
+	@Override
 	public String name() {
 		initJdwpRequest();
 		try {
@@ -363,6 +373,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#ownedMonitors()
 	 */
+	@Override
 	public List<ObjectReference> ownedMonitors() throws IncompatibleThreadStateException {
 		if (!virtualMachine().canGetOwnedMonitorInfo()) {
 			throw new UnsupportedOperationException();
@@ -400,6 +411,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.ThreadReference#ownedMonitorsAndFrames()
 	 */
+	@Override
 	public List<com.sun.jdi.MonitorInfo> ownedMonitorsAndFrames()
 			throws IncompatibleThreadStateException {
 		initJdwpRequest();
@@ -447,6 +459,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * 
 	 * @see com.sun.jdi.ThreadReference#resume()
 	 */
+	@Override
 	public void resume() {
 		initJdwpRequest();
 		try {
@@ -466,6 +479,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * @return Returns the thread's status.
 	 */
+	@Override
 	public int status() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -513,6 +527,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * 
 	 * @see com.sun.jdi.ThreadReference#stop(com.sun.jdi.ObjectReference)
 	 */
+	@Override
 	public void stop(ObjectReference throwable) throws InvalidTypeException {
 		checkVM(throwable);
 		ObjectReferenceImpl throwableImpl = (ObjectReferenceImpl) throwable;
@@ -546,6 +561,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * 
 	 * @see com.sun.jdi.ThreadReference#suspend()
 	 */
+	@Override
 	public void suspend() {
 		initJdwpRequest();
 		try {
@@ -564,6 +580,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * @return Returns the number of pending suspends for this thread.
 	 */
+	@Override
 	public int suspendCount() {
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -585,6 +602,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * @return Returns this thread's thread group.
 	 */
+	@Override
 	public ThreadGroupReference threadGroup() {
 		if (fThreadGroup != null) {
 			return fThreadGroup;
@@ -616,6 +634,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	 * @return Returns whether any finally or synchronized blocks are enclosing
 	 *         the current instruction.
 	 */
+	@Override
 	public boolean doReturn(Value returnValue,
 			boolean triggerFinallyAndSynchronized)
 			throws org.eclipse.jdi.hcr.OperationRefusedException {
@@ -771,6 +790,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * @see ThreadReference#popFrames(StackFrame)
 	 */
+	@Override
 	public void popFrames(StackFrame frameToPop)
 			throws IncompatibleThreadStateException {
 		if (!isSuspended()) {

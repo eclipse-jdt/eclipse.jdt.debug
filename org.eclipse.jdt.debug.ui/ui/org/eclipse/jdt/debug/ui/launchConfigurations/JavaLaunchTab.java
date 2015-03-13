@@ -118,6 +118,7 @@ public abstract class JavaLaunchTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * Subclasses may override this method and should call super.initializeFrom(...).
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		setCurrentLaunchConfiguration(config);
 	}	

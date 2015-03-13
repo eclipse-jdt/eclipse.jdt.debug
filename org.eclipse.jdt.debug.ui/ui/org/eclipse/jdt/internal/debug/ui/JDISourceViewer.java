@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		StyledText text= this.getTextWidget();
 		final int baseLevel= (styles & SWT.RIGHT_TO_LEFT) != 0 ? Bidi.DIRECTION_RIGHT_TO_LEFT : Bidi.DIRECTION_LEFT_TO_RIGHT;
 		text.addBidiSegmentListener(new  BidiSegmentListener() {
+			@Override
 			public void lineGetSegments(BidiSegmentEvent event) {
 				try {
 					event.segments= getBidiLineSegments(getDocument(), baseLevel, widgetOffset2ModelOffset(event.lineOffset), event.lineText);
@@ -239,6 +240,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		IContentAssistant assistant= getContentAssistant();
 		if (assistant instanceof ContentAssistant) {
@@ -331,12 +333,14 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 */
 	protected static int[] getBidiLineSegments(IDocument document, int baseLevel, int lineStart, String lineText) throws BadLocationException {
 
-		if (lineText == null || document == null)
+		if (lineText == null || document == null) {
 			return null;
+		}
 
 		int lineLength= lineText.length();
-		if (lineLength <= 2)
+		if (lineLength <= 2) {
 			return null;
+		}
 
 		// Have ICU compute embedding levels. Consume these levels to reduce
 		// the Bidi impact, by creating selective segments (preceding
@@ -347,14 +351,16 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		// unavailability of such methods as isLeftToRight and getLevels.
 
 		Bidi bidi= new Bidi(lineText, baseLevel);
-		if (bidi.isLeftToRight())
+		if (bidi.isLeftToRight()) {
 			// Bail out if this is not Bidi text.
 			return null;
+		}
 
 		IRegion line= document.getLineInformationOfOffset(lineStart);
 		ITypedRegion[] linePartitioning= TextUtilities.computePartitioning(document, IJavaPartitions.JAVA_PARTITIONING, lineStart, line.getLength(), false);
-		if (linePartitioning == null || linePartitioning.length < 1)
+		if (linePartitioning == null || linePartitioning.length < 1) {
 			return null;
+		}
 
 		int segmentIndex= 1;
 		int[] segments= new int[lineLength + 1];
@@ -386,15 +392,18 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 				}
 			}
 		}
-		if (segmentIndex <= 1)
+		if (segmentIndex <= 1) {
 			return null;
+		}
 
 		segments[0]= 0;
-		if (segments[segmentIndex - 1] != lineLength)
+		if (segments[segmentIndex - 1] != lineLength) {
 			segments[segmentIndex++]= lineLength;
+		}
 
-		if (segmentIndex == segments.length)
+		if (segmentIndex == segments.length) {
 			return segments;
+		}
 
 		int[] newSegments= new int[segmentIndex];
 		System.arraycopy(segments, 0, newSegments, 0, segmentIndex);

@@ -572,6 +572,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * @since 3.2
 	 * @return true if the specified tests pass, or the context is a container, false otherwise
 	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (PROPERTY_IS_CONTAINER.equals(property)) {
 			if (receiver instanceof IAdaptable) {

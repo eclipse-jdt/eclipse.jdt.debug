@@ -52,6 +52,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreads()
 	 */
+	@Override
 	public synchronized IJavaThread[] getThreads() throws DebugException {
 		try {
 			List<ThreadReference> threads = fGroup.threads();
@@ -80,6 +81,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroup()
 	 */
+	@Override
 	public IJavaThreadGroup getThreadGroup() throws DebugException {
 		try {
 			ThreadGroupReference reference = fGroup.parent();
@@ -97,6 +99,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroups()
 	 */
+	@Override
 	public IJavaThreadGroup[] getThreadGroups() throws DebugException {
 		try {
 			List<ThreadGroupReference> groups = fGroup.threadGroups();
@@ -126,6 +129,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getName()
 	 */
+	@Override
 	public synchronized String getName() throws DebugException {
 		if (fName == null) {
 			try {
@@ -146,6 +150,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreadGroups()
 	 */
+	@Override
 	public boolean hasThreadGroups() throws DebugException {
 		try {
 			List<ThreadGroupReference> groups = fGroup.threadGroups();
@@ -161,6 +166,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	 * 
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreads()
 	 */
+	@Override
 	public boolean hasThreads() throws DebugException {
 		try {
 			List<ThreadReference> threads = fGroup.threads();
@@ -174,6 +180,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		// the group can terminate if the target can terminate
 		return getDebugTarget().canTerminate();
@@ -182,6 +189,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
@@ -189,6 +197,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}

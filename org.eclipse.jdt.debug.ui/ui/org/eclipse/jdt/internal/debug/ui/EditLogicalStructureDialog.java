@@ -100,18 +100,21 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getElements();
 		}
@@ -224,6 +227,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fParentComposite= parent;
 		
 		IHandler handler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				if(fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
 					findCorrespondingType();
@@ -385,6 +389,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		Widget source= event.widget;
 		switch (event.type) {
@@ -541,6 +546,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		saveAttributeValue();
 		fCurrentAttributeSelection= (IStructuredSelection) event.getSelection();
@@ -643,6 +649,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		// nothing to do
 	}
@@ -650,6 +657,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		checkValues();
 	}
@@ -729,6 +737,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 * Return the type object which corresponds to the given name.
 	 * @return the {@link IType}
 	 */
+	@Override
 	public IType getType() {
 		if (!fTypeSearched) {
 			findCorrespondingType();

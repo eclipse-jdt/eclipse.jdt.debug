@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	/**
 	 * @return Returns the default arguments.
 	 */
+	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
 		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(6);
 
@@ -165,6 +166,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.connect.LaunchingConnector#launch(java.util.Map)
 	 */
+	@Override
 	public VirtualMachine launch(Map<String,? extends Connector.Argument> connectionArgs) throws IOException,
 			IllegalConnectorArgumentsException, VMStartException {
 		getConnectionArguments(connectionArgs);
@@ -222,18 +224,9 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	 * @since 3.2
 	 */
 	public static int findFreePort() {
-		ServerSocket socket = null;
-		try {
-			socket = new ServerSocket(0);
+		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
 		} catch (IOException e) {
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return -1;
 	}

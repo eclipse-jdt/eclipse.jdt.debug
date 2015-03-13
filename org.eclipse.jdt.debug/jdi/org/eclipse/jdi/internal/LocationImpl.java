@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @return Returns the code position within this location's method.
 	 */
+	@Override
 	public long codeIndex() {
 		return fIndex;
 	}
@@ -58,6 +59,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @return Returns the type to which this Location belongs.
 	 */
+	@Override
 	public ReferenceType declaringType() {
 		return fMethod.declaringType();
 	}
@@ -87,6 +89,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(Locatable locatable) {
 		if (locatable == null || !locatable.getClass().equals(this.getClass()))
 			throw new ClassCastException(
@@ -117,6 +120,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * @return Returns an int specifying the line in the source, return -1 if
 	 *         the information is not available.
 	 */
+	@Override
 	public int lineNumber() {
 		return lineNumber(virtualMachine().getDefaultStratum());
 	}
@@ -124,6 +128,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @return Returns the Method if this location is in a method.
 	 */
+	@Override
 	public Method method() {
 		return fMethod;
 	}
@@ -131,6 +136,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @return a string specifying the source.
 	 */
+	@Override
 	public String sourceName() throws AbsentInformationException {
 		return sourceName(virtualMachine().getDefaultStratum());
 	}
@@ -177,6 +183,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @see Location#lineNumber(String)
 	 */
+	@Override
 	public int lineNumber(String stratum) {
 		return fMethod.referenceTypeImpl().lineNumber(fIndex, fMethod, stratum);
 	}
@@ -184,6 +191,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @see Location#sourceName(String)
 	 */
+	@Override
 	public String sourceName(String stratum) throws AbsentInformationException {
 		return fMethod.referenceTypeImpl().sourceName(fIndex, fMethod, stratum);
 	}
@@ -191,6 +199,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @see Location#sourcePath(String)
 	 */
+	@Override
 	public String sourcePath(String stratum) throws AbsentInformationException {
 		return fMethod.referenceTypeImpl().sourcePath(fIndex, fMethod, stratum);
 	}
@@ -198,6 +207,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/**
 	 * @see Location#sourcePath()
 	 */
+	@Override
 	public String sourcePath() throws AbsentInformationException {
 		return sourcePath(virtualMachine().getDefaultStratum());
 	}
