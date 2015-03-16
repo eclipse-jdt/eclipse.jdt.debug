@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -1686,6 +1688,7 @@ public final class JavaRuntime {
 		IPath[] libraryPaths;
 		IPath[] sourcePaths;
 		IPath[] sourceRootPaths;
+		IPath[] annotationPaths;
 		URL[] javadocLocations;
 		URL[] indexes;
 		LibraryLocation[] locations= vm.getLibraryLocations();
@@ -1701,6 +1704,7 @@ public final class JavaRuntime {
 			sourceRootPaths = new IPath[dflts.length];
 			javadocLocations= new URL[dflts.length];
 			indexes = new URL[dflts.length];
+			annotationPaths = new IPath[dflts.length];
 			for (int i = 0; i < dflts.length; i++) {
 				libraryPaths[i]= dflts[i].getSystemLibraryPath();
                 if (defJavaDocLocation == null) {
@@ -1713,6 +1717,8 @@ public final class JavaRuntime {
 					libraryPaths[i]= Path.EMPTY;
 				}
 				
+				annotationPaths[i] = Path.EMPTY;
+
 				sourcePaths[i]= dflts[i].getSystemLibrarySourcePath();
 				if (sourcePaths[i].toFile().isFile()) {
 					sourceRootPaths[i]= dflts[i].getPackageRootPath();
@@ -1727,17 +1733,19 @@ public final class JavaRuntime {
 			sourceRootPaths = new IPath[locations.length];
 			javadocLocations= new URL[locations.length];
 			indexes = new URL[locations.length];
+			annotationPaths = new IPath[locations.length];
 			for (int i = 0; i < locations.length; i++) {
 				libraryPaths[i]= locations[i].getSystemLibraryPath();
 				sourcePaths[i]= locations[i].getSystemLibrarySourcePath();
 				sourceRootPaths[i]= locations[i].getPackageRootPath();
 				javadocLocations[i]= locations[i].getJavadocLocation();
+				annotationPaths[i] = locations[i].getExternalAnnotationsPath();
 				indexes[i] = locations[i].getIndexLocation();
 			}
 		}
 		locations = new LibraryLocation[sourcePaths.length];
 		for (int i = 0; i < sourcePaths.length; i++) {
-			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i], javadocLocations[i], indexes[i]);
+			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i], javadocLocations[i], indexes[i], annotationPaths[i]);
 		}
 		return locations;
 	}

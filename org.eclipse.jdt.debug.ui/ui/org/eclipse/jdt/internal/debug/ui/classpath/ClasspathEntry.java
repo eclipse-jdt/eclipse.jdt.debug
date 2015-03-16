@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 
 package org.eclipse.jdt.internal.debug.ui.classpath;
@@ -131,7 +133,22 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	@Override
 	public void setSourceAttachmentRootPath(IPath path) {
 		entry.setSourceAttachmentRootPath(path);
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getExternalAnnotationsPath()
+	 */
+	@Override
+	public IPath getExternalAnnotationsPath() {
+		return entry.getExternalAnnotationsPath();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setExternalAnnotationsPath(org.eclipse.core.runtime.IPath)
+	 */
+	@Override
+	public void setExternalAnnotationsPath(IPath path) {
+		entry.setExternalAnnotationsPath(path);
 	}
 
 	/* (non-Javadoc)

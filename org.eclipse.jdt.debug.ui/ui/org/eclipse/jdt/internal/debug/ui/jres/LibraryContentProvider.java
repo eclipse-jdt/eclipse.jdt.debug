@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
@@ -46,6 +47,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		
 		public static final int JAVADOC_URL= 1;
 		public static final int SOURCE_PATH= 2;
+		public static final int EXTERNAL_ANNOTATIONS_PATH = 3;
 		
 		private LibraryStandin fParent;
 		private int fType;
@@ -71,6 +73,10 @@ public class LibraryContentProvider implements ITreeContentProvider {
 				case SOURCE_PATH:
 					fParent.setSystemLibrarySourcePath(Path.EMPTY);
 					break;
+				case EXTERNAL_ANNOTATIONS_PATH:
+					fParent.setExternalAnnotationsPath(Path.EMPTY);
+					break;
+
 			}
 		}
 	}
@@ -112,7 +118,8 @@ public class LibraryContentProvider implements ITreeContentProvider {
 			LibraryStandin standin= (LibraryStandin) parentElement;
 			Object[] children= fChildren.get(standin);
 			if (children == null) {
-				children= new Object[] {new SubElement(standin, SubElement.SOURCE_PATH), new SubElement(standin, SubElement.JAVADOC_URL)};
+				children = new Object[] { new SubElement(standin, SubElement.SOURCE_PATH), new SubElement(standin, SubElement.JAVADOC_URL),
+						new SubElement(standin, SubElement.EXTERNAL_ANNOTATIONS_PATH) };
 				fChildren.put(standin, children);
 			}
 			return children;
@@ -319,6 +326,29 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		fViewer.refresh();
 	}
 	
+	/**
+	 * Set the given paths as the annotations path for the libraries contained in the given selection.
+	 *
+	 * @param annotationsAttachmentPath
+	 *            the path of the new attachment
+	 * @param annotationsAttachmentRootPath
+	 *            the root path of the new attachment
+	 * @param selection
+	 *            the selection of libraries to set the new paths in
+	 */
+	public void setAnnotationsPath(IPath annotationsAttachmentPath, IStructuredSelection selection) {
+		Set<Object> libraries = getSelectedLibraries(selection);
+		if (annotationsAttachmentPath == null) {
+			annotationsAttachmentPath = Path.EMPTY;
+		}
+		Iterator<Object> iterator = libraries.iterator();
+		while (iterator.hasNext()) {
+			LibraryStandin standin = (LibraryStandin) iterator.next();
+			standin.setExternalAnnotationsPath(annotationsAttachmentPath);
+		}
+		fViewer.refresh();
+	}
+
 	/**
 	 * Returns the stand-in libraries being edited.
 	 * 

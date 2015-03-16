@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
@@ -50,11 +52,19 @@ public class LibraryLabelProvider extends LabelProvider {
 			status = library.validate();
 			
 		} else if (element instanceof SubElement) {
-			if (((SubElement)element).getType() == SubElement.SOURCE_PATH) {
-				key = ISharedImages.IMG_OBJS_JAR_WITH_SOURCE;
-			}
-			else {
-				key = ISharedImages.IMG_OBJS_JAVADOCTAG;
+			switch(((SubElement)element).getType()) {
+				case SubElement.SOURCE_PATH:
+					key = ISharedImages.IMG_OBJS_JAR_WITH_SOURCE;
+					break;
+					
+				case SubElement.EXTERNAL_ANNOTATIONS_PATH:
+					key = ISharedImages.IMG_OBJS_EXTERNAL_ANNOTATIONS;
+					break;
+
+				default:
+				case SubElement.JAVADOC_URL:
+					key = ISharedImages.IMG_OBJS_JAVADOCTAG;
+					break;
 			}
 		}
 		if(key != null) {
@@ -93,6 +103,14 @@ public class LibraryLabelProvider extends LabelProvider {
 					text.append(javadocLocation.toExternalForm());
 				} else {
 					text.append(JREMessages.VMLibraryBlock_1);
+				}
+			} else if (subElement.getType() == SubElement.EXTERNAL_ANNOTATIONS_PATH) {
+				text.append(JREMessages.VMExternalAnnsBlock_1);
+				IPath externalAnnotationsPath = subElement.getParent().getExternalAnnotationsPath();
+				if (externalAnnotationsPath != null && !Path.EMPTY.equals(externalAnnotationsPath)) {
+					text.append(externalAnnotationsPath.toOSString());
+				} else {
+					text.append(JREMessages.VMExternalAnnsBlock_2);
 				}
 			}
 			return text.toString();

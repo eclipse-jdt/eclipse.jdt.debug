@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -37,6 +39,8 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	
 	private IPath sourceAttachmentPath = null;
 	private IPath rootSourcePath = null;
+	private IPath externalAnnotationsPath = null;
+
 	private int classpathProperty = IRuntimeClasspathEntry.USER_CLASSES;
 	/**
 	 * Associated Java project, or <code>null</code>
@@ -162,6 +166,16 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	public void setSourceAttachmentRootPath(IPath path) {
 		rootSourcePath = path;
 	}
+	@Override
+	public IPath getExternalAnnotationsPath() {
+		return externalAnnotationsPath;
+	}
+
+	@Override
+	public void setExternalAnnotationsPath(IPath path) {
+		externalAnnotationsPath = path;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathProperty()
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
 import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
@@ -26,6 +29,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 public final class LibraryLocation {
 	private IPath fSystemLibrary;
 	private IPath fSystemLibrarySource;
+	private IPath fExternalAnnotations;
 	private IPath fPackageRootPath;
 	private URL fJavadocLocation;
 	private URL fIndexLocation;
@@ -65,8 +69,8 @@ public final class LibraryLocation {
 	 * @since 3.1
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation) {
-		this(libraryPath, sourcePath, packageRoot, javadocLocation, null);
-	}		
+		this(libraryPath, sourcePath, packageRoot, javadocLocation, null, null);
+	}
 
 	/**
 	 * Creates a new library location.
@@ -86,6 +90,28 @@ public final class LibraryLocation {
 	 * @since 3.7
 	 */
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation, URL indexLocation) {
+		this(libraryPath, sourcePath, packageRoot, javadocLocation, indexLocation, null);
+	}		
+
+	/**
+	 * Creates a new library location.
+	 * 
+	 * @param libraryPath	The location of the JAR containing java.lang.Object
+	 * 					Must not be <code>null</code>.
+	 * @param sourcePath	The location of the zip file containing the sources for <code>library</code>
+	 * 					Must not be <code>null</code> (Use Path.EMPTY instead)
+	 * @param packageRoot The path inside the <code>source</code> zip file where packages names
+	 * 					  begin. If the source for java.lang.Object source is found at 
+	 * 					  "src/java/lang/Object.java" in the zip file, the 
+	 * 					  packageRoot should be "src"
+	 * 					  Must not be <code>null</code>. (Use Path.EMPTY or IPath.ROOT)
+	 * @param javadocLocation The location of the javadoc for <code>library</code>
+	 * @param indexLocation The location of the index for <code>library</code>
+	 * @param externalAnnotations The file or directory containing external annotations, or <code>null</code> if not applicable.
+	 * @throws IllegalArgumentException If the library path is <code>null</code>.
+	 * @since 3.8
+	 */
+	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation, URL indexLocation, IPath externalAnnotations) {
 		if (libraryPath == null) {
 			throw new IllegalArgumentException(LaunchingMessages.libraryLocation_assert_libraryNotNull); 
 		}
@@ -94,6 +120,7 @@ public final class LibraryLocation {
 		fPackageRootPath= packageRoot;
 		fJavadocLocation= javadocLocation;
 		fIndexLocation = indexLocation;
+		fExternalAnnotations = externalAnnotations == null ? Path.EMPTY : externalAnnotations;
 	}
 	
 	/**
@@ -114,6 +141,16 @@ public final class LibraryLocation {
 		return fSystemLibrarySource;
 	}	
 	
+	/**
+	 * Return the JRE library external annotations location.
+	 * 
+	 * @since 3.8
+	 * @return The file or directory holding external annotations, or Path.EMPTY if not applicable. This will never be null.
+	 */
+	public IPath getExternalAnnotationsPath() {
+		return fExternalAnnotations;
+	}
+
 	/**
 	 * Returns the path to the default package in the sources zip file
 	 * 
@@ -154,6 +191,7 @@ public final class LibraryLocation {
 			LibraryLocation lib = (LibraryLocation)obj;
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
+				&& equals(getExternalAnnotationsPath(), lib.getExternalAnnotationsPath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
 				&& LaunchingPlugin.sameURL(getJavadocLocation(), lib.getJavadocLocation());
 		} 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -312,6 +314,9 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		if (attributeKey.equals(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME)) {
 			return Status.OK_STATUS;
 		}
+		if (attributeKey.equals(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH)) {
+			return Status.OK_STATUS;
+		}
 		if (attributeKey.equals(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
 			return Status.OK_STATUS;
 		}
@@ -347,6 +352,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 						rootPath = Path.EMPTY;
 					}
 					URL javadocLocation = null;
+					IPath externalAnnotations = null;
 					IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
 					for (int j = 0; j < extraAttributes.length; j++) {
 						IClasspathAttribute attribute = extraAttributes[j];
@@ -359,9 +365,18 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 									LaunchingPlugin.log(e);
 								}
 							}
+						} else if (attribute.getName().equals(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH)) {
+							String xpath = attribute.getValue();
+							if (null != xpath && xpath.trim().length() > 0) {
+								try {
+									externalAnnotations = Path.fromPortableString(xpath);
+								} catch (Exception x) {
+									LaunchingPlugin.log(x);
+								}
+							}
 						}
 					}
-					libs[i] = new LibraryLocation(path, srcPath, rootPath, javadocLocation);
+					libs[i] = new LibraryLocation(path, srcPath, rootPath, javadocLocation, null, externalAnnotations);
 				} else {
 					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, NLS.bind(LaunchingMessages.JREContainerInitializer_Classpath_entry__0__does_not_refer_to_an_existing_library__2, new String[]{entry.getPath().toString()}), null); 
 					throw new CoreException(status);

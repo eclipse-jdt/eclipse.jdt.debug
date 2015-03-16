@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
@@ -28,6 +30,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 public final class LibraryStandin {
 	private IPath fSystemLibrary;
 	private IPath fSystemLibrarySource;
+	private IPath fExternalAnnotations;
 	private IPath fPackageRootPath;
 	private URL fJavadocLocation;
 	
@@ -39,6 +42,7 @@ public final class LibraryStandin {
 		setSystemLibrarySourcePath(libraryLocation.getSystemLibrarySourcePath());
 		setPackageRootPath(libraryLocation.getPackageRootPath());
 		setJavadocLocation(libraryLocation.getJavadocLocation());
+		setExternalAnnotationsPath(libraryLocation.getExternalAnnotationsPath());
 	}		
 		
 	/**
@@ -69,6 +73,19 @@ public final class LibraryStandin {
 	}
 	
 	/**
+	 * Returns the path to the external annotations.
+	 *
+	 * @return
+	 */
+	public IPath getExternalAnnotationsPath() {
+		return fExternalAnnotations;
+	}
+
+	void setExternalAnnotationsPath(IPath path) {
+		fExternalAnnotations = path;
+	}
+
+	/**
 	 * Returns the path to the default package in the sources zip file
 	 * 
 	 * @return The path to the default package in the sources zip file.
@@ -96,6 +113,7 @@ public final class LibraryStandin {
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
+				&& equals(getExternalAnnotationsPath(), lib.getExternalAnnotationsPath())
 				&& equalURLs(getJavadocLocation(), lib.getJavadocLocation());
 		} 
 		return false;
@@ -179,7 +197,7 @@ public final class LibraryStandin {
 	 * @return library location
 	 */
 	LibraryLocation toLibraryLocation() {
-		return new LibraryLocation(getSystemLibraryPath(), getSystemLibrarySourcePath(), getPackageRootPath(), getJavadocLocation());
+		return new LibraryLocation(getSystemLibraryPath(), getSystemLibrarySourcePath(), getPackageRootPath(), getJavadocLocation(), null, getExternalAnnotationsPath());
 	}
 	
 	/**
@@ -201,6 +219,17 @@ public final class LibraryStandin {
 				}
 			}
 		}
+		path = getExternalAnnotationsPath();
+		if (path != null && !path.isEmpty()) {
+			if (!path.toFile().exists()) {
+				// check for workspace resource
+				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (resource == null || !resource.exists()) {
+					return new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, "External Annotations file does not exist: " + path.toOSString(), null); //$NON-NLS-1$
+				}
+			}
+		}
+
 		return Status.OK_STATUS;
 	}
 	

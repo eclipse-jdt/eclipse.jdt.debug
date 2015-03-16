@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -358,6 +360,12 @@ public class JREContainer implements IClasspathContainer {
 			IClasspathAttribute indexCPLocation = JavaCore.newClasspathAttribute(IClasspathAttribute.INDEX_LOCATION_ATTRIBUTE_NAME, indexLocation.toExternalForm());
 			classpathAttributes.add(indexCPLocation);
 		}
+		IPath annotationsPath = lib.getExternalAnnotationsPath();
+		if (null != annotationsPath && !annotationsPath.isEmpty()) {
+			IClasspathAttribute xAnnLocation = JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, annotationsPath.toPortableString());
+			classpathAttributes.add(xAnnLocation);
+		}
+
 		return classpathAttributes.toArray(new IClasspathAttribute[classpathAttributes.size()]);
 	}
 	

@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 88939
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -25,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -291,6 +294,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (getSourceAttachmentRootPath() != null) {
 			node.setAttribute("sourceRootPath", getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
 		}
+		if (getExternalAnnotationsPath() != null) {
+			node.setAttribute("externalAnnotationsPath", getExternalAnnotationsPath().toString()); //$NON-NLS-1$
+		}
 		if (getJavaProject() != null) {
 			node.setAttribute("javaProject", getJavaProject().getElementName()); //$NON-NLS-1$
 		}
@@ -367,7 +373,36 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (path != null && path.isEmpty()) {
 			path = null;
 		}
-		updateClasspathEntry(getPath(), path, getSourceAttachmentRootPath());
+		updateClasspathEntry(getPath(), path, getSourceAttachmentRootPath(), getExternalAnnotationsPath());
+	}
+
+	@Override
+	public IPath getExternalAnnotationsPath() {
+		IClasspathEntry entry = getClasspathEntry();
+		if (null != entry) {
+			String s = findClasspathAttribute(entry.getExtraAttributes(), IClasspathAttribute.EXTERNAL_ANNOTATION_PATH);
+			if (null != s) {
+				return new Path(s);
+			}
+		}
+		return null;
+	}
+
+	private static String findClasspathAttribute(IClasspathAttribute[] attributes, String name) {
+		for(int i = attributes.length; --i >= 0;) {
+			if(name.equals(attributes[i].getName())) {
+				return attributes[i].getValue();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setExternalAnnotationsPath(IPath path) {
+		if (path != null && path.isEmpty()) {
+			path = null;
+		}
+		updateClasspathEntry(getPath(), getSourceAttachmentPath(), getSourceAttachmentRootPath(), path);
 	}
 	
 	/**
@@ -391,7 +426,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (path != null && path.isEmpty()) {
 			path = null;
 		}
-		updateClasspathEntry(getPath(), getSourceAttachmentPath(), path);		
+		updateClasspathEntry(getPath(), getSourceAttachmentPath(), path, getExternalAnnotationsPath());
 	}
 	
 	/**
@@ -605,12 +640,17 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @param sourcePath the source path
 	 * @param rootPath the root path
 	 */
-	protected void updateClasspathEntry(IPath path, IPath sourcePath, IPath rootPath) {
+	protected void updateClasspathEntry(IPath path, IPath sourcePath, IPath rootPath, IPath annotationsPath) {
 		IClasspathEntry entry = null;
 		IClasspathEntry original = getClasspathEntry();
 		switch (getType()) {
 			case ARCHIVE:
-				entry = JavaCore.newLibraryEntry(path, sourcePath, rootPath, original.getAccessRules(), original.getExtraAttributes(), original.isExported());
+				IClasspathAttribute[] extraAttributes = original.getExtraAttributes();
+				if (annotationsPath != null) {
+					extraAttributes = setClasspathAttribute(extraAttributes, IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, annotationsPath.toPortableString());
+				}
+
+				entry = JavaCore.newLibraryEntry(path, sourcePath, rootPath, original.getAccessRules(), extraAttributes, original.isExported());
 				break;
 			case VARIABLE:
 				entry = JavaCore.newVariableEntry(path, sourcePath, rootPath);
@@ -621,6 +661,21 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		setClasspathEntry(entry);		
 	}
 	
+	private static IClasspathAttribute[] setClasspathAttribute(IClasspathAttribute[] attributes, String name, String value) {
+		for (int i = attributes.length; --i >= 0;) {
+			if (name.equals(attributes[i].getName())) {
+				IClasspathAttribute[] nw = new IClasspathAttribute[attributes.length];
+				System.arraycopy(nw, 0, attributes, 0, attributes.length);
+				nw[i] = JavaCore.newClasspathAttribute(name, value);
+				return nw;
+			}
+		}
+		IClasspathAttribute[] nw = new IClasspathAttribute[attributes.length + 1];
+		System.arraycopy(nw, 0, attributes, 0, attributes.length);
+		nw[attributes.length] = JavaCore.newClasspathAttribute(name, value);
+		return nw;
+	}
+
 	/**
 	 * Returns the resolved classpath entry associated with this runtime
 	 * entry, resolving if required.
