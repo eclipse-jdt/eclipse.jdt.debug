@@ -82,6 +82,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
+
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -384,22 +385,23 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 			
 		if (ITextOperationTarget.class.equals(required)) {
-			return fSourceViewer.getTextOperationTarget();
+			return (T) fSourceViewer.getTextOperationTarget();
 		}
 		
 		if (IFindReplaceTarget.class.equals(required)) {
-			return fSourceViewer.getFindReplaceTarget();
+			return (T) fSourceViewer.getFindReplaceTarget();
 		}
 			
 		if (IDataDisplay.class.equals(required)) {
-			return fDataDisplay;
+			return (T) fDataDisplay;
 		}
 		if (ITextViewer.class.equals(required)) {
-			return fSourceViewer;
+			return (T) fSourceViewer;
 		}
 		
 		return super.getAdapter(required);
