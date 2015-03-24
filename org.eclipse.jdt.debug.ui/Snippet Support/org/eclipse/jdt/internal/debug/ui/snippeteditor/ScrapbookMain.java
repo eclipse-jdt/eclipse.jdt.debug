@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -41,17 +42,19 @@ public class ScrapbookMain {
 				return;
 			} catch (IllegalAccessException e) {
 				return;
+			} catch (IOException e) {
+				return;
 			}
 		}
 	
 	}
 	
-	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-		ClassLoader cl= new URLClassLoader(urls, null);
-		Class<?> clazz= cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
-		Method method= clazz.getDeclaredMethod("eval", new Class[] {Class.class}); //$NON-NLS-1$
-		method.invoke(null, new Object[] {ScrapbookMain.class});
+	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
+		try (URLClassLoader cl = new URLClassLoader(urls, null)) {
+			Class<?> clazz = cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
+			Method method = clazz.getDeclaredMethod("eval", new Class[] { Class.class }); //$NON-NLS-1$
+			method.invoke(null, new Object[] { ScrapbookMain.class });
+		}
 	}
 	
 	public static void nop() {
