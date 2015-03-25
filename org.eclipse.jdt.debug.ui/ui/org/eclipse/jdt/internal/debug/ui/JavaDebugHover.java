@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *      Bug Menot - Bug 445867
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
@@ -395,8 +396,17 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             					}
             				} else {
             					// compare unresolved signatures
+
+            					// Frames in classes with generics have declaringTypeName like class<V>
+            					// We must get rid of this '<V>' for proper comparison
+            					String frameDeclaringTypeName = frame.getDeclaringTypeName();
+            					int genericPartOffset = frameDeclaringTypeName.indexOf('<');
+            					if (genericPartOffset != -1) {
+            						frameDeclaringTypeName = frameDeclaringTypeName.substring(0, genericPartOffset);
+            					}
+
             					if (((frame.isConstructor() && method.isConstructor()) || frame.getMethodName().equals(method.getElementName()))
-            							&& frame.getDeclaringTypeName().endsWith(method.getDeclaringType().getElementName())
+            							&& frameDeclaringTypeName.endsWith(method.getDeclaringType().getElementName())
             							&& frame.getArgumentTypeNames().size() == method.getNumberOfParameters()) {
             						equal = true;
             					}
