@@ -48,15 +48,22 @@ public class ScrapbookMain {
 		}
 	
 	}
-	
+
 	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
-		try (URLClassLoader cl = new URLClassLoader(urls, null)) {
+		@SuppressWarnings("resource")
+		URLClassLoader cl = null;
+		try {
+			cl = new URLClassLoader(urls, null);
 			Class<?> clazz = cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
 			Method method = clazz.getDeclaredMethod("eval", new Class[] { Class.class }); //$NON-NLS-1$
 			method.invoke(null, new Object[] { ScrapbookMain.class });
+		} finally {
+			if (cl != null) {
+				cl.close();
+			}
 		}
 	}
-	
+
 	public static void nop() {
 		try {
 			Thread.sleep(100);
