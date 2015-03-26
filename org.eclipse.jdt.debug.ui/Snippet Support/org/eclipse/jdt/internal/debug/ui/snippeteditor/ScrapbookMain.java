@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -42,28 +41,21 @@ public class ScrapbookMain {
 				return;
 			} catch (IllegalAccessException e) {
 				return;
-			} catch (IOException e) {
-				return;
 			}
 		}
 	
 	}
-
-	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
+	
+	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		// Currently uses compiler target=jsr14, see scripts/buildExtraJAR.xml
+		// Don't use URLClassLoader#close() or other post-1.4 APIs!
 		@SuppressWarnings("resource")
-		URLClassLoader cl = null;
-		try {
-			cl = new URLClassLoader(urls, null);
-			Class<?> clazz = cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
-			Method method = clazz.getDeclaredMethod("eval", new Class[] { Class.class }); //$NON-NLS-1$
-			method.invoke(null, new Object[] { ScrapbookMain.class });
-		} finally {
-			if (cl != null) {
-				cl.close();
-			}
-		}
+		ClassLoader cl= new URLClassLoader(urls, null);
+		Class<?> clazz= cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
+		Method method= clazz.getDeclaredMethod("eval", new Class[] {Class.class}); //$NON-NLS-1$
+		method.invoke(null, new Object[] {ScrapbookMain.class});
 	}
-
+	
 	public static void nop() {
 		try {
 			Thread.sleep(100);

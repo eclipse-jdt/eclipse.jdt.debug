@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2005, 2011 IBM Corporation and others.
+     Copyright (c) 2005, 2015 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@
 
 	<target name="build" description="Cleans, builds and refreshes the impacted resources" depends="clean, snippetsupport.jar"/>
 
+	<!-- Empty target for "After a Clean" task (we don't want to rebuild the Jar here, e.g. on checkout). -->
+	<target name="dummy_clean"/>
+	
 	<target name="init" depends="properties">
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -27,15 +30,16 @@
 		<property name="destdir" value="${temp.folder}/snippetsupport.jar.bin"/>
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
-		<!-- compile the source code -->
-		<javac target="1.5" source="1.5" destdir="${destdir}"
+		<!-- Keep target level as low as possible!
+			snippetsupport.jar is used on the classpath of a separate VM that
+			uses the JRE that's on the build path of the scrapbook file's project. -->
+		<javac target="jsr14" source="1.5" destdir="${destdir}"
 			failonerror="true"
 			verbose="false"
 			debug="on"
 			includeAntRuntime="no"
 			classpath="${basedir}/bin">
 			<src path="Snippet Support/"/>
-			<compilerarg value="-warn:-resource"/>
 		</javac>
 		<mkdir dir="${build.result.folder}"/>
 		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${destdir}"/>
