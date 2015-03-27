@@ -362,7 +362,10 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 				IPath annotationPath = null == annotationPathString ? null : new Path(annotationPathString);
 
 				IPath newPath = BuildPathDialogAccess.configureExternalAnnotationsAttachment(fLibraryViewer.getControl().getShell(), annotationPath);
-				fLibraryContentProvider.setAnnotationsPath(newPath, selection);
+				if (null == newPath) {
+					return;
+				}
+				fLibraryContentProvider.setAnnotationsPath(newPath.segmentCount() == 0 ? null : newPath, selection);
 			}
 		}
 	}
