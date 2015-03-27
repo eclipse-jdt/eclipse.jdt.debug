@@ -230,7 +230,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			if (launch != null) {
 				IDebugTarget dt = launch.getDebugTarget();
-				IBreakpoint magicBreakpoint = createMagicBreakpoint("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
+				IBreakpoint magicBreakpoint = createMagicBreakpoint();
 				fScrapbookToVMs.put(page, dt);
 				fVMsToScrapbooks.put(dt, page);
 				fVMsToBreakpoints.put(dt, magicBreakpoint);
@@ -246,13 +246,15 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	/**
 	 * Creates an "invisible" line breakpoint. 
-	 * @param typeName the type name
 	 * @return the new 'magic' breakpoint
 	 * @throws CoreException if an exception occurs
 	 */
-	IBreakpoint createMagicBreakpoint(String typeName) throws CoreException{
-		//set a breakpoint on the Thread.sleep(100); line of the no-op method of ScrapbookMain
-		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 59, -1, -1, 0, false, null);
+	IBreakpoint createMagicBreakpoint() throws CoreException {
+		// set a breakpoint on the "Thread.sleep(100);" line of the no-op method of ScrapbookMain
+		String typeName = "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"; //$NON-NLS-1$
+		int lineNumber = 66; // TODO: This line number needs to be adjusted when ScrapbookMain is modified.
+
+		fMagicBreakpoint = JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, lineNumber, -1, -1, 0, false, null);
 		fMagicBreakpoint.setPersisted(false);
 		return fMagicBreakpoint;
 	}

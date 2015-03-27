@@ -21,14 +21,21 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
 /**
- * Support class for launching a snippet evaluation
+ * Support class for launching a snippet evaluation.
+ * <p>
+ * CAUTION 1: If you touch this class, you need to make sure the line number of the {@link #nop()} method's statement gets updated in
+ * {@link org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher#createMagicBreakpoint()}.
+ * <p>
+ * CAUTION 2: This class gets compiled with target=jsr14, see scripts/buildExtraJAR.xml. Don't use URLClassLoader#close() or other post-1.4 APIs!
  */
 public class ScrapbookMain {
 	
 	public static void main(String[] args) {
 
 		URL[] urls= getClasspath(args);
-		if (urls == null) return;
+		if (urls == null) {
+			return;
+		}
 		
 		while (true) {
 			try {
@@ -47,8 +54,6 @@ public class ScrapbookMain {
 	}
 	
 	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		// Currently uses compiler target=jsr14, see scripts/buildExtraJAR.xml
-		// Don't use URLClassLoader#close() or other post-1.4 APIs!
 		@SuppressWarnings("resource")
 		ClassLoader cl= new URLClassLoader(urls, null);
 		Class<?> clazz= cl.loadClass("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1"); //$NON-NLS-1$
@@ -58,7 +63,7 @@ public class ScrapbookMain {
 	
 	public static void nop() {
 		try {
-			Thread.sleep(100);
+			Thread.sleep(100); // TODO: The line number of this statement needs to be updated in ScrapbookLauncher#createMagicBreakpoint()!
 		} catch(InterruptedException e) {
 		}
 	}
@@ -79,9 +84,13 @@ public class ScrapbookMain {
 		}
 
 		ProtectionDomain pd = ScrapbookMain.class.getProtectionDomain();
-		if (pd == null) return null;
+		if (pd == null) {
+			return null;
+		}
 		CodeSource cs = pd.getCodeSource();
-		if (cs == null) return null;
+		if (cs == null) {
+			return null;
+		}
 		urls[0] = cs.getLocation();
 
 		return urls;
