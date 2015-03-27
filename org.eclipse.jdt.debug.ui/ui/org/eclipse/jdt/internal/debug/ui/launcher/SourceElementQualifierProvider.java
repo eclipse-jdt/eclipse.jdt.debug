@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.io.File;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -47,13 +46,13 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 			return fJavaLabels.getText(parent);
 		} else if (element instanceof ZipEntryStorage) {
 			ZipEntryStorage storage = (ZipEntryStorage)element;
-			ZipFile zipFile = storage.getArchive();
-			IPath path = new Path(zipFile.getName());
+			String zipFileName = storage.getArchive().getName();
+			IPath path = new Path(zipFileName);
 			IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 			IResource res = entry.getResource();
 			if (res == null) {
 				// external
-				return zipFile.getName();
+				return zipFileName;
 			}
 			// internal
 			return res.getName();
