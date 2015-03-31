@@ -23,10 +23,7 @@ import java.security.ProtectionDomain;
 /**
  * Support class for launching a snippet evaluation.
  * <p>
- * CAUTION 1: If you touch this class, you need to make sure the line number of the {@link #nop()} method's statement gets updated in
- * {@link org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher#createMagicBreakpoint()}.
- * <p>
- * CAUTION 2: This class gets compiled with target=jsr14, see scripts/buildExtraJAR.xml. Don't use URLClassLoader#close() or other post-1.4 APIs!
+ * CAUTION: This class gets compiled with target=jsr14, see scripts/buildExtraJAR.xml. Don't use URLClassLoader#close() or other post-1.4 APIs!
  */
 public class ScrapbookMain {
 	
@@ -61,9 +58,14 @@ public class ScrapbookMain {
 		method.invoke(null, new Object[] {ScrapbookMain.class});
 	}
 	
+	/**
+	 * The magic "no-op" method, where {@link org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher#createMagicBreakpoint(String)} sets a
+	 * breakpoint.
+	 * <p>
+	 */
 	public static void nop() {
 		try {
-			Thread.sleep(100); // TODO: The line number of this statement needs to be updated in ScrapbookLauncher#createMagicBreakpoint()!
+			Thread.sleep(100);
 		} catch(InterruptedException e) {
 		}
 	}

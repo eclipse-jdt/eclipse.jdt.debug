@@ -29,8 +29,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -44,6 +46,12 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.compiler.CharOperation;
+import org.eclipse.jdt.core.util.IClassFileReader;
+import org.eclipse.jdt.core.util.ICodeAttribute;
+import org.eclipse.jdt.core.util.ILineNumberAttribute;
+import org.eclipse.jdt.core.util.IMethodInfo;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -130,7 +138,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		
 		List<IRuntimeClasspathEntry> cp = new ArrayList<IRuntimeClasspathEntry>(3);
-		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarURL.getFile()));
+		String jarFile = jarURL.getFile();
+		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarFile));
 		cp.add(supportEntry);
 		// get bootpath entries
 		try {
@@ -142,14 +151,14 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 			IRuntimeClasspathEntry[] classPath = cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
 			
-			return doLaunch(javaProject, page, classPath);
+			return doLaunch(javaProject, page, classPath, jarFile);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e); //$NON-NLS-1$
 		}
 		return null;
 	}
 
-	private ILaunch doLaunch(IJavaProject p, IFile page, IRuntimeClasspathEntry[] classPath) {
+	private ILaunch doLaunch(IJavaProject p, IFile page, IRuntimeClasspathEntry[] classPath, String jarFile) {
 		try {
 			if (fVMsToScrapbooks.isEmpty()) {
 				// register for debug events if a scrapbook is not currently running
@@ -230,7 +239,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			if (launch != null) {
 				IDebugTarget dt = launch.getDebugTarget();
-				IBreakpoint magicBreakpoint = createMagicBreakpoint();
+				IBreakpoint magicBreakpoint = createMagicBreakpoint(jarFile);
 				fScrapbookToVMs.put(page, dt);
 				fVMsToScrapbooks.put(dt, page);
 				fVMsToBreakpoints.put(dt, magicBreakpoint);
@@ -245,18 +254,35 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}
 	
 	/**
-	 * Creates an "invisible" line breakpoint. 
+	 * Creates an "invisible" line breakpoint.
+	 * 
+	 * @param jarFile
+	 *            path to the snippetsupport.jar file
 	 * @return the new 'magic' breakpoint
-	 * @throws CoreException if an exception occurs
+	 * @throws CoreException
+	 *             if an exception occurs
 	 */
-	IBreakpoint createMagicBreakpoint() throws CoreException {
-		// set a breakpoint on the "Thread.sleep(100);" line of the no-op method of ScrapbookMain
+	IBreakpoint createMagicBreakpoint(String jarFile) throws CoreException {
+		// set a breakpoint on the "Thread.sleep(100);" line of the "ScrapbookMainnop()" method
 		String typeName = "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"; //$NON-NLS-1$
-		int lineNumber = 66; // TODO: This line number needs to be adjusted when ScrapbookMain is modified.
 
-		fMagicBreakpoint = JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, lineNumber, -1, -1, 0, false, null);
-		fMagicBreakpoint.setPersisted(false);
-		return fMagicBreakpoint;
+		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(jarFile, typeName.replace('.', '/')
+				+ ".class", IClassFileReader.METHOD_INFOS | IClassFileReader.METHOD_BODIES); //$NON-NLS-1$
+		IMethodInfo[] methodInfos = reader.getMethodInfos();
+		for (IMethodInfo methodInfo : methodInfos) {
+			if (!CharOperation.equals("nop".toCharArray(), methodInfo.getName())) {//$NON-NLS-1$
+				continue;
+			}
+			ICodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+			ILineNumberAttribute lineNumberAttribute = codeAttribute.getLineNumberAttribute();
+			int[][] lineNumberTable = lineNumberAttribute.getLineNumberTable();
+			int lineNumber = lineNumberTable[0][1];
+
+			fMagicBreakpoint = JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, lineNumber, -1, -1, 0, false, null);
+			fMagicBreakpoint.setPersisted(false);
+			return fMagicBreakpoint;
+		}
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An error occurred creating the evaluation breakpoint location.", null)); //$NON-NLS-1$
 	}
 
 	/**
