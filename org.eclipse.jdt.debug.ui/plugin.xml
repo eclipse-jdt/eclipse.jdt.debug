@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2014 IBM Corporation and others.
+     Copyright (c) 2005, 2015 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -3216,6 +3216,11 @@ M4 = Platform-specific fourth key
             adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>   
+  		<factory 
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.SourceElementLabelProviderAdapterFactory" 
+            adaptableType="org.eclipse.jdt.core.IJavaElement">
+            <adapter type="org.eclipse.debug.internal.ui.sourcelookup.SourceElementLabelProvider"/>
+  		</factory>
     
     <!-- Adapters for runtime classpath entries -->
          <factory 
