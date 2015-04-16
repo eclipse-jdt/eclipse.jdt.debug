@@ -55,6 +55,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.osgi.framework.Bundle;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -419,7 +422,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			}
 	
 			List<IJavaSourceLocation> sourceLocations = new ArrayList<IJavaSourceLocation>();
-			ClassLoader classLoader = LaunchingPlugin.getDefault().getDescriptor().getPluginClassLoader(); 
+			Bundle bundle = LaunchingPlugin.getDefault().getBundle(); 
 			
 			NodeList list = root.getChildNodes();
 			int length = list.getLength();
@@ -436,7 +439,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 						}
 						Class<?> clazz  = null;
 						try {
-							clazz = classLoader.loadClass(className);
+							clazz = bundle.loadClass(className);
 						} catch (ClassNotFoundException e) {
 							abort(NLS.bind(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location___class_not_found___0__11, new String[] {className}), e); 
 						}
