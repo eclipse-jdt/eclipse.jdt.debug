@@ -1591,15 +1591,21 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			// get the line locations
 			allLineLocations = sourceNameAllLineLocations.get(sourceName);
 		}
-		if (allLineLocations == null) { // the line locations are not know,
-										// compute and store them
+		if (allLineLocations == null) { // the line locations are not known, compute and store them
 			allLineLocations = new ArrayList<Location>();
 			while (allMethods.hasNext()) {
 				MethodImpl method = (MethodImpl) allMethods.next();
 				if (method.isAbstract() || method.isNative()) {
 					continue;
 				}
-				allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
+				try {
+					allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
+				} catch(AbsentInformationException aie) {
+					//ignore, continue to check each method
+				}
+			}
+			if (allLineLocations.isEmpty()) {
+				throw new AbsentInformationException(JDIMessages.MethodImpl_No_line_number_information_available_2);
 			}
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}
@@ -1613,8 +1619,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	public List<Location> locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
 		Iterator<Method> allMethods = methods().iterator();
 		List<Location> locations = new ArrayList<Location>();
-		boolean hasLineInformation = false;
-		AbsentInformationException exception = null;
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl) allMethods.next();
 			if (method.isAbstract() || method.isNative()) {
@@ -1625,13 +1629,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			// methods in the output source. We need all these locations.
 			try {
 				locations.addAll(locationsOfLine(stratum, sourceName, lineNumber, method));
-				hasLineInformation = true;
 			} catch (AbsentInformationException e) {
-				exception = e;
+				//ignore, continue on to find any locations
 			}
 		}
-		if (!hasLineInformation && exception != null) {
-			throw exception;
+		if (locations.isEmpty()) {
+			throw new AbsentInformationException(JDIMessages.MethodImpl_No_line_number_information_available_2);
 		}
 		return locations;
 	}
