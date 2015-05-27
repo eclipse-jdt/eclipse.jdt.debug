@@ -23,11 +23,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -35,6 +37,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -90,18 +93,21 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	}
 
 	/**
-	 * Using the specified launch configuration, build an HTML file that specifies the
-	 * applet to launch.  Return the name of the HTML file.
+	 * Using the specified launch configuration, build an HTML file that specifies the applet to launch. Return the name of the HTML file.
 	 * 
-	 * @param configuration the launch config
-	 * @param dir the directory in which to make the file
+	 * @param configuration
+	 *            the launch config
+	 * @param dir
+	 *            the directory in which to make the file
 	 * @return the new HTML file
+	 * @throws CoreException
+	 *             if the file cannot be built
 	 */
-	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) {
-		File tempFile = null;
+	private File buildHTMLFile(ILaunchConfiguration configuration, File dir) throws CoreException {
+		String name = getAppletMainTypeName(configuration);
+		File tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$
 		try (FileOutputStream stream = new FileOutputStream(tempFile)) {
 			String encoding = getLaunchManager().getEncoding(configuration);
-			String name = getAppletMainTypeName(configuration);
 			StringBuffer buf = new StringBuffer();
 			buf.append("<html>\n"); //$NON-NLS-1$
 			buf.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + encoding + "\"/>\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -134,12 +140,11 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			buf.append("</body>\n"); //$NON-NLS-1$
 			buf.append("</html>\n"); //$NON-NLS-1$
 
-			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$
 			stream.write(buf.toString().getBytes(encoding));
 		} catch(IOException e) {
-		} catch(CoreException e) {
+			LaunchingPlugin.log(e);
 		}
-		
+
 		return tempFile;
 	}
 
