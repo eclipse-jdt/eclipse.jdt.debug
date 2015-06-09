@@ -1591,15 +1591,24 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			// get the line locations
 			allLineLocations = sourceNameAllLineLocations.get(sourceName);
 		}
-		if (allLineLocations == null) { // the line locations are not know,
-										// compute and store them
+		if (allLineLocations == null) { // the line locations are not known, compute and store them
 			allLineLocations = new ArrayList<Location>();
+			boolean hasLineInformation = false;
+			AbsentInformationException exception = null;
 			while (allMethods.hasNext()) {
 				MethodImpl method = (MethodImpl) allMethods.next();
 				if (method.isAbstract() || method.isNative()) {
 					continue;
 				}
-				allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
+				try {
+					allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
+					hasLineInformation = true;
+				} catch (AbsentInformationException e) {
+					exception = e;
+				}
+			}
+			if (!hasLineInformation && exception != null) {
+				throw exception;
 			}
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}

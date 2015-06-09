@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element internal="true" />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
          </sequence>
@@ -70,7 +75,6 @@
          The name of the extension point is the fully qualified name of a Java class implementing &lt;code&gt;com.sun.jdi.VirtualMachineManager&lt;/code&gt;.
       </documentation>
    </annotation>
-
 
    <annotation>
       <appinfo>

@@ -2561,8 +2561,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (applyStepFilters()) {
 				Location origLocation = getOriginalStepLocation();
 				if (origLocation != null) {
-					return !locationIsFiltered(origLocation.method())
-							&& locationIsFiltered(location.method());
+					return !locationIsFiltered(origLocation.method(), true) && locationIsFiltered(location.method(), false);
 				}
 			}
 			return false;
@@ -2608,6 +2607,41 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 			}
 
+			return false;
+		}
+		
+		/**
+		 * Returns <code>true</code> if the StepEvent's Location is a Method
+		 * that the user has indicated (via the step filter preferences) should
+		 * be filtered. Returns <code>false</code> otherwise.
+		 * 
+		 * @param method
+		 *            the {@link Method} location to check
+		 * @param orig
+		 *            <code>true</code> if the {@link Method} {@link Location} is the JDI Location 
+		 *         from which an original user-requested step began, <code>false</code> otherwise
+		 * @return <code>true</code> if the {@link Method} {@link Location}
+		 *         should be filtered, <code>false</code> otherwise
+		 */
+		protected boolean locationIsFiltered(Method method, boolean orig) {
+			if (isStepFiltersEnabled()) {
+				JDIDebugTarget target = getJavaDebugTarget();
+				if ((target.isFilterStaticInitializers() && method.isStaticInitializer())
+						|| (target.isFilterSynthetics() && method.isSynthetic())
+						|| (target.isFilterConstructors() && method.isConstructor())
+						|| (target.isFilterGetters() && JDIMethod.isGetterMethod(method))
+						|| (target.isFilterSetters() && JDIMethod.isSetterMethod(method))) {
+					return true;
+				}
+				if(!orig) {
+					IStepFilter[] contributedFilters = DebugPlugin.getStepFilters(JDIDebugPlugin.getUniqueIdentifier());
+					for (int i = 0; i < contributedFilters.length; i++) {
+						if (contributedFilters[i].isFiltered(method)) {
+							return true;
+						}
+					}
+				}
+			}
 			return false;
 		}
 
