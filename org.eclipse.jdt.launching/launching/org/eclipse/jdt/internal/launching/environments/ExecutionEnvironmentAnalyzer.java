@@ -5,6 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +40,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
-	private static final String JavaSE_1_9 = "JavaSE-1.9"; //$NON-NLS-1$
+	static final String JavaSE_1_9 = "JavaSE-1.9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$

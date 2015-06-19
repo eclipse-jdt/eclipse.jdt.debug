@@ -5,6 +5,10 @@
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -451,12 +455,21 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				if (is != null) {
 					Properties profile = new Properties();
 					profile.load(is);
+					fixJavaSE19SourceTargetLevels(profile);
 					return profile;
 				}
 			} catch (IOException e) {
 			}
 		}
 		return null;
+	}
+
+	private void fixJavaSE19SourceTargetLevels(Properties profile) {
+		if (!ExecutionEnvironmentAnalyzer.JavaSE_1_9.equals(getId())) {
+			return;
+		}
+		profile.setProperty(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8); // TODO: at the moment, there's no new Java language feature
+		profile.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8); // TODO: at the moment, runtime doesn't support a new class file version
 	}
 
 	/* (non-Javadoc)
