@@ -207,11 +207,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		if (e instanceof CoreException) {
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e.getCause()));
-		} else {
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
-		}
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
 	}
 	
 	/**
