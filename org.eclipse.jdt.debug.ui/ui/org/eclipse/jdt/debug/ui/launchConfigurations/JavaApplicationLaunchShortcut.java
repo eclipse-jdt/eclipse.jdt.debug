@@ -18,6 +18,8 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -131,7 +133,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			IJavaSearchScope scope = SearchEngine.createJavaSearchScope(javaElements, constraints);
 			return engine.searchMainMethods(context, scope, true);
 		} catch (InvocationTargetException e) {
-			throw (CoreException)e.getTargetException(); 
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), e.getMessage(), e));
 		}
 	}
 	
