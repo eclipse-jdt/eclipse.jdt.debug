@@ -60,7 +60,7 @@ public class PopupInspectAction extends InspectAction {
         	@Override
 			public boolean close() {
         		boolean returnValue = super.close();
-        		if (fTextEditor != null && fSelectionBeforeEvaluation != null){
+				if (fTextEditor != null && fTextEditor.getSelectionProvider() != null && fSelectionBeforeEvaluation != null) {
         			fTextEditor.getSelectionProvider().setSelection(fSelectionBeforeEvaluation);
         			fTextEditor = null;
         			fSelectionBeforeEvaluation = null;
