@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import com.sun.jdi.request.ModificationWatchpointRequest;
  * Tests for JDI com.sun.jdi.Mirror.
  */
 public class MirrorTest extends AbstractJDITest {
-	List<Mirror> fMirrors = new LinkedList<Mirror>();
+	List<Mirror> fMirrors = new LinkedList<>();
 	/**
 	 * Creates a new test.
 	 */
@@ -40,7 +40,7 @@ public class MirrorTest extends AbstractJDITest {
 
 		//TO DO: Add events too
 
-		fMirrors = new LinkedList<Mirror>();
+		fMirrors = new LinkedList<>();
 
 		if (fVM.canWatchFieldAccess())
 			fMirrors.add(getAccessWatchpointRequest());

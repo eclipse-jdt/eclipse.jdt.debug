@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,7 +134,7 @@ public abstract class AbstractJDITest extends TestCase {
 	protected Vector<String> getAllMatchingTests(String match) {
 		Class<? extends AbstractJDITest> theClass = this.getClass();
 		java.lang.reflect.Method[] methods = theClass.getDeclaredMethods();
-		Vector<String> result = new Vector<String>();
+		Vector<String> result = new Vector<>();
 		for (int i = 0; i < methods.length; i++) {
 			java.lang.reflect.Method m = methods[i];
 			String name = m.getName();
@@ -707,7 +707,7 @@ public abstract class AbstractJDITest extends TestCase {
 			fLaunchedProxy = Runtime.getRuntime().exec(proxyString);
 
 			// Launch target VM
-			Vector<String> commandLine = new Vector<String>();
+			Vector<String> commandLine = new Vector<>();
 			
 			String launcher = binDirectory + "j9w.exe";
 			File vm= new File(launcher);
@@ -745,7 +745,7 @@ public abstract class AbstractJDITest extends TestCase {
 			binDirectory.append(System.getProperty("file.separator"));
 			binDirectory.append("bin").append(System.getProperty("file.separator"));
 
-			Vector<String> commandLine = new Vector<String>();
+			Vector<String> commandLine = new Vector<>();
 
 			String launcher = binDirectory.toString() + "javaw.exe";
 			File vm= new File(launcher);
@@ -785,7 +785,7 @@ public abstract class AbstractJDITest extends TestCase {
 					+ "bin"
 					+ System.getProperty("file.separator");
 
-			Vector<String> commandLine = new Vector<String>();
+			Vector<String> commandLine = new Vector<>();
 
 			commandLine.add(binDirectory + "javaw");
 			if (fBootPath.length() > 0) {
