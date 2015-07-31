@@ -21,6 +21,7 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.internal.debug.core.JDIDebugOptions;
 import org.eclipse.osgi.util.NLS;
 
 import com.sun.jdi.VMDisconnectedException;
@@ -29,7 +30,7 @@ import com.sun.jdi.connect.spi.Connection;
 /**
  * This class implements a thread that receives packets from the Virtual
  * Machine.
- * 
+ *
  */
 public class PacketReceiveManager extends PacketManager {
 
@@ -164,7 +165,12 @@ public class PacketReceiveManager extends PacketManager {
 				// see bug 171075
 				// just stop waiting for the reply and treat it as a timeout
 				catch (InterruptedException e) {
-					break;
+					if (JDIDebugOptions.DEBUG) {
+						JDIDebugOptions.trace(null, "Interrupt observed while waiting for packet: " + id, e); //$NON-NLS-1$
+					}
+					// Do not stop waiting on interrupt, this causes
+					// sporadic TimeoutException's without timeout
+					// break;
 				}
 				long waitedTime = System.currentTimeMillis() - timeBeforeWait;
 				remainingTime = timeToWait - waitedTime;
@@ -257,7 +263,7 @@ public class PacketReceiveManager extends PacketManager {
 
 	/**
 	 * Returns whether the request for the given packet has already timed out.
-	 * 
+	 *
 	 * @param packet
 	 *            response packet
 	 * @return whether the request for the given packet has already timed out
