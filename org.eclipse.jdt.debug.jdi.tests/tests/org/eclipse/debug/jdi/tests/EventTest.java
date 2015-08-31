@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import com.sun.jdi.request.EventRequest;
  * Tests for JDI com.sun.jdi.event.Event.
  */
 public class EventTest extends AbstractJDITest {
-	private HashMap<EventRequest, Event> fAllEvents = new HashMap<EventRequest, Event>();
+	private HashMap<EventRequest, Event> fAllEvents = new HashMap<>();
 	/**
 	 * Creates a new test.
 	 */
@@ -81,7 +81,7 @@ public class EventTest extends AbstractJDITest {
 
 		// Remove the requests
 		fVM.eventRequestManager().deleteEventRequests(
-			new LinkedList<EventRequest>(fAllEvents.keySet()));
+			new LinkedList<>(fAllEvents.keySet()));
 
 		// Set the value of the "fBool" field back to its original value
 		resetField();

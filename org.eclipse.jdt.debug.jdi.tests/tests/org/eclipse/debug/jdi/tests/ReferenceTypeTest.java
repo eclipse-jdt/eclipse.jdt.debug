@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import com.sun.jdi.ReferenceType;
  */
 public class ReferenceTypeTest extends AbstractJDITest {
 
-	private List<ReferenceType> fTypes = new LinkedList<ReferenceType>();
+	private List<ReferenceType> fTypes = new LinkedList<>();
 
 	// These must match what is done in localSetUp
 	private boolean[] fSystemClassLoader = { true, true, false, false };
@@ -192,7 +192,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 		// Get field values
 		List<?> fields = type.fields();
 		ListIterator<?> iterator = fields.listIterator();
-		List<Field> staticFields = new LinkedList<Field>();
+		List<Field> staticFields = new LinkedList<>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
 			if (field.isStatic())

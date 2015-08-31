@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,7 @@ public class ClassTypeTest extends AbstractJDITest {
 			fType.concreteMethodByName(
 				"invoke1",
 				"(ILjava/lang/Object;)Ljava/lang/String;");
-		List<IntegerValue> args = new ArrayList<IntegerValue>();
+		List<IntegerValue> args = new ArrayList<>();
 		args.add(fVM.mirrorOf(41));
 		args.add(null);
 		Exception oops = null;
@@ -262,7 +262,7 @@ public class ClassTypeTest extends AbstractJDITest {
 			.methodsByName("<init>", "(ILjava/lang/Object;Ljava/lang/Object;)V")
 			.get(0);
 		ObjectReference result = null;
-		ArrayList<Value> arguments = new ArrayList<Value>();
+		ArrayList<Value> arguments = new ArrayList<>();
 		arguments.add(fVM.mirrorOf(0));
 		arguments.add(fVM.allThreads().get(0));
 		arguments.add(null);

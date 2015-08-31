@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		ReferenceType type = fObject.referenceType();
 		List<?> fields = type.fields();
 		ListIterator<?> iterator = fields.listIterator();
-		List<Field> instanceFields = new LinkedList<Field>();
+		List<Field> instanceFields = new LinkedList<>();
 		while (iterator.hasNext()) {
 			Field field = (Field) iterator.next();
 			if (!field.isStatic())
@@ -213,7 +213,7 @@ public class ObjectReferenceTest extends AbstractJDITest {
 		ClassType ct = (ClassType) fObject.referenceType();
 		Method inv =
 			ct.concreteMethodByName("invoke3", "(Ljava/lang/String;Ljava/lang/Object;)I");
-		List<StringReference> args = new ArrayList<StringReference>();
+		List<StringReference> args = new ArrayList<>();
 		args.add(fVM.mirrorOf("888"));
 		args.add(null);
 		Exception oops = null;
