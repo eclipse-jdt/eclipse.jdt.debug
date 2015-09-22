@@ -531,7 +531,7 @@ public class BinaryBasedSourceGenerator {
 		case 'v':
 			return ""; //$NON-NLS-1$
 		case 'b':
-			if (typeName.charAt(1) == 'o') {
+			if (typeName.length() >= 1 && typeName.charAt(1) == 'o') {
 				return "return false;\n"; //$NON-NLS-1$
 			}
 		case 's':
