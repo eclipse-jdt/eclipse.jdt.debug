@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,14 @@ public class JDIDebugModel {
 	public static final String PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION = getPluginIdentifier()
 			+ ".suspend_for_breakpoints_during_evaluation"; //$NON-NLS-1$
 
+	/**
+	 * Boolean preference controlling whether to not install (filter) breakpoints for types existing multiple times
+	 * in source projects and not related to the current debug session.
+	 * @since 3.10
+	 */
+	public static final String PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES = getPluginIdentifier()
+			+ ".do_not_install_breakpoints_from_unrelated_sources"; //$NON-NLS-1$
+	
 	/**
 	 * Not to be instantiated.
 	 */

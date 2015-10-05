@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,5 +41,6 @@ public class JDIDebugPluginPreferenceInitializer extends
 		node.putBoolean(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, false);
 		node.putInt(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT, 100);
 		node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, 100);
+		node.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, false);
 	}
 }

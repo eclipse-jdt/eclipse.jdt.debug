@@ -364,8 +364,13 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 
 	private void prepareBreakpointsSearchScope() {
+		boolean enableFiltering = Platform.getPreferencesService().getBoolean(
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES,
+				false,
+				null);
 		ILaunchConfiguration config = getLaunch().getLaunchConfiguration();
-		if (config == null) {
+		if (!enableFiltering || config == null) {
 			return;
 		}
 		try {
