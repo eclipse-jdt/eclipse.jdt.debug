@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -128,27 +128,6 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
 		return null;
-	}
-
-	/**
-	 * Utility method to convert argument array to an argument list.
-	 * 
-	 * @param args
-	 *            array of arguments, as <code>IJavaValue</code>s, possibly
-	 *            <code>null</code> or empty
-	 * @return a list of underlying <code>Value</code>s
-	 */
-	protected List<Value> convertArguments(IJavaValue[] args) {
-		List<Value> arguments = null;
-		if (args == null) {
-			arguments = Collections.EMPTY_LIST;
-		} else {
-			arguments = new ArrayList<Value>(args.length);
-			for (IJavaValue arg : args) {
-				arguments.add(((JDIValue) arg).getUnderlyingValue());
-			}
-		}
-		return arguments;
 	}
 
 	/*

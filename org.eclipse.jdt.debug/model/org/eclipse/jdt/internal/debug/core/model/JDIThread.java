@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 89643
  *     Jesper Steen Moller - Enhancement 254677 - filter getters/setters
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -27,7 +28,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -39,9 +39,7 @@ import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
-
 import org.eclipse.jdt.core.Signature;
-
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -52,7 +50,6 @@ import org.eclipse.jdt.debug.core.IJavaThreadGroup;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ConditionalBreakpointHandler;
@@ -66,6 +63,7 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.IntegerValue;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InvalidStackFrameException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
@@ -979,6 +977,105 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				result = receiverClass.invokeMethod(fThread, method, args,
 						flags);
 			}
+		} catch (InvalidTypeException e) {
+			invokeFailed(e, timeout);
+		} catch (ClassNotLoadedException e) {
+			invokeFailed(e, timeout);
+		} catch (IncompatibleThreadStateException e) {
+			invokeFailed(
+					JDIDebugModelMessages.JDIThread_Thread_must_be_suspended_by_step_or_breakpoint_to_perform_method_invocation_1,
+					IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE, e, timeout);
+		} catch (InvocationException e) {
+			invokeFailed(e, timeout);
+		} catch (RuntimeException e) {
+			invokeFailed(e, timeout);
+		}
+
+		invokeComplete(timeout);
+		return result;
+	}
+
+	/**
+	 * Invokes a method on the target, in this thread, and returns the result.
+	 * This thread is left suspended after the invocation is complete, unless
+	 * a call is made to <code>abortEvaluation<code> while  performing a method
+	 * invocation. In that case, this thread is automatically resumed when/if
+	 * this invocation (eventually) completes.
+	 * <p>
+	 * Method invocations cannot be nested. That is, this method must
+	 * return before another call to this method can be made. This
+	 * method does not return until the invocation is complete.
+	 * Breakpoints can suspend a method invocation, and it is possible
+	 * that an invocation will not complete due to an infinite loop
+	 * or deadlock.
+	 * </p>
+	 * <p>
+	 * Stack frames are preserved during method invocations, unless
+	 * a timeout occurs. Although this thread's state is updated to
+	 * running while performing an evaluation, no debug events are
+	 * fired unless this invocation is interrupted by a breakpoint,
+	 * or the invocation times out.
+	 * </p>
+	 * <p>
+	 * When performing an invocation, the communication timeout with
+	 * the target VM is set to infinite, as the invocation may not 
+	 * complete in a timely fashion, if at all. The timeout value
+	 * is reset to its original value when the invocation completes.
+	 * </p>
+	 * 
+	 * @param receiverInterface
+	 *            the class in the target representing the receiver of a static
+	 *            message send, or <code>null</code>
+	 * @param method
+	 *            the underlying method to be invoked
+	 * @param args
+	 *            the arguments to invoke the method with (an empty list if
+	 *            none)
+	 * @return the result of the method, as an underlying value
+	 * @exception DebugException
+	 *                if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                <li>This thread is not suspended (status code
+	 *                <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
+	 *                <li>This thread is already invoking a method (status code
+	 *                <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 *                <li>This thread is not suspended by a JDI request (status
+	 *                code
+	 *                <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
+	 *                </ul>
+	 */
+	protected Value invokeMethod(InterfaceType receiverInterface,
+			Method method, List<? extends Value> args) throws DebugException {
+		Value result = null;
+		int timeout = getRequestTimeout();
+		try {
+			// this is synchronized such that any other operation that
+			// might be resuming this thread has a chance to complete before
+			// we determine if it is safe to continue with a method invocation.
+			// See bugs 6518, 14069
+			synchronized (this) {
+				if (!isSuspended()) {
+					requestFailed(
+							JDIDebugModelMessages.JDIThread_Evaluation_failed___thread_not_suspended,
+							null, IJavaThread.ERR_THREAD_NOT_SUSPENDED);
+				}
+				if (isInvokingMethod()) {
+					requestFailed(
+							JDIDebugModelMessages.JDIThread_Cannot_perform_nested_evaluations,
+							null, IJavaThread.ERR_NESTED_METHOD_INVOCATION);
+				}
+				// set the request timeout to be infinite
+				setRequestTimeout(Integer.MAX_VALUE);
+				setRunning(true);
+				setInvokingMethod(true);
+			}
+			preserveStackFrames();
+			int flags = ClassType.INVOKE_SINGLE_THREADED;
+			result = receiverInterface.invokeMethod(fThread, method, args,
+					flags);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
 		} catch (ClassNotLoadedException e) {
