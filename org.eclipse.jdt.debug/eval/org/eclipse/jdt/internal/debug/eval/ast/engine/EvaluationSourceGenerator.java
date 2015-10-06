@@ -66,24 +66,17 @@ public class EvaluationSourceGenerator {
 		this(new String[0], new String[0], codeSnippet);
 	}
 
-	protected String getCompleteSnippet(String codeSnippet) {
-
-		if (isExpression(codeSnippet)) {
-			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
-		}
-		return codeSnippet;
-	}
-
 	/**
-	 * Returns whether the given snippet represents an expression. This is
-	 * determined by examining the snippet for non-quoted semicolons.
-	 * 
-	 * Returns <code>true</code> if the snippet is an expression, or
-	 * <code>false</code> if the expression contains a statement.
+	 * Returns the completed codeSnippet by adding required semicolon and
+	 * return 
 	 */
-	protected boolean isExpression(String codeSnippet) {
+	protected String getCompleteSnippet(String codeSnippet) {
+		codeSnippet = codeSnippet.trim(); // remove whitespaces at the end
 		boolean inString = false;
 		byte[] chars = codeSnippet.getBytes();
+		
+		int semicolonIndex = -1;
+		int lastSemilcolonIndex = -1;
 		for (int i = 0, numChars = chars.length; i < numChars; i++) {
 			switch (chars[i]) {
 			case '\\':
@@ -96,13 +89,44 @@ public class EvaluationSourceGenerator {
 				inString = !inString;
 				break;
 			case ';':
-				if (!inString) {
-					return false;
+				if (!inString) { // mark the last 2 semicolon
+					semicolonIndex = lastSemilcolonIndex;
+					lastSemilcolonIndex = i;
 				}
 				break;
 			}
 		}
-		return true;
+		StringBuffer wordBuffer = new StringBuffer();
+		// if semicolon missing at the end 
+		if (lastSemilcolonIndex != chars.length-1)
+			semicolonIndex = lastSemilcolonIndex;
+		int i ;
+		for (i=0; i < chars.length; i++) {
+			// copy everything before the last statement or if whitespace
+			if (i<= semicolonIndex || Character.isWhitespace(chars[i]) || chars[i] == '}'){
+				wordBuffer.append(codeSnippet.charAt(i));
+			}
+			else
+				break;
+		}
+		String returnString = "return ";//$NON-NLS-1$
+		// don't add return if it there in some condition
+		int index = codeSnippet.lastIndexOf(returnString); 
+		if (index > i){
+			if (!Character.isWhitespace(chars[index-1]) || !(Character.isWhitespace(chars[index+6]) || chars[index+6] == '}'))
+				wordBuffer.append(returnString); 
+		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+6).equals("return")))){ //$NON-NLS-1$
+			// add return if last statement does not have return
+				wordBuffer.append("return "); //$NON-NLS-1$
+		}
+		for (; i < chars.length; i++) {
+			// copy the last statement
+			wordBuffer.append(codeSnippet.charAt(i));
+		}
+		// add semicolon at the end if missing
+		if (chars[chars.length -1] !=';' && chars[chars.length -1] !='}')
+			wordBuffer.append(';');
+		return wordBuffer.toString();
 	}
 
 	public String getCompilationUnitName() {
