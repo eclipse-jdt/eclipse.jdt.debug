@@ -30,6 +30,7 @@ public class JDIMessages extends NLS {
 	public static String ClassTypeImpl_Class_does_not_contain_given_method_4;
 	public static String ClassTypeImpl_Number_of_arguments_doesn__t_match_5;
 	public static String ClassTypeImpl_Method_is_not_a_constructor_6;
+	public static String InterfaceTypeImpl_Static_interface_methods_require_newer_JVM;
 	public static String FieldImpl_Can__t_compare_field_to_given_object_1;
 	public static String FieldImpl_Got_FieldID_of_ReferenceType_that_is_not_a_member_of_the_ReferenceType_2;
 	public static String LocalVariableImpl_Can__t_compare_local_variable_to_given_object_1;

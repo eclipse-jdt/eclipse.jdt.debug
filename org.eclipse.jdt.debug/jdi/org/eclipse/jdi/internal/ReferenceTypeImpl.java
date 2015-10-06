@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yavor Boyadzhiev <yavor.vasilev.boyadzhiev@sap.com> - Bug 162399  
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
@@ -41,14 +42,18 @@ import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InternalException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
@@ -1560,7 +1565,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			return fSmap;
 		}
 		if (!virtualMachine().canGetSourceDebugExtension()) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("1"); //$NON-NLS-1$
 		}
 		throw new AbsentInformationException();
 	}
@@ -2356,4 +2361,108 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			handledJdwpRequest();
 		}
 	}
+	
+	/**
+	 * @return Returns Jdwp version of given options.
+	 */
+	protected int optionsToJdwpOptions(int options) {
+		int jdwpOptions = 0;
+		if ((options & ClassType.INVOKE_SINGLE_THREADED) != 0)
+			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
+		return jdwpOptions;
+	}
+	
+
+	/**
+	 * Invoke static method on class or interface type
+	 * 
+	 * @param thread the debugger thread in which to invoke
+	 * @param method the resolved chosed Method to invoke
+	 * @param arguments the list of Values to supply as arguments for the method, assigned to arguments in the order they appear in the method signature.
+	 * @param options the integer bit flags
+	 * @param command the JWDP command to invoke
+	 * @return a Value representing the method's return value.
+	 * @throws InvalidTypeException If the arguments do not match
+	 * @throws ClassNotLoadedException if any argument type has not yet been loaded in the VM
+	 * @throws IncompatibleThreadStateException if the specified thread has not been suspended
+	 * @throws InvocationException if the method invocation resulted in an exception
+	 */
+	protected Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options, int command) throws InvalidTypeException,
+			ClassNotLoadedException, IncompatibleThreadStateException,
+			InvocationException {
+		checkVM(thread);
+		checkVM(method);
+		ThreadReferenceImpl threadImpl = (ThreadReferenceImpl) thread;
+		MethodImpl methodImpl = (MethodImpl) method;
+
+		// Perform some checks for IllegalArgumentException.
+		if (!visibleMethods().contains(method))
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1);
+		if (method.argumentTypeNames().size() != arguments.size())
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2);
+		if (method.isConstructor() || method.isStaticInitializer())
+			throw new IllegalArgumentException(
+					JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3);
+
+		// check the type and the VM of the arguments. Convert the values if
+		// needed
+		List<Value> checkedArguments = ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
+
+		initJdwpRequest();
+		try {
+			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+			DataOutputStream outData = new DataOutputStream(outBytes);
+			write(this, outData);
+			threadImpl.write(this, outData);
+			methodImpl.write(this, outData);
+
+			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
+			Iterator<Value> iter = checkedArguments.iterator();
+			while (iter.hasNext()) {
+				Value elt = iter.next();
+				if (elt instanceof ValueImpl) {
+					((ValueImpl)elt).writeWithTag(this, outData);
+				} else {
+					ValueImpl.writeNullWithTag(this, outData);
+				}
+			}
+
+			writeInt(optionsToJdwpOptions(options),
+					"options", MethodImpl.getInvokeOptions(), outData); //$NON-NLS-1$
+
+			JdwpReplyPacket replyPacket = requestVM(
+					command, outBytes);
+			switch (replyPacket.errorCode()) {
+			case JdwpReplyPacket.INVALID_METHODID:
+				throw new IllegalArgumentException();
+			case JdwpReplyPacket.TYPE_MISMATCH:
+				throw new InvalidTypeException();
+			case JdwpReplyPacket.INVALID_CLASS:
+				throw new ClassNotLoadedException(name());
+			case JdwpReplyPacket.INVALID_THREAD:
+				throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
+				throw new IncompatibleThreadStateException();
+			case JdwpReplyPacket.NOT_IMPLEMENTED:
+				throw new UnsupportedOperationException(JDIMessages.InterfaceTypeImpl_Static_interface_methods_require_newer_JVM);
+			}
+			
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			DataInputStream replyData = replyPacket.dataInStream();
+			ValueImpl value = ValueImpl.readWithTag(this, replyData);
+			ObjectReferenceImpl exception = ObjectReferenceImpl
+					.readObjectRefWithTag(this, replyData);
+			if (exception != null)
+				throw new InvocationException(exception);
+			return value;
+		} catch (IOException e) {
+			defaultIOExceptionHandler(e);
+			return null;
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+	
 }

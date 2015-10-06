@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdi.internal;
 
@@ -17,14 +18,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdi.internal.jdwp.JdwpClassObjectID;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpInterfaceID;
 
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InterfaceType;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 /**
@@ -147,6 +154,16 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	@Override
 	public List<InterfaceType> superinterfaces() {
 		return interfaces();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sun.jdi.InterfaceType#invokeMethod(com.sun.jdi.ThreadReference, com.sun.jdi.Method, java.util.List, int)
+	 */
+	@Override
+	public Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options) throws InvalidTypeException,
+			ClassNotLoadedException, IncompatibleThreadStateException,
+			InvocationException {
+		return invokeMethod(thread, method, arguments, options, JdwpCommandPacket.IT_INVOKE_METHOD);
 	}
 
 	/**

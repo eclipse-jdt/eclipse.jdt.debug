@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdi.internal.jdwp;
 
@@ -90,6 +91,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int CT_SET_VALUES = 2 + (CSET_CLASS_TYPE << 8);
 	public static final int CT_INVOKE_METHOD = 3 + (CSET_CLASS_TYPE << 8);
 	public static final int CT_NEW_INSTANCE = 4 + (CSET_CLASS_TYPE << 8);
+
+	/** Commands InterfaceType. */
+	public static final int IT_INVOKE_METHOD = 1 + (CSET_INTERFACE_TYPE << 8);
 
 	/** Commands ArrayType. */
 	public static final int AT_NEW_INSTANCE = 1 + (CSET_ARRAY_TYPE << 8);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
@@ -14,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -51,6 +53,9 @@ public class SendStaticMessage extends CompoundInstruction {
 		IJavaValue result;
 		if (receiver instanceof IJavaClassType) {
 			result = ((IJavaClassType) receiver).sendMessage(fSelector,
+					fSignature, args, getContext().getThread());
+		} else if (receiver instanceof IJavaInterfaceType) {
+			result = ((IJavaInterfaceType) receiver).sendMessage(fSelector,
 					fSignature, args, getContext().getThread());
 		} else {
 			throw new CoreException(

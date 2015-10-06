@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
@@ -30,6 +33,7 @@ import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 
 /**
@@ -398,4 +402,26 @@ public abstract class JDIReferenceType extends JDIType implements
 		}
 		return -1;
 	}
+
+	/**
+	 * Utility method to convert argument array to an argument list.
+	 * 
+	 * @param args
+	 *            array of arguments, as <code>IJavaValue</code>s, possibly
+	 *            <code>null</code> or empty
+	 * @return a list of underlying <code>Value</code>s
+	 */
+	protected List<Value> convertArguments(IJavaValue[] args) {
+		List<Value> arguments = null;
+		if (args == null) {
+			arguments = Collections.EMPTY_LIST;
+		} else {
+			arguments = new ArrayList<Value>(args.length);
+			for (IJavaValue arg : args) {
+				arguments.add(((JDIValue) arg).getUnderlyingValue());
+			}
+		}
+		return arguments;
+	}
+
 }
