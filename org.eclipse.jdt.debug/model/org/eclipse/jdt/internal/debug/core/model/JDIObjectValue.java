@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
+ *     Jesper Steen Møller - bug 426903: [1.8] Cannot evaluate super call to default method
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdi.internal.InterfaceTypeImpl;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -125,7 +127,14 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		Method method = null;
 		ReferenceType refType = getUnderlyingReferenceType();
 		try {
-			while (typeSignature != null && refType != null	&& !refType.signature().equals(typeSignature)) {
+			found: while (typeSignature != null && refType != null	&& !refType.signature().equals(typeSignature)) {
+				// Didin't match, could be a method from inheirited interface
+				for (InterfaceType iface : ((ClassType) refType).allInterfaces()) {
+					if (iface.signature().equals(typeSignature)) {
+						refType = iface;
+						break found;
+					}
+				}
 				// lookup correct type through the hierarchy
 				refType = ((ClassType) refType).superclass();
 				if (refType == null) {
@@ -167,6 +176,13 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 						return ifaceMethod;
 					}
 				}
+			}
+		}
+		if (refType instanceof InterfaceTypeImpl) {
+			Method m = ((InterfaceTypeImpl) refType).concreteMethodByName(selector,
+					signature);
+			if (m != null) {
+				return m;
 			}
 		}
 		if (refType instanceof ArrayType) {

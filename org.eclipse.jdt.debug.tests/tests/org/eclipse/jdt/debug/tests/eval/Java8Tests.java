@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Jesper S. Møller and others.
+ * Copyright (c) 2014, 2015 Jesper S. Møller and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * 
  * Contributors:
  *     Jesper S. Møller - initial API and implementation
+ *     Jesper Steen Møller - bug 426903: [1.8] Cannot evaluate super call to default method
  *******************************************************************************/
 
 package org.eclipse.jdt.debug.tests.eval;
@@ -84,5 +85,27 @@ public class Java8Tests extends AbstractDebugTest {
 		}
 	}
 	
+	/**
+	 * Evaluates a snippet in the context of interface method generic statement
+	 * 
+	 * @throws Exception
+	 */
+	public void testBugEvalIntfSuperDefault() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String type = "EvalIntfSuperDefault";
+			IJavaLineBreakpoint bp = createLineBreakpoint(26, "", "EvalIntfSuperDefault.java", "EvalIntfSuperDefault");
+			assertNotNull("should have created breakpoint", bp);
+			thread = launchToBreakpoint(type);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "B.super.getOne()";
+			String result = doEval(thread, snippet).getValueString();
+			assertEquals("2", result);
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
 
 }
