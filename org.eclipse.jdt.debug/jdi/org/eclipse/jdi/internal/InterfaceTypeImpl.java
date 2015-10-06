@@ -23,6 +23,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpInterfaceID;
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.InterfaceType;
+import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
@@ -148,6 +149,41 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		return interfaces();
 	}
 
+	/**
+	 * @return Returns a the single non-abstract Method visible from this class
+	 *         that has the given name and signature.
+	 */
+	public Method concreteMethodByName(String name, String signature) {
+		/*
+		 * Recursion is used to find the method: The methods of its own (own
+		 * methods() command); The methods of it's superclass.
+		 */
+
+		Iterator<Method> methods = methods().iterator();
+		Method method;
+		while (methods.hasNext()) {
+			method = methods.next();
+			if (method.name().equals(name) && method.signature().equals(signature)) {
+				if (method.isAbstract()) {
+					return null;
+				}
+				return method;
+			}
+		}
+
+		if (superinterfaces() != null) {
+			for (InterfaceType superi: superinterfaces()) {
+				Method foundMethod = ((InterfaceTypeImpl)superi).concreteMethodByName(name, signature);
+				if (foundMethod != null) {
+					return foundMethod;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	
 	/**
 	 * @return Returns true if this type has been initialized.
 	 */

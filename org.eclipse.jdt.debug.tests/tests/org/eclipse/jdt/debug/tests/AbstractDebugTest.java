@@ -12,6 +12,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
+ *     Jesper Steen Møller - bug 426903: [1.8] Cannot evaluate super call to default method
  *     Jesper Steen Møller - bug 341232
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
@@ -457,6 +458,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
+				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
@@ -2681,11 +2683,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ASTEvaluationEngine engine = new ASTEvaluationEngine(getProjectContext(), (IJavaDebugTarget) thread.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			long timeout = System.currentTimeMillis()+5000;
+			long timeout = System.currentTimeMillis() + 5000;
 			while(listener.getResult() == null && System.currentTimeMillis() < timeout) {
 				Thread.sleep(100);
 			}
 			IEvaluationResult result = listener.getResult();
+			assertNotNull("The evaluation should have result: ", result);
 			assertNull("The evaluation should not have exception : " + result.getException(), result.getException());
 
 			String firstError = result.hasErrors() ? result.getErrorMessages()[0] : "";
