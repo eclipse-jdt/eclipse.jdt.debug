@@ -992,7 +992,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IJavaProject jp = getJavaProject(configuration);
 		if (jp != null) {
 			IProject p = jp.getProject();
-			return p.getLocation().toFile();
+			// p.getLocation() will be null in the case where the location is relative to an undefined workspace path variable.
+			if (p.getLocation() != null) {
+				return p.getLocation().toFile();
+			}
 		}
 		return null;
 	}
