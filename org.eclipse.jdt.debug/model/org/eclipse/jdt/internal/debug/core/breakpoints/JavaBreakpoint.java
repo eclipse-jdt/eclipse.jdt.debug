@@ -415,8 +415,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected boolean installableReferenceType(ReferenceType type,
 			JDIDebugTarget target) throws CoreException {
 		String installableType = getTypeName();
+		if (installableType == null )
+			return false;
 		String queriedType = type.name();
-		if (installableType == null || queriedType == null) {
+		if( queriedType == null) {
 			return false;
 		}
 		int index = queriedType.indexOf('<');
