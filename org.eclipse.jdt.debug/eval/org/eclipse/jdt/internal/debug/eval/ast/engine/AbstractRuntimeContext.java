@@ -124,10 +124,12 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 		if (types != null && types.length > 0) {
 			// find the one with the right class loader
 			for (IJavaType type2 : types) {
-				IJavaReferenceType type = (IJavaReferenceType) type2;
-				IJavaObject cloader = type.getClassLoaderObject();
-				if (isCompatibleLoader(loader, cloader)) {
-					return type.getClassObject();
+				if ( type2 instanceof IJavaReferenceType){
+					IJavaReferenceType type = (IJavaReferenceType) type2;
+					IJavaObject cloader = type.getClassLoaderObject();
+					if (isCompatibleLoader(loader, cloader)) {
+						return type.getClassObject();
+					}
 				}
 			}
 		}
