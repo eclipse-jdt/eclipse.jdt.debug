@@ -8,26 +8,37 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - enhancement 254677 - filter getters/setters
+ *     Andrey Loskutov <loskutov@gmx.de> - bug 5188 - breakpoint filtering
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -40,6 +51,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -55,9 +67,19 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
@@ -281,6 +303,21 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	private ListenerList fHCRListeners = new ListenerList();
 
 	/**
+	 * Java scope of the current launch, "null" means everything is in scope
+	 */
+	private IJavaSearchScope fScope;
+
+	/**
+	 * Java projects of the current launch, "null" means everything is in scope
+	 */
+	private Set<IProject> fProjects;
+
+	/**
+	 * Java types from breakpoints with the flag if they are in scope for current launch
+	 */
+	private Map<String, Boolean> fKnownTypes = new HashMap<>();
+
+	/**
 	 * Creates a new JDI debug target for the given virtual machine.
 	 * 
 	 * @param jvm
@@ -316,6 +353,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setTerminating(false);
 		setDisconnected(false);
 		setName(name);
+		prepareBreakpointsSearchScope();
 		setBreakpoints(new ArrayList<IBreakpoint>(5));
 		setThreadList(new ArrayList<JDIThread>(5));
 		fGroups = new ArrayList<JDIThreadGroup>(5);
@@ -325,6 +363,32 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().getBreakpointManager()
 				.addBreakpointManagerListener(this);
+	}
+
+	private void prepareBreakpointsSearchScope() {
+		ILaunchConfiguration config = getLaunch().getLaunchConfiguration();
+		if (config == null) {
+			return;
+		}
+		try {
+			IResource[] resources = config.getMappedResources();
+			if (resources != null && resources.length != 0) {
+				Set<IJavaProject> javaProjects = getJavaProjects(resources);
+				fProjects = collectReferencedJavaProjects(javaProjects);
+				fScope = SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaProject[javaProjects.size()]), true);
+				return;
+			}
+			// See IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME
+			String projectName = config.getAttribute("org.eclipse.jdt.launching.PROJECT_ATTR", (String)null); //$NON-NLS-1$
+			if(projectName != null){
+				Set<IJavaProject> javaProjects = getJavaProjects(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+				fProjects = collectReferencedJavaProjects(javaProjects);
+				fScope = SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaProject[javaProjects.size()]), true);
+				return;
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
 	}
 
 	/**
@@ -1286,7 +1350,217 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
-		return breakpoint instanceof IJavaBreakpoint;
+		boolean isJava = breakpoint instanceof IJavaBreakpoint;
+		if(!isJava){
+			return false;
+		}
+		if(fScope == null){
+			// no checks, everything in scope: the filtering is disabled
+			return true;
+		}
+
+		IJavaBreakpoint jBreakpoint = (IJavaBreakpoint) breakpoint;
+
+		// check if the breakpoint from resources in target scope
+		IMarker marker = jBreakpoint.getMarker();
+		if(marker != null){
+			IResource resource = marker.getResource();
+			// Java exception breakpoints have wsp root as resource
+			if(resource != null && resource != ResourcesPlugin.getWorkspace().getRoot()){
+				if (fProjects.contains(resource.getProject())) {
+					return true;
+				}
+				// check if this is a resource which is linked to any of the projects
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				URI uri = resource.getLocationURI();
+				if(uri != null){
+					IFile[] files = root.findFilesForLocationURI(uri);
+					for (IFile file : files) {
+						if(fProjects.contains(file.getProject())){
+							return true;
+						}
+					}
+				}
+				// breakpoint belongs to resource outside of referenced projects?
+				return false;
+			}
+		}
+
+		// Marker not available, so try to find the type in our scope
+		try {
+			String typeName = jBreakpoint.getTypeName();
+			if(typeName != null){
+				Boolean known = fKnownTypes.get(typeName);
+				if(known != null){
+					return known.booleanValue();
+				}
+				boolean inScope = isTypeAccessibleInScope(typeName);
+				fKnownTypes.put(typeName, Boolean.valueOf(inScope));
+				return inScope;
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
+
+		// no idea what this breakpoint about, so let say we support it
+		return true;
+	}
+
+	private Set<IJavaProject> getJavaProjects(IResource... resources) {
+		Set<IJavaProject> projects = new LinkedHashSet<>();
+		for (IResource resource : resources) {
+			IProject project = resource.getProject();
+			if(!project.isAccessible()){
+				continue;
+			}
+			IJavaElement javaElement = JavaCore.create(project);
+			if(javaElement != null) {
+				projects.add(javaElement.getJavaProject());
+			}
+		}
+		return projects;
+	}
+
+	/**
+	 * @param javaProjects the set which will be updated with all referenced java projects
+	 * @return corresponding resource projects
+	 */
+	private Set<IProject> collectReferencedJavaProjects(Set<IJavaProject> javaProjects) {
+		Set<IProject> projects = new LinkedHashSet<>();
+		// collect all references
+		for (IJavaProject jProject : javaProjects) {
+			projects.add(jProject.getProject());
+			addReferencedProjects(jProject, projects);
+		}
+		// update java projects set with new java projects we might collected
+		for (IProject project : projects) {
+			IJavaProject jProject = JavaCore.create(project);
+			if(jProject != null){
+				javaProjects.add(jProject);
+			}
+		}
+		return projects;
+	}
+
+	private void addReferencedProjects(IJavaProject jProject, Set<IProject> projects) {
+		IClasspathEntry[] cp;
+		try {
+			// we want resolved classpath to get variables and containers resolved for us
+			cp = jProject.getResolvedClasspath(true);
+		} catch (JavaModelException e) {
+			// we don't care here
+			return;
+		}
+		for (IClasspathEntry cpe : cp) {
+			int entryKind = cpe.getEntryKind();
+			IProject project = null;
+			switch (entryKind) {
+				case IClasspathEntry.CPE_LIBRARY:
+					// we must check for external folders coming from other projects in the workspace
+					project = getProjectOfExternalFolder(cpe);
+					break;
+				case IClasspathEntry.CPE_PROJECT:
+					// we must add any projects referenced
+					project = getProject(cpe);
+					break;
+				case IClasspathEntry.CPE_SOURCE:
+					// we have the project already
+				case IClasspathEntry.CPE_VARIABLE:
+					// should not happen on resolved classpath
+				case IClasspathEntry.CPE_CONTAINER:
+					// should not happen on resolved classpath
+				default:
+					break;
+			}
+
+			if(project == null || projects.contains(project) || !project.isAccessible()){
+				continue;
+			}
+
+			IJavaProject referenced = JavaCore.create(project);
+			if (referenced != null) {
+				// we have found new project, start recursion
+				projects.add(project);
+				addReferencedProjects(referenced, projects);
+			}
+		}
+	}
+
+	private IProject getProject(IClasspathEntry cpe) {
+		IPath projectPath = cpe.getPath();
+		if (projectPath == null || projectPath.isEmpty()) {
+			return null;
+		}
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(projectPath.lastSegment());
+		if (project.isAccessible()) {
+			return project;
+		}
+		return null;
+	}
+
+	private static IProject getProjectOfExternalFolder(IClasspathEntry cpe){
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		if(cpe.getContentKind() == IPackageFragmentRoot.K_BINARY){
+			IPath path = cpe.getPath();
+			if(path == null || path.isEmpty()){
+				return null;
+			}
+			IProject project = root.getProject(path.segment(0));
+			if(project.isAccessible()) {
+				return project;
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * Checks if the given type is accessible in our scope
+	 */
+	private boolean isTypeAccessibleInScope(final String typeName) {
+		final AtomicReference<IType> foundType = new AtomicReference<>();
+		String packageName = null;
+		String simpleName = typeName;
+		int lastDot = typeName.lastIndexOf('.');
+		if(lastDot > 0 && lastDot < typeName.length() - 1){
+			packageName = typeName.substring(0, lastDot);
+			simpleName = typeName.substring(lastDot + 1);
+		}
+		int lastDoll = simpleName.lastIndexOf('$');
+		if(lastDoll > 0 && lastDoll < simpleName.length() - 1){
+			simpleName = simpleName.substring(lastDoll + 1);
+		}
+
+		final IProgressMonitor monitor = new NullProgressMonitor();
+        TypeNameMatchRequestor requestor = new TypeNameMatchRequestor() {
+			@Override
+			public void acceptTypeNameMatch(TypeNameMatch match) {
+				IType type = match.getType();
+				if(typeName.equals(type.getFullyQualifiedName())){
+					foundType.set(type);
+					monitor.setCanceled(true);
+					return;
+				}
+			}
+		};
+		try {
+			SearchEngine searchEngine = new SearchEngine();
+			searchEngine.searchAllTypeNames(packageName != null? packageName.toCharArray() : null,
+					SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+					simpleName.toCharArray(),
+			        SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+			        IJavaSearchConstants.TYPE,
+			        fScope,
+			        requestor,
+			        IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+			        monitor);
+		} catch (JavaModelException e) {
+			logError(e);
+			return true;
+		} catch (OperationCanceledException e){
+			// expected if we cancelled the search on first match
+		}
+		return foundType.get() != null;
 	}
 
 	/**
@@ -1567,6 +1841,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setEventDispatcher(null);
 		setStepFilters(new String[0]);
 		fHCRListeners.clear();
+		fKnownTypes.clear();
+		fProjects = null;
+		fScope = null;
 	}
 
 	/**
