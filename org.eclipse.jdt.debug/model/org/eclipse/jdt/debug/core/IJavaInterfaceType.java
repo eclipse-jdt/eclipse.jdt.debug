@@ -117,7 +117,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	 *                <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 *                </ul>
 	 *                
-	 * @since 4.6
+	 * @since 3.10
 	 */
 	public IJavaValue sendMessage(String selector, String signature,
 			IJavaValue[] args, IJavaThread thread) throws DebugException;
