@@ -331,7 +331,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			String[] localVariables = new String[names.size()];
 			System.arraycopy(localVariablesWithNull, 0, localVariables, 0, localVariables.length);
 			mapper = new EvaluationSourceGenerator(localTypesNames,
-					localVariables, snippet);
+					localVariables, snippet, getJavaProject());
 			// Compile in context of declaring type to get proper visibility of
 			// locals and members.
 			// Compiling in context of receiving type potentially provides
@@ -428,7 +428,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			String[] localTypesNames = new String[] { typeName };
 			String[] localVariables = new String[] { ArrayRuntimeContext.ARRAY_THIS_VARIABLE };
 			mapper = new EvaluationSourceGenerator(localTypesNames,
-					localVariables, newSnippet);
+					localVariables, newSnippet, getJavaProject());
 
 			int index = typeName.indexOf('$');
 			// if the argument is an inner type, compile in context of outer
@@ -503,7 +503,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		CompilationUnit unit = null;
 
 		mapper = new EvaluationSourceGenerator(new String[0], new String[0],
-				snippet);
+				snippet, getJavaProject());
 
 		try {
 			unit = parseCompilationUnit(

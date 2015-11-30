@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.compiler.IScanner;
+import org.eclipse.jdt.core.compiler.ITerminalSymbols;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -51,39 +55,35 @@ public class EvaluationSourceGenerator {
 	private int fSnippetStartPosition;
 	private int fRunMethodStartPosition;
 	private int fRunMethodLength;
+	private IJavaProject fJavaProject;
 
 	/**
 	 * Rebuild source in presence of external local variables
 	 */
 	public EvaluationSourceGenerator(String[] localVariableTypesNames,
-			String[] localVariableNames, String codeSnippet) {
+			String[] localVariableNames, String codeSnippet, IJavaProject javaProject) {
 		fLocalVariableTypeNames = localVariableTypesNames;
 		fLocalVariableNames = localVariableNames;
+		fJavaProject = javaProject;
 		fCodeSnippet = getCompleteSnippet(codeSnippet);
 	}
 
-	public EvaluationSourceGenerator(String codeSnippet) {
-		this(new String[0], new String[0], codeSnippet);
+	public EvaluationSourceGenerator(String codeSnippet, IJavaProject javaProject) {
+		this(new String[0], new String[0], codeSnippet, javaProject);
 	}
 
-	protected String getCompleteSnippet(String codeSnippet) {
-
-		if (isExpression(codeSnippet)) {
-			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
-		}
-		return codeSnippet;
-	}
-
+	
 	/**
-	 * Returns whether the given snippet represents an expression. This is
-	 * determined by examining the snippet for non-quoted semicolons.
-	 * 
-	 * Returns <code>true</code> if the snippet is an expression, or
-	 * <code>false</code> if the expression contains a statement.
+	 * Returns the completed codeSnippet by adding required semicolon and
+	 * return 
 	 */
-	protected boolean isExpression(String codeSnippet) {
+	protected String getCompleteSnippet(String codeSnippet) {
+		codeSnippet = codeSnippet.trim(); // remove whitespaces at the end
 		boolean inString = false;
 		byte[] chars = codeSnippet.getBytes();
+		
+		int semicolonIndex = -1;
+		int lastSemilcolonIndex = -1;
 		for (int i = 0, numChars = chars.length; i < numChars; i++) {
 			switch (chars[i]) {
 			case '\\':
@@ -96,15 +96,122 @@ public class EvaluationSourceGenerator {
 				inString = !inString;
 				break;
 			case ';':
-				if (!inString) {
-					return false;
+				if (!inString) { // mark the last 2 semicolon
+					semicolonIndex = lastSemilcolonIndex;
+					lastSemilcolonIndex = i;
 				}
 				break;
 			}
 		}
-		return true;
+		StringBuffer wordBuffer = new StringBuffer();
+		// if semicolon missing at the end 
+		if (lastSemilcolonIndex != chars.length-1)
+			semicolonIndex = lastSemilcolonIndex;
+		int i ;
+		for (i=0; i < chars.length; i++) {
+			// copy everything before the last statement or if whitespace
+			if (i<= semicolonIndex || Character.isWhitespace(chars[i]) || chars[i] == '}'){
+				wordBuffer.append(codeSnippet.charAt(i));
+			}
+			else
+				break;
+		}
+		String lastSentence  = codeSnippet.substring(i);
+		// don't add return if it there in some condition
+		String returnString = "return "; //$NON-NLS-1$
+		int index = codeSnippet.lastIndexOf(returnString); 
+		if (index == -1){
+			if (needsReturn(lastSentence))
+				wordBuffer.append(returnString);
+		}
+		else if (index > i){
+			if (!Character.isWhitespace(chars[index-1]) || !(Character.isWhitespace(chars[index+6]) || chars[index+6] == '}')){
+				if (needsReturn(lastSentence))
+					wordBuffer.append(returnString);
+			}
+		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+6).equals(returnString)))){ 
+			// add return if last statement does not have return
+			if (needsReturn(lastSentence))
+				wordBuffer.append(returnString);
+		}
+		for (; i < chars.length; i++) {
+			// copy the last statement
+			wordBuffer.append(codeSnippet.charAt(i));
+		}
+		// add semicolon at the end if missing
+		if (chars[chars.length -1] !=';' && chars[chars.length -1] !='}')
+			wordBuffer.append(';');
+		else if (chars[chars.length -1] !=';' && chars[chars.length -1] =='}'){
+			int j = lastSentence.lastIndexOf('=') ;
+			int k = lastSentence.lastIndexOf("==") ; //$NON-NLS-1$
+			if ( j != -1 && (j!=k))
+				wordBuffer.append(';');
+		}
+		return wordBuffer.toString();
 	}
 
+	
+	/**
+	 * Returns <code>true</code> if the snippet required return to be added, or
+	 * <code>false</code> if the snippet does not require return to be added.
+	 */
+	
+	private boolean needsReturn(String codeSnippet){
+		IScanner scanner = ToolFactory.createScanner(false, false, false, fJavaProject.getOption(JavaCore.COMPILER_SOURCE, true), fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		scanner.setSource(codeSnippet.toCharArray());
+		int token;
+		try {
+			token = scanner.getNextToken();
+			int count = 0;
+			while (token != ITerminalSymbols.TokenNameEOF) {
+				if (count == 0 && (token == ITerminalSymbols.TokenNameIdentifier || token == ITerminalSymbols.TokenNameint || token == ITerminalSymbols.TokenNamefloat || 
+						token == ITerminalSymbols.TokenNamedouble || token == ITerminalSymbols.TokenNameboolean || token == ITerminalSymbols.TokenNamechar ||
+						token == ITerminalSymbols.TokenNameshort || token == ITerminalSymbols.TokenNamelong)) {
+					int currentToken = token;
+					token = scanner.getNextToken();
+					if ( token == ITerminalSymbols.TokenNameEOF && currentToken == ITerminalSymbols.TokenNameIdentifier ){
+						return true;
+					}
+					count = 1;
+				} 
+				else if ( count == 0 && (token == ITerminalSymbols.TokenNamestatic || token == ITerminalSymbols.TokenNamefinal || token == ITerminalSymbols.TokenNamepackage ||
+						token == ITerminalSymbols.TokenNameprivate || token == ITerminalSymbols.TokenNameprotected || token == ITerminalSymbols.TokenNamepublic)){
+					token = scanner.getNextToken();
+				}
+				else if (count ==1 && (token == ITerminalSymbols.TokenNameLBRACE || token == ITerminalSymbols.TokenNameEQUAL)){
+					return true;
+				}
+				else if (count ==1 && (token == ITerminalSymbols.TokenNameLESS || token == ITerminalSymbols.TokenNameLBRACKET)){
+					token = scanner.getNextToken();
+					count = 2;
+				}
+				else if (count ==2 && (token == ITerminalSymbols.TokenNameGREATER || token == ITerminalSymbols.TokenNameRBRACKET)){
+					int currentToken = token;
+					token = scanner.getNextToken();
+					if ( token == ITerminalSymbols.TokenNameEOF && currentToken == ITerminalSymbols.TokenNameRBRACKET ){
+						return true;
+					}
+					count = 3;
+				}
+				else if (count == 2)
+					token = scanner.getNextToken();
+				else if ( (count == 3 || count == 1 ) && token == ITerminalSymbols.TokenNameIdentifier ){
+					 return false;
+				}
+				else { 
+					return true;
+				}
+				
+			}
+		}
+		catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
 	public String getCompilationUnitName() {
 		return fCompilationUnitName;
 	}

@@ -81,6 +81,7 @@ import org.eclipse.jdt.debug.tests.eval.StringPlusAssignmentOpTests;
 import org.eclipse.jdt.debug.tests.eval.StringPlusOpTests;
 import org.eclipse.jdt.debug.tests.eval.TestsAnonymousClassVariable;
 import org.eclipse.jdt.debug.tests.eval.TestsArrays;
+import org.eclipse.jdt.debug.tests.eval.TestsBreakpointConditions;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
 import org.eclipse.jdt.debug.tests.eval.TestsNumberLiteral;
@@ -231,6 +232,7 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(LabelTests.class));
 		addTest(new TestSuite(TestsAnonymousClassVariable.class));
 		
+		addTest(new TestSuite(TestsBreakpointConditions.class));
 
 	}
 	
