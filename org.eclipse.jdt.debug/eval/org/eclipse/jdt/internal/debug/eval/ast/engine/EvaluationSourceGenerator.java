@@ -129,7 +129,7 @@ public class EvaluationSourceGenerator {
 				if (needsReturn(lastSentence))
 					wordBuffer.append(returnString);
 			}
-		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+6).equals(returnString)))){ 
+		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+7).equals(returnString)))){ 
 			// add return if last statement does not have return
 			if (needsReturn(lastSentence))
 				wordBuffer.append(returnString);
