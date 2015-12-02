@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
+
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -27,8 +22,20 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
+
 import org.eclipse.ui.IEditorInput;
+
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.debug.ui.DebugUITools;
+
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
+
+import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
 
 /**
  * This is a specialization of a hyperlink detector for the step into selection command
@@ -87,7 +94,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	 */
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
+		ITextEditor editor = getAdapter(ITextEditor.class);
 		if(editor != null && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {
 			
 			// should only enable step into selection when the current debug context
