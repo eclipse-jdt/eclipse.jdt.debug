@@ -1526,9 +1526,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			packageName = typeName.substring(0, lastDot);
 			simpleName = typeName.substring(lastDot + 1);
 		}
-		int lastDoll = simpleName.lastIndexOf('$');
-		if(lastDoll > 0 && lastDoll < simpleName.length() - 1){
-			simpleName = simpleName.substring(lastDoll + 1);
+		// get rid of inner types, use outer type name
+		final String fqName;
+		int firstDoll = simpleName.indexOf('$');
+		if(firstDoll > 0 && firstDoll < simpleName.length() - 1){
+			simpleName = simpleName.substring(0, firstDoll);
+			fqName = packageName + "." + simpleName; //$NON-NLS-1$
+		} else {
+			fqName = typeName;
 		}
 
 		final IProgressMonitor monitor = new NullProgressMonitor();
@@ -1536,7 +1541,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			@Override
 			public void acceptTypeNameMatch(TypeNameMatch match) {
 				IType type = match.getType();
-				if(typeName.equals(type.getFullyQualifiedName())){
+				if(fqName.equals(type.getFullyQualifiedName())){
 					foundType.set(type);
 					monitor.setCanceled(true);
 					return;
