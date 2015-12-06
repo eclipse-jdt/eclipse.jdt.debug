@@ -290,7 +290,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				PreferenceConstants.getPreferenceStore(),
 				EditorsUI.getPreferenceStore()});
 		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), store, this));		
-		fSnippetStateListeners= new ArrayList<ISnippetStateChangedListener>(4);
+		fSnippetStateListeners = new ArrayList<>(4);
 		setPreferenceStore(store);
 		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
@@ -627,7 +627,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			public void run() {
 				Shell shell= getShell();
 				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
-					List<ISnippetStateChangedListener> v= new ArrayList<ISnippetStateChangedListener>(fSnippetStateListeners);
+					List<ISnippetStateChangedListener> v = new ArrayList<>(fSnippetStateListeners);
 					for (int i= 0; i < v.size(); i++) {
 						ISnippetStateChangedListener l= v.get(i);
 						l.snippetStateChanged(JavaSnippetEditor.this);
@@ -1444,13 +1444,12 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		async(r);		
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
+
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (required == IShowInTargetList.class) {
-			return new IShowInTargetList() {
+			return (T) new IShowInTargetList() {
 				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
