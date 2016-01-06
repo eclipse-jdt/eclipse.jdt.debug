@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -395,6 +395,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.ConditionalsNearGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug329294WithGenerics"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug403028"));
+				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug484686"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.GenericMethodEntryTest"));
 				loaded15 = true;
 				waitForBuild();
