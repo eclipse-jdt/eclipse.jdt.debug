@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Mar 12, 2015 IBM Corporation and others.
+ * Copyright (c) Mar 12, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -329,6 +329,42 @@ public class DetailFormatterTests extends AbstractDebugTest {
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertFalse("The returned value from !(true==true||true!=true&&true) should be false", Boolean.parseBoolean(fListener.result));
+		}
+		finally {
+			jdfm.removeAssociatedDetailFormatter(formatter);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests a detail formatter made from an collection with no type arguments
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484686
+	 * @throws Exception
+	 */
+	public void testHoverWithNoTypeArguments() throws Exception {
+		IJavaThread thread = null;
+		DetailFormatter formatter = null;
+		JavaDetailFormattersManager jdfm = JavaDetailFormattersManager.getDefault();
+		try {
+			String typename = "a.b.c.bug484686";
+			createLineBreakpoint(8, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("The program did not suspend", thread);
+			String snippet = "StringBuilder sb = new StringBuilder();\n" + "for (Object obj : this) { \n" + "sb.append(obj).append(\"\\n\"); }\n"
+					+ "return sb.toString();";
+			formatter = new DetailFormatter("java.util.Collection", snippet, true);
+			jdfm.setAssociatedDetailFormatter(formatter);
+			IJavaVariable var = thread.findVariable("coll");
+			assertNotNull("the variable 'coll' must exist in the frame", var);
+			jdfm.computeValueDetail((IJavaValue) var.getValue(), thread, fListener);
+			long timeout = System.currentTimeMillis() + 5000;
+			while (fListener.value == null && System.currentTimeMillis() < timeout) {
+				Thread.sleep(100);
+			}
+			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
+			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
 		finally {
 			jdfm.removeAssociatedDetailFormatter(formatter);
