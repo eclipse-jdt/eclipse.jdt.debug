@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2239,8 +2239,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new PushLocalVariable(iteratorIdentifier));
 			storeInstruction();
 			storeInstruction();
-			if (checkAutoBoxing(typeBinding.getTypeArguments()[0], paramBinding)) {
-				storeInstruction();
+			ITypeBinding[] typeArguments = typeBinding.getTypeArguments();
+			if (typeArguments != null && typeArguments.length > 0 ){
+				if (checkAutoBoxing(typeArguments[0], paramBinding)) {
+					storeInstruction();
+				}
 			}
 			storeInstruction();
 			addPopInstruction();
