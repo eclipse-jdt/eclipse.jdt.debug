@@ -2240,7 +2240,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction();
 			storeInstruction();
 			ITypeBinding[] typeArguments = typeBinding.getTypeArguments();
-			if (typeArguments != null && typeArguments.length > 0 ){
+			if (typeArguments != null && typeArguments.length > 0) {
 				if (checkAutoBoxing(typeArguments[0], paramBinding)) {
 					storeInstruction();
 				}
