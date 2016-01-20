@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2360,9 +2360,7 @@ public final class JavaRuntime {
 	 * @param current the new current default VM
 	 */
 	private static void notifyDefaultVMChanged(IVMInstall previous, IVMInstall current) {
-		Object[] listeners = fgVMListeners.getListeners();
-		for (Object object : listeners) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
+		for (IVMInstallChangedListener listener : fgVMListeners) {
 			listener.defaultVMInstallChanged(previous, current);
 		}
 	}
@@ -2374,9 +2372,7 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMChanged(PropertyChangeEvent event) {
-		Object[] listeners = fgVMListeners.getListeners();
-		for (Object object : listeners) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
+		for (IVMInstallChangedListener listener : fgVMListeners) {
 			listener.vmChanged(event);
 		}
 	}
@@ -2389,9 +2385,7 @@ public final class JavaRuntime {
 	 */
 	public static void fireVMAdded(IVMInstall vm) {
 		if (!fgInitializingVMs) {
-			Object[] listeners = fgVMListeners.getListeners();
-			for (Object object : listeners) {
-				IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
+			for (IVMInstallChangedListener listener : fgVMListeners) {
 				listener.vmAdded(vm);
 			}
 		}
@@ -2404,9 +2398,7 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMRemoved(IVMInstall vm) {
-		Object[] listeners = fgVMListeners.getListeners();
-		for (Object object : listeners) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
+		for (IVMInstallChangedListener listener : fgVMListeners) {
 			listener.vmRemoved(vm);
 		}
 	}
