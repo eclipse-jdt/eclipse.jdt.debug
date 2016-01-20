@@ -2989,12 +2989,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	}
 
 	/**
-	 * Returns an array of current hot code replace listeners.
+	 * Returns the current hot code replace listeners.
 	 * 
 	 * @return registered hot code replace listeners
-	 * @since 3.6
+	 * @since 3.10
 	 */
-	public Object[] getHotCodeReplaceListeners() {
-		return fHCRListeners.getListeners();
+	public ListenerList<IJavaHotCodeReplaceListener> getHotCodeReplaceListeners() {
+		return fHCRListeners;
 	}
 }
