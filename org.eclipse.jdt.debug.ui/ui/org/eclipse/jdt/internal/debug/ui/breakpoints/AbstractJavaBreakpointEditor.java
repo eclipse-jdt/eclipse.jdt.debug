@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
  */
 public abstract class AbstractJavaBreakpointEditor {
 	
-    private ListenerList fListeners = new ListenerList();
+	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
     private boolean fDirty = false;
     private boolean fMnemonics = true;
     private boolean fSuppressPropertyChanges = false;
@@ -165,8 +165,8 @@ public abstract class AbstractJavaBreakpointEditor {
 	protected void firePropertyChange(int propId) {
 		if (!fSuppressPropertyChanges) {
 			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				IPropertyListener listener = (IPropertyListener) listeners[i];
+			for (Object object : listeners) {
+				IPropertyListener listener = (IPropertyListener) object;
 				listener.propertyChanged(this, propId);
 			}
 		}

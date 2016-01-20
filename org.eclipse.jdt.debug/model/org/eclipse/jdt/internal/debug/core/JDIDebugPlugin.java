@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Breakpoint listener list.
 	 */
-	private ListenerList fBreakpointListeners = null;
+	private ListenerList<IJavaBreakpointListener> fBreakpointListeners = null;
 
 	/**
 	 * Breakpoint notification types
@@ -300,7 +300,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 					}
 				});
 		JavaHotCodeReplaceManager.getDefault().startup();
-		fBreakpointListeners = new ListenerList();
+		fBreakpointListeners = new ListenerList<>();
 		fJavaBreakpointManager = new BreakpointListenerManager();
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
 		if(node != null) {
