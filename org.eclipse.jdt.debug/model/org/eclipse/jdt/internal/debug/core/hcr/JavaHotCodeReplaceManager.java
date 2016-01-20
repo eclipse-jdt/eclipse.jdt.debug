@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * The list of <code>IJavaHotCodeReplaceListeners</code> which this hot code
 	 * replace manager will notify about hot code replace attempts.
 	 */
-	private ListenerList fHotCodeReplaceListeners = new ListenerList();
+	private ListenerList<IJavaHotCodeReplaceListener> fHotCodeReplaceListeners = new ListenerList<>();
 
 	/**
 	 * The lists of hot swap targets which support HCR and those which don't
@@ -195,7 +195,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWorkspace().removeResourceChangeListener(this);
-		fHotCodeReplaceListeners = new ListenerList();
+		fHotCodeReplaceListeners = new ListenerList<>();
 		synchronized (this) {
 			fHotSwapTargets.clear();
 			fNoHotSwapTargets.clear();

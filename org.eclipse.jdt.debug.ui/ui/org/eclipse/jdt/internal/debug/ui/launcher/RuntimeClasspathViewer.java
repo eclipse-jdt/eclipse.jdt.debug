@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/**
 	 * Entry changed listeners
 	 */
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
 	
 	/**
 	 * The runtime classpath entries displayed in this viewer
@@ -189,8 +189,9 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	@Override
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IEntriesChangedListener)listeners[i]).entriesChanged(this);
+		for (Object object : listeners) {
+			((IEntriesChangedListener) object).entriesChanged(this);
+
 		}
 	}
 	

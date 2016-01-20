@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,7 +325,7 @@ public final class JavaRuntime {
 	/**
 	 * VM change listeners
 	 */
-	private static ListenerList fgVMListeners = new ListenerList();
+	private static ListenerList<IVMInstallChangedListener> fgVMListeners = new ListenerList<>();
 	
 	/**
 	 * Cache of already resolved projects in container entries. Used to avoid
@@ -2361,8 +2361,8 @@ public final class JavaRuntime {
 	 */
 	private static void notifyDefaultVMChanged(IVMInstall previous, IVMInstall current) {
 		Object[] listeners = fgVMListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+		for (Object object : listeners) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
 			listener.defaultVMInstallChanged(previous, current);
 		}
 	}
@@ -2375,8 +2375,8 @@ public final class JavaRuntime {
 	 */
 	public static void fireVMChanged(PropertyChangeEvent event) {
 		Object[] listeners = fgVMListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+		for (Object object : listeners) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
 			listener.vmChanged(event);
 		}
 	}
@@ -2390,8 +2390,8 @@ public final class JavaRuntime {
 	public static void fireVMAdded(IVMInstall vm) {
 		if (!fgInitializingVMs) {
 			Object[] listeners = fgVMListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			for (Object object : listeners) {
+				IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
 				listener.vmAdded(vm);
 			}
 		}
@@ -2405,8 +2405,8 @@ public final class JavaRuntime {
 	 */
 	public static void fireVMRemoved(IVMInstall vm) {
 		Object[] listeners = fgVMListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+		for (Object object : listeners) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener) object;
 			listener.vmRemoved(vm);
 		}
 	}
