@@ -741,13 +741,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 *            Java debug target
 	 * @return hot code replace listeners
 	 */
-	private Object[] getHotCodeReplaceListeners(IJavaDebugTarget target) {
-		Object[] listeners = null;
+	private ListenerList<IJavaHotCodeReplaceListener> getHotCodeReplaceListeners(IJavaDebugTarget target) {
+		ListenerList<IJavaHotCodeReplaceListener> listeners = null;
 		if (target instanceof JDIDebugTarget) {
 			listeners = ((JDIDebugTarget) target).getHotCodeReplaceListeners();
 		}
-		if (listeners == null || listeners.length == 0) {
-			listeners = fHotCodeReplaceListeners.getListeners();
+		if (listeners == null || listeners.size() == 0) {
+			listeners = fHotCodeReplaceListeners;
 		}
 		return listeners;
 	}
@@ -756,10 +756,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * Notifies listeners that a hot code replace attempt succeeded
 	 */
 	private void fireHCRSucceeded(IJavaDebugTarget target) {
-		Object[] listeners = getHotCodeReplaceListeners(target);
-		for (Object listener : listeners) {
-			((IJavaHotCodeReplaceListener) listener)
-					.hotCodeReplaceSucceeded(target);
+		ListenerList<IJavaHotCodeReplaceListener> listeners = getHotCodeReplaceListeners(target);
+		for (IJavaHotCodeReplaceListener listener : listeners) {
+			listener.hotCodeReplaceSucceeded(target);
 		}
 	}
 
@@ -768,10 +767,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * exception
 	 */
 	private void fireHCRFailed(JDIDebugTarget target, DebugException exception) {
-		Object[] listeners = getHotCodeReplaceListeners(target);
-		for (Object listener : listeners) {
-			((IJavaHotCodeReplaceListener) listener).hotCodeReplaceFailed(
-					target, exception);
+		ListenerList<IJavaHotCodeReplaceListener> listeners = getHotCodeReplaceListeners(target);
+		for (IJavaHotCodeReplaceListener listener : listeners) {
+			listener.hotCodeReplaceFailed(target, exception);
 		}
 	}
 
@@ -779,9 +777,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * Notifies listeners that obsolete methods remain on the stack
 	 */
 	private void fireObsoleteMethods(JDIDebugTarget target) {
-		Object[] listeners = getHotCodeReplaceListeners(target);
-		for (Object listener : listeners) {
-			((IJavaHotCodeReplaceListener) listener).obsoleteMethods(target);
+		ListenerList<IJavaHotCodeReplaceListener> listeners = getHotCodeReplaceListeners(target);
+		for (IJavaHotCodeReplaceListener listener : listeners) {
+			listener.obsoleteMethods(target);
 		}
 	}
 
