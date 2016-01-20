@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2016 IBM Corporation and others.
+ *  Copyright (c) 2009, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	private IWorkbenchPartSite fSite; 
 	
 	// property listeners
-	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
+	private ListenerList<IPropertyListener> fListeners = new ListenerList<IPropertyListener>();
 	private Composite fEditorParent;
 	
 	/**
@@ -97,10 +97,9 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	 * @param property the property
 	 */
 	protected void firePropertyChange(int property) {
-		Object[] listeners = fListeners.getListeners();
-		for (Object object : listeners) {
-			((IPropertyListener) object).propertyChanged(this, property);
-		}
+		for (IPropertyListener listener : fListeners) {
+			listener.propertyChanged(this, property);
+		}	
 	}
 	
 	/* (non-Javadoc)

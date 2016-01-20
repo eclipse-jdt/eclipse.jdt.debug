@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ class BundleDescription implements BundleAttributes {
 		RUN_MODE.add(ILaunchManager.RUN_MODE);
 	}
 		
-	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
+	private ListenerList<IPropertyChangeListener> fListeners= new ListenerList<>();
 	private Properties fProperties= new Properties();
 	private List<ResourceInfo> fClassPath= new ArrayList<ResourceInfo>();
 	private List<ResourceInfo> fResources= new ArrayList<ResourceInfo>();
@@ -223,9 +223,8 @@ class BundleDescription implements BundleAttributes {
 	
 	void fireChange() {
 		PropertyChangeEvent e= new PropertyChangeEvent(this, ALL, null, null);
-		Object[] listeners= fListeners.getListeners();
-		for (Object object : listeners) {
-			((IPropertyChangeListener) object).propertyChange(e);
+		for (IPropertyChangeListener listener : fListeners) {
+			listener.propertyChange(e);
 		}
 	}
 
