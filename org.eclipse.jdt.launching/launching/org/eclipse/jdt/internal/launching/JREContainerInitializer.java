@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.jdt.internal.launching;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -191,8 +190,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 				}
 			}
 			//try the default VM install: https://bugs.eclipse.org/bugs/show_bug.cgi?id=371300
-			// only if default vm can be used for this https://bugs.eclipse.org/bugs/show_bug.cgi?id=484026
-			if (vm == null && installs.length > 0 && Arrays.asList(installs).contains(JavaRuntime.getDefaultVMInstall())) {
+			if(vm == null && installs.length > 0) {
 				vm = JavaRuntime.getDefaultVMInstall();
 			}
 			// use the first VM failing that
