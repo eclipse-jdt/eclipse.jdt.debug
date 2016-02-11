@@ -2753,6 +2753,11 @@ M4 = Platform-specific fourth key
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             commandId="org.eclipse.jdt.debug.ui.commands.Inspect"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M1+M2+V"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.jdt.debug.ui.command.OpenFromClipboard"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+D J"
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
