@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2014 IBM Corporation and others.
+ *  Copyright (c) 2014, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.console;
+
+import java.net.InetAddress;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateAllActionDelegate;
@@ -32,6 +34,14 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 		super(name);
 	}
 
+	/*
+	 * adding the test temporarily for finding the cause
+	 */
+	public void testLocalHostConnection() throws Exception {
+		InetAddress address = InetAddress.getByName("localhost");
+		assertNotNull(address);
+
+	}
 	public void testTerminateAll_01() throws Exception{
 		createLineBreakpoint(15, "TerminateAll_01");
 		createLineBreakpoint(15, "TerminateAll_02");
