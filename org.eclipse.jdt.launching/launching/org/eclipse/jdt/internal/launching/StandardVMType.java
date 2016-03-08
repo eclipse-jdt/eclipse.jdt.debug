@@ -423,6 +423,16 @@ public class StandardVMType extends AbstractVMInstallType {
 			// Add all endorsed libraries - they are first, as they replace
 			allLibs = new ArrayList<LibraryLocation>(gatherAllLibraries(libInfo.getEndorsedDirs()));
 			
+			if (libInfo.getBootpath().length == 0) {
+				// TODO: Temporary workaround for Jigsaw-previews that don't declare a bootpath.
+				LibraryLocation libraryLocation = new LibraryLocation(
+						new Path(installLocation.getAbsolutePath()).append("jrt-fs.jar"), //$NON-NLS-1$ // jrt-fs.jar is just any file...
+							Path.EMPTY, 
+							getDefaultPackageRootPath(), 
+							getDefaultJavadocLocation(installLocation));
+				allLibs.add(libraryLocation);
+			}
+			
 			// next is the boot path libraries
 			String[] bootpath = libInfo.getBootpath();
 			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
