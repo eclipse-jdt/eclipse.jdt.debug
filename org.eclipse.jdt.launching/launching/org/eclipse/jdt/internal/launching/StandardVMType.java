@@ -424,9 +424,11 @@ public class StandardVMType extends AbstractVMInstallType {
 			allLibs = new ArrayList<LibraryLocation>(gatherAllLibraries(libInfo.getEndorsedDirs()));
 			
 			if (libInfo.getBootpath().length == 0) {
-				// TODO: Temporary workaround for Jigsaw-previews that don't declare a bootpath.
+				// TODO: Bug 489207: Temporary workaround for Jigsaw-previews that don't declare a bootpath.
+				// JDT Core currently requires a non-empty library path, so let's give it jrt-fs.jar as a stand-in for now.
+				// Code referencing org.eclipse.jdt.internal.compiler.util.JimageUtil.JRT_FS_JAR looks for this file.
 				LibraryLocation libraryLocation = new LibraryLocation(
-						new Path(installLocation.getAbsolutePath()).append("jrt-fs.jar"), //$NON-NLS-1$ // jrt-fs.jar is just any file...
+						new Path(installLocation.getAbsolutePath()).append("jrt-fs.jar"), //$NON-NLS-1$
 							Path.EMPTY, 
 							getDefaultPackageRootPath(), 
 							getDefaultJavadocLocation(installLocation));
