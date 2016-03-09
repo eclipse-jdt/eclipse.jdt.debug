@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,12 @@ import org.eclipse.jdt.internal.corext.template.java.JavaContextType;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
+import org.eclipse.jdt.ui.text.java.AbstractProposalSorter;
 import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -48,7 +50,9 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	private char[] fProposalAutoActivationSet;
 	private CompletionProposalComparator fComparator;
 	private IJavaDebugContentAssistContext fContext;
-		
+	private ContentAssistant fAssistant;
+
+
 	public JavaDebugContentAssistProcessor(IJavaDebugContentAssistContext context) {
 		fContext = context;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType(JavaContextType.ID_ALL);
@@ -61,8 +65,13 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 		}
 		
 		fComparator= new CompletionProposalComparator();
+		fAssistant= null;
 	}
-	
+
+	public void setContentAssistant(ContentAssistant assistant) {
+		fAssistant = assistant;
+	}
+
 	/**
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
@@ -182,10 +191,21 @@ public class JavaDebugContentAssistProcessor implements IContentAssistProcessor 
 	 * Order the given proposals.
 	 */
 	private IJavaCompletionProposal[] order(IJavaCompletionProposal[] proposals) {
-		Arrays.sort(proposals, fComparator);
-		return proposals;	
-	}	
-	
+		if (fAssistant == null) {
+			Arrays.sort(proposals, fComparator);
+			return proposals;
+		}
+
+		fAssistant.setSorter(new AbstractProposalSorter() {
+			@Override
+			public int compare(ICompletionProposal p1, ICompletionProposal p2) {
+				return fComparator.compare(p1, p2);
+			}
+
+		});
+		return proposals;
+	}
+
 	/**
 	 * Configures the display result collection for the current code assist session
 	 */
