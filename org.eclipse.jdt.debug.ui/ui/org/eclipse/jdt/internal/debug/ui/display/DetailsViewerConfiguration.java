@@ -31,6 +31,7 @@ public class DetailsViewerConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
+		assistant.enableColoredLabels(true);
 		JavaDebugContentAssistProcessor contentAssistProcessor = new JavaDebugContentAssistProcessor(new CurrentValueContext());
 		contentAssistProcessor.setContentAssistant(assistant);
 		assistant.setContentAssistProcessor(contentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
