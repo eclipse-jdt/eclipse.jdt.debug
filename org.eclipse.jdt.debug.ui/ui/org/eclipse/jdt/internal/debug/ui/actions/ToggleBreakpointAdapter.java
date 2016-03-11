@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -732,7 +732,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					else if(element instanceof IClassFile) {
 						element = ((IClassFile) element).getElementAt(selection.getOffset());
 					}
-					return element != null && element.getElementType() == IJavaElement.METHOD;
+					if (element != null && element.getElementType() == IJavaElement.METHOD) {
+						IMethod method = (IMethod) element;
+						if (method.getDeclaringType().isAnonymous()) {
+							return false;
+						}
+						return true;
+					}
+
 				} 
     			catch (JavaModelException e) {return false;}
 			}
