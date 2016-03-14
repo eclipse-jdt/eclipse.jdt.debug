@@ -8,31 +8,41 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - enhancement 254677 - filter getters/setters
+ *     Andrey Loskutov <loskutov@gmx.de> - bug 5188 - breakpoint filtering
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,6 +50,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -51,13 +62,22 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
-
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.TypeNameMatch;
+import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
@@ -69,7 +89,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
-
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -107,7 +126,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Threads contained in this debug target. When a thread starts it is added
 	 * to the list. When a thread ends it is removed from the list.
-	 * 
+	 *
 	 * TODO investigate making this a synchronized collection, to remove all this copying
 	 * @see #getThreadIterator()
 	 */
@@ -245,21 +264,21 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * When a step lands in a filtered location, this indicates whether stepping
 	 * should proceed "through" to an unfiltered location or step return.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private static final int STEP_THRU_FILTERS = 0x010;
 
 	/**
 	 * Step filter bit mask - indicates if simple getters are filtered.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private static final int FILTER_GETTERS = 0x020;
 
 	/**
 	 * Step filter bit mask - indicates if simple setters are filtered.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private static final int FILTER_SETTERS = 0x040;
@@ -275,14 +294,29 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Target specific HCR listeners
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private ListenerList<IJavaHotCodeReplaceListener> fHCRListeners = new ListenerList<>();
 
 	/**
+	 * Java scope of the current launch, "null" means everything is in scope
+	 */
+	private IJavaSearchScope fScope;
+
+	/**
+	 * Java projects of the current launch, "null" means everything is in scope
+	 */
+	private Set<IProject> fProjects;
+
+	/**
+	 * Java types from breakpoints with the flag if they are in scope for current launch
+	 */
+	private Map<String, Boolean> fKnownTypes = new HashMap<>();
+
+	/**
 	 * Creates a new JDI debug target for the given virtual machine.
-	 * 
+	 *
 	 * @param jvm
 	 *            the underlying VM
 	 * @param name
@@ -316,6 +350,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setTerminating(false);
 		setDisconnected(false);
 		setName(name);
+		prepareBreakpointsSearchScope();
 		setBreakpoints(new ArrayList<IBreakpoint>(5));
 		setThreadList(new ArrayList<JDIThread>(5));
 		fGroups = new ArrayList<JDIThreadGroup>(5);
@@ -327,10 +362,49 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				.addBreakpointManagerListener(this);
 	}
 
+
+	private void prepareBreakpointsSearchScope() {
+		ILaunchConfiguration config = getLaunch().getLaunchConfiguration();
+		if (config == null) {
+			return;
+		}
+		try {
+			// See IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH
+			boolean defaultClasspath = config.getAttribute("org.eclipse.jdt.launching.DEFAULT_CLASSPATH", true); //$NON-NLS-1$
+			if(!defaultClasspath){
+				return;
+			}
+
+			IResource[] resources = config.getMappedResources();
+			if (resources != null && resources.length != 0) {
+				Set<IJavaProject> javaProjects = getJavaProjects(resources);
+				fProjects = collectReferencedJavaProjects(javaProjects);
+				fScope = createSourcesOnlyScope();
+				return;
+			}
+			// See IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME
+			String projectName = config.getAttribute("org.eclipse.jdt.launching.PROJECT_ATTR", (String)null); //$NON-NLS-1$
+			if(projectName != null){
+				Set<IJavaProject> javaProjects = getJavaProjects(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+				fProjects = collectReferencedJavaProjects(javaProjects);
+				fScope = createSourcesOnlyScope();
+				return;
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
+	}
+
+	private IJavaSearchScope createSourcesOnlyScope() {
+		int includeMask = IJavaSearchScope.SOURCES;
+		Set<IJavaProject> javaProjects = getJavaProjects(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+		return SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaElement[javaProjects.size()]), includeMask);
+	}
+
 	/**
 	 * Returns the event dispatcher for this debug target. There is one event
 	 * dispatcher per debug target.
-	 * 
+	 *
 	 * @return event dispatcher
 	 */
 	public EventDispatcher getEventDispatcher() {
@@ -340,7 +414,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets the event dispatcher for this debug target. Set once at
 	 * initialization.
-	 * 
+	 *
 	 * @param dispatcher
 	 *            event dispatcher
 	 * @see #initialize()
@@ -353,7 +427,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Returns an iterator over the collection of threads. The returned iterator
 	 * is made on a copy of the thread list so that it is thread safe. This
 	 * method should always be used instead of getThreadList().iterator()
-	 * 
+	 *
 	 * @return an iterator over the collection of threads
 	 */
 	private Iterator<JDIThread> getThreadIterator() {
@@ -370,7 +444,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * collection on creation. Threads are added and removed as they start and
 	 * end. On termination this collection is set to the immutable singleton
 	 * empty list.
-	 * 
+	 *
 	 * @param threads
 	 *            empty list
 	 */
@@ -380,7 +454,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns the collection of breakpoints installed in this debug target.
-	 * 
+	 *
 	 * @return list of installed breakpoints - instances of
 	 *         <code>IJavaBreakpoint</code>
 	 */
@@ -391,7 +465,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets the list of breakpoints installed in this debug target. Set to an
 	 * empty list on creation.
-	 * 
+	 *
 	 * @param breakpoints
 	 *            empty list
 	 */
@@ -404,7 +478,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * first event received from the VM. The VM is resumed. This event is not
 	 * generated when an attach is made to a VM that is already running (has
 	 * already started up). The VM is resumed as specified on creation.
-	 * 
+	 *
 	 * @param event
 	 *            VM start event
 	 */
@@ -540,7 +614,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * reference. A creation event is fired for the thread. Returns
 	 * <code>null</code> if during the creation of the thread this target is set
 	 * to the disconnected state.
-	 * 
+	 *
 	 * @param thread
 	 *            underlying thread
 	 * @return model thread
@@ -563,7 +637,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Factory method for creating new threads. Creates and returns a new thread
 	 * object for the underlying thread reference, or <code>null</code> if none
-	 * 
+	 *
 	 * @param reference
 	 *            thread reference
 	 * @return JDI model thread
@@ -599,7 +673,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this target has any threads which can be resumed.
-	 * 
+	 *
 	 * @return true if any thread can be resumed, false otherwise
 	 * @since 3.2
 	 */
@@ -650,7 +724,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this debug target supports disconnecting.
-	 * 
+	 *
 	 * @return whether this debug target supports disconnecting
 	 */
 	protected boolean supportsDisconnect() {
@@ -659,7 +733,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets whether this debug target supports disconnection. Set on creation.
-	 * 
+	 *
 	 * @param supported
 	 *            <code>true</code> if this target supports disconnection,
 	 *            otherwise <code>false</code>
@@ -670,7 +744,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this debug target supports termination.
-	 * 
+	 *
 	 * @return whether this debug target supports termination
 	 */
 	protected boolean supportsTerminate() {
@@ -679,7 +753,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets whether this debug target supports termination. Set on creation.
-	 * 
+	 *
 	 * @param supported
 	 *            <code>true</code> if this target supports termination,
 	 *            otherwise <code>false</code>
@@ -715,7 +789,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Returns whether this debug target supports hot code replace for the J9
 	 * VM.
-	 * 
+	 *
 	 * @return whether this debug target supports J9 hot code replace
 	 */
 	public boolean supportsJ9HotCodeReplace() {
@@ -735,7 +809,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this debug target supports hot code replace for JDK VMs.
-	 * 
+	 *
 	 * @return whether this debug target supports JDK hot code replace
 	 */
 	public boolean supportsJDKHotCodeReplace() {
@@ -752,7 +826,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this debug target supports popping stack frames.
-	 * 
+	 *
 	 * @return whether this debug target supports popping stack frames.
 	 */
 	public boolean canPopFrames() {
@@ -814,7 +888,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Returns the underlying virtual machine associated with this debug target,
 	 * or <code>null</code> if none (disconnected/terminated)
-	 * 
+	 *
 	 * @return the underlying VM or <code>null</code>
 	 */
 	@Override
@@ -825,7 +899,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets the underlying VM associated with this debug target. Set on
 	 * creation.
-	 * 
+	 *
 	 * @param vm
 	 *            underlying VM
 	 */
@@ -902,7 +976,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether a hot code replace attempt has failed.
-	 * 
+	 *
 	 * HCR has failed if there are any out of synch types
 	 */
 	public boolean hasHCRFailed() {
@@ -948,7 +1022,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Finds and returns the JDI thread for the associated thread reference, or
 	 * <code>null</code> if not found.
-	 * 
+	 *
 	 * @param the
 	 *            underlying thread reference
 	 * @return the associated model thread
@@ -979,7 +1053,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Sets the name of this debug target. Set on creation, and if set to
 	 * <code>null</code> the name will be retrieved lazily from the underlying
 	 * VM.
-	 * 
+	 *
 	 * @param name
 	 *            the name of this VM or <code>null</code> if the name should be
 	 *            retrieved from the underlying VM
@@ -991,7 +1065,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets the process associated with this debug target, possibly
 	 * <code>null</code>. Set on creation.
-	 * 
+	 *
 	 * @param process
 	 *            the system process associated with the underlying VM, or
 	 *            <code>null</code> if no process is associated with this debug
@@ -1012,7 +1086,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Notification the underlying VM has died. Updates the state of this target
 	 * to be terminated.
-	 * 
+	 *
 	 * @param event
 	 *            VM death event
 	 */
@@ -1023,7 +1097,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Notification the underlying VM has disconnected. Updates the state of
 	 * this target to be terminated.
-	 * 
+	 *
 	 * @param event
 	 *            disconnect event
 	 */
@@ -1045,7 +1119,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets whether this VM is suspended.
-	 * 
+	 *
 	 * @param suspended
 	 *            whether this VM is suspended
 	 */
@@ -1070,7 +1144,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets whether this debug target is terminated
-	 * 
+	 *
 	 * @param terminated
 	 *            <code>true</code> if this debug target is terminated,
 	 *            otherwise <code>false</code>
@@ -1081,7 +1155,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets whether this debug target is disconnected
-	 * 
+	 *
 	 * @param disconnected
 	 *            <code>true</code> if this debug target is disconnected,
 	 *            otherwise <code>false</code>
@@ -1101,7 +1175,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Creates, enables and returns a class prepare request for the specified
 	 * class name in this target.
-	 * 
+	 *
 	 * @param classPattern
 	 *            regular expression specifying the pattern of class names that
 	 *            will cause the event request to fire. Regular expressions may
@@ -1119,7 +1193,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * class name in this target. Can specify a class exclusion filter as well.
 	 * This is a utility method used by event requesters that need to create
 	 * class prepare requests.
-	 * 
+	 *
 	 * @param classPattern
 	 *            regular expression specifying the pattern of class names that
 	 *            will cause the event request to fire. Regular expressions may
@@ -1143,7 +1217,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * class name in this target. Can specify a class exclusion filter as well.
 	 * This is a utility method used by event requesters that need to create
 	 * class prepare requests.
-	 * 
+	 *
 	 * @param classPattern
 	 *            regular expression specifying the pattern of class names that
 	 *            will cause the event request to fire. Regular expressions may
@@ -1170,7 +1244,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * class name in this target. Can specify a class exclusion filter as well.
 	 * This is a utility method used by event requesters that need to create
 	 * class prepare requests.
-	 * 
+	 *
 	 * @param classPattern
 	 *            regular expression specifying the pattern of class names that
 	 *            will cause the event request to fire. Regular expressions may
@@ -1241,7 +1315,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * @see ISuspendResume#resume()
-	 * 
+	 *
 	 *      Updates the state of this debug target to resumed, but does not fire
 	 *      notification of the resumption.
 	 */
@@ -1251,7 +1325,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * @see ISuspendResume#resume()
-	 * 
+	 *
 	 *      Updates the state of this debug target, but only fires notification
 	 *      to listeners if <code>fireNotification</code> is <code>true</code>.
 	 */
@@ -1286,14 +1360,237 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
-		return breakpoint instanceof IJavaBreakpoint;
+		boolean isJava = breakpoint instanceof IJavaBreakpoint;
+		if(!isJava){
+			return false;
+		}
+		if(fScope == null){
+			// No checks, everything in scope: the filtering is disabled
+			return true;
+		}
+
+		IJavaBreakpoint jBreakpoint = (IJavaBreakpoint) breakpoint;
+
+		// Check if the breakpoint from resources in target scope
+		IMarker marker = jBreakpoint.getMarker();
+		if(marker == null) {
+			// Marker not available, so don't guess and allow the breakpoint to be set
+			return true;
+		}
+
+		IResource resource = marker.getResource();
+		// Java exception breakpoints have wsp root as resource
+		if(resource == null || resource == ResourcesPlugin.getWorkspace().getRoot()) {
+			return true;
+		}
+
+		// Breakpoint from project known by the resource mapping
+		if (fProjects.contains(resource.getProject())) {
+			return true;
+		}
+
+		// Check if this is a resource which is linked to any of the projects
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		URI uri = resource.getLocationURI();
+		if(uri != null){
+			IFile[] files = root.findFilesForLocationURI(uri);
+			for (IFile file : files) {
+				if(fProjects.contains(file.getProject())){
+					return true;
+				}
+			}
+		}
+
+		// breakpoint belongs to resource outside of referenced projects?
+		// This can be also an incomplete resource mapping.
+		// Try to see if the type available multiple times in workspace
+		try {
+			String typeName = jBreakpoint.getTypeName();
+			if(typeName != null){
+				Boolean known = fKnownTypes.get(typeName);
+				if(known != null){
+					return known.booleanValue();
+				}
+				boolean supportedBreakpoint = !hasMultipleMatchesInWorkspace(typeName);
+				fKnownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
+				return supportedBreakpoint;
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}
+		// we don't know why computation failed, so let assume the breakpoint is supported.
+		return true;
+	}
+
+	private Set<IJavaProject> getJavaProjects(IResource... resources) {
+		Set<IJavaProject> projects = new LinkedHashSet<>();
+		for (IResource resource : resources) {
+			IProject project = resource.getProject();
+			if(!project.isAccessible()){
+				continue;
+			}
+			IJavaElement javaElement = JavaCore.create(project);
+			if(javaElement != null) {
+				projects.add(javaElement.getJavaProject());
+			}
+		}
+		return projects;
+	}
+
+	/**
+	 * @param javaProjects the set which will be updated with all referenced java projects
+	 * @return corresponding resource projects
+	 */
+	private Set<IProject> collectReferencedJavaProjects(Set<IJavaProject> javaProjects) {
+		Set<IProject> projects = new LinkedHashSet<>();
+		// collect all references
+		for (IJavaProject jProject : javaProjects) {
+			projects.add(jProject.getProject());
+			addReferencedProjects(jProject, projects);
+		}
+		// update java projects set with new java projects we might collected
+		for (IProject project : projects) {
+			IJavaProject jProject = JavaCore.create(project);
+			if(jProject != null){
+				javaProjects.add(jProject);
+			}
+		}
+		return projects;
+	}
+
+	private void addReferencedProjects(IJavaProject jProject, Set<IProject> projects) {
+		IClasspathEntry[] cp;
+		try {
+			// we want resolved classpath to get variables and containers resolved for us
+			cp = jProject.getResolvedClasspath(true);
+		} catch (JavaModelException e) {
+			// we don't care here
+			return;
+		}
+		for (IClasspathEntry cpe : cp) {
+			int entryKind = cpe.getEntryKind();
+			IProject project = null;
+			switch (entryKind) {
+				case IClasspathEntry.CPE_LIBRARY:
+					// we must check for external folders coming from other projects in the workspace
+					project = getProjectOfExternalFolder(cpe);
+					break;
+				case IClasspathEntry.CPE_PROJECT:
+					// we must add any projects referenced
+					project = getProject(cpe);
+					break;
+				case IClasspathEntry.CPE_SOURCE:
+					// we have the project already
+				case IClasspathEntry.CPE_VARIABLE:
+					// should not happen on resolved classpath
+				case IClasspathEntry.CPE_CONTAINER:
+					// should not happen on resolved classpath
+				default:
+					break;
+			}
+
+			if(project == null || projects.contains(project) || !project.isAccessible()){
+				continue;
+			}
+
+			IJavaProject referenced = JavaCore.create(project);
+			if (referenced != null) {
+				// we have found new project, start recursion
+				projects.add(project);
+				addReferencedProjects(referenced, projects);
+			}
+		}
+	}
+
+	private IProject getProject(IClasspathEntry cpe) {
+		IPath projectPath = cpe.getPath();
+		if (projectPath == null || projectPath.isEmpty()) {
+			return null;
+		}
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(projectPath.lastSegment());
+		if (project.isAccessible()) {
+			return project;
+		}
+		return null;
+	}
+
+	private static IProject getProjectOfExternalFolder(IClasspathEntry cpe){
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		if(cpe.getContentKind() == IPackageFragmentRoot.K_BINARY){
+			IPath path = cpe.getPath();
+			if(path == null || path.isEmpty()){
+				return null;
+			}
+			IProject project = root.getProject(path.segment(0));
+			if(project.isAccessible()) {
+				return project;
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * Checks if the given type (computed from a breakpoint resource) exists multiple times in the workspace.
+	 */
+	private boolean hasMultipleMatchesInWorkspace(final String typeName) {
+		final AtomicInteger matchCount = new AtomicInteger(0);
+		String packageName = null;
+		String simpleName = typeName;
+		int lastDot = typeName.lastIndexOf('.');
+		if(lastDot > 0 && lastDot < typeName.length() - 1){
+			packageName = typeName.substring(0, lastDot);
+			simpleName = typeName.substring(lastDot + 1);
+		}
+		// get rid of inner types, use outer type name
+		final String fqName;
+		int firstDoll = simpleName.indexOf('$');
+		if(firstDoll > 0 && firstDoll < simpleName.length() - 1){
+			simpleName = simpleName.substring(0, firstDoll);
+			fqName = packageName + "." + simpleName; //$NON-NLS-1$
+		} else {
+			fqName = typeName;
+		}
+
+		final IProgressMonitor monitor = new NullProgressMonitor();
+        TypeNameMatchRequestor requestor = new TypeNameMatchRequestor() {
+			@Override
+			public void acceptTypeNameMatch(TypeNameMatch match) {
+				IType type = match.getType();
+				if(fqName.equals(type.getFullyQualifiedName())){
+					int count = matchCount.incrementAndGet();
+					if(count > 1) {
+						monitor.setCanceled(true);
+					}
+					return;
+				}
+			}
+		};
+		try {
+			SearchEngine searchEngine = new SearchEngine();
+			searchEngine.searchAllTypeNames(packageName != null? packageName.toCharArray() : null,
+					SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+					simpleName.toCharArray(),
+			        SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+			        IJavaSearchConstants.TYPE,
+			        fScope,
+			        requestor,
+			        IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+			        monitor);
+		} catch (JavaModelException e) {
+			logError(e);
+			return true;
+		} catch (OperationCanceledException e){
+			// expected if we cancelled the search on second match
+		}
+		return matchCount.get() > 1;
 	}
 
 	/**
 	 * Notification a breakpoint has been added to the breakpoint manager. If
 	 * the breakpoint is a Java breakpoint and this target is not terminated,
 	 * the breakpoint is installed.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint added to the breakpoint manager
 	 */
@@ -1327,7 +1624,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * changed. If the breakpoint is a Java breakpoint, the associated event
 	 * request in the underlying VM is updated to reflect the new state of the
 	 * breakpoint.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint that has changed
 	 */
@@ -1339,7 +1636,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Notification that the given breakpoint has been removed from the
 	 * breakpoint manager. If this target is not terminated, the breakpoint is
 	 * removed from the underlying VM.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint has been removed from the breakpoint manager.
 	 */
@@ -1398,7 +1695,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Prepares threads to suspend (terminates evaluations, waits for
 	 * invocations, etc.).
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if a thread times out
 	 */
@@ -1431,7 +1728,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Notifies this VM to update its state in preparation for a suspend.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint that caused the suspension
 	 */
@@ -1442,7 +1739,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Notifies this VM it has been suspended by the given breakpoint
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint that caused the suspension
 	 */
@@ -1457,7 +1754,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Notifies this VM suspension has been cancelled
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint that caused the suspension
 	 */
@@ -1567,6 +1864,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setEventDispatcher(null);
 		setStepFilters(new String[0]);
 		fHCRListeners.clear();
+		fKnownTypes.clear();
+		fProjects = null;
+		fScope = null;
 	}
 
 	/**
@@ -1590,7 +1890,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints()); 
+		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
 		for(IBreakpoint bp : list) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
@@ -1620,7 +1920,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns VirtualMachine.classesByName(String), logging any JDI exceptions.
-	 * 
+	 *
 	 * @see com.sun.jdi.VirtualMachine
 	 */
 	public List<ReferenceType> jdiClassesByName(String className) {
@@ -1694,7 +1994,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Returns the CRC-32 of the entire class file contents associated with
 	 * given type, on the target VM, or <code>null</code> if the type is not
 	 * loaded, or a CRC for the type is not known.
-	 * 
+	 *
 	 * @param typeName
 	 *            fully qualified name of the type for which a CRC is required.
 	 *            For example, "com.example.Example".
@@ -1983,7 +2283,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * creating the thread, a create event is fired for the model thread.
 		 * The event is ignored if the underlying thread is already marked as
 		 * collected.
-		 * 
+		 *
 		 * @param event
 		 *            a thread start event
 		 * @param target
@@ -2022,7 +2322,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete
 		 * (com.sun.jdi.event.Event,
@@ -2085,7 +2385,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * that has terminated, and removes it from the collection of threads
 		 * belonging to this debug target. A terminate event is fired for the
 		 * model thread.
-		 * 
+		 *
 		 * @param event
 		 *            a thread death event
 		 * @param target
@@ -2118,7 +2418,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.internal.debug.core.IJDIEventListener#eventSetComplete
 		 * (com.sun.jdi.event.Event,
@@ -2144,7 +2444,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime
 		 * .IProgressMonitor)
@@ -2162,7 +2462,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
 		@Override
@@ -2172,7 +2472,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
 		 */
 		@Override
@@ -2192,7 +2492,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Java debug targets do not support storage retrieval.
-	 * 
+	 *
 	 * @see IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	@Override
@@ -2245,7 +2545,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets whether the VM should be resumed on startup. Has no effect if the VM
 	 * is already running when this target is created.
-	 * 
+	 *
 	 * @param resume
 	 *            whether the VM should be resumed on startup
 	 */
@@ -2255,7 +2555,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns whether this VM should be resumed on startup.
-	 * 
+	 *
 	 * @return whether this VM should be resumed on startup
 	 */
 	protected synchronized boolean isResumeOnStartup() {
@@ -2296,7 +2596,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc) Was added in 3.3, made API in 3.5
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#isStepThruFilters()
 	 */
 	@Override
@@ -2352,7 +2652,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc) Was added in 3.3, made API in 3.5
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#setStepThruFilters(boolean)
 	 */
@@ -2432,7 +2732,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Sets the launch this target is contained in
-	 * 
+	 *
 	 * @param launch
 	 *            the launch this target is contained in
 	 */
@@ -2442,7 +2742,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns the number of suspend events that have occurred in this target.
-	 * 
+	 *
 	 * @return the number of suspend events that have occurred in this target
 	 */
 	protected int getSuspendCount() {
@@ -2453,7 +2753,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Increments the suspend counter for this target based on the reason for
 	 * the suspend event. The suspend count is not updated for implicit
 	 * evaluations.
-	 * 
+	 *
 	 * @param eventDetail
 	 *            the reason for the suspend event
 	 */
@@ -2466,7 +2766,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Returns an evaluation engine for the given project, creating one if
 	 * necessary.
-	 * 
+	 *
 	 * @param project
 	 *            java project
 	 * @return evaluation engine
@@ -2518,7 +2818,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsAccessWatchpoints()
 	 */
@@ -2533,7 +2833,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsModificationWatchpoints
 	 * ()
@@ -2569,7 +2869,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IStepFilters#supportsStepFilters()
 	 */
 	@Override
@@ -2603,7 +2903,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
 	 * .debug.core.DebugEvent[])
@@ -2628,7 +2928,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	@Override
@@ -2639,7 +2939,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Adds the given thread group to the list of known thread groups. Also adds
 	 * any parent thread groups that have not already been added to the list.
-	 * 
+	 *
 	 * @param group
 	 *            thread group to add
 	 */
@@ -2674,7 +2974,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getThreadGroups()
 	 */
 	@Override
@@ -2704,7 +3004,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getAllThreadGroups()
 	 */
 	@Override
@@ -2717,7 +3017,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsInstanceRetrieval()
 	 */
@@ -2734,7 +3034,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Sends a JDWP command to the back end and returns the JDWP reply packet as
 	 * bytes. This method creates an appropriate command header and packet id,
 	 * before sending to the back end.
-	 * 
+	 *
 	 * @param commandSet
 	 *            command set identifier as defined by JDWP
 	 * @param commandId
@@ -2758,7 +3058,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsForceReturn()
 	 */
 	@Override
@@ -2772,7 +3072,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#
 	 * supportsSelectiveGarbageCollection()
 	 */
@@ -2784,7 +3084,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	/**
 	 * Sets whether this target supports selectively disabling/enabling garbage
 	 * collection of specific objects.
-	 * 
+	 *
 	 * @param enableGC
 	 *            whether this target supports selective GC
 	 */
@@ -2794,7 +3094,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVMName()
 	 */
 	@Override
@@ -2816,7 +3116,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#getVersion()
 	 */
 	@Override
@@ -2838,7 +3138,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#refreshState()
 	 */
 	@Override
@@ -2948,7 +3248,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#sendCommand(byte, byte,
 	 * byte[])
 	 */
@@ -2965,7 +3265,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#addHotCodeReplaceListener
 	 * (org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
@@ -2977,7 +3277,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaDebugTarget#removeHotCodeReplaceListener
 	 * (org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener)
@@ -2990,7 +3290,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	/**
 	 * Returns the current hot code replace listeners.
-	 * 
+	 *
 	 * @return registered hot code replace listeners
 	 * @since 3.10
 	 */
