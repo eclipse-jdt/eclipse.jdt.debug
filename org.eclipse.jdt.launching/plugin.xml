@@ -295,7 +295,7 @@
       </environment>
       <environment
             description="%environment.description.13"
-            id="JavaSE-9.0"
+            id="JavaSE-9"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
       </environment>            
       <analyzer

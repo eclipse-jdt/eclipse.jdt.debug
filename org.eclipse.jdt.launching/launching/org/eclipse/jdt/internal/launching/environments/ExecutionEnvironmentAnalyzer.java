@@ -40,7 +40,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
-	static final String JavaSE_1_9 = "JavaSE-9.0"; //$NON-NLS-1$
+	static final String JavaSE_1_9 = "JavaSE-9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
