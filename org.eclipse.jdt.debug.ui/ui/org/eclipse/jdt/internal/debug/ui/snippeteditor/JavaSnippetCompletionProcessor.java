@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,13 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
+import org.eclipse.jdt.ui.text.java.AbstractProposalSorter;
 import org.eclipse.jdt.ui.text.java.CompletionProposalCollector;
 import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -44,6 +46,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private String fErrorMessage;
 	
 	private char[] fProposalAutoActivationSet;
+	private ContentAssistant fAssistant;
 			
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fEditor= editor;
@@ -55,6 +58,9 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		fComparator= new CompletionProposalComparator();
 	}
 	
+	public void setContentAssistant(ContentAssistant assistant) {
+		fAssistant = assistant;
+	}
 	/**
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
@@ -138,7 +144,18 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 * Order the given proposals.
 	 */
 	private ICompletionProposal[] order(IJavaCompletionProposal[] proposals) {
-		Arrays.sort(proposals, fComparator);
+		if (fAssistant == null) {
+			Arrays.sort(proposals, fComparator);
+			return proposals;
+		}
+
+		fAssistant.setSorter(new AbstractProposalSorter() {
+			@Override
+			public int compare(ICompletionProposal p1, ICompletionProposal p2) {
+				return fComparator.compare(p1, p2);
+			}
+
+		});
 		return proposals;	
 	}	
 	
