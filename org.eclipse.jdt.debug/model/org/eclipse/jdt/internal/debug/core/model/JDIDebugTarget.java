@@ -367,7 +367,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		boolean enableFiltering = Platform.getPreferencesService().getBoolean(
 				JDIDebugPlugin.getUniqueIdentifier(),
 				JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES,
-				false,
+				true,
 				null);
 		ILaunchConfiguration config = getLaunch().getLaunchConfiguration();
 		if (!enableFiltering || config == null) {

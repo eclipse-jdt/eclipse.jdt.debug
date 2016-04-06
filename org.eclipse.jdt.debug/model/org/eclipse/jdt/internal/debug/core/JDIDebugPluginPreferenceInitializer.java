@@ -41,6 +41,6 @@ public class JDIDebugPluginPreferenceInitializer extends
 		node.putBoolean(JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, false);
 		node.putInt(JDIDebugPlugin.PREF_ALL_REFERENCES_MAX_COUNT, 100);
 		node.putInt(JDIDebugPlugin.PREF_ALL_INSTANCES_MAX_COUNT, 100);
-		node.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, false);
+		node.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true);
 	}
 }
