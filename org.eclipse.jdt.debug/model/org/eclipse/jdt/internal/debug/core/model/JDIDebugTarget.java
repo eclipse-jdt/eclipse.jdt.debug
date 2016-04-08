@@ -1388,9 +1388,13 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if(resource == null || resource == ResourcesPlugin.getWorkspace().getRoot()) {
 			return true;
 		}
-
+		Set<IProject> projects = fProjects;
+		if(projects == null){
+			return true;
+		}
+		
 		// Breakpoint from project known by the resource mapping
-		if (fProjects.contains(resource.getProject())) {
+		if (projects.contains(resource.getProject())) {
 			return true;
 		}
 
@@ -1400,10 +1404,15 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if(uri != null){
 			IFile[] files = root.findFilesForLocationURI(uri);
 			for (IFile file : files) {
-				if(fProjects.contains(file.getProject())){
+				if(projects.contains(file.getProject())){
 					return true;
 				}
 			}
+		}
+
+		Map<String, Boolean> knownTypes = fKnownTypes;
+		if(knownTypes == null){
+			return true;
 		}
 
 		// breakpoint belongs to resource outside of referenced projects?
@@ -1412,12 +1421,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		try {
 			String typeName = jBreakpoint.getTypeName();
 			if(typeName != null){
-				Boolean known = fKnownTypes.get(typeName);
+				Boolean known = knownTypes.get(typeName);
 				if(known != null){
 					return known.booleanValue();
 				}
 				boolean supportedBreakpoint = !hasMultipleMatchesInWorkspace(typeName);
-				fKnownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
+				knownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
 				return supportedBreakpoint;
 			}
 		} catch (CoreException e) {
@@ -1869,7 +1878,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setEventDispatcher(null);
 		setStepFilters(new String[0]);
 		fHCRListeners.clear();
-		fKnownTypes.clear();
+		fKnownTypes = null;
 		fProjects = null;
 		fScope = null;
 	}
