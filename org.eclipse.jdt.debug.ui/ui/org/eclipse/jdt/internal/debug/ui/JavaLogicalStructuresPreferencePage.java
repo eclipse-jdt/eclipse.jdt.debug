@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,13 +44,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -66,11 +63,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JavaLogicalStructuresPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ISelectionChangedListener, Listener {
 
-    public class LogicalStructuresListViewerLabelProvider extends LabelProvider implements IColorProvider, ITableLabelProvider {
+	public class LogicalStructuresListViewerLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-         */
         @Override
 		public String getColumnText(Object element, int columnIndex) {
             JavaLogicalStructure logicalStructure= (JavaLogicalStructure) element;
@@ -94,35 +88,6 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
             return buffer.toString();
         }
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-		 */
-		@Override
-		public Color getForeground(Object element) {
-			if (element instanceof JavaLogicalStructure) {
-				if (((JavaLogicalStructure) element).isContributed()) {
-					return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
-				}
-			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-		 */
-		@Override
-		public Color getBackground(Object element) {
-			if (element instanceof JavaLogicalStructure) {
-				if (((JavaLogicalStructure) element).isContributed()) {
-					return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
-				}
-			}
-			return null;
-		}
-
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-         */
         @Override
 		public Image getColumnImage(Object element, int columnIndex) {
             return null;
@@ -134,31 +99,22 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         private List<JavaLogicalStructure> fLogicalStructures;
         
         LogicalStructuresListViewerContentProvider() {
-			fLogicalStructures= new ArrayList<JavaLogicalStructure>();
+			fLogicalStructures = new ArrayList<>();
 			JavaLogicalStructure[] logicalStructures= JavaLogicalStructures.getJavaLogicalStructures();
 			for (int i= 0; i < logicalStructures.length; i++) {
 				add(logicalStructures[i]);
 			}
 		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
         @Override
 		public Object[] getElements(Object inputElement) {
             return fLogicalStructures.toArray();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
         @Override
 		public void dispose() {
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-         */
         @Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
@@ -214,7 +170,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		}
 
 		public void saveUserDefinedJavaLogicalStructures() {
-			List<JavaLogicalStructure> logicalStructures= new ArrayList<JavaLogicalStructure>();
+			List<JavaLogicalStructure> logicalStructures = new ArrayList<>();
 			for (Iterator<JavaLogicalStructure> iter = fLogicalStructures.iterator(); iter.hasNext();) {
 				JavaLogicalStructure logicalStructure= iter.next();
 				if (!logicalStructure.isContributed()) {
@@ -255,18 +211,12 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         setDescription(DebugUIMessages.JavaLogicalStructuresPreferencePage_11); 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_LOGICAL_STRUCTURES_PAGE);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
         Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 2);
@@ -394,15 +344,9 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         });
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection= event.getSelection();
@@ -462,9 +406,6 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void handleEvent(Event event) {
 		Widget source= event.widget;
@@ -533,9 +474,6 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		
 	}
 	
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if (fCodeViewer != null) {
@@ -545,9 +483,6 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		if (fCodeViewer != null) {
