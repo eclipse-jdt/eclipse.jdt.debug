@@ -3379,7 +3379,7 @@ M4 = Platform-specific fourth key
             <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaExceptionConsoleTracker"
             regex="\w[^\(\s]+Exception[\s|:]"
-            qualifier="Exception[\s|:]"
+            qualifier="Exception"
             id="org.eclipse.jdt.debug.ui.JavaExceptionConsoleTracker">
          <enablement>
             <or>
