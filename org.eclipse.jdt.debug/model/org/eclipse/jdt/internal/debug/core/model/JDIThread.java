@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2664,49 +2664,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return false;
 		}
 
-		/**
-		 * Returns <code>true</code> if the StepEvent's Location is a Method
-		 * that the user has indicated (via the step filter preferences) should
-		 * be filtered. Returns <code>false</code> otherwise.
-		 * 
-		 * @param method
-		 *            the {@link Method} location to check
-		 * @return <code>true</code> if the {@link Method} {@link Location}
-		 *         should be filtered, <code>false</code> otherwise
-		 */
-		protected boolean locationIsFiltered(Method method) {
-			if (isStepFiltersEnabled()) {
-				boolean filterStatics = getJavaDebugTarget()
-						.isFilterStaticInitializers();
-				boolean filterSynthetics = getJavaDebugTarget()
-						.isFilterSynthetics();
-				boolean filterConstructors = getJavaDebugTarget()
-						.isFilterConstructors();
-				boolean filterSetters = getJavaDebugTarget().isFilterSetters();
-				boolean filterGetters = getJavaDebugTarget().isFilterGetters();
-				IStepFilter[] contributedFilters = DebugPlugin.getStepFilters(JDIDebugPlugin.getUniqueIdentifier());
-				if (!(filterStatics || filterSynthetics || filterConstructors
- || filterGetters || filterSetters || contributedFilters.length > 0)) {
-					return false;
-				}
-
-				if ((filterStatics && method.isStaticInitializer())
-						|| (filterSynthetics && method.isSynthetic())
-						|| (filterConstructors && method.isConstructor())
-						|| (filterGetters && JDIMethod.isGetterMethod(method))
-						|| (filterSetters && JDIMethod.isSetterMethod(method))) {
-					return true;
-				}
-				for (int i = 0; i < contributedFilters.length; i++) {
-					if (contributedFilters[i].isFiltered(method)) {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-		
 		/**
 		 * Returns <code>true</code> if the StepEvent's Location is a Method
 		 * that the user has indicated (via the step filter preferences) should
