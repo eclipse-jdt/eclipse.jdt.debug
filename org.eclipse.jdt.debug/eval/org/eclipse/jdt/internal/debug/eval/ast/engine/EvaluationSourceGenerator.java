@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,7 +291,7 @@ public class EvaluationSourceGenerator {
 		for (Iterator<String> iter = options.keySet().iterator(); iter.hasNext();) {
 			String key = iter.next();
 			String value = options.get(key);
-			if (JavaCore.ERROR.equals(value) || JavaCore.WARNING.equals(value)) {
+			if (JavaCore.ERROR.equals(value) || JavaCore.WARNING.equals(value) || JavaCore.INFO.equals(value)) {
 				options.put(key, JavaCore.IGNORE);
 			}
 		}

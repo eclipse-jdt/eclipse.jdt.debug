@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,14 @@ package org.eclipse.jdt.internal.debug.ui.classpath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathEntryLabelProvider;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Label provider for classpath elements
  */
-public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
+public class ClasspathLabelProvider implements ILabelProvider {
 	
 	private RuntimeClasspathEntryLabelProvider runtimeClasspathLabelProvider= new RuntimeClasspathEntryLabelProvider();
 
@@ -51,30 +47,6 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 			return runtimeClasspathLabelProvider.getText(entry.getDelegate());
 		}
 		return element.toString();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	@Override
-	public Color getBackground(Object element) {
-		if (element instanceof ClasspathGroup) {
-			Display display= Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	@Override
-	public Color getForeground(Object element) {
-		if (element instanceof ClasspathGroup) {
-			Display display= Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)
