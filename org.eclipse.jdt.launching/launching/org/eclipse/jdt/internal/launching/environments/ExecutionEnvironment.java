@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -455,21 +455,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				if (is != null) {
 					Properties profile = new Properties();
 					profile.load(is);
-					fixJavaSE19SourceTargetLevels(profile);
 					return profile;
 				}
 			} catch (IOException e) {
 			}
 		}
 		return null;
-	}
-
-	private void fixJavaSE19SourceTargetLevels(Properties profile) {
-		if (!ExecutionEnvironmentAnalyzer.JavaSE_1_9.equals(getId())) {
-			return;
-		}
-		profile.setProperty(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8); // TODO: at the moment, there's no new Java language feature
-		profile.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8); // TODO: at the moment, runtime doesn't support a new class file version
 	}
 
 	/* (non-Javadoc)
