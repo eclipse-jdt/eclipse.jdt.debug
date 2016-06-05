@@ -40,7 +40,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
-	private static final String JavaSE_1_9 = "JavaSE-9"; //$NON-NLS-1$
+	static final String JavaSE_9 = "JavaSE-9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
-		mappings.put(JavaSE_1_9, new String[] { JavaSE_1_8 });
+		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -106,7 +106,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				}
 			} else {
 				if (javaVersion.startsWith("9")) { //$NON-NLS-1$
-					types = getTypes(JavaSE_1_9);
+					types = getTypes(JavaSE_9);
 				} else if (javaVersion.startsWith("1.8")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_8);
 				} else if (javaVersion.startsWith("1.7")) { //$NON-NLS-1$
