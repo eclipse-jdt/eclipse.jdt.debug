@@ -2796,8 +2796,11 @@ public final class JavaRuntime {
             		compliance = JavaCore.VERSION_1_7;
 				} else if (javaVersion.startsWith(JavaCore.VERSION_1_8)) {
 					compliance = JavaCore.VERSION_1_8;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_9)
+						&& (javaVersion.length() == JavaCore.VERSION_9.length() || javaVersion.charAt(JavaCore.VERSION_9.length()) == '.')) {
+					compliance = JavaCore.VERSION_9;
 				} else {
-					compliance = JavaCore.VERSION_1_8; // use latest by default
+					compliance = JavaCore.VERSION_9; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();
