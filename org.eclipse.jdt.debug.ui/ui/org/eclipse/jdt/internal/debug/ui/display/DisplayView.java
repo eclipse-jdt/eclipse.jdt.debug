@@ -172,6 +172,9 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		fSourceViewer.configure(new DisplayViewerConfiguration());
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		IDocument doc= getRestoredDocument();
+		if (doc.getLength() == 0) {
+			doc.set(DisplayMessages.DisplayView_Initial_Comment);
+		}
 		fSourceViewer.setDocument(doc);
 		fSourceViewer.addTextInputListener(this);
 		fRestoredContents= null;
