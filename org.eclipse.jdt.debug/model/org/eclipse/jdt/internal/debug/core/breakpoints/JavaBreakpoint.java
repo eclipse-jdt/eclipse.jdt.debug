@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @since 3.5
 	 */
 	public static final String BREAKPOINT_LISTENERS = JDIDebugPlugin.EXTENSION_POINT_JAVA_BREAKPOINT_LISTENERS;
+	/**
+	 * Breakpoint attribute storing the expired value of trigger point (value
+	 * <code>"org.eclipse.jdt.debug.core.expiredTriggerPoint"</code>). This attribute is
+	 * stored as a <code>boolean</code>. Once a trigger point is hit, a
+	 * breakpoint is considered to be "expired" as trigger point for the session.
+	 * 
+	 * @since 3.11
+	 */
+	public static final String EXPIRED_TRIGGER_POINT = "org.eclipse.jdt.debug.core.expiredTriggerPoint"; //$NON-NLS-1$
 
 	/**
 	 * Stores the collection of requests that this breakpoint has installed in
@@ -167,6 +176,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected static final String[] fgExpiredEnabledAttributes = new String[] {
 			EXPIRED, ENABLED };
+	
+	/**
+	 * JavaBreakpoint attributes for Trigger Point activation
+	 */
+	protected static final String[] fgExpiredEnabledTriggerAttributes = new String[] {
+			EXPIRED_TRIGGER_POINT, getTriggerActivePropertyString() };
 
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap<JDIDebugTarget, List<EventRequest>>(1);
@@ -393,6 +408,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public boolean handleBreakpointEvent(Event event, JDIThread thread,
 			boolean suspendVote) {
 		expireHitCount(event);
+		inActivateTriggerPoint(event);
 		return !suspend(thread, suspendVote); // Resume if suspend fails
 	}
 
@@ -465,6 +481,20 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				JDIDebugPlugin.log(ce);
 			}
 		}
+	}
+	
+	protected void inActivateTriggerPoint(Event event) {
+		try{
+			if (isTriggerPointActive()) {
+					setAttributes(fgExpiredEnabledTriggerAttributes, new Object[] {
+								Boolean.TRUE, Boolean.FALSE });
+					DebugPlugin.getDefault().getBreakpointManager().deActivateTriggerpoints(null);
+					// make a note that we auto-inactivated the trigger point for this breakpoint.
+				}
+			}catch (CoreException ce) {
+				JDIDebugPlugin.log(ce);
+			}
+	
 	}
 
 	/**
@@ -860,6 +890,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public int getInstallCount() throws CoreException {
 		return ensureMarker().getAttribute(INSTALL_COUNT, 0);
 	}
+	
+	/**
+	 * Returns whether this trigger breakpoint has expired.
+	 */
+	public boolean isTriggerPointExpired() throws CoreException {
+		return ensureMarker().getAttribute(EXPIRED_TRIGGER_POINT, false);
+	}
 
 	/**
 	 * Decrements the install count of this breakpoint.
@@ -873,6 +910,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			if (isExpired()) {
 				// if breakpoint was auto-disabled, re-enable it
 				setAttributes(fgExpiredEnabledAttributes, new Object[] {
+						Boolean.FALSE, Boolean.TRUE });
+			}
+			if (isTriggerPointExpired()) {
+				// if breakpoint was auto-disabled, re-enable it
+				setAttributes(fgExpiredEnabledTriggerAttributes, new Object[] {
 						Boolean.FALSE, Boolean.TRUE });
 			}
 		}

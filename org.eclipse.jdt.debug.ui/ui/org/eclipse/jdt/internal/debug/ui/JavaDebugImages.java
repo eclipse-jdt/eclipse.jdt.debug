@@ -101,6 +101,10 @@ public class JavaDebugImages {
     
     public static final String IMG_ELCL_ALL_REFERENCES = "IMG_ELCL_ALL_REFERENCES"; //$NON-NLS-1$
 
+	public static final String IMG_OVR_IN_TRIGGER_POINT = "IMG_OVR_IN_TRIGGER_POINT"; //$NON-NLS-1$
+
+	public static final String IMG_OVR_TRIGGER_SUPPRESSED = "IMG_OVR_TRIGGER_SUPPRESSED"; //$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -212,6 +216,11 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.png"); //$NON-NLS-1$
         
 		declareRegistryImage(IMG_ELCL_ALL_REFERENCES, E_LCL + "all_references.png"); //$NON-NLS-1$
+
+		declareRegistryImage(IMG_OVR_IN_TRIGGER_POINT, T_OVR + "trigger_ovr.png"); //$NON-NLS-1$
+
+		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.png"); //$NON-NLS-1$
+
 	}
 
 	/**

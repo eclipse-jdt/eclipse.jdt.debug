@@ -1428,6 +1428,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 
+		try {
+			if (!breakpoint.isTriggerPointActive()) {
+				if (!DebugPlugin.getDefault().getBreakpointManager().canSupendOnBreakpoint()){
+					DebugPlugin.getDefault().getBreakpointManager().deActivateTriggerpoints(null);
+					fSuspendVoteInProgress = false;
+					return false;
+				}
+				
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
 		// Evaluate breakpoint condition (if any). The condition is evaluated
 		// regardless of the current suspend vote status, since breakpoint
 		// listeners

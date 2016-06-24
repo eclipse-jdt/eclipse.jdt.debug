@@ -30,6 +30,7 @@ public class ExceptionBreakpointDetailPane extends AbstractDetailPane {
 		addAutosaveProperties(new int[]{
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,
+				StandardJavaBreakpointEditor.PROP_TRIGGER_POINT, StandardJavaBreakpointEditor.PROP_TRIGER_POINT_ACTIVE,
 				ExceptionBreakpointEditor.PROP_CAUGHT,
 				ExceptionBreakpointEditor.PROP_UNCAUGHT,
 				ExceptionBreakpointEditor.PROP_SUBCLASSES

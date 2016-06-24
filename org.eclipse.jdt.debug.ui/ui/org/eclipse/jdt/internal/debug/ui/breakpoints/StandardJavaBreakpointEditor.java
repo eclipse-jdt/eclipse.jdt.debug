@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,12 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.propertypages.PropertyPageMessages;
+import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -40,6 +42,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	private Text fHitCountText;
 	private Button fSuspendThread;
 	private Button fSuspendVM;
+	protected Button fTriggerPointButton;
+	protected Button fTriggerPointButtonActive;
 	
 	/**
      * Property id for hit count enabled state.
@@ -56,14 +60,66 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
      */
     public static final int PROP_SUSPEND_POLICY = 0x1007;
 
+	/**
+	 * Property id for trigger point.
+	 */
+	public static final int PROP_TRIGGER_POINT = 0x1008;
+	/**
+	 * Property id for trigger point active state.
+	 */
+	public static final int PROP_TRIGER_POINT_ACTIVE = 0x1009;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public Control createControl(Composite parent) {
+		createTriggerPointButton(parent);
 		return createStandardControls(parent);
 	}
+
+	protected Button createCheckButton(Composite parent, String text) {
+		return SWTFactory.createCheckButton(parent, text, null, false, 1);
+	}
 	
+	/**
+	 * Creates the button to toggle Triggering point property of the breakpoint
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createTriggerPointButton(Composite parent) {
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
+		fTriggerPointButton = createCheckButton(composite, PropertyPageMessages.JavaBreakpointPage_12);
+		composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, 0, 0, 0);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		gd.horizontalIndent = LayoutUtil.getIndent();
+		composite.setLayoutData(gd);
+		fTriggerPointButtonActive = createCheckButton(composite, PropertyPageMessages.JavaBreakpointPage_13);
+
+		fTriggerPointButton.setSelection(isTriggerPoint());
+		fTriggerPointButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				fTriggerPointButtonActive.setEnabled(fTriggerPointButton.getSelection());
+				fTriggerPointButtonActive.setSelection(fTriggerPointButton.getSelection());
+				setDirty(PROP_TRIGER_POINT_ACTIVE);
+				setDirty(PROP_TRIGGER_POINT);
+			}
+
+		});
+		fTriggerPointButtonActive.setEnabled(fTriggerPointButton.getSelection());
+		fTriggerPointButtonActive.setSelection(isActiveTriggerPoiint());
+		fTriggerPointButtonActive.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				setDirty(PROP_TRIGER_POINT_ACTIVE);
+			}
+
+		});
+
+	}
 	protected Control createStandardControls(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 4, 1, 0, 0, 0);
 		fHitCountButton = SWTFactory.createCheckButton(composite, processMnemonics(PropertyPageMessages.JavaBreakpointPage_4), null, false, 1);
@@ -169,6 +225,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendVM.setEnabled(enabled);
 		fSuspendThread.setSelection(suspendThread);
 		fSuspendVM.setSelection(!suspendThread);
+		fTriggerPointButton.setEnabled(enabled);
+		fTriggerPointButton.setSelection(isTriggerPoint());
+		fTriggerPointButtonActive.setEnabled(enabled);
+		fTriggerPointButtonActive.setSelection(isActiveTriggerPoiint());
 		setDirty(false);
 	}
 	
@@ -210,6 +270,9 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 				}
 			}
 			fBreakpoint.setHitCount(hitCount);
+			storeTriggerPoint(fBreakpoint);
+			storeTriggerPointActive(fBreakpoint);
+
 		}
 		setDirty(false);
 	}
@@ -255,5 +318,64 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			}
 		});
 		return button;
+	}
+
+	private boolean isActiveTriggerPoiint() {
+		try {
+			if (getBreakpoint() != null) {
+				return getBreakpoint().isTriggerPointActive();
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private boolean isTriggerPoint() {
+		try {
+			if (getBreakpoint() != null) {
+				return getBreakpoint().isTriggerPoint();
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+
+	/**
+	 * Stores the value of the trigger point state in the breakpoint manager.
+	 * 
+	 * @param breakpoint
+	 *            the breakpoint to be compared with trigger point in the workspace
+	 * @throws CoreException
+	 *             if an exception occurs while setting the enabled state
+	 */
+	private void storeTriggerPoint(IJavaBreakpoint breakpoint) throws CoreException {
+		boolean oldSelection = breakpoint.isTriggerPoint();
+		if (oldSelection == fTriggerPointButton.getSelection()) {
+			return;
+		}
+		breakpoint.setTriggerPoint(fTriggerPointButton.getSelection());
+	}
+
+	/**
+	 * Stores the value of the trigger point active state in the breakpoint manager.
+	 * 
+	 * @param breakpoint
+	 *            the breakpoint to be compared with trigger point in the workspace
+	 * @throws CoreException
+	 *             if an exception occurs while setting the enabled state
+	 */
+	private void storeTriggerPointActive(IJavaBreakpoint breakpoint) throws CoreException {
+		boolean oldSelection = breakpoint.isTriggerPointActive();
+		if (oldSelection == fTriggerPointButtonActive.getSelection()) {
+			return;
+		}
+		breakpoint.setTriggerPointActive(fTriggerPointButtonActive.getSelection());
+		DebugPlugin.getDefault().getBreakpointManager().refreshTriggerpointDisplay();
 	}
 }

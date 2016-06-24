@@ -32,7 +32,8 @@ public class LineBreakpointDetailPane extends AbstractDetailPane {
 				JavaBreakpointConditionEditor.PROP_CONDITION_ENABLED,
 				JavaBreakpointConditionEditor.PROP_CONDITION_SUSPEND_POLICY,
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
-				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY});
+				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT,
+				StandardJavaBreakpointEditor.PROP_TRIGER_POINT_ACTIVE });
 	}
 	
 	/* (non-Javadoc)

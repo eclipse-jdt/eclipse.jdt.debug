@@ -30,6 +30,7 @@ public class WatchpointDetailPane extends AbstractDetailPane {
 		addAutosaveProperties(new int[]{
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,
+				StandardJavaBreakpointEditor.PROP_TRIGGER_POINT, StandardJavaBreakpointEditor.PROP_TRIGER_POINT_ACTIVE,
 				WatchpointEditor.PROP_ACCESS,
 				WatchpointEditor.PROP_MODIFICATION
 		});
