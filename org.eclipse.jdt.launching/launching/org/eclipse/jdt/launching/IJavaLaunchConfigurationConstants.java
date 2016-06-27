@@ -67,6 +67,10 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a name of
 	 * a Java project associated with a Java launch configuration.
 	 */
+	/*
+	 * This constant is referenced from an upper-layer bundle
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget#prepareBreakpointsSearchScope()
+	 */
 	public static final String ATTR_PROJECT_NAME = LaunchingPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
 	
 	/**
@@ -178,6 +182,10 @@ public interface IJavaLaunchConfigurationConstants {
 	 * via the <code>ATTR_CLASSPATH</code> attribute. When <code>true</code> or
 	 * unspecified, a classpath is computed by the classpath provider associated
 	 * with a launch configuration.
+	 */
+	/*
+	 * This constant is referenced from an upper-layer bundle
+	 * @see org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget#prepareBreakpointsSearchScope()
 	 */
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
 
