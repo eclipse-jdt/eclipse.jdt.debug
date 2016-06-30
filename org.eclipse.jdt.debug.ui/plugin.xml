@@ -3342,7 +3342,7 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory 
             label="%javaStackTraceConsole.label"
-            class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
+            class="org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
    </extension>
 

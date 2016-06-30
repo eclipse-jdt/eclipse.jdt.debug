@@ -10,37 +10,69 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.console;
 
+import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsole;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleFactory;
+import org.eclipse.ui.console.IConsoleListener;
+import org.eclipse.ui.console.IConsoleManager;
+
 /**
- * Creates a new console into which users can paste stack traces and follow the hyperlinks. creates a public API for
- * org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory
+ * Creates a new console into which users can paste stack traces and follow the hyperlinks.
  * 
  * @since 3.8
  * 
  */
-public class JavaStackTraceConsoleFactory {
-	private org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory javaStackTraceConsoleFactory;
+public class JavaStackTraceConsoleFactory implements IConsoleFactory {
+	private IConsoleManager fConsoleManager = null;
+	private JavaStackTraceConsole fConsole = null;
 
 	public JavaStackTraceConsoleFactory() {
-		javaStackTraceConsoleFactory = new org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory();
+		fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
+		fConsoleManager.addConsoleListener(new IConsoleListener() {
+			@Override
+			public void consolesAdded(IConsole[] consoles) {
+			}
+
+			@Override
+			public void consolesRemoved(IConsole[] consoles) {
+				for (int i = 0; i < consoles.length; i++) {
+					if (consoles[i] == fConsole) {
+						fConsole.saveDocument();
+						fConsole = null;
+					}
+				}
+			}
+
+		});
 	}
 
 	/**
-	 * Invokes openConsole() from org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory
+	 * Opens the console (creating a new one if not previously initialized).
 	 */
+	@Override
 	public void openConsole() {
-		javaStackTraceConsoleFactory.openConsole();
+		openConsole(null);
 	}
 
 	/**
-	 * Invokes openConsole(String) from org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory
+	 * Opens the console (creating a new one if not previously initialized). If the passed string is not <code>null</code>, the text of the console is
+	 * set to the string.
 	 * 
 	 * @param initialText
 	 *            text to put in the console or <code>null</code>.
 	 */
 	public void openConsole(String initialText) {
-		javaStackTraceConsoleFactory.openConsole(initialText);
+		if (fConsole == null) {
+			fConsole = new JavaStackTraceConsole();
+			fConsole.initializeDocument();
+			fConsoleManager.addConsoles(new IConsole[] { fConsole });
+		}
+		if (initialText != null) {
+			fConsole.getDocument().set(initialText);
+		}
+		fConsoleManager.showConsoleView(fConsole);
 	}
-	
 	
 
 }
