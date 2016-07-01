@@ -102,6 +102,13 @@ public class JDIDebugModel {
 			+ ".do_not_install_breakpoints_from_unrelated_sources"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key for specifying if the value returned or thrown should be displayed as variable after a "step return" or "step over" (if
+	 * supported by the vm)
+	 */
+	public static final String PREF_SHOW_STEP_RESULT = getPluginIdentifier()
+			+ ".PREF_SHOW_STEP_RESULT"; //$NON-NLS-1$
+
+	/**
 	 * Not to be instantiated.
 	 */
 	private JDIDebugModel() {

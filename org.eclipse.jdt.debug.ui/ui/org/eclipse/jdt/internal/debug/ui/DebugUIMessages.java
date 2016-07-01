@@ -61,6 +61,7 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1;
 	public static String JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1;
 	public static String JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1;
+	public static String JavaDebugPreferencePage_ShowStepResult_1;
 	public static String JavaDebugPreferencePage_Communication_1;
 	public static String JavaDebugPreferencePage_Debugger__timeout__2;
 	public static String JavaDebugPreferencePage__Launch_timeout__ms___1;

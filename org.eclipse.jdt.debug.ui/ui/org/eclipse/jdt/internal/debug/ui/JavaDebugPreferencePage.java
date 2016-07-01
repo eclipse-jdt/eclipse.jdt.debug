@@ -89,6 +89,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fAlertHCRNotSupportedButton;
 	private Button fAlertObsoleteButton;
 	private Button fPerformHCRWithCompilationErrors;
+	private Button fShowStepResult;
+
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
 	private JavaDebugIntegerFieldEditor fConnectionTimeoutText;
@@ -164,8 +166,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fOnlyIncludeExportedEntries = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_only_include_exported_entries, null, false, 1);
+
+		SWTFactory.createVerticalSpacer(composite, 1);
+		fShowStepResult = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_1, null, false, 1);
 		
 		setValues();
+
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText.setPropertyChangeListener(this);
 		return composite;		
@@ -202,6 +208,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			prefs.putInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, policy);
 			prefs.putInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, fWatchpoint.getSelectionIndex());
 			prefs.putBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
+			prefs.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, fShowStepResult.getSelection());
 			prefs.putInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 			prefs.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, fFilterUnrelatedBreakpoints.getSelection());
 			try {
@@ -246,6 +253,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD) ? 0 : 1);
 			fWatchpoint.select(prefs.getInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, 0));
 			fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true));
+			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
 		}
@@ -278,6 +286,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD ? 0 : 1));
 			fWatchpoint.select(prefs.getInt(JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, 0));
 			fPerformHCRWithCompilationErrors.setSelection(prefs.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true));
+			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
 		}
