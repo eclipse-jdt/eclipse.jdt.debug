@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,21 @@ public class TestsBreakpointConditions extends Tests {
 		try {
 			init();
 			IValue value = eval("System.out.println(\"test\");return true");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+	/*
+	 * To test throw as a last statement
+	 */
+	public void testCondition4() throws Throwable {
+		try {
+			init();
+			IValue value = eval("System.out.println(\"test\");throw new Exception(\"test\")");
 			System.out.println(value);
 
 		}
