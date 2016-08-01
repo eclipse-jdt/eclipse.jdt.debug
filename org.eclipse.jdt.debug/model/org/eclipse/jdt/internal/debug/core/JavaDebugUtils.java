@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,8 +303,14 @@ public class JavaDebugUtils {
 	 * @throws CoreException if an exception occurs
 	 */
 	public static IJavaElement resolveJavaElement(Object object, ILaunch launch) throws CoreException {
-		Object sourceElement = resolveSourceElement(object, JAVA_STRATUM, launch);
-		return getJavaElement(sourceElement);
+		Object sourceElement = resolveSourceElement(object, launch);
+		IJavaElement javaElement = getJavaElement(sourceElement);
+		if (javaElement == null) {
+			// fallback if default stratum does not provide a Java element
+			sourceElement = resolveSourceElement(object, JAVA_STRATUM, launch);
+			javaElement = getJavaElement(sourceElement);
+		}
+		return javaElement;
 	}
 
 	/**
@@ -403,8 +409,15 @@ public class JavaDebugUtils {
 		ILaunch launch = frame.getLaunch();
 		if(launch != null) {
 			try {
-				Object sourceElement = resolveSourceElement(frame, JAVA_STRATUM, launch);
+				Object sourceElement = resolveSourceElement(frame, launch);
 				IJavaElement element = getJavaElement(sourceElement);
+				if (element == null) {
+					Object sourceElement1 = resolveSourceElement(frame, JAVA_STRATUM, launch);
+					if (sourceElement1 != null){
+						sourceElement = sourceElement1;
+						element = getJavaElement(sourceElement);
+					}
+				}
 				if(element != null) {
 					return element.getJavaProject();
 				}

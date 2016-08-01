@@ -178,6 +178,9 @@ public class EvaluationSourceGenerator {
 						token == ITerminalSymbols.TokenNameprivate || token == ITerminalSymbols.TokenNameprotected || token == ITerminalSymbols.TokenNamepublic)){
 					token = scanner.getNextToken();
 				}
+				else if (count == 0 && (token == ITerminalSymbols.TokenNamethrow)){
+					return false;
+				}
 				else if (count ==1 && (token == ITerminalSymbols.TokenNameLBRACE || token == ITerminalSymbols.TokenNameEQUAL)){
 					return true;
 				}
