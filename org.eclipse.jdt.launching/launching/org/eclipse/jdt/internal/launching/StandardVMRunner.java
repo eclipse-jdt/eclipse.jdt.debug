@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -591,9 +591,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 			// use old single attribute instead of new attributes if not specified
 			bootCP = config.getBootClassPath();
 		}
-		if (prependBootCP != null) {
-			arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
-		}
+		// Bug 497945 -Temporary testing to see if we can launch inner eclipse in Mac after this.
+		/*
+		 * if (prependBootCP != null) { arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$ }
+		 */
 		if (bootCP != null) {
 			if (bootCP.length > 0) {
 				arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
