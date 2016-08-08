@@ -104,6 +104,7 @@ public class JDIDebugModel {
 	/**
 	 * Preference key for specifying if the value returned or thrown should be displayed as variable after a "step return" or "step over" (if
 	 * supported by the vm)
+	 * @since 3.11
 	 */
 	public static final String PREF_SHOW_STEP_RESULT = getPluginIdentifier()
 			+ ".PREF_SHOW_STEP_RESULT"; //$NON-NLS-1$
