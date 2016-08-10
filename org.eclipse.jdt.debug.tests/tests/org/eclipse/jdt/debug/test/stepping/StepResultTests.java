@@ -400,4 +400,74 @@ public class StepResultTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testStepInto() throws Exception {
+		String typeName = "StepResult3";
+		ILineBreakpoint bp8 = createLineBreakpoint(31, "StepResult3");
+		bp8.setEnabled(true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp8, false);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("f", stackFrame.getMethodName());
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("f", stackFrame.getMethodName());
+			assertEquals("g() returned", stackFrame.getVariables()[0].getName());
+			assertEquals("\"XXX\"", stackFrame.getVariables()[0].getValue().toString());
+
+			stepInto(stackFrame);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("f", stackFrame.getMethodName());
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepInto(stackFrame);
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("<init>", stackFrame.getMethodName()); // constructor of Exception
+			assertFalse(stackFrame.getVariables()[0].getName().contains("returned"));
+
+			stepReturn(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertEquals("<init>() returned", stackFrame.getVariables()[0].getName());
+
+			stepInto(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("main", stackFrame.getMethodName());
+			assertEquals("g() threw", stackFrame.getVariables()[0].getName());
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 }

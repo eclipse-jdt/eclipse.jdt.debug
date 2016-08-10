@@ -2518,8 +2518,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				attachFiltersToStepRequest(request);
 				request.enable();
 				
-				if ((kind == StepRequest.STEP_OUT || kind == StepRequest.STEP_OVER) && manager.virtualMachine().canGetMethodReturnValues()
-						&& showStepResultIsEnabled()) {
+				if (manager.virtualMachine().canGetMethodReturnValues() && showStepResultIsEnabled()) {
 					if (fCurrentMethodExitRequest != null) {
 						removeJDIEventListener(this, fCurrentMethodExitRequest);
 						manager.deleteEventRequest(fCurrentMethodExitRequest);
@@ -2787,7 +2786,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
 
-				if ((getStepKind() == StepRequest.STEP_OUT || getStepKind() == StepRequest.STEP_OVER) && fStepResultCandidate != null) {
+				if (fStepResultCandidate != null) {
 					fStepResult = fStepResultCandidate;
 					fStepResultMethod = null;
 					fStepReturnTargetFrameCount = -1;
