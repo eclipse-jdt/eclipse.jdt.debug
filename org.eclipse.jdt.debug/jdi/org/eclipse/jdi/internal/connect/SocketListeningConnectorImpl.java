@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
  *     			from Eclipse
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -56,6 +57,12 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		// Timeout
 		intArg = new IntegerArgumentImpl(
 				"timeout", ConnectMessages.SocketListeningConnectorImpl_Timeout_before_accept_returns_3, ConnectMessages.SocketListeningConnectorImpl_Timeout_4, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$  
+		arguments.put(intArg.name(), intArg);
+
+		// FIXME: connectionLimit is not actually used in this class, but in the higher-level controller, SocketListenConnector.  
+		// But IntegerArgumentImpl is package restricted so we must put it here.
+		intArg = new IntegerArgumentImpl("connectionLimit", ConnectMessages.SocketListeningConnectorImpl_Limit_incoming_connections, ConnectMessages.SocketListeningConnectorImpl_Limit, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
+		intArg.setValue(1);  // mimics previous behaviour, allowing a single connection
 		arguments.put(intArg.name(), intArg);
 
 		return arguments;

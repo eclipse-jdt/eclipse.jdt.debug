@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
@@ -100,11 +101,16 @@ public class SocketListenConnector implements IVMConnector {
         Connector.Argument param= acceptArguments.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
         
+		// retain default behaviour to accept 1 connection only
+		int connectionLimit = 1;
+		if (arguments.containsKey("connectionLimit")) { //$NON-NLS-1$
+			connectionLimit = Integer.valueOf(arguments.get("connectionLimit")); //$NON-NLS-1$
+		}
+
 		try {
 			monitor.subTask(NLS.bind(LaunchingMessages.SocketListenConnector_3, new String[]{portNumberString}));
 			connector.startListening(acceptArguments);
-			SocketListenConnectorProcess process = new SocketListenConnectorProcess(launch,portNumberString);
-			launch.addProcess(process);
+			SocketListenConnectorProcess process = new SocketListenConnectorProcess(launch, portNumberString, connectionLimit);
 			process.waitForConnection(connector, acceptArguments);
 		} catch (IOException e) {
 			abort(LaunchingMessages.SocketListenConnector_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
@@ -119,8 +125,10 @@ public class SocketListenConnector implements IVMConnector {
 	@Override
 	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException {
 		Map<String, Connector.Argument> def = getListeningConnector().defaultArguments();
+
 		Connector.IntegerArgument arg = (Connector.IntegerArgument)def.get("port"); //$NON-NLS-1$
 		arg.setValue(8000);
+
 		return def;
 	}
 
@@ -131,6 +139,7 @@ public class SocketListenConnector implements IVMConnector {
 	public List<String> getArgumentOrder() {
 		List<String> list = new ArrayList<String>(1);
 		list.add("port"); //$NON-NLS-1$
+		list.add("connectionLimit"); //$NON-NLS-1$
 		return list;
 	}
 
