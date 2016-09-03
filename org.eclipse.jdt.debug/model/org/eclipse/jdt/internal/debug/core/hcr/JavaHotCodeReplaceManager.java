@@ -444,6 +444,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 */
 	private void doHotCodeReplace(List<JDIDebugTarget> targets, List<IResource> resources,
 			List<String> qualifiedNames) {
+
+		// Check whether hot code replace is enabled
+		if (!Platform.getPreferencesService().getBoolean(
+				JDIDebugPlugin.getUniqueIdentifier(), 
+				JDIDebugPlugin.PREF_ENABLE_HCR, 
+				true, 
+				null)) {
+			return; // disabled
+		}
+
 		MultiStatus ms = new MultiStatus(
 				JDIDebugPlugin.getUniqueIdentifier(),
 				DebugException.TARGET_REQUEST_FAILED,

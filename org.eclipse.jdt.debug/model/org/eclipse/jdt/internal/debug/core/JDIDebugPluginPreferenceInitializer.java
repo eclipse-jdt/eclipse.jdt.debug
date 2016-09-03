@@ -32,6 +32,7 @@ public class JDIDebugPluginPreferenceInitializer extends
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
+		node.putBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, true);
 		node.putInt(JDIDebugModel.PREF_REQUEST_TIMEOUT,	JDIDebugModel.DEF_REQUEST_TIMEOUT);
 		node.putBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
 		node.putBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, true);

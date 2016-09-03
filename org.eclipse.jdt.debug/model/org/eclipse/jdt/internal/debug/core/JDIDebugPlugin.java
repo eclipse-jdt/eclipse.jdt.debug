@@ -55,6 +55,14 @@ import com.sun.jdi.VirtualMachineManager;
 public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPreferenceChangeListener {
 
 	/**
+	 * Boolean preference controlling if hot code replace is enabled.
+	 * 
+	 * @since 3.11
+	 */
+	public static final String PREF_ENABLE_HCR = JDIDebugPlugin
+			.getUniqueIdentifier() + ".enable_hcr"; //$NON-NLS-1$
+	
+	/**
 	 * integer preference controlling if we should, by default, suspend the VM
 	 * instead of the thread
 	 * 
