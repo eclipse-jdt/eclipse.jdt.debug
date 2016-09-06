@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIAllInstancesValue;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListValue;
@@ -1097,6 +1098,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} catch (DebugException e) {
 			    // no need to log errors - elements may no longer exist by the time we render them
 			}
+		}
+		if (javaVariable instanceof JDIReturnValueVariable) {
+			return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_METHOD_RESULT);
 		}
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);
 	}
