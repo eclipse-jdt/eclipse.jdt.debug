@@ -110,7 +110,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 
 		});
 		fTriggerPointButtonActive.setEnabled(fTriggerPointButton.getSelection());
-		fTriggerPointButtonActive.setSelection(isActiveTriggerPoiint());
+		fTriggerPointButtonActive.setSelection(isActiveTriggerPoint());
 		fTriggerPointButtonActive.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -120,6 +120,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		});
 
 	}
+
 	protected Control createStandardControls(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 4, 1, 0, 0, 0);
 		fHitCountButton = SWTFactory.createCheckButton(composite, processMnemonics(PropertyPageMessages.JavaBreakpointPage_4), null, false, 1);
@@ -227,8 +228,8 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fSuspendVM.setSelection(!suspendThread);
 		fTriggerPointButton.setEnabled(enabled);
 		fTriggerPointButton.setSelection(isTriggerPoint());
-		fTriggerPointButtonActive.setEnabled(enabled);
-		fTriggerPointButtonActive.setSelection(isActiveTriggerPoiint());
+		fTriggerPointButtonActive.setEnabled(isTriggerPoint());
+		fTriggerPointButtonActive.setSelection(isActiveTriggerPoint());
 		setDirty(false);
 	}
 	
@@ -320,7 +321,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		return button;
 	}
 
-	private boolean isActiveTriggerPoiint() {
+	private boolean isActiveTriggerPoint() {
 		try {
 			if (getBreakpoint() != null) {
 				return getBreakpoint().isTriggerPointActive();
