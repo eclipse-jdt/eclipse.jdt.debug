@@ -368,7 +368,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 				}
 			}
 			setExceptionName(name);
-			inActivateTriggerPoint(event);
+			disableTriggerPoint(event);
 			if (getExclusionClassFilters().length >= 1
 					|| getInclusionClassFilters().length >= 1
 					|| filtersIncludeDefaultPackage(fInclusionClassFilters)

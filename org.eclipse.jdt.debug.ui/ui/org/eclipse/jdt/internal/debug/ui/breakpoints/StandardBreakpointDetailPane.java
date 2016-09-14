@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2011 IBM Corporation and others.
+ *  Copyright (c) 2009, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,8 +29,7 @@ public class StandardBreakpointDetailPane extends AbstractDetailPane {
 		super(BreakpointMessages.StandardBreakpointDetailPane_0, BreakpointMessages.StandardBreakpointDetailPane_0, DETAIL_PANE_STANDARD);
 		addAutosaveProperties(new int[]{
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
-				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT,
-				StandardJavaBreakpointEditor.PROP_TRIGER_POINT_ACTIVE });
+				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT, });
 	}
 	
 	/* (non-Javadoc)

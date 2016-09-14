@@ -177,12 +177,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected static final String[] fgExpiredEnabledAttributes = new String[] {
 			EXPIRED, ENABLED };
 	
-	/**
-	 * JavaBreakpoint attributes for Trigger Point activation
-	 */
-	protected static final String[] fgExpiredEnabledTriggerAttributes = new String[] {
-			EXPIRED_TRIGGER_POINT, getTriggerActivePropertyString() };
-
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap<JDIDebugTarget, List<EventRequest>>(1);
 		fFilteredThreadsByTarget = new HashMap<JDIDebugTarget, IJavaThread>(1);
@@ -408,7 +402,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public boolean handleBreakpointEvent(Event event, JDIThread thread,
 			boolean suspendVote) {
 		expireHitCount(event);
-		inActivateTriggerPoint(event);
+		disableTriggerPoint(event);
 		return !suspend(thread, suspendVote); // Resume if suspend fails
 	}
 
@@ -483,13 +477,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
-	protected void inActivateTriggerPoint(Event event) {
+	protected void disableTriggerPoint(Event event) {
 		try{
-			if (isTriggerPointActive()) {
-					setAttributes(fgExpiredEnabledTriggerAttributes, new Object[] {
-								Boolean.TRUE, Boolean.FALSE });
-					DebugPlugin.getDefault().getBreakpointManager().deActivateTriggerpoints(null);
-					// make a note that we auto-inactivated the trigger point for this breakpoint.
+			if (isTriggerPoint() && isEnabled()) {
+					DebugPlugin.getDefault().getBreakpointManager().enableTriggerpoints(null, false);
+					// make a note that we auto-disabled the trigger point for this breakpoint.
+					// we re enable it at cleanup of JDITarget
 				}
 			}catch (CoreException ce) {
 				JDIDebugPlugin.log(ce);
@@ -910,11 +903,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			if (isExpired()) {
 				// if breakpoint was auto-disabled, re-enable it
 				setAttributes(fgExpiredEnabledAttributes, new Object[] {
-						Boolean.FALSE, Boolean.TRUE });
-			}
-			if (isTriggerPointExpired()) {
-				// if breakpoint was auto-disabled, re-enable it
-				setAttributes(fgExpiredEnabledTriggerAttributes, new Object[] {
 						Boolean.FALSE, Boolean.TRUE });
 			}
 		}

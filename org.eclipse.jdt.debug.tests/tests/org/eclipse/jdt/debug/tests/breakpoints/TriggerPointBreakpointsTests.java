@@ -40,7 +40,6 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(25, typeName);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(30, typeName);
 		bp2.setTriggerPoint(true);
-		bp2.setTriggerPointActive(true);
 		
 		IJavaThread thread= null;
 		try {

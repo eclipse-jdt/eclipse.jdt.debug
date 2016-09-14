@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2011 IBM Corporation and others.
+ *  Copyright (c) 2010, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,8 +32,7 @@ public class LineBreakpointDetailPane extends AbstractDetailPane {
 				JavaBreakpointConditionEditor.PROP_CONDITION_ENABLED,
 				JavaBreakpointConditionEditor.PROP_CONDITION_SUSPEND_POLICY,
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
-				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT,
-				StandardJavaBreakpointEditor.PROP_TRIGER_POINT_ACTIVE });
+				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT });
 	}
 	
 	/* (non-Javadoc)
