@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.breakpoints;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -321,6 +322,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			return;
 		}
 		breakpoint.setTriggerPoint(fTriggerPointButton.getSelection());
+		DebugPlugin.getDefault().getBreakpointManager().refreshTriggerpointDisplay();
 	}
 
 }
