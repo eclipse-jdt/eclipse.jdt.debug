@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.ITriggerPoint;
 
 /**
  * A breakpoint specific to the Java debug model. A Java breakpoint supports:
@@ -29,7 +30,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IJavaBreakpoint extends IBreakpoint {
+public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 
 	/**
 	 * Suspend policy constant indicating a breakpoint will suspend the target

@@ -1863,7 +1863,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		plugin.getBreakpointManager().removeBreakpointManagerListener(this);
 		plugin.removeDebugEventListener(this);
 		removeAllBreakpoints();
-		DebugPlugin.getDefault().getBreakpointManager().enableTriggerpoints(null, true);
+		DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, true);
 		fOutOfSynchTypes.clear();
 		if (fEngines != null) {
 			Iterator<IAstEvaluationEngine> engines = fEngines.values().iterator();

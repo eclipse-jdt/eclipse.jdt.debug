@@ -480,7 +480,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void disableTriggerPoint(Event event) {
 		try{
 			if (isTriggerPoint() && isEnabled()) {
-					DebugPlugin.getDefault().getBreakpointManager().enableTriggerpoints(null, false);
+					DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
 					// make a note that we auto-disabled the trigger point for this breakpoint.
 					// we re enable it at cleanup of JDITarget
 				}

@@ -1430,7 +1430,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		try {
 			if (!(breakpoint.isTriggerPoint())) {
-				if (!DebugPlugin.getDefault().getBreakpointManager().canSupendOnBreakpoint()){
+				if (DebugPlugin.getDefault().getBreakpointManager().hasActiveTriggerPoints()){
 					fSuspendVoteInProgress = false;
 					return false;
 				}

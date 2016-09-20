@@ -1048,7 +1048,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (breakpoint.isTriggerPoint()) {
 				flags |= JDIImageDescriptor.TRIGGER_POINT;
-			} else if (!DebugPlugin.getDefault().getBreakpointManager().canSupendOnBreakpoint()) {
+			} else if (DebugPlugin.getDefault().getBreakpointManager().hasActiveTriggerPoints()) {
 				flags |= JDIImageDescriptor.TRIGGER_SUPPRESSED;
 			}
 			if (breakpoint instanceof IJavaLineBreakpoint) {
