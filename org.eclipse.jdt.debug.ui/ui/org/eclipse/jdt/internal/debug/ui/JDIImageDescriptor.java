@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,12 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	
 	/** Flag to render the synchronized stack frame adornment */
 	public final static int SYNCHRONIZED=				0x4000;
+
+	/** Flag to render the trigger point adornment */
+	public final static int TRIGGER_POINT = 0x10000;
+
+	/** Flag to render disabled due to trigger point adornment */
+	public final static int TRIGGER_SUPPRESSED = 0x20000;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -153,6 +159,21 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				x= 0;
 				y= 0;
 				data= getImageData(JavaDebugImages.IMG_OVR_IN_DEADLOCK);
+				drawImage(data, x, y);
+			}
+			if ((flags & TRIGGER_POINT) != 0) {
+				x = getSize().x;
+				y = getSize().y;
+				data = getImageData(JavaDebugImages.IMG_OVR_IN_TRIGGER_POINT);
+				x -= data.width;
+				y -= data.height;
+				drawImage(data, x, y);
+			} else if ((flags & TRIGGER_SUPPRESSED) != 0) {
+				x = getSize().x;
+				y = getSize().y;
+				data = getImageData(JavaDebugImages.IMG_OVR_TRIGGER_SUPPRESSED);
+				x -= data.width;
+				y -= data.height;
 				drawImage(data, x, y);
 			}
 			if ((flags & OWNED_MONITOR) != 0) {

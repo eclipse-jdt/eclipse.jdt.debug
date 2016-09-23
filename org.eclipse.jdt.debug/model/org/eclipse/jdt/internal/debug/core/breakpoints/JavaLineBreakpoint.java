@@ -449,6 +449,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	protected boolean suspendForEvent(Event event, JDIThread thread,
 			boolean suspendVote) {
 		expireHitCount(event);
+		disableTriggerPoint(event);
 		return suspend(thread, suspendVote);
 	}
 

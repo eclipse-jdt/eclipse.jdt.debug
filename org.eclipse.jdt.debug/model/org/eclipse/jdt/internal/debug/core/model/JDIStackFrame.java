@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
@@ -123,6 +124,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private Location fLocation;
 
 	/**
+	 * Whether the current stack frame is the top of the stack
+	 */
+	private boolean fIsTop;
+
+	/**
 	 * Creates a new stack frame in the given thread.
 	 * 
 	 * @param thread
@@ -163,6 +169,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				// mark as invalid
 				fDepth = -1;
 				fStackFrame = null;
+				fIsTop = false;
 				return null;
 			} else if (fDepth == depth) {
 				Location location = frame.location();
@@ -354,6 +361,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 								(JDIDebugTarget) getDebugTarget(), t));
 					}
 				}
+				addStepReturnValue(fVariables);
 				// add locals
 				Iterator<LocalVariable> variables = getUnderlyingVisibleVariables()
 						.iterator();
@@ -366,6 +374,34 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			fRefreshVariables = false;
 			return fVariables;
+		}
+	}
+
+	/**
+	 * If there is a return value from a "step return" that belongs to this frame, insert it as first element
+	 *
+	 * @param variables
+	 */
+	private void addStepReturnValue(List<IJavaVariable> variables) {
+		if (fIsTop) {
+			StepResult stepResult = fThread.fStepResult;
+			if (stepResult != null) {
+				if (stepResult.fIsReturnValue) {
+					if (fDepth + 1 != stepResult.fTargetFrameCount) {
+						// can happen e.g., because of checkPackageAccess/System.getSecurityManager()
+						return;
+					}
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, stepResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue)));
+				} else {
+					if (fDepth + 1 > stepResult.fTargetFrameCount) {
+						// don't know if this really can happen, but other jvm suprises were not expected either
+						return;
+					}
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, stepResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue)));
+				}
+			}
 		}
 	}
 
@@ -518,6 +554,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return;
 		}
 
+		// remove old return value first, so the "this" updating logic below works
+		if (!fVariables.isEmpty() && fVariables.get(0) instanceof JDIReturnValueVariable) {
+			fVariables.remove(0);
+		}
+
 		Method method = getUnderlyingMethod();
 		int index = 0;
 		if (!method.isStatic()) {
@@ -600,6 +641,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			JDILocalVariable local = new JDILocalVariable(this, newOnes.next());
 			fVariables.add(local);
 		}
+
+		addStepReturnValue(fVariables);
 	}
 
 	/**
@@ -1504,4 +1547,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 	}
 
+	public void setIsTop(boolean isTop) {
+		this.fIsTop = isTop;
+	}
 }

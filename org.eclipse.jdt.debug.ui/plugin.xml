@@ -2568,12 +2568,7 @@
                 <adapt type="org.eclipse.jdt.core.IJavaElement">
                   	<test property="org.eclipse.jdt.core.isInJavaProject"/>
                 </adapt>
-               	<or>
-               	  <test property="org.eclipse.jdt.launching.extendsClass" args="java.applet.Applet"/>
-               	  <test property="org.eclipse.jdt.launching.isContainer"/>
-               	  <test property="org.eclipse.jdt.launching.isPackageFragment"/>
-               	  <test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
-               	 </or>
+             	<test property="org.eclipse.jdt.launching.extendsClass" args="java.applet.Applet"/>
                	</and>
                </iterate>
            	</with>

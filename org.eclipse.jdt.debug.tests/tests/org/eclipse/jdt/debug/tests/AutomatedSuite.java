@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *     SAP SE - Support hyperlinks for stack entries with method signature
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.debug.test.stepping.ForceReturnTests;
@@ -41,6 +38,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
+import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
 import org.eclipse.jdt.debug.tests.console.ConsoleTerminateAllActionTests;
@@ -127,6 +125,9 @@ import org.eclipse.jdt.debug.tests.variables.TestInstanceRetrieval;
 import org.eclipse.jdt.debug.tests.variables.TestIntegerAccessUnboxing15;
 import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 /**
  * Tests for integration and nightly builds.
  */
@@ -189,6 +190,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
+		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
+
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
 		}

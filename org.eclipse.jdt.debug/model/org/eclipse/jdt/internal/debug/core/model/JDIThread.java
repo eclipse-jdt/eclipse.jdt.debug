@@ -79,9 +79,15 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventSet;
+import com.sun.jdi.event.ExceptionEvent;
+import com.sun.jdi.event.MethodEntryEvent;
+import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.ExceptionRequest;
+import com.sun.jdi.request.MethodEntryRequest;
+import com.sun.jdi.request.MethodExitRequest;
 import com.sun.jdi.request.StepRequest;
 
 /**
@@ -247,6 +253,46 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	private ThreadJob fAsyncJob;
 
 	private ThreadJob fRunningAsyncJob;
+
+	/**
+	 * The current MethodExitRequest if a step-return or step-over is in progress.
+	 */
+	private MethodExitRequest fCurrentMethodExitRequest;
+
+	/**
+	 * The current ExceptionRequest if a step-return or step-over is in progress.
+	 */
+	private ExceptionRequest fCurrentExceptionRequest;
+
+	/**
+	 * The current MethodEntryRequest if a step-over is in progress.
+	 */
+	private MethodEntryRequest fCurrentMethodEntryRequest;
+
+	/**
+	 * Method for which a result value is expected
+	 */
+	private Method fStepResultMethod;
+
+	/**
+	 * The location if a step-over is in progress.
+	 */
+	private Location fStepOverLocation;
+
+	/**
+	 * The depth if a step-over is in progress.
+	 */
+	private int fStepOverFrameCount;
+
+	/**
+	 * Candidate for depth of stack that will be returned values belong to. Is copied to fStepReturnTargetDepth only when step-return is actually
+	 * observed
+	 */
+	private int fStepReturnTargetFrameCount;
+
+	private StepResult fStepResultCandidate;
+
+	StepResult fStepResult;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -573,6 +619,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			} else if (refreshChildren) {
 				List<StackFrame> frames = getUnderlyingFrames();
 				int oldSize = fStackFrames.size();
+				if (oldSize > 0) {
+					((JDIStackFrame) fStackFrames.get(0)).setIsTop(false);
+				}
 				int newSize = frames.size();
 				int discard = oldSize - newSize; // number of old frames to
 													// discard, if any
@@ -604,7 +653,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 					offset--;
 				}
-
+				if (newSize > 0) {
+					((JDIStackFrame) fStackFrames.get(0)).setIsTop(true);
+				}
 			}
 			fRefreshChildren = false;
 		} else {
@@ -1377,6 +1428,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		}
 
+		try {
+			if (!(breakpoint.isTriggerPoint())) {
+				if (!DebugPlugin.getDefault().getBreakpointManager().canSupendOnBreakpoint()){
+					fSuspendVoteInProgress = false;
+					return false;
+				}
+				
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
 		// Evaluate breakpoint condition (if any). The condition is evaluated
 		// regardless of the current suspend vote status, since breakpoint
 		// listeners
@@ -1634,6 +1697,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		try {
 			setRunning(true);
+			clearStepReturnResult();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
@@ -1662,6 +1726,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (running) {
 			fCurrentBreakpoints.clear();
 		}
+	}
+
+	private void clearStepReturnResult() {
+		fStepResult = null;
 	}
 
 	/**
@@ -2001,6 +2069,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected synchronized void resumedByVM() throws DebugException {
 		fClientSuspendRequest = false;
 		setRunning(true);
+		clearStepReturnResult();
 		preserveStackFrames();
 		// This method is called *before* the VM is actually resumed.
 		// To ensure that all threads will fully resume when the VM
@@ -2375,6 +2444,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setPendingStepHandler(this);
 				addJDIEventListener(this, getStepRequest());
 				setRunning(true);
+				clearStepReturnResult();
 				preserveStackFrames();
 				fireResumeEvent(getStepDetail());
 				invokeThread();
@@ -2459,6 +2529,81 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				request.addCountFilter(1);
 				attachFiltersToStepRequest(request);
 				request.enable();
+				
+				if (manager.virtualMachine().canGetMethodReturnValues() && showStepResultIsEnabled()) {
+					if (fCurrentMethodExitRequest != null) {
+						removeJDIEventListener(this, fCurrentMethodExitRequest);
+						manager.deleteEventRequest(fCurrentMethodExitRequest);
+						fCurrentMethodExitRequest = null;
+					}
+					if (fCurrentExceptionRequest != null) {
+						removeJDIEventListener(this, fCurrentExceptionRequest);
+						manager.deleteEventRequest(fCurrentExceptionRequest);
+						fCurrentExceptionRequest = null;
+					}
+					if (fCurrentMethodEntryRequest != null) {
+						removeJDIEventListener(this, fCurrentMethodEntryRequest);
+						manager.deleteEventRequest(fCurrentMethodEntryRequest);
+						fCurrentMethodEntryRequest = null;
+					}
+					fStepResultCandidate = null;
+					List<IJavaStackFrame> frames = computeStackFrames();
+					int frameCount = 0;
+					StackFrame currentFrame = null;
+					if (!frames.isEmpty()) {
+						frameCount = frames.size();
+						currentFrame = ((JDIStackFrame) frames.get(0)).getUnderlyingStackFrame();
+					} else {
+						// can happen, e.g. when step filters are active.
+						if (fThread.isSuspended()) {
+							try {
+								// try to get the required info from the underlying object.
+								frameCount = fThread.frameCount();
+								currentFrame = fThread.frame(0);
+							}
+							catch (IncompatibleThreadStateException e) {
+								// cannot not happen because of the enclosing isSuspended() check.
+								e.printStackTrace();
+							}
+						}
+					}
+					if (currentFrame != null) {
+						MethodExitRequest methodExitRequest = manager.createMethodExitRequest();
+						methodExitRequest.addThreadFilter(fThread);
+						methodExitRequest.addClassFilter(currentFrame.location().declaringType());
+
+						if (manager.virtualMachine().canUseInstanceFilters()) {
+							ObjectReference thisObject = currentFrame.thisObject();
+							if (thisObject != null) {
+								methodExitRequest.addInstanceFilter(thisObject);
+							}
+						}
+						methodExitRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+						methodExitRequest.enable();
+						fCurrentMethodExitRequest = methodExitRequest;
+						fStepResultMethod = currentFrame.location().method();
+						fStepReturnTargetFrameCount = frameCount - 1; // depth of the frame that is returned to
+						addJDIEventListener(this, methodExitRequest);
+
+						ExceptionRequest exceptionRequest = manager.createExceptionRequest(null, true, true);
+						exceptionRequest.addThreadFilter(fThread);
+						exceptionRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+						exceptionRequest.enable();
+						fCurrentExceptionRequest = exceptionRequest;
+						addJDIEventListener(this, exceptionRequest);
+
+						if (kind == StepRequest.STEP_OVER) {
+							MethodEntryRequest methodEntryRequest = manager.createMethodEntryRequest();
+							methodEntryRequest.addThreadFilter(fThread);
+							methodEntryRequest.enable();
+							methodEntryRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+							fCurrentMethodEntryRequest = methodEntryRequest;
+							fStepOverLocation = currentFrame.location();
+							fStepOverFrameCount = frameCount; // depth of the frame where the step-over is being done
+							addJDIEventListener(this, methodEntryRequest);
+						}
+					}
+				}
 				return request;
 			} catch (RuntimeException e) {
 				targetRequestFailed(
@@ -2471,6 +2616,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// an exception
 			return null;
 
+		}
+
+		private boolean showStepResultIsEnabled() {
+			return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
 		}
 
 		/**
@@ -2519,6 +2668,30 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void deleteStepRequest() {
 			try {
+				if (fCurrentMethodExitRequest != null) {
+					removeJDIEventListener(this, fCurrentMethodExitRequest);
+					EventRequestManager manager = getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(fCurrentMethodExitRequest);
+					}
+					fCurrentMethodExitRequest = null;
+				}
+				if (fCurrentExceptionRequest != null) {
+					removeJDIEventListener(this, fCurrentExceptionRequest);
+					EventRequestManager manager = getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(fCurrentExceptionRequest);
+					}
+					fCurrentExceptionRequest = null;
+				}
+				if (fCurrentMethodEntryRequest != null) {
+					removeJDIEventListener(this, fCurrentMethodEntryRequest);
+					EventRequestManager manager = getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(fCurrentMethodEntryRequest);
+					}
+					fCurrentMethodEntryRequest = null;
+				}
 				StepRequest req = getStepRequest();
 				if (req != null) {
 					removeJDIEventListener(this, req);
@@ -2596,8 +2769,66 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		public boolean handleEvent(Event event, JDIDebugTarget target,
 				boolean suspendVote, EventSet eventSet) {
 			try {
+				if (event instanceof MethodExitEvent) {
+					Method stepResultMethod = fStepResultMethod;
+					if (stepResultMethod != null) {
+						MethodExitEvent methodExitEvent = (MethodExitEvent) event;
+						if (methodExitEvent.location().method().equals(stepResultMethod)) {
+							fStepResultCandidate = new StepResult(fStepResultMethod, fStepReturnTargetFrameCount, methodExitEvent.returnValue(), true);
+						}
+						return true;
+					}
+				}
+				if (event instanceof ExceptionEvent) {
+					ExceptionEvent exceptionEvent = (ExceptionEvent) event;
+					fStepResultCandidate = new StepResult(fStepResultMethod, fStepReturnTargetFrameCount, exceptionEvent.exception(), false);
+					return true;
+				}
+				if (event instanceof MethodEntryEvent) {
+					removeJDIEventListener(this, fCurrentMethodEntryRequest);
+					EventRequestManager manager = getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(fCurrentMethodEntryRequest);
+					}
+					fCurrentMethodEntryRequest = null;
+					deleteStepRequest();
+					createSecondaryStepRequest(StepRequest.STEP_OUT);
+					return true;
+				}
 				StepEvent stepEvent = (StepEvent) event;
 				Location currentLocation = stepEvent.location();
+
+				if (fStepResultCandidate != null) {
+					fStepResult = fStepResultCandidate;
+					fStepResultMethod = null;
+					fStepReturnTargetFrameCount = -1;
+					fStepResultCandidate = null;
+				}
+
+				if (getStepKind() == StepRequest.STEP_OVER) {
+					Location stepOverLocation2 = fStepOverLocation;
+					if (stepOverLocation2 != null && fStepOverFrameCount >= 0) {
+						int underlyingFrameCount = getUnderlyingFrameCount();
+						if (underlyingFrameCount > fStepOverFrameCount) {
+							// sometimes a MethodEntryEvent does not stop the thread but is delivered with another one grouped
+							// in an event set. in this situation, multiple step-returns must be done.
+							deleteStepRequest();
+							createSecondaryStepRequest(StepRequest.STEP_OUT);
+							return true;
+						}
+						if (underlyingFrameCount == fStepOverFrameCount && stepOverLocation2.method().equals(currentLocation.method())) {
+							int lineNumber = stepOverLocation2.lineNumber();
+							if (lineNumber != -1 && lineNumber == currentLocation.lineNumber()) {
+								// line has not changed yet (probably returned from invocation with STEP_OUT)
+								deleteStepRequest();
+								createSecondaryStepRequest(StepRequest.STEP_OVER);
+								return true;
+							}
+						}
+						fStepOverLocation = null;
+						fStepOverFrameCount = -1;
+					}
+				}
 
 				if (!target.isStepThruFilters()) {
 					if (shouldDoStepReturn()) {
@@ -2615,6 +2846,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					setRunning(true);
 					deleteStepRequest();
 					createSecondaryStepRequest();
+					clearStepReturnResult();
 					return true;
 					// otherwise, we're done stepping
 				}
@@ -2776,6 +3008,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (getStepRequest() != null) {
 				deleteStepRequest();
 				setPendingStepHandler(null);
+				fStepOverLocation = null;
+				fStepOverFrameCount =  -1;
 			}
 		}
 	}
@@ -2955,6 +3189,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setRunning(true);
 				deleteStepRequest();
 				createSecondaryStepRequest();
+				clearStepReturnResult();
 				return true;
 			} catch (DebugException e) {
 				logError(e);

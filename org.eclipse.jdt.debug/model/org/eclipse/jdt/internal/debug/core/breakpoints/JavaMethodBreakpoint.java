@@ -431,11 +431,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 		if (event instanceof MethodEntryEvent) {
 			MethodEntryEvent entryEvent = (MethodEntryEvent) event;
 			fLastEventTypes.put(thread.getDebugTarget(), ENTRY_EVENT);
+			//inActivateTriggerPoint(event);
 			return handleMethodEvent(entryEvent, entryEvent.method(), thread,
 					suspendVote);
 		} else if (event instanceof MethodExitEvent) {
 			MethodExitEvent exitEvent = (MethodExitEvent) event;
 			fLastEventTypes.put(thread.getDebugTarget(), EXIT_EVENT);
+			//inActivateTriggerPoint(event);
 			return handleMethodEvent(exitEvent, exitEvent.method(), thread,
 					suspendVote);
 		} else if (event instanceof BreakpointEvent) {

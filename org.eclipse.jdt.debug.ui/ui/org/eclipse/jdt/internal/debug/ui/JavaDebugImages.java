@@ -41,6 +41,7 @@ public class JavaDebugImages {
 	public static final String IMG_OVR_BREAKPOINT_INSTALLED_DISABLED= "IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED";	//$NON-NLS-1$
 		
 	public static final String IMG_OBJS_LOCAL_VARIABLE = "IMG_OBJS_LOCAL_VARIABLE";	//$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_RESULT = "IMG_OBJS_METHOD_RESULT"; //$NON-NLS-1$
 	
 	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY";	//$NON-NLS-1$
 	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED";	//$NON-NLS-1$
@@ -100,6 +101,10 @@ public class JavaDebugImages {
     
     public static final String IMG_ELCL_ALL_REFERENCES = "IMG_ELCL_ALL_REFERENCES"; //$NON-NLS-1$
 
+	public static final String IMG_OVR_IN_TRIGGER_POINT = "IMG_OVR_IN_TRIGGER_POINT"; //$NON-NLS-1$
+
+	public static final String IMG_OVR_TRIGGER_SUPPRESSED = "IMG_OVR_TRIGGER_SUPPRESSED"; //$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -152,6 +157,7 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_OBJS_REFERENCE, T_OBJ + "reference_obj.gif"); //$NON-NLS-1$
 			
 		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_RESULT, T_OBJ + "methodresult_obj.png"); //$NON-NLS-1$
 		
 		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY, T_OVR + "entry_ovr.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED, T_OVR + "entry_ovr_disabled.png"); //$NON-NLS-1$
@@ -210,6 +216,11 @@ public class JavaDebugImages {
 		declareRegistryImage(IMG_ELCL_AUTO_FORMAT, E_LCL + "autoform_menu.png"); //$NON-NLS-1$
         
 		declareRegistryImage(IMG_ELCL_ALL_REFERENCES, E_LCL + "all_references.png"); //$NON-NLS-1$
+
+		declareRegistryImage(IMG_OVR_IN_TRIGGER_POINT, T_OVR + "trigger_ovr.png"); //$NON-NLS-1$
+
+		declareRegistryImage(IMG_OVR_TRIGGER_SUPPRESSED, T_OVR + "trigger_suppressed_ovr.png"); //$NON-NLS-1$
+
 	}
 
 	/**
