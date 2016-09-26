@@ -19,6 +19,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,6 +31,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -68,6 +72,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	private static final String JRE = "jre"; //$NON-NLS-1$
 	private static final String LIB = "lib"; //$NON-NLS-1$
 	private static final String BAR = "|"; //$NON-NLS-1$
+	private static final String RELEASE_FILE = "release"; //$NON-NLS-1$
+	private static final String JAVA_VERSION = "JAVA_VERSION"; //$NON-NLS-1$
 
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
 	
@@ -205,13 +211,18 @@ public class StandardVMType extends AbstractVMInstallType {
 		if (info == null || LaunchingPlugin.timeStampChanged(installPath)) {
 			info = fgFailedInstallPath.get(installPath);
 			if (info == null) {
-				info = generateLibraryInfo(javaHome, javaExecutable);
-				if (info == null) {
-					info = getDefaultLibraryInfo(javaHome);
-					fgFailedInstallPath.put(installPath, info);
+				String version = readReleaseVersion(javaHome);
+				if (JavaCore.compareJavaVersions(version, JavaCore.VERSION_1_8) > 0) {
+					info = new LibraryInfo(version, new String[0], new String[0], new String[0]);
 				} else {
-				    // only persist if we were able to generate information - see bug 70011
-				    LaunchingPlugin.setLibraryInfo(installPath, info);
+					info = generateLibraryInfo(javaHome, javaExecutable);
+					if (info == null) {
+						info = getDefaultLibraryInfo(javaHome);
+						fgFailedInstallPath.put(installPath, info);
+					} else {
+						// only persist if we were able to generate information - see bug 70011
+						LaunchingPlugin.setLibraryInfo(installPath, info);
+					}
 				}
 			}
 		} 
@@ -794,6 +805,24 @@ public class StandardVMType extends AbstractVMInstallType {
 		} catch (MalformedURLException e) {
 		}
 		return null;
+	}
+
+	private synchronized String readReleaseVersion(File javaHome) {
+
+		String version = ""; //$NON-NLS-1$
+		try (Stream<String> lines = Files.lines(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE)).filter(s -> s.contains(JAVA_VERSION))) {
+			Optional<String> hasVersion = lines.findFirst();
+			if (hasVersion.isPresent()) {
+				String line = hasVersion.get();
+				version = line.substring(14, line.length() - 1); // length of JAVA_VERSION + 2 in JAVA_VERSION="9"
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+		return version;
+
 	}
 
 }
