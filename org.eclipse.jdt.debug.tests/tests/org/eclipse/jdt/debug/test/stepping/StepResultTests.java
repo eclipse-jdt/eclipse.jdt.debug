@@ -75,7 +75,7 @@ public class StepResultTests extends AbstractDebugTest {
 			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertEquals("main", stackFrame.getMethodName());
 			IVariable varInMain2 = stackFrame.getVariables()[0];
-			assertEquals("x", varInMain2.getName());
+			assertEquals("no method return value", varInMain2.getName());
 		}
 		finally {
 			terminateAndRemove(thread);
@@ -124,7 +124,7 @@ public class StepResultTests extends AbstractDebugTest {
 			IVariable varInH = stackFrame.getVariables()[0];
 
 			// specifically no "i() returned" must be present
-			assertEquals("this", varInH.getName());
+			assertEquals("no method return value", varInH.getName());
 		}
 		finally {
 			terminateAndRemove(thread);

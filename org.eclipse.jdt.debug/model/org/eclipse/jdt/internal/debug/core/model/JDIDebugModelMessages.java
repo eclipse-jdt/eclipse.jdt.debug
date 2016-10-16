@@ -125,6 +125,7 @@ public class JDIDebugModelMessages extends NLS {
 	public static String JDIStackFrame_Variable_information_unavailable_for_native_methods;
 	public static String JDIStackFrame_ReturnValue;
 	public static String JDIStackFrame_ExceptionThrown;
+	public static String JDIStackFrame_NoMethodReturnValue;
 
 	public static String JDIThisVariable_exception_while_retrieving_type_this;
 	public static String JDIThisVariableexception_retrieving_reference_type_name;

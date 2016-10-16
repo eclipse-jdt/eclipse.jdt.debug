@@ -16,8 +16,10 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  * Represents the return value after a "step-return".
  */
 public class JDIReturnValueVariable extends JDIPlaceholderVariable {
+	public final boolean hasResult;
 
-	public JDIReturnValueVariable(String name, IJavaValue value) {
+	public JDIReturnValueVariable(String name, IJavaValue value, boolean hasResult) {
 		super(name, value);
+		this.hasResult = hasResult;
 	}
 }

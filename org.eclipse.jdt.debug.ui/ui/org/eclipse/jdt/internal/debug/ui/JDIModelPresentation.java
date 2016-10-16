@@ -1105,6 +1105,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		if (javaVariable instanceof JDIReturnValueVariable) {
+
+			JDIReturnValueVariable jdiReturnValueVariable = (JDIReturnValueVariable) javaVariable;
+			if (!jdiReturnValueVariable.hasResult) {
+				return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_METHOD_RESULT_DISABLED);
+			}
 			return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_METHOD_RESULT);
 		}
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);

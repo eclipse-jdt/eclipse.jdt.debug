@@ -2618,10 +2618,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 		}
 
-		private boolean showStepResultIsEnabled() {
-			return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
-		}
-
 		/**
 		 * Returns the kind of step this handler implements.
 		 * 
@@ -3734,5 +3730,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
     protected DropToFrameHandler createDropToFrameHandler(IStackFrame stackFrame) throws DebugException {
         return new DropToFrameHandler(stackFrame);
     }
+	public static boolean showStepResultIsEnabled() {
+		return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
+	}
    
 }
