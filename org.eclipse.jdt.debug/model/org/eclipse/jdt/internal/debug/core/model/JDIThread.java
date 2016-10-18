@@ -1772,7 +1772,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return;
 			}
 		}
-		StepHandler handler = new StepIntoHandler();
+		StepHandler handler = createStepIntoHandler();
 		handler.step();
 	}
 
@@ -1789,7 +1789,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return;
 			}
 		}
-		StepHandler handler = new StepOverHandler();
+		StepHandler handler = createStepOverHandler();
 		handler.step();
 	}
 
@@ -1806,7 +1806,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return;
 			}
 		}
-		StepHandler handler = new StepReturnHandler();
+		StepHandler handler = createStepReturnHandler();
 		handler.step();
 	}
 
@@ -2135,7 +2135,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// This block is synchronized, such that the step request
 			// begins before a background evaluation can be performed.
 			synchronized (this) {
-				StepHandler handler = new DropToFrameHandler(frame);
+				StepHandler handler = createDropToFrameHandler(frame);
 				handler.step();
 			}
 		}
@@ -2204,7 +2204,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return;
 			}
 		}
-		StepHandler handler = new StepToFrameHandler(frame);
+		StepHandler handler = createStepToFrameHandler(frame);
 		handler.step();
 	}
 
@@ -3045,7 +3045,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Handler for step into requests.
 	 */
-	class StepIntoHandler extends StepHandler {
+	protected class StepIntoHandler extends StepHandler {
 
 		/*
 		 * (non-Javadoc)
@@ -3074,7 +3074,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Handler for step return requests.
 	 */
-	class StepReturnHandler extends StepHandler {
+	protected class StepReturnHandler extends StepHandler {
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -3120,7 +3120,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * stack frame). Step returns are performed until a specified stack frame is
 	 * reached or the thread is suspended (explicitly, or by a breakpoint).
 	 */
-	class StepToFrameHandler extends StepReturnHandler {
+	protected class StepToFrameHandler extends StepReturnHandler {
 
 		/**
 		 * The number of frames that should be left on the stack
@@ -3202,7 +3202,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Handles dropping to a specified frame.
 	 */
-	class DropToFrameHandler extends StepReturnHandler {
+	protected class DropToFrameHandler extends StepReturnHandler {
 
 		/**
 		 * The number of frames to drop off the stack.
@@ -3714,5 +3714,25 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return (IJavaObject) JDIValue
 				.createValue(getJavaDebugTarget(), fThread);
 	}
+	
+	protected StepIntoHandler createStepIntoHandler() {
+        return new StepIntoHandler();
+    }
 
+    protected StepOverHandler createStepOverHandler() {
+        return new StepOverHandler();
+    }
+
+    protected StepReturnHandler createStepReturnHandler() {
+        return new StepReturnHandler();
+    }
+    
+    protected StepToFrameHandler createStepToFrameHandler(IStackFrame stackFrame) throws DebugException {
+        return new StepToFrameHandler(stackFrame);
+    }
+    
+    protected DropToFrameHandler createDropToFrameHandler(IStackFrame stackFrame) throws DebugException {
+        return new DropToFrameHandler(stackFrame);
+    }
+   
 }
