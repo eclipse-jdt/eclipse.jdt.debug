@@ -433,23 +433,28 @@ public class StandardVMType extends AbstractVMInstallType {
 			
 			// Add all endorsed libraries - they are first, as they replace
 			allLibs = new ArrayList<LibraryLocation>(gatherAllLibraries(libInfo.getEndorsedDirs()));
-			
+			URL url = getDefaultJavadocLocation(installLocation);
 			if (libInfo.getBootpath().length == 0) {
 				// TODO: Bug 489207: Temporary workaround for Jigsaw-previews that don't declare a bootpath.
 				// JDT Core currently requires a non-empty library path, so let's give it jrt-fs.jar as a stand-in for now.
 				// Code referencing org.eclipse.jdt.internal.compiler.util.JimageUtil.JRT_FS_JAR looks for this file.
+				IPath sourceRootPath = Path.EMPTY;
+				IPath path = new Path(installLocation.getAbsolutePath()).append("src.zip"); //$NON-NLS-1$
+				File lib = path.toFile();
+				if (lib.exists() && lib.isFile()) {
+					sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
+				}
 				LibraryLocation libraryLocation = new LibraryLocation(
 						new Path(installLocation.getAbsolutePath()).append("jrt-fs.jar"), //$NON-NLS-1$
-							Path.EMPTY, 
-							getDefaultPackageRootPath(), 
-							getDefaultJavadocLocation(installLocation));
+						sourceRootPath, getDefaultPackageRootPath(),
+						getDefaultJavadocLocation(installLocation));
 				allLibs.add(libraryLocation);
 			}
 			
 			// next is the boot path libraries
 			String[] bootpath = libInfo.getBootpath();
 			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
-			URL url = getDefaultJavadocLocation(installLocation);
+
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
 				File lib = path.toFile(); 
