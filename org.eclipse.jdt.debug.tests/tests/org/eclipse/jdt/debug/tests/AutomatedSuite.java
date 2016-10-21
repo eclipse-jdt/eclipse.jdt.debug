@@ -129,9 +129,6 @@ import org.eclipse.jdt.debug.tests.variables.TestLogicalStructures;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Tests for integration and nightly builds.
  */
