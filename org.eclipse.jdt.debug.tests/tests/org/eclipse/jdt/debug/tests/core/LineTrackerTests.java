@@ -45,7 +45,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 
 	protected IJavaDebugTarget fTarget;
 
-	protected List<String> fLinesRead = new ArrayList<String>();
+	protected List<String> fLinesRead = new ArrayList<>();
 
 	protected boolean fStarted = false;
 
@@ -195,7 +195,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 		if (fStarted) {
 			try {
 				String text = fConsole.getDocument().get(line.getOffset(), line.getLength());
-				fLinesRead.add(text);
+				if (!JavaOutputHelpers.isKnownExtraneousOutput(text)) {
+					fLinesRead.add(text);
+				}
 			} catch (BadLocationException e) {
 			    e.printStackTrace();
 			}

@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -37,7 +38,7 @@ import junit.framework.TestSuite;
  */
 public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLineTrackerExtension {
 
-	protected List<String> fLinesRead = new ArrayList<String>();
+	protected List<String> fLinesRead = new ArrayList<>();
 
 	protected boolean fStarted = false;
 
@@ -80,12 +81,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		ILaunch launch = null;
 		try {
 			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
-			synchronized (fConsoleLock) {
-				if (!fStarted) {
-					fConsoleLock.wait(30000);
-				}
-			}
-			assertNotNull("Console is null", fConsole);
+			waitStarted();
 			String[] list = appendAndGet(fConsole, "one\ntwo\nexit", 4);
 			verifyOutput(new String[]{"one", "two", "exitone", "two"}, list);
 
@@ -108,12 +104,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		ILaunch launch = null;
 		try {
 			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
-			synchronized (fConsoleLock) {
-				if (!fStarted) {
-					fConsoleLock.wait(30000);
-				}
-			}
-			assertNotNull("Console is null", fConsole);
+			waitStarted();
 			String[] list = appendAndGet(fConsole, "one\ntwo\n", 4);
 			verifyOutput(new String[]{"one", "two", "one", "two"}, list);
 
@@ -264,12 +255,28 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			synchronized (fLinesRead) {
 				try {
 					String text = fConsole.getDocument().get(line.getOffset(), line.getLength());
-					fLinesRead.add(text);
+					if (!JavaOutputHelpers.isKnownExtraneousOutput(text)) {
+						fLinesRead.add(text);
+					}
 				} catch (BadLocationException e) {
 				    e.printStackTrace();
 				}
 				fLinesRead.notifyAll();
 			}
+		}
+	}
+
+	private void waitStarted() throws InterruptedException {
+		synchronized (fConsoleLock) {
+			if (!fStarted) {
+				fConsoleLock.wait(30000);
+			}
+		}
+		assertNotNull("Console is null", fConsole);
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// on OSX java process writes unexpected message to stderr due to https://bugs.openjdk.java.net/browse/JDK-8022291
+			// need to wait for the message to fully appear so it can be filtered in #lineAppended above
+			Thread.sleep(1000L);
 		}
 	}
 
@@ -296,12 +303,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		ILaunch launch = null;
 		try {
 			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
-			synchronized (fConsoleLock) {
-				if (!fStarted) {
-					fConsoleLock.wait(30000);
-				}
-			}
-			assertNotNull("Console is null", fConsole);
+			waitStarted();
 			append(fConsole, "a");
 			deleteAll(fConsole);
 			append(fConsole, "b");

@@ -8,9 +8,11 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jdt.internal.launching;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.jdt.launching.macosx",
  org.eclipse.jdt.internal.launching.environments;x-internal:=true,
+ org.eclipse.jdt.internal.launching.sourcelookup.advanced;x-internal:=true,
  org.eclipse.jdt.launching,
  org.eclipse.jdt.launching.environments,
  org.eclipse.jdt.launching.sourcelookup,
+ org.eclipse.jdt.launching.sourcelookup.advanced,
  org.eclipse.jdt.launching.sourcelookup.containers
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.jdt.core;bundle-version="[3.8.0,4.0.0)",

@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.Arrays;
+
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.launching.sourcelookup.advanced.JDIHelpers;
 
 /**
  * Tests strata.
@@ -40,8 +43,10 @@ public class StratumTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IJavaReferenceType type = ((IJavaStackFrame)thread.getTopStackFrame()).getReferenceType();
 			String[] strata = type.getAvailableStrata();
-			assertEquals("Wrong number of available strata", 1, strata.length);
+			Arrays.sort(strata);
+			assertEquals("Wrong number of available strata", 2, strata.length);
 			assertEquals("Wrong strata", "Java", strata[0]);
+			assertEquals("Wrong strata", JDIHelpers.STRATA_ID, strata[1]);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

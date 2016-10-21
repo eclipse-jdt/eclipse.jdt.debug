@@ -91,6 +91,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fAlertObsoleteButton;
 	private Button fPerformHCRWithCompilationErrors;
 	private Button fShowStepResult;
+	private Button fAdvancedSourcelookup;
 
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
@@ -172,6 +173,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fShowStepResult = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_1, null, false, 1);
 
+		SWTFactory.createVerticalSpacer(composite, 1);
+		fAdvancedSourcelookup = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_advancedSourcelookup, null, false, 1);
+
 		setValues();
 
 		fTimeoutText.setPropertyChangeListener(this);
@@ -214,6 +218,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			prefs.putBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, fShowStepResult.getSelection());
 			prefs.putInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 			prefs.putBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, fFilterUnrelatedBreakpoints.getSelection());
+			prefs.putBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, fAdvancedSourcelookup.getSelection());
 			try {
 				prefs.flush();
 			}
@@ -260,6 +265,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
+			fAdvancedSourcelookup.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true));
 		}
 		prefs = DefaultScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
@@ -294,6 +300,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fShowStepResult.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SHOW_STEP_RESULT, true));
 			fTimeoutText.setStringValue(new Integer(prefs.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT)).toString());
 			fFilterUnrelatedBreakpoints.setSelection(prefs.getBoolean(JDIDebugModel.PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES, true));
+			fAdvancedSourcelookup.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_ADVANCED_SOURCELOOKUP, true));
 		}
 		prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {

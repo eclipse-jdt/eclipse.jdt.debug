@@ -108,6 +108,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 			.getUniqueIdentifier() + ".all_instances_max_count"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference controlling if advanced sourcelookup is enabled.
+	 * 
+	 * @since 3.11
+	 */
+	public static final String PREF_ENABLE_ADVANCED_SOURCELOOKUP = JDIDebugPlugin
+			.getUniqueIdentifier() + ".enable_advanced_sourcelookup"; //$NON-NLS-1$
+
+	/**
 	 * Extension point for java logical structures.
 	 *
 	 * @since 3.1

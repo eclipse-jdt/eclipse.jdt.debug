@@ -23,6 +23,8 @@
    <extension-point id="executionEnvironments" name="%executionEnvironments" schema="schema/executionEnvironments.exsd"/>
    <extension-point id="vmInstalls" name="%vmInstalls" schema="schema/vmInstalls.exsd"/>
    <extension-point id="libraryLocationResolvers" name="%libraryLocationResolvers" schema="schema/libraryLocationResolvers.exsd"/>
+   <extension-point id="workspaceProjectDescribers" name="%projectSourceDescribers" schema="schema/workspaceProjectDescribers.exsd"/>
+   <extension-point id="sourceContainerResolvers" name="%sourceContainerResolvers" schema="schema/sourceContainerResolvers.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -43,7 +45,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipse.jdt.launching.JavaLaunchDelegate"
+            delegate="org.eclipse.jdt.launching.sourcelookup.advanced.AdvancedJavaLaunchDelegate"
             delegateDescription="%localJavaApplicationDelegate.description"
             delegateName="%eclipseJDTLauncher.name"
             id="org.eclipse.jdt.launching.localJavaApplication"
@@ -54,7 +56,7 @@
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
+            delegate="org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedRemoteJavaLaunchDelegate"
             delegateDescription="%remoteJavaApplicationDelegate.description"
             delegateName="%eclipseJDTLauncher.name"
             id="org.eclipse.jdt.launching.remoteJavaApplication"
@@ -201,6 +203,11 @@
    			class="org.eclipse.jdt.internal.launching.JavaSourceLookupDirector"
    			name="%javaSourceLookupDirector.name">
    		</sourceLocator>
+   		<sourceLocator
+   			id="org.eclipse.jdt.launching.sourceLocator.JavaAdvancedSourceLookupDirector"
+   			class="org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupDirector"
+   			name="%javaAdvancedSourceLookupDirector.name">
+   		</sourceLocator>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -229,6 +236,12 @@
             namespace="org.eclipse.jdt.launching"
             properties="hasMain, extendsClass, extendsInterface, hasMethod, isContainer, hasProjectNature, buildpathReference, hasMethodWithAnnotation, hasTypeWithAnnotation, isPackageFragment, isPackageFragmentRoot"
             type="org.eclipse.core.runtime.IAdaptable"/>            
+      <propertyTester
+            class="org.eclipse.jdt.internal.launching.sourcelookup.advanced.JDIStratumPropertyTester"
+            id="org.eclipse.jdt.internal.launching.sourcelookup.advanced.jdtStratumTest"
+            namespace="org.eclipse.jdt.launching"
+            properties="jdtstratum"
+            type="org.eclipse.debug.core.model.DebugElement"/>
    </extension>
    <extension
          id="jreContainerMarker"
@@ -328,6 +341,12 @@
                description="%project.classpath.description"
                name="project_classpath"
                resolver="org.eclipse.jdt.internal.launching.ProjectClasspathVariableResolver">
+         </variable>
+         <variable
+               description="%sourcelookup.javaagent.description"
+               name="sourcelookup_javaagent"
+               resolver="org.eclipse.jdt.internal.launching.sourcelookup.advanced.JavaagentVariableResolver"
+               supportsArgument="false">
          </variable>
       </extension>
       <extension

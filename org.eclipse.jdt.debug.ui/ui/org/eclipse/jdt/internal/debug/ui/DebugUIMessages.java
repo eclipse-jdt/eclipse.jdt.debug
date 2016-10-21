@@ -71,6 +71,8 @@ public class DebugUIMessages extends NLS {
 	public static String JavaDebugPreferencePage_0;
 	public static String JavaDebugPreferencePage_20;
 
+	public static String JavaDebugPreferencePage_advancedSourcelookup;
+
 	public static String JavaDebugPreferencePage_only_include_exported_entries;
 	public static String JavaDebugPreferencePage_filterUnrelatedBreakpoints;
 	public static String JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint;
