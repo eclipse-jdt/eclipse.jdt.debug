@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,6 +214,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				String version = readReleaseVersion(javaHome);
 				if (JavaCore.compareJavaVersions(version, JavaCore.VERSION_1_8) > 0) {
 					info = new LibraryInfo(version, new String[0], new String[0], new String[0]);
+					LaunchingPlugin.setLibraryInfo(installPath, info);
 				} else {
 					info = generateLibraryInfo(javaHome, javaExecutable);
 					if (info == null) {
