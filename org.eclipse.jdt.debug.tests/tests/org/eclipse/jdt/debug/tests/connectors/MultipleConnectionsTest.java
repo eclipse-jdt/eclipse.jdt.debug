@@ -33,7 +33,6 @@ import com.sun.jdi.connect.Connector;
 /**
  * Test the SocketListenerConnector
  */
-@SuppressWarnings("restriction")
 public class MultipleConnectionsTest extends AbstractDebugTest {
 
 	public MultipleConnectionsTest(String name) {
