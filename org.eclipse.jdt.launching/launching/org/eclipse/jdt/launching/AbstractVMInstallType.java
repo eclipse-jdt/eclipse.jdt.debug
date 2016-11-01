@@ -42,7 +42,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Constructs a new VM install type.
 	 */
 	protected AbstractVMInstallType() {
-		fVMs= new ArrayList<IVMInstall>(10);
+		fVMs = new ArrayList<>(10);
 	}
 
 	/* (non-Javadoc)
@@ -61,15 +61,17 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	@Override
 	public void disposeVMInstall(String id) {
+		IVMInstall removedVM = null;
 		synchronized (this) {
 			for (int i= 0; i < fVMs.size(); i++) {
-				IVMInstall vm= fVMs.get(i);
-				if (vm.getId().equals(id)) {
-					fVMs.remove(i);
-					JavaRuntime.fireVMRemoved(vm);
-					return;
+				if (fVMs.get(i).getId().equals(id)) {
+					removedVM = fVMs.remove(i);
+					break;
 				}
 			}
+		}
+		if (removedVM != null) {
+			JavaRuntime.fireVMRemoved(removedVM);
 		}
 	}
 
