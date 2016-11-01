@@ -15,6 +15,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -155,7 +156,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		synchronized (this) {
 			for (int i = 0; i < fVMs.size(); i++) {
 				IVMInstall vm = fVMs.get(i);
-				if (vm.getName().equals(name)) {
+				if (Objects.equals(vm.getName(), name)) {
 					return vm;
 				}
 			}
