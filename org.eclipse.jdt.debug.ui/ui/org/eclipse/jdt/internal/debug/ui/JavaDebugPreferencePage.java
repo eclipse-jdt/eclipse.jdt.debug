@@ -85,6 +85,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Combo fWatchpoint;
 	
 	// Hot code replace preference widgets
+	private Button fEnableHCRButton;
 	private Button fAlertHCRButton;
 	private Button fAlertHCRNotSupportedButton;
 	private Button fAlertObsoleteButton;
@@ -138,6 +139,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fWatchpoint.setFont(group.getFont());
 			
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
+		fEnableHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Enable_hot_code_replace_1, null, true, 1);
 		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
 		fAlertHCRNotSupportedButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1, null, false, 1); 
 		fAlertObsoleteButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1, null, false, 1); 
@@ -199,6 +201,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
+			prefs.putBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, fEnableHCRButton.getSelection());
 			prefs.putBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, fSuspendDuringEvaluations.getSelection());
 			int selectionIndex = fSuspendVMorThread.getSelectionIndex();
 			int policy = IJavaBreakpoint.SUSPEND_THREAD;
@@ -248,6 +251,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fOpenInspector.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
+			fEnableHCRButton.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, true));
 			fSuspendDuringEvaluations.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, true));
 			int value = prefs.getInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, IJavaBreakpoint.SUSPEND_THREAD);
 			fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD) ? 0 : 1);
@@ -281,6 +285,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
+			fEnableHCRButton.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, true));
 			fSuspendDuringEvaluations.setSelection(prefs.getBoolean(JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, true));
 			int value = prefs.getInt(JDIDebugPlugin.PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY, IJavaBreakpoint.SUSPEND_THREAD);
 			fSuspendVMorThread.select((value == IJavaBreakpoint.SUSPEND_THREAD ? 0 : 1));

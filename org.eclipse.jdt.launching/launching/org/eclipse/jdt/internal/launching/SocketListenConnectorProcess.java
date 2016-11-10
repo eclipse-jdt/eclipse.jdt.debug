@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -41,16 +44,14 @@ import com.sun.jdi.connect.ListeningConnector;
 import com.sun.jdi.connect.TransportTimeoutException;
 
 /**
- * A process that represents a VM listening connector that is waiting
- * for a VM to remotely connect.  Allows the user to see the status
- * of the connection and terminate it.  If a successful connection 
- * occurs, the debug target is added to the launch and this process
- * is removed.
+ * A process that represents a VM listening connector that is waiting for some VM(s) to remotely connect. Allows the user to see the status of the
+ * connection and terminate it. If a successful connection occurs, the debug target is added to the launch and, if a configured number of connections
+ * have been reached, then this process is removed.
+ * 
  * @since 3.4
  * @see SocketListenConnector
  */
 public class SocketListenConnectorProcess implements IProcess {
-	
 	/**
 	 * Whether this process has been terminated.
 	 */
@@ -64,19 +65,30 @@ public class SocketListenConnectorProcess implements IProcess {
 	 */
 	private String fPort;
 	/**
+	 * The number of incoming connections to accept (0 = unlimited). Setting to 1 mimics previous behaviour.
+	 */
+	private int fConnectionLimit;
+	/** The number of connections accepted so far. */
+	private int fAccepted = 0;
+	/**
 	 * The system job that will wait for incoming VM connections.
 	 */
 	private WaitForConnectionJob fWaitForConnectionJob;
 	
+	/** Time when this instance was created (milliseconds) */
+	private long fStartTime;
+
 	/**
 	 * Creates this process.  The label for this process will state
 	 * the port the connector is listening at.
 	 * @param launch the launch this process belongs to
 	 * @param port the port the connector will wait on
+	 * @param connectionLimit the number of incoming connections to accept (0 = unlimited)
 	 */
-	public SocketListenConnectorProcess(ILaunch launch, String port){
+	public SocketListenConnectorProcess(ILaunch launch, String port, int connectionLimit){
 		fLaunch = launch;
 		fPort = port;
+		fConnectionLimit = connectionLimit;
 	}
 	
 	/**
@@ -95,8 +107,21 @@ public class SocketListenConnectorProcess implements IProcess {
 		if (isTerminated()){
 			throw new CoreException(getStatus(LaunchingMessages.SocketListenConnectorProcess_0, null, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED));
 		}
-		fWaitForConnectionJob = new WaitForConnectionJob(this,connector,arguments);
+		fStartTime = System.currentTimeMillis();
+		fAccepted = 0;
+		// If the connector does not support multiple connections, accept a single connection
+		try {
+			if (!connector.supportsMultipleConnections()) {
+				fConnectionLimit = 1;
+			}
+		}
+		catch (IOException | IllegalConnectorArgumentsException ex) {
+			fConnectionLimit = 1;
+		}
+		fLaunch.addProcess(this);
+		fWaitForConnectionJob = new WaitForConnectionJob(connector,arguments);
 		fWaitForConnectionJob.setPriority(Job.SHORT);
+		fWaitForConnectionJob.setSystem(true);
 		fWaitForConnectionJob.addJobChangeListener(new JobChangeAdapter(){
 			@Override
 			public void running(IJobChangeEvent event) {
@@ -104,7 +129,9 @@ public class SocketListenConnectorProcess implements IProcess {
 			}
 			@Override
 			public void done(IJobChangeEvent event) {
-				if (event.getResult().equals(Status.CANCEL_STATUS)){
+				if (event.getResult().isOK() && continueListening()) {
+					fWaitForConnectionJob.schedule();
+				} else {
 					try{
 						terminate();
 					} catch (DebugException e){}
@@ -112,6 +139,13 @@ public class SocketListenConnectorProcess implements IProcess {
 			}
 		});
 		fWaitForConnectionJob.schedule();
+	}
+
+	/**
+	 * Return true if this connector should continue listening for further connections.
+	 */
+	protected boolean continueListening() {
+		return !isTerminated() && (fConnectionLimit <= 0 || fConnectionLimit - fAccepted > 0);
 	}
 
 	/**
@@ -174,6 +208,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	public void terminate() throws DebugException {
 		if (!fTerminated){
 			fTerminated = true;
+			fLaunch.removeProcess(this);
 			if (fWaitForConnectionJob != null){
 				fWaitForConnectionJob.cancel();
 				fWaitForConnectionJob.stopListening();
@@ -236,13 +271,24 @@ public class SocketListenConnectorProcess implements IProcess {
 	}
 
 	/**
-	 * Job that waits for incoming VM connections.  When a remote
-	 * VM connection is accepted, a debug target is created and 
-	 * the process that created this job is removed.
+	 * Return the time since this connector was started.
+	 */
+	private String getRunningTime() {
+		long total = System.currentTimeMillis() - fStartTime;
+		StringWriter result = new StringWriter();
+		PrintWriter writer = new PrintWriter(result);
+		int minutes = (int) (total / 60 / 1000);
+		int seconds = (int) (total / 1000) % 60;
+		int milliseconds = (int) (total / 1000) % 1000;
+		writer.printf("%02d:%02d.%03d", minutes, seconds, milliseconds).close(); //$NON-NLS-1$
+		return result.toString();
+	}
+
+	/**
+	 * Job that waits for incoming VM connections. When a remote VM connection is accepted, a debug target is created.
 	 */
 	class WaitForConnectionJob extends Job{
 
-		private IProcess fWaitProcess;
 		private ListeningConnector fConnector;
 		private Map<String, Connector.Argument> fArguments;
 		/**
@@ -253,9 +299,8 @@ public class SocketListenConnectorProcess implements IProcess {
 		 */
 		private boolean fListeningStopped = false;
 		
-		public WaitForConnectionJob(IProcess waitProcess, ListeningConnector connector, Map<String, Connector.Argument> arguments) {
+		public WaitForConnectionJob(ListeningConnector connector, Map<String, Connector.Argument> arguments) {
 			super(getLabel());
-			fWaitProcess = waitProcess;
 			fConnector = connector;
 			fArguments = arguments;
 		}
@@ -297,7 +342,7 @@ public class SocketListenConnectorProcess implements IProcess {
 				String vmLabel = constructVMLabel(vm, portArg.value(), fLaunch.getLaunchConfiguration());
 				IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(fLaunch, vm, vmLabel, null, allowTerminate, true);
 				fLaunch.addDebugTarget(debugTarget);
-				fLaunch.removeProcess(fWaitProcess);
+				fAccepted++;
 				return Status.OK_STATUS;
 			} catch (IOException e) {
 				if (fListeningStopped){
@@ -306,9 +351,6 @@ public class SocketListenConnectorProcess implements IProcess {
 				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 			} catch (IllegalConnectorArgumentsException e) {
 				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
-			} finally {
-				// Always try to close the socket
-				stopListening();
 			}
 		}
 		
@@ -363,6 +405,11 @@ public class SocketListenConnectorProcess implements IProcess {
 				}
 			}
 			StringBuffer buffer = new StringBuffer(name);
+			if (fConnectionLimit != 1) {
+				// if we're accepting multiple incoming connections,
+				// append the time when each connection was accepted
+				buffer.append('<').append(getRunningTime()).append('>');
+			}
 			buffer.append('['); 
 			buffer.append(port);
 			buffer.append(']'); 

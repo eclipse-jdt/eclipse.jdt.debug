@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Ivan Popov - Bug 184211: JDI connectors throw NullPointerException if used separately
  *     			from Eclipse
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -73,13 +74,6 @@ public class SocketTransportService extends TransportService {
 		}
 	}
 
-	// for attaching connector
-	private Socket fSocket;
-
-	private InputStream fInput;
-
-	private OutputStream fOutput;
-
 	// for listening or accepting connectors
 	private ServerSocket fServerSocket;
 
@@ -99,15 +93,16 @@ public class SocketTransportService extends TransportService {
 			}
 			fServerSocket.setSoTimeout((int) attachTimeout);
 		}
+		Socket socket;
 		try {
-			fSocket = fServerSocket.accept();
+			socket = fServerSocket.accept();
 		} catch (SocketTimeoutException e) {
 			throw new TransportTimeoutException();
 		}
-		fInput = fSocket.getInputStream();
-		fOutput = fSocket.getOutputStream();
-		performHandshake(fInput, fOutput, handshakeTimeout);
-		return new SocketConnection(this);
+		InputStream input = socket.getInputStream();
+		OutputStream output = socket.getOutputStream();
+		performHandshake(input, output, handshakeTimeout);
+		return new SocketConnection(socket, input, output);
 	}
 
 	/*
@@ -141,14 +136,16 @@ public class SocketTransportService extends TransportService {
 		}
 
 		final IOException[] ex = new IOException[1];
+		final SocketConnection[] result = new SocketConnection[1];
 		Thread attachThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					fSocket = new Socket(host, port);
-					fInput = fSocket.getInputStream();
-					fOutput = fSocket.getOutputStream();
-					performHandshake(fInput, fOutput, handshakeTimeout);
+					Socket socket = new Socket(host, port);
+					InputStream input = socket.getInputStream();
+					OutputStream output = socket.getOutputStream();
+					performHandshake(input, output, handshakeTimeout);
+					result[0] = new SocketConnection(socket, input, output);
 				} catch (IOException e) {
 					ex[0] = e;
 				}
@@ -169,7 +166,7 @@ public class SocketTransportService extends TransportService {
 			throw ex[0];
 		}
 
-		return new SocketConnection(this);
+		return result[0];
 	}
 
 	void performHandshake(final InputStream in, final OutputStream out,
@@ -315,35 +312,5 @@ public class SocketTransportService extends TransportService {
 			}
 		}
 		fServerSocket = null;
-	}
-
-	/**
-	 * Closes the current open socket, the transport service will continue to
-	 * listen for new incoming connections.
-	 */
-	public void close() {
-		if (fSocket != null) {
-			try {
-				fSocket.close();
-			} catch (IOException e) {
-			}
-		}
-		fSocket = null;
-		fInput = null;
-		fOutput = null;
-	}
-
-	/**
-	 * @return current socket input stream or <code>null</code>
-	 */
-	public InputStream getInputStream() {
-		return fInput;
-	}
-
-	/**
-	 * @return curernt socket output stream or <code>null</code>
-	 */
-	public OutputStream getOutputStream() {
-		return fOutput;
 	}
 }

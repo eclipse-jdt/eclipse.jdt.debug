@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,32 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 
 import com.sun.jdi.connect.spi.ClosedConnectionException;
 import com.sun.jdi.connect.spi.Connection;
 
 public class SocketConnection extends Connection {
 
-	private SocketTransportService fTransport;
+	// for attaching connector
+	private Socket fSocket;
 
-	SocketConnection(SocketTransportService transport) {
-		fTransport = transport;
+	private InputStream fInput;
+
+	private OutputStream fOutput;
+
+	SocketConnection(Socket socket, InputStream in, OutputStream out) {
+		fSocket = socket;
+		fInput = in;
+		fOutput = out;
 	}
 
 	/*
@@ -32,11 +42,11 @@ public class SocketConnection extends Connection {
 	 */
 	@Override
 	public synchronized void close() throws IOException {
-		if (fTransport == null)
+		if (fSocket == null)
 			return;
 
-		fTransport.close();
-		fTransport = null;
+		fSocket.close();
+		fSocket = null;
 	}
 
 	/*
@@ -46,7 +56,7 @@ public class SocketConnection extends Connection {
 	 */
 	@Override
 	public synchronized boolean isOpen() {
-		return fTransport != null;
+		return fSocket != null;
 	}
 
 	/*
@@ -61,7 +71,7 @@ public class SocketConnection extends Connection {
 			if (!isOpen()) {
 				throw new ClosedConnectionException();
 			}
-			stream = new DataInputStream(fTransport.getInputStream());
+			stream = new DataInputStream(fInput);
 		}
 		synchronized (stream) {
 			int packetLength = 0;
@@ -121,7 +131,7 @@ public class SocketConnection extends Connection {
 			if (!isOpen()) {
 				throw new ClosedConnectionException();
 			}
-			stream = fTransport.getOutputStream();
+			stream = fOutput;
 		}
 
 		synchronized (stream) {

@@ -41,6 +41,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
+import org.eclipse.jdt.debug.tests.connectors.MultipleConnectionsTest;
 import org.eclipse.jdt.debug.tests.console.ConsoleTerminateAllActionTests;
 import org.eclipse.jdt.debug.tests.console.IOConsoleTests;
 import org.eclipse.jdt.debug.tests.console.JavaStackTraceConsoleTest;
@@ -304,6 +305,7 @@ public class AutomatedSuite extends DebugSuite {
 		
 	// JDWP tests
 		addTest(new TestSuite(JDWPTests.class));
+		addTest(new TestSuite(MultipleConnectionsTest.class));
 	// Refresh state tests
 		addTest(new TestSuite(RefreshStateTests.class));
 		

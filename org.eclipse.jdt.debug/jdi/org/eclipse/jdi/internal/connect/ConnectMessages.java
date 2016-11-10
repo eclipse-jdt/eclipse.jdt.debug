@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Google Inc - add support for accepting multiple connections
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
@@ -52,6 +53,10 @@ public class ConnectMessages extends NLS {
 	public static String SocketListeningConnectorImpl_Connection_argument_is_not_of_the_right_type_6;
 	public static String SocketListeningConnectorImpl_Necessary_connection_argument_is_null_7;
 	public static String SocketListeningConnectorImpl_Connection_argument_is_not_a_number_8;
+	public static String SocketListeningConnectorImpl_Limit;
+
+	public static String SocketListeningConnectorImpl_Limit_incoming_connections;
+
 	public static String SocketListeningConnectorImpl_ListeningConnector_Socket_Port;
 	public static String SocketRawLaunchingConnectorImpl_Raw_command_to_start_the_debugged_application_VM_1;
 	public static String SocketRawLaunchingConnectorImpl_Command_2;
