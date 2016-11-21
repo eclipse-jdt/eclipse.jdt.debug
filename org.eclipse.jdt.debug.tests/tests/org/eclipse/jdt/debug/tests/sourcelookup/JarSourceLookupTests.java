@@ -96,7 +96,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * 
 	 * @throws Exception
 	 */
-	public void testTranslateContainers() throws Exception {
+	public void AtestTranslateContainers() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
@@ -129,7 +129,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 * 
 	 * @throws Exception
 	 */
-	public void AtestInspectClassFileFromJar() throws Exception {
+	public void testInspectClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		createLineBreakpoint(16, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
