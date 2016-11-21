@@ -145,7 +145,8 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * Return true if this connector should continue listening for further connections.
 	 */
 	protected boolean continueListening() {
-		return !isTerminated() && (fConnectionLimit <= 0 || fConnectionLimit - fAccepted > 0);
+		return !isTerminated() && (fWaitForConnectionJob != null && !fWaitForConnectionJob.fListeningStopped)
+				&& (fConnectionLimit <= 0 || fConnectionLimit - fAccepted > 0);
 	}
 
 	/**
