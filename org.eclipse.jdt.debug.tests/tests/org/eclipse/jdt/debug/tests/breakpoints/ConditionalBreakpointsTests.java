@@ -471,4 +471,25 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}	
 	}
+
+	/**
+	 * Tests a breakpoint with a simple systrace Launch should don't suspend for simple systrace
+	 * 
+	 * @throws Exception
+	 */
+	public void testSystracelBreakpoint() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "System.out.println(\"enclosing_type.enclosing_method()\");", true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp);
+		}
+		finally {
+			bp.delete();
+			assertNotNull(thread);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }

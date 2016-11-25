@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.VMDisconnectedException;
@@ -122,6 +123,12 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 							} 
 							return DONT_SUSPEND;
 						}
+					}
+					if (value instanceof JDIValue) {
+						JDIValue jdiValue = (JDIValue)value;
+						// If return is void, don't suspend (no error dialog)
+						if (jdiValue.getJavaType().getName().equals("void")) //$NON-NLS-1$
+							return DONT_SUSPEND;
 					}
 					IStatus status = new Status(
 							IStatus.ERROR,
