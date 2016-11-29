@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -480,10 +480,12 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	public void testSystracelBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "System.out.println(\"enclosing_type.enclosing_method()\");", true);
+		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(17, typeName, "return true", true);
 
 		IJavaThread thread = null;
 		try {
-			thread = launchToLineBreakpoint(typeName, bp);
+			thread = launchToLineBreakpoint(typeName, bp1);
+
 		}
 		finally {
 			bp.delete();
