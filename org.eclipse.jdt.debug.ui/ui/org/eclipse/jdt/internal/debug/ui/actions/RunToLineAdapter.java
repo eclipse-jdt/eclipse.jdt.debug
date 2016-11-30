@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -78,12 +78,15 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
 							compilationUnit.accept(locator);
-							validLine[0]= locator.getLineLocation();		
+							validLine[0] = locator.getLineLocation();
 							typeName[0]= locator.getFullyQualifiedTypeName();
 						}
 					};
 					BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), r);
 					if (validLine[0] == lineNumber[0]) {
+						if (typeName[0] == null) {
+							throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Invalid Type Name", null)); //$NON-NLS-1$
+						}
 						IBreakpoint breakpoint= null;
 						Map<String, Object> attributes = new HashMap<String, Object>(4);
 						BreakpointUtils.addRunToLineAttributes(attributes);
