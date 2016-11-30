@@ -142,7 +142,7 @@
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddClassPrepareBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddClassPrepareBreakpoint">
-         </action>         
+         </action>
          <action
                definitionId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
                label="%exceptionAction.accel.label"
@@ -168,13 +168,13 @@
                   <systemProperty
                       name="org.eclipse.jdt.debug.ui.supportsForceReturn"
                       value="true">
-                  </systemProperty>                  
+                  </systemProperty>
                   <objectClass
                         name="org.eclipse.jface.text.ITextSelection">
                   </objectClass>
                </and>
             </enablement>
-         </action>         
+         </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.Execute"
                hoverIcon="$nl$/icons/full/etool16/run_sbook.png"
@@ -326,7 +326,7 @@
                                  </or>
                               </and>
             </enablement>
-         </action>         
+         </action>
          <action
                class="org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate"
                definitionId="org.eclipse.jdt.debug.ui.commands.AllInstances"
@@ -397,7 +397,7 @@
          </action>
       </actionSet>
    </extension>
-   <extension 
+   <extension
          point="org.eclipse.ui.menus">
        <menuContribution
             locationURI="menu:navigate?endof=open.ext">
@@ -513,7 +513,7 @@
             targetID="org.eclipse.jdt.ui.JavaPerspective">
 		 <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
-         </actionSet>                            
+         </actionSet>
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
@@ -522,7 +522,7 @@
             targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
          <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
-         </actionSet>         
+         </actionSet>
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
@@ -531,7 +531,7 @@
             targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
          <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
-         </actionSet>         
+         </actionSet>
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
@@ -761,7 +761,7 @@
             </not>
           </and>
          </visibility>
-         
+
       </objectContribution>
       <objectContribution
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
@@ -1102,7 +1102,7 @@
                menubarPath="java.debug"
                tooltip="%allInstances.tooltip">
          </action>
-      </viewerContribution>      
+      </viewerContribution>
       <viewerContribution
             targetID="#ClassFileEditorContext"
             id="org.eclipse.jdt.debug.ui.CFPopupActions">
@@ -1125,7 +1125,7 @@
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
                label="%runToLineAction.label"
                menubarPath="additions">
-         </action>            
+         </action>
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.png"
@@ -1208,12 +1208,12 @@
                menubarPath="additions"
                tooltip="%allInstances.tooltip">
          </action>
-      </viewerContribution>      
+      </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.core.IMethod"
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
          <visibility>
-            <and>						
+            <and>
 	            	   <not>
 	                  <objectState name="MemberActionFilter" value="isAbstract"/>
 	               </not>
@@ -1259,7 +1259,7 @@
                       </objectState>
                    </not>
                 </and>
-         </visibility>            
+         </visibility>
          <action
                class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
                enablesFor="+"
@@ -1298,7 +1298,7 @@
                </not>
             </and>
          </visibility>
-      </objectContribution>   
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.InstanceFiltersActions">
@@ -1446,11 +1446,11 @@
                menubarPath="emptyThreadGroup"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.ShowStratum">
-        </action>    
+        </action>
         <enablement>
          	<test property="org.eclipse.jdt.debug.isMultiStrata" value="true"/>
-        </enablement>        
-      </objectContribution>         
+        </enablement>
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaMethodBreakpoint"
             id="org.eclipse.jdt.debug.MethodBreakpointToggleActions">
@@ -1590,7 +1590,7 @@
                menubarPath="emptyThreadGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.EditStepFiltersAction">
-         </action>              
+         </action>
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView.detail"
@@ -1618,7 +1618,7 @@
                      value="true">
                </systemProperty>
             </enablement>
-         </action>         
+         </action>
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.png"
@@ -1718,7 +1718,7 @@
                   </objectClass>
                </and>
             </enablement>
-         </action>         
+         </action>
          <action
                label="%Execute.label"
                icon="$nl$/icons/full/etool16/run_sbook.png"
@@ -1911,7 +1911,7 @@
                menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                style="toggle"
                tooltip="%allReferencesInView.tooltip">
-         </action>         
+         </action>
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
@@ -1920,7 +1920,7 @@
                label="%showNullEntriesAction.label"
                menubarPath="org.eclipse.jdt.debug.ui.VariableView.javaSubmenu/javaPart"
                tooltip="%showNullEntriesAction.tooltip">
-         </action>                  
+         </action>
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowQualified"
@@ -1976,7 +1976,7 @@
                label="%allReferencesInView.label"
                menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                style="toggle"
-               tooltip="%allReferencesInView.label"/>               
+               tooltip="%allReferencesInView.label"/>
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.variableViewActions.ShowNullEntries"
@@ -1985,7 +1985,7 @@
                label="%showNullEntriesAction.label"
                menubarPath="org.eclipse.jdt.debug.ui.expSubmenu/javaPart"
                tooltip="%showNullEntriesAction.tooltip">
-         </action>                  
+         </action>
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.expressionViewActions.ShowQualified"
@@ -2060,7 +2060,7 @@
                label="%showThreadGroupsAction.label"
                menubarPath="org.eclipse.jdt.debug.ui.LaunchView.javaSubmenu/javaPart"
                tooltip="%showThreadGroupsAction.tooltip">
-         </action>            
+         </action>
          <action
                style="toggle"
                id="org.eclipse.jdt.debug.ui.launchViewActions.ShowQualified"
@@ -2097,7 +2097,7 @@
      <groupMarker
            name="org.eclipse.jdt.debug.ui.javaPart">
      </groupMarker>
-  </menu>         
+  </menu>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"
@@ -2291,8 +2291,8 @@
                </adapt>
             </or>
          </enabledWhen>
-      </page>      
-      
+      </page>
+
       <page
             name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointAdvancedPage"
@@ -2379,7 +2379,7 @@
             class="org.eclipse.jdt.internal.debug.ui.JavaPrimitivesPreferencePage"
             id="org.eclipse.jdt.debug.ui.JavaPrimitivesPreferencePage">
          <keywordReference id="org.eclipse.jdt.debug.ui.primitiveOptions"/>
-      </page>   
+      </page>
       <page
             name="%javaDetailFormattersPrefName"
             category="org.eclipse.jdt.debug.ui.JavaDebugPreferencePage"
@@ -2436,7 +2436,7 @@
             helpContextId="org.eclipse.jdt.debug.ui.local_java_application_type_context"
             class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication">
-            <launchMode 
+            <launchMode
                   mode="debug"
                   perspective="org.eclipse.debug.ui.DebugPerspective"
                   description="%localJavaApplicationTabGroupDescription.debug">
@@ -2458,7 +2458,7 @@
             helpContextId="org.eclipse.jdt.debug.ui.java_applet_type_context"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet">
-            <launchMode 
+            <launchMode
                   mode="debug"
                   perspective="org.eclipse.debug.ui.DebugPerspective"
                   description="%appletTabGroupDescription.debug">
@@ -2499,7 +2499,7 @@
             code="111"
             class="org.eclipse.jdt.internal.debug.ui.EvaluationStackFrameContextStatusHandler"
             id="org.eclipse.jdt.debug.ui.statusHandler.evaluationStackFrameContextStatusHandler"
-            plugin="org.eclipse.jdt.debug"/>        
+            plugin="org.eclipse.jdt.debug"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">
@@ -2589,9 +2589,9 @@
    </extension>
 <!-- commands and their bindings
 NOTE:
-M1 = CTRL/COMMAND 
-M2 = SHIFT 
-M3 = ALT 
+M1 = CTRL/COMMAND
+M2 = SHIFT
+M3 = ALT
 M4 = Platform-specific fourth key
 -->
    <extension point="org.eclipse.ui.commands">
@@ -2637,7 +2637,7 @@ M4 = Platform-specific fourth key
             description="%ActionDefinition.forceReturn.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.ForceReturn">
-      </command>      
+      </command>
  <!-- views -->
 <!-- launch shortcuts -->
       <command
@@ -2668,7 +2668,7 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.watch.description"
             id="org.eclipse.jdt.debug.ui.commands.Watch"
-            name="%ActionDefinition.watch.name"/> 
+            name="%ActionDefinition.watch.name"/>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.allReferences.description"
@@ -2689,13 +2689,13 @@ M4 = Platform-specific fourth key
             helpContextId="all_instances_action_context"
             id="org.eclipse.jdt.debug.ui.commands.InstanceCount"
             name="%ActionDefinition.instanceCount.name">
-      </command>      
+      </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.breakpointproperties.description"
             id="org.eclipse.jdt.debug.ui.breakpoint.properties"
             name="%CommandDefinition.breakpointproperties.name">
-      </command> 
+      </command>
       <command
             categoryId="org.eclipse.ui.category.navigate"
             description="%OpenFromClipboardAction.description"
@@ -2724,16 +2724,16 @@ M4 = Platform-specific fourth key
       <key
             sequence="M2+M3+F"
             commandId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M2+M3+F"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M1+M3+F"
             commandId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             sequence="M1+U"
             commandId="org.eclipse.jdt.debug.ui.commands.Execute"
@@ -2765,61 +2765,61 @@ M4 = Platform-specific fourth key
        <key
             platform="carbon"
             sequence="M1+M3+M4+D J"
-            
+
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+X J"
-            
+
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M2+M3+X J"
-            
+
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M1+M3+X J"
-            
+
             commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+M3+D A"
-            
+
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
       <key
             platform="carbon"
             sequence="M2+M3+D A"
-            
+
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M1+M3+M4+D A"
-            
+
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             sequence="M2+M3+X A"
-            
+
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
             sequence="M2+M3+X A"
-            
+
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
             sequence="M1+M3+X A"
-            
+
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    <key
          commandId="org.eclipse.jdt.debug.ui.commands.AllInstances"
-         
+
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="M1+M2+N">
    </key>
@@ -2947,14 +2947,14 @@ M4 = Platform-specific fourth key
          </part>
       </actionSetPartAssociation>
    </extension>
-   
+
 <!-- refactoring -->
-   
+
    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeRenameParticipant"
             name="%LaunchConfigurationITypeRenameParticipant.name"
-            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.typeRename"> 
+            id="org.eclipse.jdt.debug.refactoring.launchConfiguration.typeRename">
          <enablement>
            <with variable="affectedNatures">
              <iterate operator="or">
@@ -3161,7 +3161,7 @@ M4 = Platform-specific fourth key
             autoOpen="false">
       </contextViewBinding>
    </extension>
-   
+
    <!-- Source Lookup -->
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
@@ -3182,89 +3182,89 @@ M4 = Platform-specific fourth key
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.javaProject"
             icon="$nl$/icons/full/obj16/prj_obj.png"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.javaProject">
-      </sourceContainerPresentation>      
+      </sourceContainerPresentation>
       <sourceContainerPresentation
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
             icon="$nl$/icons/full/obj16/jar_obj.png"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.packageFragmentRoot">
-      </sourceContainerPresentation>      
+      </sourceContainerPresentation>
    </extension>
 	<extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory"
             adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory"
             adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>         
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+         </factory>
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory"
             adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.ClasspathVariableSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>                  
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory" 
+         </factory>
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.WorkbenchAdapterFactory"
             adaptableType="org.eclipse.jdt.launching.sourcelookup.containers.ClasspathContainerSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>   
-  		<factory 
-            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.SourceElementLabelProviderAdapterFactory" 
+         </factory>
+  		<factory
+            class="org.eclipse.jdt.internal.debug.ui.sourcelookup.SourceElementLabelProviderAdapterFactory"
             adaptableType="org.eclipse.jdt.core.IJavaElement">
             <adapter type="org.eclipse.debug.internal.ui.sourcelookup.SourceElementLabelProvider"/>
   		</factory>
-    
+
     <!-- Adapters for runtime classpath entries -->
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.classpath.VariableClasspathEntryAdapterFactory" 
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.classpath.VariableClasspathEntryAdapterFactory"
             adaptableType="org.eclipse.jdt.internal.launching.VariableClasspathEntry">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>  
-         
+         </factory>
+
      <!-- Adapters for contextual launch -->
-     	 <factory 
-            class="" 
+     	 <factory
+            class=""
             adaptableType="org.eclipse.jdt.core.IJavaElement">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
-         <factory 
-            class="" 
+         <factory
+            class=""
             adaptableType="org.eclipse.core.resources.IResource">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
-         <factory 
-            class="" 
+         <factory
+            class=""
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>   
-         
+         </factory>
+
      <!-- Adapters for retargettable actions -->
-     	  <factory 
-            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+     	  <factory
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor">
             <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor">
             <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
-         </factory>         
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+         </factory>
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.jdt.core.IMethod">
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
-         </factory>         
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+         </factory>
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.jdt.core.IField">
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
-         </factory>         
-         <factory 
-            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+         </factory>
+         <factory
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.jdt.debug.core.IJavaFieldVariable">
             <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>
@@ -3277,9 +3277,9 @@ M4 = Platform-specific fourth key
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
             </adapter>
-         </factory>                            
-      </extension>     	   
-   
+         </factory>
+      </extension>
+
    <!-- Dynamic (String Substitution) Variables -->
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
@@ -3293,8 +3293,8 @@ M4 = Platform-specific fourth key
           name="java_extensions_regex"
           resolver="org.eclipse.jdt.internal.debug.ui.console.JavaLikeExtensionsResolver"
           supportsArgument="false"/>
-   </extension> 
-       
+   </extension>
+
 	<extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -3304,7 +3304,7 @@ M4 = Platform-specific fourth key
       </category>
       <wizard
             name="%NewJavaScrapbookPage.label"
-            icon="$nl$/icons/full/etool16/new_sbook.gif"
+            icon="$nl$/icons/full/etool16/new_sbook.png"
             category="org.eclipse.jdt.ui.java/org.eclipse.jdt.debug.ui.java"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.NewSnippetFileCreationWizard"
             id="org.eclipse.jdt.debug.ui.snippetEditor.NewSnippetFileCreationWizard">
@@ -3313,7 +3313,7 @@ M4 = Platform-specific fourth key
          </description>
       </wizard>
    </extension>
-   
+
    <extension
          id="org.eclipse.jdt.debug.ui.SnippetDocumentSetupParticipant"
          name="%snippetDocumentSetupParticipant.name"
@@ -3323,7 +3323,7 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetDocumentSetupParticipant">
       </participant>
    </extension>
-   
+
    <!-- Scrapbook Source Lookup -->
    <extension point="org.eclipse.jdt.launching.classpathProviders">
        <classpathProvider
@@ -3331,11 +3331,11 @@ M4 = Platform-specific fourth key
           class="org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookSourcepathProvider">
        </classpathProvider>
    </extension>
-   
+
    <!--Java Stack Trace Console-->
    <extension
          point="org.eclipse.ui.console.consoleFactories">
-      <consoleFactory 
+      <consoleFactory
             label="%javaStackTraceConsole.label"
             class="org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
@@ -3384,7 +3384,7 @@ M4 = Platform-specific fourth key
             </or>
          </enablement>
       </consolePatternMatchListener>
-   </extension>   
+   </extension>
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
@@ -3398,7 +3398,7 @@ M4 = Platform-specific fourth key
 	<extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer"/>
 	</extension>
-	
+
  <extension
        point="org.eclipse.ui.themes">
     <colorDefinition
