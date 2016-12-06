@@ -42,6 +42,7 @@ public class JavaDebugImages {
 		
 	public static final String IMG_OBJS_LOCAL_VARIABLE = "IMG_OBJS_LOCAL_VARIABLE";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_RESULT = "IMG_OBJS_METHOD_RESULT"; //$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_RESULT_DISABLED = "IMG_OBJS_METHOD_RESULT_DISABLED"; //$NON-NLS-1$
 	
 	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY";	//$NON-NLS-1$
 	public static final String IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED= "IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED";	//$NON-NLS-1$
@@ -158,6 +159,7 @@ public class JavaDebugImages {
 			
 		declareRegistryImage(IMG_OBJS_LOCAL_VARIABLE, T_OBJ + "localvariable_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OBJS_METHOD_RESULT, T_OBJ + "methodresult_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJS_METHOD_RESULT_DISABLED, T_OBJ + "methodresult_obj_disabled.png"); //$NON-NLS-1$
 		
 		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY, T_OVR + "entry_ovr.png"); //$NON-NLS-1$
 		declareRegistryImage(IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED, T_OVR + "entry_ovr_disabled.png"); //$NON-NLS-1$

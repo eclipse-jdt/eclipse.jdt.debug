@@ -354,6 +354,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 	} else {
                 		tname = locator.getFullyQualifiedTypeName();
                 	}
+					if (tname == null) {
+						return Status.CANCEL_STATUS;
+					}
                 	IResource resource = BreakpointUtils.getBreakpointResource(type);
 					int lnumber = locator == null ? tsel.getStartLine() + 1 : locator.getLineLocation();
 					IJavaLineBreakpoint existingBreakpoint = JDIDebugModel.lineBreakpointExists(resource, tname, lnumber);

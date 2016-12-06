@@ -98,16 +98,13 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * @see IVMType#createVM(String)
 	 */
 	@Override
-	public IVMInstall createVMInstall(String id) throws IllegalArgumentException {
+	public synchronized IVMInstall createVMInstall(String id) throws IllegalArgumentException {
 		if (findVMInstall(id) != null) {
 			String format= LaunchingMessages.vmInstallType_duplicateVM; 
 			throw new IllegalArgumentException(NLS.bind(format, new String[] { id }));
 		}
-		IVMInstall vm = null;
-		synchronized (this) {
-			vm = doCreateVMInstall(id);
-			fVMs.add(vm);
-		}
+		IVMInstall vm = doCreateVMInstall(id);
+		fVMs.add(vm);
 		return vm;
 	}
 	

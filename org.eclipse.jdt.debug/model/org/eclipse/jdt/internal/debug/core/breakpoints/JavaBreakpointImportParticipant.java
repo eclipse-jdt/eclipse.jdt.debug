@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -561,6 +561,8 @@ public class JavaBreakpointImportParticipant implements
 				int newline = locator.getLineLocation();
 				if (locator.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
 					if (currentline != newline) {
+						if (locator.getFullyQualifiedTypeName() == null)
+							throw new CoreException(Status.CANCEL_STATUS);
 						bp.getMarker().setAttribute(JavaBreakpoint.TYPE_NAME,
 								locator.getFullyQualifiedTypeName());
 						bp.getMarker().setAttribute(IMarker.LINE_NUMBER,
@@ -593,6 +595,9 @@ public class JavaBreakpointImportParticipant implements
 	private boolean attributesEqual(Object attr1, Object attr2) {
 		if (attr1 == null) {
 			return attr2 == null;
+		}
+		if (attr2 == null) {
+			return false;
 		}
 		return attr1.equals(attr2);
 	}

@@ -392,15 +392,17 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						return;
 					}
 					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, stepResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue)));
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue), true));
 				} else {
 					if (fDepth + 1 > stepResult.fTargetFrameCount) {
 						// don't know if this really can happen, but other jvm suprises were not expected either
 						return;
 					}
 					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, stepResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue)));
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue), true));
 				}
+			} else if(JDIThread.showStepResultIsEnabled()) {
+				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$
 			}
 		}
 	}
