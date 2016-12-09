@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -126,9 +127,15 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 					}
 					if (value instanceof JDIValue) {
 						JDIValue jdiValue = (JDIValue)value;
-						// If return is void, don't suspend (no error dialog)
-						if (jdiValue.getJavaType().getName().equals("void")) //$NON-NLS-1$
+						// Suspend if return is Boolean(true) else don't suspend (no error dialog)
+						if (jdiValue.getJavaType().getName().equals("java.lang.Boolean")) {//$NON-NLS-1$
+							IJavaPrimitiveValue javaValue = (IJavaPrimitiveValue) ((IJavaObject) jdiValue).getField("value", false).getValue(); //$NON-NLS-1$
+							if (javaValue.getBooleanValue()) {
+								return SUSPEND;
+							}
 							return DONT_SUSPEND;
+						}
+						return DONT_SUSPEND;
 					}
 					IStatus status = new Status(
 							IStatus.ERROR,
