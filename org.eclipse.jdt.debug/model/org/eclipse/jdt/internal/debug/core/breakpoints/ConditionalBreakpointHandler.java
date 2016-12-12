@@ -141,7 +141,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 							IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							MessageFormat.format(JDIDebugBreakpointMessages.ConditionalBreakpointHandler_1, value.getReferenceTypeName()));
-					// result was not boolean
+					// result was not JDIValue
 					fireConditionHasRuntimeErrors(fBreakpoint, new DebugException(status));
 					return SUSPEND;
 				} 
