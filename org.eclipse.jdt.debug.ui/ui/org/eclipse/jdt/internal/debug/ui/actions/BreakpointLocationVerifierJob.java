@@ -226,7 +226,13 @@ public class BreakpointLocationVerifierJob extends Job {
 			}
 			BreakpointUtils.addJavaBreakpointAttributes(newAttributes, fType);
 		}
-		JDIDebugModel.createLineBreakpoint(fBreakpoint.getMarker().getResource(), typeName, lineNumber, start, end, 0, true, newAttributes);
+		IJavaLineBreakpoint newBreakpoint = JDIDebugModel.createLineBreakpoint(fBreakpoint.getMarker().getResource(), typeName, lineNumber, start, end, 0, true, newAttributes);
+		String condition = fBreakpoint.getCondition();
+		if (condition != null && condition.length() != 0) {
+			newBreakpoint.setCondition(fBreakpoint.getCondition());
+			newBreakpoint.setConditionEnabled(fBreakpoint.isConditionEnabled());
+			newBreakpoint.setConditionSuspendOnTrue(fBreakpoint.isConditionSuspendOnTrue());
+		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class ActionMessages extends NLS {
 
 	public static String BreakpointSuspendPolicy_Suspend__Thread_2;
 	public static String BreakpointSuspendPolicy_Suspend__VM_1;
+
 
 	public static String DisplayAction_no_result_value;
 	public static String DisplayAction_result_pattern;
@@ -155,6 +156,8 @@ public class ActionMessages extends NLS {
 	public static String StringValueInputDialog_1;
 	public static String StringValueInputDialog_2;
 	public static String StringValueInputDialog_4;
+
+	public static String TracepointToggleAction_Unavailable;
 
 	static {
 		// load message values from bundle file
