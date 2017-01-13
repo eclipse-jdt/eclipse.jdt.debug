@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -440,10 +440,17 @@ public class StandardVMType extends AbstractVMInstallType {
 				// JDT Core currently requires a non-empty library path, so let's give it jrt-fs.jar as a stand-in for now.
 				// Code referencing org.eclipse.jdt.internal.compiler.util.JimageUtil.JRT_FS_JAR looks for this file.
 				IPath sourceRootPath = Path.EMPTY;
-				IPath path = new Path(installLocation.getAbsolutePath()).append("src.zip"); //$NON-NLS-1$
+				// src zip moved to lib folder from JDK 9 EA Build 151
+				IPath path = new Path(installLocation.getAbsolutePath()).append("lib").append("src.zip"); //$NON-NLS-1$ //$NON-NLS-2$
 				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
 					sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
+				} else {
+					path = new Path(installLocation.getAbsolutePath()).append("src.zip"); //$NON-NLS-1$
+					lib = path.toFile();
+					if (lib.exists() && lib.isFile()) {
+						sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
+					}
 				}
 				IPath pathName = new Path(installLocation.getAbsolutePath()).append("lib").append("jrt-fs.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 				// From Java 9 149 version, we see that jrt-fs.jar is moved to lib directory so we need to look at both places
