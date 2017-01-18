@@ -479,7 +479,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSystracelBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "System.out.println(\"enclosing_type.enclosing_method()\");", true);
+		createConditionalLineBreakpoint(16, typeName, "System.out.println(\"enclosing_type.enclosing_method()\");", true);
 		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(17, typeName, "return true", true);
 
 		IJavaThread thread = null;
@@ -488,7 +488,71 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 		}
 		finally {
-			bp.delete();
+			assertNotNull(thread);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests a breakpoint with a simple code which returns Integer Object, Launch should don't suspend for non true boolean returns
+	 * 
+	 * @throws Exception
+	 */
+	public void testConditionBreakpointReturnNonBooleanObject() throws Exception {
+		String typeName = "HitCountLooper";
+		createConditionalLineBreakpoint(16, typeName, "return new Integer(1)", true);
+		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(17, typeName, "return true", true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp1);
+
+		}
+		finally {
+			assertNotNull(thread);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests a breakpoint with a simple code which returns Boolean Object with true, Launch should suspend for true Boolean returns
+	 * 
+	 * @throws Exception
+	 */
+	public void testConditionBreakpointReturnBooleanObjectTrue() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "return new Boolean(true)", true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp);
+
+		}
+		finally {
+			assertNotNull(thread);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests a breakpoint with a simple code which returns Boolean Object with false, Launch should not suspend for false Boolean returns
+	 * 
+	 * @throws Exception
+	 */
+	public void testConditionBreakpointReturnBooleanObjectFalse() throws Exception {
+		String typeName = "HitCountLooper";
+		createConditionalLineBreakpoint(16, typeName, "return new Boolean(false)", true);
+		IJavaLineBreakpoint bp1 = createConditionalLineBreakpoint(17, typeName, "return true", true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchToLineBreakpoint(typeName, bp1);
+
+		}
+		finally {
 			assertNotNull(thread);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

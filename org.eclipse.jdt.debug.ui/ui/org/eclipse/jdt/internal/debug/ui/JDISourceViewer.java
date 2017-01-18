@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -94,10 +95,10 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
 			FontData data= null;
-			if (store.contains(JFaceResources.TEXT_FONT) && !store.isDefault(JFaceResources.TEXT_FONT)) {
-				data= PreferenceConverter.getFontData(store, JFaceResources.TEXT_FONT);
+			if (store.contains(PreferenceConstants.EDITOR_TEXT_FONT) && !store.isDefault(PreferenceConstants.EDITOR_TEXT_FONT)) {
+				data= PreferenceConverter.getFontData(store, PreferenceConstants.EDITOR_TEXT_FONT);
 			} else {
-				data= PreferenceConverter.getDefaultFontData(store, JFaceResources.TEXT_FONT);
+				data = PreferenceConverter.getDefaultFontData(store, PreferenceConstants.EDITOR_TEXT_FONT);
 			}
 			if (data != null) {
 				Font font= new Font(getTextWidget().getDisplay(), data);
@@ -248,7 +249,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		}
 		String property= event.getProperty();
 		
-		if (JFaceResources.TEXT_FONT.equals(property)) {
+		if (PreferenceConstants.EDITOR_TEXT_FONT.equals(property)) {
 			updateViewerFont();
 		}
 		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property) || AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||

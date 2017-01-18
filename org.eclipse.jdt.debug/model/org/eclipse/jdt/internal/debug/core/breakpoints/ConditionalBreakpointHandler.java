@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
@@ -124,17 +126,23 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 							return DONT_SUSPEND;
 						}
 					}
-					if (value instanceof JDIValue) {
+					if ((value instanceof JDIValue) && !(value instanceof JDINullValue)) {
 						JDIValue jdiValue = (JDIValue)value;
-						// If return is void, don't suspend (no error dialog)
-						if (jdiValue.getJavaType().getName().equals("void")) //$NON-NLS-1$
+						// Suspend if return is Boolean(true) else don't suspend (no error dialog)
+						if (jdiValue.getJavaType().getName().equals("java.lang.Boolean")) {//$NON-NLS-1$
+							IJavaPrimitiveValue javaValue = (IJavaPrimitiveValue) ((IJavaObject) jdiValue).getField("value", false).getValue(); //$NON-NLS-1$
+							if (javaValue.getBooleanValue()) {
+								return SUSPEND;
+							}
 							return DONT_SUSPEND;
+						}
+						return DONT_SUSPEND;
 					}
 					IStatus status = new Status(
 							IStatus.ERROR,
 							JDIDebugPlugin.getUniqueIdentifier(),
 							MessageFormat.format(JDIDebugBreakpointMessages.ConditionalBreakpointHandler_1, value.getReferenceTypeName()));
-					// result was not boolean
+					// result was not JDIValue
 					fireConditionHasRuntimeErrors(fBreakpoint, new DebugException(status));
 					return SUSPEND;
 				} 
