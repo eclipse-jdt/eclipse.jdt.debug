@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * @since 3.12
  * 
  */
-@SuppressWarnings("restriction")
 public class RetargetToggleTracepointAction extends RetargetToggleBreakpointAction {
 	
 	/*
