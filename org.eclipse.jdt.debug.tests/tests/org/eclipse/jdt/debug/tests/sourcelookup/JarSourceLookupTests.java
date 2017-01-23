@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSour
  */
 public class JarSourceLookupTests extends AbstractDebugTest {
 
-	public static final String A_RUN_JAR = "a.RunJar";
+	public static final String A_RUN_JAR = "testJar.RunJar";
 	static IJavaProject fgJarProject = null;
 	
 	String RefPjName = "JarRefProject";
@@ -167,7 +167,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			 assertNotNull("The top stack frame cannot be null", frame);
 			 assertTrue("The found frame should be an IJavaStackFrame", frame instanceof IJavaStackFrame);
 			 Object source = lookupSource(frame);
-			 assertNotNull("We should have found source for the main class a.RunJar", source);
+			assertNotNull("We should have found source for the main class testJar.RunJar", source);
 			 assertTrue("The found source should be an IFile", source instanceof IFile);
 			 assertEquals("We should have found a file named RunJar.java", ((IFile)source).getName(), "RunJar.java");
 			 
