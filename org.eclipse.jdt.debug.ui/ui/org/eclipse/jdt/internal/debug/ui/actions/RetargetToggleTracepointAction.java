@@ -49,8 +49,9 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 		try {
 		ISelection sel = BreakpointToggleUtils.translateToMembers(part, selection);
     	if(sel instanceof IStructuredSelection) {
-    		IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
-				if (member != null) {
+    		Object firstElement = ((IStructuredSelection)sel).getFirstElement();
+				if (firstElement instanceof IMember) {
+					IMember member = (IMember) firstElement;
 					int mtype = member.getElementType();
 					if (mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
 						// remove line breakpoint if present first
