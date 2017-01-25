@@ -50,30 +50,30 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 		ISelection sel = BreakpointToggleUtils.translateToMembers(part, selection);
     	if(sel instanceof IStructuredSelection) {
     		IMember member = (IMember) ((IStructuredSelection)sel).getFirstElement();
-    		int mtype = member.getElementType();
-    		if(mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
-    			// remove line breakpoint if present first
-    	    	if (selection instanceof ITextSelection) {
-    				ITextSelection ts = (ITextSelection) selection;
-					
-					CompilationUnit unit = BreakpointToggleUtils.parseCompilationUnit(BreakpointToggleUtils.getTextEditor(part));
-        			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine()+1, true, true);
-        			unit.accept(loc);
-        			if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
-        				return true;
-        			}
-        			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
-        				return false;
-        			}
-        			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
-        				return true;
-        			}
-    			} 
-    		}
+				if (member != null) {
+					int mtype = member.getElementType();
+					if (mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
+						// remove line breakpoint if present first
+						if (selection instanceof ITextSelection) {
+							ITextSelection ts = (ITextSelection) selection;
 
-    		if(member.getElementType() == IJavaElement.TYPE) {
-    			return false;
-    		}
+							CompilationUnit unit = BreakpointToggleUtils.parseCompilationUnit(BreakpointToggleUtils.getTextEditor(part));
+							ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
+							unit.accept(loc);
+							if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
+								return true;
+							} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
+								return false;
+							} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
+								return true;
+							}
+						}
+					}
+
+					if (member.getElementType() == IJavaElement.TYPE) {
+						return false;
+					}
+				}
 		}
 		return false;
 		}
