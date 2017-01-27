@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
-
 /**
  * Global retargettable toggle tracepoint action.
  * 
@@ -29,11 +28,11 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  */
 public class RetargetToggleTracepointAction extends RetargetToggleBreakpointAction {
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetTracepointAction#
-	 * performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection,
+	 * 
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetTracepointAction# performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection,
 	 * org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
@@ -41,15 +40,19 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 		BreakpointToggleUtils.setUnsetTracepoints(true);
 		super.performAction(target, selection, part);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection,
+	 * org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
 		try {
-		ISelection sel = BreakpointToggleUtils.translateToMembers(part, selection);
-    	if(sel instanceof IStructuredSelection) {
-    		Object firstElement = ((IStructuredSelection)sel).getFirstElement();
+			ISelection sel = BreakpointToggleUtils.translateToMembers(part, selection);
+			if (sel instanceof IStructuredSelection) {
+				Object firstElement = ((IStructuredSelection) sel).getFirstElement();
 				if (firstElement instanceof IMember) {
 					IMember member = (IMember) firstElement;
 					int mtype = member.getElementType();
@@ -75,19 +78,21 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 						return false;
 					}
 				}
-		}
-		return false;
+			}
+			return super.canPerformAction(target, selection, part);
 		}
 		catch (CoreException e) {
 			return false;
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
 	 */
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return ActionMessages.TracepointToggleAction_Unavailable;
-	}	
+	}
 }
