@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 IBM Corporation and others.
+ * Copyright (c) 2015, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class TestsBreakpointConditions extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalArrayTests", 37, 1, 1);
+		initializeFrame("EvalSimpleTests", 37, 1, 1);
 	}
 
 	protected void end() throws Exception {
@@ -71,6 +71,133 @@ public class TestsBreakpointConditions extends Tests {
 		try {
 			init();
 			IValue value = eval("System.out.println(\"test\");throw new Exception(\"test\")");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test xVarInt < (xVarInt + 100)
+	 */
+	public void testCondition5() throws Throwable {
+		try {
+			init();
+			IValue value = eval("xVarInt < (xVarInt + 100)");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+	/*
+	 * To test xVarInt < 100
+	 */
+	public void testCondition6() throws Throwable {
+		try {
+			init();
+			IValue value = eval("xVarInt < 100");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test xVarInt > 100
+	 */
+	public void testCondition7() throws Throwable {
+		try {
+			init();
+			IValue value = eval("xVarInt > -7");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test xVarInt == 100
+	 */
+	public void testCondition8() throws Throwable {
+		try {
+			init();
+			IValue value = eval("xVarInt == -7");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test return xVarInt < 100
+	 */
+	public void testCondition9() throws Throwable {
+		try {
+			init();
+			IValue value = eval("return xVarInt < 100");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test return xVarInt > 100
+	 */
+	public void testCondition10() throws Throwable {
+		try {
+			init();
+			IValue value = eval("return xVarInt > -7");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test if as last statement
+	 */
+	public void testCondition11() throws Throwable {
+		try {
+			init();
+			IValue value = eval("if (xVarInt > 3) { System.out.println(\"test if\");} ");
+			System.out.println(value);
+
+		}
+		finally {
+			end();
+		}
+
+	}
+
+	/*
+	 * To test while as last statement
+	 */
+	public void testCondition12() throws Throwable {
+		try {
+			init();
+			IValue value = eval("while (xVarInt < 3) { System.out.println(\"test while\");xVarInt++; } ");
 			System.out.println(value);
 
 		}

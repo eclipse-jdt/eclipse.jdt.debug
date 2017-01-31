@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,6 +157,9 @@ public class EvaluationSourceGenerator {
 	 */
 	
 	private boolean needsReturn(String codeSnippet){
+		if ( codeSnippet.length() == 0) {
+			return false;
+		}
 		IScanner scanner = ToolFactory.createScanner(false, false, false, fJavaProject.getOption(JavaCore.COMPILER_SOURCE, true), fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
 		scanner.setSource(codeSnippet.toCharArray());
 		int token;
@@ -181,11 +184,21 @@ public class EvaluationSourceGenerator {
 				else if (count == 0 && (token == ITerminalSymbols.TokenNamethrow)){
 					return false;
 				}
+				else if ( count == 0 && (token == ITerminalSymbols.TokenNameif || token == ITerminalSymbols.TokenNamewhile || token == ITerminalSymbols.TokenNamedo)) {
+					return false;
+				}
 				else if (count ==1 && (token == ITerminalSymbols.TokenNameLBRACE || token == ITerminalSymbols.TokenNameEQUAL)){
 					return true;
 				}
 				else if (count ==1 && (token == ITerminalSymbols.TokenNameLESS || token == ITerminalSymbols.TokenNameLBRACKET)){
+					int currentToken = token;
 					token = scanner.getNextToken();
+					if ( currentToken == ITerminalSymbols.TokenNameLESS && ( token == ITerminalSymbols.TokenNameIdentifier || (token >= ITerminalSymbols.TokenNameIntegerLiteral && token <= ITerminalSymbols.TokenNameStringLiteral))){
+						token = scanner.getNextToken();
+						if (token == ITerminalSymbols.TokenNameEOF) {
+							return true;
+						}
+					}
 					count = 2;
 				}
 				else if (count ==2 && (token == ITerminalSymbols.TokenNameGREATER || token == ITerminalSymbols.TokenNameRBRACKET)){
@@ -193,6 +206,12 @@ public class EvaluationSourceGenerator {
 					token = scanner.getNextToken();
 					if ( token == ITerminalSymbols.TokenNameEOF && currentToken == ITerminalSymbols.TokenNameRBRACKET ){
 						return true;
+					}
+					if ( currentToken == ITerminalSymbols.TokenNameGREATER && ( token == ITerminalSymbols.TokenNameIdentifier || (token >= ITerminalSymbols.TokenNameIntegerLiteral && token <= ITerminalSymbols.TokenNameStringLiteral))){
+						token = scanner.getNextToken();
+						if (token == ITerminalSymbols.TokenNameEOF) {
+							return true;
+						}
 					}
 					count = 3;
 				}
@@ -212,7 +231,7 @@ public class EvaluationSourceGenerator {
 			e.printStackTrace();
 		}
 		
-		return false;
+		return true;
 	}
 	
 	public String getCompilationUnitName() {

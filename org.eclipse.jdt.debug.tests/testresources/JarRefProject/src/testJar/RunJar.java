@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a;
+package testJar;
+
+import a.JarClass;
 
 public class RunJar {
 	public static void main(String[] args) {

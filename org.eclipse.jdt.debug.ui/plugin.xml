@@ -135,12 +135,22 @@
             </separator>
          </menu>
          <action
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint"
+               label="%ToggleTracepointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.png"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
+               helpContextId="toggle_tracepoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RetargetToggleTracepointAction"
+               menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
+               id="org.eclipse.jdt.debug.ui.actions.ToggleTracepoint">
+         </action>
+         <action
 	           definitionId="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
                label="%classPrepareAction.label"
                icon="$nl$/icons/full/obj16/class_obj.png"
                helpContextId="add_class_prepare_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddClassPrepareBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddClassPrepareBreakpoint">
          </action>
          <action
@@ -149,7 +159,7 @@
                icon="$nl$/icons/full/elcl16/exc_catch.png"
                helpContextId="add_exception_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddExceptionBreakpoint">
          </action>
          <action
@@ -2595,6 +2605,12 @@ M3 = ALT
 M4 = Platform-specific fourth key
 -->
    <extension point="org.eclipse.ui.commands">
+   	 <command
+            name="%ToggleTracepointAction.label"
+            description="%ToggleTracepointAction.label"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.commands.ToggleTracepoint">
+      </command>
       <command
             name="%ActionDefinition.addException.name"
             description="%ActionDefinition.addException.description"
@@ -3681,4 +3697,7 @@ M4 = Platform-specific fourth key
        </enabledWhen>
     </handler>
  </extension>
+  
+   
+ 
 </plugin>
