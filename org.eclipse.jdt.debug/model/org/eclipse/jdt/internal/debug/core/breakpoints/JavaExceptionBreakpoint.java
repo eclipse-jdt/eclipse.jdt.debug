@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -369,28 +370,44 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 			}
 			setExceptionName(name);
 			disableTriggerPoint(event);
-			if (getExclusionClassFilters().length >= 1
-					|| getInclusionClassFilters().length >= 1
-					|| filtersIncludeDefaultPackage(fInclusionClassFilters)
-					|| filtersIncludeDefaultPackage(fExclusionClassFilters)) {
-				Location location = ((ExceptionEvent) event).location();
-				String typeName = location.declaringType().name();
-				boolean defaultPackage = typeName.indexOf('.') == -1;
-				boolean included = true;
-				String[] filters = getInclusionClassFilters();
-				if (filters.length > 0) {
-					included = matchesFilters(filters, typeName, defaultPackage);
+			IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+			for (IBreakpoint iBreakpoint : allBreakpoints) {
+				if (iBreakpoint instanceof JavaExceptionBreakpoint) {
+					JavaExceptionBreakpoint jExceptionBreakpoint = (JavaExceptionBreakpoint)iBreakpoint;
+					try {
+						//This Java Exception breakpoint is the  breakpoint created for catching compilation and Uncaught exception in JavaDebugOptionsManagaer initialization
+						// This does not have scope defined
+						if (jExceptionBreakpoint.getTypeName().equals(name)) {
+							if (jExceptionBreakpoint.getExclusionClassFilters().length >= 1
+						|| jExceptionBreakpoint.getInclusionClassFilters().length >= 1
+						|| filtersIncludeDefaultPackage(jExceptionBreakpoint.fInclusionClassFilters)
+						|| filtersIncludeDefaultPackage(jExceptionBreakpoint.fExclusionClassFilters)) {
+							Location location = ((ExceptionEvent) event).location();
+							String typeName = location.declaringType().name();
+							boolean defaultPackage = typeName.indexOf('.') == -1;
+							boolean included = true;
+							String[] filters = jExceptionBreakpoint.getInclusionClassFilters();
+							if (filters.length > 0) {
+								included = matchesFilters(filters, typeName, defaultPackage);
+							}
+							boolean excluded = false;
+							filters = jExceptionBreakpoint.getExclusionClassFilters();
+							if (filters.length > 0) {
+								excluded = matchesFilters(filters, typeName, defaultPackage);
+							}
+							if (included && !excluded) {
+								return !suspend(thread, suspendVote);
+							}
+							return true;
+							}
+						}
+					}
+					catch (CoreException e) {
+						e.printStackTrace();
+					}
 				}
-				boolean excluded = false;
-				filters = getExclusionClassFilters();
-				if (filters.length > 0) {
-					excluded = matchesFilters(filters, typeName, defaultPackage);
-				}
-				if (included && !excluded) {
-					return !suspend(thread, suspendVote);
-				}
-				return true;
 			}
+			
 			return !suspend(thread, suspendVote);
 		}
 		return true;
