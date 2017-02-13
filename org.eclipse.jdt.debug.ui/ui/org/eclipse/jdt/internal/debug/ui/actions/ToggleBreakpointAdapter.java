@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -91,6 +92,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
@@ -110,6 +114,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 /**
  * Toggles a line breakpoint in a Java editor.
@@ -1352,9 +1357,37 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     			// remove line breakpoint if present first
     	    	if (selection instanceof ITextSelection) {
     				ITextSelection ts = (ITextSelection) selection;
-    				IType declaringType = member.getDeclaringType();
-    				IResource resource = BreakpointUtils.getBreakpointResource(declaringType);
-					IJavaLineBreakpoint breakpoint = JDIDebugModel.lineBreakpointExists(resource, getQualifiedName(declaringType), ts.getStartLine() + 1);
+					IJavaLineBreakpoint breakpoint = null;
+					ITextEditor editor = getTextEditor(part);
+					IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
+					IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+					if (annotationModel != null) {
+						Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
+						while (iterator.hasNext()) {
+							Object object = iterator.next();
+							if (object instanceof SimpleMarkerAnnotation) {
+								SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+								IMarker marker = markerAnnotation.getMarker();
+								try {
+									if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+										Position position = annotationModel.getPosition(markerAnnotation);
+										int line = document.getLineOfOffset(position.getOffset());
+										if (line == ts.getStartLine()) {
+											IBreakpoint oldBreakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+											if (oldBreakpoint instanceof IJavaLineBreakpoint) {
+												breakpoint = (IJavaLineBreakpoint) oldBreakpoint;
+												break;
+											}
+										}
+									}
+								}
+								catch (BadLocationException e) {
+									JDIDebugUIPlugin.log(e);
+								}
+							}
+						}
+					}
+
     				if (breakpoint != null) {
 						if (BreakpointToggleUtils.isToggleTracepoints()) {
 							deleteTracepoint(breakpoint, part, null);
