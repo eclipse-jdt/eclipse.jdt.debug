@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -213,6 +214,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			suppressPropertyChanges(true);
 			if (input instanceof IJavaLineBreakpoint) {
 				setBreakpoint((IJavaLineBreakpoint)input);
+			} else if (input instanceof IJavaWatchpoint) {
+				setBreakpoint((IJavaWatchpoint) input);
 			} else {
 				setBreakpoint(null);
 			}
@@ -263,6 +266,8 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		IJavaDebugContentAssistContext context = null;
 		if (type == null || breakpoint == null) {
 			context = new TypeContext(null, -1);
+		} else if (breakpoint instanceof IJavaWatchpoint) {
+			context = new TypeContext(type, 0);
 		} else {
 			String source = null;
 			ICompilationUnit compilationUnit = type.getCompilationUnit();

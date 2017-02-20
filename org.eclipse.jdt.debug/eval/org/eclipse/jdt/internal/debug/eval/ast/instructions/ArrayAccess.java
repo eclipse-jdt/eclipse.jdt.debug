@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,13 @@ public class ArrayAccess extends ArrayInstruction {
 	 *             if not available
 	 */
 	protected IJavaArray popArray() throws CoreException {
-		IJavaValue value = popValue();
+		Object popValue = popValue();
+		if (! (popValue instanceof IJavaValue)) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK,
+					"Internal error: attempt to access non-java object", null)); //$NON-NLS-1$
+		}
+		IJavaValue value = (IJavaValue) popValue;
 		if (value instanceof IJavaArray) {
 			return (IJavaArray) value;
 		} else if (value.isNull()) {
