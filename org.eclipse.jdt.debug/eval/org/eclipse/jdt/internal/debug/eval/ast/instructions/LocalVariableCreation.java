@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdi.internal.PrimitiveTypeImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
@@ -104,8 +105,8 @@ public class LocalVariableCreation extends CompoundInstruction {
 		IVariable var = createInternalVariable(fName, type);
 		if (fHasInitializer) {
 			Object value = popValue();
-			if (value instanceof String)
-				var.setValue((String) value);
+			if (value instanceof IValue)
+				var.setValue((IValue) value);
 		}
 	}
 
