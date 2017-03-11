@@ -76,7 +76,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	@Override
 	protected void setUp() throws Exception {
 		IPath testrpath = new Path("testresources");
-		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), false);
+		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
 		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, false);
 	}
 	
@@ -100,6 +100,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
+		assertEquals("There should be 2 containers returned (JRE and classpath)", 2, entries.length);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, config);
 		ISourceContainer[] containers = JavaSourceLookupUtil.translate(resolved);
 		try {
@@ -107,15 +108,33 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			//the number of containers is M + 2, where M is unknown across JREs, 1 for the project container and 1 for the JAR we are looking for
 			assertTrue("There should be at least 2 containers returned", containers.length >= 2);
 			for (int i = 0; i < containers.length; i++) {
-				if("sample.jar".equals(containers[i].getName()) &&
-						containers[i] instanceof PackageFragmentRootSourceContainer) {
-					PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) containers[i];
+				ISourceContainer sourceContainer = containers[i];
+				if ("sample.jar".equals(sourceContainer.getName()) && sourceContainer instanceof PackageFragmentRootSourceContainer) {
+					PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) sourceContainer;
 					if("/JarProject/lib/sample.jar".equals(container.getPackageFragmentRoot().getPath().toString())) {
 						return;
 					}
 				}
 			}
-			fail("We did not find a source container that was a PackageFragmentRootSourceContainer and had the name /JarProject/lib/sample.jar");
+			StringBuilder dump = new StringBuilder();
+			for (ISourceContainer sc : containers) {
+				dump.append(sc.getName());
+				if (sc instanceof PackageFragmentRootSourceContainer) {
+					PackageFragmentRootSourceContainer pfsc = (PackageFragmentRootSourceContainer) sc;
+					dump.append(" with path: ").append(pfsc.getPath());
+				}
+				dump.append(", ");
+			}
+			dump.setLength(dump.length() - 2);
+			dump.append(".\n Those containers were resolved from: ");
+			for (IRuntimeClasspathEntry cpe : resolved) {
+				dump.append(cpe);
+				dump.append(", ");
+			}
+
+			dump.setLength(dump.length() - 2);
+			fail("We did not find a source container that was a PackageFragmentRootSourceContainer "
+					+ "and had the name /JarProject/lib/sample.jar, but found source containers: " + dump);
 		}
 		finally {
 			disposeContainers(containers);

@@ -844,10 +844,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject createJavaProjectClone(String name, String contentpath, String ee, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
         if (pro.exists() && delete) {
-        	try {
-        		pro.delete(true, true, null);
-        	}
-        	catch(Exception e) {}
+			pro.delete(true, true, null);
         }
         // create project and import source
         IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
@@ -885,10 +882,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IProject createProjectClone(String name, String contentpath, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
         if (pro.exists() && delete) {
-        	try {
-        		pro.delete(true, true, null);
-        	}
-        	catch(Exception e) {}
+			pro.delete(true, true, null);
         }
         // create project and import source
         IProject pj = JavaProjectHelper.createProject(name);
