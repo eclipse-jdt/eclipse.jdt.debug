@@ -1590,13 +1590,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								}
 							}
 						}
-						catch (BadLocationException e) {
-							e.printStackTrace();
+						catch (BadLocationException | TemplateException e) {
+							// ignore
 						}
-						catch (TemplateException e1) {
-							e1.printStackTrace();
-						}
-
 					}
 				}
 			});
