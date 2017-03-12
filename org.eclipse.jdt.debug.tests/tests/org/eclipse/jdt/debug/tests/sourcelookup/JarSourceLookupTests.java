@@ -29,6 +29,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -67,25 +68,24 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
-	 */
 	@Override
 	protected IJavaProject getProjectContext() {
 		return fgJarProject;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
+		assertWelcomeScreenClosed();
+		TestUtil.runEventLoop();
+		TestUtil.cleanUp();
 		IPath testrpath = new Path("testresources");
 		IProject jarProject = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
+
 		IFile jar = jarProject.getFile("lib/sample.jar");
 		assertTrue("lib/sample.jar is missing in project: " + jarProject.getName(), jar.exists());
 
 		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, true);
+
 		IProject jarRefProject = fgJarProject.getProject();
 		IFile cp = jarRefProject.getFile(".classpath");
 		assertTrue(".classpath is missing in project: " + jarRefProject.getName(), cp.exists());
@@ -102,14 +102,16 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			fail("The .classpath from project " + jarRefProject + " is unexpected and does not have an entry for " + SAMPLE_JAR_PATH + ": "
 					+ new String(Files.readAllBytes(path)));
 		}
+		waitForBuild();
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		removeAllBreakpoints();
+		if (fgJarProject.exists()) {
+			fgJarProject.getProject().delete(true, null);
+		}
+		TestUtil.cleanUp();
 		super.tearDown();
 	}
 	
