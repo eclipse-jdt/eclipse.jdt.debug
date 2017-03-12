@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.sourcelookup;
 
+import java.nio.file.Files;
+import java.util.List;
+
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
@@ -36,6 +40,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSour
  */
 public class JarSourceLookupTests extends AbstractDebugTest {
 
+	private static final String SAMPLE_JAR_PATH = "/JarProject/lib/sample.jar";
 	public static final String A_RUN_JAR = "testJar.RunJar";
 	static IJavaProject fgJarProject = null;
 	
@@ -76,8 +81,27 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	@Override
 	protected void setUp() throws Exception {
 		IPath testrpath = new Path("testresources");
-		createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
-		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, false);
+		IProject jarProject = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
+		IFile jar = jarProject.getFile("lib/sample.jar");
+		assertTrue("lib/sample.jar is missing in project: " + jarProject.getName(), jar.exists());
+
+		fgJarProject = createJavaProjectClone(RefPjName, testrpath.append(RefPjName).toString(), JavaProjectHelper.J2SE_1_4_EE_NAME, true);
+		IProject jarRefProject = fgJarProject.getProject();
+		IFile cp = jarRefProject.getFile(".classpath");
+		assertTrue(".classpath is missing in project: " + jarRefProject.getName(), cp.exists());
+		java.nio.file.Path path = cp.getLocation().toFile().toPath();
+		List<String> lines = Files.readAllLines(path);
+		boolean foundJar = false;
+		for (String line : lines) {
+			if (line.contains(SAMPLE_JAR_PATH)) {
+				foundJar = true;
+				break;
+			}
+		}
+		if (!foundJar) {
+			fail("The .classpath from project " + jarRefProject + " is unexpected and does not have an entry for " + SAMPLE_JAR_PATH + ": "
+					+ new String(Files.readAllBytes(path)));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -111,7 +135,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 				ISourceContainer sourceContainer = containers[i];
 				if ("sample.jar".equals(sourceContainer.getName()) && sourceContainer instanceof PackageFragmentRootSourceContainer) {
 					PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer) sourceContainer;
-					if("/JarProject/lib/sample.jar".equals(container.getPackageFragmentRoot().getPath().toString())) {
+					if (SAMPLE_JAR_PATH.equals(container.getPackageFragmentRoot().getPath().toString())) {
 						return;
 					}
 				}
@@ -134,7 +158,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 
 			dump.setLength(dump.length() - 2);
 			fail("We did not find a source container that was a PackageFragmentRootSourceContainer "
-					+ "and had the name /JarProject/lib/sample.jar, but found source containers: " + dump);
+					+ "and had the name " + SAMPLE_JAR_PATH + ", but found source containers: " + dump);
 		}
 		finally {
 			disposeContainers(containers);

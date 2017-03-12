@@ -37,6 +37,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -530,14 +531,19 @@ public class JavaProjectHelper {
 	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List<File> files = new ArrayList<File>(100);
+		List<File> files = new ArrayList<>(100);
 		addJavaFiles(rootDir, files);
 		try {
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
 			op.setCreateContainerStructure(false);
 			op.run(monitor);
+			IStatus status = op.getStatus();
+			if (!status.isOK()) {
+				CoreException e = new CoreException(status);
+				throw new InvocationTargetException(e, "Import operation encountered problems");
+			}
 		} catch (InterruptedException e) {
-			// should not happen
+			throw new InvocationTargetException(e, "Interrupted during files import");
 		}
 	}	
 	
