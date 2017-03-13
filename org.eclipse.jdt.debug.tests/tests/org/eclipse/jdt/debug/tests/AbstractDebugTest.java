@@ -579,31 +579,43 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
-	 *  
+	 * 
 	 * @throws Exception
 	 * @since 3.8
 	 */
 	protected final void assertWelcomeScreenClosed() throws Exception {
 		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
 			final IWorkbench wb = PlatformUI.getWorkbench();
-			if(wb != null) {
-				UIJob job = new UIJob("close welcome screen for debug test suite") {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
-						if(window != null) {
-							IIntroManager im = wb.getIntroManager();
-							IIntroPart intro = im.getIntro();
-							if(intro != null) {
-								welcomeClosed = im.closeIntro(intro);
-							}
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.setPriority(Job.INTERACTIVE);
-				job.setSystem(true);
-				job.schedule();
+			if (wb == null) {
+				return;
+			}
+			// In UI thread we don't need to run a job
+			if (Display.getCurrent() != null) {
+				closeIntro(wb);
+				return;
+			}
+
+			UIJob job = new UIJob("close welcome screen for debug test suite") {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					closeIntro(wb);
+					return Status.OK_STATUS;
+				}
+
+			};
+			job.setPriority(Job.INTERACTIVE);
+			job.setSystem(true);
+			job.schedule();
+		}
+	}
+
+	private static void closeIntro(final IWorkbench wb) {
+		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+		if (window != null) {
+			IIntroManager im = wb.getIntroManager();
+			IIntroPart intro = im.getIntro();
+			if (intro != null) {
+				welcomeClosed = im.closeIntro(intro);
 			}
 		}
 	}

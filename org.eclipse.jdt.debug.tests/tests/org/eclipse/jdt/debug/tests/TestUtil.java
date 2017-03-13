@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.jobs.Job;
@@ -17,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
 public class TestUtil {
+
 	/**
 	 * Call this in the tearDown method of every test to clean up state that can
 	 * otherwise leak through SWT between tests.
@@ -24,12 +27,23 @@ public class TestUtil {
 	public static void cleanUp() {
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+
+		// Wait for any pending *syncExec calls to finish
+		TestUtil.runEventLoop();
+
 		// Wait for any outstanding jobs to finish. Protect against deadlock by
 		// terminating the wait after a timeout.
-		boolean timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(3));
-		Assert.assertFalse("Some Job did not terminate at the end of the test", timedOut);
+		boolean timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(2));
+		if (timedOut) {
+			// We don't expect any extra jobs run during the test: try to cancel them
+			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
+		}
+		timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(1));
+		Assert.assertFalse("Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs(), timedOut);
+
 		// Wait for any pending *syncExec calls to finish
 		runEventLoop();
+
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
 	}
@@ -86,4 +100,36 @@ public class TestUtil {
 		}
 		return false;
 	}
+
+	private static String dumpRunningOrWaitingJobs() {
+		List<Job> jobs = getRunningOrWaitingJobs((Object) null);
+		if (jobs.isEmpty()) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (Job job : jobs) {
+			sb.append("'").append(job.getName()).append("'/");
+			sb.append(job.getClass().getName());
+			sb.append(", ");
+		}
+		sb.setLength(sb.length() - 2);
+		return sb.toString();
+	}
+
+	private static List<Job> getRunningOrWaitingJobs(Object jobFamily) {
+		List<Job> running = new ArrayList<>();
+		Job[] jobs = Job.getJobManager().find(jobFamily);
+		for (Job job : jobs) {
+			if (isRunningOrWaitingJob(job)) {
+				running.add(job);
+			}
+		}
+		return running;
+	}
+
+	private static boolean isRunningOrWaitingJob(Job job) {
+		int state = job.getState();
+		return (state == Job.RUNNING || state == Job.WAITING);
+	}
+
 }
