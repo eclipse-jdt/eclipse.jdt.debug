@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2016 IBM Corporation and others.
+ *  Copyright (c) 2009, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
+import org.eclipse.jdt.debug.ui.breakpoints.JavaBreakpointConditionEditor;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
@@ -32,7 +33,8 @@ public class WatchpointDetailPane extends AbstractDetailPane {
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY,
 				StandardJavaBreakpointEditor.PROP_TRIGGER_POINT,
 				WatchpointEditor.PROP_ACCESS,
-				WatchpointEditor.PROP_MODIFICATION
+				WatchpointEditor.PROP_MODIFICATION, JavaBreakpointConditionEditor.PROP_CONDITION_ENABLED,
+				JavaBreakpointConditionEditor.PROP_CONDITION_SUSPEND_POLICY
 		});
 	}
 	
@@ -41,7 +43,7 @@ public class WatchpointDetailPane extends AbstractDetailPane {
 	 */
 	@Override
 	protected AbstractJavaBreakpointEditor createEditor(Composite parent) {
-		return new WatchpointEditor();
+		return new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] { new WatchpointEditor(), new JavaBreakpointConditionEditor(null) });
 	}
 
 }

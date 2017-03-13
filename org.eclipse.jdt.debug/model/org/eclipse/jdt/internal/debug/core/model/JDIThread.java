@@ -2563,7 +2563,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 							}
 							catch (IncompatibleThreadStateException e) {
 								// cannot not happen because of the enclosing isSuspended() check.
-								e.printStackTrace();
+								logError(e);
 							}
 						}
 					}

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.internal.launching.JavaFxLibraryResolver;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -35,20 +34,6 @@ import org.eclipse.jdt.launching.VMStandin;
  * Tests for installed VMs
  */
 public class VMInstallTests extends AbstractDebugTest {
-
-	private static boolean isTesting = false;
-	
-	static boolean applies(IPath path) {
-		if (!isTesting)
-			return false;
-
-		for (int i = 0; i < path.segmentCount(); i++) {
-			if ("ext".equals(path.segment(i))) {
-				return !JavaFxLibraryResolver.JFXRT_JAR.equals(path.lastSegment());
-			}
-		}
-		return false;
-	}
 
 	public VMInstallTests() {
 		super("VM Install tests");
@@ -119,7 +104,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLibraryResolver1() throws Exception {
-		isTesting = true;
+		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("There must be a default VM", vm);
 		
@@ -133,7 +118,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			assertResolvedLibraryLocations(locs);
 		}
 		finally {
-			isTesting = false;
+			VMInstallTestsLibraryLocationResolver.isTesting = false;
 			//force a re-compute to remove the bogus paths
 			vm.getVMInstallType().disposeVMInstall(vm.getId());
 		}
@@ -146,7 +131,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLibraryResolver2() throws Exception {
-		isTesting = true;
+		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		try {
 			String filename = "/testfiles/test-jre/bin/test-resolver.ee";
 			if(Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -158,7 +143,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			assertResolvedLibraryLocations(locs);
 		}
 		finally {
-			isTesting = false;
+			VMInstallTestsLibraryLocationResolver.isTesting = false;
 		}
 	}
 	
@@ -169,7 +154,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLibraryResolver3() throws Exception {
-		isTesting = true;
+		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("There must be a default VM", vm);
 		try {
@@ -182,7 +167,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			assertResolvedLibraryLocations(locs);
 		}
 		finally {
-			isTesting = false;
+			VMInstallTestsLibraryLocationResolver.isTesting = false;
 			vm.getVMInstallType().disposeVMInstall(vm.getId());
 		}
 	}
@@ -195,7 +180,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLibraryResolver4() throws Exception {
-		isTesting = true;
+		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		try {
 			String filename = "/testfiles/test-jre/bin/test-resolver2.ee";
 			if(Platform.OS_WIN32.equals(Platform.getOS())) {
@@ -207,7 +192,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			String locpath = null;
 			for (int i = 0; i < locs.length; i++) {
 				IPath path = locs[i].getSystemLibraryPath();
-				if(applies(path)) {
+				if(VMInstallTestsLibraryLocationResolver.applies(path)) {
 					locpath = path.toString();
 					assertTrue("The original source path should be set on the ext lib [" + locpath + "]",
 							locs[i].getSystemLibrarySourcePath().toString().indexOf("source.txt") > -1);
@@ -215,7 +200,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			}
 		}
 		finally {
-			isTesting = false;
+			VMInstallTestsLibraryLocationResolver.isTesting = false;
 		}
 	}
 	
@@ -228,7 +213,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		String locpath = null;
 		for (int i = 0; i < locs.length; i++) {
 			IPath path = locs[i].getSystemLibraryPath();
-			if(applies(path)) {
+			if(VMInstallTestsLibraryLocationResolver.applies(path)) {
 				locpath = path.toString();
 				assertTrue("There should be a source path ending in test_resolver_src.zip on the ext lib [" + locpath + "]",
 						locs[i].getSystemLibrarySourcePath().toString().indexOf("test_resolver_src.zip") > -1);

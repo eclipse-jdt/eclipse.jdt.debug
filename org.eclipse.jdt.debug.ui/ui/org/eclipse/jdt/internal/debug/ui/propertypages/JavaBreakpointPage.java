@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,7 +333,8 @@ public class JavaBreakpointPage extends PropertyPage {
 			fEditor = new ExceptionBreakpointEditor();
 		} else if (JavaWatchpoint.JAVA_WATCHPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_19);
-			fEditor = new WatchpointEditor();
+				fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] { new WatchpointEditor(),
+						new JavaBreakpointConditionEditor(null) });
 		} else if (JavaMethodBreakpoint.JAVA_METHOD_BREAKPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
 			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 

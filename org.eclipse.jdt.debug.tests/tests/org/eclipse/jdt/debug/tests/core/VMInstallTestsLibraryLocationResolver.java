@@ -18,10 +18,29 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
+import org.eclipse.jdt.internal.launching.JavaFxLibraryResolver;
 import org.eclipse.jdt.launching.ILibraryLocationResolver;
 
 
 public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationResolver {
+
+	// This used to be in VMInstallTests. Moved here to support headless test runs,
+	// which previously failed because VMInstallTests extends a UI class.
+	static boolean isTesting = false;
+
+	static boolean applies(IPath path) {
+		if (!isTesting) {
+			return false;
+		}
+	
+		for (int i = 0; i < path.segmentCount(); i++) {
+			if ("ext".equals(path.segment(i))) {
+				return !JavaFxLibraryResolver.JFXRT_JAR.equals(path.lastSegment());
+			}
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -29,7 +48,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 	 */
 	@Override
 	public IPath getPackageRoot(IPath libraryPath) {
-		if (VMInstallTests.applies(libraryPath)) {
+		if (applies(libraryPath)) {
 			return new Path("src");
 		}
 		return Path.EMPTY;
@@ -42,7 +61,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 	 */
 	@Override
 	public IPath getSourcePath(IPath libraryPath) {
-		if (VMInstallTests.applies(libraryPath)) {
+		if (applies(libraryPath)) {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_src.zip"));
 			if (file.isFile()) {
 				return new Path(file.getAbsolutePath());
@@ -58,7 +77,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 	 */
 	@Override
 	public URL getJavadocLocation(IPath libraryPath) {
-		if (VMInstallTests.applies(libraryPath)) {
+		if (applies(libraryPath)) {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_javadoc.zip"));
 			if (file.isFile()) {
 				try {
@@ -79,7 +98,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 	 */
 	@Override
 	public URL getIndexLocation(IPath libraryPath) {
-		if (VMInstallTests.applies(libraryPath)) {
+		if (applies(libraryPath)) {
 			File file = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testresources/test_resolver_index.index"));
 			if (file.isFile()) {
 				try {

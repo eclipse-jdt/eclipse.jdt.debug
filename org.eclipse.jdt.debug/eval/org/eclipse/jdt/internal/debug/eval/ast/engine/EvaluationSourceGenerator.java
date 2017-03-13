@@ -227,8 +227,7 @@ public class EvaluationSourceGenerator {
 			}
 		}
 		catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// ignore
 		}
 		
 		return true;

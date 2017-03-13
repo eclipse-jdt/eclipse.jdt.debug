@@ -12,13 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.debug.core.breakpoints.ValidBreakpointLocationLocator;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -49,41 +43,7 @@ public class RetargetToggleTracepointAction extends RetargetToggleBreakpointActi
 	 */
 	@Override
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
-		try {
-			ISelection sel = BreakpointToggleUtils.translateToMembers(part, selection);
-			if (sel instanceof IStructuredSelection) {
-				Object firstElement = ((IStructuredSelection) sel).getFirstElement();
-				if (firstElement instanceof IMember) {
-					IMember member = (IMember) firstElement;
-					int mtype = member.getElementType();
-					if (mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
-						// remove line breakpoint if present first
-						if (selection instanceof ITextSelection) {
-							ITextSelection ts = (ITextSelection) selection;
-
-							CompilationUnit unit = BreakpointToggleUtils.parseCompilationUnit(BreakpointToggleUtils.getTextEditor(part));
-							ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
-							unit.accept(loc);
-							if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
-								return true;
-							} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
-								return false;
-							} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
-								return true;
-							}
-						}
-					}
-
-					if (member.getElementType() == IJavaElement.TYPE) {
-						return false;
-					}
-				}
-			}
-			return super.canPerformAction(target, selection, part);
-		}
-		catch (CoreException e) {
-			return false;
-		}
+		return super.canPerformAction(target, selection, part);
 	}
 
 	/*

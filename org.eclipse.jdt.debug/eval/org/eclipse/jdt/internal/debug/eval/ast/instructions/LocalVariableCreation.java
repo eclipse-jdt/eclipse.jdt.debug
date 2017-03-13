@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdi.internal.PrimitiveTypeImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
@@ -103,7 +104,9 @@ public class LocalVariableCreation extends CompoundInstruction {
 		}
 		IVariable var = createInternalVariable(fName, type);
 		if (fHasInitializer) {
-			var.setValue(popValue());
+			Object value = popValue();
+			if (value instanceof IValue)
+				var.setValue((IValue) value);
 		}
 	}
 

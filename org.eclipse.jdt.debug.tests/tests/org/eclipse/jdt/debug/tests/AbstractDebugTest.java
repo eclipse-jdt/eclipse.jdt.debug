@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -582,7 +583,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @throws Exception
 	 * @since 3.8
 	 */
-	void assertWelcomeScreenClosed() throws Exception {
+	protected final void assertWelcomeScreenClosed() throws Exception {
 		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
 			final IWorkbench wb = PlatformUI.getWorkbench();
 			if(wb != null) {
@@ -844,16 +845,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject createJavaProjectClone(String name, String contentpath, String ee, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
         if (pro.exists() && delete) {
-        	try {
-        		pro.delete(true, true, null);
-        	}
-        	catch(Exception e) {}
+			pro.delete(true, true, null);
+			TestUtil.waitForJobs(300, TimeUnit.MINUTES.toMillis(3));
+			TestUtil.runEventLoop();
         }
         // create project and import source
         IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
+		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
+
         JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR);
+		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
+
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, jp.getPath(), null);
+
+		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
 
         // add the EE library
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
@@ -869,6 +878,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         if (!folder.exists()) {
         	folder.create(true, true, null);
         }
+		TestUtil.waitForJobs(300, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
         return jp;
 	}
 	
@@ -885,15 +896,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IProject createProjectClone(String name, String contentpath, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
         if (pro.exists() && delete) {
-        	try {
-        		pro.delete(true, true, null);
-        	}
-        	catch(Exception e) {}
+			pro.delete(true, true, null);
+			TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+			TestUtil.runEventLoop();
         }
         // create project and import source
         IProject pj = JavaProjectHelper.createProject(name);
+		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
+
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, pj.getFullPath(), null);
+		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.runEventLoop();
         return pj;
 	}
 	
@@ -2471,6 +2486,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				tryAgain = false;
 			} catch (TestAgainException e) {
 				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				TestUtil.cleanUp();
 				DebugPlugin.log(status);
 				if (attempts > 5) {
 					tryAgain = false;
