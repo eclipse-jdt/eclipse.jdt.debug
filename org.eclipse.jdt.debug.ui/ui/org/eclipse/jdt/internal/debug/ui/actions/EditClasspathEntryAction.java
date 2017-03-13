@@ -62,7 +62,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 				IRuntimeClasspathEntry[] wrappers = new IRuntimeClasspathEntry[replacements.length];
 				List<IRuntimeClasspathEntry> list = getEntriesAsList();
 				int index = 0;
-				for (int i = 0; i < list.size(); i++) {
+				for (int i = 0; i < list.size() && index < original.length && index < replacements.length; i++) {
 					Object element = list.get(i);
 					if (element == original[index]) {
 						wrappers[index] = new ClasspathEntry(replacements[index], parents[index]);
