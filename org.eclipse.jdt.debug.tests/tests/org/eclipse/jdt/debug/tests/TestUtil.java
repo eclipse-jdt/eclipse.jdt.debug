@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
@@ -39,7 +42,13 @@ public class TestUtil {
 			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
 		}
 		timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(1));
-		Assert.assertFalse("Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs(), timedOut);
+
+		if (timedOut) {
+			// Don't fail here, just log. See 506401.
+			String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs();
+			Status status = new Status(IStatus.ERROR, JavaTestPlugin.getDefault().getBundle().getSymbolicName(), message);
+			JavaTestPlugin.getDefault().getLog().log(status);
+		}
 
 		// Wait for any pending *syncExec calls to finish
 		runEventLoop();
