@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,13 +121,13 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		
 		fClasspathViewer = new RuntimeClasspathViewer(comp);
 		fClasspathViewer.addEntriesChangedListener(this);
-		fClasspathViewer.getControl().setFont(font);
-		fClasspathViewer.setLabelProvider(new ClasspathLabelProvider());
-		fClasspathViewer.setContentProvider(new ClasspathContentProvider(this));
+		fClasspathViewer.getTreeViewer().getControl().setFont(font);
+		fClasspathViewer.getTreeViewer().setLabelProvider(new ClasspathLabelProvider());
+		fClasspathViewer.getTreeViewer().setContentProvider(new ClasspathContentProvider(this));
 		if (!isShowBootpath()) {
-			fClasspathViewer.addFilter(new BootpathFilter());
+			fClasspathViewer.getTreeViewer().addFilter(new BootpathFilter());
 		}
-	
+
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
 		pathButtonLayout.marginHeight = 0;
@@ -208,7 +208,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		refresh(configuration);
-		fClasspathViewer.expandToLevel(2);
+		fClasspathViewer.getTreeViewer().expandToLevel(2);
 	}
 	
 	/* (non-Javadoc)
@@ -224,7 +224,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 					return;
 				}
 			}
-			fClasspathViewer.refresh();
+			fClasspathViewer.getTreeViewer().refresh();
 		} catch (CoreException e) {
 		}
 	}
@@ -235,23 +235,8 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * @param configuration the configuration
 	 */
 	private void refresh(ILaunchConfiguration configuration) {
-		boolean useDefault = true;
 		setErrorMessage(null);
-		try {
-			useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		
-		if (configuration == getLaunchConfiguration()) {
-			// no need to update if an explicit path is being used and this setting
-			// has not changed (and viewing the same config as last time)
-			if (!useDefault) {
-				setDirty(false);
-				return;			
-			}
-		}
-		
+
 		setLaunchConfiguration(configuration);
 		try {
 			createClasspathModel(configuration);
@@ -260,7 +245,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		}
 		
 		fClasspathViewer.setLaunchConfiguration(configuration);
-		fClasspathViewer.setInput(fModel);
+		fClasspathViewer.getTreeViewer().setInput(fModel);
 		setDirty(false);
 	}
 	

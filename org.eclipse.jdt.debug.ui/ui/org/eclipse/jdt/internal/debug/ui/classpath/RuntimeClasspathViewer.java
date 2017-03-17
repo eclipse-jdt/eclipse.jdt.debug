@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -27,8 +29,8 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -37,14 +39,16 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A viewer that displays and manipulates runtime classpath entries.
  */
-public class RuntimeClasspathViewer extends TreeViewer implements IClasspathViewer {
+public class RuntimeClasspathViewer implements IClasspathViewer {
 		
 	/**
 	 * Entry changed listeners
@@ -70,31 +74,86 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 
 		}
 	};
+
+	private static class RuntimeClasspathFilteredTree extends FilteredTree {
+
+		private boolean isFiltering;
+
+		private RuntimeClasspathFilteredTree(Composite parent, PatternFilter filter) {
+			super(parent, 0, filter, true);
+		}
+
+		private boolean hasFilterTextEntered() {
+			return isFiltering;
+		}
+
+		/**
+		 * Called by modify listener -> implicit change listener.
+		 */
+		@Override
+		protected void textChanged() {
+
+			super.textChanged();
+
+			final String filterString = getFilterString();
+			if (null != filterString) {
+				// REVIEW: There are several different ways used to check for empty filter texts:
+				// comparing with "", comparing with IInternalDebugCoreConstants.EMPTY_STRING and checking size of trimmed value.
+				isFiltering = !filterString.trim().isEmpty();
+			} else {
+				isFiltering = false;
+			}
+		}
+
+		@Override
+		protected WorkbenchJob doCreateRefreshJob() {
+			final WorkbenchJob job = super.doCreateRefreshJob();
+
+			return new WorkbenchJob("Classpath filter refresh") { //$NON-NLS-1$
+
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					final IStatus status = job.runInUIThread(monitor);
+
+					if (!isFiltering) {
+						getViewer().expandToLevel(2);
+					}
+
+					return status;
+				}
+			};
+		}
+	}
+
+	private final RuntimeClasspathFilteredTree fTree;
 		
+	public TreeViewer getTreeViewer() {
+		return fTree.getViewer();
+	}
+
 	/**
 	 * Creates a runtime classpath viewer with the given parent.
 	 *
 	 * @param parent the parent control
 	 */
 	public RuntimeClasspathViewer(Composite parent) {
-		super(parent);
 		
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.heightHint = getTree().getItemHeight();
-		getTree().setLayoutData(data);
+		final PatternFilter filter = new PatternFilter();
+		filter.setIncludeLeadingWildcard(true);
+		fTree = new RuntimeClasspathFilteredTree(parent, filter);
 		
-		getTree().addKeyListener(new KeyAdapter() {
+		getTreeViewer().getTree().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
-				if (updateSelection(RuntimeClasspathAction.REMOVE, (IStructuredSelection)getSelection()) && event.character == SWT.DEL && event.stateMask == 0) {
-					List<?> selection= getSelectionFromWidget();
-					getClasspathContentProvider().removeAll(selection);
+				if (updateSelection(RuntimeClasspathAction.REMOVE, (IStructuredSelection) getSelection()) && event.character == SWT.DEL
+						&& event.stateMask == 0) {
+					getClasspathContentProvider().removeAll(((IStructuredSelection) getSelectedEntries()).toList());
 					notifyChanged();
 				}
 			}
 		});
-		getTree().addDisposeListener(new DisposeListener() {
+
+		fTree.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
@@ -190,8 +249,8 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 * @param configuration the backing {@link ILaunchConfiguration}
 	 */
 	public void setLaunchConfiguration(ILaunchConfiguration configuration) {
-		if (getLabelProvider() != null) {
-			((ClasspathLabelProvider)getLabelProvider()).setLaunchConfiguration(configuration);
+		if (getTreeViewer().getLabelProvider() != null) {
+			((ClasspathLabelProvider) getTreeViewer().getLabelProvider()).setLaunchConfiguration(configuration);
 		}
 	}
 	
@@ -242,11 +301,11 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 */
 	@Override
 	public Shell getShell() {
-		return getControl().getShell();
+		return getTreeViewer().getControl().getShell();
 	}
 	
 	private ClasspathContentProvider getClasspathContentProvider() {
-		return (ClasspathContentProvider)super.getContentProvider();
+		return (ClasspathContentProvider) getTreeViewer().getContentProvider();
 	}
 
 	/* (non-Javadoc)
@@ -268,8 +327,11 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 					}
 				}
 				return selection.size() > 0;
+			case RuntimeClasspathAction.MOVE:
+				if (fTree.hasFilterTextEntered()) {
+					return false;
+				}
 			case RuntimeClasspathAction.REMOVE :
-			case RuntimeClasspathAction.MOVE :
 				selected= selection.iterator();
 				while (selected.hasNext()) {
 					IClasspathEntry entry = selected.next();
@@ -303,4 +365,30 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		
 		return new StructuredSelection(entries);
 	}
+
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		getTreeViewer().addSelectionChangedListener(listener);
+	}
+
+	@Override
+	public ISelection getSelection() {
+		return getTreeViewer().getSelection();
+	}
+
+	@Override
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		getTreeViewer().removeSelectionChangedListener(listener);
+	}
+
+	@Override
+	public void setSelection(ISelection selection) {
+		getTreeViewer().setSelection(selection);
+	}
+
+	@Override
+	public void refresh(Object entry) {
+		getTreeViewer().refresh();
+	}
+
 }
