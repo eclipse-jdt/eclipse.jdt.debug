@@ -116,6 +116,7 @@ public class HcrTests extends AbstractDebugTest {
 			cu.commitWorkingCopy(true, null);
 			waitForBuild();
 		}
+		super.tearDown();
 	}	
 
 	public void testSimpleHcr() throws Exception {

@@ -12,7 +12,6 @@ package org.eclipse.jdt.debug.tests;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -27,7 +26,7 @@ public class TestUtil {
 	 * Call this in the tearDown method of every test to clean up state that can
 	 * otherwise leak through SWT between tests.
 	 */
-	public static void cleanUp() {
+	public static void cleanUp(String owner) {
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
 
@@ -36,18 +35,12 @@ public class TestUtil {
 
 		// Wait for any outstanding jobs to finish. Protect against deadlock by
 		// terminating the wait after a timeout.
-		boolean timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(2));
+		boolean timedOut = waitForJobs(owner, 10, 10000);
 		if (timedOut) {
 			// We don't expect any extra jobs run during the test: try to cancel them
+			log(IStatus.INFO, owner, "Trying to cancel running jobs: " + getRunningOrWaitingJobs(null));
 			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
-		}
-		timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(1));
-
-		if (timedOut) {
-			// Don't fail here, just log. See 506401.
-			String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs();
-			Status status = new Status(IStatus.ERROR, JavaTestPlugin.getDefault().getBundle().getSymbolicName(), message);
-			JavaTestPlugin.getDefault().getLog().log(status);
+			waitForJobs(owner, 10, 1000);
 		}
 
 		// Wait for any pending *syncExec calls to finish
@@ -55,6 +48,16 @@ public class TestUtil {
 
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+	}
+
+	public static void log(int severity, String owner, String message, Throwable... optionalError) {
+		message = "[" + owner + "] " + message;
+		Throwable error = null;
+		if (optionalError != null && optionalError.length > 0) {
+			error = optionalError[0];
+		}
+		Status status = new Status(severity, JavaTestPlugin.getDefault().getBundle().getSymbolicName(), message, error);
+		JavaTestPlugin.getDefault().getLog().log(status);
 	}
 
 	/**
@@ -71,19 +74,18 @@ public class TestUtil {
 	}
 
 	/**
-	 * Utility for waiting until the execution of jobs of any family has
-	 * finished or timeout is reached. If no jobs are running, the method waits
-	 * given minimum wait time. While this method is waiting for jobs, UI events
-	 * are processed.
+	 * Utility for waiting until the execution of jobs of any family has finished or timeout is reached. If no jobs are running, the method waits
+	 * given minimum wait time. While this method is waiting for jobs, UI events are processed.
 	 *
+	 * @param owner
+	 *            name of the caller which will be logged as prefix if the wait times out
 	 * @param minTimeMs
 	 *            minimum wait time in milliseconds
 	 * @param maxTimeMs
 	 *            maximum wait time in milliseconds
-	 * @return true if the method timed out, false if all the jobs terminated
-	 *         before the timeout
+	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
-	public static boolean waitForJobs(long minTimeMs, long maxTimeMs) {
+	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
@@ -98,6 +100,8 @@ public class TestUtil {
 		}
 		while (!Job.getJobManager().isIdle()) {
 			if (System.currentTimeMillis() - start >= maxTimeMs) {
+				String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs();
+				log(IStatus.ERROR, owner, message);
 				return true;
 			}
 			runEventLoop();

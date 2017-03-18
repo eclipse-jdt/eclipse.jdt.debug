@@ -479,12 +479,12 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		manager.removeValueVariableListener(this);
 		fAdded = null;
 		fChanged = null;
 		fRemoved = null;
+		super.tearDown();
 	}
 
 	/* (non-Javadoc)

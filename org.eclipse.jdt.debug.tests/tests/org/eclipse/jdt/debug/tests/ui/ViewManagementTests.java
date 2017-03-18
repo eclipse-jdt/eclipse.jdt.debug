@@ -189,13 +189,13 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, switch_on_suspend);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, switch_on_launch);
 		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, debug_perspectives);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, user_view_bindings); 	
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate_debug_view);
+		super.tearDown();
 	}
 
 	/**

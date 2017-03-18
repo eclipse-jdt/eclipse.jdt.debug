@@ -62,9 +62,9 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 	
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		deleteProject("PathTests1");
 		deleteProject("PathTests2");
+		super.tearDown();
 	}
 	
 	private IJavaProject createProject(String name) throws Exception {

@@ -68,7 +68,6 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
     
     @Override
 	protected void tearDown() throws Exception {
-        super.tearDown();
         // delete references and gc to free memory.
         fConsole = null;
         fLines = null;
@@ -76,6 +75,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
         fLinesRead = null;
         
         System.gc();
+		super.tearDown();
     }   
     
     

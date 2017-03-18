@@ -17,6 +17,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -75,8 +76,9 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 
 	@Override
 	protected void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "setUp");
 		assertWelcomeScreenClosed();
-		TestUtil.cleanUp();
+		TestUtil.cleanUp(getName());
 		IPath testrpath = new Path("testresources");
 		IProject jarProject = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
 
@@ -110,7 +112,6 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		if (fgJarProject.exists()) {
 			fgJarProject.getProject().delete(true, null);
 		}
-		TestUtil.cleanUp();
 		super.tearDown();
 	}
 

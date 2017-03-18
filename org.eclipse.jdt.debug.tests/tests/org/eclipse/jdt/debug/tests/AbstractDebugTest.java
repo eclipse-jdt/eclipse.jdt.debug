@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -58,6 +57,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
@@ -126,6 +126,7 @@ import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.core.LiteralTests17;
 import org.eclipse.jdt.debug.tests.refactoring.MemberParser;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
@@ -248,12 +249,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		SafeRunnable.setIgnoreErrors(true);
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "setUp");
 		super.setUp();
 		setPreferences();
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ONE_FOUR_PROJECT_NAME);
@@ -856,24 +854,25 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaProject createJavaProjectClone(String name, String contentpath, String ee, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		String owner = "Creating project: " + name;
         if (pro.exists() && delete) {
 			pro.delete(true, true, null);
-			TestUtil.waitForJobs(300, TimeUnit.MINUTES.toMillis(3));
+			TestUtil.waitForJobs(owner, 100, 10000);
 			TestUtil.runEventLoop();
         }
         // create project and import source
         IJavaProject jp = JavaProjectHelper.createJavaProject(name, JavaProjectHelper.BIN_DIR);
-		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
 
         JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR);
-		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
 
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, jp.getPath(), null);
 
-		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
 
         // add the EE library
@@ -890,7 +889,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         if (!folder.exists()) {
         	folder.create(true, true, null);
         }
-		TestUtil.waitForJobs(300, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
         return jp;
 	}
@@ -907,19 +906,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IProject createProjectClone(String name, String contentpath, boolean delete) throws Exception {
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		String owner = "Creating project: " + name;
         if (pro.exists() && delete) {
 			pro.delete(true, true, null);
-			TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+			TestUtil.waitForJobs(owner, 100, 10000);
 			TestUtil.runEventLoop();
         }
         // create project and import source
         IProject pj = JavaProjectHelper.createProject(name);
-		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
 
         File root = JavaTestPlugin.getDefault().getFileInPlugin(new Path(contentpath));
         JavaProjectHelper.importFilesFromDirectory(root, pj.getFullPath(), null);
-		TestUtil.waitForJobs(100, TimeUnit.MINUTES.toMillis(3));
+		TestUtil.waitForJobs(owner, 100, 10000);
 		TestUtil.runEventLoop();
         return pj;
 	}
@@ -2497,12 +2497,29 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				super.runBare();
 				tryAgain = false;
 			} catch (TestAgainException e) {
-				Status status = new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", "Test failed attempt " + attempts + ". Re-testing: " + this.getName(), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				TestUtil.cleanUp();
-				DebugPlugin.log(status);
+				TestUtil.log(IStatus.ERROR, getName(), "Test failed attempt " + attempts + ". Re-testing.", e);
+				TestUtil.cleanUp(getName());
 				if (attempts > 5) {
 					tryAgain = false;
 				}
+			}
+		}
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "tearDown");
+		shutdownDebugTargets();
+		TestUtil.cleanUp(getName());
+		super.tearDown();
+	}
+
+	protected void shutdownDebugTargets() {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		IDebugTarget[] targets = launchManager.getDebugTargets();
+		for (IDebugTarget target : targets) {
+			if (target instanceof JDIDebugTarget) {
+				((JDIDebugTarget) target).shutdown();
 			}
 		}
 	}
