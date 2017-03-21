@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 88939
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
@@ -95,6 +96,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * Constructor
 	 */
 	public JavaClasspathTab() {
+		super();
 		setHelpContextId(IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB);
 	}
 
@@ -497,5 +499,17 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 */
 	protected ClasspathModel getModel() {
 		return fModel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab#initializeAttributes()
+	 * @since 3.9
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, LauncherMessages.JavaClasspathTab_AttributeLabel_DefaultClasspath);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, LauncherMessages.JavaClasspathTab_AttributeLabel_Classpath);
 	}
 }

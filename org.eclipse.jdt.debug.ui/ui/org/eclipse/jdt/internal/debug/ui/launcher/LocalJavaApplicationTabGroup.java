@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
@@ -20,6 +21,7 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.ProtoypeTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
@@ -59,7 +61,8 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 				tab,
 			new SourceLookupTab(),
 			new EnvironmentTab(),
-			new CommonTab()
+			new CommonTab(),
+			new ProtoypeTab()
 		};
 		setTabs(tabs);
 	}

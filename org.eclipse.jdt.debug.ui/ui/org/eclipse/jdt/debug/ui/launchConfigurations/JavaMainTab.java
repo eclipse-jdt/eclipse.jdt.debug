@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -286,6 +288,20 @@ public class JavaMainTab extends SharedJavaMainTab {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		}
 		initializeMainTypeAndName(javaElement, config);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.SharedJavaMainTab#initializeAttributes()
+	 * @since 3.9
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, LauncherMessages.SharedJavaMainTab_AttributeLabel_MainTypeName);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, LauncherMessages.JavaMainTab_AttributeLabel_StopInMain);
+		getAttributesLabelsForPrototype().put(JavaMainTab.ATTR_INCLUDE_EXTERNAL_JARS, LauncherMessages.JavaMainTab_AttributeLabel_IncludeExternalJars);
+		getAttributesLabelsForPrototype().put(JavaMainTab.ATTR_CONSIDER_INHERITED_MAIN, LauncherMessages.JavaMainTab_AttributeLabel_InheritedMain);
 	}
 
 	/**

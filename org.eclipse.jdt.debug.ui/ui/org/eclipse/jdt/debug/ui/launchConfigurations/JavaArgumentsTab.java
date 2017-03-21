@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *      - Bug 214696 Expose WorkingDirectoryBlock as API
  *      - Bug 221973 Make WorkingDirectoryBlock from JDT a Debug API class
+ *      Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
@@ -70,6 +71,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	public JavaArgumentsTab() {
+		super();
 		fVMArgumentsBlock = createVMArgsBlock();
 		fWorkingDirectoryBlock = createWorkingDirBlock();
 	}
@@ -317,6 +319,20 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab#initializeAttributes()
+	 * @since 3.9
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LauncherMessages.JavaArgumentsTab_AttributeLabel_ProgramArguments);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, LauncherMessages.JavaArgumentsTab_AttributeLabel_VMArguments);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, LauncherMessages.JavaArgumentsTab_AttributeLabel_UseAtStart);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, LauncherMessages.JavaArgumentsTab_AttributeLabel_WorkingDirectory);
 	}
 }
 

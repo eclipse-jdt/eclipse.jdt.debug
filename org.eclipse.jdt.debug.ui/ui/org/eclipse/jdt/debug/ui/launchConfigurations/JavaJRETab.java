@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
@@ -100,6 +101,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	 * Constructor
 	 */
 	public JavaJRETab() {
+		super();
 		setHelpContextId(IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 	}
 
@@ -673,5 +675,17 @@ public class JavaJRETab extends JavaLaunchTab {
 			return true;
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab#initializeAttributes()
+	 * @since 3.9
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, LauncherMessages.JavaJRETab_AttributeLabel_JREContainerPath);
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, LauncherMessages.JavaJRETab_AttributeLabel_VMAttributes);
 	}
 }

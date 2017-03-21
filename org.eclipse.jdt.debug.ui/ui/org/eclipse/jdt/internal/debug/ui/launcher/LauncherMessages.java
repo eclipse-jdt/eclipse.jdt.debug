@@ -9,6 +9,7 @@
  *  IBM - Initial API and implementation
  *  BEA - Daniel R Somerfield - Bug 88939
  *  Remy Chi Jian Suen - Bug 221973
+ *  Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
@@ -22,6 +23,10 @@ public class LauncherMessages extends NLS {
 	public static String JavaArgumentsTab__Program_arguments__5;
 	public static String JavaArgumentsTab_Exception_occurred_reading_configuration___15;
 	public static String JavaArgumentsTab_VM_ar_guments__6;
+	public static String JavaArgumentsTab_AttributeLabel_ProgramArguments;
+	public static String JavaArgumentsTab_AttributeLabel_VMArguments;
+	public static String JavaArgumentsTab_AttributeLabel_UseAtStart;
+	public static String JavaArgumentsTab_AttributeLabel_WorkingDirectory;
 
 	public static String JavaClasspathTab_1;
 
@@ -33,6 +38,9 @@ public class LauncherMessages extends NLS {
 
 	public static String JavaJRETab_3;
 	public static String JavaJRETab_4;
+
+	public static String JavaJRETab_AttributeLabel_JREContainerPath;
+	public static String JavaJRETab_AttributeLabel_VMAttributes;
 
 	public static String MainMethodLabelProvider_0;
 	public static String RuntimeClasspathAdvancedDialog_6;
@@ -75,6 +83,12 @@ public class LauncherMessages extends NLS {
 	public static String JavaMainTab_22;
 	public static String JavaMainTab_missing_project;
 
+	public static String JavaLauncherTab_AttributeLabel_ProjectName;
+	public static String SharedJavaMainTab_AttributeLabel_MainTypeName;
+	public static String JavaMainTab_AttributeLabel_StopInMain;
+	public static String JavaMainTab_AttributeLabel_IncludeExternalJars;
+	public static String JavaMainTab_AttributeLabel_InheritedMain;
+
 	public static String JavaUISourceLocator_askagain_message;
 	public static String JavaUISourceLocator_selectprojects_message;
 	public static String JavaUISourceLocator_selectprojects_title;
@@ -93,6 +107,9 @@ public class LauncherMessages extends NLS {
 	public static String JavaClasspathTab_0;
 	public static String JavaClasspathTab_Unable_to_save_classpath_1;
 	public static String JavaClasspathTab_Invalid_runtime_classpath_1;
+
+	public static String JavaClasspathTab_AttributeLabel_DefaultClasspath;
+	public static String JavaClasspathTab_AttributeLabel_Classpath;
 
 	public static String JavaDependenciesTab_0;
 	public static String JavaDependenciesTab_Dependencies_3;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *******************************************************************************/
 
 package org.eclipse.jdt.internal.debug.ui.launcher;
@@ -147,5 +148,18 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		}
 		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
 		fMainText.setText(mainTypeName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchTab#initializeAttributes()
+	 * 
+	 * @since 3.9
+	 */
+	@Override
+	protected void initializeAttributes() {
+		super.initializeAttributes();
+		getAttributesLabelsForPrototype().put(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, LauncherMessages.SharedJavaMainTab_AttributeLabel_MainTypeName);
 	}
 }
