@@ -11,7 +11,10 @@
 package org.eclipse.jdt.debug.tests;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,21 +33,15 @@ public class TestUtil {
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
 
-		// Wait for any pending *syncExec calls to finish
-		TestUtil.runEventLoop();
-
 		// Wait for any outstanding jobs to finish. Protect against deadlock by
 		// terminating the wait after a timeout.
-		boolean timedOut = waitForJobs(owner, 10, 10000);
+		boolean timedOut = waitForJobs(owner, 5, 5000);
 		if (timedOut) {
 			// We don't expect any extra jobs run during the test: try to cancel them
 			log(IStatus.INFO, owner, "Trying to cancel running jobs: " + getRunningOrWaitingJobs(null));
 			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
-			waitForJobs(owner, 10, 1000);
+			waitForJobs(owner, 5, 1000);
 		}
-
-		// Wait for any pending *syncExec calls to finish
-		runEventLoop();
 
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
@@ -93,34 +90,51 @@ public class TestUtil {
 		while (System.currentTimeMillis() - start < minTimeMs) {
 			runEventLoop();
 			try {
-				Thread.sleep(100);
+				Thread.sleep(Math.min(10, minTimeMs));
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
 		}
 		while (!Job.getJobManager().isIdle()) {
+			List<Job> jobs = getRunningOrWaitingJobs((Object) null);
+
+			if (!Collections.disjoint(runningJobs, jobs)) {
+				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
+				dumpRunningOrWaitingJobs(owner, jobs);
+				return true;
+			}
+
 			if (System.currentTimeMillis() - start >= maxTimeMs) {
-				String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs();
-				log(IStatus.ERROR, owner, message);
+				dumpRunningOrWaitingJobs(owner, jobs);
 				return true;
 			}
 			runEventLoop();
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// Uninterruptable
 			}
 		}
+		runningJobs.clear();
 		return false;
 	}
 
-	private static String dumpRunningOrWaitingJobs() {
-		List<Job> jobs = getRunningOrWaitingJobs((Object) null);
+	static Set<Job> runningJobs = new LinkedHashSet<>();
+
+	private static void dumpRunningOrWaitingJobs(String owner, List<Job> jobs) {
+		String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs(jobs);
+		log(IStatus.ERROR, owner, message);
+	}
+
+	private static String dumpRunningOrWaitingJobs(List<Job> jobs) {
 		if (jobs.isEmpty()) {
 			return "";
 		}
+		// clear "old" running jobs, we only remember most recent
+		runningJobs.clear();
 		StringBuilder sb = new StringBuilder();
 		for (Job job : jobs) {
+			runningJobs.add(job);
 			sb.append("'").append(job.getName()).append("'/");
 			sb.append(job.getClass().getName());
 			sb.append(", ");
