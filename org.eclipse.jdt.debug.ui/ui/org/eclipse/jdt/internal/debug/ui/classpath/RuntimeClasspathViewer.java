@@ -192,6 +192,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		getClasspathContentProvider().setRefreshEnabled(false);
@@ -275,6 +276,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		IClasspathEntry[] entries= getClasspathContentProvider().getBootstrapClasspathEntries();
