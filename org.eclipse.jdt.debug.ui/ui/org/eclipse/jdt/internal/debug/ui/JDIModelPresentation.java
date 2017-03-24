@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -704,7 +704,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getDebugElementImage(item);
 			}
 			if (item instanceof IJavaValue) {
-				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PUBLIC);
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_FIELD_PUBLIC);
 			}
 			if (item instanceof IExpression) {
 				return getExpressionImage(item);
@@ -1092,13 +1092,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_LOCAL_VARIABLE);
 				}
 				if (javaVariable.isPublic()) {
-					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PUBLIC);
+					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_FIELD_PUBLIC);
 				}
 				if (javaVariable.isProtected()) {
-					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PROTECTED);
+					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_FIELD_PROTECTED);
 				}
 				if (javaVariable.isPrivate()) {
-					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PRIVATE);
+					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_FIELD_PRIVATE);
 				}
 			} catch (DebugException e) {
 			    // no need to log errors - elements may no longer exist by the time we render them
@@ -1112,7 +1112,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			return JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_METHOD_RESULT);
 		}
-		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);
+		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_FIELD_DEFAULT);
 	}
 	
 	private int computeAdornmentFlags(IAdaptable element) {
