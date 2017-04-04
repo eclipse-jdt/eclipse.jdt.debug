@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
@@ -266,8 +268,6 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		IJavaDebugContentAssistContext context = null;
 		if (type == null || breakpoint == null) {
 			context = new TypeContext(null, -1);
-		} else if (breakpoint instanceof IJavaWatchpoint) {
-			context = new TypeContext(type, 0);
 		} else {
 			String source = null;
 			ICompilationUnit compilationUnit = type.getCompilationUnit();
@@ -280,13 +280,33 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 					source = classFile.getSource();
 				}
 			}
-			int lineNumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 			int position= -1;
-			if (source != null && lineNumber != -1) {
-				try {
-					position = new Document(source).getLineOffset(lineNumber - 1);
-				} 
-				catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
+			if (breakpoint instanceof IJavaWatchpoint) {
+				IField[] fields = type.getFields();
+				// Taking first field
+				ISourceRange sourceRange = fields[0].getNameRange();
+				position = sourceRange.getOffset();
+				if (source != null && position != -1) {
+					try {
+						// to get offset of the first character of line in which field is defined
+						int lineNumber = new Document(source).getLineOfOffset(position);
+						position = new Document(source).getLineOffset(lineNumber);
+					}
+					catch (BadLocationException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+				}
+
+			} else {
+				int lineNumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
+				if (source != null && lineNumber != -1) {
+					try {
+						position = new Document(source).getLineOffset(lineNumber - 1);
+					}
+					catch (BadLocationException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+				}
 			}
 			context = new TypeContext(type, position);
 		}
