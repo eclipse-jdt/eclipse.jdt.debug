@@ -293,7 +293,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 						position = new Document(source).getLineOffset(lineNumber);
 					}
 					catch (BadLocationException e) {
-						JDIDebugUIPlugin.log(e);
+						// ignore, breakpoint line is out-of-date with the document
 					}
 				}
 
@@ -304,7 +304,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 						position = new Document(source).getLineOffset(lineNumber - 1);
 					}
 					catch (BadLocationException e) {
-						JDIDebugUIPlugin.log(e);
+						// ignore, breakpoint line is out-of-date with the document
 					}
 				}
 			}
