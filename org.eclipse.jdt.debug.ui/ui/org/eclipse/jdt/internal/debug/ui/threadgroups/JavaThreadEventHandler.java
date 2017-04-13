@@ -145,15 +145,12 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	    return fDisplayMonitors;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	protected int indexOf(IStackFrame frame) {
+		int index = 0;
 		if (isDisplayMonitors()) {
-			if (((IJavaDebugTarget)frame.getDebugTarget()).supportsMonitorInformation()) {
-				IJavaThread thread = (IJavaThread)frame.getThread();
-				int index = 0;
+			if (((IJavaDebugTarget) frame.getDebugTarget()).supportsMonitorInformation()) {
+				IJavaThread thread = (IJavaThread) frame.getThread();
 				try {
 					index = thread.getOwnedMonitors().length;
 					if (thread.getContendedMonitor() != null) {
@@ -161,12 +158,13 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					}
 				} catch (DebugException e) {
 				}
-				return index;
+			} else {
+				// make room for the 'no monitor info' element
+				index = 1;
 			}
-			// make room for the 'no monitor info' element
-			return 1;
 		}
-		return super.indexOf(frame);
+
+		return index + super.indexOf(frame);
 	}
 
 	/**
