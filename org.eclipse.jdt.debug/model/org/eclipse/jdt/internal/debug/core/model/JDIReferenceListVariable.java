@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVaria
  * information collected from the vm using the 'all references' utility in Java
  * 6.0. This variable uses a <code>JDIReferenceListValue</code> as its value.
  * Its children will be <code>JDIReferenceListEntryVariable</code>.
- * 
+ *
  * @since 3.3
  * @see JDIReferenceListValue
  * @see JDIReferenceListEntryVariable
@@ -28,7 +28,7 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable {
 	/**
 	 * Creates a new variable that stores a list of references, all referring to
 	 * the java object specified by the parameter root.
-	 * 
+	 *
 	 * @param name
 	 *            The name this variable should use
 	 * @param root
@@ -40,7 +40,7 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable
 	 * #equals(java.lang.Object)
@@ -62,7 +62,7 @@ public class JDIReferenceListVariable extends JDIPlaceholderVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVariable
 	 * #hashCode()

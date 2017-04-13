@@ -335,7 +335,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * names if there is no type corresponding type loaded in the given debug
 	 * target. This method allows us to avoid bogus HCR attempts and
 	 * "HCR failed" notifications.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target
 	 * @param resources
@@ -436,7 +436,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * reloading the given resources and then performing a step-into operation
 	 * on all threads which were affected by the class redefinition.</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param targets
 	 *            the targets in which to perform HCR
 	 * @param resources
@@ -447,9 +447,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 		// Check whether hot code replace is enabled
 		if (!Platform.getPreferencesService().getBoolean(
-				JDIDebugPlugin.getUniqueIdentifier(), 
-				JDIDebugPlugin.PREF_ENABLE_HCR, 
-				true, 
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugPlugin.PREF_ENABLE_HCR,
+				true,
 				null)) {
 			return; // disabled
 		}
@@ -556,9 +556,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Replaces the given types in the given J9 debug target. A fully qualified
 	 * name of each type must be supplied.
-	 * 
+	 *
 	 * Breakpoints are reinstalled automatically when the new types are loaded.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
@@ -587,7 +587,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				result = vm.classesHaveChanged(typeNames);
 			} catch (RuntimeException e) {
 				target.targetRequestFailed(
-						MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_exception_replacing_types, e.toString()), 
+						MessageFormat.format(JDIDebugHCRMessages.JavaHotCodeReplaceManager_exception_replacing_types, e.toString()),
 						e);
 			}
 			switch (result) {
@@ -613,7 +613,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/**
 	 * Replaces the given types in the given JDK-compliant debug target.
-	 * 
+	 *
 	 * This method is to be used for JDK hot code replace.
 	 */
 	private void redefineTypesJDK(JDIDebugTarget target, List<IResource> resources,
@@ -638,7 +638,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 							qualifiedNames,
 							MessageFormat.format(
 									JDIDebugHCRMessages.JavaHotCodeReplaceManager_hcr_unsupported_operation,
-									detail), 
+									detail),
 							exception);
 				} else {
 					redefineTypesFailedJDK(
@@ -692,7 +692,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/**
 	 * Error handling for JDK hot code replace.
-	 * 
+	 *
 	 * The given exception occurred when redefinition was attempted for the
 	 * given types.
 	 */
@@ -706,7 +706,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Returns a mapping of class files to the bytes that make up those class
 	 * files.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target to query
 	 * @param resources
@@ -746,7 +746,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * Return the listeners to notify for the given target. Target specific
 	 * listeners take precedence over generic listeners registered with the
 	 * debug model plug-in.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @return hot code replace listeners
@@ -796,7 +796,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Looks for the deepest affected stack frame in the stack and forces a drop
 	 * to frame. Does this for all of the active stack frames in the target.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target in which frames are to be dropped
 	 * @param replacedClassNames
@@ -827,7 +827,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Looks for the deepest affected stack frame in the stack and forces a drop
 	 * to frame. Does this for all of the active stack frames in the target.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target in which frames are to be dropped
 	 * @param replacedClassNames
@@ -947,10 +947,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 								.getProject();
 						delta = getDelta(compilationUnit,
 								getLastProjectBuildTime(project));
-						
+
 						String typeName = frame.getDeclaringTypeName();
 						typeName = typeName.replace('$', '.');
-						
+
 						if (!delta.hasChanged(typeName, frame.getName(),
 								frame.getSignature())) {
 							continue;
@@ -983,7 +983,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/**
 	 * Returns the delta object for the given compilation unit
-	 * 
+	 *
 	 * @param cu
 	 *            compilation unit
 	 * @param time
@@ -1197,9 +1197,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 								boolean hasBlockingErrors = false;
 								try {
 									if (!Platform.getPreferencesService().getBoolean(
-											JDIDebugPlugin.getUniqueIdentifier(), 
-											JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, 
-											true, 
+											JDIDebugPlugin.getUniqueIdentifier(),
+											JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS,
+											true,
 											null)) {
 										// If the user doesn't want to replace
 										// classfiles containing
@@ -1273,7 +1273,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		/**
 		 * Returns a collection of qualified type names corresponding to the
 		 * changed class files.
-		 * 
+		 *
 		 * @return List
 		 */
 		public List<String> getQualifiedNamesList() {
@@ -1283,7 +1283,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		/**
 		 * Returns the source file associated with the given type, or
 		 * <code>null</code> if no source file could be found.
-		 * 
+		 *
 		 * @param project
 		 *            the java project containing the classfile
 		 * @param qualifiedName
@@ -1355,7 +1355,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Begin listening for resource changes when a launch is registered with a
 	 * hot swap-able target.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
 	@Override
@@ -1384,7 +1384,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Begin listening for resource changes when a launch is registered with a
 	 * hot swap-able target.
-	 * 
+	 *
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	@Override
@@ -1394,7 +1394,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
 	 * .debug.core.DebugEvent[])
@@ -1442,7 +1442,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Adds the given target to the list of hot-swap-able targets. Has no effect
 	 * if the target is already registered.
-	 * 
+	 *
 	 * @param target
 	 *            a target that supports hot swap
 	 */
@@ -1455,7 +1455,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * Adds the given target to the list of non hot-swap-able targets. Has no
 	 * effect if the target is already registered.
-	 * 
+	 *
 	 * @param target
 	 *            a target that does not support hot swap
 	 */

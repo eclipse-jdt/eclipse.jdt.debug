@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/** JDWP Tag. */
@@ -212,7 +212,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 *         ways, such as from a local variable in a stack frame, or from a
 	 *         JNI global reference. Such non-object referrers are not returned
 	 *         by this method.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
@@ -381,7 +381,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 
 	/**
 	 * Invokes the specified static Method in the target VM.
-	 * 
+	 *
 	 * @return Returns a Value mirror of the invoked method's return value.
 	 */
 	@Override

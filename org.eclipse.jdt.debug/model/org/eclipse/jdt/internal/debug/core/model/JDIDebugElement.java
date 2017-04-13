@@ -42,7 +42,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 
 	/**
 	 * Creates a JDI debug element associated with the specified debug target.
-	 * 
+	 *
 	 * @param target
 	 *            The associated debug target
 	 */
@@ -101,7 +101,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Queues a debug event with the event dispatcher to be fired as an event
 	 * set when all event processing is complete.
-	 * 
+	 *
 	 * @param event
 	 *            the event to queue
 	 * @param set
@@ -118,7 +118,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Fires a debug event marking the SUSPEND of this element with the
 	 * associated detail.
-	 * 
+	 *
 	 * @param detail
 	 *            The int detail of the event
 	 * @see org.eclipse.debug.core.DebugEvent
@@ -132,7 +132,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Queues a debug event marking the SUSPEND of this element with the
 	 * associated detail.
-	 * 
+	 *
 	 * @param detail
 	 *            The int detail of the event
 	 * @param set
@@ -147,7 +147,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Throws a new debug exception with a status code of
 	 * <code>REQUEST_FAILED</code>.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -166,7 +166,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	 * <code>TARGET_REQUEST_FAILED</code> with the given underlying exception.
 	 * If the underlying exception is not a JDI exception, the original
 	 * exception is thrown.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -187,7 +187,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 
 	/**
 	 * Throws a new debug exception with the given status code.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -205,7 +205,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Throws a new debug exception with a status code of
 	 * <code>TARGET_REQUEST_FAILED</code>.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -223,7 +223,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	 * Throws a new debug exception with a status code of
 	 * <code>TARGET_REQUEST_FAILED</code> with the given underlying exception.
 	 * The underlying exception is an exception thrown by a JDI request.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -240,7 +240,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Throws a new debug exception with a status code of
 	 * <code>NOT_SUPPORTED</code>.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @throws DebugException
@@ -267,7 +267,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Logs the given exception if it is a JDI exception, otherwise throws the
 	 * runtime exception.
-	 * 
+	 *
 	 * @param e
 	 *            The internal runtime exception
 	 */
@@ -282,7 +282,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Logs a debug exception with the given message, with a status code of
 	 * <code>INTERNAL_ERROR</code>.
-	 * 
+	 *
 	 * @param message
 	 *            The internal error message
 	 */
@@ -294,7 +294,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 
 	/**
 	 * Returns the common "&lt;unknown&gt;" message.
-	 * 
+	 *
 	 * @return the unknown String
 	 */
 	protected String getUnknownMessage() {
@@ -303,7 +303,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 
 	/**
 	 * Returns this elements debug target as its implementation class.
-	 * 
+	 *
 	 * @return Java debug target
 	 */
 	public JDIDebugTarget getJavaDebugTarget() {
@@ -313,7 +313,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Returns the target VM associated with this element, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return target VM or <code>null</code> if none
 	 */
 	protected VirtualMachine getVM() {
@@ -323,7 +323,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	/**
 	 * Returns the underlying VM's event request manager, or <code>null</code>
 	 * if none (disconnected/terminated)
-	 * 
+	 *
 	 * @return event request manager or <code>null</code>
 	 */
 	public EventRequestManager getEventRequestManager() {
@@ -338,7 +338,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	 * Adds the given listener to this target's event dispatcher's table of
 	 * listeners for the specified event request. The listener will be notified
 	 * each time the event occurs.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to register
 	 * @param request
@@ -358,7 +358,7 @@ public abstract class JDIDebugElement extends DebugElement implements
 	 * listeners for the specifed event request. The listener will no longer be
 	 * notified when the event occurs. Listeners are responsible for deleting
 	 * the event request if desired.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 * @param request

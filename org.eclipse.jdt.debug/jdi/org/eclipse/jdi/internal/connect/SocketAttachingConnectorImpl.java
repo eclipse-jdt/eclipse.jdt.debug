@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,18 +53,18 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 
 		// Host name
 		StringArgumentImpl strArg = new StringArgumentImpl(
-				"hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$  
+				"hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$
 		strArg.setValue("localhost"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Port
 		IntegerArgumentImpl intArg = new IntegerArgumentImpl(
-				"port", ConnectMessages.SocketAttachingConnectorImpl_Port_number_to_which_to_attach_for_VM_connections_3, ConnectMessages.SocketAttachingConnectorImpl_Port_4, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$  
+				"port", ConnectMessages.SocketAttachingConnectorImpl_Port_number_to_which_to_attach_for_VM_connections_3, ConnectMessages.SocketAttachingConnectorImpl_Port_4, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 
 		// Timeout
 		IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl(
-				"timeout", ConnectMessages.SocketAttachingConnectorImpl_1, ConnectMessages.SocketAttachingConnectorImpl_2, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$  
+				"timeout", ConnectMessages.SocketAttachingConnectorImpl_1, ConnectMessages.SocketAttachingConnectorImpl_2, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
 		timeoutArg.setValue(0); // by default wait forever
 		arguments.put(timeoutArg.name(), timeoutArg);
 

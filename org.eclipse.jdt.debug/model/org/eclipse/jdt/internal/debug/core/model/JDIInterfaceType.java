@@ -43,7 +43,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getImplementors()
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSubInterfaces()
 	 */
 	@Override
@@ -109,7 +109,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSuperInterfaces()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaInterfaceType#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],

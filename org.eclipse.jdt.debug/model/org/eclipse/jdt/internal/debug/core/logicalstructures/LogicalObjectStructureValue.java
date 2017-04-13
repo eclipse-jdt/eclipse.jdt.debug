@@ -32,7 +32,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	/**
 	 * Constructs a proxy to the given object, with the given variables as
 	 * children.
-	 * 
+	 *
 	 * @param object
 	 *            original object
 	 * @param variables
@@ -46,7 +46,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, boolean)
@@ -61,7 +61,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
@@ -76,7 +76,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * boolean)
 	 */
@@ -88,7 +88,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -100,7 +100,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
 	 */
 	@Override
@@ -110,7 +110,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
 	@Override
@@ -120,7 +120,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
 	@Override
@@ -130,7 +130,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
 	@Override
@@ -160,7 +160,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
 	@Override
@@ -180,7 +180,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	@Override
@@ -190,7 +190,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -220,7 +220,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
 	@Override
@@ -230,7 +230,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
 	 */
 	@Override
@@ -240,7 +240,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
 	@Override
@@ -250,7 +250,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
 	 */
 	@Override
@@ -260,7 +260,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
 	@Override
@@ -270,7 +270,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
 	@Override
@@ -280,7 +280,7 @@ public class LogicalObjectStructureValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
 	@Override

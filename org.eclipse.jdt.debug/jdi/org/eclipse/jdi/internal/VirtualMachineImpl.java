@@ -57,7 +57,7 @@ import com.sun.jdi.request.EventRequestManager;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		org.eclipse.jdi.hcr.VirtualMachine, org.eclipse.jdi.VirtualMachine {
@@ -1236,7 +1236,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/**
 	 * Returns whether the JDWP version is greater than or equal to the
 	 * specified major/minor version numbers.
-	 * 
+	 *
 	 * @return whether the JDWP version is greater than or equal to the
 	 *         specified major/minor version numbers
 	 */
@@ -1494,7 +1494,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/**
 	 * Returns whether this VM is disconnected.
-	 * 
+	 *
 	 * @return whether this VM is disconnected
 	 */
 	public boolean isDisconnected() {
@@ -1503,7 +1503,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/**
 	 * Sets whether this VM is disconnected.
-	 * 
+	 *
 	 * @param disconected
 	 *            whether this VM is disconnected
 	 */
@@ -1593,7 +1593,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.VirtualMachine#canBeModified()
 	 */
 	@Override

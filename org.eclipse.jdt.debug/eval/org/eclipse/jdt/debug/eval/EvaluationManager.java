@@ -20,7 +20,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 /**
  * The evaluation manager provides factory methods for creating evaluation
  * engines.
- * 
+ *
  * @see org.eclipse.jdt.debug.eval.IEvaluationEngine
  * @see org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine
  * @see org.eclipse.jdt.debug.eval.IAstEvaluationEngine
@@ -41,7 +41,7 @@ public class EvaluationManager {
 	/**
 	 * Creates and returns a new evaluation engine that performs evaluations for
 	 * local Java applications by deploying class files.
-	 * 
+	 *
 	 * @param project
 	 *            the Java project in which expressions are to be compiled
 	 * @param target
@@ -61,7 +61,7 @@ public class EvaluationManager {
 	 * compiling expressions into abstract syntax trees (ASTs), and interpreting
 	 * the AST over a JDI connection. This type of evaluation engine is capable
 	 * of performing remote evaluations.
-	 * 
+	 *
 	 * @param project
 	 *            the Java project in which expressions are to be compiled
 	 * @param target

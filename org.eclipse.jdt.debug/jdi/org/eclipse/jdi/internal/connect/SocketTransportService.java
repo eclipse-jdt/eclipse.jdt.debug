@@ -65,7 +65,7 @@ public class SocketTransportService extends TransportService {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jdi.connect.spi.TransportService.ListenKey#address()
 		 */
 		@Override
@@ -79,7 +79,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.sun.jdi.connect.spi.TransportService#accept(com.sun.jdi.connect.spi
 	 * .TransportService.ListenKey, long, long)
@@ -107,7 +107,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.TransportService#attach(java.lang.String,
 	 * long, long)
 	 */
@@ -226,7 +226,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.TransportService#capabilities()
 	 */
 	@Override
@@ -236,7 +236,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.TransportService#description()
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.TransportService#name()
 	 */
 	@Override
@@ -256,7 +256,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.TransportService#startListening()
 	 */
 	@Override
@@ -267,7 +267,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.sun.jdi.connect.spi.TransportService#startListening(java.lang.String)
 	 */
@@ -298,7 +298,7 @@ public class SocketTransportService extends TransportService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.sun.jdi.connect.spi.TransportService#stopListening(com.sun.jdi.connect
 	 * .spi.TransportService.ListenKey)

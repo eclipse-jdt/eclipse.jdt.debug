@@ -39,7 +39,7 @@ import com.sun.jdi.Value;
 
 /**
  * Represents the value of a java variable
- * 
+ *
  * @see IJavaValue
  */
 public class JDIValue extends JDIDebugElement implements IJavaValue {
@@ -56,14 +56,14 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	 * When created for a logical structure we hold onto the original
 	 * non-logical value for purposes of equality. This way a logical
 	 * structure's children remain more stable in the variables view.
-	 * 
+	 *
 	 * This is <code>null</code> when not created for a logical structure.
 	 */
 	protected IJavaValue fLogicalParent;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param target
 	 *            debug target that this value belongs to
 	 * @param value
@@ -76,7 +76,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIDebugElement#getAdapter(
 	 * java.lang.Class)
@@ -230,7 +230,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * Returns a list of variables that are children of this value. The result
 	 * is cached.
-	 * 
+	 *
 	 * @return list of variable children
 	 * @throws DebugException
 	 */
@@ -383,7 +383,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
 	@Override
@@ -443,7 +443,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 
 	/**
 	 * Returns this value's underlying type.
-	 * 
+	 *
 	 * @return type
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -484,7 +484,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * Sets the value that is the original non-logical value that this child
 	 * value was computed for.
-	 * 
+	 *
 	 * @param logicalParent
 	 *            parent value
 	 */
@@ -495,7 +495,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 	/**
 	 * Returns the value that is the original non-logical value that this child
 	 * value was computed for or <code>null</code> if none
-	 * 
+	 *
 	 * @param logicalParent
 	 *            parent value or <code>null</code>
 	 */
@@ -505,7 +505,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
 	@Override

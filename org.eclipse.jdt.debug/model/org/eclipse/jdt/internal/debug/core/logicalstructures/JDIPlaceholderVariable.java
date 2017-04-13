@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
  * Encapsulates a name and a value. Used when a variable is required (such as
  * for the VariablesView), but we only have a value available (such as the
  * result of an evaluation for an object browser).
- * 
+ *
  * @since 3.0
  */
 public class JDIPlaceholderVariable extends PlatformObject implements
@@ -37,7 +37,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 	 * When created for a logical structure we hold onto the original
 	 * non-logical value for purposes of equality. This way a logical
 	 * structure's children remain more stable in the variables view.
-	 * 
+	 *
 	 * This is <code>null</code> when not created for a logical structure.
 	 */
 	private IJavaValue fLogicalParent;
@@ -50,7 +50,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 	/**
 	 * Constructs a place holder with the given name and value originating from
 	 * the specified logical parent.
-	 * 
+	 *
 	 * @param name
 	 *            variable name
 	 * @param value
@@ -67,7 +67,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getSignature()
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getJavaType()
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
 	@Override
@@ -137,7 +137,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPackagePrivate()
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isFinal()
 	 */
 	@Override
@@ -197,7 +197,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isStatic()
 	 */
 	@Override
@@ -207,7 +207,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isSynthetic()
 	 */
 	@Override
@@ -217,7 +217,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	@Override
@@ -227,7 +227,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	@Override
@@ -237,7 +237,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	@Override
@@ -247,7 +247,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String
 	 * )
@@ -258,7 +258,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.
 	 * debug.core.model.IValue)
@@ -269,7 +269,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IValueModification#supportsValueModification
 	 * ()
@@ -281,7 +281,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang
 	 * .String)
@@ -293,7 +293,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse
 	 * .debug.core.model.IValue)
@@ -305,7 +305,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -320,7 +320,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -330,7 +330,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 			if (fLogicalParent != null) {
 				return var.getName().equals(getName())
 						&& fLogicalParent.equals(var.fLogicalParent);
-			} 
+			}
 			return var.getName().equals(getName())
 					&& var.getValue().equals(getValue());
 		}
@@ -339,7 +339,7 @@ public class JDIPlaceholderVariable extends PlatformObject implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

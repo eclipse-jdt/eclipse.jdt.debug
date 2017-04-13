@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -65,14 +65,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * <code>true</code>, an uncaught exception of the associated type will
 	 * cause execution to suspend.
 	 */
-	protected static final String UNCAUGHT = "org.eclipse.jdt.debug.core.uncaught"; //$NON-NLS-1$	
+	protected static final String UNCAUGHT = "org.eclipse.jdt.debug.core.uncaught"; //$NON-NLS-1$
 	/**
 	 * Exception breakpoint attribute storing the checked value (value
 	 * <code>"org.eclipse.jdt.debug.core.checked"</code>). This attribute is
 	 * stored as a <code>boolean</code>, indicating whether an exception is a
 	 * checked exception.
 	 */
-	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$	
+	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$
 
 	/**
 	 * Exception breakpoint attribute storing the String value (value
@@ -81,7 +81,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * The filters are applied as inclusion or exclusion depending on
 	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String INCLUSION_FILTERS = "org.eclipse.jdt.debug.core.inclusion_filters"; //$NON-NLS-1$	
+	protected static final String INCLUSION_FILTERS = "org.eclipse.jdt.debug.core.inclusion_filters"; //$NON-NLS-1$
 
 	/**
 	 * Exception breakpoint attribute storing the String value (value
@@ -90,11 +90,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * The filters are applied as inclusion or exclusion depending on
 	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String EXCLUSION_FILTERS = "org.eclipse.jdt.debug.core.exclusion_filters"; //$NON-NLS-1$	
+	protected static final String EXCLUSION_FILTERS = "org.eclipse.jdt.debug.core.exclusion_filters"; //$NON-NLS-1$
 	/**
 	 * Allows the user to specify whether we should suspend if subclasses of the
 	 * specified exception are thrown/caught
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	protected static final String SUSPEND_ON_SUBCLASSES = "org.eclipse.jdt.debug.core.suspend_on_subclasses"; //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * type. Caught and uncaught specify where the exception should cause thread
 	 * suspensions - that is, in caught and/or uncaught locations. Checked
 	 * indicates if the given exception is a checked exception.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -214,7 +214,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Enable this exception breakpoint.
-	 * 
+	 *
 	 * If the exception breakpoint is not catching caught or uncaught, turn both
 	 * modes on. If this isn't done, the resulting state (enabled with caught
 	 * and uncaught both disabled) is ambiguous.
@@ -269,7 +269,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setSuspendOnSubclasses
 	 * (boolean)
@@ -283,7 +283,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#isSuspendOnSubclasses
 	 * ()
@@ -337,7 +337,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget,
 	 *      JDIThread) Decides how to handle an exception being thrown
-	 * 
+	 *
 	 * @return true if we do not want to suspend false otherwise
 	 */
 	@Override
@@ -407,7 +407,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 					}
 				}
 			}
-			
+
 			return !suspend(thread, suspendVote);
 		}
 		return true;
@@ -416,7 +416,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * Returns whether the given class type is a subclass of the classes with the
 	 * given name.
-	 * 
+	 *
 	 * @param type
 	 *            the class type reference
 	 * @return true if the specified the class type is a subclass of the class
@@ -436,7 +436,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setInstalledIn
 	 * (org.eclipse.jdt.debug.core.IJavaDebugTarget, boolean)
@@ -451,7 +451,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	/**
 	 * Determines of the filters for this exception include the default package
 	 * or not
-	 * 
+	 *
 	 * @param filters
 	 *            the list of filters to inspect
 	 * @return true if any one of the specified filters include the default
@@ -468,7 +468,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Returns whether the given type is in the given filter set.
-	 * 
+	 *
 	 * @param filters
 	 *            the filter set
 	 * @param typeName
@@ -497,7 +497,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Sets the name of the exception that was last hit
-	 * 
+	 *
 	 * @param name
 	 *            fully qualified exception name
 	 */
@@ -507,7 +507,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExceptionTypeName
 	 * ()
@@ -550,7 +550,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * configureRequest(com.sun.jdi.request.EventRequest,
 	 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -750,9 +750,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Returns the last exception object that was encountered by this exception
-	 * 
+	 *
 	 * TODO: make API in future release.
-	 * 
+	 *
 	 * @return
 	 */
 	public IJavaObject getLastException() {

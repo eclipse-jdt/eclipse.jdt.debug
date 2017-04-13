@@ -159,7 +159,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * breakpoint location. If this locator makes a pass of the tree and
 	 * determines that binding information would be helpful but was not
 	 * available, this method returns <code>true</code>.
-	 * 
+	 *
 	 * @return whether binding information would be helpful in validating a
 	 *         breakpoint location
 	 */
@@ -169,7 +169,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/**
 	 * Return the type of the valid location found
-	 * 
+	 *
 	 * @return one of LOCATION_NOT_FOUND, LOCATION_LINE, LOCATION_METHOD or
 	 *         LOCATION_FIELD
 	 */
@@ -207,7 +207,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * <br>
 	 * Delegates to the old method of computing the type name if bindings are
 	 * not available.
-	 * 
+	 *
 	 * @see #computeTypeName0(ASTNode)
 	 * @since 3.6
 	 */
@@ -231,7 +231,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/**
 	 * Fall back to compute the type name if bindings are not resolved
-	 * 
+	 *
 	 * @param node
 	 * @return the computed type name
 	 */
@@ -268,7 +268,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	/**
 	 * Return <code>true</code> if this node children may contain a valid
 	 * location for the breakpoint.
-	 * 
+	 *
 	 * @param node
 	 *            the node.
 	 * @param isCode
@@ -403,7 +403,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeDeclaration)
 	 */
@@ -420,7 +420,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeMemberDeclaration)
 	 */
@@ -536,7 +536,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * BlockComment)
 	 */
@@ -643,7 +643,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnhancedForStatement)
 	 */
@@ -658,7 +658,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumConstantDeclaration)
 	 */
@@ -679,7 +679,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumDeclaration)
 	 */
@@ -780,7 +780,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ForStatement)
 	 */
@@ -911,7 +911,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
 	 * .LabeledStatement)
@@ -945,7 +945,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * LineComment)
 	 */
@@ -956,7 +956,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MarkerAnnotation)
 	 */
@@ -967,7 +967,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef
 	 * )
@@ -979,7 +979,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MemberValuePair)
 	 */
@@ -1028,7 +1028,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef
 	 * )
@@ -1040,7 +1040,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MethodRefParameter)
 	 */
@@ -1051,7 +1051,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier
 	 * )
@@ -1063,7 +1063,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * NormalAnnotation)
 	 */
@@ -1098,7 +1098,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * ParameterizedType)
 	 */
@@ -1160,7 +1160,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * QualifiedType)
 	 */
@@ -1196,7 +1196,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * SingleMemberAnnotation)
 	 */
@@ -1271,7 +1271,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement
 	 * )
@@ -1283,7 +1283,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TextElement)
 	 */
@@ -1318,7 +1318,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.UnionType
 	 * )
@@ -1353,7 +1353,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TypeParameter)
 	 */
@@ -1420,7 +1420,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * WildcardType)
 	 */

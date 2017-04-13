@@ -31,7 +31,7 @@ import com.sun.jdi.ObjectReference;
  * <code>JDIReferenceListVariable</code>. The children of this value will be
  * <code>JDIReferenceListEntryVariable</code>, each representing one reference
  * to the root object.
- * 
+ *
  * @see JDIReferenceListVariable
  * @see JDIReferenceListEntryVariable
  * @since 3.3
@@ -45,7 +45,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/**
 	 * Constructor, initializes this value with its debug target and root object
-	 * 
+	 *
 	 * @param target
 	 *            The debug target associated with this value
 	 * @param root
@@ -107,7 +107,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getVariables()
 	 */
 	@Override
@@ -132,7 +132,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getUnderlyingObject
 	 * ()
@@ -144,7 +144,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#hasVariables()
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#isAllocated()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getJavaType()
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getSignature()
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getReferenceTypeName
 	 * ()
@@ -199,7 +199,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 	/**
 	 * Returns a string representation of this value intended to be displayed in
 	 * the detail pane of views. Lists the references on separate lines.
-	 * 
+	 *
 	 * @return a string representation of this value to display in the detail
 	 *         pane
 	 */
@@ -246,7 +246,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#toString()
 	 */
 	@Override
@@ -258,7 +258,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIValue#equals(java.lang.Object
 	 * )
@@ -276,7 +276,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#hashCode()
 	 */
 	@Override
@@ -286,7 +286,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
 	@Override
@@ -306,7 +306,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
 	@Override
@@ -321,7 +321,7 @@ public class JDIReferenceListValue extends JDIObjectValue implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
 	@Override

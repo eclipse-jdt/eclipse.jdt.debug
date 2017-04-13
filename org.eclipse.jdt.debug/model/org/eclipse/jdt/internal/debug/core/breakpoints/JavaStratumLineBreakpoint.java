@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ import com.sun.jdi.VirtualMachine;
 /**
  * A line breakpoint identified by its source file name and/or path, and stratum
  * that it is relative to.
- * 
+ *
  * @since 3.0
  */
 public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
@@ -58,7 +58,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * Creates and returns a line breakpoint identified by its source file name
 	 * and/or path, and stratum that it is relative to.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -188,7 +188,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * installableReferenceType(com.sun.jdi.ReferenceType,
 	 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -350,7 +350,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getPattern()
 	 */
 	@Override
@@ -360,7 +360,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourceName()
 	 */
@@ -371,7 +371,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getStratum()
 	 */
 	@Override
@@ -381,7 +381,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getSourcePath()
 	 */
@@ -444,7 +444,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements
 		String patterns = getPattern();
 
 		// delimit by ","
-		fTypeNamePatterns = patterns.split(","); //$NON-NLS-1$  
+		fTypeNamePatterns = patterns.split(","); //$NON-NLS-1$
 		fSuffix = new String[fTypeNamePatterns.length];
 		fPrefix = new String[fTypeNamePatterns.length];
 		for (int i = 0; i < fTypeNamePatterns.length; i++) {

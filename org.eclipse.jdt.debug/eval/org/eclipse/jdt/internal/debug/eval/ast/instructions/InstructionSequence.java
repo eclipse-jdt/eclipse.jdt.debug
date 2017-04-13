@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -131,7 +131,7 @@ public class InstructionSequence implements ICompiledExpression {
 	 * Inserts the instruction at the given index. If the index is less than 0
 	 * or greater than the current instruction count, the instruction is added
 	 * at the end of the sequence.
-	 * 
+	 *
 	 * Instructs the instructions to update their program counters.
 	 */
 	public void insert(Instruction instruction, int index) {

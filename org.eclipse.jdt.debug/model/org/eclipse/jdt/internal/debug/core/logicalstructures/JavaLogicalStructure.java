@@ -88,7 +88,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param value
 		 * @param type
 		 * @param thread
@@ -104,7 +104,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete
 		 * (org.eclipse.jdt.debug.eval.IEvaluationResult)
@@ -120,7 +120,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 		/**
 		 * Evaluates the specified snippet and returns the
 		 * <code>IJavaValue</code> from the evaluation
-		 * 
+		 *
 		 * @param snippet
 		 *            the snippet to evaluate
 		 * @return the <code>IJavaValue</code> from the evaluation
@@ -327,7 +327,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * Returns the <code>IJavaReferenceType</code> from the specified
 	 * <code>IJavaObject</code>
-	 * 
+	 *
 	 * @param value
 	 * @return the <code>IJavaReferenceType</code> from the specified
 	 *         <code>IJavaObject</code>
@@ -372,7 +372,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * Return the current stack frame context, or a valid stack frame for the
 	 * given value.
-	 * 
+	 *
 	 * @param value
 	 * @return the current stack frame context, or a valid stack frame for the
 	 *         given value.
@@ -404,7 +404,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Returns the singleton stackframe provider
-	 * 
+	 *
 	 * @return the singleton stackframe provider
 	 */
 	private static IStatusHandler getStackFrameProvider() {
@@ -417,7 +417,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Returns if this logical structure should be used for subtypes too.
-	 * 
+	 *
 	 * @return if this logical structure should be used for subtypes too.
 	 */
 	public boolean isSubtypes() {
@@ -426,7 +426,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Sets if this logical structure should be used for subtypes or not.
-	 * 
+	 *
 	 * @param subtypes
 	 */
 	public void setSubtypes(boolean subtypes) {
@@ -435,7 +435,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Returns the name of the type this logical structure should be used for.
-	 * 
+	 *
 	 * @return the name of the type this logical structure should be used for.
 	 */
 	public String getQualifiedTypeName() {
@@ -444,7 +444,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Sets the name of the type this logical structure should be used for.
-	 * 
+	 *
 	 * @param type
 	 */
 	public void setType(String type) {
@@ -453,7 +453,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Returns the code snippet to use to generate the logical structure.
-	 * 
+	 *
 	 * @return the code snippet to use to generate the logical structure.
 	 */
 	public String getValue() {
@@ -462,7 +462,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Sets the code snippet to use to generate the logical structure.
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setValue(String value) {
@@ -471,7 +471,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Returns the variables of this logical structure.
-	 * 
+	 *
 	 * @return the variables of this logical structure.
 	 */
 	public String[][] getVariables() {
@@ -480,7 +480,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Sets the variables of this logical structure.
-	 * 
+	 *
 	 * @param variables
 	 */
 	public void setVariables(String[][] variables) {
@@ -489,7 +489,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/**
 	 * Set the description of this logical structure.
-	 * 
+	 *
 	 * @param description
 	 */
 	public void setDescription(String description) {
@@ -498,7 +498,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription
 	 * (org.eclipse.debug.core.model.IValue)
@@ -510,7 +510,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILogicalStructureType#getDescription()
 	 */
 	@Override
@@ -521,7 +521,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * Indicates if this logical structure was contributed by a plug-in or
 	 * defined by a user.
-	 * 
+	 *
 	 * @return if this logical structure is contributed
 	 */
 	public boolean isContributed() {
@@ -532,7 +532,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 * Returns the plugin identifier of the plugin which contributed this
 	 * logical structure or <code>null</code> if this structure was defined by
 	 * the user.
-	 * 
+	 *
 	 * @return the plugin identifier of the plugin which contributed this
 	 *         structure or <code>null</code>
 	 */
@@ -542,7 +542,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.ILogicalStructureType#getId()
 	 */
 	@Override

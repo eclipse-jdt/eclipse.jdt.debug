@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * A value referencing an object on a target VM.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -30,7 +30,7 @@ public interface IJavaObject extends IJavaValue {
 	 * return until the method invocation is complete. Invoking a method in the
 	 * target VM can result in breakpoints being hit, infinite loops, and
 	 * deadlock.
-	 * 
+	 *
 	 * @param selector
 	 *            the selector of the method to be invoked
 	 * @param signature
@@ -74,7 +74,7 @@ public interface IJavaObject extends IJavaValue {
 	 * is complete. This method does not return until the method invocation is
 	 * complete. Invoking a method in the target VM can result in breakpoints
 	 * being hit, infinite loops, and deadlock.
-	 * 
+	 *
 	 * @param selector
 	 *            the selector of the method to be invoked
 	 * @param signature
@@ -116,7 +116,7 @@ public interface IJavaObject extends IJavaValue {
 	 * Returns a variable representing the field in this object with the given
 	 * name, or <code>null</code> if there is no field with the given name, or
 	 * the name is ambiguous.
-	 * 
+	 *
 	 * @param name
 	 *            field name
 	 * @param superField
@@ -137,7 +137,7 @@ public interface IJavaObject extends IJavaValue {
 	 * Returns a variable representing the field in this object with the given
 	 * name declared in the type with the given signature, or <code>null</code>
 	 * if there is no field with the given name, or the name is ambiguous.
-	 * 
+	 *
 	 * @param name
 	 *            field name
 	 * @param typeSignature
@@ -156,7 +156,7 @@ public interface IJavaObject extends IJavaValue {
 	/**
 	 * Returns the threads waiting for the monitor associated to this object, or
 	 * <code>null</code> if no thread is waiting for the monitor.
-	 * 
+	 *
 	 * @return the thread waiting for the monitor, or <code>null</code>.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -174,7 +174,7 @@ public interface IJavaObject extends IJavaValue {
 	/**
 	 * Returns the threads which owns for the monitor associated to this object,
 	 * or <code>null</code> if no thread owns the monitor.
-	 * 
+	 *
 	 * @return the thread which owns the monitor, or <code>null</code>.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -191,7 +191,7 @@ public interface IJavaObject extends IJavaValue {
 
 	/**
 	 * Returns objects that directly reference this object.
-	 * 
+	 *
 	 * @param max
 	 *            the maximum number of references to retrieve or 0 for all
 	 *            references
@@ -206,7 +206,7 @@ public interface IJavaObject extends IJavaValue {
 	 * Permits this object to be garbage collected. Has no effect if this VM
 	 * does not support enabling/disabling of garbage collection of specific
 	 * objects.
-	 * 
+	 *
 	 * @throws DebugException
 	 *             if request fails
 	 * @see IJavaDebugTarget
@@ -218,7 +218,7 @@ public interface IJavaObject extends IJavaValue {
 	 * Prevents this object from being garbage collected. Has no effect if this
 	 * VM does not support enabling/disabling of garbage collection of specific
 	 * objects.
-	 * 
+	 *
 	 * @throws DebugException
 	 *             if request fails
 	 * @see IJavaDebugTarget
@@ -228,7 +228,7 @@ public interface IJavaObject extends IJavaValue {
 
 	/**
 	 * Returns the unique id for this object.
-	 * 
+	 *
 	 * @return unique id or -1 if this value is <code>null</code>
 	 * @throws DebugException
 	 *             if the request fails

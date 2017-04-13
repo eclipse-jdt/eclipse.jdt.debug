@@ -51,7 +51,7 @@ public class LocalVariableCreation extends CompoundInstruction {
 
 	/**
 	 * Constructor for LocalVariableCreation.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the variable to create.
 	 * @param typeSignature

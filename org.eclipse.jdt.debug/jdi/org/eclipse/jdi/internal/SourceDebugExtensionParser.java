@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import com.sun.jdi.AbsentInformationException;
 
 /**
- * 
+ *
  */
 public class SourceDebugExtensionParser {
 
@@ -62,7 +62,7 @@ public class SourceDebugExtensionParser {
 
 		/**
 		 * Compute the next lexem.
-		 * 
+		 *
 		 * @return the type of the next lexem.
 		 */
 		public int nextLexem() throws AbsentInformationException {
@@ -119,7 +119,7 @@ public class SourceDebugExtensionParser {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		private void startWithOtherChar() {
 			int lexemStart = fPointer;
@@ -164,7 +164,7 @@ public class SourceDebugExtensionParser {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		private void startWithAsterisk() throws AbsentInformationException {
 			nextChar();
@@ -203,7 +203,7 @@ public class SourceDebugExtensionParser {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		private void startWithCR() {
 			if (fChar == '\r') {
@@ -221,7 +221,7 @@ public class SourceDebugExtensionParser {
 		}
 
 		/**
-		 * 
+		 *
 		 */
 		private void consumeWhiteSpace() {
 			while (fChar == ' ' || fChar == '\t') {
@@ -273,7 +273,7 @@ public class SourceDebugExtensionParser {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void parseSmap(String smap) throws AbsentInformationException {
 		Lexer lexer = new Lexer(smap);

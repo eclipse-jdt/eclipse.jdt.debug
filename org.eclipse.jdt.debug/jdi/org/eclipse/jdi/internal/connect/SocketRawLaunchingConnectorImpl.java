@@ -60,17 +60,17 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 
 		// Command
 		StringArgumentImpl strArg = new StringArgumentImpl(
-				"command", ConnectMessages.SocketRawLaunchingConnectorImpl_Raw_command_to_start_the_debugged_application_VM_1, ConnectMessages.SocketRawLaunchingConnectorImpl_Command_2, true); //$NON-NLS-1$  
+				"command", ConnectMessages.SocketRawLaunchingConnectorImpl_Raw_command_to_start_the_debugged_application_VM_1, ConnectMessages.SocketRawLaunchingConnectorImpl_Command_2, true); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Address
 		strArg = new StringArgumentImpl(
-				"address", ConnectMessages.SocketRawLaunchingConnectorImpl_Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3, ConnectMessages.SocketRawLaunchingConnectorImpl_Address_4, true); //$NON-NLS-1$  
+				"address", ConnectMessages.SocketRawLaunchingConnectorImpl_Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3, ConnectMessages.SocketRawLaunchingConnectorImpl_Address_4, true); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Quote
 		strArg = new StringArgumentImpl(
-				"quote", ConnectMessages.SocketRawLaunchingConnectorImpl_Character_used_to_combine_space_delimited_text_into_a_single_command_line_argument_5, ConnectMessages.SocketRawLaunchingConnectorImpl_Quote_6, true); //$NON-NLS-1$  
+				"quote", ConnectMessages.SocketRawLaunchingConnectorImpl_Character_used_to_combine_space_delimited_text_into_a_single_command_line_argument_5, ConnectMessages.SocketRawLaunchingConnectorImpl_Quote_6, true); //$NON-NLS-1$
 		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
@@ -153,7 +153,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 			proc.destroy();
 			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
 							new String[] { ((Connector.IntegerArgument) args
-									.get("timeout")).value() }); //$NON-NLS-1$ 
+									.get("timeout")).value() }); //$NON-NLS-1$
 			throw new VMStartException(message, proc);
 		}
 

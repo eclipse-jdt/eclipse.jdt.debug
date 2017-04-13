@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.dom.Message;
  * <p>
  * Clients are intended to implement this interface.
  * </p>
- * 
+ *
  * @since 2.0
  * @see JDIDebugModel
  * @see IJavaBreakpoint
@@ -36,35 +36,35 @@ public interface IJavaBreakpointListener {
 	/**
 	 * Return code in response to a "breakpoint hit" notification, indicating a
 	 * vote to suspend the associated thread.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int SUSPEND = 0x0001;
 	/**
 	 * Return code in response to a "breakpoint hit" notification, indicating a
 	 * vote to not suspend (i.e. resume) the associated thread.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int DONT_SUSPEND = 0x0002;
 	/**
 	 * Return code in response to an "installing" notification, indicating a
 	 * vote to install the associated breakpoint.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int INSTALL = 0x0001;
 	/**
 	 * Return code in response to an "installing" notification, indicating a
 	 * vote to not install the associated breakpoint.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int DONT_INSTALL = 0x0002;
 	/**
 	 * Return code indicating that this listener should not be considered in a
 	 * vote to suspend a thread or install a breakpoint.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static int DONT_CARE = 0x0004;
@@ -73,7 +73,7 @@ public interface IJavaBreakpointListener {
 	 * Notification that the given breakpoint is about to be added to the
 	 * specified target. This message is sent before the breakpoint is actually
 	 * added to the debut target (i.e. this is a pre-notification).
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -91,7 +91,7 @@ public interface IJavaBreakpointListener {
 	 * breakpoint, there must be at least one <code>DONT_INSTALL</code> vote to
 	 * cancel the installation. If all listeners vote <code>DONT_CARE</code>,
 	 * the breakpoint will be installed by default.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -114,7 +114,7 @@ public interface IJavaBreakpointListener {
 	/**
 	 * Notification that the given breakpoint has been installed in the
 	 * specified target.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -137,7 +137,7 @@ public interface IJavaBreakpointListener {
 	 * Listeners may query thread state and perform evaluations. All subsequent
 	 * breakpoints in this thread will be ignored until voting has completed.
 	 * </p>
-	 * 
+	 *
 	 * @param thread
 	 *            Java thread
 	 * @param breakpoint
@@ -152,7 +152,7 @@ public interface IJavaBreakpointListener {
 	/**
 	 * Notification that the given breakpoint has been removed from the
 	 * specified target.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -164,7 +164,7 @@ public interface IJavaBreakpointListener {
 	/**
 	 * Notification that the given breakpoint had runtime errors in its
 	 * conditional expression.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint
 	 * @param exception
@@ -177,7 +177,7 @@ public interface IJavaBreakpointListener {
 	/**
 	 * Notification that the given breakpoint has compilation errors in its
 	 * conditional expression.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint
 	 * @param errors

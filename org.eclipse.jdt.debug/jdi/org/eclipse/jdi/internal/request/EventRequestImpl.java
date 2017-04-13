@@ -43,7 +43,7 @@ import com.sun.jdi.request.StepRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public abstract class EventRequestImpl extends MirrorImpl implements
 		EventRequest {
@@ -137,7 +137,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	protected ArrayList<ObjectReference> fInstanceFilters = null;
 	/**
 	 * source name filters
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected ArrayList<String> fSourceNameFilters = null;
@@ -478,7 +478,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 	/**
 	 * Helper method which allows instance filters to be added
-	 * 
+	 *
 	 * @param instance
 	 *            the object ref instance to add to the listing
 	 */
@@ -494,7 +494,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Adds a source name filter to the request. An exact match or pattern
 	 * beginning OR ending in '*'.
-	 * 
+	 *
 	 * @param pattern
 	 *            source name pattern
 	 * @since 3.3
@@ -714,7 +714,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 	/**
 	 * Returns whether JDWP supports source name filters (a 1.6 feature).
-	 * 
+	 *
 	 * @return whether JDWP supports source name filters
 	 */
 	private boolean supportsSourceNameFilters() {

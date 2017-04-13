@@ -18,7 +18,7 @@ import com.sun.jdi.request.ClassPrepareRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ClassPrepareRequestImpl extends EventRequestImpl implements
 		ClassPrepareRequest {

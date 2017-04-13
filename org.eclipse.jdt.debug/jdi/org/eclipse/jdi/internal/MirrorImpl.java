@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ import com.sun.jdi.VirtualMachine;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class MirrorImpl implements Mirror {
 
@@ -177,7 +177,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Performs a VM request.
-	 * 
+	 *
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command, byte[] outData) {
@@ -220,7 +220,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Performs a VM request.
-	 * 
+	 *
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command, ByteArrayOutputStream outData) {
@@ -229,7 +229,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Performs a VM request for a specified object.
-	 * 
+	 *
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command, ObjectReferenceImpl object) {
@@ -245,7 +245,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Performs a VM request for a specified object.
-	 * 
+	 *
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command, ReferenceTypeImpl refType) {
@@ -261,7 +261,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Performs a VM request.
-	 * 
+	 *
 	 * @return Returns reply data.
 	 */
 	public JdwpReplyPacket requestVM(int command) {
@@ -313,7 +313,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Waits for a specified command packet from the VM.
-	 * 
+	 *
 	 * @return Returns Command Packet from VM.
 	 */
 	public final JdwpCommandPacket getCommandVM(int command, long timeout)
@@ -346,7 +346,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public byte readByte(String description, DataInputStream in)
@@ -360,7 +360,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public short readShort(String description, DataInputStream in)
@@ -374,7 +374,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public int readInt(String description, DataInputStream in)
@@ -388,7 +388,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public long readLong(String description, DataInputStream in)
@@ -402,7 +402,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public byte readByte(String description, Map<Integer, String> valueToString,
@@ -416,7 +416,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public short readShort(String description, Map<Integer, String> valueToString,
@@ -430,7 +430,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public int readInt(String description, Map<Integer, String> valueToString, DataInputStream in)
@@ -444,7 +444,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public String readString(String description, DataInputStream in)
@@ -458,7 +458,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public boolean readBoolean(String description, DataInputStream in)
@@ -472,7 +472,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public char readChar(String description, DataInputStream in)
@@ -486,7 +486,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public double readDouble(String description, DataInputStream in)
@@ -500,7 +500,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public float readFloat(String description, DataInputStream in)
@@ -514,7 +514,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public byte[] readByteArray(int length, String description,
@@ -683,7 +683,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public byte readByte(String description, String[] bitNames,
@@ -697,7 +697,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public short readShort(String description, String[] bitNames,
@@ -711,7 +711,7 @@ public class MirrorImpl implements Mirror {
 
 	/**
 	 * Reads Jdwp data and, if verbose is on, outputs verbose info.
-	 * 
+	 *
 	 * @return Returns value that has been read.
 	 */
 	public int readInt(String description, String[] bitNames, DataInputStream in)

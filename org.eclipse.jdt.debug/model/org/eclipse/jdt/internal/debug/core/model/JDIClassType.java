@@ -43,7 +43,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassType#newInstance(java.lang.String,
 	 * org.eclipse.jdt.debug.core.IJavaValue[],
@@ -88,7 +88,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassType#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
@@ -132,7 +132,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getSuperclass()
 	 */
 	@Override
@@ -156,7 +156,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getAllInterfaces()
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getInterfaces()
 	 */
 	@Override
@@ -217,7 +217,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#isEnum()
 	 */
 	@Override

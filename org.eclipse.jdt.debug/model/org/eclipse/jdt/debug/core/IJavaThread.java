@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IThread;
 
 /**
  * A thread in a Java virtual machine.
- * 
+ *
  * @see org.eclipse.debug.core.model.IThread
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -34,7 +34,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Status code indicating a request to perform a message send failed because
 	 * a thread was already performing a message send.
-	 * 
+	 *
 	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread,
 	 *      boolean)
 	 * @see IJavaClassType#sendMessage(String, String, IJavaValue[],
@@ -48,7 +48,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * a thread was not suspended by a step or breakpoint event. When a thread
 	 * is suspended explicitly via the <code>suspend()</code> method, it is not
 	 * able to perform method invocations (this is a JDI limitation).
-	 * 
+	 *
 	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread,
 	 *      boolean)
 	 * @see IJavaClassType#sendMessage(String, String, IJavaValue[],
@@ -59,7 +59,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns whether this thread is a system thread.
-	 * 
+	 *
 	 * @return whether this thread is a system thread
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -75,7 +75,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * Returns whether any of the stack frames associated with this thread are
 	 * running code in the VM that is out of synch with the code in the
 	 * workspace.
-	 * 
+	 *
 	 * @return whether this thread is out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -90,7 +90,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Returns whether this thread may be running code in the VM that is out of
 	 * synch with the code in the workspace.
-	 * 
+	 *
 	 * @return whether this thread may be out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -104,7 +104,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns whether this thread is currently performing an evaluation.
-	 * 
+	 *
 	 * @return whether this thread is currently performing an evaluation
 	 * @since 2.0
 	 */
@@ -113,7 +113,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Returns the name of the thread group this thread belongs to, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return thread group name, or <code>null</code> if none
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -134,7 +134,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * performed in all stack frames, in a top-down order, returning the first
 	 * successful match, or <code>null</code> if no match is found.
 	 * </p>
-	 * 
+	 *
 	 * @param variableName
 	 *            the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
@@ -161,7 +161,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * back. Suspend and resume events are not fired during listener call backs.
 	 * Unspecified model specific events are fired.
 	 * </p>
-	 * 
+	 *
 	 * @param evaluation
 	 *            the evaluation to perform
 	 * @param monitor
@@ -186,7 +186,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * thread. Runnables are executed asynchronously in a separate thread. This
 	 * method should be used to execute any code which performs an operation
 	 * like a method invocation.
-	 * 
+	 *
 	 * @param runnable
 	 *            the runnable to execute.
 	 * @since 2.1
@@ -196,12 +196,12 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Attempts to terminate the currently executing
 	 * <code>IEvaluationRunnable</code> in this thread, if any.
-	 * 
+	 *
 	 * Evaluations may be composed of a series of instructions. Terminating an
 	 * evaluation means stopping the evaluation after the current instruction
 	 * completes. A single instruction (such as a method invocation) cannot be
 	 * interrupted.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if an exception occurs while terminating the evaluation.
 	 * @since 2.1
@@ -212,7 +212,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * Returns whether the currently executing <code>IEvaluationRunnable</code>
 	 * supports termination. An IEvaluationRunnable supports termination if it
 	 * implements <code>ITerminate</code>
-	 * 
+	 *
 	 * @return whether the current evaluation supports termination
 	 * @since 2.1
 	 */
@@ -221,7 +221,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Returns a Java object for the monitor for which this thread is currently
 	 * waiting or <code>null</code>.
-	 * 
+	 *
 	 * @return IJavaObject the contended monitor object or <code>null</code> if
 	 *         this thread is not waiting on a monitor.
 	 * @exception DebugException
@@ -234,7 +234,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Returns the monitors owned by this thread or <code>null</code> if this
 	 * thread owns no monitors.
-	 * 
+	 *
 	 * @return the owned monitors
 	 * @exception DebugException
 	 *                if an exception occurs while retrieving the owned monitors
@@ -245,7 +245,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns whether this threads owns at least one monitor.
-	 * 
+	 *
 	 * @return boolean whether this thread owns a monitor
 	 * @exception DebugException
 	 *                if an exception occurs determining if there are owned
@@ -260,9 +260,9 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * java.lang.Thread#stop(java.lang.Throwable).<br>
 	 * If the thread is suspended when the method is called, the thread must be
 	 * resumed to complete the action.<br>
-	 * 
+	 *
 	 * <em>exception</em> must represent an exception.
-	 * 
+	 *
 	 * @param exception
 	 *            the exception to throw.
 	 * @exception DebugException
@@ -275,7 +275,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	/**
 	 * Returns the thread group this thread belongs to or <code>null</code> if
 	 * none.
-	 * 
+	 *
 	 * @return thread group or <code>null</code>
 	 * @throws DebugException
 	 *             if the thread group cannot be computed
@@ -285,7 +285,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns whether this thread is a daemon thread.
-	 * 
+	 *
 	 * @return whether this thread is a daemon thread
 	 * @throws DebugException
 	 *             if an exception occurs while determining status
@@ -295,7 +295,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns the number of frames in this thread.
-	 * 
+	 *
 	 * @return number of stack frames
 	 * @throws DebugException
 	 *             if an exception occurs while retrieving the count
@@ -305,7 +305,7 @@ public interface IJavaThread extends IThread, IFilteredStep {
 
 	/**
 	 * Returns the object reference associated with this thread.
-	 * 
+	 *
 	 * @return thread object reference
 	 * @throws DebugException
 	 *             if unable to retrieve an object reference

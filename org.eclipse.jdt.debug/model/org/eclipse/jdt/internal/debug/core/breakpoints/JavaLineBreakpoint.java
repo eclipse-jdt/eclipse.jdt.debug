@@ -165,7 +165,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addToTarget
 	 * (org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -178,7 +178,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * removeFromTarget
 	 * (org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -245,7 +245,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
 	@Override
@@ -255,7 +255,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
 	@Override
@@ -265,7 +265,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
 	@Override
@@ -282,7 +282,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#newRequest
 	 * (org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget,
@@ -358,7 +358,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 			if (((type.modifiers() & (AccessibleImpl.MODIFIER_ACC_SYNTHETIC | AccessibleImpl.MODIFIER_SYNTHETIC)) != 0)||(type instanceof InterfaceType)) {
 				return null;
 			}
-			
+
 			IStatus status = new Status(
 					IStatus.ERROR,
 					JDIDebugPlugin.getUniqueIdentifier(),
@@ -399,7 +399,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * <li>IMarker.CHAR_START</li>
 	 * <li>IMarker.CHAR_END</li>
 	 * </ol>
-	 * 
+	 *
 	 */
 	public void addLineBreakpointAttributes(Map<String, Object> attributes,
 			String modelIdentifier, boolean enabled, int lineNumber,
@@ -413,7 +413,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Adds type name and hit count attributes to the given map.
-	 * 
+	 *
 	 * If <code>hitCount > 0</code>, adds the <code>HIT_COUNT</code> attribute
 	 * to the given breakpoint, and resets the <code>EXPIRED</code> attribute to
 	 * false (since, if the hit count is changed, the breakpoint should no
@@ -468,7 +468,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#supportsCondition()
 	 */
 	@Override
@@ -478,7 +478,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#getCondition()
 	 */
 	@Override
@@ -488,7 +488,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setCondition(java.lang
 	 * .String)
@@ -526,7 +526,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionEnabled()
 	 */
 	@Override
@@ -536,7 +536,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionEnabled(boolean
 	 * )
@@ -551,7 +551,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * cleanupForThreadTermination
 	 * (org.eclipse.jdt.internal.debug.core.model.JDIThread)
@@ -565,7 +565,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * addInstanceFilter(com.sun.jdi.request.EventRequest,
 	 * com.sun.jdi.ObjectReference)
@@ -580,7 +580,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionSuspendOnTrue()
 	 */
@@ -591,7 +591,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionSuspendOnTrue
 	 * (boolean)
@@ -610,7 +610,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	/**
 	 * Returns existing compiled expression for the given thread or
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param thread
 	 *            thread the breakpoint was hit in
 	 * @return compiled expression or <code>null</code>
@@ -621,7 +621,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Sets the compiled expression for a thread.
-	 * 
+	 *
 	 * @param thread
 	 *            thread the breakpoint was hit in
 	 * @param expression
@@ -636,7 +636,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	 * Sets the current result value of the conditional expression evaluation
 	 * for this breakpoint in the given target, and returns the previous value
 	 * or <code>null</code> if none
-	 * 
+	 *
 	 * @param target
 	 *            debug target
 	 * @param value

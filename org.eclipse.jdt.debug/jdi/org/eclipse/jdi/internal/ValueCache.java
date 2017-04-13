@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import java.util.Map;
  * This class is used to cache values. It uses soft references to store cached
  * values. Once a value is garbage collected by the VM, the corresponding entry
  * is removed from the cache on the next invocation of put() or get().
- * 
+ *
  * Note that WeakHashMap can't be used for this purpose because in WeakHashMap
  * soft references are only used for the keys, and values may not have 'strong'
  * references to keys otherwise they will never be garbage collected.
- * 
+ *
  */
 public class ValueCache {
 	/**
@@ -75,7 +75,7 @@ public class ValueCache {
 
 	/**
 	 * Get entry from the cache.
-	 * 
+	 *
 	 * @return Returns value that is cached under the given key, or null of one
 	 *         of the following is true: - The value has not been cached. - The
 	 *         value had been cached but is garbage collected.
@@ -135,7 +135,7 @@ public class ValueCache {
 
 	/**
 	 * Removes the key and its corresponding value from this cache.
-	 * 
+	 *
 	 * @return Returns The value to which the key had been mapped in this
 	 *         hashtable, or null if the key did not have a mapping.
 	 */

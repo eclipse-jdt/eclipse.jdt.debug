@@ -37,7 +37,7 @@ import com.ibm.icu.text.MessageFormat;
  * connects; 2) The name of the host on which the VM or proxy waits for a JDWP
  * connection; 3) The port number on which the VM or proxy waits for a JDWP
  * connection; 4) The file where the trace is written to.
- * 
+ *
  * Note that if this program is used for tracing JDWP activity of Leapfrog, the
  * 'debug remote program' option must be used, and the J9 proxy must first be
  * started up by hand on the port to which Leapfrog will connect. The J9 proxy

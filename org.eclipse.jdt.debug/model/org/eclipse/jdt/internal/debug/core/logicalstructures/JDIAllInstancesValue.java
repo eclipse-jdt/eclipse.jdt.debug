@@ -29,7 +29,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Java value containing an array of java objects. This value is used to hold a
  * list of all instances of a specific java type.
- * 
+ *
  * @since 3.3
  * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate
  */
@@ -43,7 +43,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	/**
 	 * Constructor, specifies whether there are more instances available than
 	 * should be displayed according to the user's preference settings.
-	 * 
+	 *
 	 * @param target
 	 *            the target VM
 	 * @param root
@@ -67,7 +67,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	protected IJavaObject[] getInstances() {
 		if (fInstances != null) {
 			return fInstances;
-		} 
+		}
 		IJavaObject[] instances = new IJavaObject[0];
 		fIsMoreThanPreference = false;
 		if (fRoot != null) {
@@ -95,7 +95,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getLength()
 	 */
 	@Override
@@ -105,7 +105,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getSize()
 	 */
 	@Override
@@ -115,7 +115,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getValue(int)
 	 */
@@ -129,7 +129,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getValues()
 	 */
 	@Override
@@ -139,7 +139,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getVariable(int)
 	 */
@@ -160,7 +160,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getVariables(int,
 	 * int)
@@ -183,7 +183,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getVariables()
 	 */
 	@Override
@@ -193,7 +193,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getReferringObjects
 	 * (long)
@@ -205,7 +205,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#isAllocated()
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#getInitialOffset
 	 * ()
@@ -227,7 +227,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIArrayValue#hasVariables()
 	 */
@@ -238,7 +238,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getJavaType()
 	 */
 	@Override
@@ -248,7 +248,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getSignature()
 	 */
 	@Override
@@ -258,7 +258,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#getReferenceTypeName
 	 * ()
@@ -270,7 +270,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#getValueString()
 	 */
 	@Override
@@ -290,7 +290,7 @@ public class JDIAllInstancesValue extends JDIArrayValue {
 	/**
 	 * Returns a string representation of this value intended to be displayed in
 	 * the detail pane of views. Lists the references on separate lines.
-	 * 
+	 *
 	 * @return a string representation of this value to display in the detail
 	 *         pane
 	 */

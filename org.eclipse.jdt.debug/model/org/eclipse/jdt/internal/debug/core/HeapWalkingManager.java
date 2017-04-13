@@ -21,7 +21,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Controls preferences related to heap walking so that they are available in
  * java debug model code, but can be updated through the UI.
- * 
+ *
  * @since 3.3
  */
 public class HeapWalkingManager {
@@ -38,7 +38,7 @@ public class HeapWalkingManager {
 	 * Returns whether the given parent object is a debug element with a debug
 	 * target that supports retrieval of instance and reference information from
 	 * the VM.
-	 * 
+	 *
 	 * @param object
 	 *            the object to test, can be <code>null</code>
 	 * @return whether the given object has a debug target that supports heap
@@ -76,8 +76,8 @@ public class HeapWalkingManager {
 	public boolean isShowReferenceInVarView() {
 		return Platform.getPreferencesService().getBoolean(
 				JDIDebugPlugin.getUniqueIdentifier(),
-				JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW, 
-				false, 
+				JDIDebugPlugin.PREF_SHOW_REFERENCES_IN_VAR_VIEW,
+				false,
 				null);
 	}
 
@@ -107,7 +107,7 @@ public class HeapWalkingManager {
 
 	/**
 	 * Stores the passed vale in the preference store
-	 * 
+	 *
 	 * @param value
 	 *            whether to display references as variables in the variables
 	 *            view
@@ -126,7 +126,7 @@ public class HeapWalkingManager {
 
 	/**
 	 * Stores the passed value in the preference store
-	 * 
+	 *
 	 * @param max
 	 *            the maximum number of references that should be displayed to
 	 *            the user
@@ -145,7 +145,7 @@ public class HeapWalkingManager {
 
 	/**
 	 * Stores the passed value in the preference store
-	 * 
+	 *
 	 * @param max
 	 *            the maximum number of instances that should be displayed to
 	 *            the user

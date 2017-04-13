@@ -34,7 +34,7 @@ public class Cast extends CompoundInstruction {
 
 	/**
 	 * Cast instruction constructor.
-	 * 
+	 *
 	 * @param typeTypeId
 	 *            the id of the type to cast into.
 	 * @param baseTypeName

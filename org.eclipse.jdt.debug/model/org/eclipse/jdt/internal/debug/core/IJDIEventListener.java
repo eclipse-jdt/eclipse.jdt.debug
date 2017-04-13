@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import com.sun.jdi.request.EventRequest;
  * A jdi event listener is notified of events associated with a specific jdi
  * event request. A listener registers/deregisters event requests with a debug
  * target.
- * 
+ *
  * @see JDIDebugTarget#addJDIEventListener(IJDIEventListener, EventRequest)
  * @see JDIDebugTarget#removeJDIEventListener(IJDIEventListener, EventRequest)
  */
@@ -40,7 +40,7 @@ public interface IJDIEventListener {
 	 * running its evaluation since the vote is already to suspend (if it
 	 * coincides with a step end).
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            the event to handle
 	 * @param target
@@ -57,7 +57,7 @@ public interface IJDIEventListener {
 	/**
 	 * Notification that all event handlers for an event set have handled their
 	 * associated events and whether the event set will suspend.
-	 * 
+	 *
 	 * @param event
 	 *            event the listener was registered for/handled
 	 * @param target

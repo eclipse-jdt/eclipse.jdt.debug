@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Yavor Boyadzhiev <yavor.vasilev.boyadzhiev@sap.com> - Bug 162399  
+ *     Yavor Boyadzhiev <yavor.vasilev.boyadzhiev@sap.com> - Bug 162399
  *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
  *******************************************************************************/
 package org.eclipse.jdi.internal;
@@ -60,7 +60,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public abstract class ReferenceTypeImpl extends TypeImpl implements
 		ReferenceType, org.eclipse.jdi.hcr.ReferenceType {
@@ -104,7 +104,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		/**
 		 * FileInfo constructor.
-		 * 
+		 *
 		 * @param fileId
 		 *            the id.
 		 * @param fileName
@@ -122,7 +122,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		/**
 		 * Add information about the mapping of one line. Associate a line in
 		 * the input source file to a snippet of code in the output source file.
-		 * 
+		 *
 		 * @param inputLine
 		 *            the line number in the input source file.
 		 * @param outputStartLine
@@ -146,7 +146,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		/**
 		 * Return a list of line information about the code in the output source
 		 * file associated to the given line in the input source file.
-		 * 
+		 *
 		 * @param lineNumber
 		 *            the line number in the input source file.
 		 * @return a List of int[2].
@@ -211,7 +211,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		/**
 		 * Stratum constructor.
-		 * 
+		 *
 		 * @param id
 		 *            The id of this stratum.
 		 */
@@ -224,7 +224,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		/**
 		 * Add a file info to this stratum.
-		 * 
+		 *
 		 * @param fileId
 		 *            the id.
 		 * @param fileName
@@ -237,7 +237,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		/**
 		 * Add a file info to this stratum.
-		 * 
+		 *
 		 * @param fileId
 		 *            the id.
 		 * @param fileName
@@ -261,7 +261,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 		/**
 		 * Add line mapping information.
-		 * 
+		 *
 		 * @param inputStartLine
 		 *            number of the first line in the input source file.
 		 * @param lineFileId
@@ -325,7 +325,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		 * Return the FileInfo object for the specified source name. Return
 		 * <code>null</code> if the specified name is the source name of no file
 		 * info.
-		 * 
+		 *
 		 * @param sourceName
 		 *            the source name to search.
 		 */
@@ -967,7 +967,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		if (methodID.value() == 0) {
 			return new MethodImpl(virtualMachineImpl(), this, methodID,
 					JDIMessages.ReferenceTypeImpl_Obsolete_method_1,
-					"", null, -1); //$NON-NLS-1$ 
+					"", null, -1); //$NON-NLS-1$
 		}
 		if (fMethodTable == null) {
 			fMethodTable = new Hashtable<JdwpMethodID, Method>();
@@ -1717,7 +1717,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/**
 	 * Get the source debug extension from the VM.
-	 * 
+	 *
 	 * @throws AbsentInformationException
 	 */
 	private void getSourceDebugExtension() throws AbsentInformationException {
@@ -1753,7 +1753,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/**
 	 * Get the name of the Java source file from the VM.
-	 * 
+	 *
 	 * @throws AbsentInformationException
 	 */
 	private void getSourceName() throws AbsentInformationException {
@@ -1834,7 +1834,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * part of the translation, for this stratum. If the code at the given index
 	 * is not a part of the translation of the given stratum code, return the
 	 * name of the primary input source file.
-	 * 
+	 *
 	 * @param codeIndex
 	 *            the index of the code.
 	 * @param method
@@ -1862,7 +1862,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * code index is part of the translation, for this stratum. If the code at
 	 * the given index is not a part of the translation of the given stratum
 	 * code, return the FileInfo of the primary input source file.
-	 * 
+	 *
 	 * @param codeIndex
 	 *            the index of the code.
 	 * @param method
@@ -1895,7 +1895,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * Return the list of line number in the input files of the stratum
 	 * associated with the code at the given address.
-	 * 
+	 *
 	 * @param codeIndex
 	 *            the index of the code.
 	 * @param method
@@ -1921,7 +1921,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * part of the translation, for this stratum. If the code at the given index
 	 * is not a part of the translation of the given stratum code, return the
 	 * path of the primary input source file.
-	 * 
+	 *
 	 * @param codeIndex
 	 *            the index of the code.
 	 * @param method
@@ -1951,7 +1951,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/**
 	 * Return the number of the line of which the given code index is part of
 	 * the translation, for this stratum.
-	 * 
+	 *
 	 * @param codeIndex
 	 *            the index of the code.
 	 * @param method
@@ -1984,7 +1984,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * in the given stratum in the source file with the given source name. If
 	 * sourceName is <code>null</code>, return the locations for all source file
 	 * in the given stratum. The returned location are in the given method.
-	 * 
+	 *
 	 * @param stratumId
 	 *            the stratum id.
 	 * @param sourceName
@@ -2020,7 +2020,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * stratum which are included in the given method. If sourceName is
 	 * <code>null</code>, return the locations for all source file in the given
 	 * stratum.
-	 * 
+	 *
 	 * @param stratumId
 	 *            the stratum id
 	 * @param sourceName
@@ -2095,7 +2095,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 
 	/*
 	 * @since 3.0
-	 * 
+	 *
 	 * @since java 1.5
 	 */
 	@Override
@@ -2135,7 +2135,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 * no-generic-signature (genericSignature() will return null) if
 	 * genericSignature is an non-empty String, the generic signature is set to
 	 * the specified value (genericSignature() will return the specified value)
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setGenericSignature(String genericSignature) {
@@ -2361,7 +2361,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * @return Returns Jdwp version of given options.
 	 */
@@ -2371,11 +2371,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
 		return jdwpOptions;
 	}
-	
+
 
 	/**
 	 * Invoke static method on class or interface type
-	 * 
+	 *
 	 * @param thread the debugger thread in which to invoke
 	 * @param method the resolved chosed Method to invoke
 	 * @param arguments the list of Values to supply as arguments for the method, assigned to arguments in the order they appear in the method signature.
@@ -2448,7 +2448,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			case JdwpReplyPacket.NOT_IMPLEMENTED:
 				throw new UnsupportedOperationException(JDIMessages.InterfaceTypeImpl_Static_interface_methods_require_newer_JVM);
 			}
-			
+
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			ValueImpl value = ValueImpl.readWithTag(this, replyData);
@@ -2464,5 +2464,5 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			handledJdwpRequest();
 		}
 	}
-	
+
 }

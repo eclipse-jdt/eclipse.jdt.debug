@@ -37,7 +37,7 @@ public class SocketConnection extends Connection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.Connection#close()
 	 */
 	@Override
@@ -51,7 +51,7 @@ public class SocketConnection extends Connection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.Connection#isOpen()
 	 */
 	@Override
@@ -61,7 +61,7 @@ public class SocketConnection extends Connection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.Connection#readPacket()
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class SocketConnection extends Connection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.connect.spi.Connection#writePacket(byte[])
 	 */
 	@Override

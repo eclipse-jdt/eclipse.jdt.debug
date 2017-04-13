@@ -72,7 +72,7 @@ public class PushLocalVariable extends SimpleInstruction {
 
 	/**
 	 * Returns the name of the variable to push onto the stack.
-	 * 
+	 *
 	 * @return the name of the variable to push onto the stack
 	 */
 	protected String getName() {

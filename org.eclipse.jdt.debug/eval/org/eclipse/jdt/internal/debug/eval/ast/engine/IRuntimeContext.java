@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public interface IRuntimeContext {
 
 	/**
 	 * Returns the virtual machine in which to perform the evaluation.
-	 * 
+	 *
 	 * @return virtual machine
 	 */
 	IJavaDebugTarget getVM();
@@ -40,7 +40,7 @@ public interface IRuntimeContext {
 	 * Returns the receiving object context in which to perform the evaluation -
 	 * equivalent to 'this'. Returns <code>null</code> if the context of an
 	 * evaluation is in a class rather than an object.
-	 * 
+	 *
 	 * @return 'this', or <code>null</code>
 	 * @exception EvaluationException
 	 *                if this method fails. Reasons include:
@@ -56,7 +56,7 @@ public interface IRuntimeContext {
 	 * Returns the receiving type context in which to perform the evaluation.
 	 * The type of 'this', or in the case of a static context, the class or
 	 * interface in which the evaluation is being performed.
-	 * 
+	 *
 	 * @return receiving class
 	 * @exception EvaluationException
 	 *                if this method fails. Reasons include:
@@ -72,7 +72,7 @@ public interface IRuntimeContext {
 	 * Returns the local variables visible for the evaluation. This includes
 	 * method arguments, if any. Does not return <code>null</code> returns an
 	 * empty collection if there are no locals.
-	 * 
+	 *
 	 * @return local variables
 	 * @exception EvaluationException
 	 *                if this method fails. Reasons include:
@@ -87,21 +87,21 @@ public interface IRuntimeContext {
 	/**
 	 * Returns the Java project context in which this expression should be
 	 * compiled.
-	 * 
+	 *
 	 * @return project
 	 */
 	IJavaProject getProject();
 
 	/**
 	 * Returns the thread in which message sends may be performed.
-	 * 
+	 *
 	 * @return thread
 	 */
 	IJavaThread getThread();
 
 	/**
 	 * Returns whether the context of this evaluation is within a constructor.
-	 * 
+	 *
 	 * @return whether the context of this evaluation is within a constructor
 	 * @exception EvaluationException
 	 *                if this method fails. Reasons include:
@@ -117,7 +117,7 @@ public interface IRuntimeContext {
 	 * Loads, prepares and returns the class with the given name in this runtime
 	 * context's receiving type's class loader. If the class is already loaded,
 	 * it is simply returned.
-	 * 
+	 *
 	 * @param name
 	 *            fully qualified class name
 	 * @return class object

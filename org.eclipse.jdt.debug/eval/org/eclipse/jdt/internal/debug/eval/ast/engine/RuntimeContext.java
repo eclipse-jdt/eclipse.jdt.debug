@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 
 	/**
 	 * Creates a runtime context for the given java project and stack frame.
-	 * 
+	 *
 	 * @param project
 	 *            Java project context used to compile expressions in
 	 * @param frame
@@ -78,7 +78,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 
 	/**
 	 * Sets the stack frame context used to compile/run expressions
-	 * 
+	 *
 	 * @param frame
 	 *            the stack frame context used to compile/run expressions
 	 */
@@ -88,7 +88,7 @@ public class RuntimeContext extends AbstractRuntimeContext {
 
 	/**
 	 * Sets the stack frame context used to compile/run expressions
-	 * 
+	 *
 	 * @param frame
 	 *            the stack frame context used to compile/run expressions
 	 */

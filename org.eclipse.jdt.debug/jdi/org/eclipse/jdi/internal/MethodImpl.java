@@ -802,7 +802,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 	/**
 	 * @see Method#isObsolete()
-	 * 
+	 *
 	 *      The JDK 1.4.0 specification states that obsolete methods are given
 	 *      an ID of zero. It also states that when a method is redefined, the
 	 *      new method gets the ID of the old method. Thus, the JDWP query for
@@ -816,7 +816,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.sun.jdi.Method#allLineLocations(java.lang.String, java.lang.String)
 	 */
@@ -887,8 +887,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			int position = Arrays.binarySearch(fCodeIndexTable, index);
 			if(position < 0) {
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=388172
-				//the key is not in the code index, we should not insert it as the line table is supposed to be 
-				//constant unless the parent class is redefined. 
+				//the key is not in the code index, we should not insert it as the line table is supposed to be
+				//constant unless the parent class is redefined.
 				//See http://docs.oracle.com/javase/6/docs/platform/jpda/jdwp/jdwp-protocol.html#JDWP_Method_LineTable for more information
 				continue;
 			}

@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * The type of an array on a Java debug target.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,7 +26,7 @@ public interface IJavaArrayType extends IJavaReferenceType {
 	/**
 	 * Returns a new instance of an array of this type, with the specified
 	 * length.
-	 * 
+	 *
 	 * @param size
 	 *            the length of the new array
 	 * @return a new array of the specified length
@@ -42,7 +42,7 @@ public interface IJavaArrayType extends IJavaReferenceType {
 
 	/**
 	 * Returns the type of the elements in this array.
-	 * 
+	 *
 	 * @return type
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:

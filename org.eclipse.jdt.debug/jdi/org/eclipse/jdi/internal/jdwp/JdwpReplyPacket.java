@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP)
  * packet declared by the JDWP specification.
- * 
+ *
  */
 public class JdwpReplyPacket extends JdwpPacket {
 	/** Error code constants. */
@@ -169,7 +169,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

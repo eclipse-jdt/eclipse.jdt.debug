@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
- * 
+ *
  */
 public class JavaStructureErrorValue implements IJavaValue {
 
@@ -39,7 +39,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	/**
 	 * Returns this error node's parent value. This is the value for which a
 	 * logical structure could not be calculated.
-	 * 
+	 *
 	 * @return the parent value of this error node
 	 */
 	public IJavaValue getParentValue() {
@@ -48,7 +48,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
 	 */
 	@Override
@@ -68,7 +68,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	@Override
@@ -151,7 +151,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	@Override
@@ -171,7 +171,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
@@ -181,7 +181,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#isNull()
 	 */
 	@Override

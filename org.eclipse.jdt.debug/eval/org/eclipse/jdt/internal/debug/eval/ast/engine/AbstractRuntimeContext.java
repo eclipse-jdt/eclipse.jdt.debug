@@ -31,7 +31,7 @@ import com.sun.jdi.InvocationException;
 /**
  * Common runtime context code for class loading and cache of class
  * loader/java.lang.Class.
- * 
+ *
  * @since 3.2
  */
 
@@ -63,7 +63,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	/**
 	 * Returns the class loader used to load classes for this runtime context or
 	 * <code>null</code> when loaded by the bootstrap loader
-	 * 
+	 *
 	 * @return the class loader used to load classes for this runtime context or
 	 *         <code>null</code> when loaded by the bootstrap loader
 	 * @throws CoreException
@@ -78,7 +78,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 
 	/**
 	 * Return the java.lang.Class type.
-	 * 
+	 *
 	 * @return the java.lang.Class type
 	 * @throws CoreException
 	 *             if unable to retrieve the type
@@ -104,7 +104,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	/**
 	 * Invokes Class.classForName(String, boolean, ClassLoader) on the target to
 	 * force load the specified class.
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            name of class to load
 	 * @param loader
@@ -164,7 +164,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#classForName
 	 * (java.lang.String)
@@ -176,7 +176,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getProject
 	 * ()
@@ -190,7 +190,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	 * Returns whether the class loaded by the <code>otherLoader</code> is
 	 * compatible with the receiver's class loader. To be compatible, the
 	 * other's loader must be the same or a parent of the receiver's loader.
-	 * 
+	 *
 	 * @param recLoader
 	 *            class loader of receiver
 	 * @param otherLoader
@@ -222,7 +222,7 @@ public abstract class AbstractRuntimeContext implements IRuntimeContext {
 	/**
 	 * Returns the parent class loader of the given class loader object or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param loader
 	 *            class loader object
 	 * @return parent class loader or <code>null</code>

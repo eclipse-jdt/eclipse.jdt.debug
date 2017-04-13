@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public interface VirtualMachine {
 	/**
 	 * Determines if this implementation supports the early return of the top
 	 * stack frame of a thread.
-	 * 
+	 *
 	 * @return <code>true</code> if the feature is supported, <code>false</code>
 	 *         otherwise.
 	 */
@@ -33,7 +33,7 @@ public interface VirtualMachine {
 	/**
 	 * Determines if this implementation supports the retrieval of a class file
 	 * version.
-	 * 
+	 *
 	 * @return <code>true</code> if the feature is supported, <code>false</code>
 	 *         otherwise.
 	 */
@@ -41,7 +41,7 @@ public interface VirtualMachine {
 
 	/**
 	 * Determines if this implementation supports the reenter stepping.
-	 * 
+	 *
 	 * @return <code>true</code> if the feature is supported, <code>false</code>
 	 *         otherwise.
 	 */
@@ -50,7 +50,7 @@ public interface VirtualMachine {
 	/**
 	 * Determines if this implementation supports the replacement of classes on
 	 * the fly.
-	 * 
+	 *
 	 * @return <code>true</code> if the feature is supported, <code>false</code>
 	 *         otherwise.
 	 */
@@ -144,7 +144,7 @@ public interface VirtualMachine {
 	 * whether it was ignored (for example if the VM doesn't support this kind
 	 * of replacement), or whether the operation failed and the VM should be
 	 * restarted
-	 * 
+	 *
 	 */
 	public int classesHaveChanged(String[] arg1);
 }

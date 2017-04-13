@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IWatchpoint;
  * Since 3.1, <code>IJavaWatchpoint</code> also implements
  * {@link org.eclipse.debug.core.model.IWatchpoint}.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -31,7 +31,7 @@ import org.eclipse.debug.core.model.IWatchpoint;
 public interface IJavaWatchpoint extends IJavaLineBreakpoint, IWatchpoint {
 	/**
 	 * Returns the name of the field associated with this watchpoint
-	 * 
+	 *
 	 * @return field the name of the field on which this watchpoint is installed
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
@@ -42,10 +42,10 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint, IWatchpoint {
 	/**
 	 * Returns whether this breakpoint last suspended in this target due to an
 	 * access (<code>true</code>) or modification (<code>false</code>).
-	 * 
+	 *
 	 * @param target
 	 *            the debug target
-	 * 
+	 *
 	 * @return <code>true</code> if this watchpoint last suspended the given
 	 *         target due to a field access; <code>false</code> if this
 	 *         watchpoint last suspended the given target due to a modification

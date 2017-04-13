@@ -34,7 +34,7 @@ import com.sun.jdi.VirtualMachine;
 public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 		IJavaTargetPatternBreakpoint {
 
-	private static final String TARGET_PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"; //$NON-NLS-1$	
+	private static final String TARGET_PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Table of targets to patterns
@@ -162,9 +162,9 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 				}
 				target.targetRequestFailed(
 						MessageFormat.format(
-								JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name, 
-								e.toString(), 
-								type.name()), 
+								JDIDebugBreakpointMessages.JavaPatternBreakpoint_exception_source_name,
+								e.toString(),
+								type.name()),
 								e);
 				// execution will not reach this line, as
 				// #targetRequestFailed will throw an exception

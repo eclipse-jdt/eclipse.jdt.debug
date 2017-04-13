@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import com.sun.jdi.Type;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comparable<ByteValue> {
 	/** JDWP Tag. */
@@ -52,7 +52,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue, Comp
 	public int compareTo(ByteValue o) {
 		return ((Byte)byteValue()).compareTo(o.byteValue());
 	}
-	
+
 	/**
 	 * @returns type of value.
 	 */

@@ -50,7 +50,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/**
 	 * Constructs a new reference type in the given target.
-	 * 
+	 *
 	 * @param target
 	 *            associated VM
 	 * @param type
@@ -62,7 +62,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getAvailableStrata()
 	 */
 	@Override
@@ -73,7 +73,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/**
 	 * Returns the underlying reference type.
-	 * 
+	 *
 	 * @return the underlying reference type
 	 */
 	protected ReferenceType getReferenceType() {
@@ -82,7 +82,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getDefaultStratum()
 	 */
 	@Override
@@ -98,7 +98,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getField(java.lang.String)
 	 */
@@ -122,7 +122,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassObject()
 	 */
 	@Override
@@ -144,7 +144,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getAllFieldNames()
 	 */
 	@Override
@@ -169,7 +169,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getDeclaredFieldNames()
 	 */
@@ -195,7 +195,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getSourcePaths(java.lang
 	 * .String)
@@ -216,7 +216,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceName()
 	 */
 	@Override
@@ -233,7 +233,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaReferenceType#getSourceNames(java.lang
 	 * .String)
@@ -254,7 +254,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getClassLoaderObject()
 	 */
 	@Override
@@ -310,7 +310,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/**
 	 * Return the name from the given signature. Keep the '$' characters.
-	 * 
+	 *
 	 * @param genericTypeSignature
 	 *            the signature to derive the type name from
 	 * @return the type name
@@ -349,7 +349,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getGenericSignature()
 	 */
 	@Override
@@ -359,7 +359,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstances(long)
 	 */
 	@Override
@@ -380,7 +380,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaReferenceType#getInstanceCount()
 	 */
 	@Override
@@ -405,7 +405,7 @@ public abstract class JDIReferenceType extends JDIType implements
 
 	/**
 	 * Utility method to convert argument array to an argument list.
-	 * 
+	 *
 	 * @param args
 	 *            array of arguments, as <code>IJavaValue</code>s, possibly
 	 *            <code>null</code> or empty

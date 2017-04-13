@@ -65,7 +65,7 @@ public abstract class Instruction {
 
 	/**
 	 * Return the internal variable with the given name.
-	 * 
+	 *
 	 * @see Interpreter#getInternalVariable(String)
 	 */
 	protected IVariable getInternalVariable(String name) {
@@ -75,7 +75,7 @@ public abstract class Instruction {
 	/**
 	 * Create and return a new internal variable with the given name and the
 	 * given type.
-	 * 
+	 *
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
 	protected IVariable createInternalVariable(String name,
@@ -215,7 +215,7 @@ public abstract class Instruction {
 
 	/**
 	 * Returns the primitive type with the given name.
-	 * 
+	 *
 	 * @param name
 	 *            type name, for example - "int"
 	 * @return primitive type

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 		ArrayReference {
@@ -83,8 +83,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Gets all of the values starting at firstIndex and ending at firstIndex+length
-	 *  
-	 * @param firstIndex the start 
+	 *
+	 * @param firstIndex the start
 	 * @param length the  number of values to return
 	 * @return the list of {@link Value}s
 	 * @throws IndexOutOfBoundsException if the index is outside the bounds of the array
@@ -182,7 +182,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	/**
 	 * Reads the given length of objects from the given stream
 	 * @param length the number of objects to read
-	 * @param in the stream to read from 
+	 * @param in the stream to read from
 	 * @return the {@link List} of {@link ValueImpl}s
 	 * @throws IOException if the reading fails
 	 * @returns Returns sequence of object reference values.
@@ -231,7 +231,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 						JdwpCommandPacket.AR_LENGTH, this);
 				defaultReplyErrorHandler(replyPacket.errorCode());
 				DataInputStream replyData = replyPacket.dataInStream();
-				fLength = readInt("length", replyData); //$NON-NLS-1$ 
+				fLength = readInt("length", replyData); //$NON-NLS-1$
 			} catch (IOException e) {
 				defaultIOExceptionHandler(e);
 				return 0;
@@ -244,7 +244,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Replaces an array component with another value.
-	 * 
+	 *
 	 * @param index
 	 *            the index to set the value in
 	 * @param value
@@ -267,7 +267,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Replaces all array components with other values.
-	 * 
+	 *
 	 * @param values
 	 *            the new values to set in the array
 	 * @throws InvalidTypeException
@@ -286,7 +286,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Replaces a range of array components with other values.
-	 * 
+	 *
 	 * @param index
 	 *            offset in this array to start replacing values at
 	 * @param values
@@ -383,7 +383,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	/**
 	 * Check the type and the VM of the values. If the given type is a primitive
 	 * type, the values may be converted to match this type.
-	 * 
+	 *
 	 * @param values
 	 *            the value(s) to check
 	 * @param type
@@ -392,7 +392,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 * @throws InvalidTypeException
 	 *             if the underlying type of an object in the list is not
 	 *             compatible
-	 * 
+	 *
 	 * @see ValueImpl#checkValue(Value, Type, VirtualMachineImpl)
 	 */
 	private List<Value> checkValues(List<? extends Value> values, Type type)
@@ -408,7 +408,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdi.internal.ObjectReferenceImpl#toString()
 	 */
 	@Override
@@ -423,7 +423,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 			return buf.toString();
 		} catch (ObjectCollectedException e) {
 			return JDIMessages.ArrayReferenceImpl__Garbage_Collected__ArrayReference_5
-					+ "[" + length() + "] " + idString(); //$NON-NLS-1$ //$NON-NLS-2$ 
+					+ "[" + length() + "] " + idString(); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (Exception e) {
 			return fDescription;
 		}
@@ -431,7 +431,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 
 	/**
 	 * Reads JDWP representation and returns new instance.
-	 * 
+	 *
 	 * @param target
 	 *            the target {@link Mirror} object
 	 * @param in

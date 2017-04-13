@@ -1392,7 +1392,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if(projects == null){
 			return true;
 		}
-		
+
 		// Breakpoint from project known by the resource mapping
 		if (projects.contains(resource.getProject())) {
 			return true;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP)
  * packet declared by the JDWP specification.
- * 
+ *
  */
 public class JdwpCommandPacket extends JdwpPacket {
 	/** Command Sets. */
@@ -332,7 +332,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

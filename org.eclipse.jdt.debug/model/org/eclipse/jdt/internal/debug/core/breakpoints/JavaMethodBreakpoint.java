@@ -57,7 +57,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * is contained. (value <code>"org.eclipse.jdt.debug.core.methodName"</code>
 	 * ). This attribute is a <code>String</code>.
 	 */
-	protected static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
+	protected static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing the signature of the method in which a
@@ -65,21 +65,21 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 * <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). This
 	 * attribute is a <code>String</code>.
 	 */
-	protected static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
+	protected static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing whether this breakpoint is an entry
 	 * breakpoint. (value <code>"org.eclipse.jdt.debug.core.entry"</code>). This
 	 * attribute is a <code>boolean</code>.
 	 */
-	protected static final String ENTRY = "org.eclipse.jdt.debug.core.entry"; //$NON-NLS-1$	
+	protected static final String ENTRY = "org.eclipse.jdt.debug.core.entry"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing whether this breakpoint is an exit
 	 * breakpoint. (value <code>"org.eclipse.jdt.debug.core.exit"</code>). This
 	 * attribute is a <code>boolean</code>.
 	 */
-	protected static final String EXIT = "org.eclipse.jdt.debug.core.exit"; //$NON-NLS-1$	
+	protected static final String EXIT = "org.eclipse.jdt.debug.core.exit"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing whether this breakpoint only applies to
@@ -192,7 +192,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Returns a new method entry request for this breakpoint's criteria
-	 * 
+	 *
 	 * @param the
 	 *            target in which to create the request
 	 * @param type
@@ -210,7 +210,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Returns a new method exit request for this breakpoint's criteria
-	 * 
+	 *
 	 * @param target
 	 *            the target in which to create the request
 	 * @param type
@@ -228,7 +228,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Returns a new method entry request for this breakpoint's criteria
-	 * 
+	 *
 	 * @param the
 	 *            target in which to create the request
 	 * @param type
@@ -245,7 +245,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Returns a new method exit request for the given reference type
-	 * 
+	 *
 	 * @param target
 	 *            the target in which to create the request
 	 * @param type
@@ -265,11 +265,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	 *      ReferenceType) or
 	 *      JavaMethodBreakpoint#createMethodExitRequest(JDIDebugTarget,
 	 *      ReferenceType)
-	 * 
+	 *
 	 *      Returns a <code>MethodEntryRequest</code> or
 	 *      <code>BreakpointRequest</code> if entry is <code>true</code>, a
 	 *      <code>MethodExitRequest</code> if entry is <code>false</code>.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target in which to create the request
 	 * @param classFilter
@@ -533,7 +533,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodName()
 	 */
@@ -544,7 +544,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodSignature
 	 * ()
@@ -623,7 +623,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Initialize cache of attributes
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IBreakpoint#setMarker(IMarker)
 	 */
 	@Override
@@ -646,7 +646,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * converts the specified string to one which has been formated to our needs
-	 * 
+	 *
 	 * @param stringMatcherPattern
 	 *            the initial pattern
 	 * @return the modified pattern
@@ -660,7 +660,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * If this breakpoint is not entry or exit enabled, set the default (entry)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IBreakpoint#setEnabled(boolean)
 	 */
 	@Override
@@ -689,7 +689,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#supportsCondition()
 	 */
 	@Override
@@ -728,7 +728,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Returns whether this breakpoint uses type name pattern matching.
-	 * 
+	 *
 	 * @return whether this breakpoint uses type name pattern matching
 	 */
 	protected boolean usesTypePattern() throws CoreException {
@@ -743,7 +743,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 	/**
 	 * Used when this breakpoint is for a specific type (i.e. not using type
 	 * name pattern matching).
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequest(JDIDebugTarget,
 	 *      ReferenceType)
 	 */

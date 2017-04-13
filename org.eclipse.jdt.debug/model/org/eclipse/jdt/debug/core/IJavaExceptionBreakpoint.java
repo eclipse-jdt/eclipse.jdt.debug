@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * execution when the corresponding exception is thrown in a caught or uncaught
  * location. As well, the location can be filtered inclusively or exclusively by
  * type name patterns.
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -28,7 +28,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Sets the inclusion filters that will define the scope for the associated
 	 * exception. Filters are a collection of strings of type name prefixes.
 	 * Default packages should be specified as the empty string.
-	 * 
+	 *
 	 * @param filters
 	 *            the array of filters to apply
 	 * @exception CoreException
@@ -41,7 +41,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns the inclusive filters that define the scope for the associated
 	 * exception. Filters are a collection of strings of type name prefixes.
-	 * 
+	 *
 	 * @return the array of defined inclusive filters
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
@@ -53,7 +53,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns whether this breakpoint suspends execution when the associated
 	 * exception is thrown in a caught location (in a try/catch statement).
-	 * 
+	 *
 	 * @return <code>true</code> if this is a caught exception breakpoint
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's
@@ -65,7 +65,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Returns whether this breakpoint suspends execution when the associated
 	 * exception is thrown in an uncaught location (not caught by a try/catch
 	 * statement).
-	 * 
+	 *
 	 * @return <code>true</code> if this is an uncaught exception breakpoint.
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's
@@ -76,7 +76,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Sets whether this breakpoint suspends execution when the associated
 	 * exception is thrown in a caught location (in a try/catch statement).
-	 * 
+	 *
 	 * @param caught
 	 *            whether or not this breakpoint suspends execution when the
 	 *            associated exception is thrown in a caught location
@@ -89,7 +89,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Sets whether this breakpoint suspends execution when the associated
 	 * exception is thrown in an uncaught location.
-	 * 
+	 *
 	 * @param uncaught
 	 *            whether or not this breakpoint suspends execution when the
 	 *            associated exception is thrown in an uncaught location
@@ -102,7 +102,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns whether the exception associated with this breakpoint is a
 	 * checked exception (compiler detected).
-	 * 
+	 *
 	 * @return <code>true</code> if the exception associated with this
 	 *         breakpoint is a checked exception
 	 * @exception CoreException
@@ -116,7 +116,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * this breakpoint to suspend, of <code>null</code> if this breakpoint has
 	 * not caused a thread to suspend. Note that this name may be a sub type of
 	 * the exception that this breakpoint is associated with.
-	 * 
+	 *
 	 * @return fully qualified exception name or <code>null</code>
 	 */
 	public String getExceptionTypeName();
@@ -125,7 +125,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Sets the filters that will define the scope for the associated exception.
 	 * Filters are a collection of strings of type name prefixes. Default
 	 * packages should be specified as the empty string.
-	 * 
+	 *
 	 * @param filters
 	 *            the array of filters to apply
 	 * @param inclusive
@@ -145,7 +145,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Sets the exclusion filters that will define the scope for the associated
 	 * exception. Filters are a collection of strings of type name prefixes.
 	 * Default packages should be specified as the empty string.
-	 * 
+	 *
 	 * @param filters
 	 *            the array of filters to apply
 	 * @exception CoreException
@@ -158,7 +158,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns the filters that define the scope for the associated exception.
 	 * Filters are a collection of strings of type name prefixes.
-	 * 
+	 *
 	 * @return the array of defined filters
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
@@ -171,7 +171,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	/**
 	 * Returns the exclusive filters that define the scope for the associated
 	 * exception. Filters are a collection of strings of type name prefixes.
-	 * 
+	 *
 	 * @return the array of defined inclusive filters
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
@@ -182,7 +182,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 
 	/**
 	 * Returns whether any inclusive filters have been applied.
-	 * 
+	 *
 	 * @return <code>true</code> if the inclusive filters have been applied
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's

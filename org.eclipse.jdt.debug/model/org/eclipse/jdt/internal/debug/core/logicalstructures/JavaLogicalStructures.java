@@ -68,7 +68,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 
 	/**
 	 * Preference key for the list of user defined Java logical structures
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static final String PREF_JAVA_LOGICAL_STRUCTURES = JDIDebugModel
@@ -165,8 +165,8 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	private static void initUserDefinedJavaLogicalStructures() {
 		fUserDefinedJavaLogicalStructures = new ArrayList<JavaLogicalStructure>();
 		String logicalStructuresString = Platform.getPreferencesService().getString(
-				JDIDebugPlugin.getUniqueIdentifier(), 
-				PREF_JAVA_LOGICAL_STRUCTURES, 
+				JDIDebugPlugin.getUniqueIdentifier(),
+				PREF_JAVA_LOGICAL_STRUCTURES,
 				"",  //$NON-NLS-1$
 				null);
 		StringTokenizer tokenizer = new StringTokenizer(

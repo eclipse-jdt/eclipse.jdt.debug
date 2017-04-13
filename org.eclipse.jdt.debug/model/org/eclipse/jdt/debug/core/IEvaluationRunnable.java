@@ -19,7 +19,7 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients are intended to implement this interface.
  * </p>
- * 
+ *
  * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(IEvaluationRunnable,
  *      IProgressMonitor, int, boolean)
  * @since 2.0
@@ -29,7 +29,7 @@ public interface IEvaluationRunnable {
 	/**
 	 * Runs this evaluation in the specified thread, reporting progress to the
 	 * given progress monitor.
-	 * 
+	 *
 	 * @param thread
 	 *            the thread in which to run the evaluation
 	 * @param monitor

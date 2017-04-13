@@ -58,7 +58,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, boolean)
@@ -104,7 +104,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
 	 * org.eclipse.jdt.debug.core.IJavaThread, java.lang.String)
@@ -168,7 +168,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			if (m != null) {
 				return m;
 			}
-			
+
 			for (InterfaceType iface : ((ClassType) refType).allInterfaces()) {
 				List<Method> matches = iface.methodsByName(selector, signature);
 				for (Method ifaceMethod : matches) {
@@ -202,7 +202,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/**
 	 * Returns this object's the underlying object reference
-	 * 
+	 *
 	 * @return underlying object reference
 	 */
 	public ObjectReference getUnderlyingObject() {
@@ -211,7 +211,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * boolean)
 	 */
@@ -257,7 +257,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getField(java.lang.String,
 	 * java.lang.String)
 	 */
@@ -296,7 +296,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * Returns a variable representing the field in this object with the given
 	 * name, or <code>null</code> if there is no field with the given name, or
 	 * the name is ambiguous.
-	 * 
+	 *
 	 * @param name
 	 *            field name
 	 * @param superClassLevel
@@ -335,7 +335,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/**
 	 * Returns the underlying reference type for this object.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
@@ -398,7 +398,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
 	 */
 	@Override
@@ -425,7 +425,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
 	 */
 	@Override
@@ -449,7 +449,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIValue#getReferenceTypeName()
 	 */
@@ -471,7 +471,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getUniqueId()
 	 */
 	@Override
@@ -480,7 +480,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			ObjectReference underlyingObject = getUnderlyingObject();
 			if (underlyingObject != null) {
 				return underlyingObject.uniqueID();
-			} 
+			}
 			return -1L;
 		} catch (RuntimeException e) {
 			targetRequestFailed(
@@ -495,7 +495,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#getReferringObjects(long)
 	 */
 	@Override
@@ -517,7 +517,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 * Returns true if references to this object have been calculated and
 	 * cached. This method will return true even if the cached references are
 	 * stale.
-	 * 
+	 *
 	 * @return true is references to this object have been calculated and
 	 *         cached, false otherwise
 	 */
@@ -528,7 +528,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * Gets the list of objects that reference this object from the VM,
 	 * overwriting the cached list (if one exists).
-	 * 
+	 *
 	 * @param max
 	 *            The maximum number of entries to return
 	 * @throws DebugException
@@ -553,7 +553,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#disableCollection()
 	 */
 	@Override
@@ -574,7 +574,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaObject#enableCollection()
 	 */
 	@Override

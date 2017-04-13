@@ -39,7 +39,7 @@ import com.sun.jdi.request.EventRequest;
 
 /**
  * Class prepare breakpoint.
- * 
+ *
  * @since 3.0
  */
 public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
@@ -57,7 +57,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/**
 	 * Creates and returns a Java class prepare breakpoint for the given type.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -157,9 +157,9 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * Not supported for class prepare breakpoints.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * addInstanceFilter(com.sun.jdi.request.EventRequest,
 	 * com.sun.jdi.ObjectReference)
@@ -171,9 +171,9 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * This method not used for class prepare breakpoints.
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#newRequest
 	 * (org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget,
@@ -187,9 +187,9 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * Not supported for class prepare breakpoints.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * setRequestThreadFilter(com.sun.jdi.request.EventRequest,
 	 * com.sun.jdi.ThreadReference)
@@ -201,7 +201,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * handleClassPrepareEvent(com.sun.jdi.event.ClassPrepareEvent,
 	 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -226,7 +226,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * classPrepareComplete(com.sun.jdi.event.Event,
 	 * org.eclipse.jdt.internal.debug.core.model.JDIThread, boolean)
@@ -239,7 +239,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint#getMemberType()
 	 */
@@ -251,7 +251,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#supportsInstanceFilters()
 	 */
 	@Override
@@ -261,7 +261,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaBreakpoint#addInstanceFilter(org.eclipse
 	 * .jdt.debug.core.IJavaObject)
@@ -276,7 +276,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaBreakpoint#setThreadFilter(org.eclipse
 	 * .jdt.debug.core.IJavaThread)
@@ -291,7 +291,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#supportsThreadFilters()
 	 */
 	@Override

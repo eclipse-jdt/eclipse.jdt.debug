@@ -25,7 +25,7 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class JDIThreadGroup extends JDIDebugElement implements
 		IJavaThreadGroup, ITerminate {
@@ -36,7 +36,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	/**
 	 * Constructs a new thread group in the given target based on the underlying
 	 * thread group reference.
-	 * 
+	 *
 	 * @param target
 	 *            debug target
 	 * @param group
@@ -49,7 +49,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreads()
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroup()
 	 */
 	@Override
@@ -96,7 +96,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroups()
 	 */
 	@Override
@@ -126,7 +126,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getName()
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreadGroups()
 	 */
 	@Override
@@ -163,7 +163,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreads()
 	 */
 	@Override

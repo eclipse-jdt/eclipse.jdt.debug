@@ -56,7 +56,7 @@ public class ArrayAccess extends ArrayInstruction {
 	/**
 	 * Pops an array object off the top of the stack. Throws an exception if not
 	 * an array object or <code>null</code>.
-	 * 
+	 *
 	 * @return array object on top of the stack
 	 * @throws CoreException
 	 *             if not available

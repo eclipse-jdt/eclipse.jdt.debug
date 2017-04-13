@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * Since 3.1, <code>IJavaStackFrame</code> also implements
  * {@link org.eclipse.debug.core.model.IDropToFrame}.
  * </p>
- * 
+ *
  * @see org.eclipse.debug.core.model.IStackFrame
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -37,7 +37,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * invalid when the thread containing the stack frame resumes. A stack frame
 	 * may or may not be valid if the thread subsequently suspends, depending on
 	 * the location where the thread suspends.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public static final int ERR_INVALID_STACK_FRAME = 130;
@@ -45,7 +45,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether this stack frame currently supports the drop to frame
 	 * operation. Note that not all VMs support the operation.
-	 * 
+	 *
 	 * @return whether this stack frame currently supports drop to frame
 	 * @deprecated since 3.1, IJavaStackFrame extends
 	 *             org.eclipse.debug.core.IDropToFrame which defines
@@ -57,7 +57,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame is a
 	 * constructor.
-	 * 
+	 *
 	 * @return whether this stack frame is associated with a constructor
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -75,7 +75,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame has been
 	 * declared as native.
-	 * 
+	 *
 	 * @return whether this stack frame has been declared as native
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -93,7 +93,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame is a static
 	 * initializer.
-	 * 
+	 *
 	 * @return whether this stack frame is a static initializer
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -112,7 +112,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame has been
 	 * declared as synchronized.
-	 * 
+	 *
 	 * @return whether this stack frame has been declared as synchronized
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -130,7 +130,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame is running
 	 * code in the VM that is out of synch with the code in the workspace.
-	 * 
+	 *
 	 * @return whether this stack frame is out of synch with the workspace.
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -151,7 +151,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * that is, it is running old byte codes that have been replaced in the VM.
 	 * This can occur when a hot code replace succeeds but the VM is unable to
 	 * pop a call to an affected method from the call stack.
-	 * 
+	 *
 	 * @return whether this stack frame's method is obsolete
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -170,7 +170,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns the fully qualified name of the type that declares the method
 	 * associated with this stack frame.
-	 * 
+	 *
 	 * @return declaring type name
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -188,7 +188,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns the fully qualified name of the type that is the receiving object
 	 * associated with this stack frame
-	 * 
+	 *
 	 * @return receiving type name
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -206,7 +206,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns the JNI signature for the method this stack frame is associated
 	 * with.
-	 * 
+	 *
 	 * @return signature
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -224,7 +224,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns a list of fully qualified type names of the arguments for the
 	 * method associated with this stack frame.
-	 * 
+	 *
 	 * @return argument type names, or an empty list if this method has no
 	 *         arguments
 	 * @exception DebugException
@@ -242,7 +242,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 
 	/**
 	 * Returns the name of the method associated with this stack frame
-	 * 
+	 *
 	 * @return method name
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -260,7 +260,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns the local, static, or "this" variable with the given name, or
 	 * <code>null</code> if unable to resolve a variable with the name.
-	 * 
+	 *
 	 * @param variableName
 	 *            the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
@@ -283,7 +283,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * that corresponds to the line in the associated source element in the
 	 * specified stratum, or <code>-1</code> if line number information is
 	 * unavailable.
-	 * 
+	 *
 	 * @param stratum
 	 *            the stratum to use.
 	 * @return line number of instruction pointer in this stack frame, or
@@ -295,7 +295,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 *                DebugException's status code contains the underlying
 	 *                exception responsible for the failure.</li>
 	 *                </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public int getLineNumber(String stratum) throws DebugException;
@@ -304,7 +304,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * Returns the source name debug attribute associated with the declaring
 	 * type of this stack frame, or <code>null</code> if the source name debug
 	 * attribute not present.
-	 * 
+	 *
 	 * @return source name debug attribute, or <code>null</code>
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -323,7 +323,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * Returns the source name debug attribute associated with the declaring
 	 * type of this stack frame in the specified stratum, or <code>null</code>
 	 * if the source name debug attribute not present.
-	 * 
+	 *
 	 * @param stratum
 	 *            the stratum to use.
 	 * @return source name debug attribute, or <code>null</code>
@@ -337,7 +337,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 *                thread containing this stack frame has since been resumed.
 	 *                </li>
 	 *                </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public String getSourceName(String stratum) throws DebugException;
@@ -346,7 +346,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * Returns the source path debug attribute associated with this stack frame
 	 * in the specified stratum, or <code>null</code> if the source path is not
 	 * known.
-	 * 
+	 *
 	 * @param stratum
 	 *            the stratum to use.
 	 * @return source path debug attribute, or <code>null</code>
@@ -367,7 +367,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns the source path debug attribute associated with this stack frame,
 	 * or <code>null</code> if the source path is not known.
-	 * 
+	 *
 	 * @return source path debug attribute, or <code>null</code>
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -386,7 +386,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns a collection of local variables that are visible at the current
 	 * point of execution in this stack frame. The list includes arguments.
-	 * 
+	 *
 	 * @return collection of locals and arguments
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -406,7 +406,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * Returns a reference to the receiver of the method associated with this
 	 * stack frame, or <code>null</code> if this stack frame represents a static
 	 * method.
-	 * 
+	 *
 	 * @return 'this' object, or <code>null</code>
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -423,7 +423,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 
 	/**
 	 * Returns the class in which this stack frame's method is declared.
-	 * 
+	 *
 	 * @return the class in which this stack frame's method is declared
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -447,7 +447,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 
 	/**
 	 * Returns the type in which this stack frame's method is declared.
-	 * 
+	 *
 	 * @return the type in which this stack frame's method is declared
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -468,11 +468,11 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * variables were retrieved from the target for this frame. Returns
 	 * <code>true</code> if locals have never been retrieved. This data is
 	 * available after the fact, since variable retrieval is expensive.
-	 * 
+	 *
 	 * @return whether local variable information was available when variables
 	 *         were retrieved from the target. Returns <code>true</code> if
 	 *         locals have never been retrieved
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public boolean wereLocalsAvailable();
@@ -480,7 +480,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	/**
 	 * Returns whether the method associated with this stack frame accepts a
 	 * variable number of arguments.
-	 * 
+	 *
 	 * @return <code>true</code> if the method associated with this stack frame
 	 *         accepts a variable number of arguments, <code>false</code>
 	 *         otherwise.
@@ -505,7 +505,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * <p>
 	 * Force return is only available when a thread is suspended.
 	 * </p>
-	 * 
+	 *
 	 * @return whether force return can be performed currently
 	 * @since 3.3
 	 */
@@ -522,7 +522,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers,
 	 * method's return type. Use a void value when a method return type is void
 	 * (see <code>IJavaDebugTarget.voidValue()</code>).</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param value
 	 *            return value that must be assignment compatible with this
 	 *            frame's method's return value

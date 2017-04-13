@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ public interface EventRequestManager extends com.sun.jdi.Mirror {
 	 * operation. This in recognition that the VM may be in an awkward state and
 	 * unable to comply. For example, execution is suspended in a native method
 	 * and the arguments would be unavailable on return .
-	 * 
+	 *
 	 * @param thread
 	 *            the thread in which to step
 	 * @return the created {@link ReenterStepRequest}

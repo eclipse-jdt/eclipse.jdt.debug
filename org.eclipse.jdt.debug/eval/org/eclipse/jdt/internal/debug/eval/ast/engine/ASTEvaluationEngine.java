@@ -83,7 +83,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse
 		 * .debug.core.DebugEvent[])
@@ -121,7 +121,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String,
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame,
@@ -139,7 +139,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IEvaluationEngine#evaluate(java.lang.String,
 	 * org.eclipse.jdt.debug.core.IJavaObject,
@@ -159,7 +159,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/**
 	 * Writes a stack dump to trace the calling thread.
-	 * 
+	 *
 	 * @param snippet
 	 *            expression to evaluate
 	 * @param thread
@@ -186,7 +186,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org
 	 * .eclipse.jdt.debug.eval.ICompiledExpression,
@@ -205,7 +205,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#evaluateExpression(org
 	 * .eclipse.jdt.debug.eval.ICompiledExpression,
@@ -267,7 +267,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaStackFrame)
@@ -461,7 +461,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaObject)
@@ -486,7 +486,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.eval.IAstEvaluationEngine#getCompiledExpression
 	 * (java.lang.String, org.eclipse.jdt.debug.core.IJavaType)
@@ -520,7 +520,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * Creates a compiled expression for the given snippet using the given
 	 * mapper and compilation unit (AST).
-	 * 
+	 *
 	 * @param snippet
 	 *            the code snippet to be compiled
 	 * @param mapper
@@ -583,7 +583,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getJavaProject()
 	 */
 	@Override
@@ -593,7 +593,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#getDebugTarget()
 	 */
 	@Override
@@ -603,7 +603,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationEngine#dispose()
 	 */
 	@Override
@@ -815,7 +815,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	/**
 	 * Replaces references to 'this' with the 'array_this' variable.
-	 * 
+	 *
 	 * @param snippet
 	 *            code snippet
 	 * @return snippet with 'this' references replaced

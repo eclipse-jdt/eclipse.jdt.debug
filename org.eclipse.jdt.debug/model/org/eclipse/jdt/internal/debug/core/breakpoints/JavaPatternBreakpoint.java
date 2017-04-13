@@ -42,7 +42,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements
 	 * <code>"org.eclipse.jdt.debug.core.pattern"</code>). This attribute is a
 	 * <code>String</code>.
 	 */
-	protected static final String PATTERN = "org.eclipse.jdt.debug.core.pattern"; //$NON-NLS-1$	
+	protected static final String PATTERN = "org.eclipse.jdt.debug.core.pattern"; //$NON-NLS-1$
 
 	public JavaPatternBreakpoint() {
 	}

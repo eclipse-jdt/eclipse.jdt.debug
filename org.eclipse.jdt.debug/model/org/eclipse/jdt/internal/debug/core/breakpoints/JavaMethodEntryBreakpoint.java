@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 	 * is contained. (value <code>"org.eclipse.jdt.debug.core.methodName"</code>
 	 * ). This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
+	private static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing the signature of the method in which a
@@ -51,7 +51,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 	 * <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). This
 	 * attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
+	private static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$
 
 	/**
 	 * Cache of method name attribute
@@ -132,7 +132,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Initialize cache of attributes
-	 * 
+	 *
 	 * @see IBreakpoint#setMarker(IMarker)
 	 */
 	@Override

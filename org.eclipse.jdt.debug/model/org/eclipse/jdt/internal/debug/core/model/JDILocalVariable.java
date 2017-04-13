@@ -162,7 +162,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
 	@Override
@@ -232,7 +232,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isLocal()
 	 */
 	@Override

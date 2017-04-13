@@ -63,7 +63,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	 * Returns this variable's current underlying jdi value. Subclasses must
 	 * implement #retrieveValue() and do not need to guard against JDI
 	 * exceptions, as this method handles them.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if unable to access the value
 	 */
@@ -88,7 +88,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * Returns the current value of this variable. The value is cached, but on
 	 * each access we see if the value has changed and update if required.
-	 * 
+	 *
 	 * @see IVariable#getValue()
 	 */
 	@Override
@@ -230,9 +230,9 @@ public abstract class JDIVariable extends JDIDebugElement implements
 
 	/**
 	 * Returns the underlying type of this variable
-	 * 
+	 *
 	 * @return the underlying type of this variable
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
 	 *                <ul>
@@ -257,7 +257,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 
 	/**
 	 * Sets this variable's change counter to the specified value
-	 * 
+	 *
 	 * @param count
 	 *            new value
 	 */
@@ -268,7 +268,7 @@ public abstract class JDIVariable extends JDIDebugElement implements
 	/**
 	 * Returns this variable's change counter. This corresponds to the last time
 	 * this variable changed.
-	 * 
+	 *
 	 * @return this variable's change counter
 	 */
 	protected int getChangeCount() {

@@ -81,7 +81,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Constructs a new event dispatcher listening for events originating from
 	 * the specified debug target's underlying VM.
-	 * 
+	 *
 	 * @param target
 	 *            the target this event dispatcher belongs to
 	 */
@@ -93,7 +93,7 @@ public class EventDispatcher implements Runnable {
 
 	/**
 	 * Dispatch the given event set.
-	 * 
+	 *
 	 * @param eventSet
 	 *            events to dispatch
 	 */
@@ -224,7 +224,7 @@ public class EventDispatcher implements Runnable {
 	 * Continuously reads events that are coming from the event queue, until
 	 * this event dispatcher is shutdown. A debug target starts a thread on this
 	 * method on startup.
-	 * 
+	 *
 	 * @see #shutdown()
 	 */
 	@Override
@@ -287,7 +287,7 @@ public class EventDispatcher implements Runnable {
 
 	/**
 	 * Returns whether this event dispatcher has been shutdown.
-	 * 
+	 *
 	 * @return whether this event dispatcher has been shutdown
 	 */
 	private boolean isShutdown() {
@@ -298,7 +298,7 @@ public class EventDispatcher implements Runnable {
 	 * Registers the given listener for with the given event request. When an
 	 * event is received from the underlying VM, that is associated with the
 	 * given event request, the listener will be notified.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to register
 	 * @param request
@@ -314,7 +314,7 @@ public class EventDispatcher implements Runnable {
 	 * De-registers the given listener and event request. The listener will no
 	 * longer be notified of events associated with the request. Listeners are
 	 * responsible for deleting the associated event request if required.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to de-register
 	 * @param request
@@ -327,7 +327,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Adds the given event to the queue of debug events to fire when done
 	 * dispatching events from the given event set.
-	 * 
+	 *
 	 * @param event
 	 *            the event to queue
 	 * @param set

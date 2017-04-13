@@ -45,7 +45,7 @@ import com.sun.jdi.Value;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadReference, org.eclipse.jdi.hcr.ThreadReference {
 	/** ThreadStatus Constants. */
@@ -456,7 +456,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 
 	/**
 	 * Resumes this thread.
-	 * 
+	 *
 	 * @see com.sun.jdi.ThreadReference#resume()
 	 */
 	@Override
@@ -524,7 +524,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 
 	/**
 	 * Stops this thread with an asynchronous exception.
-	 * 
+	 *
 	 * @see com.sun.jdi.ThreadReference#stop(com.sun.jdi.ObjectReference)
 	 */
 	@Override
@@ -558,7 +558,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 
 	/**
 	 * Suspends this thread.
-	 * 
+	 *
 	 * @see com.sun.jdi.ThreadReference#suspend()
 	 */
 	@Override
@@ -630,7 +630,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 	/**
 	 * Simulate the execution of a return instruction instead of executing the
 	 * next byte code in a method.
-	 * 
+	 *
 	 * @return Returns whether any finally or synchronized blocks are enclosing
 	 *         the current instruction.
 	 */

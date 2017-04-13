@@ -20,7 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * An evaluation engine that performs evaluations by interpreting abstract
  * syntax trees. An AST evaluation engine is capable of creating compiled
  * expressions that can be evaluated multiple times in a given runtime context.
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -36,7 +36,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * evaluation with the given evaluation detail (@see
 	 * IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to evaluate
 	 * @param frame
@@ -80,7 +80,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * the given evaluation detail (@see
 	 * IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
-	 * 
+	 *
 	 * @param expression
 	 *            the expression to evaluate
 	 * @param object
@@ -122,7 +122,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * in the context of the specified stack frame. The generated expression can
 	 * be stored and evaluated later in a valid runtime context. Compilation
 	 * errors are reported in the returned compiled expression.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to compile
 	 * @param frame
@@ -147,7 +147,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * in the context of the specified object. The generated expression can be
 	 * stored and evaluated later in a valid runtime context. Compilation errors
 	 * are reported in the returned compiled expression.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to compile
 	 * @param object
@@ -172,7 +172,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * in the context of the specified type. The generated expression can be
 	 * stored and evaluated later in a valid runtime context. Compilation errors
 	 * are reported in the returned compiled expression.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to compile
 	 * @param type

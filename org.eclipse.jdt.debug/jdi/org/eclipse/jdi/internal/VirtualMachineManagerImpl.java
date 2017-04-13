@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -143,9 +143,9 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 			IPreferencesService srvc = Platform.getPreferencesService();
 			if(srvc != null) {
 				return Platform.getPreferencesService().getInt(
-						JDIDebugModel.getPluginIdentifier(), 
-						JDIDebugModel.PREF_REQUEST_TIMEOUT, 
-						JDIDebugModel.DEF_REQUEST_TIMEOUT, 
+						JDIDebugModel.getPluginIdentifier(),
+						JDIDebugModel.PREF_REQUEST_TIMEOUT,
+						JDIDebugModel.DEF_REQUEST_TIMEOUT,
 						null);
 			}
 		} catch (NoClassDefFoundError e) {

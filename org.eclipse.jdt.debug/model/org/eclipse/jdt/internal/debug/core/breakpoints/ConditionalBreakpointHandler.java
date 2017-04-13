@@ -43,7 +43,7 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * Breakpoint listener to handle breakpoint conditions.
- * 
+ *
  * @since 3.5
  */
 public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
@@ -90,7 +90,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 
 		/**
 		 * Processes the result to determine whether to suspend or resume.
-		 * 
+		 *
 		 * @param result
 		 *            evaluation result
 		 * @return vote
@@ -108,10 +108,10 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 				if (wrappedException instanceof VMDisconnectedException) {
 					// VM terminated/disconnected during evaluation
 					return DONT_SUSPEND;
-				} 
+				}
 				fireConditionHasRuntimeErrors(fBreakpoint, exception);
 				return SUSPEND;
-			} 
+			}
 			try {
 				IValue value = result.getValue();
 				if (fBreakpoint.isConditionSuspendOnTrue()) {
@@ -122,7 +122,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 								.equals("boolean")) { //$NON-NLS-1$
 							if (javaValue.getBooleanValue()) {
 								return SUSPEND;
-							} 
+							}
 							return DONT_SUSPEND;
 						}
 					}
@@ -145,13 +145,13 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 					// result was not JDIValue
 					fireConditionHasRuntimeErrors(fBreakpoint, new DebugException(status));
 					return SUSPEND;
-				} 
+				}
 				IDebugTarget debugTarget = thread.getDebugTarget();
 				IValue lastValue = fBreakpoint
 						.setCurrentConditionValue(debugTarget, value);
 				if (!value.equals(lastValue)) {
 					return SUSPEND;
-				} 
+				}
 				return DONT_SUSPEND;
 			} catch (DebugException e) {
 				// Suspend when an error occurs
@@ -163,7 +163,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 		/**
 		 * Result of the conditional expression evaluation - to resume or not
 		 * resume, that is the question.
-		 * 
+		 *
 		 * @return vote result
 		 */
 		int getVote() {
@@ -172,7 +172,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 
 		/**
 		 * Returns the lock object to synchronize this evaluation.
-		 * 
+		 *
 		 * @return lock object
 		 */
 		Object getLock() {
@@ -331,7 +331,7 @@ public class ConditionalBreakpointHandler implements IJavaBreakpointListener {
 	/**
 	 * Returns whether errors were encountered when evaluating the condition
 	 * (compilation or runtime).
-	 * 
+	 *
 	 * @return whether errors were encountered when evaluating the condition
 	 */
 	public boolean hasErrors() {

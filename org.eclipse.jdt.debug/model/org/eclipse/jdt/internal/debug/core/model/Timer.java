@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,7 +12,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 /**
  * A timer notifies listeners when a specific amount of time has passed.
- * 
+ *
  * @see ITimeoutListener
  */
 public class Timer {
@@ -79,7 +79,7 @@ public class Timer {
 	 * passed. A call to <code>stop</code>, before the time expires, will cancel
 	 * the the timer and timeout callback. This method can only be called if
 	 * this timer is idle (i.e. <code>isStarted() == false<code>).
-	 * 
+	 *
 	 * @param listener
 	 *            The timer listener
 	 * @param ms
@@ -121,7 +121,7 @@ public class Timer {
 
 	/**
 	 * Returns whether this timer's thread is alive
-	 * 
+	 *
 	 * @return whether this timer's thread is alive
 	 */
 	private boolean isAlive() {
@@ -131,7 +131,7 @@ public class Timer {
 	/**
 	 * Sets whether this timer's thread is alive. When set to <code>false</code>
 	 * this timer's thread will exit on its next iteration.
-	 * 
+	 *
 	 * @param alive
 	 *            whether this timer's thread should be alive
 	 * @see #dispose()
@@ -142,7 +142,7 @@ public class Timer {
 
 	/**
 	 * Returns the current timeout listener
-	 * 
+	 *
 	 * @return timeout listener
 	 */
 	protected ITimeoutListener getListener() {
@@ -151,7 +151,7 @@ public class Timer {
 
 	/**
 	 * Sets the listener to be notified if this timer times out.
-	 * 
+	 *
 	 * @param listener
 	 *            timeout listener
 	 */
@@ -162,7 +162,7 @@ public class Timer {
 	/**
 	 * Returns whether this timer has been started, and has not yet timed out,
 	 * or been stopped.
-	 * 
+	 *
 	 * @return whether this timer has been started, and has not yet timed out,
 	 *         or been stopped
 	 */
@@ -173,7 +173,7 @@ public class Timer {
 	/**
 	 * Sets whether this timer has been started, and has not yet timed out, or
 	 * been stopped.
-	 * 
+	 *
 	 * @param started
 	 *            whether this timer has been started, and has not yet timed
 	 *            out, or been stopped
@@ -184,7 +184,7 @@ public class Timer {
 
 	/**
 	 * Returns this timer's thread
-	 * 
+	 *
 	 * @return thread that waits for a timeout
 	 */
 	private Thread getThread() {
@@ -193,7 +193,7 @@ public class Timer {
 
 	/**
 	 * Sets this timer's thread used to perform timeout processing
-	 * 
+	 *
 	 * @param thread
 	 *            thread that waits for a timeout
 	 */
@@ -204,7 +204,7 @@ public class Timer {
 	/**
 	 * Returns the amount of time, in milliseconds, that this timer is/was
 	 * waiting for.
-	 * 
+	 *
 	 * @return timeout value, in milliseconds
 	 */
 	protected int getTimeout() {
@@ -214,7 +214,7 @@ public class Timer {
 	/**
 	 * Sets the amount of time, in milliseconds, that this timer will wait for
 	 * before timing out.
-	 * 
+	 *
 	 * @param timeout
 	 *            value, in milliseconds
 	 */

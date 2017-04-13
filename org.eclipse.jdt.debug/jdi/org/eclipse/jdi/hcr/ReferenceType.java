@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,16 +54,16 @@ public interface ReferenceType {
 	 * <p>
 	 * @return the CRC-32 of the entire class file contents for this reference
 	 * type.
-	 * 
+	 *
 	 * @see org.eclipse.jdi.hcr.VirtualMachine#classesHaveChanged
 	 */
 	public int getClassFileVersion();
 
 	/**
 	 * Returns whether this reference type is eligible for hot code replacement.
-	 * 
+	 *
 	 * @return whether this reference type is eligible for hot code replacement
-	 * 
+	 *
 	 * @see org.eclipse.jdi.hcr.ReferenceType#getClassFileVersion
 	 */
 	public boolean isHCREligible();
