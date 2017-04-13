@@ -32,7 +32,7 @@ import org.eclipse.jdt.internal.core.SourceMethod;
 import org.eclipse.jdt.internal.core.SourceType;
 
 /**
- * Contains methods to find an IMember within a given path subdivided by the '$' character. 
+ * Contains methods to find an IMember within a given path subdivided by the '$' character.
  * Syntax:
  * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
  * eg:<code>
@@ -43,7 +43,7 @@ import org.eclipse.jdt.internal.core.SourceType;
  * 			{
  * 				Object anon = new Object(){
  * 					int anIntField;
- * 					String anonTypeMethod() {return "an Example";}				
+ * 					String anonTypeMethod() {return "an Example";}
  * 				}
  * 			}
  * 		}
@@ -54,7 +54,7 @@ import org.eclipse.jdt.internal.core.SourceType;
  * eg:<code>1MyType</code>
  */
 public class MemberParser{
-	
+
 	/**
 	 * @param typeQualifiedName
 	 * @return
@@ -83,7 +83,7 @@ public class MemberParser{
 			if(fragments[fragmentNum].containsJavaResources()){
 				ICompilationUnit cunits[] = fragments[fragmentNum].getCompilationUnits();
 				for (int cunitNum = 0; cunitNum < cunits.length; cunitNum++) {
-					results.add(cunits[cunitNum]);								
+					results.add(cunits[cunitNum]);
 				}
 			}
 		}
@@ -91,7 +91,7 @@ public class MemberParser{
 			return null;
 		return results.toArray(new ICompilationUnit[results.size()]);
 	}
-	
+
 	/**
 	 * @param projects the scope of which you wish to return compilation units
 	 * @return a handle to all compilation units contained by the given projects
@@ -99,12 +99,12 @@ public class MemberParser{
 	 */
 	private static ICompilationUnit[] getAllCompilationUnits(IProject[] projects)  throws JavaModelException{
 		return getAllCompilationUnits(getAllPackageFragments(projects));
-	}	
-	
+	}
+
 	private static ICompilationUnit[] getAllCompilationUnits(String packageName, IProject[] projects)throws JavaModelException {
 		return getAllCompilationUnits(getAllPackageFragments(packageName, projects));
-	}	
-	
+	}
+
 	/**
 	 * @param types
 	 * @return an array of all declared methods for the given types
@@ -113,7 +113,7 @@ public class MemberParser{
 	private static IMethod[] getAllMethods(IType[] types) throws JavaModelException{
 		if(types==null)
 			return null;
-		
+
 		final Set<IMethod> results = new HashSet<IMethod>();
 		for (int typeNum = 0; typeNum < types.length; typeNum++) {
 			IMethod[] methods = types[typeNum].getMethods();
@@ -125,7 +125,7 @@ public class MemberParser{
 			return null;
 		return results.toArray(new SourceMethod[results.size()]);
 	}
-	
+
 	/**
 	 * @param projects the scope of the return
 	 * @return all package fragments in the scope
@@ -152,7 +152,7 @@ public class MemberParser{
 	private static IProject[] getAllProjects(){
 		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
 	}
-	
+
 	/**
 	 * @param cunits the scope of the search
 	 * @return all types within the scope
@@ -161,7 +161,7 @@ public class MemberParser{
 	private static IType[] getAllTypes(ICompilationUnit[] cunits) throws JavaModelException {
 		if(cunits == null)
 			return null;
-		
+
 		final Set<IType> results = new HashSet<IType>();
 		for (int cunitNum = 0; cunitNum < cunits.length; cunitNum++) {
 			IType types[] = cunits[cunitNum].getTypes(); //get all topLevel types
@@ -170,10 +170,10 @@ public class MemberParser{
 			}
 		}
 		if(results.isEmpty())
-			return null;	   
+			return null;
 		return results.toArray(new IType[results.size()]);
 	}
-	
+
 	/**
 	 * @param methods the scope of the search
 	 * @return an array of all types declared within the given methods.
@@ -194,8 +194,8 @@ public class MemberParser{
 			return null;
 		return results.toArray(new SourceType[results.size()]);
 	}
-	
-	/**Will search within the given type and all of it's children - including methods 
+
+	/**Will search within the given type and all of it's children - including methods
 	 * and anonymous types for other types.
 	 * @param types the scope of the search
 	 * @return all types within the given scope
@@ -223,11 +223,11 @@ public class MemberParser{
 		//else
 		return results.toArray(new SourceType[results.size()]);//possibly change to new IType
 	}
-	
-	
+
+
 	/**
 	 * Returns the Java project with the given name.
-	 * 
+	 *
 	 * @param name project name
 	 * @return the Java project with the given name
 	 */
@@ -235,7 +235,7 @@ public class MemberParser{
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject();
 		return JavaCore.create(project);
 	}
-	
+
 	/**
 	 * @param packageName name of the package
 	 * @param projects where to search
@@ -259,11 +259,11 @@ public class MemberParser{
 		//else
 		return results.toArray(new IPackageFragment[results.size()]);
 	}
-	
+
 	private static IProject getProject(String projectName){
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 	}
-	
+
 	private static IType getType(ArrayList<String> typeList, ICompilationUnit[] cunits) throws JavaModelException{
 		IType[] types = getAllTypes(cunits);
 		//if 1st letter is a number, it's anonymous
@@ -295,20 +295,20 @@ public class MemberParser{
 				else
 					typeNum++;//check the next type
 			}
-			
+
 			//else, it is not in the top-level types - check in methods
 			types = getAllTypes(getAllMethods(types));
 			if(types==null)
 				return null;//couldn't find it.
-		}//end while		
+		}//end while
 	}
-	
+
 	/**
-	 * Will search the workspace and return the requested type. The more information given, 
+	 * Will search the workspace and return the requested type. The more information given,
 	 * the faster the search
 	 * @param typeName the name of the type, with or without qualifiers - it cannot be null
-	 * 		e.g. "aType.innerType.1.typeInAnonymousType" or even just "typeInAnonymousType" 
-	 * 		or "innerType.1.typeInAnonymousType". 
+	 * 		e.g. "aType.innerType.1.typeInAnonymousType" or even just "typeInAnonymousType"
+	 * 		or "innerType.1.typeInAnonymousType".
 	 * @param packageName the elemental name of the package containing the given type - may be null
 	 * @param projectName the elemental name of the project containing the given type - may be null
 	 * @return the IType handle to the requested type
@@ -327,7 +327,7 @@ public class MemberParser{
 		else{
 			projects = getAllProjects();
 		}
-		
+
 		//get the Comp.units for those projects
 		ICompilationUnit cunits[] = null;
 		if(packageName!=null && packageName.length()>0){
@@ -336,14 +336,14 @@ public class MemberParser{
 		else{
 			cunits = getAllCompilationUnits(projects);
 		}
-		
+
 		return getType(typeList, cunits);
 	}
-	
-	
+
+
 	/**
 	 * @param cu the CompilationUnit containing the toplevel Type
-	 * @param target - the IMember target, listed in full Syntax, as noted in MemberParser 
+	 * @param target - the IMember target, listed in full Syntax, as noted in MemberParser
 	 * eg: EnclosingType$InnerType
 	 * @return the Lowest level inner type specified in input
 	 */
@@ -361,14 +361,14 @@ public class MemberParser{
 		}
 		//has no inner type
 		return cu.getType(target);
-		
+
 	}
-	
+
 	/**
 	 * Helper method for getLowestType (ICompilationUnit cu, String input)
 	 * @param top name of enclosing Type
-	 * @param tail the typename, possibly including inner type, 
-	 * separated by $. 
+	 * @param tail the typename, possibly including inner type,
+	 * separated by $.
 	 * eg: EnclosingType$InnerType
 	 * @return the designated type, or null if type not found.
 	 */
@@ -376,10 +376,10 @@ public class MemberParser{
 		String newtail = tail;
 		if(newtail==null || newtail.length()==0 )
 			return top;
-		
+
 		if(!top.exists())
 			return null;
-		
+
 		//check if there are more nested elements
 		String head=null;
 		for(int i=0;i<newtail.length();i++)
@@ -387,7 +387,7 @@ public class MemberParser{
 			if(newtail.charAt(i)=='$')//nested Item?
 			{//Enclosing$Inner$MoreInner
 				head = newtail.substring(0,i);
-				newtail = newtail.substring(i+1);	
+				newtail = newtail.substring(i+1);
 				break;//found next item
 			}
 		}
@@ -396,19 +396,19 @@ public class MemberParser{
 			head = newtail;
 			newtail = null;
 		}
-		
+
 		if(top instanceof IType)
 			return getNextFromType(top, head, newtail);
-		else 
+		else
 			if(top instanceof IMethod)
 				return getNextFromMethod(top, head, newtail);
 			else
 				if(top instanceof IField)
 					return getNextFromField(top, head, newtail);
 		//else there is a problem!
-		return getDeepest(top,newtail);			
+		return getDeepest(top,newtail);
 	}
-	
+
 	/**
 	 * @param head the string to parse for a name
 	 * @return the name in the type, given in the format "Occurance#Type"
@@ -421,11 +421,11 @@ public class MemberParser{
 			{
 				return head.substring(i);
 			}
-			
+
 		}
-		return IInternalDebugCoreConstants.EMPTY_STRING;//entire thing is a number 
+		return IInternalDebugCoreConstants.EMPTY_STRING;//entire thing is a number
 	}
-	
+
 	/**
 	 * @param head the string to parse for an occurrence
 	 * @return the name in the type, given in the format "Occurance#Type"
@@ -439,7 +439,7 @@ public class MemberParser{
 		}
 		return Integer.parseInt(head);//entire thing is a number
 	}
-	
+
 	/**
 	 * @param head name of method w/ signature at the end
 	 * @return simply the name of the given method, using format:
@@ -454,7 +454,7 @@ public class MemberParser{
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param top the field in which to search
 	 * @param head the next member to find
@@ -463,14 +463,14 @@ public class MemberParser{
 	 */
 	protected IMember getNextFromField(IMember top, String head, String tail) {
 		IField current = (IField)top;
-		
+
 		IType type = current.getType(getLocalTypeName(head),getLocalTypeOccurrence(head));
-		if(type.exists())	
+		if(type.exists())
 			return getDeepest(type,tail);
 		//else
-		return null;//something failed.								
+		return null;//something failed.
 	}
-	
+
 	/**
 	 * @param top the member in which to search
 	 * @param head the next member to find
@@ -480,15 +480,15 @@ public class MemberParser{
 	protected IMember getNextFromMethod(IMember top, String head, String tail) {
 		//must be a local or anonymous type
 		IMethod current = (IMethod)top;
-		
+
 		//is next part a Type?
 		IType type = current.getType(getLocalTypeName(head), getLocalTypeOccurrence(head));
-		if(type.exists())	
+		if(type.exists())
 			return getDeepest(type,tail);
 		//else
 		return null;
 	}
-	
+
 	/**
 	 * @param top the member in which to search
 	 * @param head the next member to find
@@ -497,10 +497,10 @@ public class MemberParser{
 	 */
 	protected IMember getNextFromType(IMember top, String head, String tail) {
 		IType current = (IType)top;
-		
+
 		//is next part a Type?
 		IMember next = current.getType(head);
-		if(next.exists())	
+		if(next.exists())
 			return getDeepest(next,tail);
 		//else, is next part a Field?
 		next = current.getField(head);
@@ -513,7 +513,7 @@ public class MemberParser{
 		//else
 		return null;//something failed.
 	}
-	
+
 	/**
 	 * @param head name of method w/ signature at the end
 	 * @return simply the ParameterTypeSignature, using format:

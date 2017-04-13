@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,9 +28,9 @@ import org.osgi.framework.Bundle;
  * Implementation of the Test plugin
  */
 public class JavaTestPlugin extends AbstractUIPlugin {
-	
+
 	private static JavaTestPlugin fgDefault;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -38,7 +38,7 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 		super();
 		fgDefault= this;
 	}
-	
+
 	/**
 	 * Returns the singleton instance of the plugin
 	 * @return the singleton instance of the plugin
@@ -46,7 +46,7 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 	public static JavaTestPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	/**
 	 * Returns a handle to the current workspace
 	 * @return a handle to the current workspace
@@ -54,7 +54,7 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	/**
 	 * Sets autobuild to the specified boolean value
 	 * @param enable
@@ -67,7 +67,7 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 		desc.setAutoBuilding(enable);
 		workspace.setDescription(desc);
 	}
-	
+
 	/**
 	 * Returns the file corresponding to the specified path from within this bundle
 	 * @param path

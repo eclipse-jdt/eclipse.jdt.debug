@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ import org.eclipse.jdt.debug.tests.TestAgainException;
  * Tests hot code replace
  */
 public class HcrTests extends AbstractDebugTest {
-	
+
 	class HCRListener implements IJavaHotCodeReplaceListener {
-		
+
 		boolean notified = false;
 		IJavaDebugTarget target = null;
 
@@ -62,19 +62,19 @@ public class HcrTests extends AbstractDebugTest {
 			notified = true;
 			notifyAll();
 		}
-		
+
 		/**
 		 * Returns whether notified (yet).
-		 * 
+		 *
 		 * @return whether notified
 		 */
 		public synchronized boolean wasNotified() {
 			return notified;
 		}
-		
+
 		/**
 		 * Waits for notification and returns whether notified.
-		 * 
+		 *
 		 * @return
 		 */
 		public synchronized boolean waitNotification() {
@@ -86,17 +86,17 @@ public class HcrTests extends AbstractDebugTest {
 			}
 			return notified;
 		}
-		
+
 	}
-	
+
 	public HcrTests(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Revert the source file after the test.
-	 * 
+	 *
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	@Override
@@ -117,17 +117,17 @@ public class HcrTests extends AbstractDebugTest {
 			waitForBuild();
 		}
 		super.tearDown();
-	}	
+	}
 
 	public void testSimpleHcr() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);		
-		
+		createLineBreakpoint(39, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 
@@ -151,13 +151,13 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
 				buffer.setContents(newCode);
-				
+
 				// save contents
 				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
 				waiter.waitForEvent();
-	
+
 				// should have dropped to frame 'one'
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull("No top stack frame", frame);
@@ -169,11 +169,11 @@ public class HcrTests extends AbstractDebugTest {
 					throw new TestAgainException("Retest - the correct method name was not present after HCR");
 				}
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
-				
+
 				// resume to breakpoint
 				createLineBreakpoint(39, typeName);
 				thread = resume(thread);
-				
+
 				// value of 'x' should now be "Two"
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				variable = findVariable(frame, "x");
@@ -185,24 +185,24 @@ public class HcrTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
 	 * Tests a general (plug-in) listener.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGeneralHcrListener() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);		
+		createLineBreakpoint(39, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				// look at the value of 'x' - it should be "One"
@@ -224,7 +224,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
 				buffer.setContents(newCode);
-				
+
 				// save contents
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -236,17 +236,17 @@ public class HcrTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that a target specific listener overrides a generic listener.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSpecificHcrListener() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
-		createLineBreakpoint(39, typeName);		
+		createLineBreakpoint(39, typeName);
 		HCRListener listener = new HCRListener();
 		HCRListener listener2 = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
@@ -254,7 +254,7 @@ public class HcrTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				target.addHotCodeReplaceListener(listener2);
@@ -277,7 +277,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
 				buffer.setContents(newCode);
-				
+
 				// save contents
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -290,18 +290,18 @@ public class HcrTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
-		}		
-	}	
-	
+		}
+	}
+
 	/**
-	 * Tests HCR in a local type with the same name as the enclosing 
+	 * Tests HCR in a local type with the same name as the enclosing
 	 * method
 	 * @throws Exception
 	 * @since 3.8.100
 	 */
 	public void testHCRLocalType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(33, typeName);		
+		createLineBreakpoint(33, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -325,7 +325,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Local#run\"" + contents.substring(index + 13);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -345,16 +345,16 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR in a local type
 	 * @throws Exception
-	 * 
+	 *
 	 * @since 3.8.100
 	 */
 	public void testHCRLocalType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(37, typeName);		
+		createLineBreakpoint(37, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -378,7 +378,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Local#run2\"" + contents.substring(index + 14);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -398,16 +398,16 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR in a local type defined in a constructor
 	 * @throws Exception
-	 * 
+	 *
 	 * @since 3.8.100
 	 */
 	public void testHCRLocalType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass2";
-		createLineBreakpoint(19, typeName);		
+		createLineBreakpoint(19, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -431,7 +431,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"CLocal#run\"" + contents.substring(index + 14);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -451,17 +451,17 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
-	 * Tests HCR in an anonymous type with the same name as the method 
+	 * Tests HCR in an anonymous type with the same name as the method
 	 * where the anonymous type was defined
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8.100
 	 */
 	public void testHCRAnonymousType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(34, typeName);		
+		createLineBreakpoint(34, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -485,7 +485,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -506,7 +506,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR in an anonymous type defined in a method
 	 * @throws Exception
@@ -514,7 +514,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnonymousType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(44, typeName);		
+		createLineBreakpoint(44, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -538,7 +538,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -558,7 +558,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR in an anonymous type defined in a constructor
 	 * @throws Exception
@@ -566,7 +566,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnonymousType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass3";
-		createLineBreakpoint(24, typeName);		
+		createLineBreakpoint(24, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -590,7 +590,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"NEW_CODE\"" + contents.substring(index + 11);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -610,7 +610,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on a method called from a constructor
 	 * @throws Exception
@@ -618,7 +618,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRConstructor() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
-		createLineBreakpoint(21, typeName);		
+		createLineBreakpoint(21, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -642,7 +642,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"HcrClass4#run\"" + contents.substring(index + 17);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -662,7 +662,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR within a constructor
 	 * @throws Exception
@@ -670,7 +670,7 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRConstructor2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass4";
-		createLineBreakpoint(16, typeName);		
+		createLineBreakpoint(16, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
@@ -694,7 +694,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Construct\"" + contents.substring(index + 13);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -715,7 +715,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an inner type method with the same name as the enclosing type
 	 * method it was called from
@@ -724,14 +724,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(23, typeName);		
+		createLineBreakpoint(23, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -750,7 +750,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"InnerClass#run\"" + contents.substring(index + 18);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -771,7 +771,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an inner type method
 	 * @throws Exception
@@ -779,14 +779,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType2() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(27, typeName);		
+		createLineBreakpoint(27, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -805,7 +805,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"InnerClass#run2\"" + contents.substring(index + 19);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -826,7 +826,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on a constructor in an inner type
 	 * @throws Exception
@@ -834,14 +834,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType3() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(18, typeName);		
+		createLineBreakpoint(18, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -860,7 +860,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Construct\"" + contents.substring(index + 13);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -882,7 +882,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an enclosing method called from an inner type
 	 * method with the same name
@@ -891,14 +891,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType4() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(33, typeName);		
+		createLineBreakpoint(33, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -917,7 +917,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"LocalHCR#run\"" + contents.substring(index + 16);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -938,7 +938,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an enclosing method called from an inner type
 	 * method
@@ -947,14 +947,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerType5() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass5";
-		createLineBreakpoint(37, typeName);		
+		createLineBreakpoint(37, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -973,7 +973,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"LocalHCR#outerrun\"" + contents.substring(index +21);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -994,7 +994,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on a local type defined in an inner type
 	 * @throws Exception
@@ -1002,14 +1002,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalInner() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass9";
-		createLineBreakpoint(19, typeName);		
+		createLineBreakpoint(19, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -1028,7 +1028,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Inner$Local#run\"" + contents.substring(index +19);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -1049,7 +1049,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on a local type defined in an anonymous type
 	 * @throws Exception
@@ -1057,14 +1057,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRLocalAnonymous() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass8";
-		createLineBreakpoint(24, typeName);		
+		createLineBreakpoint(24, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -1083,7 +1083,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Inner$Local#run\"" + contents.substring(index +19);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -1104,7 +1104,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an inner type defined in a local type
 	 * @throws Exception
@@ -1112,14 +1112,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRInnerLocal() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass7";
-		createLineBreakpoint(19, typeName);		
+		createLineBreakpoint(19, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -1138,7 +1138,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Local$Inner#run\"" + contents.substring(index +19);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();
@@ -1159,7 +1159,7 @@ public class HcrTests extends AbstractDebugTest {
 			JDIDebugModel.removeHotCodeReplaceListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Tests HCR on an anonymous type defined in a local type
 	 * @throws Exception
@@ -1167,14 +1167,14 @@ public class HcrTests extends AbstractDebugTest {
 	 */
 	public void testHCRAnnonymousLocal() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.HcrClass6";
-		createLineBreakpoint(23, typeName);		
+		createLineBreakpoint(23, typeName);
 		HCRListener listener = new HCRListener();
 		JDIDebugModel.addHotCodeReplaceListener(listener);
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			if (target.supportsHotCodeReplace()) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -1193,7 +1193,7 @@ public class HcrTests extends AbstractDebugTest {
 				assertTrue("Could not find code to replace", index > 0);
 				String newCode = contents.substring(0, index) + "\"Local$Inner#run\"" + contents.substring(index +19);
 				buffer.setContents(newCode);
-				
+
 				DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.SUSPEND);
 				cu.commitWorkingCopy(true, null);
 				waitForBuild();

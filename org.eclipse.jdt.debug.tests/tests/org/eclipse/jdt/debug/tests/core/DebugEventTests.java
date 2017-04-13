@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,19 +27,19 @@ public class DebugEventTests extends AbstractDebugTest {
 	public DebugEventTests(String name) {
 		super(name);
 	}
-	
+
 	/**
-	 * Ensure that a model specific event can be dispatched 
+	 * Ensure that a model specific event can be dispatched
 	 */
 	public void testModelSpecificEvent() {
 		DebugEvent event = new DebugEvent(this, DebugEvent.MODEL_SPECIFIC, 5000);
 		event.setData("TEST");
-		
+
 		DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.MODEL_SPECIFIC);
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 		waiter.waitForEvent();
 		DebugEvent received = waiter.getEvent();
-		
+
 		assertEquals("Incorrect detail", 5000, received.getDetail());
 		assertEquals("incorrect user data", "TEST", received.getData());
 		assertEquals("incorrect source", this, received.getSource());

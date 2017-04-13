@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,13 +26,13 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
 /**
  * Tests delegation to create a launch object.
- * 
+ *
  * @since 3.0
  */
 public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
-	
+
 	private ILaunch fLaunch = null;
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
@@ -41,7 +41,7 @@ public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
 		fLaunch = new Launch(configuration, mode, null);
 		return fLaunch;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -67,7 +67,7 @@ public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return true;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -75,7 +75,7 @@ public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) {
 		return true;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */

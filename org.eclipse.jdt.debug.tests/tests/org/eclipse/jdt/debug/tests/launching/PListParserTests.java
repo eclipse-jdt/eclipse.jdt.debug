@@ -28,16 +28,16 @@ public class PListParserTests extends AbstractDebugTest {
 
 	/**
 	 * Constructs a test
-	 * 
+	 *
 	 * @param name test name
 	 */
 	public PListParserTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests parsing of a sample installed JREs plist from the Mac.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testParseJREs() throws Exception {
@@ -61,7 +61,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("test", Boolean.FALSE);
 			map.put("testint", new Integer(42));
 			assertEquals("Incorrect values parsed", map, jres[0]);
-			
+
 			map = new HashMap<String, Comparable<?>>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk16");
@@ -72,7 +72,7 @@ public class PListParserTests extends AbstractDebugTest {
 			map.put("JVMPlatformVersion", "1.6");
 			map.put("JVMVersion", "1.6.0_20");
 			assertEquals("Incorrect values parsed", map, jres[1]);
-			
+
 			map = new HashMap<String, Comparable<?>>();
 			map.put("JVMArch", "x86_64");
 			map.put("JVMBundleID", "com.apple.javajdk15");
@@ -90,7 +90,7 @@ public class PListParserTests extends AbstractDebugTest {
 
 	/**
 	 * Tests that we parse out the correct number of raw entries from the 'lion' plist output
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -102,15 +102,15 @@ public class PListParserTests extends AbstractDebugTest {
 		if (obj instanceof Object[]) {
 			Object[] jres = (Object[]) obj;
 			assertEquals("Should be 8 entries in the array", 8, jres.length);
-			
+
 		} else {
 			assertTrue("Top level object should be an array", false);
 		}
 	}
-	
+
 	/**
 	 * Tests that we parse out the correct number of raw entries from the 'now leopard' plist output
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -122,16 +122,16 @@ public class PListParserTests extends AbstractDebugTest {
 		if (obj instanceof Object[]) {
 			Object[] jres = (Object[]) obj;
 			assertEquals("Should be 2 entries in the array", 2, jres.length);
-			
+
 		} else {
 			assertTrue("Top level object should be an array", false);
 		}
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'old' style
 	 * of plist output.
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -142,11 +142,11 @@ public class PListParserTests extends AbstractDebugTest {
 		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 2 JRE descriptions", 2, desc.length);
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'snow leopard' style
 	 * of plist output.
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -157,11 +157,11 @@ public class PListParserTests extends AbstractDebugTest {
 		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 1 JRE description", 1, desc.length);
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the 'lion' style
 	 * of plist output.
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -172,14 +172,14 @@ public class PListParserTests extends AbstractDebugTest {
 		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 4 JRE descriptions", 4, desc.length);
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - wrong data types.
 	 * <br><br>
-	 * <code>plist-bad1.xml</code> has a boolean value in place of the VM name for the 1.6 VM, 
+	 * <code>plist-bad1.xml</code> has a boolean value in place of the VM name for the 1.6 VM,
 	 * but we should still recover the remainder of the VMs defined (3 of them)
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -191,13 +191,13 @@ public class PListParserTests extends AbstractDebugTest {
 		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - missing element.
 	 * <br><br>
 	 * <code>plist-bad2.xml</code> is missing a key element - but still has the value for the key.
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -209,13 +209,13 @@ public class PListParserTests extends AbstractDebugTest {
 		VMStandin[] desc = MacInstalledJREs.parseJREInfo(new FileInputStream(file), null);
 		assertEquals("There should be 3 JRE descriptions", 3, desc.length);
 	}
-	
+
 	/**
 	 * Tests that we can parse out certain {@link VMStandin}s from the plist
 	 * output known to be bad - corrupt XML syntax.
 	 * <br><br>
 	 * <code>plist-bad3.xml</code> has corrupt XML syntax
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */

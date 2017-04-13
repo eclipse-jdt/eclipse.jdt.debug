@@ -59,7 +59,7 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
 	 */
@@ -115,6 +115,6 @@ public class ParticipantLaunchShortcut implements ILaunchShortcut2 {
 			}
 		}
 		catch(CoreException ce) {DebugPlugin.log(ce);}
-		
+
 	}
 }

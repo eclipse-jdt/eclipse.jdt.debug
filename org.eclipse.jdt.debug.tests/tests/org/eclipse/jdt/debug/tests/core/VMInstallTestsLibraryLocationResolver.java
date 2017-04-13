@@ -32,7 +32,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 		if (!isTesting) {
 			return false;
 		}
-	
+
 		for (int i = 0; i < path.segmentCount(); i++) {
 			if ("ext".equals(path.segment(i))) {
 				return !JavaFxLibraryResolver.JFXRT_JAR.equals(path.lastSegment());
@@ -43,7 +43,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getPackageRoot(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getSourcePath(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getJavadocLocation(org.eclipse.core.runtime.IPath)
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class VMInstallTestsLibraryLocationResolver implements ILibraryLocationRe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.ILibraryLocationResolver#getIndexLocation(org.eclipse.core.runtime.IPath)
 	 */
 	@Override

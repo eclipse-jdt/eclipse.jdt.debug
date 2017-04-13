@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.console.TextConsole;
  * IOConsoleTests for the Automated suite
  */
 public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchListener {
-    
+
     private int fMatchCount;
     private boolean fDisconnected = false;
 
@@ -35,7 +35,7 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     public IOConsoleTests(String name) {
         super(name);
     }
-    
+
     /**
      * Tests that the pattern matcher will find a specific pattern
      * @throws Exception
@@ -51,14 +51,14 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
             stream.print("one foo bar");
             stream.println();
             stream.print("two foo bar");
-            
+
             long endTime = System.currentTimeMillis() + 1500;
             while (!fDisconnected && System.currentTimeMillis() < endTime) {
                 synchronized(this) {
                     wait(500);
                 }
             }
-            
+
             assertEquals("Should be two foo's", 2, fMatchCount);
         } finally {
             consoleManager.removeConsoles(new IConsole[]{console});
@@ -72,7 +72,7 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 	public String getPattern() {
         return "foo";
     }
-    
+
     /**
      * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
      */
@@ -96,7 +96,7 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 	public int getCompilerFlags() {
 		return 0;
 	}
-	
+
     /**
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
@@ -112,4 +112,4 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
         notifyAll();
     }
 }
-    
+

@@ -8,7 +8,7 @@
  * This is an implementation of an early-draft specification developed under the Java
  * Community Process (JCP) and is made available for testing and evaluation purposes
  * only. The code is not compatible with any specification of the JCP.
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -55,7 +55,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  * Helper methods to set up a IJavaProject.
  */
 public class JavaProjectHelper {
-	
+
 	public static final String SRC_DIR = "src";
 	public static final String BIN_DIR = "bin";
 	public static final String J2SE_1_4_EE_NAME = "J2SE-1.4";
@@ -63,12 +63,12 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_1_6_EE_NAME = "JavaSE-1.6";
 	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
 	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
-	
+
 	/**
 	 * path to the test src for 'testprograms'
 	 */
 	public static final IPath TEST_SRC_DIR= new Path("testprograms");
-	
+
 	/**
 	 * path to the 1.5 test source
 	 */
@@ -81,18 +81,18 @@ public class JavaProjectHelper {
 	 * path to the 1.8 test source
 	 */
 	public static final IPath TEST_1_8_SRC_DIR= new Path("java8");
-	
+
 	/**
 	 * path to the compiler error java file
 	 */
-	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");	
-	
+	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");
+
 	public static final String JRE_CONTAINER_NAME = "org.eclipse.jdt.launching.JRE_CONTAINER";
 
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 8
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 8 (or greater) VM is running <code>false</code> otherwise
 	 */
 	public static boolean isJava8Compatible() {
@@ -100,34 +100,34 @@ public class JavaProjectHelper {
 	}
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 7 (or greater) VM is running <code>false</code> otherwise
 	 */
 	public static boolean isJava7Compatible() {
 		return isCompatible(7);
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 6
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 6 (or greater) VM is running <code>false</code> otherwise
 	 */
 	public static boolean isJava6Compatible() {
 		return isCompatible(6);
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 5
-	 * 
+	 *
 	 * @return <code>true</code> if a Java 5 (or greater) VM is running <code>false</code> otherwise
 	 */
 	public static boolean isJava5Compatible() {
 		return isCompatible(5);
 	}
-	
+
 	/**
 	 * Returns if the current running system is compatible with the given Java minor version
-	 * 
+	 *
 	 * @param ver the version to test - either 4, 5, 6, 7 or 8
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
@@ -150,11 +150,11 @@ public class JavaProjectHelper {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Creates a new {@link IProject} with the given name unless the project already exists. If it already exists
 	 * the project is refreshed and opened (if closed)
-	 * 
+	 *
 	 * @param pname the desired name for the project
 	 * @return the new {@link IProject} handle
 	 * @throws CoreException
@@ -172,7 +172,7 @@ public class JavaProjectHelper {
 		}
 		return project;
 	}
-	
+
 	/**
 	 * creates a java project with the specified name and output folder
 	 * @param projectName
@@ -198,9 +198,9 @@ public class JavaProjectHelper {
 		IJavaProject jproject= JavaCore.create(project);
 		jproject.setOutputLocation(outputLocation, null);
 		jproject.setRawClasspath(new IClasspathEntry[0], null);
-		return jproject;	
+		return jproject;
 	}
-		
+
 	/**
 	 * Creates a new Java project with the specified name
 	 * @param projectName
@@ -214,9 +214,9 @@ public class JavaProjectHelper {
 		}
 		IJavaProject jproject= JavaCore.create(project);
 		jproject.setRawClasspath(new IClasspathEntry[0], null);
-		return jproject;	
-	}	
-			
+		return jproject;
+	}
+
 	/**
 	 * deletes a java project
 	 * @param jproject
@@ -226,7 +226,7 @@ public class JavaProjectHelper {
 		jproject.setRawClasspath(new ClasspathEntry[0], jproject.getProject().getFullPath(), null);
 		jproject.getProject().delete(true, true, null);
 	}
-		
+
 	/**
 	 * Adds a new source container specified by the container name to the source path of the specified project
 	 * @param jproject
@@ -247,12 +247,12 @@ public class JavaProjectHelper {
 			container= folder;
 		}
 		IPackageFragmentRoot root= jproject.getPackageFragmentRoot(container);
-		
+
 		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath());
-		addToClasspath(jproject, cpe);		
+		addToClasspath(jproject, cpe);
 		return root;
 	}
-	
+
 	/**
 	 * Adds a source container to a IJavaProject.
 	 * @param jproject
@@ -282,12 +282,12 @@ public class JavaProjectHelper {
 				output.create(false, true, null);
 			}
 		}
-				
+
 		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output.getFullPath());
-		
-		addToClasspath(jproject, cpe);		
+
+		addToClasspath(jproject, cpe);
 		return root;
-	}	
+	}
 
 	/**
 	 * Adds a source container to a IJavaProject and imports all files contained
@@ -358,11 +358,11 @@ public class JavaProjectHelper {
 		IFile newFile= project.getFile(jarPath.lastSegment());
 		try (InputStream inputStream = new FileInputStream(jarPath.toFile())) {
 			newFile.create(inputStream, true, null);
-		}				
+		}
 		return addLibrary(jproject, newFile.getFullPath(), sourceAttachPath, sourceAttachRoot);
-	}	
+	}
 
-		
+
 	/**
 	 * Adds a variable entry with source attachment to a IJavaProject.
 	 * Can return null if variable can not be resolved.
@@ -382,7 +382,7 @@ public class JavaProjectHelper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Adds a container entry to the specified java project
 	 * @param project
@@ -393,13 +393,13 @@ public class JavaProjectHelper {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
 		addToClasspath(project, cpe);
 	}
-	
+
 	/**
 	 * Sets the given compiler compliance on the given {@link IJavaProject}
 	 * <br><br>
-	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6}, 
+	 * See {@link JavaCore#VERSION_1_4}, {@link JavaCore#VERSION_1_5}, {@link JavaCore#VERSION_1_6},
 	 * {@link JavaCore#VERSION_1_7} and {@link JavaCore#VERSION_1_8} for more information on accepted compliances
-	 * 
+	 *
 	 * @param project
 	 * @param compliance
 	 */
@@ -410,9 +410,9 @@ public class JavaProjectHelper {
 		map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
 		project.setOptions(map);
 	}
-	
+
 	/**
-	 * Updates the compiler compliance project setting for the given project to match the given EE. 
+	 * Updates the compiler compliance project setting for the given project to match the given EE.
 	 * I.e. J2SE-1.5 will set a 1.5 compliance for the compiler and the source level.
 	 * @param project
 	 * @param ee
@@ -431,7 +431,7 @@ public class JavaProjectHelper {
 			setCompliance(project, JavaCore.VERSION_1_8);
 		}
 	}
-	
+
 	/**
 	 * Adds a required project entry.
 	 * @param jproject
@@ -441,8 +441,8 @@ public class JavaProjectHelper {
 	public static void addRequiredProject(IJavaProject jproject, IJavaProject required) throws JavaModelException {
 		IClasspathEntry cpe= JavaCore.newProjectEntry(required.getProject().getFullPath());
 		addToClasspath(jproject, cpe);
-	}	
-	
+	}
+
 	/**
 	 * Removes a specified path form the specified java project
 	 * @param jproject
@@ -456,12 +456,12 @@ public class JavaProjectHelper {
 		for (int i= 0 ; i < nEntries ; i++) {
 			IClasspathEntry curr= oldEntries[i];
 			if (!path.equals(curr.getPath())) {
-				list.add(curr);			
+				list.add(curr);
 			}
 		}
 		IClasspathEntry[] newEntries= list.toArray(new IClasspathEntry[list.size()]);
 		jproject.setRawClasspath(newEntries, null);
-	}	
+	}
 
 	/**
 	 * Adds the specified classpath entry to the specified java project
@@ -485,8 +485,8 @@ public class JavaProjectHelper {
 		entries.add(cpe);
 		jproject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 	}
-	
-			
+
+
 	/**
 	 * Adds the specified nature to the specified project
 	 * @param proj
@@ -503,7 +503,7 @@ public class JavaProjectHelper {
 		description.setNatureIds(newNatures);
 		proj.setDescription(description, monitor);
 	}
-	
+
 	/**
 	 * Imports files from the specified zip to the specified destination
 	 * @param srcZipFile
@@ -511,7 +511,7 @@ public class JavaProjectHelper {
 	 * @param monitor
 	 * @throws InvocationTargetException
 	 */
-	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
+	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
 		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
 		try {
 			ImportOperation op= new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new ImportOverwriteQuery());
@@ -520,7 +520,7 @@ public class JavaProjectHelper {
 			// should not happen
 		}
 	}
-	
+
 	/**
 	 * Imports files from the specified root dir into the specified path
 	 * @param rootDir
@@ -529,7 +529,7 @@ public class JavaProjectHelper {
 	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
+	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
 		List<File> files = new ArrayList<>(100);
 		addJavaFiles(rootDir, files);
@@ -545,8 +545,8 @@ public class JavaProjectHelper {
 		} catch (InterruptedException e) {
 			throw new InvocationTargetException(e, "Interrupted during files import");
 		}
-	}	
-	
+	}
+
 	/**
 	 * Imports the specified file into the specified path
 	 * @param file
@@ -554,7 +554,7 @@ public class JavaProjectHelper {
 	 * @param monitor
 	 * @throws InvocationTargetException
 	 */
-	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
+	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
 		List<File> files = new ArrayList<File>(1);
 		files.add(file);
@@ -566,7 +566,7 @@ public class JavaProjectHelper {
 			// should not happen
 		}
 	}
-	
+
 	/**
 	 * Recursively adds files from the specified dir to the provided list
 	 * @param dir
@@ -591,7 +591,7 @@ public class JavaProjectHelper {
 			}
 		}
 	}
-	
+
 	/**
 	 * Static class for an <code>IOverwriteQuery</code> implementation
 	 */
@@ -602,6 +602,6 @@ public class JavaProjectHelper {
 		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
-		}	
-	}	
+		}
+	}
 }

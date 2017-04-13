@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * Tests for classpath variables
  */
 public class ClasspathVariableTests extends AbstractDebugTest {
-		
+
 	/**
 	 * Constructor
 	 * @param name the name of the test
@@ -48,7 +48,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Entries should be equal", entry, resolved[0]);
 	}
-	
+
 	/**
 	 * test JRE resolution
 	 * @throws CoreException
@@ -64,7 +64,7 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertTrue("no default libs", libs.length > 0);
 		assertEquals("Should resolve to location of local JRE", libs[0].getSystemLibraryPath().toOSString().toLowerCase(), resolved[0].getPath().toOSString().toLowerCase());
 	}
-	
+
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a null source attachment.
@@ -83,8 +83,8 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertNull("Should be null source attachment", resolved[0].getSourceAttachmentPath());
-	}	
-	
+	}
+
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a source attachment rooted with a null
@@ -104,11 +104,11 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertNull("Should be null source attachment", resolved[0].getSourceAttachmentPath());
-	}	
-	
+	}
+
 	/**
 	 * Test a class path entry with variable extensions for archive and source attachment.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
@@ -124,11 +124,11 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
-	}	
-	
+	}
+
 	/**
 	 * Test a class path entry with variable extensions for archive and source attachment.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testProjectResolutionWithVariableArchiveAndSourceAttachmentWithExtension() throws Exception {
@@ -145,5 +145,5 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertEquals("Resolved source attachment not correct", archive.getLocation(), new Path(resolved[0].getSourceAttachmentLocation()));
-	}	
+	}
 }

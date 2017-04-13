@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 	public RenameMethodUnitTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -60,7 +60,7 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 	}
 
 	/**
-	 * Will setup the refactoring for Methods and members declared within 
+	 * Will setup the refactoring for Methods and members declared within
 	 * members (i.e. members of anonymous classes)
 	 * @param root
 	 * @param packageName
@@ -70,30 +70,30 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName, String fullName) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMember member = getMember(cunit, fullName);
 		IMethod method = (IMethod)member;
-		
+
 		JavaRenameProcessor proc = new RenameNonVirtualMethodProcessor(method);
 		proc.setNewElementName("renamedMethod");
-		
+
 		RenameRefactoring ref= new RenameRefactoring(proc);
-		
+
 		//setup final refactoring conditions
 		RefactoringStatus refactoringStatus= ref.checkAllConditions(new NullProgressMonitor());
 		if(!refactoringStatus.isOK())
 		{
 			System.out.println(refactoringStatus.getMessageMatchingSeverity(refactoringStatus.getSeverity()));
 			return null;
-		}		
-		
+		}
+
 		return ref;
 	}
 
 	public void testInnerAnonymousTypeMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1$anonTypeMethod()V",
@@ -102,49 +102,49 @@ public class RenameMethodUnitTests extends AbstractRefactoringDebugTest {
 	}//end testBreakPoint
 
 	public void testInnerMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V",
 					targetLineage = pack+"."+"MoveeChild$InnerChildType";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 	public void testNonPublicAnonymousTypeMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1$anonTypeMethod()V",
 					targetLineage = pack+"."+"NonPublicChildType$1";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
-	}//end testBreakPoint		
+	}//end testBreakPoint
 
 	public void testNonPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$",
 					targetLineage = pack+"."+"NonPublicChildType";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
 	}//end testBreakPoint
-	
+
 	public void testPublicAnonymousTypeMethodBreakpoint() throws Exception {
-		String 	src = "src", 
+		String 	src = "src",
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1$anonTypeMethod()V",
 		targetLineage = pack+"."+"MoveeChild$1";
-		
+
 		runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
 	}//end testBreakPoint
 
 	public void testPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V",
 					targetLineage = pack+"."+"MoveeChild";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 }

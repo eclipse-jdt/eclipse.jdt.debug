@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Test detail pane factory, used by the test suite to test custom detail pane functionality.
- * 
+ *
  * @since 3.3
  * @see DetailPaneManagerTests
  * @see SimpleDetailPane
@@ -61,7 +61,7 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 		}
 		return possibleIDs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -90,7 +90,7 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 		}
 		return null;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
@@ -103,6 +103,6 @@ public class TestDetailPaneFactory implements IDetailPaneFactory {
 		if (id.equals(SimpleDetailPane.ID)){
 			return SimpleDetailPane.DESCRIPTION;
 		}
-		return null;		
+		return null;
 	}
 }

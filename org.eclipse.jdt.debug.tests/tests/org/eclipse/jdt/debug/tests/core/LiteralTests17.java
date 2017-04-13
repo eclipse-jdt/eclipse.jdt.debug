@@ -20,13 +20,13 @@ import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
 
 /**
  * Tests that the new forms allowed in literals in Java 7 work as expected
- * 
+ *
  * @since 3.1.200
  */
 public class LiteralTests17 extends AbstractDebugTest {
 
 	public static final String LITERAL_TYPE_NAME = "Literals17";
-	
+
 	/**
 	 * Constructor
 	 */
@@ -41,7 +41,7 @@ public class LiteralTests17 extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get17Project();
 	}
-	
+
 	/**
 	 * Perform the evaluation on the given snippet and return the value
 	 * @param snippet
@@ -56,19 +56,19 @@ public class LiteralTests17 extends AbstractDebugTest {
 			IEvaluationResult result = evaluate(snippet, thread);
 			assertNotNull("There must be an evaluation result", result);
 			assertTrue("There must be no errors in the result", !result.hasErrors());
-			return result.getValue(); 
+			return result.getValue();
 		}
 		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * Runs evaluations on the two given snippets returning the value from the second snippet. This method allows us to 
+	 * Runs evaluations on the two given snippets returning the value from the second snippet. This method allows us to
 	 * run two snippets on the same thread where the second snippet may or may not depend on the state change from the
 	 * first snippet
-	 * 
+	 *
 	 * @param snippet
 	 * @param snippet2
 	 * @return the {@link IEvaluationResult}
@@ -85,17 +85,17 @@ public class LiteralTests17 extends AbstractDebugTest {
 			result = evaluate(snippet2, thread);
 			assertNotNull("There must be an evaluation result", result);
 			assertTrue("There must be no errors in the result", !result.hasErrors());
-			return result.getValue(); 
+			return result.getValue();
 		}
 		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with an int with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreIntEval() throws Exception {
@@ -105,10 +105,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 11", val.getIntValue() == 11);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to an int with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreIntVarAssignment() throws Exception {
@@ -118,10 +118,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 12", val.getIntValue() == 12);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a short with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreShortEval() throws Exception {
@@ -131,10 +131,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new short value should be 11", val.getShortValue() == 11);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a short with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreShortVarAssignment() throws Exception {
@@ -144,10 +144,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new short value should be 12", val.getShortValue() == 12);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a byte with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreByteEval() throws Exception {
@@ -157,10 +157,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new byte value should be 9", val.getByteValue() == 9);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a short with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreByteVarAssignment() throws Exception {
@@ -170,10 +170,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new byte value should be 12", val.getByteValue() == 12);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a long with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreLongEval() throws Exception {
@@ -183,10 +183,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new long value should be 11", val.getLongValue() == 11);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a long with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreLongVarAssignment() throws Exception {
@@ -196,10 +196,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new long value should be 12", val.getLongValue() == 12);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a float with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreFloatEval() throws Exception {
@@ -209,10 +209,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new float value should be 4.1415", val.getFloatValue() == 4.1415F);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a float with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreFloatVarAssignment() throws Exception {
@@ -222,10 +222,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new float value should be 7.1415", val.getFloatValue() == 7.1415F);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a double with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreDoubleEval() throws Exception {
@@ -235,10 +235,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new double value should be 11.556", val.getDoubleValue() == 11.556D);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a double with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreDoubleVarAssignment() throws Exception {
@@ -248,10 +248,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new double value should be 16.556", val.getDoubleValue() == 16.555999999999997D);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a binary literal with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreBinaryEval() throws Exception {
@@ -261,10 +261,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 9", val.getIntValue() == 9);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a binary literal with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreBinaryVarAssignment() throws Exception {
@@ -274,10 +274,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 17", val.getIntValue() == 17);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with a hex with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreHexEval() throws Exception {
@@ -287,10 +287,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 17", val.getIntValue() == 17);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to a hex with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreHexVarAssignment() throws Exception {
@@ -300,10 +300,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 257", val.getIntValue() == 257);
 	}
-	
+
 	/**
 	 * Tests that an addition evaluation with an octal with underscores in it works
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreOctEval() throws Exception {
@@ -313,10 +313,10 @@ public class LiteralTests17 extends AbstractDebugTest {
 		JDIPrimitiveValue val = (JDIPrimitiveValue) value;
 		assertTrue("The new integer value should be 9", val.getIntValue() == 9);
 	}
-	
+
 	/**
 	 * Tests that we can assign a variable value to an octal with underscores
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnderscoreOctVarAssignment() throws Exception {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  */
 @SuppressWarnings("deprecation")
 public class PatternBreakpointTests extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -66,7 +66,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		bps.add(createPatternBreakpoint(72, sourceName, pattern));
 		// instance method
 		bps.add(createPatternBreakpoint(107, sourceName, pattern));
-		// static method 
+		// static method
 		bps.add(createPatternBreakpoint(53, sourceName, pattern));
 		// case statement
 		bps.add(createPatternBreakpoint(133, sourceName, pattern));
@@ -80,8 +80,8 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		bps.add(createPatternBreakpoint(118, sourceName, pattern));
 		// while
 		bps.add(createPatternBreakpoint(97, sourceName, pattern));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint("Breakpoints", false);
@@ -104,9 +104,9 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Bug 74108 - enable/disable a stratum breakpoint that is not yet installed
 	 * @throws Exception
@@ -135,9 +135,9 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Bug 74108 - enable/disable a pattern breakpoint that is not yet installed
 	 * @throws Exception
@@ -166,9 +166,9 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests that a pattern breakpoint is skipped when set to do so
 	 * @throws Exception
@@ -201,7 +201,7 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		bps.add(createPatternBreakpoint(72, sourceName, pattern));
 		// instance method
 		bps.add(createPatternBreakpoint(107, sourceName, pattern));
-		// static method 
+		// static method
 		bps.add(createPatternBreakpoint(53, sourceName, pattern));
 		// case statement
 		bps.add(createPatternBreakpoint(133, sourceName, pattern));
@@ -215,8 +215,8 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 		bps.add(createPatternBreakpoint(118, sourceName, pattern));
 		// while
 		bps.add(createPatternBreakpoint(97, sourceName, pattern));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint("Breakpoints");
@@ -227,6 +227,6 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
-		}		
-	}	
+		}
+	}
 }

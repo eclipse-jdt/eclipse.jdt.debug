@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  * Debug test suite framework that runs test in a non UI thread.
  */
 public abstract class DebugSuite extends TestSuite {
-	
+
 	/**
 	 * Flag that indicates test are in progress
 	 */
@@ -34,7 +34,7 @@ public abstract class DebugSuite extends TestSuite {
 	 */
 	public DebugSuite() {
 	}
-	
+
 	/**
 	 * Runs the tests and collects their result in a TestResult.
 	 * The debug tests cannot be run in the UI thread or the event
@@ -55,7 +55,7 @@ public abstract class DebugSuite extends TestSuite {
 						}
 						Test test= e.nextElement();
 						runTest(test, result);
-					}					
+					}
 					fTesting = false;
 					display.wake();
 				}
@@ -65,7 +65,7 @@ public abstract class DebugSuite extends TestSuite {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-				
+
 		while (fTesting) {
 			try {
 				if (!display.readAndDispatch()) {
@@ -73,8 +73,8 @@ public abstract class DebugSuite extends TestSuite {
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
-			}			
-		}		
+			}
+		}
 	}
 
 }

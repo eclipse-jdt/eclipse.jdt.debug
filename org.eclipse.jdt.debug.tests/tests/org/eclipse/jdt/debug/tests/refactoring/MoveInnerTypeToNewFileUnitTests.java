@@ -49,8 +49,8 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
-	
+
+
 	public void testMethodBreakPoint() throws Exception {
 		try {
 			//create Breakpoint to test
@@ -70,7 +70,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testWatchPoint() throws Exception {
 		try {
 			//create Breakpoint to test
@@ -90,7 +90,7 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testClassLoadBreakPoint() throws Exception {
 		try {
 			//create Breakpoint to test
@@ -109,12 +109,12 @@ public class MoveInnerTypeToNewFileUnitTests extends AbstractRefactoringDebugTes
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IType clas= parentClas.getType(className);
-		
+
 		MoveInnerToTopRefactoring ref= new MoveInnerToTopRefactoring(clas, JavaPreferencesSettings.getCodeGenerationSettings(clas.getJavaProject()));
 		ref.checkInitialConditions(new NullProgressMonitor());
 

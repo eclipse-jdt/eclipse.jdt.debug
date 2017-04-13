@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 /**
  * test class tests the returnable methods of the new <code>LaunchConfigurationTabGroupWrapper</code> to ensure that it returns existing tab group
  * elements and all contributions
- * 
+ *
  * @since 3.3
  */
 public class TabGroupWrapperTests extends AbstractDebugTest {
@@ -43,7 +43,7 @@ public class TabGroupWrapperTests extends AbstractDebugTest {
 		javagroup.createTabs(getLaunchConfigurationDialog(IDebugUIConstants.ID_RUN_LAUNCH_GROUP), ILaunchManager.RUN_MODE);
 		assertTrue("There must be at least 11 tabs", javagroup.getTabs().length >= 11); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Checks to make sure that all of the controls of the tabs (including contributed ones) are disposed on a call to the tab group
 	 * wrapper class

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -587,8 +587,8 @@ public class OpenFromClipboardTests extends TestCase {
 
 	public void testInvalidPattern_3() throws Exception {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=426392#c6
-		String s = "java.lang.IllegalArgumentException\n" + 
-				"	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:63)\n" + 
+		String s = "java.lang.IllegalArgumentException\n" +
+				"	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:63)\n" +
 				"	at something.completely.Different(Different.java:47)";
 		assertEquals(INVALID, getMatachingPattern(s));
 	}

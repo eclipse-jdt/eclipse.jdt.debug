@@ -32,7 +32,7 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 
 	public void testLineBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1",
@@ -40,7 +40,7 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 					newAnonTypeName = "a.b.c.MoveeChild$NewAnonymousClass";
 			int lineNumber = 26,
 				newLineNumber = 30;
-			
+
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
 			//refactor
@@ -58,16 +58,16 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 	public void testMethodBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1$anonTypeMethod()QString",
 					targetParentType = "MoveeChild$childsMethod()V$1",
-					methodName = "anonTypeMethod",					
+					methodName = "anonTypeMethod",
 					newAnonTypeName = "a.b.c.MoveeChild$NewAnonymousClass";
 			//create breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
@@ -87,17 +87,17 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testWatchpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1$anAnonInt",
 					targetParentType = "MoveeChild$childsMethod()V$1",
-					fieldName = "anAnonInt",					
+					fieldName = "anAnonInt",
 					newAnonTypeName = "a.b.c.MoveeChild$NewAnonymousClass";
-						
+
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
 			//refactor
@@ -115,17 +115,17 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-		
+	}//end testBreakPoint
+
 	public void testClassLoadpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1",
 					targetParentType = "MoveeChild$childsMethod()V$1",
 					newAnonTypeName = "a.b.c.MoveeChild$NewAnonymousClass";
-			
+
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
 			//refactor
@@ -142,20 +142,20 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-			
+	}//end testBreakPoint
+
 	private Refactoring setupRefactor(String root, String packageName, String cuName, String targetName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IType type = (IType)getMember(cunit,targetName);
-		
+
 		ISourceRange typeInfo = type.getSourceRange();
-		int target = typeInfo.getOffset(); 
-		
+		int target = typeInfo.getOffset();
+
 		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, target, 0);
 		//configure the ref a little more here!
-		ref.setClassName("NewAnonymousClass");			
-		
+		ref.setClassName("NewAnonymousClass");
+
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())
 		{
@@ -163,7 +163,7 @@ public class ConvertPublicAnonymousTypeToNestedUnitTests extends AbstractRefacto
 			return null;
 		}
 		//configure the ref a little more here!
-		ref.setClassName("NewAnonymousClass");		
+		ref.setClassName("NewAnonymousClass");
 		return ref;
 	}
 }

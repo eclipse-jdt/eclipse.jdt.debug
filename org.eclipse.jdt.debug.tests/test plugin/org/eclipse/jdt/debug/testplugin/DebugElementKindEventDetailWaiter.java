@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class DebugElementKindEventDetailWaiter extends DebugElementKindEventWait
 		super(eventKind, elementClass);
 		fDetail = detail;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
 	 */
@@ -37,5 +37,5 @@ public class DebugElementKindEventDetailWaiter extends DebugElementKindEventWait
 	public boolean accept(DebugEvent event) {
 		return super.accept(event) && fDetail == event.getDetail();
 	}
-	
+
 }

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Helper class for accessing classes and members which cannot be accessed using standard Java
  * access control like private or package visible elements.
- * 
+ *
  * @since 3.7
  */
 public class Accessor {
@@ -33,7 +33,7 @@ public class Accessor {
 	/**
 	 * Creates an accessor for the given <code>instance</code> and <code>class</code>. Only
 	 * non-inherited members that particular <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance
 	 *            the instance
 	 * @param clazz
@@ -49,7 +49,7 @@ public class Accessor {
 	/**
 	 * Creates an accessor for the given <code>instance</code> and <code>class</code>. Only
 	 * non-inherited members that particular <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance
 	 *            the instance
 	 * @param className
@@ -78,7 +78,7 @@ public class Accessor {
 	 * Object. Use {@link #Accessor(String, ClassLoader, Class[], Object[])} if this is not the
 	 * case.
 	 * </p>
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param classLoader
@@ -92,7 +92,7 @@ public class Accessor {
 
 	/**
 	 * Creates an accessor for the given class.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param classLoader
@@ -138,7 +138,7 @@ public class Accessor {
 	 * <p>
 	 * This constructor is used to access static stuff.
 	 * </p>
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class
 	 * @param classLoader
@@ -159,7 +159,7 @@ public class Accessor {
 	 * <p>
 	 * This constructor is used to access static stuff.
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            the class
 	 */
@@ -174,7 +174,7 @@ public class Accessor {
 	 * In order to get the type information from the given arguments all those arguments must be
 	 * instance of Object. Use {@link #invoke(String, Class[], Object[])} if this is not the case.
 	 * </p>
-	 * 
+	 *
 	 * @param methodName
 	 *            the method name
 	 * @param arguments
@@ -187,7 +187,7 @@ public class Accessor {
 
 	/**
 	 * Invokes the method with the given method name and arguments.
-	 * 
+	 *
 	 * @param methodName
 	 *            the method name
 	 * @param types
@@ -221,7 +221,7 @@ public class Accessor {
 
 	/**
 	 * Assigns the given value to the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @param value
@@ -240,7 +240,7 @@ public class Accessor {
 
 	/**
 	 * Assigns the given value to the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @param value
@@ -259,7 +259,7 @@ public class Accessor {
 
 	/**
 	 * Assigns the given value to the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @param value
@@ -278,7 +278,7 @@ public class Accessor {
 
 	/**
 	 * Returns the value of the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @return the value of the field
@@ -298,7 +298,7 @@ public class Accessor {
 
 	/**
 	 * Returns the value of the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @return the value of the field
@@ -318,7 +318,7 @@ public class Accessor {
 
 	/**
 	 * Returns the value of the field with the given name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the field name
 	 * @return the value of the field

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
 
 /**
  * Common code for setting up and performing a move refactoring.
- * 
+ *
  * @since 3.4
  */
 public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
@@ -42,17 +42,17 @@ public class MoveRefactoringTest extends AbstractRefactoringDebugTest {
 	 */
 	protected JavaMoveProcessor setupRefactor(IJavaProject javaProject, IJavaElement type) throws JavaModelException {
 		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
-				new IResource[0], 
+				new IResource[0],
 				new IJavaElement[] {type});
 		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
-		IJavaElement destination= getPackageFragmentRoot(javaProject, "src").getPackageFragment("a.b").getCompilationUnit("MoveeRecipient.java"); 
+		IJavaElement destination= getPackageFragmentRoot(javaProject, "src").getPackageFragment("a.b").getCompilationUnit("MoveeRecipient.java");
 		processor.setDestination(ReorgDestinationFactory.createDestination(destination));
 		processor.setReorgQueries(new MockReorgQueries());
 		if(processor.canUpdateJavaReferences())
 			processor.setUpdateReferences(true);//assuming is properly set otherwise
 		return processor;
 	}
-	
+
 	/** Sets up a refactoring and executes it.
 	 * @param javaProject
 	 * @param cunit

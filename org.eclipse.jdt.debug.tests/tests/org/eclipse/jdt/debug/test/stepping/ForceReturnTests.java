@@ -25,30 +25,30 @@ import com.sun.jdi.InvalidTypeException;
 
 /**
  * Tests forcing return from method.
- * 
+ *
  * @since 3.3
  */
 public class ForceReturnTests extends AbstractDebugTest {
 
 	/**
 	 * Creates test case.
-	 * 
+	 *
 	 * @param name test name
 	 */
 	public ForceReturnTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests forcing the return of an integer from top stack frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceIntReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
 		ILineBreakpoint bp2 = createLineBreakpoint(22, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(31, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -75,19 +75,19 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests forcing the return of an integer from non-top stack frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceIntReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
 		ILineBreakpoint bp2 = createLineBreakpoint(23, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(37, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -116,19 +116,19 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests forcing the return of a string from top frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceStringReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
 		ILineBreakpoint bp2 = createLineBreakpoint(24, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(36, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -156,19 +156,19 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests forcing the return of a string from a non top frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceStringReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
 		ILineBreakpoint bp2 = createLineBreakpoint(25, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -197,19 +197,19 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
+		}
+	}
 
 	/**
 	 * Tests forcing the return of an object from top frame.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceObjectReturnTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
 		ILineBreakpoint bp2 = createLineBreakpoint(26, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -237,19 +237,19 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests forcing the return of an object from non-top frame.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testForceObjectReturn() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
 		ILineBreakpoint bp2 = createLineBreakpoint(27, typeName);
 		ILineBreakpoint bp = createLineBreakpoint(56, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -278,18 +278,18 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests that an incompatible type causes an exception in top frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testIncompatibleReturnTypeTopFrame() throws Exception {
 		String typeName = "ForceReturnTests";
 		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -309,18 +309,18 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests that an incompatible type causes an exception in non top frame
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testIncompatibleReturnType() throws Exception {
 		String typeName = "ForceReturnTestsTwo";
 		ILineBreakpoint bp = createLineBreakpoint(46, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp, false);
@@ -341,6 +341,6 @@ public class ForceReturnTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
+		}
+	}
 }

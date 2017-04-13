@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Tests the performance of the contextual launch menu population 
+ * Tests the performance of the contextual launch menu population
  */
 public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
-    
+
     /**
      * Constructor
      * @param name
@@ -40,18 +40,18 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
     public void testContextualLaunchMenu() throws Exception {
     	setDegradationComment("This test is unreliable as it improved 10x during 3.3 (vs 3.2), and needs to be replaced.");
         final PerfTestContextualLaunchAction launchaction = new PerfTestContextualLaunchAction();
-        
-        ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");        
+
+        ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
         StructuredSelection selection = new StructuredSelection(new Object[] {cu});
         launchaction.selectionChanged(new BogusAction(), selection);
-        
+
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
             @Override
 			public void run() {
                 Shell shell = DebugUIPlugin.getStandardDisplay().getActiveShell();
                 Menu menu = launchaction.getMenu(new Menu(shell));
                 showMenu(launchaction, menu, 5);
-                
+
                 for(int i=0; i<10; i++) {
                     try {
                     System.gc();
@@ -77,10 +77,10 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
         commitMeasurements();
         assertPerformance();
     }
-    
+
     private class BogusAction extends Action {
     }
-    
+
     private class PerfTestContextualLaunchAction extends ContextualLaunchAction {
         /**
          * Constructor
@@ -88,7 +88,7 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
         public PerfTestContextualLaunchAction() {
             super(ILaunchManager.RUN_MODE);
         }
-        
+
         void showMenu(Menu menu) {
         	fillMenu(menu);
         }

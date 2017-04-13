@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 /**
  * Tests raw JDWP commands sent to a target.
- * 
+ *
  * @since 3.3
  */
 public class JDWPTests extends AbstractDebugTest {
@@ -41,13 +41,13 @@ public class JDWPTests extends AbstractDebugTest {
 
 	/**
 	 * Sends a request to the VirtualMachine Command Set (byte 1) to ask for
-	 * the VM Capabilities (byte 12) 
+	 * the VM Capabilities (byte 12)
 	 * @throws Exception
 	 */
 	public void testCapabilities() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -57,29 +57,29 @@ public class JDWPTests extends AbstractDebugTest {
 			// VM capabilities
 			byte[] reply = jdiTarget.sendCommand((byte)1, (byte)12, null);
 			JdwpReplyPacket packet = (JdwpReplyPacket) JdwpPacket.build(reply);
-			
+
 			assertEquals("Unexpected error code in reply packet", 0, packet.errorCode());
 			DataInputStream replyData = packet.dataInStream();
 			// should be 7 booleans in reply
 			for (int i = 0; i < 7; i++) {
 				replyData.readBoolean();
 			}
-			assertEquals("Should be no available bytes", 0, replyData.available());			
+			assertEquals("Should be no available bytes", 0, replyData.available());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
-	
+
 	/**
-	 * Sends a request to the VirtualMachine Command Set (byte 1) to ask 
+	 * Sends a request to the VirtualMachine Command Set (byte 1) to ask
 	 * for ClassesBySignature (byte 2)
 	 * @throws Exception
 	 */
 	public void testClassesBySingature() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -95,11 +95,11 @@ public class JDWPTests extends AbstractDebugTest {
 			assertEquals("Unexpected error code in reply packet", 0, packet.errorCode());
 			DataInputStream replyData = packet.dataInStream();
 			// should be 1 type in reply
-			assertEquals("Wrong number of types", 1, replyData.readInt());			
+			assertEquals("Wrong number of types", 1, replyData.readInt());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
-	
+		}
+	}
+
 }

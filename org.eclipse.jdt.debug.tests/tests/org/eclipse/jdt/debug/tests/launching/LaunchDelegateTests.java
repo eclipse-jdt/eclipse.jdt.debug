@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  * Tests for launch delegates
  */
 public class LaunchDelegateTests extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -39,7 +39,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 	public LaunchDelegateTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Ensures a launch delegate can provide a launch object for
 	 * a launch.
@@ -54,7 +54,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunch launch = workingCopy.launch(ILaunchManager.DEBUG_MODE, null);
 		manager.removeLaunch(launch);
 	}
-	
+
 	/**
 	 * Tests that a delegate extension can provide the source path computer.
 	 */
@@ -65,7 +65,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ISourcePathComputer sourcePathComputer = configurationType.getSourcePathComputer();
 		assertEquals("Wrong source path computer", "org.eclipse.jdt.debug.tests.testSourcePathComputer", sourcePathComputer.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Tests that a delegate extension can provide the source locator.
 	 */
@@ -76,10 +76,10 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		String sourceLocatorId = configurationType.getSourceLocatorId();
 		assertEquals("Wrong source locater id", "org.eclipse.jdt.debug.tests.testSourceLocator", sourceLocatorId); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Test launch delegate for mixed launch mode.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public void testMixedModeDelegate() throws CoreException {
 		ILaunchManager manager = getLaunchManager();
@@ -94,7 +94,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		assertEquals("Wrong number of delegates", 1, delegates.length); //$NON-NLS-1$
 		assertTrue("Wrong delegate", delegates[0].getDelegate() instanceof AlternateDelegate); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests if the java launch delegate was found as one of the delegates for debug mode.
 	 * @throws CoreException
@@ -117,7 +117,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		}
 		assertTrue("The java launch delegate was not one of the returned delegates", found);		 //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests correct delegate is found for alternate mode.
 	 * @throws CoreException
@@ -133,8 +133,8 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		assertTrue("missing delegate", delegates.length > 0); //$NON-NLS-1$
 		assertEquals("Wrong number of delegates", 1, delegates.length); //$NON-NLS-1$
 		assertTrue("Wrong delegate", delegates[0].getDelegate() instanceof AlternateDelegate);		 //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Checks that the delegate definition is collecting and parsing mode combination information properly from both the delegate
 	 * contribution and from modeCombination child elements
@@ -155,7 +155,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 			assertTrue("Wrong delegate", delegates[0].getDelegate() instanceof AlternateDelegate);	 //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Checks that all applicable delegates are found for given types and mode combinations
 	 * @throws CoreException
@@ -177,7 +177,7 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		HashSet<Object> ds = new HashSet<Object>(Arrays.asList(new Object[] {TestLaunchDelegate1.class, TestLaunchDelegate2.class}));
 		assertTrue("There must be only TestLaunchDelegate1 and TestLaunchDelegate2 as registered delegates for the mode alternate2 and the local java type", ds.containsAll(dels)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Checks to see the even with a partial match of a mode combination it will indicate that it does not support the specified modes
 	 */

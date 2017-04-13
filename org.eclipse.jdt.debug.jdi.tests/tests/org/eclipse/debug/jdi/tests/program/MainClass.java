@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.jdi.tests.program;
- 
+
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -19,12 +19,12 @@ import org.eclipse.debug.jdi.tests.ClassTypeTest;
 
 /**
  * Main class for target VM tests.
- * This class is intended to be run by the target VM. 
+ * This class is intended to be run by the target VM.
  * It will use other classes in this package, and it will create and terminate
  * threads as a regular program would do.
  *
  * WARNING, WARNING:
- * Tests in org.eclipse.debug.jdi.tests assume the content of this class, 
+ * Tests in org.eclipse.debug.jdi.tests assume the content of this class,
  * as well as its behavior. So if this class or one of the types in this
  * package is changed, the corresponding tests must also be changed.
  */
@@ -117,7 +117,7 @@ public class MainClass extends Date implements Runnable, Printable {
 	public MainClass(int i, Object o1, Object o2) {
 	}
 
-	/** 
+	/**
 	 * For invocation tests
 	 * @param x the integer
 	 * @param o
@@ -130,13 +130,13 @@ public class MainClass extends Date implements Runnable, Printable {
 			return "";
 		}
 	}
-	/** 
+	/**
 	 * For invocation tests
 	 */
 	private static void invoke2() {
 		throw new IndexOutOfBoundsException();
 	}
-	
+
 	/**
 	 * For invocation tests
 	 * @param str
@@ -159,9 +159,9 @@ public class MainClass extends Date implements Runnable, Printable {
 	 * @param l
 	 */
 	private void variablesTest(long l) {}
-	
+
 	/**
-	 * Runs the test program 
+	 * Runs the test program
 	 * @param args
 	 */
 	public static void main(java.lang.String[] args) {
@@ -190,7 +190,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		writer.println(string);
 		writer.flush();
 	}
-	
+
 	/**
 	 * Prints out a specified integer. This method is used in the force early return tests to ensure we
 	 * can specify a different, type compatible return value
@@ -206,37 +206,37 @@ public class MainClass extends Date implements Runnable, Printable {
 		writer.flush();
 		return num;
 	}
-	
+
 	/**
 	 * Returns 20
-	 * 
+	 *
 	 * @return 20
 	 */
 	public int getInt() {
 		int x = Math.max(20, 10);
 		return x;
 	}
-	
+
 	/**
 	 * Returns true.
-	 * 
+	 *
 	 * @return true
 	 */
 	public boolean getBoolean() {
 		boolean bool = Boolean.valueOf("true").booleanValue();
 		return bool;
 	}
-	
+
 	/**
 	 * Returns 123L.
-	 * 
+	 *
 	 * @return 123
 	 */
 	public long getLong() {
 		long l = Long.valueOf("123").longValue();
 		return l;
 	}
-	
+
 	/**
 	 * dump out a string
 	 * @return a String
@@ -246,7 +246,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		System.out.println("foobar");
 		return "man";
 	}
-	
+
 	/**
 	 * make a sync'd method so we can stop in it to gather monitor information
 	 * @since 3.3
@@ -254,7 +254,7 @@ public class MainClass extends Date implements Runnable, Printable {
 	synchronized public void sync() {
 		System.out.println("sync'd to the moon");
 	}
-	
+
 	/**
 	 * suspend on the first line of the method to get the argument values from the stackframe.
 	 * used in testing the new 1.6VM capability to get argument values when no debugging info is available.
@@ -266,7 +266,7 @@ public class MainClass extends Date implements Runnable, Printable {
 	public void argValues(String str, int num, Object obj) {
 		System.out.println("get the arg values");
 	}
-	
+
 	/**
 	 * Prints to System.out and throws an exception to indicate readiness
 	 */
@@ -278,7 +278,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		} catch (NegativeArraySizeException exc) {
 		}
 	}
-	
+
 	/**
 	 * @see java.lang.Runnable#run()
 	 */
@@ -460,7 +460,7 @@ public class MainClass extends Date implements Runnable, Printable {
 			System.out.println("Unknown event type: " + eventType);
 		}
 	}
-	
+
 	/**
 	 *	Trigger an exception event for the front-end.
 	 */

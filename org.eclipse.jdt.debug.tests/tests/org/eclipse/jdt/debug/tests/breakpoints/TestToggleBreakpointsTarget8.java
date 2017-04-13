@@ -20,10 +20,10 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
  * Tests the Java debugger's 'toggle breakpoints target'.
  */
 public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarget {
-	
-	
-	
-	
+
+
+
+
 	public TestToggleBreakpointsTarget8(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
@@ -32,7 +32,7 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 	/**
 	 * Tests that qualified names get created for method breakpoints in default method of Java 8 interface
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInterfaceDefaultMethodBreakpoint() throws Exception {
@@ -53,11 +53,11 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests that qualified names get created for method breakpoints in Static method of Java 8 interface
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInterfaceStaticMethodBreakpoint() throws Exception {
@@ -78,12 +78,12 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 			removeAllBreakpoints();
 		}
 	}
-	
-		
+
+
 	/**
 	 * Tests that qualified names does get created for method breakpoints in unimplemented method of Java 8 interface
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInterfaceUnimplementedMethodBreakpoint() throws Exception {
@@ -99,11 +99,11 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests that qualified names get created for line breakpoints in Interface implemented method
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInterfaceLineBreakpoint() throws Exception {
@@ -123,5 +123,5 @@ public class TestToggleBreakpointsTarget8 extends AbstractToggleBreakpointsTarge
 			removeAllBreakpoints();
 		}
 	}
-	
+
 }

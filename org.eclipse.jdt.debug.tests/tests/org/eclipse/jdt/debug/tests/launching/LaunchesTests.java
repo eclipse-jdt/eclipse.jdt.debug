@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests launch notification plural
  */
 public class LaunchesTests extends AbstractDebugTest implements ILaunchesListener2 {
-	
+
 	private boolean added = false;
 	private boolean removed = false;
-	private boolean terminated = false; 
-	
+	private boolean terminated = false;
+
 	/**
 	 * Constructor
 	 * @param name the name of the test
@@ -33,14 +33,14 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	public LaunchesTests(String name) {
 		super(name);
 	}
-	
-	
+
+
 
 	@Override
 	protected void setUp() throws Exception {
 		added = false;
 		removed = false;
-		terminated = false; 
+		terminated = false;
 		super.setUp();
 	}
 
@@ -53,7 +53,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	public void testDebugMode() throws CoreException {
 		doMode(ILaunchManager.DEBUG_MODE);
 	}
-	
+
 	/**
 	 * Tests launch notification in run mode.
 	 * @throws CoreException
@@ -61,7 +61,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 	public void testRunMode() throws CoreException {
 		doMode(ILaunchManager.RUN_MODE);
 	}
-	
+
 	protected void doMode(String mode) throws CoreException {
 		String typeName = "Breakpoints";		 //$NON-NLS-1$
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
@@ -86,9 +86,9 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 			}
 		}
 		assertTrue("Launch should have been terminated", terminated); //$NON-NLS-1$
-		
+
 		getLaunchManager().removeLaunch(launch);
-		
+
 		synchronized (this) {
 			if (!removed) {
 				try {
@@ -97,7 +97,7 @@ public class LaunchesTests extends AbstractDebugTest implements ILaunchesListene
 				}
 			}
 		}
-		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$		
+		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$
 	}
 
 	/**

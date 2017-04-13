@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests event sets.
  */
 public class EventSetTests extends AbstractDebugTest {
-	
+
 	public EventSetTests(String name) {
 		super(name);
 	}
@@ -34,7 +34,7 @@ public class EventSetTests extends AbstractDebugTest {
 		// add two breakpoints at the same location
 		bps.add(createLineBreakpoint(88, typeName));
 		bps.add(createLineBreakpoint(88, typeName));
-		
+
 
 		IJavaThread thread= null;
 		try {
@@ -52,11 +52,11 @@ public class EventSetTests extends AbstractDebugTest {
 					bps.remove(hits[i]);
 				}
 				assertTrue("breakpoint collection should now be empty", bps.isEmpty());
-				
+
 			}
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 }

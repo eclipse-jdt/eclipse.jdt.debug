@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class MiscBreakpointsTests extends AbstractDebugTest {
 
-	private static final String COMPILE_ERROR_CONTENTS = 
+	private static final String COMPILE_ERROR_CONTENTS =
 	 "public class CompileError {\npublic static void main(String[] args) {\nString foo = \"foo\" + bar;\n}	\n}";
 
 	private static final String ORIGINAL_CONTENTS = "public class CompileError {\npublic static void main(String[] args) {\n}\n}";
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -45,19 +45,19 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	public void testSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
-				
+
 		IJavaThread javaThread = null;
 		try {
 			javaThread= launchAndSuspend(typeName);
-			
+
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
 			assertTrue("line number should be '26', but was " + stackLine, stackLine == 26);
-		
+
 		} finally {
             getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -68,19 +68,19 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	public void testSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
-		
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
+
 		IType type = get14Project().findType(typeName);
 		ICompilationUnit cu = type.getCompilationUnit();
 		setFileContents(cu, COMPILE_ERROR_CONTENTS);
-		
+
 		IJavaThread javaThread = null;
 		try {
 			javaThread= launchAndSuspend(typeName);
-			
+
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
 			assertTrue("line number should be '3', but was " + stackLine, stackLine == 3);
-		
+
 		} finally {
             getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
             getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
@@ -88,7 +88,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			//restore the file to remove compile errors
 			setFileContents(cu, ORIGINAL_CONTENTS);
-		}		
+		}
 	}
 
 	/**
@@ -99,12 +99,12 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	public void testDontSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);		
-		
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
+
 		IType type = get14Project().findType(typeName);
 		ICompilationUnit cu = type.getCompilationUnit();
 		setFileContents(cu, COMPILE_ERROR_CONTENTS);
-		
+
 		IJavaDebugTarget debugTarget = null;
 		try {
 			debugTarget= launchAndTerminate(typeName);
@@ -112,7 +112,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
 			setFileContents(cu, ORIGINAL_CONTENTS);
-		}		
+		}
 	}
 
 	/**
@@ -122,22 +122,22 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testDontSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);		
-		
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+
 		IJavaDebugTarget debugTarget= null;
 		try {
 			debugTarget = launchAndTerminate(typeName);
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns the <code>JDIDebugUIPlugin</code> preference store
 	 * @return
 	 */
 	protected IPreferenceStore getPrefStore() {
-		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	}
 }

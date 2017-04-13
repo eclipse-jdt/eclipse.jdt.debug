@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,34 +38,34 @@ import org.eclipse.ui.console.IOConsole;
  * Tests console line tracker.
  */
 public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineTrackerExtension {
-	
+
 	protected String[] fLines = new String[] {
 		"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"
 	};
-	
+
 	protected IJavaDebugTarget fTarget;
-	
+
 	protected List<String> fLinesRead = new ArrayList<String>();
-	
+
 	protected boolean fStarted = false;
-	
+
 	protected boolean fStopped = false;
-	
+
 	protected IConsole fConsole = null;
-	
+
 	protected Object fLock = new Object();
-	
+
 	public LineTrackerTests(String name) {
 		super(name);
 	}
-	
+
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;
     }
-    
+
     @Override
 	protected void tearDown() throws Exception {
         // delete references and gc to free memory.
@@ -73,12 +73,12 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
         fLines = null;
         fLinesRead.clear();
         fLinesRead = null;
-        
+
         System.gc();
 		super.tearDown();
-    }   
-    
-    
+    }
+
+
 	public void testSimpleLineCounter() throws Exception {
 		ConsoleLineTracker.setDelegate(this);
 		fTarget = null;
@@ -95,15 +95,15 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			// there are 10 lines and one "empty line" (i.e. the last "new line")
 			assertEquals("Wrong number of lines output", 11, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
-				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
+				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));
 			}
 			assertEquals("Should be an empty last line", IInternalDebugCoreConstants.EMPTY_STRING, fLinesRead.get(10));
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			terminateAndRemove(fTarget);
 		}
-	} 
-	
+	}
+
 	/**
 	 * This program prints the final line without a new line
 	 * @throws Exception
@@ -123,17 +123,17 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			assertTrue("Did not receive 'stopped' notification", fStopped);
 			assertEquals("Wrong number of lines", 10, fLinesRead.size());
 			for (int i = 0; i < 10; i++) {
-				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));			
+				assertEquals("Line " + i + " not equal", fLines[i], fLinesRead.get(i));
 			}
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			terminateAndRemove(fTarget);
 		}
-	} 
-	
+	}
+
 	/**
 	 * Test 10,000 lines of output.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testFlood() throws Exception {
@@ -143,7 +143,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			ILaunchConfiguration config = getLaunchConfiguration("FloodConsole");
 			assertNotNull("Could not locate launch configuration", config);
 			launch = config.launch(ILaunchManager.RUN_MODE, null);
-			
+
 			synchronized (fLock) {
 			    if (!fStopped) {
 			        fLock.wait(480000);
@@ -158,8 +158,8 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			launch.getProcesses()[0].terminate();
 			DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 		}
-	} 	
-	
+	}
+
 	public void testHyperLink() throws Exception {
 	    try {
 			ConsoleLineTracker.setDelegate(this);
@@ -212,7 +212,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			fLock.notifyAll();
         }
 	}
-	
+
 	/**
 	 * Tests that stack traces appear with hyperlinks
 	 */
@@ -249,9 +249,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			ConsoleLineTracker.setDelegate(null);
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);
 			terminateAndRemove(fTarget);
-		}	    
+		}
 	}
-	
+
 	public void testStringConcatenation() throws Exception {
 	    ConsoleLineTracker.setDelegate(this);
 	    String typeName = "PrintConcatenation";
@@ -275,7 +275,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        terminateAndRemove(fTarget);
 	    }
 	}
-	
+
 	public void testIntConcatenation() throws Exception {
 	    ConsoleLineTracker.setDelegate(this);
 	    String typeName = "PrintConcatenation";
@@ -299,7 +299,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	        terminateAndRemove(fTarget);
 	    }
 	}
-	
+
 	private void dumpOnError(int expectedLines) {
         if (fLinesRead.size() != expectedLines) {
 	    	Iterator<String> lines = fLinesRead.iterator();

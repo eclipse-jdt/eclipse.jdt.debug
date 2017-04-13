@@ -30,10 +30,10 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 		super(name);
 	}
 
-	
+
 	public void testLineBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
@@ -41,7 +41,7 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 					newAnonTypeName = "a.b.c.MoveeChild$InnerChildType$NewAnonymousClass";
 			int lineNumber = 40,
 				newLineNumber = 44;
-			
+
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
 			//refactor
@@ -59,16 +59,16 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 	public void testMethodBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1$anonTypeMethod()V",
 					targetParentType = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
-					methodName = "anonTypeMethod",					
+					methodName = "anonTypeMethod",
 					newAnonTypeName = "a.b.c.MoveeChild$InnerChildType$NewAnonymousClass";
 			//create breakpoint to test
 			IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(src, pack, cunit,fullTargetName, true, false);
@@ -88,17 +88,17 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testWatchpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1$anAnonInt",
 					targetParentType = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
-					fieldName = "anAnonInt",					
+					fieldName = "anAnonInt",
 					newAnonTypeName = "a.b.c.MoveeChild$InnerChildType$NewAnonymousClass";
-						
+
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
 			//refactor
@@ -116,17 +116,17 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-		
+	}//end testBreakPoint
+
 	public void testClassLoadpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
 					targetParentType = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
 					newAnonTypeName = "a.b.c.MoveeChild$InnerChildType$NewAnonymousClass";
-					
+
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
 			//refactor
@@ -143,23 +143,23 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-			
-//////////////////////////////////////////////////////////////////////////////////////	
+	}//end testBreakPoint
+
+//////////////////////////////////////////////////////////////////////////////////////
 	private Refactoring setupRefactor(String root, String packageName, String cuName, String targetName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IType type = (IType)getMember(cunit,targetName);
-		
+
 		//IDocument compUnitSource = new Document(cunit.getSource());
-				
+
 		ISourceRange typeInfo = type.getSourceRange();
-		int target = typeInfo.getOffset(); 
-		
+		int target = typeInfo.getOffset();
+
 		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, target, 0);
 		//configure the ref a little more here!
-		ref.setClassName("NewAnonymousClass");			
-		
+		ref.setClassName("NewAnonymousClass");
+
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())
 		{
@@ -167,7 +167,7 @@ public class ConvertInnerAnonymousTypeToNestedUnitTests extends AbstractRefactor
 			return null;
 		}
 		//configure the ref a little more here!
-		ref.setClassName("NewAnonymousClass");		
+		ref.setClassName("NewAnonymousClass");
 		return ref;
 	}
 }

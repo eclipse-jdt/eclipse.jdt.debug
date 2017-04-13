@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,52 +37,52 @@ import junit.framework.AssertionFailedError;
  * whether to resume a thread.
  */
 public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
-	
+
 	/**
 	 * How to vote when hit
 	 */
 	public static int VOTE = IJavaBreakpointListener.DONT_CARE;
-	
+
 	/**
 	 * Whether hit
 	 */
 	public static boolean HIT = false;
-	
+
 	/**
 	 * Whether removed
 	 */
 	public static boolean REMOVED = false;
-	
+
 	/**
 	 * Expression to evaluate when hit
 	 */
 	public static String EXPRESSION;
-	
+
 	/**
 	 * Project to compile expression in
 	 */
 	public static IJavaProject PROJECT;
-	
+
 	/**
 	 * Evaluation result
 	 */
 	public static IEvaluationResult RESULT;
-	
+
 	/**
 	 * List of breakpoints with compilation errors
 	 */
 	public static List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
-	
+
 	/**
 	 * Lock used to notify when a notification is received.
 	 */
 	public static Object REMOVE_LOCK = new Object();
-	
+
 	/**
 	 * List of breakpoints with runtime errors
 	 */
 	public static List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
-	
+
 	public static void reset() {
 		VOTE = IJavaBreakpointListener.DONT_CARE;
 		EXPRESSION = null;
@@ -181,5 +181,5 @@ public class EvalualtionBreakpointListener implements IJavaBreakpointListener {
 	public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 		return IJavaBreakpointListener.DONT_CARE;
 	}
-	
+
 }

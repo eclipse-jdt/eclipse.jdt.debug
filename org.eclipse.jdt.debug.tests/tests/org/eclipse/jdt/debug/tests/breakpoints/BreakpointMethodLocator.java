@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,13 +32,13 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * Compute the name of field declared at a given position from an JDOM CompilationUnit.
  */
 public class BreakpointMethodLocator extends ASTVisitor {
-	
+
 	private int fPosition;
-	
+
 	private String fTypeName;
-	
+
 	private String fMethodName;
-	
+
 	private String fMethodSignature;
 
 	private boolean fFound;
@@ -80,13 +80,13 @@ public class BreakpointMethodLocator extends ASTVisitor {
 	public String getTypeName() {
 		return fTypeName;
 	}
-	
+
 	private boolean containsPosition(ASTNode node) {
 		int startPosition= node.getStartPosition();
 		int endPosition = startPosition + node.getLength();
 		return startPosition <= fPosition && fPosition <= endPosition;
 	}
-	
+
 	private String computeMethodSignature(MethodDeclaration node) {
 		if (node.getExtraDimensions() != 0 || Modifier.isAbstract(node.getModifiers())) {
 			return null;
@@ -112,7 +112,7 @@ public class BreakpointMethodLocator extends ASTVisitor {
 		}
 		return signature.toString();
 	}
-	
+
 	private void appendTypeLetter(StringBuffer signature, PrimitiveType type) {
 		PrimitiveType.Code code= type.getPrimitiveTypeCode();
 		if (code == PrimitiveType.BYTE) {

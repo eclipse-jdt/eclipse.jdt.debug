@@ -23,13 +23,13 @@ public class TestIJavaType implements IJavaType {
 
 	String name;
 	String sig;
-	
+
 	public TestIJavaType(String name, String sig) {
 		this.name = name;
 		this.sig = sig;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */

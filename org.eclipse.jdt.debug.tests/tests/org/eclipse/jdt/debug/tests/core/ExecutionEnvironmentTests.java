@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,11 +30,11 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
  * Tests for execution environments
  */
 public class ExecutionEnvironmentTests extends AbstractDebugTest {
-		
+
 	public ExecutionEnvironmentTests(String name) {
 		super(name);
 	}
-	
+
 	public void testGetEnvironments() throws Exception {
 		IExecutionEnvironment[] executionEnvironments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		assertTrue("Should be at least one environment", executionEnvironments.length > 0);
@@ -46,11 +46,11 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertTrue("Did not find environment J2SE-1.4", false);
 	}
-	
+
 	public void testAnalyze() throws Exception {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-				
+
 		IExecutionEnvironment environment = manager.getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
 		assertNotNull("Missing environment J2SE-1.4", environment);
 		IVMInstall[] installs = environment.getCompatibleVMs();
@@ -63,7 +63,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertTrue("vm should be J2SE-1.4 compliant", false);
 	}
-	
+
 	public void testAccessRuleParticipants() throws Exception {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
@@ -82,7 +82,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("Wrong rule", "non_accessible", rules[3].getPattern().toString());
 		}
 	}
-	
+
 	public void testNoAccessRuleParticipants() throws Exception {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se13x");
@@ -96,8 +96,8 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			IAccessRule[] rules = accessRules[i];
 			assertEquals("wrong number of rules for lib", 0, rules.length);
 		}
-	}	
-	
+	}
+
 	public void testAccessRuleParticipantsWithShortCircut() throws Exception {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se15x");
@@ -113,7 +113,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("Wrong rule", "**/*", rules[0].getPattern().toString());
 		}
 	}
-	
+
 	/**
 	 * Tests that a project bound to an EE has access rules.
 	 */
@@ -140,7 +140,7 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertTrue("did not find JRE libs on classpath", foundLib);
 	}
-	
+
 	/**
 	 * Tests that a project bound to a specific JRE has no access rules.
 	 */
@@ -165,12 +165,12 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 				}
 			}
 		}
-		assertTrue("did not find JRE library on classpath", foundLib);		
-	}	
-	
+		assertTrue("did not find JRE library on classpath", foundLib);
+	}
+
 	/**
 	 * Tests that default access rules appear for system packages when a profile file is specified.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDefaultSystemPackageAccessRules() throws Exception {
@@ -189,12 +189,12 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			assertEquals("Wrong rule", "one/two/*", rules[1].getPattern().toString());
 			assertEquals("Wrong rule", "three/four/*", rules[2].getPattern().toString());
 			assertEquals("Wrong rule", "**/*", rules[3].getPattern().toString());
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that a location can be resolved for ${ee_home:J2SE-1.4}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEEHomeVariable() throws Exception {
@@ -205,10 +205,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		IVMInstall install = JavaRuntime.getVMInstall(JavaRuntime.newJREContainerPath(ee));
 		assertEquals(install.getInstallLocation().getAbsolutePath(), result);
 	}
-	
+
 	/**
 	 * Tests that a location cannot be resolved for ${ee_home}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEEHomeVariableMissingArgument() throws Exception {
@@ -220,10 +220,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		}
 		assertNotNull("Test should have thrown an exception", null);
 	}
-	
+
 	/**
 	 * Tests that a location cannot be resolved for ${ee_home:bogus}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEEHomeVariableInvalidArgument() throws Exception {
@@ -234,5 +234,5 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 			return; // expected
 		}
 		assertNotNull("Test should have thrown an exception", null);
-	}	
+	}
 }

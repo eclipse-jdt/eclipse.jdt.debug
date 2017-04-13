@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * test the detail pane functionality.  Displays a colored label depending on
  * if the selected element is public/private/protected/other.  This detail
  * pane is intended to only be used for selections containing only java variables.
- * 
+ *
  * @since 3.3
  * @see DetailPaneManagerTests
  * @see TestDetailPaneFactory
@@ -38,22 +38,22 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public class SimpleDetailPane implements IDetailPane {
 
 	private Label theLabel;
-	
+
 	private Color colorPrivate;
 	private Color colorProtected;
 	private Color colorPublic;
 	private Color colorOther;
-	
+
 	private static final int TYPE_PRIVATE = 1;
 	private static final int TYPE_PROTECTED = 2;
 	private static final int TYPE_PUBLIC = 3;
 	private static final int TYPE_OTHER = 4;
-	
+
 	// Do not change these constants, they are compared against strings in DetailPaneManagerTests
 	public static final String ID = "SimpleDetailPane";
 	public static final String NAME = "Example Pane: Colorful Detail Pane";
 	public static final String DESCRIPTION = "Example pane that displays a color for variables depending on their access level.";
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -64,10 +64,10 @@ public class SimpleDetailPane implements IDetailPane {
 		theLabel.setLayoutData(gd);
 		return theLabel;
 	}
-	
+
 	/**
 	 * Returns the color to be used with the given type
-	 * 
+	 *
 	 * @param typeId type of variable
 	 * @return the color to use
 	 */
@@ -121,14 +121,14 @@ public class SimpleDetailPane implements IDetailPane {
 					}
 					theLabel.setBackground(getColor(TYPE_OTHER));
 					return;
-					
+
 				} catch (DebugException e){
 					theLabel.setBackground(theLabel.getParent().getBackground());
 					theLabel.setText(e.getMessage());
 				}
 			}
 		}
-		
+
 	}
 
 	/* (non-Javadoc)

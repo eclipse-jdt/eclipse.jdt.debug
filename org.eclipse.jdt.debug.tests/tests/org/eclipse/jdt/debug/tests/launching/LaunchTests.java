@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,11 +25,11 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests launch notification.
  */
 public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
-	
+
 	private boolean added = false;
 	private boolean removed = false;
-	private boolean terminated = false; 
-	
+	private boolean terminated = false;
+
 	/**
 	 * Constructor
 	 * @param name the name of the test
@@ -73,9 +73,9 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 			}
 		}
 		assertTrue("Launch should have been terminated", terminated); //$NON-NLS-1$
-		
+
 		getLaunchManager().removeLaunch(launch);
-		
+
 		synchronized (this) {
 			if (!removed) {
 				try {
@@ -86,10 +86,10 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		}
 		assertTrue("Launch should have been removed", removed);		 //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests launching an unregistered launch.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnregisteredLaunch() throws Exception {
@@ -104,7 +104,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
        } finally {
            terminateAndRemove(thread);
            removeAllBreakpoints();
-       }	   
+       }
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 		added = true;
 		notifyAll();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */

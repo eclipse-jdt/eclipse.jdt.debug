@@ -73,7 +73,7 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	public void testExtractionFromInternalType() throws Exception {
 		try {
 			int lineNumber = 29;
@@ -89,26 +89,26 @@ public class IntroduceParameterUnitTests extends AbstractRefactoringDebugTest {
 			assertTrue("Breakpoint Marker has ceased existing",methodBreakpoint.getMarker().exists());
 			assertEquals("wrong method Signature", "(QString;)V", methodBreakpoint.getMethodSignature());
 			assertEquals("wrong type name", "a.b.c.Movee$InnerType", methodBreakpoint.getTypeName());
-			assertEquals("breakpoint attached to wrong method","innerTypeMethod",methodBreakpoint.getMethodName());		
+			assertEquals("breakpoint attached to wrong method","innerTypeMethod",methodBreakpoint.getMethodName());
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testLineBreakPoint	
-	
-//////////////////////////////////////////////////////////////////////////////////////	
+	}//end testLineBreakPoint
+
+//////////////////////////////////////////////////////////////////////////////////////
 	private Refactoring setupRefactor(int lineNumber, String root, String targetPackageName, String cuName) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, targetPackageName, cuName);
 		IDocument sourceCUnit = new Document(cunit.getSource());
 		IRegion lineInfo = sourceCUnit.getLineInformation(lineNumber-1);//-1 Document considers lineNumber different than createBreakpoint
 		int allowanceForBrackets = 4;
-		int itemOffset = lineInfo.getOffset() + lineInfo.getLength() - allowanceForBrackets; 
-						
+		int itemOffset = lineInfo.getOffset() + lineInfo.getLength() - allowanceForBrackets;
+
 		IntroduceParameterRefactoring ref= new IntroduceParameterRefactoring(cunit,itemOffset, 0);//0, no length
-		
+
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())
 		{

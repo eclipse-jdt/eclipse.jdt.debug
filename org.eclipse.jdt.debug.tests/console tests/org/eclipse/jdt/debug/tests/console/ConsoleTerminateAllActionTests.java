@@ -84,6 +84,6 @@ public class ConsoleTerminateAllActionTests extends AbstractDebugTest {
 				removeAllBreakpoints();
 			}
 		}
-			
+
 	}
 }

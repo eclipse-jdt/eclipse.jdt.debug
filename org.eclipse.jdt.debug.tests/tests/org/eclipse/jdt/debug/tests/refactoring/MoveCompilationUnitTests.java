@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,28 +26,28 @@ import org.eclipse.jdt.internal.corext.refactoring.reorg.JavaMoveProcessor;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgDestinationFactory;
 import org.eclipse.jdt.internal.corext.refactoring.reorg.ReorgPolicyFactory;
 import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
-// 
+//
 //then check number of and location of created breakpoint
 /**
- * A set of tests which moves a CompilationUnit and verifies if 
- * various breakpoints associated with that C.U. were moved. 
+ * A set of tests which moves a CompilationUnit and verifies if
+ * various breakpoints associated with that C.U. were moved.
  */
 public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 
 	public MoveCompilationUnitTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Performs a move refactoring.
-	 * 
+	 *
 	 * @param element element to move
 	 * @param destination destination of move
 	 * @throws Exception
 	 */
 	protected void move(IJavaElement element, IJavaElement destination) throws Exception {
 		IMovePolicy movePolicy= ReorgPolicyFactory.createMovePolicy(
-				new IResource[0], 
+				new IResource[0],
 				new IJavaElement[] {element});
 		JavaMoveProcessor processor= new JavaMoveProcessor(movePolicy);
 		processor.setDestination(ReorgDestinationFactory.createDestination(destination));
@@ -55,9 +55,9 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 		if(processor.canUpdateJavaReferences()) {
 			processor.setUpdateReferences(true);
 		}
-		performRefactor(new MoveRefactoring(processor));			
+		performRefactor(new MoveRefactoring(processor));
 	}
-	
+
 	/**
 	 * Tests if a LineBreakPoint was moved appropriately.
 	 * @throws Exception
@@ -82,19 +82,19 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	/**
 	 * Tests if a MethodBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */	
+	 */
 	public void testMethodBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-				
+
 		try {
 			//create an EntryMethod Breakpoint to test
 			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
-			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
+			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null);
 			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -105,22 +105,22 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */		
+	 */
 	public void testWatchPointBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-				
+
 		try {
 			//create a watchPoint to test
 			createWatchpoint("a.b.c.Movee", "anInt", true, true);
-			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
-			move(cunit, destination);	
+			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null);
+			move(cunit, destination);
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of watchpoints", 1, breakPoints .length);
 			IJavaWatchpoint watchPoint = (IJavaWatchpoint) breakPoints [0];
@@ -130,21 +130,21 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}			
+		}
 	}
-	
+
 	/**
 	 * Tests if a ClassLoadBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */			
+	 */
 	public void testClassLoadBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-				
+
 		try {
 			//create a classLoad breakpoint to test
 			createClassPrepareBreakpoint("a.b.c.Movee");
-			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null); 
+			IPackageFragment destination= getPackageFragmentRoot(javaProject, "src").createPackageFragment("a.b", false, null);
 			move(cunit, destination);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
@@ -154,6 +154,6 @@ public class MoveCompilationUnitTests extends AbstractRefactoringDebugTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}				
+		}
 	}
 }

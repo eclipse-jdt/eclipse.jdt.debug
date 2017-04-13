@@ -29,10 +29,10 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 	public ConvertNonPublicAnonymousTypeToNestedUnitTests(String name) {
 		super(name);
 	}
-	
+
 	public void testLineBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1",
@@ -40,7 +40,7 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 					newAnonTypeName = "a.b.c.NonPublicChildType$NewAnonymousClass";
 			int lineNumber = 56,
 				newLineNumber = 60;///////VERIFY NEW LINE NUMBER
-			
+
 			//create breakpoint to test
 			IJavaLineBreakpoint breakpoint = createLineBreakpoint(lineNumber, src, pack, cunit, fullTargetName);
 			//refactor
@@ -58,11 +58,11 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 	public void testMethodBreakpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1$anonTypeMethod()V",
@@ -87,17 +87,17 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testWatchpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1$anAnonInt",
 					targetParentType = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					newAnonTypeName = "a.b.c.NonPublicChildType$NewAnonymousClass",
 					fieldName = "anAnonInt";
-						
+
 			//create breakpoint to test
 			IJavaWatchpoint breakpoint = createNestedTypeWatchPoint(src, pack, cunit, fullTargetName, true, true);
 			//refactor
@@ -115,17 +115,17 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-		
+	}//end testBreakPoint
+
 	public void testClassLoadpoint() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					targetParentType = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					newAnonTypeName = "a.b.c.NonPublicChildType$NewAnonymousClass";
-					
+
 			//create breakpoint to test
 			IJavaClassPrepareBreakpoint breakpoint = createClassPrepareBreakpoint(src, pack, cunit, fullTargetName);
 			//refactor
@@ -142,23 +142,23 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-			
-//////////////////////////////////////////////////////////////////////////////////////	
+	}//end testBreakPoint
+
+//////////////////////////////////////////////////////////////////////////////////////
 	private Refactoring setupRefactor(String root, String packageName, String cuName, String targetName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IType type = (IType)getMember(cunit,targetName);
-		
+
 		//IDocument compUnitSource = new Document(cunit.getSource());
-				
+
 		ISourceRange typeInfo = type.getSourceRange();
-		int target = typeInfo.getOffset(); 
-		
+		int target = typeInfo.getOffset();
+
 		ConvertAnonymousToNestedRefactoring ref= new ConvertAnonymousToNestedRefactoring(cunit, target, 0);
 		//configure the ref a little more here!
-		ref.setClassName("ThisWillBeErased");//must have *A* name...			
-		
+		ref.setClassName("ThisWillBeErased");//must have *A* name...
+
 		//the below actually resets the refactoring fields to defaults.
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())
@@ -167,7 +167,7 @@ public class ConvertNonPublicAnonymousTypeToNestedUnitTests extends AbstractRefa
 			return null;
 		}
 		//configure the actual new name
-		ref.setClassName("NewAnonymousClass");		
+		ref.setClassName("NewAnonymousClass");
 		return ref;
 	}
 }

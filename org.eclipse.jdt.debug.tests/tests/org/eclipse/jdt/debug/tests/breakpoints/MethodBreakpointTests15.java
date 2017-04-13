@@ -27,7 +27,7 @@ import org.eclipse.ui.IEditorPart;
  * Tests method breakpoints for 1.5 source code.
  */
 public class MethodBreakpointTests15 extends AbstractDebugTest {
-	
+
 	public MethodBreakpointTests15(String name) {
 		super(name);
 	}
@@ -38,30 +38,30 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 	@Override
 	protected IJavaProject getProjectContext() {
 		return get15Project();
-	}	
-	
+	}
+
 	public void testStaticTypeParameter() throws Exception {
 		IJavaMethodBreakpoint breakpoint  = createBreakpoint(25);
 		assertEquals("Wrong method", "staticTypeParameter", breakpoint.getMethodName());
-		runToBreakpoint(getTypeName(), breakpoint);		
+		runToBreakpoint(getTypeName(), breakpoint);
 	}
-	
+
 	public void testTypeParameter() throws Exception {
 		IJavaMethodBreakpoint breakpoint  = createBreakpoint(29);
 		assertEquals("Wrong method", "typeParameter", breakpoint.getMethodName());
 		runToBreakpoint(getTypeName(), breakpoint);
 	}
-	
+
 	public void testMethodTypeParameter() throws Exception {
 		IJavaMethodBreakpoint breakpoint  = createBreakpoint(34);
 		assertEquals("Wrong method", "methodTypeParameter", breakpoint.getMethodName());
-		runToBreakpoint(getTypeName(), breakpoint);	
-	}	
-	
+		runToBreakpoint(getTypeName(), breakpoint);
+	}
+
 	private String getTypeName() {
 		return "a.b.c.MethodBreakpoints";
 	}
-	
+
 	private IJavaMethodBreakpoint createBreakpoint(int line) throws Exception {
 		IType type = get15Project().findType(getTypeName());
 		assertNotNull("Missing file", type);
@@ -78,7 +78,7 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(get15Project(), typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", mbp,hit);
@@ -87,7 +87,7 @@ public class MethodBreakpointTests15 extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-	}	
+	}
 
 	/**
 	 * @throws Exception

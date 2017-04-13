@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testGetSize() throws Exception {
 		String typeName = "ArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -47,14 +47,14 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
-	
-	
+
+
 	public void testGetVariable() throws Exception {
 		String typeName = "ArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -70,13 +70,13 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
-	
+		}
+	}
+
 	public void testGetVariableRange() throws Exception {
 		String typeName = "ArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(19, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -91,17 +91,17 @@ public class ArrayTests extends AbstractDebugTest {
 			for (int i = 0; i < 15; i++) {
 				assertEquals("Wrong value", ((IJavaDebugTarget)frame.getDebugTarget()).newValue(50 + i), variables[i].getValue());
 			}
-			
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
-	
+		}
+	}
+
 	public void testSetValueRange() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(27, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -132,13 +132,13 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	public void testCreateArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -157,7 +157,7 @@ public class ArrayTests extends AbstractDebugTest {
 			IJavaArray javaArray = type.newInstance(6000);
 			v.setValue(javaArray);
 			IJavaArray  array = (IJavaArray) v.getValue();
-			
+
 			IJavaValue[] replacements = new IJavaValue[6000];
 			for (int i = 0; i < replacements.length; i++) {
 				replacements[i] = target.newValue((byte)23);
@@ -173,9 +173,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
-	}	
-	
+		}
+	}
+
 	/**
 	 * Sets a zero-length array as the new values
 	 * @throws Exception
@@ -184,7 +184,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetZeroLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -198,7 +198,7 @@ public class ArrayTests extends AbstractDebugTest {
 			IJavaArray javaArray = type.newInstance(1);
 			v.setValue(javaArray);
 			IJavaArray  array = (IJavaArray) v.getValue();
-			
+
 			IJavaValue[] replacements = new IJavaValue[0];
 			array.setValues(replacements);
 			// the overall size of the array will never change size, and trying to set no values has not effect
@@ -206,19 +206,19 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tries to set a new array with a starting index of -1
-	 * 
+	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLowerIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -233,7 +233,7 @@ public class ArrayTests extends AbstractDebugTest {
 			IJavaArray javaArray = type.newInstance(1);
 			v.setValue(javaArray);
 			IJavaArray  array = (IJavaArray) v.getValue();
-			
+
 			IJavaValue[] replacements = {target.nullValue()};
 			try {
 				array.setValues(-1, 0, replacements, 0);
@@ -246,9 +246,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with an index greater than the total length of the source array
 	 * @throws Exception
@@ -257,7 +257,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetBadUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -271,7 +271,7 @@ public class ArrayTests extends AbstractDebugTest {
 			IJavaArray javaArray = type.newInstance(1);
 			v.setValue(javaArray);
 			IJavaArray  array = (IJavaArray) v.getValue();
-			
+
 			IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 			IJavaValue bite = target.newValue((byte)-1);
 			IJavaValue[] replacements = {bite};
@@ -286,9 +286,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with an index greater than the total length of the soure array
 	 * @throws Exception
@@ -297,7 +297,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetExactUpperIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -326,9 +326,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
 	 * @throws Exception
@@ -337,7 +337,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetBadLowerSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -366,9 +366,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
 	 * @throws Exception
@@ -377,7 +377,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetBadUpperSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -406,9 +406,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with a source index greater than the total length of the new values array
 	 * @throws Exception
@@ -417,7 +417,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetExactSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -446,9 +446,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with a length less than -1
 	 * @throws Exception
@@ -457,7 +457,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetBadLowerLengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -486,9 +486,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array with a length equal to -1
 	 * @throws Exception
@@ -497,7 +497,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetMinus1LengthArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -524,18 +524,18 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
-	 * Tries to set an array where the given length and index combined exceed the length of the array 
+	 * Tries to set an array where the given length and index combined exceed the length of the array
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLengthPlusIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -564,18 +564,18 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
-	 * Tries to set an array where the given length and source index combined exceed the length of the array 
+	 * Tries to set an array where the given length and source index combined exceed the length of the array
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=359450
 	 */
 	public void testSetBadLengthPlusSrcIndexArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -603,9 +603,9 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tries to set an array where the source array is longer than the array to set the values into
 	 * @throws Exception
@@ -614,7 +614,7 @@ public class ArrayTests extends AbstractDebugTest {
 	public void testSetLongerSrcArray() throws Exception {
 		String typeName = "ByteArrayTests";
 		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
-		
+
 		IJavaThread thread = null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -640,6 +640,6 @@ public class ArrayTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
 }

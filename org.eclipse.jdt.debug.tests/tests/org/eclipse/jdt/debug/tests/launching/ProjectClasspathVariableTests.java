@@ -29,17 +29,17 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 /**
- * Tests for the ${project_classpath} variable 
+ * Tests for the ${project_classpath} variable
  */
 public class ProjectClasspathVariableTests extends AbstractDebugTest {
 
 	public ProjectClasspathVariableTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Sets the selected resource in the navigator view.
-	 * 
+	 *
 	 * @param resource resource to select or <code>null</code> if empty
 	 */
 	protected void setSelection(final IResource resource) {
@@ -66,15 +66,15 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 				} catch (PartInitException e) {
 					assertNotNull("Failed to open navigator view", null);
 				}
-				
+
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
-	
+
 	/**
 	 * Tests that a project name must be specified.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMissingProjectName() throws Exception {
@@ -87,10 +87,10 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 		}
 		assertNotNull("Test should have thrown an exception due to missing project name", null);
 	}
-	
+
 	/**
 	 * Tests the selected project's classpath.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSelectedProject() throws Exception {
@@ -105,10 +105,10 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 		buffer.append(get14Project().getProject().getFolder("src").getFile("A.jar").getLocation().toOSString());
 		assertEquals("Wrong classpath", buffer.toString(), cp);
 	}
-	
+
 	/**
 	 * Tests that a Java project must exist
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testProjectDoesNotExist() throws Exception {
@@ -120,7 +120,7 @@ public class ProjectClasspathVariableTests extends AbstractDebugTest {
 		}
 		assertNotNull("Test should have thrown an exception due to project does not exist", null);
 	}
-	
+
 	public void testProjectClasspath() throws Exception {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		String projectName = get14Project().getElementName();

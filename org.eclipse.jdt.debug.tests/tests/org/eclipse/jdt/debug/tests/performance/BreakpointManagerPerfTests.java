@@ -24,11 +24,11 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * Tests the performance of various parts of the {@link BreakpointManager}
- * 
+ *
  * @since 3.8
  */
 public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -39,10 +39,10 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 
 	static IBreakpoint[] NO_BREAKPOINTS = new IBreakpoint[0];
 	static String fgTypeName = "BPManagerPerf";
-	
+
 	/**
 	 * Create the given number of breakpoints in the given resource starting from the given line
-	 *  
+	 *
 	 * @param count
 	 * @throws Exception
 	 * @return the collection of breakpoints
@@ -72,7 +72,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 		assertEquals("the should have been "+count+" breakpoints created", count, bps.size());
 		return bps.toArray(new IBreakpoint[bps.size()]);
 	}
-	
+
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
 	 * @throws Exception
@@ -102,7 +102,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
 	 * @throws Exception
@@ -132,7 +132,7 @@ public class BreakpointManagerPerfTests extends AbstractDebugPerformanceTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests the time required to start the {@link BreakpointManager}
 	 * @throws Exception

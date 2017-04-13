@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests IProcess.
  */
 public class ProcessTests extends AbstractDebugTest {
-	
+
 	public ProcessTests(String name) {
 		super(name);
 	}
@@ -31,7 +31,7 @@ public class ProcessTests extends AbstractDebugTest {
 	public void testExitValueNormal() throws Exception {
 		String typeName = "Breakpoints";
 		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
-				
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -51,13 +51,13 @@ public class ProcessTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that an already terminated java.lang.Process behaves properly when
 	 * wrapped in an IProcess.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAlreadyTerminatedProcess() throws Exception {

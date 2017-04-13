@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,19 +26,19 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests instance filters on breakpoints.
- * 
+ *
  * These tests only "run" on VMs that support instance breakpoints,
  * such as JDK 1.4.1.
  */
 public class InstanceFilterTests extends AbstractDebugTest {
-	
+
 	public InstanceFilterTests(String name) {
 		super(name);
 	}
 
 	/**
 	 * Instance filter on a line breakpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testLineBreakpoint() throws Exception {
@@ -46,8 +46,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// main
 		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
 		// simpleMethod
-		IJavaLineBreakpoint simpleMethod = createLineBreakpoint(19, typeName);		
-		
+		IJavaLineBreakpoint simpleMethod = createLineBreakpoint(19, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -55,7 +55,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -69,15 +69,15 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				simpleMethod.addInstanceFilter(object1);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
-				
+
 				// receiver should be object1
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
@@ -87,12 +87,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Instance filter on a method entry breakpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMethodEntryBreakpoint() throws Exception {
@@ -100,8 +100,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// main
 		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
 		// simpleMethod
-		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", true, false);		
-		
+		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", true, false);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -109,7 +109,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -123,15 +123,15 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				simpleMethod.addInstanceFilter(object1);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
-				
+
 				// receiver should be object1
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
@@ -146,12 +146,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Instance filter on a method exit breakpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMethodExitBreakpoint() throws Exception {
@@ -159,8 +159,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// main
 		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
 		// simpleMethod
-		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", false, true);		
-		
+		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", false, true);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -168,7 +168,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -182,15 +182,15 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				simpleMethod.addInstanceFilter(object1);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
-				
+
 				// receiver should be object1
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
@@ -205,12 +205,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
+		}
+	}
 
 	/**
 	 * Instance filter on an exception breakpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExceptionBreakpoint() throws Exception {
@@ -218,8 +218,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// main
 		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
 		// exception breakpoint
-		IJavaExceptionBreakpoint npe = createExceptionBreakpoint("java.lang.NullPointerException", true, true);		
-		
+		IJavaExceptionBreakpoint npe = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -227,7 +227,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -241,15 +241,15 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				npe.addInstanceFilter(object1);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in throwNPE", npe, breakpoints[0]);
-				
+
 				// receiver should be object1
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
@@ -259,12 +259,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Instance filter on an access watchpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAccessWatchpoint() throws Exception {
@@ -272,8 +272,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// main
 		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
 		// exception breakpoint
-		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", true, false);		
-		
+		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", true, false);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -281,7 +281,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -295,20 +295,20 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				watchpoint.addInstanceFilter(object1);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in access method", watchpoint, breakpoints[0]);
-				
-				// in "accessField" 
+
+				// in "accessField"
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
 				assertEquals("should be in access method", "accessField", frame.getMethodName());
-				
+
 				// receiver should be object1
 				IJavaObject receiver = frame.getThis();
 				assertEquals("should be in object1 context", object1, receiver);
@@ -316,12 +316,12 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Instance filter on an modification watchpoint
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testModificationWatchpoint() throws Exception {
@@ -331,8 +331,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		// exception breakpoint
 		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", false, true);
 		// disable to avoid variable initializer
-		watchpoint.setEnabled(false);		
-		
+		watchpoint.setEnabled(false);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -340,7 +340,7 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
-			
+
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
 				// restrict breakpoint in simpleMethod to object 1
@@ -354,23 +354,23 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				IJavaObject object2 = (IJavaObject)var2.getValue();
 				assertNotNull(object1);
 				assertNotNull(object2);
-				
+
 				watchpoint.addInstanceFilter(object1);
-				
+
 				// enable watchpoint
 				watchpoint.setEnabled(true);
-				
+
 				// resume the thread
 				thread= resume(thread);
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				assertEquals("should be a breakpoint", 1, breakpoints.length);
 				assertEquals("should be in modification method", watchpoint, breakpoints[0]);
-				
-				// in "modifyField" 
+
+				// in "modifyField"
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
 				assertEquals("should be in modify method", "modifyField", frame.getMethodName());
-				
+
 				// receiver should be object1
 				IJavaObject receiver = frame.getThis();
 				assertEquals("should be in object1 context", object1, receiver);
@@ -378,17 +378,17 @@ public class InstanceFilterTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
-	
+		}
+	}
+
 	/**
 	 * Returns whether the associated target supports instance breakpoints
-	 * 
+	 *
 	 * @param thread
 	 * @return boolean
 	 */
 	private boolean supportsInstanceBreakpoints(IJavaThread thread) {
 		IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 		return target.supportsInstanceBreakpoints();
-	}	
+	}
 }

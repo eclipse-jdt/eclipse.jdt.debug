@@ -37,9 +37,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Tests the Java debugger's 'toggle breakpoints target'.
  */
 public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest {
-	
+
 	class Listener implements IBreakpointListener {
-		
+
 		List<IBreakpoint> added = new ArrayList<IBreakpoint>();
 		List<IBreakpoint> removed = new ArrayList<IBreakpoint>();
 
@@ -62,7 +62,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 		@Override
 		public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		}
-		
+
 		public IBreakpoint getAdded() throws Exception {
 			synchronized (added) {
 				if (added.isEmpty()) {
@@ -72,7 +72,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 			assertFalse("Breakpoint not added", added.isEmpty());
 			return added.get(0);
 		}
-		
+
 		public boolean isEmpty() throws Exception{
 			synchronized (added) {
 				if (added.isEmpty()) {
@@ -83,7 +83,7 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 			return false;
 
 		}
-		
+
 		public IBreakpoint getRemoved() throws Exception {
 			synchronized (removed) {
 				if (removed.isEmpty()) {
@@ -93,18 +93,18 @@ public abstract class AbstractToggleBreakpointsTarget extends AbstractDebugTest 
 			assertFalse("Breakpoint not removed", removed.isEmpty());
 			return removed.get(0);
 		}
-		
-		
+
+
 	}
 
 	public AbstractToggleBreakpointsTarget(String name) {
 		super(name);
 	}
-	
-		
+
+
 	/**
 	 * Opens an editor on the given external file and toggles a breakpoint.
-	 * 
+	 *
 	 * @param externalFile path to external file in the test plug-in
 	 * @param line line number (1 based)
 	 * @throws Exception on failure

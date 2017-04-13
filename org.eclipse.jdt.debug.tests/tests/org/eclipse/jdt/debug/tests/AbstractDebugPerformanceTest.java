@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	public AbstractDebugPerformanceTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Overridden to create a default performance meter for this test case.
 	 * @throws Exception
@@ -54,7 +54,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * Mark the scenario of this test case
 	 * to be included into the global performance summary. The summary shows
 	 * the given dimension of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName a short (shorter than 40 characters) descriptive name of the scenario
 	 * @param dimension the dimension to show in the summary
 	 */
@@ -62,10 +62,10 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 		Performance performance= Performance.getDefault();
 		performance.tagAsGlobalSummary(fPerformanceMeter, shortName, new Dimension[] { dimension } );
 	}
-	
+
 	/**
 	 * Sets a degradation comment on this test.
-	 * 
+	 *
 	 * @param comment the reason for degradation.
 	 */
 	public void setDegradationComment(String comment) {
@@ -77,7 +77,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * Mark the scenario represented by the given PerformanceMeter
 	 * to be included into the global performance summary. The summary shows
 	 * the given dimensions of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimensions an array of dimensions to show in the summary
 	 */
@@ -85,24 +85,24 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 		Performance performance= Performance.getDefault();
 		performance.tagAsGlobalSummary(fPerformanceMeter, shortName, dimensions );
 	}
-	
+
 	/**
 	 * Mark the scenario of this test case
 	 * to be included into the component performance summary. The summary shows
 	 * the given dimension of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimension the dimension to show in the summary
 	 */
 	public void tagAsSummary(String shortName, Dimension dimension) {
 		tagAsSummary(shortName, new Dimension[]{dimension});
 	}
-	
+
 	/**
 	 * Mark the scenario of this test case
 	 * to be included into the component performance summary. The summary shows
 	 * the given dimension of the scenario and labels the scenario with the short name.
-	 * 
+	 *
 	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
 	 * @param dimensions an array of dimensions to show in the summary
 	 */
@@ -110,7 +110,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 		Performance performance= Performance.getDefault();
 		performance.tagAsSummary(fPerformanceMeter, shortName, dimensions);
 	}
-	
+
 	/**
 	 * Called from within a test case immediately before the code to measure is run.
 	 * It starts capturing of performance data.
@@ -120,18 +120,18 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	protected void startMeasuring() {
 		fPerformanceMeter.start();
 	}
-	
+
 	protected void stopMeasuring() {
 		fPerformanceMeter.stop();
 	}
-	
+
 	protected void commitMeasurements() {
-		fPerformanceMeter.commit(); 
+		fPerformanceMeter.commit();
 	}
 
 	/**
 	 * Asserts default properties of the measurements captured for this test case.
-	 * 
+	 *
 	 * @throws RuntimeException if the properties do not hold
 	 */
 	protected void assertPerformance() {
@@ -142,7 +142,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	 * Asserts that the measurement specified by the given dimension
 	 * is within a certain range with respect to some reference value.
 	 * If the specified dimension isn't available, the call has no effect.
-	 * 
+	 *
 	 * @param dim the Dimension to check
 	 * @param lowerPercentage a negative number indicating the percentage the measured value is allowed to be smaller than some reference value
 	 * @param upperPercentage a positive number indicating the percentage the measured value is allowed to be greater than some reference value
@@ -151,7 +151,7 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	protected void assertPerformanceInRelativeBand(Dimension dim, int lowerPercentage, int upperPercentage) {
 		Performance.getDefault().assertPerformanceInRelativeBand(fPerformanceMeter, dim, lowerPercentage, upperPercentage);
 	}
-    
+
     /**
      * Sets a comment to explain performance degradation.
      * @param comment the explanation for a performance degradation.

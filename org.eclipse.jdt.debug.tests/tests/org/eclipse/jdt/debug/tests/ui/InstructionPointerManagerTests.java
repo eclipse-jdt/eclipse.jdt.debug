@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Tests functionality of the InstructionPointerManager.
  * The tests are not currently part of the automated suite because they produce
  * transient failures that could not be tracked down.
- * 
+ *
  * @since 3.3
  * @see InstructionPointerManager
  */
@@ -63,31 +63,31 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	private Object fLock = new Object();
 	private Annotation fAddedAnnotation = null;
 	private Annotation fRemovedAnnotation = null;
-	
+
 	private MyPerspectiveListener fPerspectiveListener;
 	private MyAnnotationListener fAnnotationListener;
 	private IPartListener2 fPartListener;
 	private Set<IAnnotationModel> fAnnotationModelsWithListeners = new HashSet<IAnnotationModel>();
-	
+
 	private static final String typeThreadStack = "org.eclipse.debug.tests.targets.ThreadStack";
 	private static final String typeClassOne = "org.eclipse.debug.tests.targets.ClassOne";
 	private static final String typeClassTwo = "org.eclipse.debug.tests.targets.ClassTwo";
-	
+
 	private IJavaDebugTarget target1;
 	private IJavaDebugTarget target2;
 	private IJavaThread thread1;
 	private IJavaThread thread2;
 	private IJavaThread thread3;
 	private IJavaThread thread4;
-	
+
 	public InstructionPointerManagerTests(String name) {
 		super(name);
 	}
-	
+
 	public void testManagerWithEditorReuse() throws Exception{
 		boolean restore = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, true);
-		
+
 		try{
 			addAndRemoveAnnotations(new int[]{1,2,1,2,1,0,1,1}, new int[]{1,1,1,1,1,0,1,1});
 		} finally {
@@ -112,14 +112,14 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
                     activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
                 }
             };
-            DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);	
+            DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);
 		}
 	}
-	
+
 	public void testManagerWithNoEditorReuse() throws Exception{
 		boolean restore = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_REUSE_EDITOR, false);
-		
+
 		try{
 			addAndRemoveAnnotations(new int[]{1,2,3,4,5,3,2,1}, new int[]{1,1,2,2,3,2,2,1});
 		} finally {
@@ -144,23 +144,23 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
                     activeWorkbenchWindow.removePerspectiveListener(getPerspectiveListener());
                 }
             };
-            DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);	
+            DebugUIPlugin.getStandardDisplay().asyncExec(cleanup);
 		}
 	}
-	
+
 	/**
 	 * Tests the ability of the manager to update it's set and mapping as
 	 * annotations are added and removed.
-	 * 
+	 *
 	 * First, all editors are closed and the manager is checked to ensure there are 0 IPCs.
-	 * 
+	 *
 	 * <p>Next, annotations are created as follows:<br>
 	 * (numbers in brackets correspond to index of expected IPC and Mapping counts checked)
 	 * <pre>
 	 * Target1	- Thread1	- IPC1	- ClassOne		- Editor1 (line 20)	[0]
 	 *      	- Thread2	- IPC2	- ClassOne		- Editor1 (line 20)	[1]
 	 * 						- IPC3	- ThreadStack	- Editor2 (line 28)	[2]
-	 * 
+	 *
 	 * Target2	- Thread3	- IPC4	- ThreadStack	- Editor2 (line 41) [3]
 	 *      	- Thread4	- IPC5	- ClassTwo		- Editor3 (line 24) [4]
 	 * </pre>
@@ -181,7 +181,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 	private void addAndRemoveAnnotations(int[] expectedIPCCounts, int[] expectedMappingCounts) throws Exception{
 		assertEquals("Incorrect number of expected counts", 8, expectedIPCCounts.length);
 		assertEquals("Incorrect number of expected counts", 8, expectedMappingCounts.length);
-		
+
 		// Close all editors
 	    Runnable closeAll = new Runnable() {
             @Override
@@ -194,9 +194,9 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         DebugUIPlugin.getStandardDisplay().syncExec(closeAll);
         assertEquals("Instruction pointer count was incorrect", 0, InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", 0, InstructionPointerManager.getDefault().getEditorMappingCount());
-		         
+
         // ADD ANNOTATIONS
-        
+
         // Launch a target creating two threads, both suspend in ClassOne, one will automatically be selected
         IJavaLineBreakpoint breakpoint = createLineBreakpoint(20, typeClassOne);
         fAddedAnnotation = null;
@@ -208,7 +208,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         waitForAnnotationToBeAdded();
         assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[0], InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[0], InstructionPointerManager.getDefault().getEditorMappingCount());
-        
+
         // Find and select the top stack frame of the other thread
         Runnable openParent = new Runnable() {
             @Override
@@ -239,7 +239,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertNotNull("Thread not selected",thread2);
         assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[1], InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[1], InstructionPointerManager.getDefault().getEditorMappingCount());
-        
+
         // Select the same stack frame and make sure IPC count doesn't change
         Runnable selectSameStackFrame = new Runnable() {
             @Override
@@ -249,7 +249,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
             	newSegments[0] = target1.getLaunch();
             	newSegments[1] = target1;
             	newSegments[2] = thread2;
-            	try { 
+            	try {
             		newSegments[3] = thread2.getTopStackFrame();
             	} catch (DebugException e) {
 					fail("Exception: " + e.getMessage());
@@ -263,7 +263,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         waitForAnnotationToBeAdded();
         assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[1], InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[1], InstructionPointerManager.getDefault().getEditorMappingCount());
-        
+
         // Select the next stack frame in the same thread
         Runnable selectSecondStackFrame = new Runnable() {
             @Override
@@ -288,7 +288,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         // Failure here, reuse, expected 1 but was 2, also with no reuse, expected 3 but was 2
         assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[2], InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[2], InstructionPointerManager.getDefault().getEditorMappingCount());
-	
+
         // Remove the breakpoint from before and create new ones, start a new target
         breakpoint.delete();
         createLineBreakpoint(41, typeThreadStack);
@@ -297,7 +297,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         assertNotNull("Target was not launched", target2);
         assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[2], InstructionPointerManager.getDefault().getInstructionPointerCount());
         assertEquals("Editor mapping count was incorrect", expectedMappingCounts[2], InstructionPointerManager.getDefault().getEditorMappingCount());
-	
+
        // Select the stack frame from the new debug target displaying ThreadStack
        Runnable openOtherDebugTarget = new Runnable() {
             @Override
@@ -337,7 +337,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        waitForAnnotationToBeAdded();
        assertEquals("Instruction pointer count was incorrect", expectedIPCCounts[3], InstructionPointerManager.getDefault().getInstructionPointerCount());
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[3], InstructionPointerManager.getDefault().getEditorMappingCount());
-       
+
        // Select the other thread from the new target displaying ClassTwo
        Runnable openOtherThread = new Runnable() {
             @Override
@@ -370,7 +370,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[4], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // REMOVE ANNOTATIONS
-       
+
        // Remove target2
        fRemovedAnnotation = null;
        target2.terminate();
@@ -379,7 +379,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Editor mapping count was incorrect", expectedMappingCounts[5], InstructionPointerManager.getDefault().getEditorMappingCount());
 
        // TODO Selection of the other target does not occur automatically.  This functionality may change and will break this test.
-       
+
        // Resume thread1
        fRemovedAnnotation = null;
        thread1.resume();
@@ -423,7 +423,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
        assertEquals("Instruction pointer count was incorrect", 0, InstructionPointerManager.getDefault().getInstructionPointerCount());
        assertEquals("Editor mapping count was incorrect", 0, InstructionPointerManager.getDefault().getEditorMappingCount());
 	}
-	
+
 	protected MyPerspectiveListener getPerspectiveListener(){
 		if (fPerspectiveListener == null){
 			fPerspectiveListener = new MyPerspectiveListener();
@@ -431,7 +431,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		}
 		return fPerspectiveListener;
 	}
-	
+
 	protected MyAnnotationListener getAnnotationListener(){
 		if (fAnnotationListener == null){
 			fAnnotationListener = new MyAnnotationListener();
@@ -439,7 +439,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		}
 		return fAnnotationListener;
 	}
-	
+
 	private IPartListener2 getPartListener(){
 		if (fPartListener == null){
 			fPartListener = new MyPartListener();
@@ -447,15 +447,15 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		}
 		return fPartListener;
 	}
-	
+
 	private void waitForAnnotationToBeAdded() throws Exception{
 		synchronized (fLock) {
 		    if (fAddedAnnotation == null) {
 		        fLock.wait(5000);
 		    }
-        }		
+        }
 		assertNotNull("Annotation was not added properly");
-		
+
 		// Synchronize with the UI thread so we know that the annotations have finished
 		Runnable runner = new Runnable(){
 			@Override
@@ -465,15 +465,15 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(runner);
 	}
-	
+
 	private void waitForAnnotationToBeRemoved() throws Exception{
 		synchronized (fLock) {
 		    if (fRemovedAnnotation == null) {
 		    	fLock.wait(5000);
 		    }
-        }		
+        }
 		assertNotNull("Annotation was not removed properly");
-		
+
 		// Synchronize with the UI thread so we know that the annotations have finished
 		Runnable runner = new Runnable(){
 			@Override
@@ -483,17 +483,17 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(runner);
 	}
-	
+
 	class MyPerspectiveListener implements IPerspectiveListener2 {
 
 		private String fTypeName = IInternalDebugCoreConstants.EMPTY_STRING;
 		private String fTitle = IInternalDebugCoreConstants.EMPTY_STRING;
-		
+
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {}
 		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
-			
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 		 */
@@ -508,7 +508,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
         	        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
         	        if (annModel == null) {
         	            fail("Could not get the annotation model");
-        	        }  
+        	        }
         	        annModel.addAnnotationModelListener(getAnnotationListener());
         	        fAnnotationModelsWithListeners.add(annModel);
         		} else {
@@ -532,12 +532,12 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 				fTitle = typeName + ".java";
 			}
 		}
-		
+
 		public String getTypeName(){
 			return fTypeName;
 		}
 	}
-	
+
 	class MyPartListener implements IPartListener2{
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {}
@@ -553,7 +553,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
 		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
@@ -567,7 +567,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
     	        IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
     	        if (annModel == null) {
     	            fail("Could not get the annotation model");
-    	        }  
+    	        }
     	        annModel.addAnnotationModelListener(getAnnotationListener());
     	        fAnnotationModelsWithListeners.add(annModel);
     		} else {
@@ -575,7 +575,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
     		}
 		}
 	}
-	
+
 	class MyAnnotationListener implements IAnnotationModelListener, IAnnotationModelListenerExtension{
 
 		@Override
@@ -587,10 +587,10 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 						fAddedAnnotation = annotations[i];
 						fLock.notifyAll();
 						System.out.println("Annotation added to editor: " + fAddedAnnotation + " (" + this + ")" + event.getAnnotationModel());
-							
+
 					}
 				}
-			}	
+			}
 			annotations = event.getRemovedAnnotations();
 			for (int i = 0; i < annotations.length; i++) {
 				if (annotations[i] instanceof InstructionPointerAnnotation){
@@ -599,7 +599,7 @@ public class InstructionPointerManagerTests extends AbstractDebugTest {
 						fLock.notifyAll();
 					}
 				}
-			}	
+			}
 		}
 
 		@Override

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,18 +18,18 @@ import com.sun.jdi.ReferenceType;
 
 /**
  * Test cases for the implementation of heap walking in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class HeapWalkingTests extends AbstractJDITest {
 
 	private ReferenceType fClass, fClass1;
 	private ObjectReference fObject;
-	
+
 	/**	 setup our tests */
 	@Override
 	public void localSetUp() {}
-	
+
 	/** tear down our tests */
 	@Override
 	public void localTearDown() {
@@ -50,7 +50,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			assertTrue("Should not have instance info", !fVM.canGetInstanceInfo());
 		}
 	}
-	
+
 	/**
 	 * tests the new method instanceCounts, to make sure it throws an NPE when required.
 	 * test is not applicable to non 1.6 VMs
@@ -65,7 +65,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		catch (NullPointerException npe) {}
 	}
-	
+
 	/**
 	 * tests to make sure the instanceCounts method throws a not supported
 	 */
@@ -86,7 +86,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to collect any referring instances can be collected for the specified class.
 	 * test is not applicable to non 1.6 VMs.
@@ -109,7 +109,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertTrue("count for RefClass1 should be 2", counts[0] == 2);
 		assertTrue("count for RefClass2 should be 1", counts[1] == 1);
 	}
-	
+
 	/**
 	 * test to make sure instances throws an unsupported exception for non 1.6 VMs
 	 */
@@ -132,7 +132,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to make sure instances throws and IllegalArgument exception for negative long arguments.
 	 * test is not applicable to non 1.6 VMs
@@ -149,10 +149,10 @@ public class HeapWalkingTests extends AbstractJDITest {
 		}
 		catch (IllegalArgumentException iae) {}
 	}
-	
+
 	/**
 	 * test to collect a list of instances.
-	 * test is not applicable to non 1.6 VMs. 
+	 * test is not applicable to non 1.6 VMs.
 	 */
 	public void testGetInstances() {
 		if(!fVM.canGetInstanceInfo()) {
@@ -168,7 +168,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 		assertNotNull("list should not be null", list);
 		assertTrue("list should have two enrtries", list.size() == 2);
 	}
-	
+
 	/**
 	 * test to make sure referringObjects throws an unsupported exception for non-1.6 VMs
 	 */
@@ -193,7 +193,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to make sure referringObjects throws an IllegalArgument exception for bad values of max
 	 */
@@ -213,7 +213,7 @@ public class HeapWalkingTests extends AbstractJDITest {
 			assertTrue("Threw exception", true);
 		}
 	}
-	
+
 	/**
 	 * tests the method referring objects to ensure working to spec.
 	 * test is not applicable to non 1.6 VMs

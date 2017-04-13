@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import com.sun.jdi.ThreadReference;
 /**
  * Tests for JDI com.sun.jdi.VirtualMachine
  * and JDWP VM command set.
- * 
+ *
  * Example of arguments:
  *   -launcher SunVMLauncher -address c:\jdk1.2.2\ -classpath d:\target
  */
@@ -83,7 +83,7 @@ public class VirtualMachineTest extends AbstractJDITest {
 		super.startProgram();
 	}
 	/**
-	 * Returns all tests 
+	 * Returns all tests
 	 */
 	@Override
 	protected Test suite() {

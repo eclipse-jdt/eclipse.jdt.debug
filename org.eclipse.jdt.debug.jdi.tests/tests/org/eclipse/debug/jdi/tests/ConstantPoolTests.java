@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,21 +14,21 @@ import com.sun.jdi.ArrayType;
 import com.sun.jdi.ReferenceType;
 
 /**
- * Test cases for the implementation of providing argument information even if 
+ * Test cases for the implementation of providing argument information even if
  * no debugging information is present in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class ConstantPoolTests extends AbstractJDITest {
 
 	ReferenceType fClass;
-	
+
 	/** setup test info locally **/
 	@Override
 	public void localSetUp() {}
-	
+
 	/**
-	 * test to see if we can get class file version info from a 1.6 VM, and 
+	 * test to see if we can get class file version info from a 1.6 VM, and
 	 * that we cannot from a pre-1.6 VM
 	 */
 	public void testCanGetClassFileVersion() {
@@ -39,10 +39,10 @@ public class ConstantPoolTests extends AbstractJDITest {
 			assertTrue("Should not have classfile version info", !fVM.canGetClassFileVersion());
 		}
 	}
-	
+
 	/**
 	 * test to make sure we can get constant pool information from a 1.6 VM, and
-	 * that we cannot get it from a pre-1.6 VM 
+	 * that we cannot get it from a pre-1.6 VM
 	 */
 	public void testCanGetConstantPool() {
 		if(is16OrGreater()) {
@@ -77,7 +77,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to make sure that majorVersion returns 0 for an arrayType.
 	 * this test does not apply to non-16 VMs
@@ -91,10 +91,10 @@ public class ConstantPoolTests extends AbstractJDITest {
 		int ver = type.majorVersion();
 		assertTrue("major verison should be 0", ver == 0);
 	}
-	
+
 	/**
 	 * test to make sure majorVerison works.
-	 * this test does not apply to non-1.6VMs 
+	 * this test does not apply to non-1.6VMs
 	 */
 	public void testMajorVersion() {
 		if(!fVM.canGetClassFileVersion()) {
@@ -106,9 +106,9 @@ public class ConstantPoolTests extends AbstractJDITest {
 		int ver = fClass.majorVersion();
 		assertTrue("version cannot be equal to -1", ver != -1);
 	}
-	
+
 	/**
-	 * test to make sure that if minorVersion is unsupported an UnsupportedIOperationException 
+	 * test to make sure that if minorVersion is unsupported an UnsupportedIOperationException
 	 * is thrown
 	 */
 	public void testMinorVersionUnsupported() {
@@ -131,10 +131,10 @@ public class ConstantPoolTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to make sure minorVerison works.
-	 * this test does not apply to non-1.6VMs 
+	 * this test does not apply to non-1.6VMs
 	 */
 	public void testMinorVersion() {
 		if(!fVM.canGetClassFileVersion()) {
@@ -146,9 +146,9 @@ public class ConstantPoolTests extends AbstractJDITest {
 		int ver = fClass.minorVersion();
 		assertTrue("version cannot be equal to -1", ver != -1);
 	}
-	
+
 	/**
-	 * test to make sure that if constantPoolCount is unsupported an UnsupportedIOperationException 
+	 * test to make sure that if constantPoolCount is unsupported an UnsupportedIOperationException
 	 * is thrown
 	 */
 	public void testConstantPoolCountSupported() {
@@ -171,7 +171,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to ensure the constant pool count is working correctly
 	 * this test does not apply to non-1.6 VMs
@@ -187,9 +187,9 @@ public class ConstantPoolTests extends AbstractJDITest {
 		//for now we don't care about constant pool counts, not likely to have a useful debug extension for this feature,
 		//but it is here for completeness
 	}
-	
+
 	/**
-	 * test to make sure that if constantPool is unsupported an UnsupportedIOperationException 
+	 * test to make sure that if constantPool is unsupported an UnsupportedIOperationException
 	 * is thrown
 	 */
 	public void testConstantPoolSupported() {
@@ -212,7 +212,7 @@ public class ConstantPoolTests extends AbstractJDITest {
 			catch(UnsupportedOperationException uoe) {}
 		}
 	}
-	
+
 	/**
 	 * test to ensure the constant pool is working correctly
 	 * this test does not apply to non-1.6 VMs

@@ -133,7 +133,7 @@ import junit.framework.TestSuite;
  * Tests for integration and nightly builds.
  */
 public class AutomatedSuite extends DebugSuite {
-	
+
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
@@ -148,9 +148,9 @@ public class AutomatedSuite extends DebugSuite {
 	 */
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
-			
+
 	//Launching tests
-		
+
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
 		addTest(new TestSuite(LaunchShortcutTests.class));
@@ -164,12 +164,12 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(LaunchConfigurationManagerTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(ProjectClasspathVariableTests.class));
-		
+
 	//mac specific tests
 		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
 			addTest(new TestSuite(PListParserTests.class));
 		}
-		
+
 	//Breakpoints tests
 		addTest(new TestSuite(TypeNameBreakpointTests.class));
 		addTest(new TestSuite(DeferredBreakpointTests.class));
@@ -205,7 +205,7 @@ public class AutomatedSuite extends DebugSuite {
 			addTest(new TestSuite(DetailFormatterTests.class));
 			addTest(new TestSuite(AlternateStratumTests.class));
 		}
-		
+
 	//Sourcelookup tests
 		addTest(new TestSuite(SourceLookupTests.class));
 		addTest(new TestSuite(FolderSourceContainerTests.class));
@@ -220,7 +220,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(SourceLocationTests.class));
 		addTest(new TestSuite(TypeResolutionTests.class));
 		addTest(new TestSuite(JarSourceLookupTests.class));
-		
+
 	// Variable tests
 		addTest(new TestSuite(InstanceVariableTests.class));
 		addTest(new TestSuite(LocalVariableTests.class));
@@ -232,7 +232,7 @@ public class AutomatedSuite extends DebugSuite {
 		if(JavaProjectHelper.isJava7Compatible()) {
 			addTest(new TestSuite(LiteralTests17.class));
 		}
-		
+
 	//Stepping tests
 		addTest(new TestSuite(StepFilterTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
@@ -240,7 +240,7 @@ public class AutomatedSuite extends DebugSuite {
 		if (JavaProjectHelper.isJava6Compatible()) {
 			addTest(new TestSuite(ForceReturnTests.class));
 		}
-		
+
 	//Classpath tests
 		addTest(new TestSuite(JavaLibraryPathTests.class));
 		addTest(new TestSuite(ClasspathVariableTests.class));
@@ -249,7 +249,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ClasspathProviderTests.class));
 		addTest(new TestSuite(BootpathTests.class));
 		addTest(new TestSuite(EEDefinitionTests.class));
-		
+
 	//VM Install/Environment tests
 		addTest(new TestSuite(VMInstallTests.class));
 		addTest(new TestSuite(StringSubstitutionTests.class));
@@ -274,7 +274,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StratumTests.class));
 		addTest(new TestSuite(JavaDebugTargetTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
-		
+
 	// Refactoring tests
 		//TODO: project rename
 		//TODO: package move
@@ -302,29 +302,29 @@ public class AutomatedSuite extends DebugSuite {
 		//addTest(new TestSuite(ConvertPublicAnonymousTypeToNestedUnitTests.class));
 		//addTest(new TestSuite(ConvertInnerAnonymousTypeToNestedUnitTests.class));
 		//addTest(new TestSuite(ConvertNonPublicAnonymousTypeToNestedUnitTests.class));
-		
+
 	// JDWP tests
 		addTest(new TestSuite(JDWPTests.class));
 		addTest(new TestSuite(MultipleConnectionsTest.class));
 	// Refresh state tests
 		addTest(new TestSuite(RefreshStateTests.class));
-		
+
 	// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
-		
+
 	// Layout tests
 		addTest(new TestSuite(ViewManagementTests.class));
-		
+
 	// Leak tests
 		addTest(new TestSuite(InstructionPointerTests.class));
-		
+
 	// Variables View Detail Pane tests
 		addTest(DetailPaneManagerTests.suite());
 		addTest(new TestSuite(ModelPresentationTests.class));
 
 	// Open from Clipboard action tests - Need to use #suite() because the test has a custom setup
 		addTest(OpenFromClipboardTests.suite());
-	
+
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
 		//addTest(EvalTestSuite.suite());

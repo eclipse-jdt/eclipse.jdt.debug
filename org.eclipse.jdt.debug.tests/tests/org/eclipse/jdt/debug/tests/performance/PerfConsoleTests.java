@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
         runConsole80CharsTest(10000, 75);
     }
-    
+
     /**
      * Tests the performance of 10000 lines of stack trace output to the console
      * @throws Exception
@@ -66,7 +66,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     /**
-     * Tests the performance of 10000 lines of wrapped process console output to the console 
+     * Tests the performance of 10000 lines of wrapped process console output to the console
      * @throws Exception
      */
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
@@ -95,7 +95,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     /**
-     * Runs the 
+     * Runs the
      * @param lines
      * @param repeatTest
      * @throws Exception
@@ -194,9 +194,9 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
                 DebugUITools.launch(workingCopy, ILaunchManager.RUN_MODE);
             }
         };
-        
+
         DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
-        
+
         synchronized (fLock) {
             if (!fStopped) {
                 fLock.wait(360000);

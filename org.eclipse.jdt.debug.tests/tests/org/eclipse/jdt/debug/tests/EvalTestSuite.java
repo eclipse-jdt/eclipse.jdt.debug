@@ -4,11 +4,11 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- *  
+ *
  * This is an implementation of an early-draft specification developed under the Java
  * Community Process (JCP) and is made available for testing and evaluation purposes
  * only. The code is not compatible with any specification of the JCP.
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -141,7 +141,7 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(TestsNestedTypes2.class));
 		addTest(new TestSuite(TestsTypeHierarchy1.class));
 		addTest(new TestSuite(TestsTypeHierarchy2.class));
-		
+
 		// Extended evaluation tests
 		addTest(new TestSuite(BooleanOperatorsTests.class));
 		addTest(new TestSuite(ByteOperatorsTests.class));
@@ -224,18 +224,18 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(TypeHierarchy_68_3.class));
 		addTest(new TestSuite(TypeHierarchy_119_1.class));
 		addTest(new TestSuite(TypeHierarchy_146_1.class));
-		
+
 		addTest(new TestSuite(TestsNumberLiteral.class));
 
 		addTest(new TestSuite(VariableDeclarationTests.class));
 		addTest(new TestSuite(LoopTests.class));
 		addTest(new TestSuite(LabelTests.class));
 		addTest(new TestSuite(TestsAnonymousClassVariable.class));
-		
+
 		addTest(new TestSuite(TestsBreakpointConditions.class));
 
 	}
-	
+
 	/**
 	 * Runs the tests and collects their result in a TestResult.
 	 * The debug tests cannot be run in the UI thread or the event
@@ -255,7 +255,7 @@ public class EvalTestSuite extends TestSuite {
 							break;
 						}
 						runTest(e.nextElement(), result);
-					}					
+					}
 					fTesting = false;
 					display.wake();
 				}
@@ -265,7 +265,7 @@ public class EvalTestSuite extends TestSuite {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-				
+
 		while (fTesting) {
 			try {
 				if (!display.readAndDispatch()) {
@@ -273,8 +273,8 @@ public class EvalTestSuite extends TestSuite {
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
-			}			
-		}		
+			}
+		}
 	}
 
 }

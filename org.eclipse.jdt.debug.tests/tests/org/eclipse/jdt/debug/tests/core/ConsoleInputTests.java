@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,38 +36,38 @@ import junit.framework.TestSuite;
  * Tests console input.
  */
 public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLineTrackerExtension {
-	
+
 	protected List<String> fLinesRead = new ArrayList<String>();
-	
+
 	protected boolean fStarted = false;
-	
+
 	protected boolean fStopped = false;
-	
+
 	protected IConsole fConsole = null;
-	
+
 	protected Object fConsoleLock = new Object();
 	protected Object fLock = new Object();
-	
-	
+
+
 	public static TestSuite suite() {
 		return new OrderedTestSuite(ConsoleInputTests.class, new String[] {
-				"testMultiLineInput",	
+				"testMultiLineInput",
 				"testEOF",
 				"testDeleteAllEnteredText"
 		});
 	}
-	
+
 	public ConsoleInputTests(String name) {
 		super(name);
 	}
-	
+
     @Override
 	protected void setUp() throws Exception {
         super.setUp();
         fStarted = false;
         fStopped = false;
     }
-    
+
     /**
      * Writes text to the console with line feeds (like pasting multiple lines).
      * The lines with line delimiters should be echoed back. The text remaining
@@ -88,7 +88,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			assertNotNull("Console is null", fConsole);
 			String[] list = appendAndGet(fConsole, "one\ntwo\nexit", 4);
 			verifyOutput(new String[]{"one", "two", "exitone", "two"}, list);
-			
+
 			// end the program
 			list = appendAndGet(fConsole, "three\n", 3);
 			verifyOutput(new String[]{"three", "exitthree", IInternalDebugCoreConstants.EMPTY_STRING}, list);
@@ -97,8 +97,8 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
 		}
-	} 
-	
+	}
+
     /**
      * Tests closing standard in
      */
@@ -116,7 +116,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			assertNotNull("Console is null", fConsole);
 			String[] list = appendAndGet(fConsole, "one\ntwo\n", 4);
 			verifyOutput(new String[]{"one", "two", "one", "two"}, list);
-			
+
 			// send EOF
 			IStreamsProxy streamsProxy = launch.getProcesses()[0].getStreamsProxy();
 			assertTrue("should be an IStreamsProxy2", streamsProxy instanceof IStreamsProxy2);
@@ -143,19 +143,19 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
 		}
-	} 	
-	
+	}
+
 	private void verifyOutput(String[] expected, String[] actual) {
 		for (int i = 0; i < actual.length; i++) {
 			assertEquals("Wrong message", expected[i], actual[i]);
 		}
 	}
-	
+
 	/**
 	 * Appends the given text to the given console and waits for the number
 	 * of lines to be written to the console. Returns the lines written to
 	 * the console.
-	 * 
+	 *
 	 * @param console
 	 * @param text
 	 * @param linesExpected
@@ -175,7 +175,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
                 }
             }
         });
-		
+
 		int attempts = 0;
 		while (fLinesRead.size() < linesExpected) {
 			spinEventLoop();
@@ -192,10 +192,10 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 		assertEquals("Wrong number of lines", linesExpected, fLinesRead.size());
 		return fLinesRead.toArray(new String[0]);
 	}
-	
+
 	/**
 	 * Appends the given text to the given console. Text should not have new lines.
-	 * 
+	 *
 	 * @param console
 	 * @param text
 	 * @throws Exception
@@ -213,11 +213,11 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
             }
         });
 		spinEventLoop();
-	}	
-		
+	}
+
 	/**
 	 * Deletes all text in the given console.
-	 * 
+	 *
 	 * @param console
 	 * @throws Exception
 	 */
@@ -235,7 +235,7 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
         });
 		spinEventLoop();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
@@ -283,11 +283,11 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			fLock.notifyAll();
         }
 	}
-	
+
 	/**
 	 * Tests the scenario reported in bug 241394 - 'a', backspace, 'b', backspace, 'c', Enter.
 	 * Result should be 'c'.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDeleteAllEnteredText() throws Exception {
@@ -308,11 +308,11 @@ public class ConsoleInputTests extends AbstractDebugTest implements IConsoleLine
 			deleteAll(fConsole);
 			String[] list = appendAndGet(fConsole, "c\n", 2);
 			verifyOutput(new String[]{"c", "c"}, list);
-			
+
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
 			launch.getProcesses()[0].terminate();
-		}		
+		}
 	}
 
 	private void spinEventLoop() {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -57,24 +57,24 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	public static final String VIEW_ONE = "org.eclipse.jdt.debug.tests.context.view.one";
 
 	private Object fEventLock = new Object();
-	
+
 	/**
 	 * List of view ids expecting to open.
 	 */
 	private List<String> fExpectingOpenEvents = new ArrayList<String>();
-	
+
 	/**
 	 * List of view ids expecting to close.
 	 */
-	private List<String> fExpectingCloseEvents = new ArrayList<String>();	
-	
+	private List<String> fExpectingCloseEvents = new ArrayList<String>();
+
 	// prefs to restore
 	private String switch_on_launch;
 	private String switch_on_suspend;
 	private String debug_perspectives;
 	private String user_view_bindings;
 	private boolean activate_debug_view;
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -82,10 +82,10 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	public ViewManagementTests(String name) {
 		super(name);
 	}
-		
+
 	/**
 	 * Switches to the specified perspective in the given window, and resets the perspective.
-	 * 
+	 *
 	 * @param window
 	 * @param perspectiveId
 	 */
@@ -96,10 +96,10 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		page.setPerspective(descriptor);
 		page.resetPerspective();
 	}
-	
+
 	/**
 	 * Switches to and resets the specified perspective in the active workbench window.
-	 * 
+	 *
 	 * @return the window in which the perspective is ready
 	 */
 	private IWorkbenchWindow resetPerspective(final String id) {
@@ -115,37 +115,37 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		sync(r);
 		return windows[0];
 	}
-	
+
 	/**
 	 * Siwtches to and resets the debug perspective in the active workbench window.
-	 * 
+	 *
 	 * @return the window in which the perspective is ready
 	 */
 	protected IWorkbenchWindow resetDebugPerspective() {
 		return resetPerspective(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 	}
-	
+
 	/**
 	 * Siwtches to and resets the java perspective in the active workbench window.
-	 * 
+	 *
 	 * @return the window in which the perspective is ready
 	 */
 	protected IWorkbenchWindow resetJavaPerspective() {
-		return resetPerspective(JavaUI.ID_PERSPECTIVE); 
-	}	
-	
+		return resetPerspective(JavaUI.ID_PERSPECTIVE);
+	}
+
 	/**
 	 * Sync exec the given runnable
-	 * 
+	 *
 	 * @param r
 	 */
 	protected void sync(Runnable r) {
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
-	
+
 	/**
 	 * Returns whether the specified view is open
-	 * 
+	 *
 	 * @param window
 	 * @param id
 	 * @return
@@ -176,14 +176,14 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		activate_debug_view = preferenceStore.getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.NEVER);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.NEVER);
-		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE + "," + 
+		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE + "," +
 				JavaUI.ID_PERSPECTIVE + ",");
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, true);
 		fExpectingOpenEvents.clear();
 		fExpectingCloseEvents.clear();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -193,7 +193,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, switch_on_suspend);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, switch_on_launch);
 		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, debug_perspectives);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, user_view_bindings); 	
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, user_view_bindings);
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate_debug_view);
 		super.tearDown();
 	}
@@ -201,7 +201,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	/**
 	 * Tests that context views auto-open in debug perspective.
 	 * Both context views should auto-open.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAutoOpenDebugPerspective() throws Exception {
@@ -212,7 +212,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		IWorkbenchWindow window = null;
 		try {
@@ -228,13 +228,13 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that context views auto-open in debug perspective, and auto close on termination.
 	 * View "two" should auto-close.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAutoCloseDebugPerspective() throws Exception {
@@ -245,7 +245,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		IWorkbenchWindow window = null;
 		try {
@@ -269,13 +269,13 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that context views auto-open in java perspective.
 	 * Both context views should auto-open as well as standard debug views.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAutoOpenJavaPerspective() throws Exception {
@@ -286,7 +286,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		IWorkbenchWindow window = null;
 		try {
@@ -307,13 +307,13 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that context views auto-open and close in java perspective.
 	 * All views should auto-close in non-standard debug perspective.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAutoCloseJavaPerspective() throws Exception {
@@ -324,7 +324,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		String typeName = "Breakpoints";
 		// first line in main
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		IWorkbenchWindow window = null;
 		try {
@@ -355,16 +355,16 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			window.removePerspectiveListener(this);
-		}		
+		}
 	}
-	
+
 	protected String buildRemainingEventsMessage() {
 		StringBuffer buffer = new StringBuffer();
 		partsMessage("Parts did not open: ", fExpectingOpenEvents, buffer);
 		partsMessage("Parts did not close: ", fExpectingCloseEvents, buffer);
 		return buffer.toString();
 	}
-	
+
 	private void partsMessage(String header, List<String> partIds, StringBuffer buffer) {
 		String[] ids = partIds.toArray(new String[partIds.size()]);
 		if (ids.length > 0) {
@@ -375,12 +375,12 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 					buffer.append(", ");
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Adds ids of views to 'expecting open' queue.
-	 * 
+	 *
 	 * @param window
 	 * @param viewIds
 	 */
@@ -390,10 +390,10 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 		}
 		window.addPerspectiveListener(this);
 	}
-	
+
 	/**
 	 * Adds ids of views to 'expecting open' queue.
-	 * 
+	 *
 	 * @param window
 	 * @param viewIds
 	 */
@@ -402,7 +402,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 			fExpectingCloseEvents.add(viewIds[i]);
 		}
 		window.addPerspectiveListener(this);
-	}	
+	}
 
 	/**
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
@@ -459,7 +459,7 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	}
-	
+
 	/**
 	 * Check if all expected events have occurred.
 	 */

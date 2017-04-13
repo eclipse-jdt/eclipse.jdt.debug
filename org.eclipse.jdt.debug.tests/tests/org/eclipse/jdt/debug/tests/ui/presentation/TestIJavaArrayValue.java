@@ -17,13 +17,13 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
- * 
+ *
  */
 public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaArray {
 
 	int size = 0;
 	IJavaValue[] values;
-	
+
 	/**
 	 * Constructor
 	 * @param type
@@ -31,7 +31,7 @@ public class TestIJavaArrayValue extends TestIJavaObjectValue implements IJavaAr
 	 * @param gsig
 	 * @param rtname
 	 * @param vstring
-	 * @param size 
+	 * @param size
 	 */
 	public TestIJavaArrayValue(IJavaType type, String sig, String gsig,	String rtname, String vstring, int size) {
 		super(type, sig, gsig, rtname, vstring);

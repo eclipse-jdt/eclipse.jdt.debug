@@ -32,7 +32,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 
 	public void testPublicTypeMethodChange() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "Movee.java",
 					type = "Movee",
@@ -60,7 +60,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 
 	public void testInnerTypeMethodChange() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "Movee.java",
 					type = "Movee$InnerType",
@@ -85,10 +85,10 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-	
+
 	public void testNonPublicTypeMethodChange() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "Movee.java",
 					type = "NonPublicType",
@@ -96,7 +96,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 					methodSig = "()V";
 			//create breakpoint to test
 			createMethodBreakpoint(pack,cunit,type,methodName,methodSig,true, false);
-			
+
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, type, methodName, methodSig);
 			performRefactor(ref);
@@ -113,18 +113,18 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-	
-	
-//////////////////////////////////////////////////////////////////////////////////////	
+	}//end testBreakPoint
+
+
+//////////////////////////////////////////////////////////////////////////////////////
 	private Refactoring setupRefactor(String root, String targetPackageName, String cuName, String typeName, String methodName, String methodSig) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, targetPackageName, cuName);
 		IType type = getLowestType(cunit, typeName);
-		
+
 		IMethod method = type.getMethod(methodName, Signature.getParameterTypes(methodSig));
-		
+
         ChangeSignatureProcessor processor = new ChangeSignatureProcessor(method);
         ProcessorBasedRefactoring ref= new ProcessorBasedRefactoring(processor);
 
@@ -143,10 +143,10 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cu the CompilationUnit containing the toplevel Type
-	 * @param input - the type, possibly including inner type, 
-	 * separated by $. 
+	 * @param input - the type, possibly including inner type,
+	 * separated by $.
 	 * eg: EnclosingType$InnerType
 	 * @return the Lowest level inner type specified in input
 	 */
@@ -163,14 +163,14 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 		}
 		//has no inner type
 		return cu.getType(input);
-		
+
 	}
-	
+
 	/**
 	 * Helper method for getLowestType (ICompilationUnit cu, String input)
 	 * @param enclosing name of enclosing Type
-	 * @param name the typename, possibly including inner type, 
-	 * separated by $. 
+	 * @param name the typename, possibly including inner type,
+	 * separated by $.
 	 * eg: EnclosingType$InnerType
 	 * @return
 	 */
@@ -184,7 +184,7 @@ public class ChangeMethodSignatureUnitTests extends AbstractRefactoringDebugTest
 			}
 		}
 		//has no inner type
-		return enclosing.getType(name);		
-		
+		return enclosing.getType(name);
+
 	}
 }

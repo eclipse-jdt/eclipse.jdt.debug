@@ -175,7 +175,7 @@ import junit.framework.TestCase;
  */
 @SuppressWarnings("deprecation")
 public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
-	
+
 	public static final String MULTI_OUTPUT_PROJECT_NAME = "MultiOutput";
 	public static final String BOUND_EE_PROJECT_NAME = "BoundEE";
 	public static final String ONE_FOUR_PROJECT_NAME = "DebugTests";
@@ -191,10 +191,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"HitCountLooper", "CompileError", "MultiThreadedLoop", "HitCountException", "MultiThreadedException", "MultiThreadedList", "MethodLoop", "StepFilterOne",
 			"StepFilterFour", "EvalArrayTests", "EvalSimpleTests", "EvalTypeTests", "EvalNestedTypeTests", "EvalTypeHierarchyTests",
 			"EvalAnonymousClassVariableTests", "WorkingDirectoryTest",
-			"OneToTen", "OneToTenPrint", "FloodConsole", "ConditionalStepReturn", "VariableChanges", "DefPkgReturnType", "InstanceFilterObject", "org.eclipse.debug.tests.targets.CallStack", 
-			"org.eclipse.debug.tests.targets.ThreadStack", "org.eclipse.debug.tests.targets.HcrClass", "org.eclipse.debug.tests.targets.StepIntoSelectionClass", 
-			"WatchItemTests", "ArrayTests", "ByteArrayTests", "PerfLoop", "Console80Chars", "ConsoleStackTrace", "ConsoleVariableLineLength", "StackTraces", 
-			"ConsoleInput", "PrintConcatenation", "VariableDetails", "org.eclipse.debug.tests.targets.ArrayDetailTests", "ArrayDetailTestsDef", "ForceReturnTests", 
+			"OneToTen", "OneToTenPrint", "FloodConsole", "ConditionalStepReturn", "VariableChanges", "DefPkgReturnType", "InstanceFilterObject", "org.eclipse.debug.tests.targets.CallStack",
+			"org.eclipse.debug.tests.targets.ThreadStack", "org.eclipse.debug.tests.targets.HcrClass", "org.eclipse.debug.tests.targets.StepIntoSelectionClass",
+			"WatchItemTests", "ArrayTests", "ByteArrayTests", "PerfLoop", "Console80Chars", "ConsoleStackTrace", "ConsoleVariableLineLength", "StackTraces",
+			"ConsoleInput", "PrintConcatenation", "VariableDetails", "org.eclipse.debug.tests.targets.ArrayDetailTests", "ArrayDetailTestsDef", "ForceReturnTests",
 			"ForceReturnTestsTwo", "LogicalStructures", "BreakpointListenerTest", "LaunchHistoryTest", "LaunchHistoryTest2", "RunnableAppletImpl", "java6.AllInstancesTests",
 			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
@@ -207,7 +207,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * the default timeout
 	 */
 	public static final int DEFAULT_TIMEOUT = 30000;
-	
+
 	//constants
 	protected static final String JAVA = "java"; //$NON-NLS-1$
 	protected static final String JAVA_EXTENSION = ".java"; //$NON-NLS-1$
@@ -216,12 +216,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected static final String LOCAL_JAVA_APPLICATION_TYPE_ID = "org.eclipse.jdt.launching.localJavaApplication"; //$NON-NLS-1$
 	protected static final String JAVA_LAUNCH_SHORTCUT_ID = "org.eclipse.jdt.debug.ui.localJavaShortcut"; //$NON-NLS-1$
 	protected static final String TEST_LAUNCH_SHORTCUT = "org.eclipse.jdt.debug.tests.testShortCut";
-	
+
 	/**
 	 * an evaluation result
 	 */
 	public IEvaluationResult fEvaluationResult;
-	
+
 	/**
 	 * The last relevant event set - for example, that caused
 	 * a thread to suspend
@@ -237,7 +237,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	private static boolean loadedJRE = false;
 	private static boolean loadedMulti = false;
 	private static boolean welcomeClosed = false;
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -248,7 +248,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ErrorDialog.AUTOMATED_MODE = true;
 		SafeRunnable.setIgnoreErrors(true);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		TestUtil.log(IStatus.INFO, getName(), "setUp");
@@ -281,14 +281,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
 	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
 	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, MessageDialogWithToggle.NEVER);
-	        
+
 	        String property = System.getProperty("debug.workbenchActivation");
-	        boolean activate = property != null && property.equals("on"); 
+	        boolean activate = property != null && property.equals("on");
 	        debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, activate);
 	        debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, activate);
 	        debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate);
 	        debugUIPreferences.setValue(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, activate);
-	
+
 	        IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	        // Turn off suspend on uncaught exceptions
 	        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
@@ -302,7 +302,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
 	        // turn off monitor information
 	        jdiUIPreferences.setValue(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
-	        
+
 	        // turn off workbench heap monitor
 	        PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
 	        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -312,7 +312,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	                ((WorkbenchWindow) window).showHeapStatus(false);
 	            }
 	        }
-	        
+
 	        //make sure we are auto-refreshing external workspace changes
 	        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 	        if(node != null) {
@@ -323,7 +323,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        loadedPrefs = true;
 		}
     }
-	
+
 	/**
 	 * Creates the Java 1.4 compliant project
 	 */
@@ -346,17 +346,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
 		        IPath path = src.getPath().append("A.jar");
 		        JavaProjectHelper.addLibrary(jp, path);
-		        
+
 		        //add a closed project optional classpath entry
 		        //see https://bugs.eclipse.org/bugs/show_bug.cgi?id=380918
 		        IClasspathEntry entry = JavaCore.newProjectEntry(
-		        		new Path(ONE_FOUR_PROJECT_CLOSED_NAME).makeAbsolute(), 
-		        		new IAccessRule[0], 
-		        		false, 
-		        		new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.OPTIONAL, Boolean.TRUE.toString())}, 
+		        		new Path(ONE_FOUR_PROJECT_CLOSED_NAME).makeAbsolute(),
+		        		new IAccessRule[0],
+		        		false,
+		        		new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.OPTIONAL, Boolean.TRUE.toString())},
 		        		false);
 		        JavaProjectHelper.addToClasspath(jp, entry);
-		        
+
 		        // create launch configurations
 		        for (int i = 0; i < LAUNCH_CONFIG_NAMES_1_4.length; i++) {
 		        	cfgs.add(createLaunchConfiguration(jp, LAUNCH_CONFIG_NAMES_1_4[i]));
@@ -380,12 +380,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONE_FOUR_PROJECT_NAME, jp);
         }
     }
-	
+
 	/**
 	 * Creates the Java 1.5 compliant project
 	 */
 	void assert15Project() {
-		IJavaProject jp = null; 
+		IJavaProject jp = null;
 		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
         try {
 	        if (!loaded15) {
@@ -417,7 +417,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONE_FIVE_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Creates the Java 1.7 compliant project
 	 */
@@ -447,7 +447,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONE_SEVEN_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Creates the Java 1.8 compliant project
 	 */
@@ -479,12 +479,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, ONE_SEVEN_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Creates the 'BoundJRE' project used for the JRE testing
 	 */
 	synchronized void assertBoundJreProject() {
-		IJavaProject jp = null; 
+		IJavaProject jp = null;
 		try {
 	        if (!loadedJRE) {
 		        jp =JavaProjectHelper.createJavaProject(BOUND_JRE_PROJECT_NAME);
@@ -508,7 +508,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, BOUND_JRE_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Creates the 'BoundEE' project for EE testing
 	 */
@@ -519,7 +519,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        // create project with two src folders and output locations
 		        jp = JavaProjectHelper.createJavaProject(BOUND_EE_PROJECT_NAME);
 		        JavaProjectHelper.addSourceContainer(jp, JavaProjectHelper.SRC_DIR, JavaProjectHelper.BIN_DIR);
-	
+
 		        // add VM specific JRE container
 		        IExecutionEnvironment j2se14 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JavaProjectHelper.J2SE_1_4_EE_NAME);
 		        assertNotNull("Missing J2SE-1.4 environment", j2se14);
@@ -541,7 +541,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, BOUND_EE_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Creates the 'MultiOutput' project for source / binary output testing
 	 */
@@ -553,7 +553,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		        jp = JavaProjectHelper.createJavaProject(MULTI_OUTPUT_PROJECT_NAME);
 		        JavaProjectHelper.addSourceContainer(jp, "src1", "bin1");
 		        JavaProjectHelper.addSourceContainer(jp, "src2", "bin2");
-	
+
 		        // add rt.jar
 		        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		        assertNotNull("No default JRE", vm);
@@ -574,10 +574,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			handleProjectCreationException(e, MULTI_OUTPUT_PROJECT_NAME, jp);
         }
 	}
-	
+
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.8
 	 */
@@ -617,7 +617,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 	}
-	
+
 	void handleProjectCreationException(Exception e, String pname, IJavaProject jp) {
 		StringWriter buf = new StringWriter();
 		String msg = e.getMessage();
@@ -630,7 +630,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		e.printStackTrace(new PrintWriter(buf));
 		fail(buf.toString());
 	}
-	
+
 	/**
 	 * Sets the contents of the given {@link ICompilationUnit} to be the new contents provided
 	 * @param unit
@@ -644,7 +644,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		unit.save(null, true);
 		waitForBuild();
 	}
-	
+
 	/**
 	 * Sets the last relevant event set
 	 *
@@ -653,44 +653,44 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected void setEventSet(DebugEvent[] set) {
 		fEventSet = set;
 	}
-	
+
 	/**
 	 * Returns the last relevant event set
-	 * 
+	 *
 	 * @return event set
 	 */
 	protected DebugEvent[] getEventSet() {
 		return fEventSet;
 	}
-	
+
 	/**
 	 * Returns the launch manager
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/**
 	 * Returns the singleton instance of the <code>LaunchConfigurationManager</code>
-	 * 
+	 *
 	 * @return the singleton instance of the <code>LaunchConfigurationManager</code>
 	 * @since 3.3
 	 */
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
-	
+
 	/**
 	 * Returns the breakpoint manager
-	 * 
+	 *
 	 * @return breakpoint manager
 	 */
 	protected IBreakpointManager getBreakpointManager() {
 		return DebugPlugin.getDefault().getBreakpointManager();
-	}	
-	
+	}
+
 	/**
 	 * Returns the project context for the current test - each
 	 * test must implement this method
@@ -698,17 +698,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaProject getProjectContext() {
 		return get14Project();
 	}
-	
+
 	/**
 	 * Returns the 'DebugTests' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject get14Project() {
 		assert14Project();
 		return getJavaProject(ONE_FOUR_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the {@link IBreakpointOrganizer} with the given id or <code>null</code>
 	 * if no such organizer exists
@@ -719,20 +719,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IBreakpointOrganizer getOrganizer(String id) {
 		return BreakpointOrganizerManager.getDefault().getOrganizer(id);
 	}
-	
+
 	/**
 	 * Returns the 'OneFive' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject get15Project() {
 		assert15Project();
 		return getJavaProject(ONE_FIVE_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the 'OneSeven' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject get17Project() {
@@ -742,47 +742,47 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 
 	/**
 	 * Returns the 'OneSeven' project.
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject get18Project() {
 		assert18Project();
 		return getJavaProject(ONE_EIGHT_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the 'BoundJRE' project
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject getBoundJreProject() {
 		assertBoundJreProject();
 		return getJavaProject(BOUND_JRE_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the 'BoundEE' project
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject getBoundEeProject() {
 		assertBoundeEeProject();
 		return getJavaProject(BOUND_EE_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the 'MultiOutput' project
-	 * 
+	 *
 	 * @return the test project
 	 */
 	protected IJavaProject getMultiOutputProject() {
 		assertMultioutputProject();
 		return getJavaProject(MULTI_OUTPUT_PROJECT_NAME);
 	}
-	
+
 	/**
 	 * Returns the Java project with the given name.
-	 * 
+	 *
 	 * @param name project name
 	 * @return the Java project with the given name
 	 */
@@ -790,14 +790,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		return JavaCore.create(project);
 	}
-	
+
 	/**
-	 * Creates a new {@link IJavaProject} with the given name and optionally initializing it from the given 
+	 * Creates a new {@link IJavaProject} with the given name and optionally initializing it from the given
 	 * resource path from the testing bundle.
 	 * <br><br>
 	 * The project has the default <code>src</code> and <code>bin</code> folders. It is also created with a default
 	 * <code>launchConfigurations</code> folder.
-	 * 
+	 *
 	 * @param name the name for the project
 	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
 	 * @param ee the level of execution environment to use
@@ -826,10 +826,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         assertNotNull("The EE ["+ee+"] does not exist", environment);
 		IPath containerPath = JavaRuntime.newJREContainerPath(environment);
         JavaProjectHelper.addContainerEntry(jp, containerPath);
-        pro = jp.getProject();  
-        
+        pro = jp.getProject();
+
         JavaProjectHelper.updateCompliance(jp, ee);
-        
+
         // create launch configuration folder
         IFolder folder = pro.getFolder("launchConfigurations");
         if (!folder.exists()) {
@@ -837,14 +837,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         }
         return jp;
 	}
-	
+
 	/**
-	 * Creates a new {@link IJavaProject} with the given name and initializes the contents from the given 
+	 * Creates a new {@link IJavaProject} with the given name and initializes the contents from the given
 	 * resource path from the testing bundle.
 	 * <br><br>
 	 * The project has the default <code>src</code> and <code>bin</code> folders. It is also created with a default
 	 * <code>launchConfigurations</code> folder.
-	 * 
+	 *
 	 * @param name the name for the project
 	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
 	 * @param ee the level of execution environment to use
@@ -882,8 +882,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         assertNotNull("The EE ["+ee+"] does not exist", environment);
 		IPath containerPath = JavaRuntime.newJREContainerPath(environment);
         JavaProjectHelper.addContainerEntry(jp, containerPath);
-        pro = jp.getProject();  
-        
+        pro = jp.getProject();
+
         // create launch configuration folder
         IFolder folder = pro.getFolder("launchConfigurations");
         if (!folder.exists()) {
@@ -893,11 +893,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		TestUtil.runEventLoop();
         return jp;
 	}
-	
+
 	/**
-	 * Creates a new {@link IProject} with the given name and initializes the contents from the given 
+	 * Creates a new {@link IProject} with the given name and initializes the contents from the given
 	 * resource path from the testing bundle.
-	 * 
+	 *
 	 * @param name the name for the project
 	 * @param contentpath the path within the jdt.debug test bundle to initialize the source from
 	 * @param if an existing project should be deleted
@@ -923,13 +923,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		TestUtil.runEventLoop();
         return pj;
 	}
-	
+
 	/**
 	 * Returns the launch shortcut with the given id
 	 * @param id
-	 * @return the <code>LaunchShortcutExtension</code> with the given id, 
+	 * @return the <code>LaunchShortcutExtension</code> with the given id,
 	 * or <code>null</code> if none
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected LaunchShortcutExtension getLaunchShortcutExtension(String id) {
@@ -943,16 +943,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * New to 3.3 is the ability to have multiple delegates for a variety of overlapping mode combinations.
-	 * As such, for tests that launch specific configurations, must be check to ensure that there is a preferred 
+	 * As such, for tests that launch specific configurations, must be check to ensure that there is a preferred
 	 * launch delegate available for the launch in the event there are duplicates. Otherwise the tests
 	 * will hang waiting for a user to select a resolution action.
 	 * @param configuration
 	 * @param modes
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected void ensurePreferredDelegate(ILaunchConfiguration configuration, Set<String> modes) throws CoreException {
@@ -962,7 +962,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			type.setPreferredDelegate(modes, getDelegateById(type.getIdentifier(), LOCAL_JAVA_APPLICATION_TYPE_ID));
 		}
 	}
-	
+
 	/**
 	 * Returns the LaunchDelegate for the specified ID
 	 * @param delegateId the id of the delegate to search for
@@ -979,10 +979,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the source folder with the given name in the given project.
-	 * 
+	 *
 	 * @param project
 	 * @param name source folder name
 	 * @return package fragment root
@@ -991,7 +991,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IProject p = project.getProject();
 		return project.getPackageFragmentRoot(p.getFolder(name));
 	}
-	
+
 	/**
 	 * Returns the <code>IHyperLink</code> at the given offset in the specified document
 	 * or <code>null</code> if the offset does not point to an <code>IHyperLink</code>
@@ -1017,12 +1017,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Launches the given configuration and waits for an event. Returns the
 	 * source of the event. If the event is not received, the launch is
 	 * terminated and an exception is thrown.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param waiter the event waiter to use
 	 * @return Object the source of the event
@@ -1031,12 +1031,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
 	    return launchAndWait(configuration, waiter, true);
 	}
-	
+
 	/**
-	 * Launches the given configuration in debug mode and waits for an event. 
-	 * Returns the source of the event. If the event is not received, the 
+	 * Launches the given configuration in debug mode and waits for an event.
+	 * Returns the source of the event. If the event is not received, the
 	 * launch is terminated and an exception is thrown.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param waiter the event waiter to use
 	 * @param register whether to register the launch
@@ -1046,12 +1046,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter, boolean register) throws CoreException {
 		return launchAndWait(configuration, ILaunchManager.DEBUG_MODE, waiter, register);
 	}
-	
+
 	/**
 	 * Launches the given configuration and waits for an event. Returns the
 	 * source of the event. If the event is not received, the launch is
 	 * terminated and an exception is thrown.
-	 * 
+	 *
 	 * @param configuration the configuration to launch
 	 * @param mode the mode to launch the configuration in
 	 * @param waiter the event waiter to use
@@ -1094,16 +1094,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
-		return suspendee;		
+		return suspendee;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Launches the type with the given name, and waits for a
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @return thread in which the first suspend event occurred
 	 */
@@ -1114,50 +1114,50 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
-	 * Launches the given configuration in debug mode, and waits for a 
+	 * Launches the given configuration in debug mode, and waits for a
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaThread launchAndSuspend(ILaunchConfiguration config) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		Object suspendee = launchAndWait(config, waiter);
-		return (IJavaThread)suspendee;		
+		return (IJavaThread)suspendee;
 	}
-	
+
 	/**
-	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * Launches the type with the given name, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(String mainTypeName) throws Exception {
 		return launchToBreakpoint(getProjectContext(), mainTypeName);
 	}
-	
+
 	/**
-	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * Launches the type with the given name, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param project the project the type is in
 	 * @param mainTypeName the program to launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName) throws Exception {
 		return launchToBreakpoint(project, mainTypeName, true);
-	}	
-	
+	}
+
 	/**
-	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * Launches the type with the given name, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @param register whether to register the launch
 	 * @return thread in which the first suspend event occurred
@@ -1165,12 +1165,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchToBreakpoint(String mainTypeName, boolean register) throws Exception {
 		return launchToBreakpoint(getProjectContext(), mainTypeName, register);
 	}
-	
+
 	/**
-	 * Launches the type with the given name, and waits for a breakpoint-caused 
+	 * Launches the type with the given name, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @param register whether to register the launch
 	 * @return thread in which the first suspend event occurred
@@ -1179,43 +1179,43 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunchConfiguration config = getLaunchConfiguration(project, mainTypeName);
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToBreakpoint(config, register);
-	}	
+	}
 
 	/**
-	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused 
+	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws CoreException {
 	    return launchToBreakpoint(config, true);
 	}
-	
+
 	/**
-	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused 
+	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @param whether to register the launch
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config, boolean register) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
 		Object suspendee= launchAndWait(config, waiter, register);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread); //$NON-NLS-1$
-		return (IJavaThread)suspendee;		
-	}	
-	
+		return (IJavaThread)suspendee;
+	}
+
 	/**
 	 * Launches the type with the given name, and waits for a terminate
 	 * event in that program. Returns the debug target in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return debug target in which the terminate event occurred
@@ -1230,42 +1230,42 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Launches the given configuration in debug mode, and waits for a terminate
 	 * event in that program. Returns the debug target in which the terminate
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout) throws Exception {
-		return launchAndTerminate(config, timeout, true);	
+		return launchAndTerminate(config, timeout, true);
 	}
-	
+
 	/**
 	 * Launches the given configuration in debug mode, and waits for a terminate
 	 * event in that program. Returns the debug target in which the terminate
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @param register whether to register the launch
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout, boolean register) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
 		waiter.setTimeout(timeout);
 
-		Object terminatee = launchAndWait(config, waiter, register);		
+		Object terminatee = launchAndWait(config, waiter, register);
 		assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
 		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget); //$NON-NLS-1$
 		IJavaDebugTarget debugTarget = (IJavaDebugTarget) terminatee;
 		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected()); //$NON-NLS-1$
-		return debugTarget;		
-	}	
-	
+		return debugTarget;
+	}
+
 	/**
 	 * Launches the type with the given name, and waits for a line breakpoint suspend
 	 * event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
@@ -1278,7 +1278,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Launches the type with the given name, and waits for a line breakpoint suspend
 	 * event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param mainTypeName the program to launch
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @param register whether to register the launch
@@ -1289,16 +1289,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToLineBreakpoint(config, bp, register);
 	}
-	
+
 	/**
-	 * Launches the given configuration in debug mode, and waits for a line breakpoint 
+	 * Launches the given configuration in debug mode, and waits for a line breakpoint
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
-	 * 
+	 *
 	 * @param config the configuration to launch
 	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
-	 */	
+	 */
 	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp, boolean register) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
@@ -1314,49 +1314,49 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
 		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
-		
-		return thread;		
+
+		return thread;
 	}
-	
+
 	/**
 	 * Returns the standard java launch tab group
 	 * @return the standard java launch tab group
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected ILaunchConfigurationTabGroup getJavaLaunchGroup() throws CoreException {
-		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION); 
+		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationTabGroup standardGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, ILaunchManager.DEBUG_MODE);
 		return standardGroup;
 	}
-	
+
 	/**
 	 * Returns an instance of the launch configuration dialog on the the specified launch mode
 	 * @param modeid the id of the mode to open the launch dialog on
 	 * @return an new instance of <code>IlaunchConfigurationDialog</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected ILaunchConfigurationDialog getLaunchConfigurationDialog(String modeid) {
 		return new LaunchConfigurationsDialog(null, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(modeid));
 	}
-	
+
 	/**
 	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
 	 * Returns the thread in which the suspend event occurs.
-	 * 
+	 *
 	 * @param thread thread to resume
 	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resume(IJavaThread thread) throws Exception {
 	    return resume(thread, DEFAULT_TIMEOUT);
-	}	
-	
+	}
+
 	/**
 	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
 	 * Returns the thread in which the suspend event occurs.
-	 * 
+	 *
 	 * @param thread thread to resume
 	 * @param timeout timeout in milliseconds
 	 * @return thread in which the first suspend event occurs
@@ -1364,26 +1364,26 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread resume(IJavaThread thread, int timeout) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(timeout);
-		
+
 		thread.resume();
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread)suspendee;
-	}	
-	
+	}
+
 	/**
 	 * Resumes the given thread, and waits for a suspend event caused by the specified
 	 * line breakpoint.  Returns the thread in which the suspend event occurs.
-	 * 
+	 *
 	 * @param thread thread to resume
 	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resumeToLineBreakpoint(IJavaThread resumeThread, ILineBreakpoint bp) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		resumeThread.resume();
 
 		Object suspendee= waiter.waitForEvent();
@@ -1399,38 +1399,38 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
 		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
-		
+
 		return (IJavaThread)suspendee;
-	}	
-	
+	}
+
 	/**
 	 * Resumes the given thread, and waits for the debug target
 	 * to terminate (i.e. finish/exit the program).
-	 * 
+	 *
 	 * @param thread thread to resume
 	 */
 	protected void exit(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IProcess.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		thread.resume();
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not terminate.", suspendee); //$NON-NLS-1$
-	}	
-		
+	}
+
 	/**
 	 * Resumes the given thread, and waits the associated debug
 	 * target to terminate.
-	 * 
+	 *
 	 * @param thread thread to resume
 	 * @return the terminated debug target
 	 */
 	protected IJavaDebugTarget resumeAndExit(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementEventWaiter(DebugEvent.TERMINATE, thread.getDebugTarget());
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		thread.resume();
 
 		Object suspendee= waiter.waitForEvent();
@@ -1439,21 +1439,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaDebugTarget target = (IJavaDebugTarget)suspendee;
 		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected()); //$NON-NLS-1$
 		return target;
-	}	
-		
+	}
+
 	/**
 	 * Returns the launch configuration for the given main type
-	 * 
+	 *
 	 * @param mainTypeName program to launch
 	 * @see ProjectCreationDecorator
 	 */
 	protected ILaunchConfiguration getLaunchConfiguration(String mainTypeName) {
 		return getLaunchConfiguration(getProjectContext(), mainTypeName);
 	}
-	
+
 	/**
 	 * Returns the launch configuration for the given main type
-	 * 
+	 *
 	 * @param mainTypeName program to launch
 	 * @see ProjectCreationDecorator
 	 */
@@ -1463,11 +1463,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("the configuration cannot be null", config);
 		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
-	}	
-	
+	}
+
 	/**
 	 * Returns the launch configuration in the specified folder in the given project, for the given main type
-	 * 
+	 *
 	 * @param project the project to look in
 	 * @param containername the name of the container in the specified project to look for the config
 	 * @param mainTypeName program to launch
@@ -1480,7 +1480,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertTrue("Could not find launch configuration for " + mainTypeName, config.exists()); //$NON-NLS-1$
 		return config;
 	}
-	
+
 	/**
 	 * Returns the corresponding <code>IResource</code> from the <code>IJavaElement</code> with the
 	 * specified name
@@ -1494,12 +1494,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IResource resource = element.getCorrespondingResource();
 		if (resource == null) {
 			resource = getProjectContext().getProject();
-		}		
+		}
 		return resource;
 	}
-	
+
 	/**
-	 * Returns the resource from the specified type or the project from the testing java project in the 
+	 * Returns the resource from the specified type or the project from the testing java project in the
 	 * event there is no resource from the specified type
 	 * @param type
 	 * @return
@@ -1512,14 +1512,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IResource resource = type.getResource();
 		if (resource == null) {
 			resource = type.getJavaProject().getProject();
-		}		
+		}
 		return resource;
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a line breakpoint at the given line number in the type with the
 	 * given name.
-	 * 
+	 *
 	 * @param lineNumber line number
 	 * @param typeName type name
 	 */
@@ -1528,7 +1528,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("Could not find the requested IType: "+typeName, type);
 		return createLineBreakpoint(type, lineNumber);
 	}
-	
+
 	/**
 	 * Creates am  new java line breakpoint
 	 * @param lineNumber
@@ -1538,7 +1538,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param fullTargetName
 	 * @return a new line breakpoint
 	 */
-	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName, 
+	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String root, String packageName, String cuName,
 			String fullTargetName) throws Exception{
 		IJavaProject javaProject = getProjectContext();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
@@ -1546,14 +1546,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IType targetType = (IType)(new MemberParser()).getDeepest(cunit,fullTargetName);
 		assertNotNull("did not find requested type", targetType); //$NON-NLS-1$
 		assertTrue("did not find type to install breakpoint in", targetType.exists()); //$NON-NLS-1$
-		
+
 		return createLineBreakpoint(targetType, lineNumber);
 	}
 
-	
+
 	/**
 	 * Creates a line breakpoint in the given type (may be a top level non public type)
-	 * 
+	 *
 	 * @param lineNumber line number to create the breakpoint at
 	 * @param packageName fully qualified package name containing the type, example "a.b.c"
 	 * @param cuName simple name of compilation unit containing the type, example "Something.java"
@@ -1566,10 +1566,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertNotNull("Could not find the requested IType: "+typeName, type);
 		return createLineBreakpoint(type, lineNumber);
 	}
-	
+
 	/**
 	 * Creates a line breakpoint in the given type at the given line number.
-	 * 
+	 *
 	 * @param type type in which to install the breakpoint
 	 * @param lineNumber line number to install the breakpoint at
 	 * @return line breakpoint
@@ -1604,10 +1604,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		forceDeltas(bp);
 		return bp;
 	}
-	
+
 	/**
 	 * Forces marker deltas to be sent based on breakpoint creation.
-	 * 
+	 *
 	 * @param breakpoint
 	 */
 	private void forceDeltas(IBreakpoint breakpoint) throws CoreException {
@@ -1616,11 +1616,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		}
 	}
-	
+
 	/**
-	 * Returns the type in the test project based on the given name. The type name may refer to a 
+	 * Returns the type in the test project based on the given name. The type name may refer to a
 	 * top level non public type.
-	 * 
+	 *
 	 * @param packageName package name, example "a.b.c"
 	 * @param cuName simple compilation unit name within the package, example "Something.java"
 	 * @param typeName simple dot qualified type name, example "Something" or "NonPublic" or "Something.Inner"
@@ -1645,11 +1645,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates and returns a map of java element breakpoint attributes for a breakpoint on the
 	 * given java element, or <code>null</code> if none
-	 * 
+	 *
 	 * @param element java element the breakpoint is associated with
 	 * @return map of breakpoint attributes or <code>null</code>
 	 * @throws Exception
@@ -1670,12 +1670,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			return map;
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a line breakpoint at the given line number in the type with the
 	 * given name and sets the specified condition on the breakpoint.
-	 * 
+	 *
 	 * @param lineNumber line number
 	 * @param typeName type name
 	 * @param condition condition
@@ -1687,11 +1687,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		bp.setConditionSuspendOnTrue(suspendOnTrue);
 		return bp;
 	}
-	
+
 	/**
 	 * Creates and returns a pattern breakpoint at the given line number in the
 	 * source file with the given name.
-	 * 
+	 *
 	 * @param lineNumber line number
 	 * @param sourceName name of source file
 	 * @param pattern the pattern of the class file name
@@ -1699,22 +1699,22 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaPatternBreakpoint createPatternBreakpoint(int lineNumber, String sourceName, String pattern) throws Exception {
 		return JDIDebugModel.createPatternBreakpoint(getProjectContext().getProject(), sourceName, pattern, lineNumber, -1, -1, 0, true, null);
 	}
-	
+
 	/**
 	 * Creates and returns a target pattern breakpoint at the given line number in the
 	 * source file with the given name.
-	 * 
+	 *
 	 * @param lineNumber line number
 	 * @param sourceName name of source file
 	 */
 	protected IJavaTargetPatternBreakpoint createTargetPatternBreakpoint(int lineNumber, String sourceName) throws Exception {
 		return JDIDebugModel.createTargetPatternBreakpoint(getProjectContext().getProject(), sourceName, lineNumber, -1, -1, 0, true, null);
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a stratum breakpoint at the given line number in the
 	 * source file with the given name.
-	 * 
+	 *
 	 * @param lineNumber line number
 	 * @param sourceName name of source file
 	 * @param stratum the stratum of the source file
@@ -1722,10 +1722,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaStratumLineBreakpoint createStratumBreakpoint(int lineNumber, String sourceName, String stratum) throws Exception {
 		return JDIDebugModel.createStratumBreakpoint(getProjectContext().getProject(), stratum, sourceName, null, null, lineNumber, -1, -1, 0, true, null);
 	}
-	
+
 	/**
 	 * Creates and returns a method breakpoint
-	 * 
+	 *
 	 * @param typeNamePattern type name pattern
 	 * @param methodName method name
 	 * @param methodSignature method signature or <code>null</code>
@@ -1734,11 +1734,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaMethodBreakpoint createMethodBreakpoint(String typeNamePattern, String methodName, String methodSignature, boolean entry, boolean exit) throws Exception {
 		return createMethodBreakpoint(getProjectContext(), typeNamePattern, methodName, methodSignature, entry, exit);
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a method breakpoint
-	 * 
+	 *
 	 * @param project java project
 	 * @param typeNamePattern type name pattern
 	 * @param methodName method name
@@ -1760,11 +1760,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(resource, typeNamePattern, methodName, methodSignature, entry, exit,false, -1, -1, -1, 0, true, map);
 		forceDeltas(bp);
 		return bp;
-	}	
-	
+	}
+
 	/**
 	 * Creates a method breakpoint in a fully specified type (potentially non public).
-	 * 
+	 *
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
 	 * @param typeName $ qualified type name within compilation unit, example "Something" or
@@ -1790,10 +1790,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		forceDeltas(bp);
 		return bp;
 	}
-		
+
 
 	/**
-	 * Creates a MethodBreakPoint on the method specified at the given path. 
+	 * Creates a MethodBreakPoint on the method specified at the given path.
 	 * Syntax:
 	 * Type$InnerType$MethodNameAndSignature$AnonymousTypeDeclarationNumber$FieldName
 	 * eg:<code>
@@ -1804,7 +1804,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 			{
 	 * 				Object anon = new Object(){
 	 * 					int anIntField;
-	 * 					String anonTypeMethod() {return "an Example";}				
+	 * 					String anonTypeMethod() {return "an Example";}
 	 * 				}
 	 * 			}
 	 * 		}
@@ -1812,9 +1812,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * Syntax to get the anonymous toString would be: Foo$Inner$aMethod()V$1$anonTypeMethod()QString
 	 * so, createMethodBreakpoint(packageName, cuName, "Foo$Inner$aMethod()V$1$anonTypeMethod()QString",true,false);
 	 */
-	protected IJavaMethodBreakpoint createMethodBreakpoint(String root, String packageName, String cuName, 
+	protected IJavaMethodBreakpoint createMethodBreakpoint(String root, String packageName, String cuName,
 									String fullTargetName, boolean entry, boolean exit) throws Exception {
-		
+
 		IJavaProject javaProject = getProjectContext();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		assertNotNull("did not find requested Compilation Unit", cunit); //$NON-NLS-1$
@@ -1823,13 +1823,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		assertTrue("Given method does not exist", targetMethod.exists()); //$NON-NLS-1$
 		IType methodParent = (IType)targetMethod.getParent();//safe - method's only parent = Type
 		assertNotNull("did not find type to install breakpoint in", methodParent); //$NON-NLS-1$
-				
+
 		Map<String, Object> map = getExtraBreakpointAttributes(targetMethod);
 		IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(getBreakpointResource(methodParent), methodParent.getFullyQualifiedName(),targetMethod.getElementName(), targetMethod.getSignature(), entry, exit,false, -1, -1, -1, 0, true, map);
 		forceDeltas(bp);
 		return bp;
-	}		
-	
+	}
+
 	/**
 	 * @param cu the Compilation where the target resides
 	 * @param target the full name of the target, as per MemberParser syntax
@@ -1839,21 +1839,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IMember toReturn = (new MemberParser()).getDeepest(cu,target);
 		return toReturn;
 	}
-	
+
 	/**
 	 * Delegate method to get a resource with a specific name from the testing workspace 'src' folder
 	 * @param name the name of the <code>IResource</code> to get
 	 * @return the specified <code>IResource</code> or <code>null</code> if it does not exist
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	protected IResource getResource(String name) {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(new Path("/DebugTests/src/"+name));
 	}
-	
+
 	/**
 	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
-	 * 
+	 *
 	 * @param typeName type on which to create the breakpoint
 	 * @return breakpoint
 	 * @throws Exception
@@ -1861,10 +1861,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String typeName) throws Exception {
 		return createClassPrepareBreakpoint(getType(typeName));
 	}
-	
+
 	/**
 	 * Creates and returns a class prepare breakpoint on the type with the given fully qualified name.
-	 * 
+	 *
 	 * @param typeName type on which to create the breakpoint
 	 * @return breakpoint
 	 * @throws Exception
@@ -1875,23 +1875,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IType type = (IType)getMember(cunit,fullTargetName);
 		assertTrue("Target type not found", type.exists()); //$NON-NLS-1$
 		return createClassPrepareBreakpoint(type);
-	}	
-	
+	}
+
 	/**
 	 * Creates a class prepare breakpoint in a fully specified type (potentially non public).
-	 * 
+	 *
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
 	 * @param typeName $ qualified type name within compilation unit, example "Something" or
 	 *  "NonPublic" or "Something$Inner"
-	 */	
+	 */
 	protected IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(String packageName, String cuName, String typeName) throws Exception {
 		return createClassPrepareBreakpoint(getType(packageName, cuName, typeName));
 	}
-	
+
 	/**
 	 * Creates a class prepare breakpoint for the given type
-	 * 
+	 *
 	 * @param type type
 	 * @return class prepare breakpoint
 	 * @throws Exception
@@ -1907,11 +1907,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		forceDeltas(bp);
 		return bp;
 	}
-	
+
 	/**
 	 * Returns the Java model type from the test project with the given name or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param typeName
 	 * @return type or <code>null</code>
 	 * @throws Exception
@@ -1919,27 +1919,27 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IType getType(String typeName) throws Exception {
 		return getProjectContext().findType(typeName);
 	}
-	
+
 	/**
 	 * Creates and returns a watchpoint
-	 * 
+	 *
 	 * @param typeNmae type name
 	 * @param fieldName field name
 	 * @param access whether to suspend on field access
 	 * @param modification whether to suspend on field modification
-	 */	
+	 */
 	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
 		IType type = getType(typeName);
 		return createWatchpoint(type, fieldName, access, modification);
 	}
-	
+
 	/**
 	 * Creates and returns an exception breakpoint
-	 * 
+	 *
 	 * @param exName exception name
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
-	 */	
+	 */
 	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws Exception {
 		IType type = getType(exName);
 		Map<String, Object> map = getExtraBreakpointAttributes(type);
@@ -1947,15 +1947,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		forceDeltas(bp);
 		return bp;
 	}
-	
+
 	/**
 	 * Creates and returns a watchpoint
-	 * 
+	 *
 	 * @param typeNmae type name
 	 * @param fieldName field name
 	 * @param access whether to suspend on field access
 	 * @param modification whether to suspend on field modification
-	 */	
+	 */
 /*	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
 		IType type = getType(typeName);
 		return createWatchpoint(type, fieldName, access, modification);
@@ -1965,17 +1965,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	/**
 	 * Creates a WatchPoint on the field specified at the given path.
 	 * Will create watchpoints on fields within anonymous types, inner types,
-	 * local (non-public) types, and public types.  
+	 * local (non-public) types, and public types.
 	 * @param root
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
 	 * @param fullTargetName - see below
-	 * @param access whether to suspend on access 
+	 * @param access whether to suspend on access
 	 * @param modification whether to suspend on modification
 	 * @return a watchpoint
 	 * @throws Exception
 	 * @throws CoreException
-	 * 
+	 *
 	 * <p>
 	 * <pre>
 	 * Syntax example:
@@ -1988,17 +1988,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * 			{
 	 * 				Object anon = new Object(){
 	 * 					int anIntField;
-	 * 					String anonTypeMethod() {return "an Example";}				
+	 * 					String anonTypeMethod() {return "an Example";}
 	 * 				}
 	 * 			}
 	 * 		}
 	 * }</pre>
 	 * </p>
-	 * To get the anonymous toString, syntax of fullTargetName would be: <code>Foo$Inner$aMethod()V$1$anIntField</code> 
+	 * To get the anonymous toString, syntax of fullTargetName would be: <code>Foo$Inner$aMethod()V$1$anIntField</code>
 	 */
-	protected IJavaWatchpoint createNestedTypeWatchPoint(String root, String packageName, String cuName, 
+	protected IJavaWatchpoint createNestedTypeWatchPoint(String root, String packageName, String cuName,
 			String fullTargetName, boolean access, boolean modification) throws Exception, CoreException {
-		
+
 		ICompilationUnit cunit = getCompilationUnit(getProjectContext(), root, packageName, cuName);
 		IField field = (IField)getMember(cunit,fullTargetName);
 		assertNotNull("Path to field is not valid", field); //$NON-NLS-1$
@@ -2006,27 +2006,27 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IType type = (IType)field.getParent();
 		return createWatchpoint(type, field.getElementName(), access, modification);
 	}
-	
+
 
 	/**
 	 * Creates a watchpoint in a fully specified type (potentially non public).
-	 * 
+	 *
 	 * @param packageName package name containing type to install breakpoint in, example "a.b.c"
 	 * @param cuName simple compilation unit name within package, example "Something.java"
 	 * @param typeName $ qualified type name within compilation unit, example "Something" or
 	 *  "NonPublic" or "Something$Inner"
 	 * @param fieldName name of the field
-	 * @param access whether to suspend on access 
+	 * @param access whether to suspend on access
 	 * @param modification whether to suspend on modification
-	 */		
+	 */
 	protected IJavaWatchpoint createWatchpoint(String packageName, String cuName, String typeName, String fieldName, boolean access, boolean modification) throws Exception {
 		IType type = getType(packageName, cuName, typeName);
 		return createWatchpoint(type, fieldName, access, modification);
 	}
-	
+
 	/**
 	 * Creates a watchpoint on the specified field.
-	 * 
+	 *
 	 * @param type type containing the field
 	 * @param fieldName name of the field
 	 * @param access whether to suspend on access
@@ -2043,8 +2043,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		wp.setModification(modification);
 		forceDeltas(wp);
 		return wp;
-	}	
-		
+	}
+
 	/**
 	 * Terminates the given thread and removes its launch
 	 */
@@ -2053,10 +2053,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			terminateAndRemove((IJavaDebugTarget)thread.getDebugTarget());
 		}
 	}
-	
+
 	/**
 	 * Terminates the given debug target and removes its launch.
-	 * 
+	 *
 	 * NOTE: all breakpoints are removed, all threads are resumed, and then
 	 * the target is terminated. This avoids defunct processes on Linux.
 	 */
@@ -2066,7 +2066,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		if (!(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
-			
+
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
 			try {
 				removeAllBreakpoints();
@@ -2091,7 +2091,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
         waiter.waitForEvent();
 	}
-	
+
 	/**
 	 * Deletes all existing breakpoints
 	 */
@@ -2102,11 +2102,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	/**
 	 * Returns the first breakpoint the given thread is suspended
 	 * at, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the first breakpoint the given thread is suspended
 	 * at, or <code>null</code> if none
 	 */
@@ -2117,11 +2117,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Evaluates the given snippet in the context of the given stack frame and returns
 	 * the result.
-	 * 
+	 *
 	 * @param snippet code snippet
 	 * @param frame stack frame context
 	 * @return evaluation result
@@ -2129,11 +2129,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IEvaluationResult evaluate(String snippet, IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(getProjectContext(), (IJavaDebugTarget)frame.getDebugTarget());
 		try {
 			engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, true);
-	
+
 			Object suspendee= waiter.waitForEvent();
 			setEventSet(waiter.getEventSet());
 			if(suspendee == null) {
@@ -2145,8 +2145,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		finally {
 			engine.dispose();
 		}
-	}		
-	
+	}
+
 	/**
 	 * Runs an evaluation using an embedded listener and the {@link #DEFAULT_TIMEOUT} for the operation
 	 * @param snippet the snippet to evaluate
@@ -2179,7 +2179,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			engine.dispose();
 		}
 	}
-	
+
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
@@ -2187,96 +2187,96 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public void evaluationComplete(IEvaluationResult result) {
 		fEvaluationResult = result;
 	}
-	
+
 	/**
 	 * Performs a step over in the given stack frame and returns when complete.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepOver(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		frame.stepOver();
-		
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
 	}
-	
+
 	/**
 	 * Performs a step over in the given stack frame and returns when a breakpoint is hit.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepOverToBreakpoint(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		frame.stepOver();
-		
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
-	}	
+	}
 
 	/**
 	 * Performs a step into in the given stack frame and returns when complete.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepInto(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		frame.stepInto();
-		
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
-		return (IJavaThread) suspendee;		
+		return (IJavaThread) suspendee;
 	}
-	
+
 	/**
 	 * Performs a step return in the given stack frame and returns when complete.
-	 * 
+	 *
 	 * @param frame stack frame to step return from
 	 */
 	protected IJavaThread stepReturn(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		frame.stepReturn();
-		
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
 		return (IJavaThread) suspendee;
-	}	
-	
+	}
+
 	/**
 	 * Performs a step into with filters in the given stack frame and returns when
 	 * complete.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepIntoWithFilters(IJavaStackFrame frame) throws Exception {
 		return stepIntoWithFilters(frame, true);
 	}
-	
+
 	/**
 	 * Performs a step into with filters in the given stack frame and returns when
 	 * complete.
-	 * 
+	 *
 	 * @param whether to step thru or step return from a filtered location
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepIntoWithFilters(IJavaStackFrame frame, boolean stepThru) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
@@ -2295,18 +2295,18 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			target.setStepThruFilters(true);
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * Performs a step return with filters in the given stack frame and returns when
 	 * complete.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepReturnWithFilters(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
@@ -2318,24 +2318,24 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			// turn filters off
 			target.setStepFiltersEnabled(false);
 		}
-		
-		
+
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
-		return (IJavaThread) suspendee;		
-	}	
-	
+		return (IJavaThread) suspendee;
+	}
+
 	/**
 	 * Performs a step over with filters in the given stack frame and returns when
 	 * complete.
-	 * 
+	 *
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepOverWithFilters(IJavaStackFrame frame) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
+
 		// turn filters on
 		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
 		try {
@@ -2347,17 +2347,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			// turn filters off
 			target.setStepFiltersEnabled(false);
 		}
-		
-		
+
+
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee); //$NON-NLS-1$
-		return (IJavaThread) suspendee;		
+		return (IJavaThread) suspendee;
 	}
 
 	/**
 	 * Returns the compilation unit with the given name.
-	 * 
+	 *
 	 * @param project the project containing the CU
 	 * @param root the name of the source folder in the project
 	 * @param pkg the name of the package (empty string for default package)
@@ -2369,7 +2369,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IResource r = p.getFolder(root);
 		return project.getPackageFragmentRoot(r).getPackageFragment(pkg).getCompilationUnit(name);
 	}
-	
+
     /**
      * Wait for builds to complete
      */
@@ -2386,9 +2386,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
                 wasInterrupted = true;
             }
         } while (wasInterrupted);
-    }	
-    
-    
+    }
+
+
     /**
      * Finds the specified variable within the context of the specified stackframe. Returns null if a variable with
      * the given name does not exist
@@ -2423,7 +2423,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         }
         return variable;
     }
-	
+
 	/**
 	 * Returns if the local filesystem is case-sensitive or not
 	 * @return true if the local filesystem is case-sensitive, false otherwise
@@ -2431,14 +2431,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected boolean isFileSystemCaseSensitive() {
 		return Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
     /**
      * Creates a shared launch configuration for the type with the given name.
      */
     protected ILaunchConfiguration createLaunchConfiguration(String mainTypeName) throws Exception {
         return createLaunchConfiguration(getProjectContext(), mainTypeName);
     }
-    
+
     /**
      * Creates a shared launch configuration for the type with the given name.
      */
@@ -2459,7 +2459,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         return config.doSave();
-    }    
+    }
 
     /**
      * Creates a shared launch configuration for the type with the given name.
@@ -2482,7 +2482,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         return config.doSave();
     }
-    
+
 	/**
 	 * When a test throws the 'try again' exception, try it again.
 	 * @see junit.framework.TestCase#runBare()
@@ -2523,11 +2523,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 	}
-    
+
 	/**
 	 * Opens and returns an editor on the given file or <code>null</code>
 	 * if none. The editor will be activated.
-	 * 
+	 *
 	 * @param file
 	 * @return editor or <code>null</code>
 	 */
@@ -2554,14 +2554,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		job.join();
 		return parts[0];
 	}
-	
+
 	/**
 	 * Opens the {@link IDebugView} with the given id, does nothing if no such view exists.
 	 * This method can return <code>null</code>
-	 * 
+	 *
 	 * @param viewId
 	 * @return the handle to the {@link IDebugView} with the given id
-	 * @throws PartInitException 
+	 * @throws PartInitException
 	 * @throws InterruptedException
 	 * @since 3.8.100
 	 */
@@ -2590,7 +2590,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Opens a debug view
 	 * @param viewId
@@ -2607,11 +2607,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return null;
 	}
- 	
+
 	/**
 	 * Toggles a breakpoint in the editor at the given line number returning the breakpoint
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param editor
 	 * @param lineNumber
 	 * @return returns the created breakpoint or <code>null</code> if none.
@@ -2653,7 +2653,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		manager.removeBreakpointListener(listener);
 		return breakpoints[0];
 	}
-	
+
 	/**
 	 * Closes all editors in the active workbench page.
 	 */
@@ -2668,11 +2668,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         Display display = DebugUIPlugin.getStandardDisplay();
         display.syncExec(closeAll);
 	}
-    
+
 	/**
 	 * Returns the version level of the class files being run, based on the system property <code>java.class.version</code>
 	 * @return the version level of the class files being run in the current VM
-	 *  
+	 *
 	 *  @since 3.6
 	 */
 	protected String getClassFileVersion() {
@@ -2685,11 +2685,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		return JavaCore.VERSION_1_6;
 	}
-	
+
 	/**
 	 * Determines if the test should be attempted again based on the error code.
 	 * See bug 297071.
-	 * 
+	 *
 	 * @param e Debug Exception
 	 * @throws TestAgainException
 	 * @throws DebugException
@@ -2704,7 +2704,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		}
 		throw e;
 	}
-	
+
 	/**
 	 * Perform the actual evaluation (inspect)
 	 * @param thread
@@ -2714,12 +2714,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IValue doEval(IJavaThread thread, String snippet) throws Exception{
 		class Listener implements IEvaluationListener {
 			IEvaluationResult fResult;
-			
+
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
 			}
-			
+
 			public IEvaluationResult getResult() {
 				return fResult;
 			}
@@ -2746,6 +2746,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			engine.dispose();
 		}
 	}
-	
+
 }
 

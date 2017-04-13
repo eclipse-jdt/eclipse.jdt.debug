@@ -27,16 +27,16 @@ public class TestInstanceRetrieval extends AbstractDebugTest {
 
 	/**
 	 * Constructs test.
-	 * 
+	 *
 	 * @param name test name
 	 */
 	public TestInstanceRetrieval(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Test the logical structure for a list.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGetInstances() throws Exception {
@@ -49,39 +49,39 @@ public class TestInstanceRetrieval extends AbstractDebugTest {
 			IJavaDebugTarget target = (IJavaDebugTarget) thread.getDebugTarget();
 			if (target.supportsInstanceRetrieval()) {
 				assertNotNull("Breakpoint not hit within timeout period", thread);
-				
+
 				IBreakpoint hit = getBreakpoint(thread);
 				assertNotNull("suspended, but not by breakpoint", hit);
-	
+
 				IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertNotNull("missing top frame", frame);
-				
+
 				IJavaVariable variable = frame.findVariable("ro");
 				assertNotNull("Missing variable 'ro'", variable);
-				
+
 				IJavaObject object = (IJavaObject) variable.getValue();
 				IJavaReferenceType refType = (IJavaReferenceType) object.getJavaType();
 				long instanceCount = refType.getInstanceCount();
 				IJavaObject[] instances = refType.getInstances(100);
-				
+
 				assertEquals("Wrong instance count", 13, instanceCount);
 				assertEquals("Wrong number of instances", 13, instances.length);
 				for (int i = 0; i < instances.length; i++) {
 					assertEquals("Instance is of unexpected type", refType, instances[i].getJavaType());
 				}
-				
+
 				thread = resumeToLineBreakpoint(thread, bp2);
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertNotNull("missing top frame", frame);
-				
+
 				variable = frame.findVariable("rc");
 				assertNotNull("Missing variable 'rc'", variable);
-				
+
 				object = (IJavaObject) variable.getValue();
 				refType = (IJavaReferenceType) object.getJavaType();
 				instanceCount = refType.getInstanceCount();
 				instances = refType.getInstances(100);
-				
+
 				assertEquals("Wrong instance count", 1002, instanceCount);
 				assertEquals("Wrong number of instances", 100, instances.length);
 				for (int i = 0; i < instances.length; i++) {
@@ -91,7 +91,7 @@ public class TestInstanceRetrieval extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
+		}
+	}
 
 }

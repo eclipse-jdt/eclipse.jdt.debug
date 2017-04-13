@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,11 +31,11 @@ import org.eclipse.ui.console.MessageConsoleStream;
  * Tests the show console drop down action delegate for the console view
  */
 public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
-	
+
 	MessageConsole console1;
 	MessageConsole console2;
 	IConsoleManager consoleManager;
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
@@ -46,13 +46,13 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 		consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		consoleManager.addConsoles(new IConsole[]{console1, console2});
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	@Override
 	public void dispose() {}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
@@ -60,7 +60,7 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -68,23 +68,23 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 	public void run(IAction action) {
 		final MessageConsoleStream stream1 = console1.newMessageStream();
 		final MessageConsoleStream stream2 = console2.newMessageStream();
-		
+
 		stream2.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				
+
 				//write to console #1, show it, write again
 				stream1.print("Testing... Testing... Testing... "); //$NON-NLS-1$
 				consoleManager.showConsoleView(console1);
 				stream1.print("More Testing"); //$NON-NLS-1$
-				
-				//write to console #2, show it, write again		
+
+				//write to console #2, show it, write again
 				stream2.print("Testing... Testing... Testing... "); //$NON-NLS-1$
 				consoleManager.showConsoleView(console2);
 				stream2.print("More Testing"); //$NON-NLS-1$
-				
+
 				try {
 					for (int i=0; i<4; i++) {
 						consoleManager.showConsoleView(console1);
@@ -95,24 +95,24 @@ public class TestShowConsoleActionDelegate implements IActionDelegate2, IWorkben
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				writeToStream(stream1, "\n\nDone"); //$NON-NLS-1$
 				writeToStream(stream2, "\n\nDone"); //$NON-NLS-1$
 			}
-			
+
 		}).start();
 	}
-	
+
 	private void writeToStream(final MessageConsoleStream stream, final String str) {
-		stream.print(str); 
+		stream.print(str);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {}
-	
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */

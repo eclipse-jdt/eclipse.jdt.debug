@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class MethodExitRequestTest extends AbstractJDITest {
 		return fVM.eventRequestManager().createMethodExitRequest();
 	}
 	/**
-	 * Tests a method exit request without filtering 
+	 * Tests a method exit request without filtering
 	 */
 	public void testJDIWithoutFilter() {
 		MethodExitRequest request = getMethodExitRequest();
@@ -76,7 +76,7 @@ public class MethodExitRequestTest extends AbstractJDITest {
 	}
 
 	/**
-	 * Tests a method exit request with an exclusion filter  
+	 * Tests a method exit request with an exclusion filter
 	 */
 	public void testJDIWithClassExclusionFilter() {
 		MethodExitRequest request = getMethodExitRequest();
@@ -93,7 +93,7 @@ public class MethodExitRequestTest extends AbstractJDITest {
 	}
 
 	/**
-	 * Tests a method exit request with a specific class filter 
+	 * Tests a method exit request with a specific class filter
 	 */
 	public void testJDIWithClassFilter1() {
 		MethodExitRequest request = getMethodExitRequest();

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -45,35 +45,35 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests breakpoint creation/deletion and listener interfaces.
  */
 public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJavaBreakpointListener {
-	
+
 	/**
 	 * count of add callbacks
 	 */
 	public int fAddCallbacks = 0;
-	
+
 	/**
 	 * count of remove callbacks
 	 */
 	public int fRemoveCallbacks = 0;
-	
+
 	/**
 	 * count of installed callbacks
 	 */
 	public int fInstalledCallbacks = 0;
-	
-	/** 
+
+	/**
 	 * a java breakpoint
 	 */
 	public IJavaBreakpoint fBreakpoint;
-	
+
 	/**
 	 * Used to test breakpoint install/suspend voting.
 	 */
 	class SuspendVoter implements IJavaBreakpointListener {
-		
+
 		int fVote;
 		IJavaBreakpoint fTheBreakpoint;
-		
+
 		/**
 		 * Constructor
 		 * @param suspendVote
@@ -83,7 +83,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			fVote = suspendVote;
 			fTheBreakpoint = breakpoint;
 		}
-		
+
 		/**
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint)
 		 */
@@ -139,12 +139,12 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		}
 
 	}
-	
+
 	/**
 	 * Aids in the voting for a breakpoint to be installed
 	 */
 	class InstallVoter extends SuspendVoter {
-		
+
 		/**
 		 * Constructor
 		 * @param installVote
@@ -153,7 +153,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		public InstallVoter(int installVote, IJavaBreakpoint breakpoint) {
 			super(installVote, breakpoint);
 		}
-		
+
 		/**
 		 * @see org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests.SuspendVoter#installingBreakpoint(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.debug.core.IJavaBreakpoint, org.eclipse.jdt.debug.core.IJavaType)
 		 */
@@ -165,12 +165,12 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			return DONT_CARE;
 		}
 	}
-	
+
 	/**
 	 * Collects hit breakpoints.
 	 */
 	class Collector implements IJavaBreakpointListener {
-		
+
 		public List<IJavaBreakpoint> HIT = new ArrayList<IJavaBreakpoint>();
 		public List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
 		public List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
@@ -196,7 +196,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		}
 
 		@Override
-		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {			
+		public void breakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 		}
 
 		@Override
@@ -207,9 +207,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			return DONT_CARE;
 		}
-		
+
 	}
-			
+
 	/**
 	 * Constructor
 	 * @param name
@@ -223,195 +223,195 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	protected void resetCallbacks() {
 		fAddCallbacks = 0;
-	
+
 		fRemoveCallbacks = 0;
-	
-		fInstalledCallbacks = 0;	
+
+		fInstalledCallbacks = 0;
 	}
-	
+
 	/**
 	 * Tests the functionality of a single line breakpoint
 	 * @throws Exception
 	 */
-	public void testLineBreakpoint() throws Exception {		
+	public void testLineBreakpoint() throws Exception {
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(54, "Breakpoints");
 		fBreakpoint = breakpoint;
 		resetCallbacks();
-		
+
 		IJavaThread thread = null;
 		try {
-			JDIDebugModel.addJavaBreakpointListener(this);		
+			JDIDebugModel.addJavaBreakpointListener(this);
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			// breakpoint should be added & installed
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);	
+			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
 
 			// disable and re-enable the breakpoint
 			breakpoint.setEnabled(false);
 			breakpoint.setEnabled(true);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// change the hit count
 			breakpoint.setHitCount(34);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// delete the breakpoint
 			breakpoint.delete();
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			
+
 			// and removed
-			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);								
-			
+			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);
+
 		} finally {
 			JDIDebugModel.removeJavaBreakpointListener(this);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Tests the functionality of an exception breakpoint
 	 * @throws Exception
 	 */
-	public void testExceptionBreakpoint() throws Exception {		
+	public void testExceptionBreakpoint() throws Exception {
 		IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
 		fBreakpoint = breakpoint;
 		resetCallbacks();
-		
+
 		IJavaThread thread = null;
 		try {
-			JDIDebugModel.addJavaBreakpointListener(this);		
+			JDIDebugModel.addJavaBreakpointListener(this);
 			thread = launchToBreakpoint("ThrowsNPE");
 			assertNotNull(thread);
 			// breakpoint should be added & installed
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);	
+			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
 
 			// disable and re-enable the breakpoint
 			breakpoint.setEnabled(false);
 			breakpoint.setEnabled(true);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// change the hit count
 			breakpoint.setHitCount(34);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// toggle caught/uncaught
 			breakpoint.setCaught(false);
 			breakpoint.setUncaught(false);
 			breakpoint.setCaught(true);
 			breakpoint.setUncaught(true);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);			
-			
+			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
+
 			// delete the breakpoint
 			breakpoint.delete();
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			
+
 			// and removed
-			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);								
-			
+			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);
+
 		} finally {
 			JDIDebugModel.removeJavaBreakpointListener(this);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Tests the functionality of a method breakpoint
 	 * @throws Exception
 	 */
-	public void testMethodBreakpoint() throws Exception {		
+	public void testMethodBreakpoint() throws Exception {
 		IJavaMethodBreakpoint breakpoint = createMethodBreakpoint("DropTests", "method4", "()V", true, false);
 		fBreakpoint = breakpoint;
 		resetCallbacks();
-		
+
 		IJavaThread thread = null;
 		try {
-			JDIDebugModel.addJavaBreakpointListener(this);		
+			JDIDebugModel.addJavaBreakpointListener(this);
 			thread = launchToBreakpoint("DropTests");
 			assertNotNull(thread);
 			// breakpoint should be added & installed
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);	
+			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
 
 			// disable and re-enable the breakpoint
 			breakpoint.setEnabled(false);
 			breakpoint.setEnabled(true);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// change the hit count
 			breakpoint.setHitCount(34);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
 			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
-			
+
 			// toggle entry/exit
 			breakpoint.setExit(true);
 			breakpoint.setEntry(false);
 			breakpoint.setExit(false);
 			breakpoint.setEnabled(true);
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);			
-			
+			assertEquals("Breakpoint should not be removed", 0, fRemoveCallbacks);
+
 			// delete the breakpoint
 			breakpoint.delete();
-			
+
 			// should still be installed/added once
 			assertEquals("Breakpoint should be added", 1, fAddCallbacks);
 			assertEquals("Breakpoint should be installed", 1, fInstalledCallbacks);
-			
+
 			// and removed
-			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);								
-			
+			assertEquals("Breakpoint should be removed", 1, fRemoveCallbacks);
+
 		} finally {
 			JDIDebugModel.removeJavaBreakpointListener(this);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Vote: Install 3, Don't Care 0, Don't Install 0 == INSTALL
 	 * @throws Exception
@@ -425,7 +425,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -435,9 +435,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Vote: Install 0, Don't Care 3, Don't Install 0 == INSTALL
 	 * @throws Exception
@@ -451,7 +451,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -461,9 +461,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Vote: Install 1, Don't Care 2, Don't Install 0 == INSTALL
 	 * @throws Exception
@@ -477,7 +477,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -487,9 +487,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
-		
+		}
+	}
+
 	/**
 	 * Vote: Install 1, Don't Care 0, Don't Install 2 == INSTALL
 	 * @throws Exception
@@ -503,7 +503,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -513,9 +513,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Vote: Install 0, Don't Care 1, Don't Install 2 = RESUME
 	 * @throws Exception
@@ -530,7 +530,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint2, thread.getBreakpoints()[0]);
@@ -540,9 +540,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Vote: Suspend 3, Don't Care 0, Don't Suspend 0 == SUSPEND
 	 * @throws Exception
@@ -556,7 +556,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -566,9 +566,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Vote: Suspend 0, Don't Care 3, Don't Suspend 0 == SUSPEND
 	 * @throws Exception
@@ -582,7 +582,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -592,9 +592,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Vote: Suspend 1, Don't Care 2, Don't Suspend 0 == SUSPEND
 	 * @throws Exception
@@ -608,7 +608,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -618,9 +618,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
-		
+		}
+	}
+
 	/**
 	 * Vote: Suspend 1, Don't Care 0, Don't Suspend 2 == SUSPEND
 	 * @throws Exception
@@ -634,7 +634,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint, thread.getBreakpoints()[0]);
@@ -644,9 +644,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Vote: Suspend 0, Don't Care 1, Don't Suspend 2 = RESUME
 	 * @throws Exception
@@ -661,7 +661,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(v2);
 		JDIDebugModel.addJavaBreakpointListener(v3);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("Breakpoints");
 			assertNotNull(thread);
 			assertEquals(breakpoint2, thread.getBreakpoints()[0]);
@@ -671,9 +671,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v3);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Vote: Suspend 0, Don't Care 1 (java debug options manager), Don't Suspend 1 = RESUME
 	 * @throws Exception
@@ -684,7 +684,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		SuspendVoter v1 = new SuspendVoter(DONT_SUSPEND, breakpoint1);
 		JDIDebugModel.addJavaBreakpointListener(v1);
 		IJavaThread thread = null;
-		try {		
+		try {
 			thread = launchToBreakpoint("DropTests");
 			assertNotNull(thread);
 			assertEquals(breakpoint2, thread.getBreakpoints()[0]);
@@ -692,9 +692,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			JDIDebugModel.removeJavaBreakpointListener(v1);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}		
-	
+		}
+	}
+
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHasCompilationErrors(org.eclipse.jdt.debug.core.IJavaLineBreakpoint, org.eclipse.jdt.core.dom.Message[])
 	 */
@@ -743,7 +743,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaDebugTarget target,
 		IJavaBreakpoint breakpoint) {
 			if (breakpoint == fBreakpoint) {
-				fRemoveCallbacks++;				
+				fRemoveCallbacks++;
 			}
 	}
 
@@ -781,7 +781,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		EvalualtionBreakpointListener.PROJECT = get14Project();
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(i);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
-			
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -805,13 +805,13 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}			
+		}
 	}
-	
+
 	/**
 	 * Tests that a step end that lands on a breakpoint listener that votes to resume
 	 * results in the step completing and suspending.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStepEndResumeVote() throws Exception {
@@ -819,7 +819,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint first = createLineBreakpoint(16, typeName);
 		IJavaLineBreakpoint second = createLineBreakpoint(17, typeName);
 		second.addBreakpointListener("org.eclipse.jdt.debug.tests.resumeListener");
-			
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, first);
@@ -830,13 +830,13 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}					
+		}
 	}
-	
+
 	/**
 	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
 	 * can perform an evaluation and resume to complete the step.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStepOverHitsNestedEvaluationHandlerResume() throws Exception {
@@ -851,7 +851,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, first);
@@ -885,11 +885,11 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Test that a step over hitting a breakpoint deeper up the stack with a listener
 	 * can perform an evaluation and suspend to abort the step.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStepOverHitsNestedEvaluationHandlerSuspend() throws Exception {
@@ -904,7 +904,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		EvalualtionBreakpointListener.EXPRESSION = "return new Integer(sum);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, first);
@@ -938,12 +938,12 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Suspends an evaluation. Ensures we're returned to the proper top frame.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSuspendEvaluation() throws Exception {
@@ -956,7 +956,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		EvalualtionBreakpointListener.EXPRESSION = "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200);";
 		EvalualtionBreakpointListener.VOTE = IJavaBreakpointListener.DONT_SUSPEND;
 		EvalualtionBreakpointListener.RESULT = null;
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, first);
@@ -972,19 +972,19 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Test that a global listener gets notifications.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGlobalListener() throws Exception {
 		GlobalBreakpointListener.clear();
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -994,18 +994,18 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			assertEquals("Should be INSTALLED", bp, GlobalBreakpointListener.INSTALLED);
 			assertEquals("Should be HIT", bp, GlobalBreakpointListener.HIT);
 			assertNull("Should not be REMOVED", GlobalBreakpointListener.REMOVED);
-						
+
 			bp.delete();
 			assertEquals("Should be REMOVED", bp, GlobalBreakpointListener.REMOVED);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Tests that breakpoint listeners are only notified when condition is true.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testListenersOnConditionalBreakpoint() throws Exception {
@@ -1014,7 +1014,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(collector);
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "return false;", true);
 		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 3", true);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, second);
@@ -1027,11 +1027,11 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests that breakpoint listeners are only notified when condition is true
 	 * while stepping to a breakpoint.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testListenersOnConditionalBreakpointStepping() throws Exception {
@@ -1040,7 +1040,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		JDIDebugModel.addJavaBreakpointListener(collector);
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		IJavaLineBreakpoint second = createConditionalLineBreakpoint(17, typeName, "i == 1", true);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -1050,7 +1050,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			assertTrue("Wrong breakpoint hit", collector.HIT.contains(bp));
 			assertFalse("Wrong breakpoint hit", collector.HIT.contains(second));
 			collector.HIT.clear();
-			
+
 			// resume to line breakpoint again
 			thread = resumeToLineBreakpoint(thread, bp);
 			// step over to next line with conditional (should be true && hit)
@@ -1058,18 +1058,18 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			assertEquals("Wrong number of breakpoints hit", 2, collector.HIT.size());
 			assertTrue("Wrong breakpoint hit", collector.HIT.contains(bp));
 			assertTrue("Wrong breakpoint hit", collector.HIT.contains(second));
-			
+
 		} finally {
 			JDIDebugModel.removeJavaBreakpointListener(collector);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
 	 * errors. Also they should be notified of the compilation errors.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testListenersOnCompilationError() throws Exception {
@@ -1077,7 +1077,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(17, typeName, "x == 1", true);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-			
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -1088,13 +1088,13 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests that breakpoint listeners are not notified of "hit" when condition has compilation
 	 * errors. Also they should be notified of the compilation errors.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testListenersOnRuntimeError() throws Exception {
@@ -1102,7 +1102,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(17, typeName, "(new String()).charAt(34) == 'c'", true);
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
-			
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
@@ -1113,51 +1113,51 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
+		}
+	}
 
 	/**
 	 * Tests addition and removal of breakpoint listeners to a breakpoint.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAddRemoveListeners() throws Exception {
 		try {
 			String typeName = "HitCountLooper";
 			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-			
+
 			String[] listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);
-			
+
 			bp.addBreakpointListener("a");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(1, listeners.length);
 			assertEquals("a", listeners[0]);
-			
+
 			bp.addBreakpointListener("b");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(2, listeners.length);
 			assertEquals("a", listeners[0]);
 			assertEquals("b", listeners[1]);
-			
+
 			bp.addBreakpointListener("c");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(3, listeners.length);
 			assertEquals("a", listeners[0]);
 			assertEquals("b", listeners[1]);
 			assertEquals("c", listeners[2]);
-			
+
 			bp.removeBreakpointListener("a");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(2, listeners.length);
 			assertEquals("b", listeners[0]);
 			assertEquals("c", listeners[1]);
-			
+
 			bp.removeBreakpointListener("c");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(1, listeners.length);
 			assertEquals("b", listeners[0]);
-			
+
 			bp.removeBreakpointListener("b");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);
@@ -1165,30 +1165,30 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests addition of duplicate breakpoint listeners to a breakpoint.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAddDuplicateListeners() throws Exception {
 		try {
 			String typeName = "HitCountLooper";
 			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-			
+
 			String[] listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);
-			
+
 			bp.addBreakpointListener("a");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(1, listeners.length);
 			assertEquals("a", listeners[0]);
-			
+
 			bp.addBreakpointListener("a");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(1, listeners.length);
-			assertEquals("a", listeners[0]);		
-			
+			assertEquals("a", listeners[0]);
+
 			bp.addBreakpointListener("b");
 			listeners = bp.getBreakpointListeners();
 			assertEquals(2, listeners.length);
@@ -1197,40 +1197,40 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that listeners can be retrieved after breakpoint deletion.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testGetListenersAfterDelete() throws Exception {
 		try {
 			String typeName = "HitCountLooper";
 			IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-			
+
 			String[] listeners = bp.getBreakpointListeners();
 			assertEquals(0, listeners.length);
-			
+
 			bp.addBreakpointListener("a");
 			bp.addBreakpointListener("b");
-			
+
 			listeners = bp.getBreakpointListeners();
 			assertEquals(2, listeners.length);
 			assertEquals("a", listeners[0]);
 			assertEquals("b", listeners[1]);
-			
+
 			bp.delete();
 			listeners = bp.getBreakpointListeners();
 			assertEquals(2, listeners.length);
 			assertEquals("a", listeners[0]);
 			assertEquals("b", listeners[1]);
-			
+
 		} finally {
 			removeAllBreakpoints();
 		}
-	}		
-	
+	}
+
 	/**
 	 * Tests a breakpoint listener extension gets removal notification when the underlying
 	 * marker is deleted.
@@ -1241,11 +1241,11 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		bp.addBreakpointListener("org.eclipse.jdt.debug.tests.evalListener");
 		EvalualtionBreakpointListener.reset();
 		EvalualtionBreakpointListener.VOTE = SUSPEND;
-			
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
-			assertTrue(EvalualtionBreakpointListener.HIT);			
+			assertTrue(EvalualtionBreakpointListener.HIT);
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -1266,7 +1266,7 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}					
-	}	
-	
+		}
+	}
+
 }

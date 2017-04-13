@@ -20,7 +20,7 @@ import com.sun.jdi.Method;
 public class TestContributedStepFilter implements IStepFilter {
 
 	/**
-	 * 
+	 *
 	 */
 	public TestContributedStepFilter() {
 	}

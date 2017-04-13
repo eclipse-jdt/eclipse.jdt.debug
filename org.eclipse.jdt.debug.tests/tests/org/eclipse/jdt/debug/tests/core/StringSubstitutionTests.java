@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,12 +43,12 @@ import org.eclipse.ui.PartInitException;
  * Tests string substitutions
  */
 public class StringSubstitutionTests extends AbstractDebugTest implements IValueVariableListener {
-	
+
 	// change notification
 	public IValueVariable[] fAdded;
 	public IValueVariable[] fChanged;
 	public IValueVariable[] fRemoved;
-	
+
 	public StringSubstitutionTests(String name) {
 		super(name);
 	}
@@ -56,27 +56,27 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	/**
 	 * Returns the value variable with the given name or <code>null</code>
 	 * if none.
-	 * 
-	 * @param name variable name 
+	 *
+	 * @param name variable name
 	 * @return value variable with the given name or <code>null</code>
 	 * if none
 	 */
 	protected IValueVariable getValueVariable(String name) {
 		return VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(name);
 	}
-	
+
 	/**
 	 * Returns the context variable with the given name or <code>null</code>
 	 * if none.
-	 * 
-	 * @param name variable name 
+	 *
+	 * @param name variable name
 	 * @return context variable with the given name or <code>null</code>
 	 * if none
 	 */
 	protected IDynamicVariable getContextVariable(String name) {
 		return VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable(name);
-	}	
-	
+	}
+
 	/**
 	 * Tests value variable initializer
 	 */
@@ -84,8 +84,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_INITIALIZER");
 		checkValueVariableProperties(variable, "VALUE_VAR_WITH_INITIALIZER", "sample value variable", "initial-value", true, false);
 		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
-	}	
-	
+	}
+
 	/**
 	 * Tests value variable with an initial value
 	 */
@@ -94,7 +94,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		checkValueVariableProperties(variable, "VALUE_VAR_WITH_VALUE", "sample value variable", "initial-value", true, false);
 		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
 	}
-	
+
 	/**
 	 * Tests value variable initializer set to read only
 	 */
@@ -102,8 +102,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		IValueVariable variable = getValueVariable("VALUE_VAR_WITH_INITIALIZER_READ_ONLY");
 		checkValueVariableProperties(variable, "VALUE_VAR_WITH_INITIALIZER_READ_ONLY", "sample value variable", "initial-value", true, true);
 		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
-	}	
-	
+	}
+
 	/**
 	 * Tests value variable with an initial value set to read only
 	 */
@@ -112,31 +112,31 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		checkValueVariableProperties(variable, "VALUE_VAR_WITH_VALUE_READ_ONLY", "sample value variable", "initial-value", true, true);
 		assertEquals("Contributing plugin ID was incorrect.","org.eclipse.jdt.debug.tests",VariablesPlugin.getDefault().getStringVariableManager().getContributingPluginId(variable));
 	}
-	
+
 	/**
 	 * Tests value variables created using string variable manager API
 	 */
 	public void testCreatedValueVariables() throws Exception {
 		IValueVariable variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "sample value variable");
 		checkValueVariableProperties(variable, "createdVariable", "sample value variable", null, false, false);
-		
+
 		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "sample value variable");
 		variable.setValue("initial-value");
 		checkValueVariableProperties(variable, "createdVariable", "sample value variable", "initial-value", false, false);
-				
+
 		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable2", "sample value variable",false,"initial-value");
 		checkValueVariableProperties(variable, "createdVariable2", "sample value variable", "initial-value", false, false);
-		
+
 		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable3", "sample value variable",true,"initial-value");
 		checkValueVariableProperties(variable, "createdVariable3", "sample value variable", "initial-value", false, true);
 	}
-	
+
 	protected IValueVariable copy(IValueVariable variable) {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		IValueVariable variable2 = manager.newValueVariable(variable.getName(), variable.getDescription(), variable.isReadOnly(), variable.getValue());
 		return variable2;
 	}
-		
+
 	/**
 	 * Tests the setValue and setDescription methods of value variables
 	 */
@@ -150,7 +150,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		copy.setValue("new value");
 		assertEquals("new description", copy.getDescription());
 		assertEquals("new value", copy.getValue());
-		
+
 		variable = getValueVariable("VALUE_VAR_WITH_VALUE");
 		copy = copy(variable);
 		assertEquals(variable.getDescription(), copy.getDescription());
@@ -159,7 +159,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		copy.setValue("new value");
 		assertEquals("new description", copy.getDescription());
 		assertEquals("new value", copy.getValue());
-		
+
 		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable", "A variable created in code");
 		copy = copy(variable);
 		assertEquals(variable.getDescription(), copy.getDescription());
@@ -168,7 +168,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		copy.setValue("new value");
 		assertEquals("new description", copy.getDescription());
 		assertEquals("new value", copy.getValue());
-		
+
 		variable = VariablesPlugin.getDefault().getStringVariableManager().newValueVariable("createdVariable3", "A variable created in code",true,"initial-value");
 		copy = copy(variable);
 		assertEquals(variable.getDescription(), copy.getDescription());
@@ -176,9 +176,9 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		copy.setDescription("new description");
 		copy.setValue("new value");  // Value shouldn't change because variable is read only.
 		assertEquals("new description", copy.getDescription());
-		assertEquals(variable.getValue(), copy.getValue());	
+		assertEquals(variable.getValue(), copy.getValue());
 	}
-		
+
 	/**
 	 * Tests that the properties of the passed variable match the expected values passed as parameters
 	 */
@@ -200,17 +200,17 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String value = variable.getValue("ONE");
 		assertEquals("the arg is ONE", value);
 	}
-	
+
 	/**
 	 * Tests a context variable with no argument
-	 */	
+	 */
 	public void testContextWithoutArg() throws CoreException {
 		IDynamicVariable variable = getContextVariable("SAMPLE_DYNAMIC_VAR");
 		assertNotNull("Missing SAMPLE_DYNAMIC_VAR", variable);
 		String value = variable.getValue(null);
-		assertEquals("no arg", value);		
+		assertEquals("no arg", value);
 	}
-	
+
 	/**
 	 * Test an expression with no variable references
 	 */
@@ -219,7 +219,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(expression, result);
 	}
-	
+
 	/**
 	 * Test an expression with a value variable reference
 	 */
@@ -228,7 +228,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals("something initial-value else", result);
 	}
-	
+
 	/**
 	 * Test an expression with a context variable reference
 	 */
@@ -237,7 +237,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals("something no arg else", result);
 	}
-	
+
 	/**
 	 * Test an expression with a context variable reference and arg
 	 */
@@ -245,8 +245,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String expression = "something ${SAMPLE_DYNAMIC_VAR:TWO} else";
 		String result = doSubs(expression);
 		assertEquals("something the arg is TWO else", result);
-	}	
-	
+	}
+
 	/**
 	 * Test an expression with multiple references
 	 */
@@ -254,11 +254,11 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String expression = "${SAMPLE_DYNAMIC_VAR:TWO} ${VALUE_VAR_WITH_INITIALIZER} ${VALUE_VAR_WITH_VALUE}";
 		String result = doSubs(expression);
 		assertEquals("the arg is TWO initial-value initial-value", result);
-	}	
-		
+	}
+
 	/**
 	 * Perform substitutions on the given expression.
-	 * 
+	 *
 	 * @param expression source expression
 	 * @return the result after performing substitutions
 	 */
@@ -275,7 +275,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals("the arg is initial-value", result);
 	}
-	
+
 	/**
 	 * Test recursive resolution
 	 */
@@ -292,7 +292,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			manager.removeVariables(new IValueVariable[]{variable});
 		}
 	}
-	
+
 	/**
 	 * Test for simple cycling references like ${A} -> ${B} -> ${A}
 	 */
@@ -312,13 +312,13 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
 					throw ce;
-				}				
+				}
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2});
 		}
 	}
-	
+
 	/**
 	 * Test for cycling references in cases where original expression is never duplicated
 	 * eg. ${A} -> ${B}z -> ${A}z -> ${B}zz
@@ -339,20 +339,20 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
 					throw ce;
-				}				
+				}
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2});
 		}
 	}
-	
+
 	/**
 	 * Test for proper handling of infinite variable reference cycles in cases where
 	 * resolving two variables results in a third
 	 * eg 	${A} = "${"
 	 * 		${B} = "C}
 	 * 		${C} = ${A}${B}
-	 * 		In this case any references to ${C} or ${A}${B} cannot be resolved 
+	 * 		In this case any references to ${C} or ${A}${B} cannot be resolved
 	 */
 	public void testDividedRecursiveReferenceCycles() throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -372,13 +372,13 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				IStatus status = ce.getStatus();
 				if (status.getSeverity() != IStatus.ERROR || status.getCode() != VariablesPlugin.REFERENCE_CYCLE_ERROR) {
 					throw ce;
-				}				
+				}
 			}
 		} finally {
 			manager.removeVariables(new IValueVariable[]{var1, var2, var3});
-		}		
+		}
 	}
-	
+
 	/**
 	 * Test a string with an open ended reference. The open ended expression
 	 * will not be translated.
@@ -388,10 +388,10 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals("${SAMPLE_DYNAMIC_VAR:initial-value", result);
 	}
-	
+
 	/**
 	 * Test that we receive proper add notification.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testAddNotificaiton() throws CoreException {
@@ -412,10 +412,10 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			manager.removeVariables(new IValueVariable[]{one, two});
 		}
 	}
-	
+
 	/**
 	 * Test that we receive proper change notification.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testChangeNotificaiton() throws CoreException {
@@ -431,15 +431,15 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 			two.setValue("2");
 			assertNotNull("no change notifications", fChanged);
 			assertEquals("should be 1 change notification", 1, fChanged.length);
-			assertEquals(two, fChanged[0]);			
+			assertEquals(two, fChanged[0]);
 		} finally {
 			manager.removeVariables(new IValueVariable[]{one, two});
 		}
-	}	
-	
+	}
+
 	/**
 	 * Test that we receive proper remove notification.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testRemoveNotificaiton() throws CoreException {
@@ -460,7 +460,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		} finally {
 			manager.removeVariables(new IValueVariable[]{one, two});
 		}
-	}	
+	}
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -510,7 +510,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void variablesRemoved(IValueVariable[] variables) {
 		fRemoved = variables;
 	}
-	
+
 	/**
 	 * Test the <code>${workspace_loc}</code> variable.
 	 */
@@ -528,7 +528,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFolder("src").getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_loc}</code> variable with a project name argument
 	 */
@@ -537,7 +537,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_loc}</code> variable with a folder path argument
 	 */
@@ -546,7 +546,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_loc}</code> variable with a folder selected
 	 */
@@ -557,7 +557,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getLocation().toOSString(), result);
 	}
-		
+
 	/**
 	 * Test the <code>${project_path}</code> variable with a project name argument
 	 */
@@ -566,7 +566,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_path}</code> variable with a file selected
 	 */
@@ -576,8 +576,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getFullPath().toOSString(), result);
-	}				
-	
+	}
+
 	/**
 	 * Test the <code>${project_path}</code> variable with a folder path argument
 	 */
@@ -586,7 +586,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_name}</code> variable with a project name argument
 	 */
@@ -595,7 +595,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getName(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${project_name}</code> variable with a project selected
 	 */
@@ -605,8 +605,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getProject().getName(), result);
-	}				
-	
+	}
+
 	/**
 	 * Test the <code>${project_name}</code> variable with a folder path argument
 	 */
@@ -615,7 +615,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getName(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_loc}</code> variable with a folder name argument.
 	 * Will resolve to the container of the specified folder.
@@ -625,7 +625,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_loc}</code> variable with a folder selected.
 	 * Will resolve to the container of the specified folder.
@@ -637,7 +637,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_path}</code> variable with a folder name argument.
 	 * Will resolve to the container of the specified folder.
@@ -647,19 +647,19 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFullPath().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_path}</code> variable with a folder selected.
 	 * Will resolve to the container of the specified folder.
 	 */
 	public void testContainerPathSelectFolder() throws CoreException {
 		String expression = "${container_path}";
-		IResource resource = get14Project().getProject().getFolder("src"); 
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getFullPath().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_name}</code> variable with a folder name argument.
 	 * Will resolve to the container of the specified folder.
@@ -669,19 +669,19 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getName(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${container_name}</code> variable with a folder selected.
 	 * Will resolve to the container of the specified folder.
 	 */
 	public void testContainerNameSelectFolder() throws CoreException {
 		String expression = "${container_name}";
-		IResource resource = get14Project().getProject().getFolder("src"); 
+		IResource resource = get14Project().getProject().getFolder("src");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getParent().getName(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${resource_loc}</code> variable with a folder name argument.
 	 */
@@ -690,7 +690,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFolder("src").getLocation().toOSString(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${resource_loc}</code> variable with a folder selected.
 	 */
@@ -700,8 +700,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getLocation().toOSString(), result);
-	}	
-		
+	}
+
 	/**
 	 * Test the <code>${resource_path}</code> variable with a folder name argument.
 	 */
@@ -716,12 +716,12 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	public void testResourcePathSelectFile() throws CoreException {
 		String expression = "${resource_path}";
-		IResource resource = get14Project().getProject().getFile(".classpath"); 
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
-	}	
-	
+	}
+
 	/**
 	 * Test the <code>${resource_name}</code> variable with a folder name argument.
 	 */
@@ -729,7 +729,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String expression = "${resource_name:DebugTests/src}";
 		String result = doSubs(expression);
 		assertEquals(get14Project().getProject().getFolder("src").getName(), result);
-	}	
+	}
 
 	/**
 	 * Test the <code>${resource_name}</code> variable with a file selected.
@@ -749,25 +749,25 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	public void testLocalJavaApplicationParameters() throws CoreException {
 		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
-		
+
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "${project_name}");
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "${resource_name}");
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${project_loc}");
-		
+
 		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
-		
+
 		assertEquals(resource.getProject().getName(), delegate.getProgramArguments(wc));
 		assertEquals(resource.getName(), delegate.getVMArguments(wc));
 		File workingDir = delegate.getWorkingDirectory(wc);
 		assertNotNull(workingDir);
 		assertEquals(resource.getProject().getLocation().toOSString(), workingDir.toString());
 	}
-	
+
 	/**
 	 * Sets the selected resource in the navigator view.
-	 * 
+	 *
 	 * @param resource resource to select or <code>null</code> if empty
 	 */
 	protected void setSelection(final IResource resource) {
@@ -794,23 +794,23 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 				} catch (PartInitException e) {
 					assertNotNull("Failed to open navigator view", null);
 				}
-				
+
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);
 	}
-	
+
 	/**
 	 * Test the <code>${selected_resource_path}</code> variable with a file selected.
 	 */
 	public void testSelectedResourcePathFile() throws CoreException {
 		String expression = "${selected_resource_path}";
-		IResource resource = get14Project().getProject().getFile(".classpath"); 
+		IResource resource = get14Project().getProject().getFile(".classpath");
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getFullPath().toOSString(), result);
-	}		
-	
+	}
+
 	/**
 	 * Test the <code>${selected_resource_name}</code> variable with a file selected.
 	 */
@@ -821,7 +821,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
 	}
-	
+
 	/**
 	 * Test the <code>${selected_resource_loc}</code> variable with a folder selected.
 	 */
@@ -831,8 +831,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getLocation().toOSString(), result);
-	}	
-	
+	}
+
 	/**
 	 * Test the <code>${selected_resource_loc}</code> variable an empty selection
 	 */
