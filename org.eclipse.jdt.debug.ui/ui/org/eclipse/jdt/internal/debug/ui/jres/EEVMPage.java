@@ -47,11 +47,11 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Page used to edit an 'EE' VM.
- * 
+ *
  * @since 3.3
  */
 public class EEVMPage extends AbstractVMInstallPage {
-	
+
 	// VM being edited or created
 	private VMStandin fVM;
 	private Text fVMName;
@@ -60,9 +60,9 @@ public class EEVMPage extends AbstractVMInstallPage {
 	private VMLibraryBlock fLibraryBlock;
 	private IStatus[] fFieldStatus = new IStatus[1];
 	private boolean fIgnoreCallbacks = false;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public EEVMPage() {
 		super(JREMessages.EEVMPage_0);
@@ -70,14 +70,14 @@ public class EEVMPage extends AbstractVMInstallPage {
 			fFieldStatus[i] = Status.OK_STATUS;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
 	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -90,7 +90,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 	// VM location
 		SWTFactory.createLabel(composite, JREMessages.EEVMPage_1, 1);
 		fEEFile = SWTFactory.createSingleText(composite, 1);
@@ -113,7 +113,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		gd = (GridData) variables.getLayoutData();
 		gd.horizontalSpan = 3;
 		gd.horizontalAlignment = GridData.END;
-	//VM libraries block 
+	//VM libraries block
 		SWTFactory.createLabel(composite, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
 		fLibraryBlock = new VMLibraryBlock();
 		fLibraryBlock.setWizard(getWizard());
@@ -122,7 +122,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		libControl.setLayoutData(gd);
-		
+
 		initializeFields();
 	//add the listeners now to prevent them from monkeying with initialized settings
 		fVMName.addModifyListener(new ModifyListener() {
@@ -153,7 +153,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 				if (file != null && file.isFile()) {
 					text = file.getParentFile().getAbsolutePath();
 				}
-				dialog.setFileName(text); 
+				dialog.setFileName(text);
 				String newPath = dialog.open();
 				if (newPath != null) {
 					fEEFile.setText(newPath);
@@ -171,12 +171,12 @@ public class EEVMPage extends AbstractVMInstallPage {
 					}
 				}
 			}
-		});		
+		});
 		Dialog.applyDialogFont(composite);
 		setControl(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.EDIT_JRE_EE_FILE_WIZARD_PAGE);	
-	}	
-	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.EDIT_JRE_EE_FILE_WIZARD_PAGE);
+	}
+
 	/**
 	 * Validates the JRE location
 	 * @return the status after validating the JRE location
@@ -185,11 +185,11 @@ public class EEVMPage extends AbstractVMInstallPage {
 		String locationName = fEEFile.getText();
 		IStatus s = null;
 		if (locationName.length() == 0) {
-			s = new StatusInfo(IStatus.WARNING, JREMessages.EEVMPage_4); 
+			s = new StatusInfo(IStatus.WARNING, JREMessages.EEVMPage_4);
 		}  else {
 			final File file = new File(locationName);
 			if (!file.exists()) {
-				s = new StatusInfo(IStatus.ERROR, JREMessages.EEVMPage_5); 
+				s = new StatusInfo(IStatus.ERROR, JREMessages.EEVMPage_5);
 			} else {
 				final IStatus[] temp = new IStatus[1];
 				final VMStandin[] standin = new VMStandin[1];
@@ -221,14 +221,14 @@ public class EEVMPage extends AbstractVMInstallPage {
 		updatePageStatus();
 		return s;
 	}
-	
+
 	/**
 	 * Validates the entered name of the VM
 	 */
 	private void validateVMName() {
 		nameChanged(fVMName.getText());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#finish()
 	 */
@@ -246,7 +246,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 	public VMStandin getSelection() {
 		return fVM;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#setSelection(org.eclipse.jdt.launching.VMStandin)
 	 */
@@ -257,7 +257,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		setTitle(JREMessages.EEVMPage_6);
 		setDescription(JREMessages.EEVMPage_7);
 	}
-	
+
 	/**
 	 * initialize fields to the specified VM
 	 * @param vm the VM to initialize from
@@ -266,16 +266,16 @@ public class EEVMPage extends AbstractVMInstallPage {
 		vm.setName(fVMName.getText());
 		String argString = fVMArgs.getText().trim();
 		if (argString != null && argString.length() > 0) {
-			vm.setVMArgs(argString);			
+			vm.setVMArgs(argString);
 		} else {
 			vm.setVMArgs(null);
 		}
 	}
-	
+
 	/**
 	 * Returns the definition file from the text control or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return definition file or <code>null</code>
 	 */
 	private File getDefinitionFile() {
@@ -285,7 +285,7 @@ public class EEVMPage extends AbstractVMInstallPage {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a unique name for the VMInstallType
 	 * @param vmType the vm install type
@@ -297,8 +297,8 @@ public class EEVMPage extends AbstractVMInstallPage {
 			id = String.valueOf(System.currentTimeMillis());
 		} while (vmType.findVMInstall(id) != null);
 		return id;
-	}	
-	
+	}
+
 	/**
 	 * Initialize the dialogs fields
 	 */
@@ -321,11 +321,11 @@ public class EEVMPage extends AbstractVMInstallPage {
 		} finally {
 			fIgnoreCallbacks = false;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Sets the status of the definition file.
-	 * 
+	 *
 	 * @param status definition file status
 	 */
 	private void setDefinitionFileStatus(IStatus status) {

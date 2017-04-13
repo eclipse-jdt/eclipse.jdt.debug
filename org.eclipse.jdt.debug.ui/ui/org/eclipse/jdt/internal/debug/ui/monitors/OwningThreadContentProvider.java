@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Content provider for an 'owning thread' in a monitor tree.
- * 
+ *
  * @since 3.3
  */
 public class OwningThreadContentProvider extends JavaElementContentProvider {

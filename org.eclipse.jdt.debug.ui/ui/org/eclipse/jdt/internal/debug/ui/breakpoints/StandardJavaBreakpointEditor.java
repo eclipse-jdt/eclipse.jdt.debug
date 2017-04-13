@@ -35,24 +35,24 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.6
  */
 public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
-	
+
 	private IJavaBreakpoint fBreakpoint;
 	private Button fHitCountButton;
 	private Text fHitCountText;
 	private Button fSuspendThread;
 	private Button fSuspendVM;
 	protected Button fTriggerPointButton;
-	
+
 	/**
      * Property id for hit count enabled state.
      */
     public static final int PROP_HIT_COUNT_ENABLED = 0x1005;
-    
+
 	/**
      * Property id for breakpoint hit count.
      */
-    public static final int PROP_HIT_COUNT = 0x1006;  
-    
+    public static final int PROP_HIT_COUNT = 0x1006;
+
 	/**
      * Property id for suspend policy.
      */
@@ -75,10 +75,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	protected Button createCheckButton(Composite parent, String text) {
 		return SWTFactory.createCheckButton(parent, text, null, false, 1);
 	}
-	
+
 	/**
 	 * Creates the button to toggle Triggering point property of the breakpoint
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
@@ -132,7 +132,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			public void widgetSelected(SelectionEvent e) {
 				setDirty(PROP_SUSPEND_POLICY);
 			}
-		});	
+		});
 		fSuspendVM.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -147,7 +147,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		});
 		return composite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setInput(java.lang.Object)
 	 */
@@ -164,7 +164,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			suppressPropertyChanges(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#getInput()
 	 */
@@ -172,10 +172,10 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 	public Object getInput() {
 		return fBreakpoint;
 	}
-	
+
 	/**
 	 * Sets the breakpoint to edit. The same editor can be used iteratively for different breakpoints.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint to edit or <code>null</code> if none
 	 * @exception CoreException if unable to access breakpoint attributes
 	 */
@@ -206,13 +206,13 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 		fTriggerPointButton.setSelection(isTriggerPoint());
 		setDirty(false);
 	}
-	
+
 	/**
 	 * Returns the current breakpoint being edited or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint or <code>null</code>
 	 */
-	protected IJavaBreakpoint getBreakpoint() { 
+	protected IJavaBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
 
@@ -239,7 +239,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 			if (fHitCountButton.getSelection()) {
 				try {
 					hitCount = Integer.parseInt(fHitCountText.getText());
-				} 
+				}
 				catch (NumberFormatException e) {
 					throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, PropertyPageMessages.JavaBreakpointPage_0, e));
 				}
@@ -273,7 +273,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 
 	/**
 	 * Creates and returns a check box button with the given text.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param text label
 	 * @param propId property id to fire on modification
@@ -310,7 +310,7 @@ public class StandardJavaBreakpointEditor extends AbstractJavaBreakpointEditor {
 
 	/**
 	 * Stores the value of the trigger point state in the breakpoint manager.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint to be compared with trigger point in the workspace
 	 * @throws CoreException

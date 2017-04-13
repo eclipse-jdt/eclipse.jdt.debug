@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Point;
  * are computed according to flags set on creation of the descriptor.
  */
 public class JDIImageDescriptor extends CompositeImageDescriptor {
-	
+
 	/** Flag to render the is out of synch adornment */
 	public final static int IS_OUT_OF_SYNCH= 			0x0001;
 	/** Flag to render the may be out of synch adornment */
@@ -41,7 +41,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int UNCAUGHT=					0x0100;
 	/** Flag to render the scoped breakpoint adornment */
 	public final static int SCOPED=						0x0200;
-	
+
 	/** Flag to render the owning a monitor thread adornment */
 	public final static int OWNS_MONITOR=				0x0400;
 	/** Flag to render the owned monitor adornment */
@@ -52,7 +52,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int IN_CONTENTION_FOR_MONITOR=	0x2000;
 	/** Flag to render the in deadlock adornment */
 	public final static int IN_DEADLOCK= 				0x8000;
-	
+
 	/** Flag to render the synchronized stack frame adornment */
 	public final static int SYNCHRONIZED=				0x4000;
 
@@ -65,19 +65,19 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
-	
+
 	/**
 	 * Create a new JDIImageDescriptor.
-	 * 
+	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
-	 * 
+	 *
 	 */
 	public JDIImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
@@ -89,7 +89,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 		return fSize;
 	}
-	
+
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
@@ -98,11 +98,11 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		if (!(object instanceof JDIImageDescriptor)){
 			return false;
 		}
-			
+
 		JDIImageDescriptor other= (JDIImageDescriptor)object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
@@ -110,7 +110,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
@@ -202,7 +202,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			}
 		}
 	}
-	
+
 	protected void drawBreakpointOverlays() {
 		int flags= getFlags();
 		int x= 0;
@@ -216,7 +216,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			} else {
 				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED));
 			}
-				
+
 			y -= provider.getHeight();
 			drawImage(provider, x, y);
 		}

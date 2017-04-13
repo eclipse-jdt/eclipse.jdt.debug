@@ -67,10 +67,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * The default detail formatters manager.
 	 */
 	static private JavaDetailFormattersManager fgDefault;
-	
+
 	/**
 	 * Return the default detail formatters manager.
-	 * 
+	 *
 	 * @return default detail formatters manager.
 	 */
 	static public JavaDetailFormattersManager getDefault() {
@@ -79,19 +79,19 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return fgDefault;
 	}
-	
+
 	/**
 	 * Map of types to the associated formatter (code snippet).
 	 * (<code>String</code> -> <code>String</code>)
 	 */
 	private HashMap<String, DetailFormatter> fDetailFormattersMap;
-	
+
 	/**
 	 * Cache of compiled expressions.
 	 * Associate a pair type name/debug target to a compiled expression.
 	 */
 	private HashMap<Key, Expression> fCacheMap;
-	
+
 	/**
 	 * JavaDetailFormattersManager constructor.
 	 */
@@ -103,7 +103,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
 		fCacheMap= new HashMap<Key, Expression>();
 	}
-	
+
 	/**
 	 * Populate the detail formatters map with data from preferences.
 	 */
@@ -117,17 +117,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fDetailFormattersMap.put(typeName, new DetailFormatter(typeName, snippet, enabled));
 		}
 	}
-	
+
 	/**
 	 * Compute asynchronously the 'toString' of the given value. If a formatter is associated to
 	 * the type of the given value, this formatter is used instead of the <code>toString()</code>
 	 * method.
 	 * The result is return through the listener.
-	 * 
-	 * @param objectValue the value to 'format' 
+	 *
+	 * @param objectValue the value to 'format'
 	 * @param thread the thread to use to performed the evaluation
 	 * @param listener the listener
-	 */	
+	 */
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
 		thread.queueRunnable(new Runnable() {
 			@Override
@@ -136,7 +136,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		});
 	}
-	
+
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
 		if (value instanceof IJavaObject) {
@@ -175,7 +175,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			listener.detailComputed(value, detail);
 		}
 	}
-	
+
 	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws CoreException {
 
 		IType type = null;
@@ -205,7 +205,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return JavaDebugUtils.resolveJavaProject(stackFrame);
 	}
-	
+
 	/**
 	 * Searches the listing of implemented interfaces to see if one of them has a detail formatter
 	 * @param type the type whose interfaces you want to inspect
@@ -226,7 +226,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		catch(DebugException e) {return null;}
 	}
-	
+
 	/**
 	 * Returns if the specified <code>IJavaType</code> has a detail formatter on one of its interfaces
 	 * @param type the type to inspect
@@ -239,7 +239,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Searches the superclass hierarchy to see if any of the specified classes parents have a detail formatter
 	 * @param type the current type. Ideally this should be the first parent class.
@@ -259,7 +259,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		catch(DebugException e) {return null;}
 	}
-	
+
 	/**
 	 * Returns if one of the parent classes of the specified type has a detail formatter
 	 * @param type the type to inspect
@@ -272,11 +272,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return false;
 	}
-	
+
 	public boolean hasAssociatedDetailFormatter(IJavaType type) {
 		return getAssociatedDetailFormatter(type) != null;
 	}
-	
+
 	public DetailFormatter getAssociatedDetailFormatter(IJavaType type) {
 		String typeName = ""; //$NON-NLS-1$
 		try {
@@ -285,21 +285,21 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 			if (type instanceof IJavaClassType) {
 				typeName = type.getName();
-			} 
+			}
 			else {
 				return null;
 			}
-		} 
+		}
 		catch (DebugException e) {return null;}
 		return fDetailFormattersMap.get(typeName);
 	}
-	
+
 	public void setAssociatedDetailFormatter(DetailFormatter detailFormatter) {
 		fDetailFormattersMap.put(detailFormatter.getTypeName(), detailFormatter);
 		savePreference();
 	}
-	
-	
+
+
 	private void savePreference() {
 		Collection<DetailFormatter> valuesList= fDetailFormattersMap.values();
 		String[] values= new String[valuesList.size() * 3];
@@ -313,7 +313,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		String pref = JavaDebugOptionsManager.serializeList(values);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST, pref);
 	}
-	
+
 	/**
 	 * Return the detail formatter (code snippet) associate with
 	 * the given type or one of its super types, super interfaces.
@@ -335,7 +335,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return the detail formatter (code snippet) associate with
 	 * the given type or one of its super types.
@@ -353,11 +353,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return getDetailFormatterSuperClass(type.getSuperclass());
 	}
-	
+
 	/**
 	 * Return the expression which corresponds to the code formatter associated with the type of
 	 * the given object or <code>null</code> if none.
-	 * 
+	 *
 	 * The code snippet is compiled in the context of the given object.
 	 * @param javaObject the Java object
 	 * @param debugTarget the target
@@ -397,7 +397,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return null;
 	}
-	
+
 	protected String getArraySnippet(IJavaArray value) throws DebugException {
 		String signature = value.getSignature();
 		int nesting = Signature.getArrayCount(signature);
@@ -430,7 +430,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
@@ -448,11 +448,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
             if (selected != null) {
                 IJavaStackFrame frame= selected.getAdapter(IJavaStackFrame.class);
                 if (frame != null) {
-                    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { 
+                    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {
                             new DebugEvent(frame, DebugEvent.CHANGE)
                     });
                 }
-            }			
+            }
 		}
 	}
 	/**
@@ -464,24 +464,24 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			DebugEvent event = events[i];
 			if (event.getSource() instanceof IJavaDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
 				deleteCacheForTarget((IJavaDebugTarget) event.getSource());
-			}	
+			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(ILaunch[])
 	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(ILaunch[])
 	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(ILaunch[])
 	 */
@@ -492,16 +492,16 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			IDebugTarget[] debugTargets= launch.getDebugTargets();
 			for (int j = 0; j < debugTargets.length; j++) {
 				if (debugTargets[j] instanceof IJavaDebugTarget) {
-					deleteCacheForTarget((IJavaDebugTarget)debugTargets[j]);		
+					deleteCacheForTarget((IJavaDebugTarget)debugTargets[j]);
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove from the cache compiled expression associated with
 	 * the given debug target.
-	 * 
+	 *
 	 * @param debugTarget the target
 	 */
 	private synchronized void deleteCacheForTarget(IJavaDebugTarget debugTarget) {
@@ -512,7 +512,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		}
 	}
-	
+
 	/**
 	 * Object used as the key in the cache map for associate a compiled
 	 * expression with a pair type name/debug target
@@ -520,12 +520,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	static private class Key {
 		private String fTypeName;
 		private IJavaDebugTarget fDebugTarget;
-		
+
 		Key(String typeName, IJavaDebugTarget debugTarget) {
 			fTypeName= typeName;
 			fDebugTarget= debugTarget;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Key) {
@@ -534,20 +534,20 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 			return false;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return fTypeName.hashCode() / 2 + fDebugTarget.hashCode() / 2;
 		}
 	}
-	
+
 	/**
 	 * Stores a compiled expression and evaluation engine used to evaluate the expression.
 	 */
 	static private class Expression {
 		private ICompiledExpression fExpression;
 		private IAstEvaluationEngine fEngine;
-		
+
 		Expression(ICompiledExpression expression, IAstEvaluationEngine engine) {
 			fExpression = expression;
 			fEngine = engine;
@@ -559,47 +559,47 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			return fEngine;
 		}
 	}
-	
+
 	/**
 	 * Listener use to manage the result of the formatter.
 	 * Utilizes the 'standard' pretty printer methods to return the result.
 	 */
 	static private class EvaluationListener implements IEvaluationListener {
-		
+
 		/**
 		 * The selector of <code>java.lang.Object#toString()</code>,
 		 * used to evaluate 'toString()' for displaying details of values.
 		 */
 		private static final String fgToString= "toString"; //$NON-NLS-1$
-		
-		
+
+
 		/**
 		 * The signature of <code>java.lang.Object#toString()</code>,
 		 * used to evaluate 'toString()' for displaying details of values.
 		 */
 		private static final String fgToStringSignature= "()Ljava/lang/String;"; //$NON-NLS-1$
-		
+
 		/**
 		 * Signature of a string object
 		 */
 		private static final String STRING_SIGNATURE = "Ljava/lang/String;"; //$NON-NLS-1$
-		
+
 		private IJavaValue fValue;
-		
+
 		private IValueDetailListener fListener;
-		
+
 		private IJavaThread fThread;
-		
+
 		public EvaluationListener(IJavaValue value, IJavaThread thread, IValueDetailListener listener) {
 			fValue= value;
 			fThread= thread;
 			fListener= listener;
 		}
-		
+
 		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			if (result.hasErrors()) {
-				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1); 
+				StringBuffer error= new StringBuffer(DebugUIMessages.JavaDetailFormattersManager_Detail_formatter_error___1);
 				DebugException exception= result.getException();
 				if (exception != null) {
 					Throwable throwable= exception.getStatus().getException();
@@ -627,13 +627,13 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				}
 			}
 		}
-		
+
 		public void valueToString(final IJavaValue objectValue) throws DebugException {
 			String nonEvalResult = null;
 			StringBuffer result= null;
 			if (objectValue.getSignature() == null) {
 				// no need to spawn evaluate for a null fValue
-				nonEvalResult = DebugUIMessages.JavaDetailFormattersManager_null; 
+				nonEvalResult = DebugUIMessages.JavaDetailFormattersManager_null;
 			} else if (objectValue instanceof IJavaPrimitiveValue) {
 				// no need to spawn evaluate for a primitive value
 				result = new StringBuffer();
@@ -641,7 +641,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			} else if (fThread == null || !fThread.isSuspended()) {
 				// no thread available
 				result = new StringBuffer();
-				result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads); 
+				result.append(DebugUIMessages.JavaDetailFormattersManager_no_suspended_threads);
 				appendJDIValueString(result, objectValue);
 			} else if (objectValue instanceof IJavaObject && STRING_SIGNATURE.equals(objectValue.getSignature())) {
 				// no need to spawn evaluate for a java.lang.String
@@ -655,7 +655,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				fListener.detailComputed(fValue, nonEvalResult);
 				return;
 			}
-			
+
 			IEvaluationRunnable eval = new IEvaluationRunnable() {
 				@Override
 				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
@@ -672,12 +672,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			};
 			fThread.runEvaluation(eval, null, DebugEvent.EVALUATION_IMPLICIT, false);
 		}
-		
+
 		/*
 		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primitive.
 		 * NB - this method is only called if there is no compiled expression for an array to perform an
 		 * Arrays.asList().toString() to minimize toString() calls on remote target (i.e. one call to
-		 * List.toString() instead of one call per item in the array). 
+		 * List.toString() instead of one call per item in the array).
 		 */
 		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
 			result.append('[');
@@ -703,7 +703,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				result.append(de.getStatus().getMessage());
 				return;
 			}
-			
+
 			for (int i= 0; i < arrayValues.length; i++) {
 				IJavaValue value= arrayValues[i];
 				if (value instanceof IJavaArray) {
@@ -725,17 +725,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				result.append(']');
 			}
 		}
-		
+
 		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
-		
-		
+
+
 		protected void appendJDIValueString(StringBuffer result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
-		
-		
+
+
 		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
 			if(objectValue instanceof JDINullValue) {
 				appendJDIValueString(result, objectValue);
@@ -745,20 +745,20 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			if (STRING_SIGNATURE.equals(objectValue.getSignature())) {
 				appendJDIValueString(result, objectValue);
 			} else {
-				
+
 				IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
 				if (toStringValue == null) {
-					result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_); 
+					result.append(DebugUIMessages.JavaDetailFormattersManager__unknown_);
 				} else {
 					appendJDIValueString(result, toStringValue);
 				}
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	/**
 	 * (non java-doc)
 	 * Remove the provided <code>detailFormatter</code> from the map
@@ -768,15 +768,15 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		fDetailFormattersMap.remove(detailFormatter.getTypeName());
 		savePreference();
 	}
-	
+
 	/**
 	 * Returns the maximum number of chars to display in the details area or 0 if
 	 * there is no maximum.
-	 * 
+	 *
 	 * @return maximum number of chars to display or 0 for no max
 	 */
 	private static int getMaxDetailLength() {
 		return DebugUITools.getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
 	}
-	
+
 }

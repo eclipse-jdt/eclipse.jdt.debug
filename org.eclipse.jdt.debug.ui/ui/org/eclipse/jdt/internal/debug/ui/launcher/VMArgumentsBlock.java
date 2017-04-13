@@ -45,7 +45,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	protected Text fVMArgumentsText;
 	private Button fUseStartOnFirstThread = null;
 	private Button fPgrmArgVariableButton;
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -56,12 +56,12 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 		Group group = new Group(parent, SWT.NONE);
 		setControl(group);
 		GridLayout topLayout = new GridLayout();
-		group.setLayout(topLayout);	
+		group.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(gd);
 		group.setFont(font);
-		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6); 
-		
+		group.setText(LauncherMessages.JavaArgumentsTab_VM_ar_guments__6);
+
 		fVMArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		fVMArgumentsText.addTraverseListener(new TraverseListener() {
 			@Override
@@ -96,9 +96,9 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			public void modifyText(ModifyEvent evt) {
 				scheduleUpdateJob();
 			}
-		});	
+		});
 		ControlAccessibleListener.addListener(fVMArgumentsText, group.getText());
-			
+
 		fPgrmArgVariableButton = createPushButton(group, LauncherMessages.VMArgumentsBlock_4, null);
 		fPgrmArgVariableButton.setFont(font);
 		fPgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -113,7 +113,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 				}
 			}
 		});
-		
+
 		if(Platform.OS_MACOSX.equals(Platform.getOS())) {
 			fUseStartOnFirstThread = SWTFactory.createCheckButton(group, LauncherMessages.VMArgumentsBlock_0, null, false, 1);
 			fUseStartOnFirstThread.addSelectionListener(new SelectionAdapter() {
@@ -130,7 +130,7 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);	
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true);
 	}
 
@@ -145,8 +145,8 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 				fUseStartOnFirstThread.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_START_ON_FIRST_THREAD, true));
 			}
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
-			JDIDebugUIPlugin.log(e);			
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage());
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 
@@ -166,12 +166,12 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 	 */
 	@Override
 	public String getName() {
-		return LauncherMessages.VMArgumentsBlock_VM_Arguments; 
+		return LauncherMessages.VMArgumentsBlock_VM_Arguments;
 	}
-	
+
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {
@@ -180,8 +180,8 @@ public class VMArgumentsBlock extends JavaLaunchTab {
 			return content;
 		}
 		return null;
-	}	
-	
+	}
+
 	public void setEnabled(boolean enabled) {
 		fVMArgumentsText.setEnabled(enabled);
 		fPgrmArgVariableButton.setEnabled(enabled);

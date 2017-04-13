@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,17 +26,17 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	 * Instance ID column identifier
 	 */
 	public final static String COLUMN_INSTANCE_ID = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_INSTANCE_ID"; //$NON-NLS-1$
-	
+
 	/**
 	 * Instance count column identifier
 	 */
 	public final static String COLUMN_INSTANCE_COUNT = JAVA_VARIABLE_COLUMN_PRESENTATION + ".COL_INSTANCE_COUNT"; //$NON-NLS-1$
-	
+
 	/**
 	 * Column ids
 	 */
 	private static String[] fgAllColumns = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getAvailableColumns()
 	 */
@@ -51,7 +51,7 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 		}
 		return fgAllColumns;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getHeader(java.lang.String)
 	 */
@@ -65,7 +65,7 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 		}
 		return super.getHeader(id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation#getId()
 	 */
@@ -73,6 +73,6 @@ public class JavaVariableColumnPresentation extends VariableColumnPresentation {
 	public String getId() {
 		return JAVA_VARIABLE_COLUMN_PRESENTATION;
 	}
-	
-	
+
+
 }

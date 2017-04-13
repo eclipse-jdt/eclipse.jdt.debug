@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,9 +32,9 @@ public class ShowNullArrayEntriesAction extends ViewFilterAction {
 	 */
 	@Override
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES; 
+		return IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -47,11 +47,11 @@ public class ShowNullArrayEntriesAction extends ViewFilterAction {
 		if (element instanceof JDIArrayEntryVariable) {
 			JDIArrayEntryVariable variable = (JDIArrayEntryVariable)element;
 			try {
-				return !variable.getValue().equals(((IJavaDebugTarget)variable.getDebugTarget()).nullValue());				
+				return !variable.getValue().equals(((IJavaDebugTarget)variable.getDebugTarget()).nullValue());
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);
-			} 
+			}
 		}
 		return true;
-	}	
+	}
 }

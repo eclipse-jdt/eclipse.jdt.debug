@@ -29,14 +29,14 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class LineBreakpointTypeChange extends LineBreakpointChange {
-	
+
 	private IType fDestType;
-	
+
 	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
@@ -63,10 +63,10 @@ public class LineBreakpointTypeChange extends LineBreakpointChange {
 				resource,
 				fDestType.getFullyQualifiedName(),
 				getLineNumber(),
-				getCharStart(), 
+				getCharStart(),
 				getCharEnd(),
-				0, 
-				true, 
+				0,
+				true,
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();

@@ -28,11 +28,11 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
  * Breakpoint listener extension for the "suspend on compilation error" exception breakpoint.
  * Changed to a breakpoint specific listener in 3.5 when breakpoint specific listeners were
  * introduced.
- * 
+ *
  * @since 3.5
  */
 public class SuspendOnCompilationErrorListener implements IJavaBreakpointListener {
-	
+
 	public static final String ID_COMPILATION_ERROR_LISTENER = JDIDebugUIPlugin.getUniqueIdentifier() + ".compilationErrorListener"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
@@ -77,7 +77,7 @@ public class SuspendOnCompilationErrorListener implements IJavaBreakpointListene
 		        return DONT_SUSPEND;
 		    }
 		}
-		return DONT_SUSPEND;		
+		return DONT_SUSPEND;
 	}
 
 	/* (non-Javadoc)

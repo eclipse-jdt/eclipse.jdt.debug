@@ -44,7 +44,7 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 		}
 		return null;
 	}
-	
+
 	private boolean isApplicable(IPresentationContext context, Object element) {
 		IJavaStackFrame frame = null;
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
@@ -53,7 +53,7 @@ public class JavaVariableColumnPresentationFactory implements IColumnPresentatio
 				frame = adaptable.getAdapter(IJavaStackFrame.class);
 			}
 		}
-		return frame != null;		
+		return frame != null;
 	}
 
 }

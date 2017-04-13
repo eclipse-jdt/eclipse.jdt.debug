@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 
@@ -25,7 +25,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeClasspathEntry, IAdaptable {
 
 	private IRuntimeClasspathEntry entry= null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
 	 */
@@ -37,7 +37,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 		this.parent= parent;
 		this.entry= entry;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -52,7 +52,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 			return entry.equals(obj);
 		}
 		return false;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +84,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	 */
 	@Override
 	public String getMemento() throws CoreException {
-		return entry.getMemento(); 
+		return entry.getMemento();
 	}
 
 	/* (non-Javadoc)
@@ -165,7 +165,7 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	@Override
 	public void setClasspathProperty(int location) {
 		entry.setClasspathProperty(location);
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -207,17 +207,17 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	public org.eclipse.jdt.core.IClasspathEntry getClasspathEntry() {
 		return entry.getClasspathEntry();
 	}
-	
+
 	public IRuntimeClasspathEntry getDelegate() {
 		return entry;
 	}
-	
+
 	public boolean hasChildren() {
 		IRuntimeClasspathEntry rpe = getDelegate();
 		return rpe instanceof IRuntimeClasspathEntry2 &&
 		 ((IRuntimeClasspathEntry2)rpe).isComposite();
 	}
-	
+
 	public IClasspathEntry[] getChildren(ILaunchConfiguration configuration) {
 		IRuntimeClasspathEntry rpe = getDelegate();
 		if (rpe instanceof IRuntimeClasspathEntry2) {

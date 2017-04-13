@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Content provider for an owned monitor.
- * 
+ *
  * @since 3.3
  */
 public class OwnedMonitorContentProvider extends JavaElementContentProvider {
@@ -36,5 +36,5 @@ public class OwnedMonitorContentProvider extends JavaElementContentProvider {
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		 return getElements(((JavaOwnedMonitor) parent).getWaitingThreads(), index, length);
 	}
-	
+
 }

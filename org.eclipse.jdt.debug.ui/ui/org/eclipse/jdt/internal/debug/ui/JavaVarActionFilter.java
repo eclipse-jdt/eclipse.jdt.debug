@@ -33,7 +33,7 @@ import com.sun.jdi.ClassNotLoadedException;
 
 /**
  * Provides the action filter for Java and Inspect actions
- * 
+ *
  * @since 3.2
  */
 public class JavaVarActionFilter implements IActionFilter {
@@ -60,7 +60,7 @@ public class JavaVarActionFilter implements IActionFilter {
 		set.add("null"); //$NON-NLS-1$
 		return set;
 	}
-	
+
 	/**
 	 * Determines if the declared value is the same as the concrete value
 	 * @param var the variable to inspect
@@ -80,14 +80,14 @@ public class JavaVarActionFilter implements IActionFilter {
 
 	/**
 	 * Determines if the passed object is a primitive type or not
-	 * @param obj the obj to test 
+	 * @param obj the obj to test
 	 * @return true if the object is primitive, false otherwise
 	 */
 	protected boolean isPrimitiveType(Object obj) {
 		if(obj instanceof IJavaVariable) {
 			try {
 				return !fgPrimitiveTypes.contains(removeArray(((IJavaVariable) obj).getReferenceTypeName()));
-			} 
+			}
 			catch (DebugException e) {
 				if(!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
 					JDIDebugUIPlugin.log(e);
@@ -106,7 +106,7 @@ public class JavaVarActionFilter implements IActionFilter {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method returns if the specified object is an array or not
 	 * @param object the object to test
@@ -120,29 +120,29 @@ public class JavaVarActionFilter implements IActionFilter {
 				if(type != null) {
 					return type instanceof IJavaArrayType;
 				}
-			} 
+			}
 			catch (DebugException e) {JDIDebugUIPlugin.log(e);}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determines if the ref type of the value is primitive
-	 * 
+	 *
 	 * @param var the variable to inspect
 	 * @return true if the the values ref type is primitive, false otherwise
 	 */
 	protected boolean isValuePrimitiveType(IValue value) {
 		try {
 			return !fgPrimitiveTypes.contains(removeArray(value.getReferenceTypeName()));
-		} 
+		}
 		catch (DebugException e) {JDIDebugUIPlugin.log(e);}
 		return false;
 	}
-	
+
 	/**
 	 * Method removes the array declaration characters to return just the type
-	 * 
+	 *
 	 * @param typeName the type name we want to strip the array delimiters from
 	 * @return the altered type
 	 */
@@ -155,7 +155,7 @@ public class JavaVarActionFilter implements IActionFilter {
 		}
 		return type;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
@@ -166,17 +166,17 @@ public class JavaVarActionFilter implements IActionFilter {
 			IValue varValue;
 			try {
 				varValue = var.getValue();
-				if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ 
+				if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$
 					if (value.equals("isPrimitive")) { //$NON-NLS-1$
 						return isPrimitiveType(var);
-					} 
+					}
 					else if(value.equals("isArray")) { //$NON-NLS-1$
 						return isArrayType(var);
 					}
 					else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$
 						return isValuePrimitiveType(varValue);
 					}
-				} 
+				}
 				if (name.equals("JavaVariableFilter")) { //$NON-NLS-1$
 					if (value.equals("isInstanceRetrievalAvailable")) { //$NON-NLS-1$
 						return isInstanceRetrievalAvailable(var);
@@ -193,15 +193,15 @@ public class JavaVarActionFilter implements IActionFilter {
 				}
 				else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);
-				} 
+				}
 				else if (name.equals("JavaVariableActionFilter")) { //$NON-NLS-1$
-					if(value.equals("instanceFilter")) { //$NON-NLS-1$ 
+					if(value.equals("instanceFilter")) { //$NON-NLS-1$
 						return !var.isStatic() && (varValue instanceof IJavaObject) && (((IJavaObject)varValue).getJavaType() instanceof IJavaClassType) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
 					}
 					if(value.equals("isValidField")) { //$NON-NLS-1$
 						return !var.isFinal() & !(var.isFinal() & var.isStatic());
-					}	
-				} 
+					}
+				}
 				else if (name.equals("DetailFormatterFilter") & (varValue instanceof IJavaObject)) { //$NON-NLS-1$
 					if(value.equals("isDefined")) { //$NON-NLS-1$
 						return JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType());
@@ -212,17 +212,17 @@ public class JavaVarActionFilter implements IActionFilter {
 					if(value.equals("inSuperclass")) { //$NON-NLS-1$
 						return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
 					}
-				} 
+				}
 				else if (name.equals("JavaLogicalStructureFilter") && value.equals("canEditLogicalStructure")) {  //$NON-NLS-1$ //$NON-NLS-2$
                     return varValue instanceof JavaStructureErrorValue || EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
                 }
-			} catch (DebugException e) {}	
+			} catch (DebugException e) {}
 		}
 		else if (target instanceof JavaInspectExpression) {
 			JavaInspectExpression exp = (JavaInspectExpression) target;
 			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isNotPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return !isPrimitiveType(exp);
-			} 
+			}
 			else if (name.equals("DetailFormatterFilter")) { //$NON-NLS-1$
 				try {
 					IValue varValue = exp.getValue();
@@ -237,7 +237,7 @@ public class JavaVarActionFilter implements IActionFilter {
 							return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
 						}
 					}
-				} 
+				}
 				catch (DebugException exception) {}
 			}
 		}
@@ -246,11 +246,11 @@ public class JavaVarActionFilter implements IActionFilter {
 
 	/**
 	 * Returns whether this variable's VM supports instance/reference information.
-	 * 
+	 *
 	 * @param var variable
 	 * @return whether this variable's VM supports instance/reference information
 	 */
 	protected boolean isInstanceRetrievalAvailable(IJavaVariable var) {
 		return ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceRetrieval() && !(var instanceof JDIReferenceListVariable);
-	}	
+	}
 }

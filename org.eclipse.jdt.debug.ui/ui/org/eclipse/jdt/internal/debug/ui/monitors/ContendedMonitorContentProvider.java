@@ -16,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Content provider for a contended monitor.
- * 
+ *
  * @since 3.3
  */
 public class ContendedMonitorContentProvider extends JavaElementContentProvider {

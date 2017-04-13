@@ -27,7 +27,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for package move.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant {
@@ -39,7 +39,7 @@ public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant 
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IPackageFragment && getArguments().getDestination() instanceof IPackageFragmentRoot;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointMoveParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List)
 	 */
@@ -67,5 +67,5 @@ public class BreakpointMovePackageParticipant extends BreakpointMoveParticipant 
 			}
 		}
 	}
-	
+
 }

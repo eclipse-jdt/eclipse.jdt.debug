@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -49,23 +49,23 @@ import org.eclipse.jface.viewers.TreePath;
  * @since 3.2
  */
 public class JavaVariableLabelProvider extends VariableLabelProvider implements IPreferenceChangeListener {
-	
+
 	public static JDIModelPresentation fLabelProvider = new JDIModelPresentation();
 	/**
 	 * Map of view id to qualified name setting
 	 */
 	private Map<String, Boolean> fQualifiedNameSettings = new HashMap<String, Boolean>();
 	private boolean fQualifiedNames = false;
-	
+
 	/**
 	 * Whether to use a thread rule for a label update job (serialize on thread)
 	 */
 	private int fSerializeMode = SERIALIZE_NONE;
-	
+
 	private static final int SERIALIZE_ALL = 0; // no toString()'s in line, so serialize labels
 	private static final int SERIALIZE_NONE = 1; // all toString()'s in line, so don't serialize labels (evaluations will be serialized)
 	private static final int SERIALIZE_SOME = 2; // some - only serialize those that don't have formatters (ones with formatters will be serialized by evaluation)
-	
+
 	public JavaVariableLabelProvider() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugUIPlugin.getUniqueIdentifier());
 		if(prefs != null) {
@@ -73,7 +73,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 			determineSerializationMode(prefs.get(IJDIPreferencesConstants.PREF_SHOW_DETAILS, IJDIPreferencesConstants.DETAIL_PANE));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter#getValueText(org.eclipse.debug.core.model.IVariable, org.eclipse.debug.core.model.IValue)
 	 */
@@ -112,7 +112,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 				return fLabelProvider.removeQualifierFromGenericName(typeName);
 			}
 		} catch (DebugException e) {}
-		return typeName;		
+		return typeName;
 	}
 
 	/**
@@ -182,10 +182,10 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		fLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, showQ);
 		super.retrieveLabel(update);
 	}
-	
+
 	/**
 	 * Sets the serialization mode for label jobs based on the current preference setting.
-	 * 
+	 *
 	 * @param value preference value for PREF_SHOW_DETAILS
 	 */
 	private void determineSerializationMode(String value) {
@@ -212,7 +212,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 		}
 		return super.getLabel(elementPath, context, columnId);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getRule(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 	 */
@@ -234,7 +234,7 @@ public class JavaVariableLabelProvider extends VariableLabelProvider implements 
 					if (value instanceof IJavaValue) {
 						if (!fLabelProvider.isShowLabelDetails((IJavaValue)value)) {
 							input = update.getViewerInput();
-							frame = (IJavaStackFrame) DebugPlugin.getAdapter(input, IJavaStackFrame.class);			
+							frame = (IJavaStackFrame) DebugPlugin.getAdapter(input, IJavaStackFrame.class);
 						}
 					}
 				} catch (DebugException e) {

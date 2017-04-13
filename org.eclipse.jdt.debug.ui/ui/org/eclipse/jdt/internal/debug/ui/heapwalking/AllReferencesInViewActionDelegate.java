@@ -31,14 +31,14 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * Action delegate that turns on/off references being displayed as variables in the view.
- * 
+ *
  * @since 3.3
  */
 public class AllReferencesInViewActionDelegate implements IPreferenceChangeListener, IActionDelegate2, IViewActionDelegate {
 
 	private IAction fAction;
 	private IDebugView fView;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -54,7 +54,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
@@ -66,7 +66,7 @@ public class AllReferencesInViewActionDelegate implements IPreferenceChangeListe
 		if(prefs != null) {
 			prefs.addPreferenceChangeListener(this);
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)

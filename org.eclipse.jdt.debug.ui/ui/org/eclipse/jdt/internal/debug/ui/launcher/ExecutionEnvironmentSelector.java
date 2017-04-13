@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class ExecutionEnvironmentSelector implements IArgumentSelector {
 		dialog.setTitle(LauncherMessages.ExecutionEnvironmentSelector_0);
 		dialog.setMultipleSelection(false);
 		dialog.setMessage(LauncherMessages.ExecutionEnvironmentSelector_1);
-		dialog.setElements(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()); 
+		dialog.setElements(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
 		if (dialog.open() == Window.OK) {
 			return (((IExecutionEnvironment)dialog.getResult()[0]).getId());
 		}

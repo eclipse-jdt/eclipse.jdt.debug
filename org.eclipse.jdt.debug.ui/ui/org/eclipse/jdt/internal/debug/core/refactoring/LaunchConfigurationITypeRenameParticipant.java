@@ -33,15 +33,15 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
 		fType= (IType) element;
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	@Override
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */

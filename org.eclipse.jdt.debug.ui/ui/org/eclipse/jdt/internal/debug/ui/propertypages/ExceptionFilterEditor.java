@@ -86,7 +86,7 @@ public class ExceptionFilterEditor {
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
 	private FilterContentProvider fFilterContentProvider;
-	
+
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -118,12 +118,12 @@ public class ExceptionFilterEditor {
 		outer.setFont(parent.getFont());
 		// filter table
 		Label label= new Label(outer, SWT.NONE);
-		label.setText(PropertyPageMessages.ExceptionFilterEditor_5); 
+		label.setText(PropertyPageMessages.ExceptionFilterEditor_5);
 		label.setFont(parent.getFont());
 		gd= new GridData();
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
-		
+
 		fFilterTable = new Table(outer, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		TableLayout tableLayout = new TableLayout();
@@ -215,20 +215,20 @@ public class ExceptionFilterEditor {
 		buttonContainer.setLayout(buttonLayout);
 
 		fAddFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_6, 
-				PropertyPageMessages.ExceptionFilterEditor_7); 
+				PropertyPageMessages.ExceptionFilterEditor_6,
+				PropertyPageMessages.ExceptionFilterEditor_7);
 		fAddTypeButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_8, 
-				PropertyPageMessages.ExceptionFilterEditor_9); 
+				PropertyPageMessages.ExceptionFilterEditor_8,
+				PropertyPageMessages.ExceptionFilterEditor_9);
 		fAddPackageButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_10, 
-				PropertyPageMessages.ExceptionFilterEditor_11); 
+				PropertyPageMessages.ExceptionFilterEditor_10,
+				PropertyPageMessages.ExceptionFilterEditor_11);
 		fRemoveFilterButton = createPushButton(buttonContainer,
-				PropertyPageMessages.ExceptionFilterEditor_12, 
-				PropertyPageMessages.ExceptionFilterEditor_13); 
+				PropertyPageMessages.ExceptionFilterEditor_12,
+				PropertyPageMessages.ExceptionFilterEditor_13);
 		fRemoveFilterButton.setEnabled(false);
 	}
-	
+
 	/**
 	 * Creates a fully configured push button with the given label and tooltip.
 	 */
@@ -323,7 +323,7 @@ public class ExceptionFilterEditor {
 				}
 			}
 		});
-		// Consume traversal events from the text widget so that CR doesn't 
+		// Consume traversal events from the text widget so that CR doesn't
 		// traverse away to dialog's default button.  Without this, hitting
 		// CR in the text field closes the entire dialog.
 		text.addListener(SWT.Traverse, new Listener() {
@@ -343,7 +343,7 @@ public class ExceptionFilterEditor {
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText = trimmedValue;
-			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14); 
+			fEditorText.setText(PropertyPageMessages.ExceptionFilterEditor_14);
 			return;
 			// otherwise, commit the new value if not a duplicate
 		} else {
@@ -369,7 +369,7 @@ public class ExceptionFilterEditor {
 	 * scoping must be limited to exact matches or patterns that
 	 * begin with '*' or end with '*'. Beyond this, a string cannot be validated
 	 * as corresponding to an existing type or package (and this is probably not
-	 * even desirable).  
+	 * even desirable).
 	 */
 	private boolean validateEditorInput(String trimmedValue) {
 		char firstChar = trimmedValue.charAt(0);
@@ -427,16 +427,16 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.ExceptionFilterEditor_15; 
-			String message = PropertyPageMessages.ExceptionFilterEditor_16; 
+			String title = PropertyPageMessages.ExceptionFilterEditor_15;
+			String message = PropertyPageMessages.ExceptionFilterEditor_16;
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 		if (dialog == null) {
 			return;
 		}
-		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_15); 
-		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_18); 
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_15);
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_18);
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
@@ -463,14 +463,14 @@ public class ExceptionFilterEditor {
 		try {
 			dialog = JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title = PropertyPageMessages.ExceptionFilterEditor_19; 
-			String message = PropertyPageMessages.ExceptionFilterEditor_20; 
+			String title = PropertyPageMessages.ExceptionFilterEditor_19;
+			String message = PropertyPageMessages.ExceptionFilterEditor_20;
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 
-		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_19); 
-		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_22); 
+		dialog.setTitle(PropertyPageMessages.ExceptionFilterEditor_19);
+		dialog.setMessage(PropertyPageMessages.ExceptionFilterEditor_22);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

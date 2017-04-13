@@ -60,7 +60,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		if (display.isDisposed()) {
 			return;
 		}
-		
+
 		String name = null;
 		try {
 			name = target.getName();
@@ -77,13 +77,13 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 		if (exception == null) {
 			status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_The_target_VM_does_not_support_hot_code_replace_1, null);
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
-			alertMessage= DebugUIMessages.JDIDebugUIPlugin_3; 
+			alertMessage= DebugUIMessages.JDIDebugUIPlugin_3;
 		} else {
 			status = new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, exception.getMessage(), exception.getCause());
 			preference= IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED;
-			alertMessage= DebugUIMessages.JDIDebugUIPlugin_1; 
+			alertMessage= DebugUIMessages.JDIDebugUIPlugin_1;
 		}
-		final String title = DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1; 
+		final String title = DebugUIMessages.JDIDebugUIPlugin_Hot_code_replace_failed_1;
 		final String message = NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__was_unable_to_replace_the_running_code_with_the_code_in_the_workspace__2, new Object[] {vmName, launchName});
 		display.asyncExec(new Runnable() {
 			@Override
@@ -110,7 +110,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * @see IJavaHotCodeReplaceListener#obsoleteMethods(IJavaDebugTarget)
 	 */
@@ -124,10 +124,10 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 			return;
 		}
 		final String vmName= fLabelProvider.getText(target);
-		final String dialogTitle= DebugUIMessages.JDIDebugUIPlugin_Obsolete_methods_remain_1; 
-		final String message= NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName}); 
-		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_Stepping_may_be_hazardous_1, null); 
-		final String toggleMessage= DebugUIMessages.JDIDebugUIPlugin_2; 
+		final String dialogTitle= DebugUIMessages.JDIDebugUIPlugin_Obsolete_methods_remain_1;
+		final String message= NLS.bind(DebugUIMessages.JDIDebugUIPlugin__0__contains_obsolete_methods_1, new Object[] {vmName});
+		final IStatus status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.JDIDebugUIPlugin_Stepping_may_be_hazardous_1, null);
+		final String toggleMessage= DebugUIMessages.JDIDebugUIPlugin_2;
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {

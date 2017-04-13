@@ -32,18 +32,18 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
  *  The source viewer configuration for the Display view
  */
 public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
-		
+
 	public DisplayViewerConfiguration() {
-		super(JDIDebugUIPlugin.getDefault().getJavaTextTools().getColorManager(), 
+		super(JDIDebugUIPlugin.getDefault().getJavaTextTools().getColorManager(),
 				new ChainedPreferenceStore(new IPreferenceStore[] {
 						PreferenceConstants.getPreferenceStore(),
 						EditorsUI.getPreferenceStore()}),
 				null, IJavaPartitions.JAVA_PARTITIONING);
 	}
-	
+
 	/**
 	 * Returns the preference store this source viewer configuration is associated with.
-	 * 
+	 *
 	 * @return
 	 */
 	public IPreferenceStore getTextPreferenceStore() {
@@ -53,7 +53,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 	public IContentAssistProcessor getContentAssistantProcessor() {
 		return new JavaDebugContentAssistProcessor(new CurrentFrameContext());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(org.eclipse.jface.text.source.ISourceViewer)
 	 */

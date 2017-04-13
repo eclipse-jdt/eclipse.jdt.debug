@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -26,16 +26,16 @@ public class BreakpointMessages extends NLS {
 	public static String AddClassPrepareBreakpointAction_0;
 	public static String AddClassPrepareBreakpointAction_1;
 	public static String AddClassPrepareBreakpointAction_2;
-	
+
 	public static String BreakpointConditionDetailPane_0;
 
 	public static String BreakpointDetailPaneFactory_0;
 
 	public static String BreakpointDetailPaneFactory_1;
-	
+
 	public static String ExceptionBreakpointDetailPane_0;
-	
-	public static String JavaBreakpointTypeAdapterFactory_0;	
+
+	public static String JavaBreakpointTypeAdapterFactory_0;
 	public static String StandardBreakpointDetailPane_0;
 
 	public static String WatchpointDetailPane_0;
@@ -44,5 +44,5 @@ public class BreakpointMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, BreakpointMessages.class);
 	}
-	
+
 }

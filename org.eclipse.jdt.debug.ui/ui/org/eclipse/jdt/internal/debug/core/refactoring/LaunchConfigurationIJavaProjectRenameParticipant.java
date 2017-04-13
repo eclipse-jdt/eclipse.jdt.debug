@@ -37,13 +37,13 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 		fJavaProject = (IJavaProject) element;
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	@Override
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0;
 	}
 
 	/* (non-Javadoc)

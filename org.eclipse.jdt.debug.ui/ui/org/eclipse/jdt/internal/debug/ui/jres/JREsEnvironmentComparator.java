@@ -17,11 +17,11 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Sorts execution environments.
- * 
+ *
  * @since 3.3
  */
 public class JREsEnvironmentComparator extends ViewerComparator {
-	
+
 	IExecutionEnvironment fEnvironment;
 
 	/* (non-Javadoc)

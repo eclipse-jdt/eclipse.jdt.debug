@@ -41,7 +41,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 	    if (!getValue()) {
-            
+
             IJavaThread thread = getJavaThread(element);
 
 	        if (thread != null) {
@@ -54,7 +54,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	    }
 	    return true;
 	}
-    
+
 	private IJavaThread getJavaThread(Object element) {
 	    IJavaThread thread = null;
 
@@ -105,7 +105,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 			}
 		}
 	}
-	
+
 	private void refresh(Object source) {
         final IJavaThread thread = getJavaThread(source);
         if (thread != null) {
@@ -122,6 +122,6 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 				}
 			} catch (DebugException e) {
 			}
-		}		
+		}
 	}
 }

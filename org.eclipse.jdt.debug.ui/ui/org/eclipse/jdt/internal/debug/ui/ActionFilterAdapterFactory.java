@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -36,13 +36,13 @@ import org.eclipse.ui.IActionFilter;
 		if (adapterType == IActionFilter.class) {
 			if (obj instanceof IJavaThread) {
 				return (T) new JavaThreadActionFilter();
-			} 
+			}
 			else if (obj instanceof IJavaStackFrame) {
 				return (T) new JavaStackFrameActionFilter();
-			} 
+			}
 			else if (obj instanceof IMember) {
 				return (T) new MemberActionFilter();
-			} 
+			}
 			else if((obj instanceof IJavaVariable) || (obj instanceof JavaInspectExpression)) {
 				return (T) new JavaVarActionFilter();
 			}
@@ -56,7 +56,7 @@ import org.eclipse.ui.IActionFilter;
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {
-			IActionFilter.class 
+			IActionFilter.class
 		};
 	}
 }

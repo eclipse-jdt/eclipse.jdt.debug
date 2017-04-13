@@ -36,16 +36,16 @@ public class TypeNameResolver extends ResourceResolver {
 			IType type= getType(javaElement);
 			if (type != null) {
 				return type.getFullyQualifiedName();
-			}	
+			}
 		}
-		abort(DebugUIMessages.TypeNameResolver_0, null); 
+		abort(DebugUIMessages.TypeNameResolver_0, null);
 		return null;
 	}
-	
+
 	/**
 	 * Returns the primary type in the given Java element
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element the Java element
 	 * @return the primary type in the given Java element
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Text;
 public class RuntimeClasspathAdvancedDialog extends Dialog {
 
 	private IAction[] fActions;
-	private Button[] fButtons;	
-	
+	private Button[] fButtons;
+
 	private IClasspathViewer fViewer;
 	private Button fAddVariableStringButton;
 	private Text fVariableString;
@@ -48,7 +48,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	/**
 	 * Constructs a new dialog on the given shell, with the specified
 	 * set of actions.
-	 * 
+	 *
 	 * @param parentShell
 	 * @param actions advanced actions
 	 */
@@ -67,15 +67,15 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		Composite inner= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		inner.setLayout(layout);
-		
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		inner.setLayoutData(gd);
-		
+
 		Label l = new Label(inner, SWT.NONE);
-		l.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1); 
+		l.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Select_an_advanced_option__1);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(gd);
-		
+
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
 			IAction action= fActions[i];
@@ -85,34 +85,34 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 			fButtons[i].setEnabled(action.isEnabled());
 			fButtons[i].setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
-		
+
 		addVariableStringComposite(inner);
 
-		getShell().setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Advanced_Options_1); 
-		
+		getShell().setText(LauncherMessages.RuntimeClasspathAdvancedDialog_Advanced_Options_1);
+
 		Dialog.applyDialogFont(parent);
 		return inner;
 	}
 
 	private void addVariableStringComposite(Composite composite) {
 		fAddVariableStringButton = new Button(composite, SWT.RADIO);
-		fAddVariableStringButton.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_6); 
+		fAddVariableStringButton.setText(LauncherMessages.RuntimeClasspathAdvancedDialog_6);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fAddVariableStringButton.setLayoutData(gd);
-		
+
 		final Composite inner = new Composite(composite, SWT.NONE);
 		inner.setLayout(new GridLayout(2, false));
 		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fVariableString = new Text(inner, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		fVariableString.setLayoutData(gd);
-		
-		final Button fVariablesButton = createButton(inner, IDialogConstants.IGNORE_ID, LauncherMessages.RuntimeClasspathAdvancedDialog_7, false); 
+
+		final Button fVariablesButton = createButton(inner, IDialogConstants.IGNORE_ID, LauncherMessages.RuntimeClasspathAdvancedDialog_7, false);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fVariablesButton.setLayoutData(gd);
-		
+
 		fVariablesButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -124,7 +124,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 				}
 			}
 		});
-		
+
 		fAddVariableStringButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -164,11 +164,11 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		}
 		super.okPressed();
 	}
-		
+
 	protected String getDialogSettingsSectionName() {
 		return IJavaDebugUIConstants.PLUGIN_ID + ".RUNTIME_CLASSPATH_ADVANCED_DIALOG"; //$NON-NLS-1$
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -178,7 +178,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
 }

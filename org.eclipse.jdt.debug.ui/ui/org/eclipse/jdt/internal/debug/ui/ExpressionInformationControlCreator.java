@@ -52,9 +52,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Creates an information control to display an expression in a hover control.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * @since 3.3
  */
 public class ExpressionInformationControlCreator implements IInformationControlCreator {
@@ -67,7 +67,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private static final String HEIGHT = "HEIGHT"; //$NON-NLS-1$
 
 		/**
-		 * Dialog setting key for width. 
+		 * Dialog setting key for width.
 		 */
 		private static final String WIDTH = "WIDTH"; //$NON-NLS-1$
 
@@ -75,24 +75,24 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 * Dialog setting key for tree sash weight
 		 */
 		private static final String SASH_WEIGHT_TREE = "SashWeightTree"; //$NON-NLS-1$
-		
+
 		/**
 		 * Dialog setting key for details sash weight
 		 */
-		private static final String SASH_WEIGHT_DETAILS = "SashWeightDetails"; //$NON-NLS-1$		
-		
+		private static final String SASH_WEIGHT_DETAILS = "SashWeightDetails"; //$NON-NLS-1$
+
 		/**
 		 * Variable to display.
 		 */
 		private IVariable fVariable;
-		
+
 		private IPresentationContext fContext;
 	    private TreeModelViewer fViewer;
 	    private SashForm fSashForm;
 	    private Composite fDetailPaneComposite;
 	    private DetailPaneProxy fDetailPane;
 	    private Tree fTree;
-		    
+
 		/**
 	     * Creates the content for the root element of the tree viewer in the hover
 	     */
@@ -111,7 +111,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return new Object[] { fVariable };
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 			 */
@@ -120,13 +120,13 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				return true;
 			}
 	    }
-	    
+
 		/**
 		 * Inner class implementing IDetailPaneContainer methods.  Handles changes to detail
 		 * pane and provides limited access to the detail pane proxy.
 		 */
 		private class DetailPaneContainer implements IDetailPaneContainer{
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
 			 */
@@ -134,7 +134,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			public String getCurrentPaneID() {
 				return fDetailPane.getCurrentPaneID();
 			}
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
 			 */
@@ -142,15 +142,15 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			public IStructuredSelection getCurrentSelection() {
 				return (IStructuredSelection)fViewer.getSelection();
 			}
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
 			 */
 			@Override
-			public void refreshDetailPaneContents() {		
+			public void refreshDetailPaneContents() {
 				fDetailPane.display(getCurrentSelection());
 			}
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 			 */
@@ -158,7 +158,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			public Composite getParentComposite() {
 				return fDetailPaneComposite;
 			}
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
 			 */
@@ -166,7 +166,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			public IWorkbenchPartSite getWorkbenchPartSite() {
 				return null;
 			}
-		
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
 			 */
@@ -177,12 +177,12 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 					fDetailPane.getCurrentControl().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 				}
 			}
-		
-		}	    
+
+		}
 
 		/**
 		 * Constructs a new control in the given shell.
-		 * 
+		 *
 		 * @param parentShell shell
 		 * @param resize whether resize is supported
 		 */
@@ -190,7 +190,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			super(parentShell, resize);
 			create();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
 		 */
@@ -211,7 +211,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Returns the dialog settings for this hover or <code>null</code> if none
-		 * 
+		 *
 		 * @param create whether to create the settings
 		 */
 		private IDialogSettings getDialogSettings(boolean create) {
@@ -222,10 +222,10 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 			return section;
 		}
-		
+
 		/**
 		 * Returns an integer value in the given dialog settings or -1 if none.
-		 * 
+		 *
 		 * @param settings dialog settings
 		 * @param key key
 		 * @return value or -1 if not present
@@ -237,7 +237,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				return -1;
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#dispose()
 		 */
@@ -250,7 +250,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		/**
 		 * Persists dialog settings.
-		 * 
+		 *
 		 * @param shell
 		 */
 		private void persistSettings(Shell shell) {
@@ -266,13 +266,13 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setVisible(boolean)
 		 */
 		@Override
 		public void setVisible(boolean visible) {
-			if (!visible) {		
+			if (!visible) {
 				persistSettings(getShell());
 			}
 			super.setVisible(visible);
@@ -299,10 +299,10 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 					fContext.setProperty(key, copy.getProperty(key));
 				}
 	        }
-	       
+
 	        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
 	        fViewer.setAutoExpandLevel(1);
-	        
+
 	        if (view != null) {
 	        	// copy over filters
 	        	StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
@@ -321,10 +321,10 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				gl.marginHeight = 0;
 				gl.marginWidth = 0;
 			}
-	        
+
 	        fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
 	        fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
-	      
+
 	        fTree = fViewer.getTree();
 	        fTree.addSelectionListener(new SelectionListener() {
 	            @Override
@@ -336,12 +336,12 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	        });
 
 	        initSashWeights();
-	              
+
 	        // add update listener to auto-select and display details of root expression
 	        fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
 				@Override
 				public void viewerUpdatesComplete() {
-				}		
+				}
 				@Override
 				public void viewerUpdatesBegin() {
 				}
@@ -357,12 +357,12 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 						fViewer.removeViewerUpdateListener(this);
 					}
 				}
-			});        
-	        
+			});
+
 	        setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 	        setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
-		
+
 
 		/**
 	     * Attempts to find an appropriate view to emulate, this will either be the
@@ -383,10 +383,10 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	            return expressionsView;
 	        }
 	        return variablesView;
-	    }	
+	    }
 
 		/**
-	     * Initializes the sash form weights from the preference store (using default values if 
+	     * Initializes the sash form weights from the preference store (using default values if
 	     * no sash weights were stored previously).
 	     */
 	    protected void initSashWeights(){
@@ -401,7 +401,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		    	}
 	    	}
 	    }
-	    		
+
 	    /* (non-Javadoc)
 	     * @see org.eclipse.jface.text.AbstractInformationControl#setForegroundColor(org.eclipse.swt.graphics.Color)
 	     */
@@ -411,7 +411,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	    	fDetailPaneComposite.setForeground(foreground);
 	    	fTree.setForeground(foreground);
 	    }
-	    
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setBackgroundColor(org.eclipse.swt.graphics.Color)
 		 */
@@ -421,7 +421,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			fDetailPaneComposite.setBackground(background);
 			fTree.setBackground(background);
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.AbstractInformationControl#setFocus()
 		 */
@@ -430,7 +430,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			super.setFocus();
 			fTree.setFocus();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 		 */
@@ -444,7 +444,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 */
 		@Override
 		public void setInput(Object input) {
-			if (input instanceof IVariable) {	        
+			if (input instanceof IVariable) {
 				fVariable = (IVariable) input;
 		        fViewer.setInput(new TreeRoot());
 			}

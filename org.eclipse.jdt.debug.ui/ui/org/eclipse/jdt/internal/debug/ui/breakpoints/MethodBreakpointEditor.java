@@ -21,18 +21,18 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Editor for method entry/exit breakpoint.
- * 
+ *
  * @since 3.6
  */
 public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
-	
+
 	// Method entry/exit editors
 	private Button fEntry;
 	private Button fExit;
 
 	public static final int PROP_ENTRY = 0x1012;
 	public static final int PROP_EXIT = 0x1013;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -43,10 +43,10 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 		super.createControl(composite);
 		Composite watchComp = SWTFactory.createComposite(composite, parent.getFont(), 3, 1, 0, 0, 0);
 		fEntry = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_10), PROP_ENTRY);
-		fExit = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_11), PROP_EXIT); 
+		fExit = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_11), PROP_EXIT);
 		return composite;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#setBreakpoint(org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
@@ -66,7 +66,7 @@ public class MethodBreakpointEditor extends StandardJavaBreakpointEditor {
 			fExit.setSelection(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#doSave()
 	 */

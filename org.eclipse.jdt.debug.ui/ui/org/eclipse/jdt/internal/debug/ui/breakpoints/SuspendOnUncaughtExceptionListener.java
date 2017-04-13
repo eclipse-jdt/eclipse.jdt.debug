@@ -26,11 +26,11 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
  * Breakpoint listener extension for the "suspend on uncaught exceptions" exception breakpoint.
  * Changed to a breakpoint specific listener in 3.5 when breakpoint specific listeners were
  * introduced.
- * 
+ *
  * @since 3.5
  */
 public class SuspendOnUncaughtExceptionListener implements IJavaBreakpointListener {
-	
+
 	public static final String ID_UNCAUGHT_EXCEPTION_LISTENER = JDIDebugUIPlugin.getUniqueIdentifier() + ".uncaughtExceptionListener"; //$NON-NLS-1$
 
 	/* (non-Javadoc)

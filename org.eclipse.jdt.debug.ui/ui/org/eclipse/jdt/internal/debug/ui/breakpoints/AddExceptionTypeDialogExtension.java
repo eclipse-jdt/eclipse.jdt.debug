@@ -29,11 +29,11 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 /**
  * Provides a type dialog extension for the JDT type selection dialog
- * 
+ *
  * @since 3.4
  */
 public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
-	
+
 	/**
 	  * widgets
 	  */
@@ -41,7 +41,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 	 private Button fUncaughtButton;
 	 private boolean fCaught = false;
 	 private boolean fUncaught = false;
-	
+
 	 /**
 	 * Constructor
 	 * @param caught
@@ -51,7 +51,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 		 fCaught = caught;
 		 fUncaught = uncaught;
 	 }
-	 
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.dialogs.TypeSelectionExtension#createContentArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -80,7 +80,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 		((GridData) fUncaughtButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		return comp;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.dialogs.TypeSelectionExtension#getSelectionValidator()
 	 */
@@ -100,7 +100,7 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 			                }
 			                curr = hierarchy.getSuperclass(curr);
 			            }
-			        } 
+			        }
 			        catch (JavaModelException e) {
 			        	JDIDebugUIPlugin.log(e);
 			        	return Status.CANCEL_STATUS;
@@ -108,10 +108,10 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 				}
 				return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), BreakpointMessages.AddExceptionDialog_13);
 			}
-			
+
 		};
 	}
-	
+
 	/**
 	 * Returns if the breakpoint should be set to suspend when the associated exception is thrown, but caught
 	 * @return if the breakpoint should be set to suspend when the associated exception is thrown, but caught
@@ -119,11 +119,11 @@ public class AddExceptionTypeDialogExtension extends TypeSelectionExtension {
 	public boolean shouldHandleCaughtExceptions() {
 		return fCaught;
 	}
-	
+
 	/**Returns if the breakpoint should be set to suspend when the associated exception is thrown, but not caught
 	 * @return if the breakpoint should be set to suspend when the associated exception is thrown, but not caught
 	 */
 	public boolean shouldHandleUncaughtExceptions() {
 		return fUncaught;
-	}	
+	}
 }

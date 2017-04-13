@@ -64,7 +64,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * Boolean launch configuration attribute indicating that external jars (on
 	 * the runtime classpath) should be searched when looking for a main type.
 	 * Default value is <code>false</code>.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_INCLUDE_EXTERNAL_JARS = IJavaDebugUIConstants.PLUGIN_ID + ".INCLUDE_EXTERNAL_JARS"; //$NON-NLS-1$
@@ -72,11 +72,11 @@ public class JavaMainTab extends SharedJavaMainTab {
 	 * Boolean launch configuration attribute indicating whether types inheriting
 	 * a main method should be considered when searching for a main type.
 	 * Default value is <code>false</code>.
-	 * 
+	 *
 	 * @since 3.0
 	 */
-	public static final String ATTR_CONSIDER_INHERITED_MAIN = IJavaDebugUIConstants.PLUGIN_ID + ".CONSIDER_INHERITED_MAIN"; //$NON-NLS-1$	
-	
+	public static final String ATTR_CONSIDER_INHERITED_MAIN = IJavaDebugUIConstants.PLUGIN_ID + ".CONSIDER_INHERITED_MAIN"; //$NON-NLS-1$
+
 	// UI widgets
 	private Button fSearchExternalJarsCheckButton;
 	private Button fConsiderInheritedMainButton;
@@ -103,10 +103,10 @@ public class JavaMainTab extends SharedJavaMainTab {
 	protected void createMainTypeExtensions(Composite parent) {
 		fSearchExternalJarsCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_E_xt__jars_6, null, false, 2);
 		fSearchExternalJarsCheckButton.addSelectionListener(getDefaultListener());
-		
+
 		fConsiderInheritedMainButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_22, null, false, 2);
 		fConsiderInheritedMainButton.addSelectionListener(getDefaultListener());
-		
+
 		fStopInMainCheckButton = SWTFactory.createCheckButton(parent, LauncherMessages.JavaMainTab_St_op_in_main_1, null, false, 1);
 		fStopInMainCheckButton.addSelectionListener(getDefaultListener());
 	}
@@ -118,7 +118,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
@@ -126,17 +126,17 @@ public class JavaMainTab extends SharedJavaMainTab {
 	public String getName() {
 		return LauncherMessages.JavaMainTab__Main_19;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaMainTab"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Show a dialog that lists all main types
 	 */
@@ -178,18 +178,18 @@ public class JavaMainTab extends SharedJavaMainTab {
 			setErrorMessage(e.getMessage());
 			return;
 		}
-		DebugTypeSelectionDialog mmsd = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.JavaMainTab_Choose_Main_Type_11); 
+		DebugTypeSelectionDialog mmsd = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.JavaMainTab_Choose_Main_Type_11);
 		if (mmsd.open() == Window.CANCEL) {
 			return;
 		}
-		Object[] results = mmsd.getResult();	
+		Object[] results = mmsd.getResult();
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
 			fProjText.setText(type.getJavaProject().getElementName());
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -200,7 +200,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		updateStopInMainFromConfig(config);
 		updateInheritedMainsFromConfig(config);
 		updateExternalJars(config);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
@@ -216,27 +216,27 @@ public class JavaMainTab extends SharedJavaMainTab {
 			if (status.isOK()) {
 				IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				if (!project.exists()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {name})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_20, new String[] {name}));
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {name})); 
+					setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_21, new String[] {name}));
 					return false;
 				}
 			}
 			else {
-				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()})); 
+				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()}));
 				return false;
 			}
 		}
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage(LauncherMessages.JavaMainTab_Main_type_not_specified_16); 
+			setErrorMessage(LauncherMessages.JavaMainTab_Main_type_not_specified_16);
 			return false;
 		}
 		return true;
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -245,7 +245,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fMainText.getText().trim());
 		mapResources(config);
-		
+
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
 		if (fStopInMainCheckButton.getSelection()) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
@@ -253,7 +253,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
 		}
-		
+
 		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
 		if (fSearchExternalJarsCheckButton.getSelection()) {
 			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, true);
@@ -261,7 +261,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		else {
 			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
 		}
-		
+
 		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
 		if (fConsiderInheritedMainButton.getSelection()) {
 			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, true);
@@ -270,7 +270,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, (String)null);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -285,7 +285,7 @@ public class JavaMainTab extends SharedJavaMainTab {
 		}
 		initializeMainTypeAndName(javaElement, config);
 	}
-	
+
 	/**
 	 * updates the external jars attribute from the specified launch config
 	 * @param config the config to load from

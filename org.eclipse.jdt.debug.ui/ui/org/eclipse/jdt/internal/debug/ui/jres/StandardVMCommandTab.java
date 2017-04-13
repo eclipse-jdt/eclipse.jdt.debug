@@ -37,13 +37,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
-	
+
 	protected Text fJavaCommandText;
 	protected Button fDefaultButton;
 	protected Button fSpecificButton;
-	
+
 	protected static final Map<?, ?> EMPTY_MAP = new HashMap<Object, Object>(1);
-	
+
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -55,7 +55,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setFont(font);
-		
+
 		Group group = new Group(comp, SWT.NONE);
 		setControl(group);
 		GridLayout topLayout = new GridLayout();
@@ -64,36 +64,36 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setFont(font);
-		
-		group.setText(JREMessages.AbstractJavaCommandTab_1);  
-		
+
+		group.setText(JREMessages.AbstractJavaCommandTab_1);
+
 		fDefaultButton = new Button(group, SWT.RADIO);
 		fDefaultButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setText(NLS.bind(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()})); 
-		
+		fDefaultButton.setText(NLS.bind(JREMessages.AbstractJavaCommandTab_2, new String[]{getDefaultCommand()}));
+
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSelection();
 			}
 		});
-		
+
 		fSpecificButton = new Button(group, SWT.RADIO);
 		fSpecificButton.setFont(font);
 		gd = new GridData(GridData.BEGINNING);
 		fSpecificButton.setLayoutData(gd);
-		fSpecificButton.setText(JREMessages.AbstractJavaCommandTab_4); 
-		
+		fSpecificButton.setText(JREMessages.AbstractJavaCommandTab_4);
+
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSelection();
 			}
 		});
-				
+
 		fJavaCommandText= new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJavaCommandText.setLayoutData(gd);
@@ -115,7 +115,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		fJavaCommandText.setEnabled(!useDefault);
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	protected String getDefaultCommand() {
 		return "javaw";  //$NON-NLS-1$
 	}
@@ -125,7 +125,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public String getName() {
-		return JREMessages.AbstractJavaCommandTab_3; 
+		return JREMessages.AbstractJavaCommandTab_3;
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +140,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 				javaCommand = attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 			}
 		} catch(CoreException ce) {
-			JDIDebugUIPlugin.log(ce);		
+			JDIDebugUIPlugin.log(ce);
 		}
 		if (javaCommand == null) {
 			javaCommand = getDefaultCommand();
@@ -166,17 +166,17 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			String javaCommand = fJavaCommandText.getText();
 			Map<String, String> attributeMap = new HashMap<String, String>(1);
 			attributeMap.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, attributeMap);		
-		}		 
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, attributeMap);
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
@@ -185,7 +185,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.standardVMCommandTab"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -196,7 +196,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage(null);
 			setMessage(null);
 		} else {
-			setErrorMessage(JREMessages.AbstractJavaCommandTab_Java_executable_must_be_specified_5); 
+			setErrorMessage(JREMessages.AbstractJavaCommandTab_Java_executable_must_be_specified_5);
 			setMessage(null);
 		}
 		return valid;

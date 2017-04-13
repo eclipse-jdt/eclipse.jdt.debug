@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Label provider for jre libraries.
- * 
+ *
  * @since 3.2
  */
 public class LibraryLabelProvider extends LabelProvider {
@@ -50,13 +50,13 @@ public class LibraryLabelProvider extends LabelProvider {
 				key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
 			}
 			status = library.validate();
-			
+
 		} else if (element instanceof SubElement) {
 			switch(((SubElement)element).getType()) {
 				case SubElement.SOURCE_PATH:
 					key = ISharedImages.IMG_OBJS_JAR_WITH_SOURCE;
 					break;
-					
+
 				case SubElement.EXTERNAL_ANNOTATIONS_PATH:
 					key = ISharedImages.IMG_OBJS_EXTERNAL_ANNOTATIONS;
 					break;

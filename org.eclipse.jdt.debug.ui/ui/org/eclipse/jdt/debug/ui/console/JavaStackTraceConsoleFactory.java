@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import org.eclipse.ui.console.IConsoleManager;
 
 /**
  * Creates a new console into which users can paste stack traces and follow the hyperlinks.
- * 
+ *
  * @since 3.8
- * 
+ *
  */
 public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 	private IConsoleManager fConsoleManager = null;
@@ -58,7 +58,7 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 	/**
 	 * Opens the console (creating a new one if not previously initialized). If the passed string is not <code>null</code>, the text of the console is
 	 * set to the string.
-	 * 
+	 *
 	 * @param initialText
 	 *            text to put in the console or <code>null</code>.
 	 */
@@ -73,6 +73,6 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
 		}
 		fConsoleManager.showConsoleView(fConsole);
 	}
-	
+
 
 }

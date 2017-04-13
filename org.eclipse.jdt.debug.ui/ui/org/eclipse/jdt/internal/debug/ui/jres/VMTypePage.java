@@ -41,20 +41,20 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page used to select a VM type.
- * 
+ *
  * @since 3.3
  */
 public class VMTypePage extends WizardPage {
-	
+
 	private ListViewer fTypesViewer;
-	
+
 	private AbstractVMInstallPage fNextPage;
-	
+
 	/**
 	 * Keep track of pages created, so we can dispose of them.
 	 */
 	private Set<AbstractVMInstallPage> fPages = new HashSet<AbstractVMInstallPage>();
-	
+
 	/**
 	 * Label provider for VM types
 	 */
@@ -71,9 +71,9 @@ public class VMTypePage extends WizardPage {
 			}
 			return super.getText(element);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Constructs a VM type selection page
 	 */
@@ -82,8 +82,8 @@ public class VMTypePage extends WizardPage {
 		setDescription(JREMessages.VMTypePage_1);
 		setTitle(JREMessages.VMTypePage_2);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
@@ -104,9 +104,9 @@ public class VMTypePage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
-		
+
 		SWTFactory.createLabel(composite, JREMessages.VMTypePage_3, 1);
-		
+
 		fTypesViewer = new ListViewer(composite, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 250;
@@ -139,17 +139,17 @@ public class VMTypePage extends WizardPage {
 		setControl(composite);
 		fTypesViewer.setSelection(new StructuredSelection(JavaRuntime.getVMInstallType(StandardVMType.ID_STANDARD_VM_TYPE)));
 		updateNextPage();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.ADD_NEW_JRE_WIZARD_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.ADD_NEW_JRE_WIZARD_PAGE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
 	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
@@ -157,7 +157,7 @@ public class VMTypePage extends WizardPage {
 	public IWizardPage getNextPage() {
 		return fNextPage;
 	}
-	
+
 	private void updateNextPage() {
 		if (isPageComplete()) {
 			IStructuredSelection selection = (IStructuredSelection)fTypesViewer.getSelection();
@@ -171,7 +171,7 @@ public class VMTypePage extends WizardPage {
 				fNextPage = page;
 				fPages.add(page);
 			}
-		}		
+		}
 	}
 
 }

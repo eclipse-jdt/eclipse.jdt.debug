@@ -16,8 +16,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Content provider for a 'thread waiting on a monitor' in a monitor tree.
- * 
- * @since 3.3 
+ *
+ * @since 3.3
  */
 public class WaitingThreadContentProvider extends JavaElementContentProvider {
 

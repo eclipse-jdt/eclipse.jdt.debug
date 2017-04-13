@@ -54,11 +54,11 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class AppletMainTab extends SharedJavaMainTab {
-	
+
 	// Applet viewer UI widgets
 	private Text fAppletViewerClassText;
 	private Button fAppletViewerClassDefaultButton;
-	
+
 	/**
 	 * Creates the applet viewer control area
 	 * @param parent the composite to add this control to
@@ -67,7 +67,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		Font font = parent.getFont();
 		Group group = SWTFactory.createGroup(parent, LauncherMessages.AppletMainTab_1, 2, 1, GridData.FILL_HORIZONTAL);
 		Composite comp = SWTFactory.createComposite(group, font, 2, 2, GridData.FILL_BOTH, 0, 0);
-		fAppletViewerClassText= SWTFactory.createSingleText(comp, 2); 
+		fAppletViewerClassText= SWTFactory.createSingleText(comp, 2);
 		fAppletViewerClassText.addModifyListener(getDefaultListener());
 		createVerticalSpacer(comp, 1);
 		fAppletViewerClassDefaultButton= createCheckButton(comp, LauncherMessages.AppletMainTab_2);
@@ -80,13 +80,13 @@ public class AppletMainTab extends SharedJavaMainTab {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		Composite projComp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH); 
+		Composite projComp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 		((GridLayout)projComp.getLayout()).verticalSpacing = 0;
 		createProjectEditor(projComp);
 		createVerticalSpacer(projComp, 1);
@@ -96,7 +96,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		setControl(projComp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
@@ -104,7 +104,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
@@ -120,12 +120,12 @@ public class AppletMainTab extends SharedJavaMainTab {
 		setAppletViewerTextEnabledState();
 		if (isDefaultAppletViewerClassName()) {
 			fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
-		} 
+		}
 		else {
 			fAppletViewerClassText.setText(EMPTY_STRING);
 		}
 	}
-	
+
 	/**
 	 * Show a dialog that lists all main types
 	 */
@@ -148,17 +148,17 @@ public class AppletMainTab extends SharedJavaMainTab {
 		IType[] types = null;
 		try {
 			types = AppletLaunchConfigurationUtils.findApplets(getLaunchConfigurationDialog(), scope);
-		} 
-		catch (InterruptedException e) {return;} 
+		}
+		catch (InterruptedException e) {return;}
 		catch (InvocationTargetException e) {
 			setErrorMessage(e.getTargetException().getMessage());
 			return;
 		}
-		DebugTypeSelectionDialog dialog = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title); 
+		DebugTypeSelectionDialog dialog = new DebugTypeSelectionDialog(getShell(), types, LauncherMessages.appletlauncher_maintab_selection_applet_dialog_title);
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		Object[] results = dialog.getResult();	
+		Object[] results = dialog.getResult();
 		IType type = (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
@@ -173,7 +173,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 	private void initializeAppletViewerClass(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
 	}
-	
+
 	/**
 	 * Initialize default attribute values based on the
 	 * given Java element.
@@ -185,7 +185,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		initializeMainTypeAndName(javaElement, config);
 		initializeAppletViewerClass(config);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.AbstractJavaMainTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -195,7 +195,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 		updateMainTypeFromConfig(config);
 		updateAppletViewerClassNameFromConfig(config);
 	}
-	
+
 	/**
 	 * Returns whether the default applet viewer is to be used
 	 * @return if the viewer should be used
@@ -214,19 +214,19 @@ public class AppletMainTab extends SharedJavaMainTab {
 		String name= fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage(LauncherMessages.appletlauncher_maintab_project_error_doesnotexist); 
+				setErrorMessage(LauncherMessages.appletlauncher_maintab_project_error_doesnotexist);
 				return false;
 			}
 		}
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage(LauncherMessages.appletlauncher_maintab_type_error_doesnotexist); 
+			setErrorMessage(LauncherMessages.appletlauncher_maintab_type_error_doesnotexist);
 			return false;
 		}
 		name = fAppletViewerClassText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage(LauncherMessages.AppletMainTab_3);  
-			return false;			
+			setErrorMessage(LauncherMessages.AppletMainTab_3);
+			return false;
 		}
 		return true;
 	}
@@ -274,7 +274,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 
 	/**
 	 * updates the applet class name from the specified launch configuration
-	 * @param config the config to load the class name attribute from 
+	 * @param config the config to load the class name attribute from
 	 */
 	private void updateAppletViewerClassNameFromConfig(ILaunchConfiguration config) {
 		String appletViewerClassName = EMPTY_STRING;
@@ -295,7 +295,7 @@ public class AppletMainTab extends SharedJavaMainTab {
 
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override

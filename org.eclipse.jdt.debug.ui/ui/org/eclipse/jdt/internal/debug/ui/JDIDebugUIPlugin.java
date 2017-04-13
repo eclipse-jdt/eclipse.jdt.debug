@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,37 +108,37 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * for the JDI Debug plug-in.
 	 */
 	private static final String PI_JDI_DEBUG = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
-	
+
 	/**
 	 * Id for inspect command.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String COMMAND_INSPECT = "org.eclipse.jdt.debug.ui.commands.Inspect"; //$NON-NLS-1$
-	
+
 	/**
 	 * Java Debug UI plug-in instance
 	 */
 	private static JDIDebugUIPlugin fgPlugin;
-	
+
 	private IDocumentProvider fSnippetDocumentProvider;
-	
+
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
-	
+
 	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
 	private JavaSourceLocationWorkbenchAdapterFactory fSourceLocationAdapterFactory;
 	private JavaBreakpointWorkbenchAdapterFactory fBreakpointAdapterFactory;
-	
+
 	private IDebugModelPresentation fUtilPresentation;
-	
+
 	/**
 	 * Java Debug UI listeners
 	 */
 	private IJavaHotCodeReplaceListener fHCRListener;
-	
+
 	// Map of VMInstallTypeIDs to IConfigurationElements
 	protected Map<String, IConfigurationElement> fVmInstallTypePageMap;
-	
+
 	/**
 	 * Whether this plugin is in the process of shutting
 	 * down.
@@ -149,7 +149,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Singleton text tools for debug plug-in.
 	 */
 	private JavaTextTools fTextTools = null;
-	
+
 	/**
 	 * @see Plugin()
 	 */
@@ -157,44 +157,44 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		super();
 		setDefault(this);
 	}
-	
+
 	/**
 	 * Sets the Java Debug UI plug-in instance
-	 * 
+	 *
 	 * @param plugin the plugin instance
 	 */
 	private static void setDefault(JDIDebugUIPlugin plugin) {
 		fgPlugin = plugin;
 	}
-	
+
 	/**
 	 * Returns the Java Debug UI plug-in instance
-	 * 
+	 *
 	 * @return the Java Debug UI plug-in instance
 	 */
 	public static JDIDebugUIPlugin getDefault() {
 		return fgPlugin;
 	}
-	
+
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_JDI_DEBUG;
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
@@ -203,22 +203,22 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
-	 */	
+	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
-	}	
-	
+	}
+
 	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow w = getActiveWorkbenchWindow();
 		if (w != null) {
@@ -226,11 +226,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
@@ -239,23 +239,23 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			return window.getShell();
 		}
 		return null;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
 	@Override
 	protected ImageRegistry createImageRegistry() {
 		return JavaDebugImages.getImageRegistry();
-	}	
-	
+	}
+
 	public IDocumentProvider getSnippetDocumentProvider() {
 		if (fSnippetDocumentProvider == null) {
 			fSnippetDocumentProvider= new SnippetFileDocumentProvider();
 		}
 		return fSnippetDocumentProvider;
 	}
-	
+
 	public static void statusDialog(IStatus status) {
 		switch (status.getSeverity()) {
 		case IStatus.ERROR:
@@ -267,7 +267,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		case IStatus.INFO:
 			statusDialog(DebugUIMessages.JDIDebugUIPlugin_4, status);
 			break;
-		}		
+		}
 	}
 	public static void statusDialog(String title, IStatus status) {
 		Shell shell = getActiveWorkbenchShell();
@@ -283,13 +283,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 				MessageDialog.openInformation(shell, title, status.getMessage());
 				break;
 			}
-		}		
+		}
 	}
-		
+
 	/**
 	 * Creates a new internal error status with the specified message and throwable, then displays
 	 * it in a status dialog.
-	 * 
+	 *
 	 * @param message error message
 	 * @param t throwable cause or <code>null</code>
 	 */
@@ -297,7 +297,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, t);
 		statusDialog(status);
 	}
-	
+
 	/**
 	 * Opens an error dialog with the given title and message.
 	 */
@@ -316,7 +316,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
-	
+
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of
@@ -333,7 +333,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		}
-		
+
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -350,8 +350,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			throw exc[0];
 		}
 		return ret[0];
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
@@ -371,7 +371,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
         IAdapterFactory typeFactory = new JavaBreakpointTypeAdapterFactory();
         manager.registerAdapters(typeFactory, IJavaBreakpoint.class);
-        
+
         IAdapterFactory monitorFactory = new MonitorsAdapterFactory();
         manager.registerAdapters(monitorFactory, IJavaThread.class);
         manager.registerAdapters(monitorFactory, JavaContendedMonitor.class);
@@ -379,34 +379,34 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
         manager.registerAdapters(monitorFactory, JavaOwningThread.class);
         manager.registerAdapters(monitorFactory, JavaWaitingThread.class);
         manager.registerAdapters(monitorFactory, IJavaStackFrame.class);
-        
+
         IAdapterFactory targetFactory = new TargetAdapterFactory();
         manager.registerAdapters(targetFactory, IJavaDebugTarget.class);
-             
+
         IAdapterFactory groupFactory = new ThreadGroupAdapterFactory();
         manager.registerAdapters(groupFactory, IJavaThreadGroup.class);
-        
+
         IAdapterFactory showInFactory = new JavaDebugShowInAdapterFactory();
         manager.registerAdapters(showInFactory, IJavaStackFrame.class);
-        
+
         IAdapterFactory columnFactory = new ColumnPresentationAdapterFactory();
         manager.registerAdapters(columnFactory, IJavaVariable.class);
         manager.registerAdapters(columnFactory, IJavaStackFrame.class);
-        
+
         IAdapterFactory entryFactory = new ClasspathEntryAdapterFactory();
         manager.registerAdapters(entryFactory, DefaultProjectClasspathEntry.class);
-        
+
         IAdapterFactory variableFactory = new JavaDebugElementAdapterFactory();
         manager.registerAdapters(variableFactory, IJavaVariable.class);
         manager.registerAdapters(variableFactory, IJavaValue.class);
         manager.registerAdapters(variableFactory, JavaInspectExpression.class);
-        
+
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
-		
+
 		// initialize exception inspector handler
 		new ExceptionInspector();
-		
+
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
 			@Override
 			public void doneSaving(ISaveContext sc) {}
@@ -429,7 +429,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		});
 		JavaDebugOptionsManager.getDefault().startup();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
@@ -448,7 +448,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			manager.unregisterAdapters(fBreakpointAdapterFactory);
 			if (fUtilPresentation != null) {
 				fUtilPresentation.dispose();
-			} 
+			}
 			if (fTextTools != null) {
 				fTextTools.dispose();
 			}
@@ -457,7 +457,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			super.stop(context);
 		}
 	}
-	
+
 	/**
 	 * Returns whether this plug-in is in the process of
 	 * being shutdown.
@@ -479,7 +479,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private void setShuttingDown(boolean value) {
 		fShuttingDown = value;
 	}
-	
+
 	/**
 	 * Returns the image descriptor registry used for this plugin.
 	 */
@@ -489,7 +489,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		return getDefault().fImageDescriptorRegistry;
 	}
-	
+
 	/**
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated display. If so, this
@@ -501,13 +501,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (display == null) {
 			display= Display.getDefault();
 		}
-		return display;		
+		return display;
 	}
-	
+
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {
@@ -517,13 +517,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			if (windows.length > 0) {
 				return windows[0].getShell();
 			}
-		} 
+		}
 		else {
 			return window.getShell();
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Utility method to create and return a selection dialog that allows
 	 * selection of a specific Java package.  Empty packages are not returned.
@@ -546,9 +546,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			public void run(IProgressMonitor monitor) {
 				try {
 					Set<String> packageNameSet= new HashSet<String>();
-					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length); 
-					for (int i = 0; i < projects.length; i++) {						
-						IPackageFragment[] pkgs= projects[i].getPackageFragments();	
+					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length);
+					for (int i = 0; i < projects.length; i++) {
+						IPackageFragment[] pkgs= projects[i].getPackageFragments();
 						for (int j = 0; j < pkgs.length; j++) {
 							if (monitor.isCanceled()) {
 								monitorCanceled[0] = true;
@@ -587,20 +587,20 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (monitorCanceled[0]) {
 			return null;
 		}
-		
+
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
 		PackageSelectionDialog dialog= new PackageSelectionDialog(shell, new JavaElementLabelProvider(flags));
 		dialog.setIgnoreCase(false);
 		dialog.setElements(packageList.toArray()); // XXX inefficient
 		return dialog;
 	}
-	
+
 	/**
 	 * Return an object that implements <code>ILaunchConfigurationTab</code> for the
-	 * specified vm install type ID.  
+	 * specified vm install type ID.
 	 */
 	public ILaunchConfigurationTab getVMInstallTypePage(String vmInstallTypeID) {
-		if (fVmInstallTypePageMap == null) {	
+		if (fVmInstallTypePageMap == null) {
 			initializeVMInstallTypePageMap();
 		}
 		IConfigurationElement configElement = fVmInstallTypePageMap.get(vmInstallTypeID);
@@ -608,13 +608,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (configElement != null) {
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch(CoreException ce) {			 
+			} catch(CoreException ce) {
 				log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An error occurred retrieving a VMInstallType page.", ce));  //$NON-NLS-1$
-			} 
+			}
 		}
 		return tab;
 	}
-	
+
 	protected void initializeVMInstallTypePageMap() {
 		fVmInstallTypePageMap = new HashMap<String, IConfigurationElement>(10);
 
@@ -623,13 +623,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		for (int i = 0; i < infos.length; i++) {
 			String id = infos[i].getAttribute("vmInstallTypeID"); //$NON-NLS-1$
 			fVmInstallTypePageMap.put(id, infos[i]);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns a shared utility Java debug model presentation. Clients should not
 	 * dispose the presentation.
-	 * 
+	 *
 	 * @return a Java debug model presentation
 	 */
 	public IDebugModelPresentation getModelPresentation() {
@@ -638,10 +638,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		return fUtilPresentation;
 	}
-	
+
 	/**
 	 * Displays the given preference page.
-	 * 
+	 *
 	 * @param id pref page id
 	 * @param page pref page
 	 * @deprecated use <code>JDIDebugUIPlugin#showPreferencePage(String pageId)</code>, which uses the <code>PreferenceUtils</code> framework for opening pages.
@@ -649,7 +649,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	@Deprecated
 	public static void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
-		
+
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), manager);
@@ -661,22 +661,22 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 				dialog.setMessage(targetNode.getLabelText());
 				result[0]= (dialog.open() == Window.OK);
 			}
-		});		
-	}	
-	
+		});
+	}
+
 	/**
 	 * Displays the given preference page
 	 * @param pageId the fully qualified id of the preference page, e.g. <code>org.eclipse.jdt.debug.ui.preferences.VMPreferencePage</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static void showPreferencePage(String pageId) {
 		PreferencesUtil.createPreferenceDialogOn(getShell(), pageId, new String[] { pageId }, null).open();
 	}
-	
+
 	/**
 	 * Returns the text tools used by this plug-in
-	 * 
+	 *
 	 * @return
 	 */
 	public JavaTextTools getJavaTextTools() {

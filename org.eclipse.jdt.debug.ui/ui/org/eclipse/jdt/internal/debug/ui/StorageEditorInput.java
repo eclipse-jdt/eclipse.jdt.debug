@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.ui.ISharedImages;
@@ -26,14 +26,14 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	 * Storage associated with this editor input
 	 */
 	private IStorage fStorage;
-	
+
 	/**
 	 * Constructs an editor input on the given storage
 	 */
 	public StorageEditorInput(IStorage storage) {
 		fStorage = storage;
 	}
-	
+
 	/**
 	 * @see IStorageEditorInput#getStorage()
 	 */
@@ -73,7 +73,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 	public String getToolTipText() {
 		return getStorage().getFullPath().toOSString();
 	}
-	
+
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -82,7 +82,7 @@ public abstract class StorageEditorInput extends PlatformObject implements IStor
 		return object instanceof StorageEditorInput &&
 		 getStorage().equals(((StorageEditorInput)object).getStorage());
 	}
-	
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */

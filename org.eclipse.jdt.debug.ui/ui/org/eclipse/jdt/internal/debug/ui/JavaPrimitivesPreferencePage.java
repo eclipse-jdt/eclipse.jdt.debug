@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,13 +32,13 @@ import org.eclipse.ui.PlatformUI;
  * Java Debugging.
  */
 public class JavaPrimitivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private List<BooleanFieldEditor> fEdtiors = new ArrayList<BooleanFieldEditor>();
 
 	public JavaPrimitivesPreferencePage() {
 		super(DebugUIMessages.JavaPrimitivesPreferencePage_0);
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.JavaPrimitivesPreferencePage_1); 
+		setDescription(DebugUIMessages.JavaPrimitivesPreferencePage_1);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_PRIMITIVES_PREFERENCE_PAGE);
-		
+
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -58,11 +58,11 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);		
-		
+		composite.setLayoutData(data);
+
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		
-		BooleanFieldEditor editor = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_HEX, 
+
+		BooleanFieldEditor editor = new BooleanFieldEditor(IJDIPreferencesConstants.PREF_SHOW_HEX,
 				DebugUIMessages.JavaDebugPreferencePage_Display__hexadecimal_values__byte__short__char__int__long__3,
 				composite);
 		editor.setPreferenceStore(preferenceStore);
@@ -77,19 +77,19 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 				composite);
 		editor.setPreferenceStore(preferenceStore);
 		fEdtiors.add(editor);
-		
+
 		loadValues();
 		applyDialogFont(composite);
-		return composite;		
+		return composite;
 	}
-		
+
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 * Also, notifies interested listeners
@@ -99,7 +99,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 		storeValues();
 		return true;
 	}
-	
+
 	/**
 	 * Sets the default preferences.
 	 * @see PreferencePage#performDefaults()
@@ -111,9 +111,9 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 			BooleanFieldEditor editor = iterator.next();
 			editor.loadDefault();
 		}
-		super.performDefaults();	
+		super.performDefaults();
 	}
-			
+
 	/**
 	 * Set the values of the component widgets based on the
 	 * values in the preference store
@@ -125,7 +125,7 @@ public class JavaPrimitivesPreferencePage extends PreferencePage implements IWor
 			editor.load();
 		}
 	}
-	
+
 	/**
 	 * Store the preference values based on the state of the
 	 * component widgets

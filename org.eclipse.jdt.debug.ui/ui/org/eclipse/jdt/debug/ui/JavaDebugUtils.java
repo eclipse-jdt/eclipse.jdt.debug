@@ -32,16 +32,16 @@ public class JavaDebugUtils {
      * The result will be empty when the user has turned off the preference
      * to show monitor information.
      * </p>
-     * 
+     *
      * @param thread an <code>IJavaThread</code> or a thread with an <code>IJavaThread</code>
-     *  adapter 
+     *  adapter
      * @return debug elements representing the monitors owned by the underlying
      *   <code>IJavaThread</code>, possibly empty
      */
     public static IDebugElement[] getOwnedMonitors(IThread thread) {
         return ThreadMonitorManager.getDefault().getOwnedMonitors(thread);
     }
-    
+
     /**
      * Returns a debug element representing a monitor in contention with
      * the given thread's underlying <code>IJavaThread</code>, or <code>null</code>
@@ -51,14 +51,14 @@ public class JavaDebugUtils {
      * to show monitor information.
      * </p>
      * @param thread an <code>IJavaThread</code> or a thread with an <code>IJavaThread</code>
-     *  adapter 
+     *  adapter
      * @return debug element representing a monitor in contention with the underlying
      *   <code>IJavaThread</code>, or <code>null</code>
-     */    
+     */
     public static IDebugElement getContendedMonitor(IThread thread) {
         return ThreadMonitorManager.getDefault().getContendedMonitor(thread);
     }
-    
+
 	/**
 	 * Returns the preference store for the Java Debug UI plug-in.
 	 *

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Suspend policy and hit count detail pane.
- * 
+ *
  * @since 3.6
  */
 public class StandardBreakpointDetailPane extends AbstractDetailPane {
-	
+
 	/**
 	 * Identifier for this detail pane editor
 	 */
@@ -31,7 +31,7 @@ public class StandardBreakpointDetailPane extends AbstractDetailPane {
 				StandardJavaBreakpointEditor.PROP_HIT_COUNT_ENABLED,
 				StandardJavaBreakpointEditor.PROP_SUSPEND_POLICY, StandardJavaBreakpointEditor.PROP_TRIGGER_POINT, });
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractDetailPane#createEditor(org.eclipse.swt.widgets.Composite)
 	 */

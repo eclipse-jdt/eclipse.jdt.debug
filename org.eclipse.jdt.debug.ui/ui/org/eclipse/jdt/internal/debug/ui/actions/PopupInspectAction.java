@@ -28,7 +28,7 @@ public class PopupInspectAction extends InspectAction {
 
     private ITextEditor fTextEditor;
     private ISelection fSelectionBeforeEvaluation;
-    
+
     /**
      * @see EvaluateAction#displayResult(IEvaluationResult)
      */

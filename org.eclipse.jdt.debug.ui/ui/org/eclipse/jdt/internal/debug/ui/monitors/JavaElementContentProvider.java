@@ -21,14 +21,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Common element presentation for the debug view.
- * 
+ *
  * @since 3.3
  */
 public abstract class JavaElementContentProvider extends ElementContentProvider {
-	
+
 	private static boolean fgDisplayMonitors;
 	private static boolean fgDisplayThreadGroups;
-	
+
 	static {
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -40,12 +40,12 @@ public abstract class JavaElementContentProvider extends ElementContentProvider 
 					fgDisplayThreadGroups= JDIDebugUIPreferenceInitializer.getBoolean(event);
 				}
 			}
-		
+
 		});
 		fgDisplayMonitors= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
 		fgDisplayThreadGroups = preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS);
 	}
-	
+
 	public static boolean isDisplayThreadGroups() {
 		return fgDisplayThreadGroups;
 	}
@@ -53,7 +53,7 @@ public abstract class JavaElementContentProvider extends ElementContentProvider 
 	public static boolean isDisplayMonitors() {
 	    return fgDisplayMonitors;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
 	 */

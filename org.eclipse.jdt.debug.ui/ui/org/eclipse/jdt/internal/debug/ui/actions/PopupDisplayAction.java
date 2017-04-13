@@ -46,7 +46,7 @@ public class PopupDisplayAction extends DisplayAction {
         }
         DebugPopup displayPopup = new DisplayPopup(getShell(), textWidget);
         displayPopup.open();
-        
+
     }
 
     private class DisplayPopup extends DebugPopup {
@@ -87,7 +87,7 @@ public class PopupDisplayAction extends DisplayAction {
             text.setText(resultString);
             return text;
         }
-        
+
         @Override
 		public boolean close() {
         	boolean returnValue = super.close();
@@ -107,7 +107,7 @@ public class PopupDisplayAction extends DisplayAction {
             super.displayStringResult(currentSnippet, currentResultString);
             return;
         }
-        
+
         final StyledText textWidget = EvaluateAction.getStyledText(part);
         if (textWidget == null) {
             super.displayStringResult(currentSnippet, currentResultString);

@@ -74,7 +74,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * Dialog for edit detail formatter.
  */
 public class DetailFormatterDialog extends StatusDialog implements ITypeProvider {
-	
+
 	/**
 	 * The detail formatter to edit.
 	 */
@@ -90,7 +90,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * have been already performed.
 	 */
 	private boolean fTypeSearched;
-	
+
 	/**
 	 * Indicate if the type can be modified.
 	 */
@@ -103,7 +103,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	 * the workspace.
 	 */
 	private IType fType;
-	
+
 	/**
 	 * List of types that have detail formatters already defined.
 	 */
@@ -113,10 +113,10 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
      * Activation handler for content assist, must be deactivated on disposal.
      */
     private IHandlerActivation fHandlerActivation;
-    
+
 	/**
 	 * DetailFormatterDialog constructor.  Creates a new dialog to create/edit a detail formatter.
-	 * 
+	 *
 	 * @param parent parent shell
 	 * @param detailFormatter detail formatter to edit, not <code>null</code>
 	 * @param definedTypes list of types with detail formatters already defined, or <code>null</code>
@@ -125,10 +125,10 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List<?> definedTypes, boolean editDialog) {
 		this(parent, detailFormatter, definedTypes, true, editDialog);
 	}
-	
+
 	/**
 	 * DetailFormatterDialog constructor.  Creates a new dialog to create/edit a detail formatter.
-	 * 
+	 *
 	 * @param parent parent shell
 	 * @param detailFormatter detail formatter to edit, not <code>null</code>
 	 * @param definedTypes list of types with detail formatters already defined, or <code>null</code>
@@ -148,27 +148,27 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fEditTypeName= editTypeName;
 		fDefinedTypes= definedTypes;
 	}
-	
+
 	/**
 	 * Create the dialog area.
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
+
 		workbench.getHelpSystem().setHelp(
 			parent,
 			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);
-		
+
 		Font font = parent.getFont();
 		Composite container = (Composite)super.createDialogArea(parent);
-		
+
 		SWTFactory.createLabel(container, DebugUIMessages.DetailFormatterDialog_Qualified_type__name__2, 1);
 
 		Composite innerContainer = SWTFactory.createComposite(container, font, 2, 1, GridData.FILL_HORIZONTAL);
-		
+
 		fTypeNameText = SWTFactory.createSingleText(innerContainer, 1);
 		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
@@ -179,7 +179,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				checkValues();
 			}
 		});
-		
+
 		Button typeSearchButton = SWTFactory.createPushButton(innerContainer, DebugUIMessages.DetailFormatterDialog_Select__type_4, null);
 		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
@@ -188,7 +188,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				selectType();
 			}
 		});
-		
+
 		String labelText = null;
 		IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		String binding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST);
@@ -198,13 +198,13 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
         if (labelText == null) {
             labelText = DebugUIMessages.DetailFormatterDialog_Detail_formatter__code_snippet__1;
         }
-		
+
         SWTFactory.createLabel(container, labelText, 1);
 
         createSnippetViewer(container);
-		
+
 		fCheckBox = SWTFactory.createCheckButton(container, DebugUIMessages.DetailFormatterDialog__Enable_1, null, fDetailFormatter.isEnabled(), 1);
-       
+
 		// Set up content assist in the viewer
         IHandler handler = new AbstractHandler() {
 			@Override
@@ -218,20 +218,20 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		};
         IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
-        
+
 		checkValues();
 		return container;
 	}
 
 	/**
 	 * Creates the JDISourceViewer that displays the code snippet to the user.
-	 * 
+	 *
 	 * @param parent parent composite
 	 */
 	private void createSnippetViewer(Composite parent) {
 		fSnippetViewer= new JDISourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
-	
+
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
 		tools.setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
@@ -243,14 +243,14 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		});
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
-		
+
 		Control control= fSnippetViewer.getControl();
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
 		document.set(fDetailFormatter.getSnippet());
-		
+
 		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
 			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -260,12 +260,12 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				checkValues();
 			}
 		});
-        
+
         if (fDetailFormatter.getTypeName().length() > 0) {
             fSnippetViewer.getControl().setFocus();
         }
 	}
-	
+
 	/**
 	 * Check the field values and display a message in the status if needed.
 	 */
@@ -292,10 +292,10 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		fDetailFormatter.setEnabled(fCheckBox.getSelection());
 		fDetailFormatter.setTypeName(fTypeNameText.getText().trim());
 		fDetailFormatter.setSnippet(fSnippetViewer.getDocument().get());
-		
+
 		super.okPressed();
 	}
-	
+
 	/**
 	 * Open the 'select type' dialog, and set the user choice into the formatter.
 	 */
@@ -311,13 +311,13 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
-	
+
 		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
 		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
-		
+
 		Object[] types= dialog.getResult();
 		if (types != null && types.length > 0) {
 			fType = (IType)types[0];
@@ -325,7 +325,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 			fTypeSearched = true;
 		}
 	}
-	
+
 	/**
 	 * Use the Java search engine to find the type which corresponds
 	 * to the given name.
@@ -343,7 +343,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		final IProgressMonitor monitor = new NullProgressMonitor();
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
-			
+
 			@Override
 			public void endReporting() {
 				checkValues();
@@ -363,7 +363,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 				monitor.setCanceled(true);
 			}
 		};
-		
+
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
 		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
@@ -375,7 +375,7 @@ public class DetailFormatterDialog extends StatusDialog implements ITypeProvider
 		} catch (OperationCanceledException e) {
 		}
 	}
-	
+
 	/**
 	 * Return the type object which corresponds to the given name.
 	 */

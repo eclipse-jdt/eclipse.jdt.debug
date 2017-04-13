@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,14 +37,14 @@ import org.eclipse.jface.viewers.Viewer;
 public class JavaDebugTargetProxy extends DebugTargetProxy {
 
 	private JavaThreadEventHandler fThreadEventHandler;
-	
+
 	/**
 	 * Whether this proxy is for a scrapbook.
 	 */
 	private boolean fIsScrapbook = false;
-	
+
 	private IDebugTarget fDebugTarget = null;
-	
+
 	/**
 	 * @param target the backing target
 	 */
@@ -77,7 +77,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 			return;
 		}
 		final Viewer finalViewer = viewer;
-		// Delay the auto-select-expand job to allow for transient suspend states to resolve. 
+		// Delay the auto-select-expand job to allow for transient suspend states to resolve.
 		// See bug 225377
 		Job job = new Job("Initialize Java Debug Session") { //$NON-NLS-1$
 			@Override
@@ -99,7 +99,7 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	private void doInstalled(Viewer viewer) {
         // select any thread that is already suspended after installation
         IDebugTarget target = fDebugTarget;
-        
+
         if (target != null) {
             ModelDelta delta = getNextSuspendedThreadDelta(null, false);
             if (delta == null) {
@@ -114,17 +114,17 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
                 } catch (DebugException e) {
                     // In case of exception do not fire delta
                     return;
-                }                     
+                }
             }
             // expand the target if no suspended thread
             fireModelChanged(delta);
-        }	    
-	}	
-	
+        }
+	}
+
 	private int getTargetChildCount(IDebugTarget target) throws DebugException{
 	    if (target instanceof IJavaDebugTarget) {
 	        IJavaDebugTarget javaTarget = (IJavaDebugTarget)target;
-	    
+
             if (JavaElementContentProvider.isDisplayThreadGroups()) {
                 if (javaTarget.isDisconnected() || javaTarget.isTerminated()) {
                     return 0;
@@ -135,5 +135,5 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 	    }
 	    return 0;
 	}
-	
+
 }

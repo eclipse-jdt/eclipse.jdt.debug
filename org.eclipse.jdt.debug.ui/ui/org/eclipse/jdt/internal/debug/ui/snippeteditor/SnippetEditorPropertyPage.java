@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
@@ -37,17 +37,17 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * Page to set working directory property on scrapbook page.
  */
 public class SnippetEditorPropertyPage extends PropertyPage {
-	
+
 	private WorkingDirectoryBlock fWorkingDirBlock = new JavaWorkingDirectoryBlock();
-	
+
 	private JavaJRETab fJRETab = new JavaJRETab();
-	
+
 	private VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
-	
+
 	// launch config template for this scrapbook file
 	private ILaunchConfiguration fConfig;
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-	
+
 	private Proxy fProxy;
 
 	class Proxy implements ILaunchConfigurationDialog {
@@ -95,7 +95,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		 */
 		@Override
 		public void updateButtons() {
-			
+
 		}
 
 		/* (non-Javadoc)
@@ -129,7 +129,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		public void setActiveTab(int index) {
 		}
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -139,11 +139,11 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		comp.setLayout(topLayout);
-		comp.setFont(parent.getFont());		
-		
+		comp.setFont(parent.getFont());
+
 		// fake launch config dialog
 		fProxy = new Proxy();
-		
+
 		try {
 			fConfig = ScrapbookLauncher.getLaunchConfigurationTemplate(getFile());
 			if (fConfig != null) {
@@ -164,20 +164,20 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 				JDIDebugUIPlugin.statusDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_retrieve_settings"), e.getStatus()); //$NON-NLS-1$
 			}
 		}
-				
+
 		fWorkingDirBlock.setLaunchConfigurationDialog(fProxy);
-		fWorkingDirBlock.createControl(comp);		
+		fWorkingDirBlock.createControl(comp);
 		fWorkingDirBlock.initializeFrom(fConfig);
-		
+
 		fVMArgumentsBlock.setLaunchConfigurationDialog(fProxy);
 		fVMArgumentsBlock.createControl(comp);
-		fVMArgumentsBlock.initializeFrom(fConfig);		
-		
+		fVMArgumentsBlock.initializeFrom(fConfig);
+
 		fJRETab.setLaunchConfigurationDialog(fProxy);
 		fJRETab.setVMSpecificArgumentsVisible(false);
 		fJRETab.createControl(comp);
 		fJRETab.initializeFrom(fConfig);
-		
+
 		return comp;
 	}
 
@@ -187,7 +187,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	protected IFile getFile() {
 		return (IFile)getElement();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -201,7 +201,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fJRETab.initializeFrom(fWorkingCopy);
 		fVMArgumentsBlock.initializeFrom(fWorkingCopy);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#isValid()
 	 */

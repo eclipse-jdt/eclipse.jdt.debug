@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 public class ConditionalBreakpointErrorDialog extends ErrorDialog {
-	
+
 	public ConditionalBreakpointErrorDialog(Shell parentShell, String message, IStatus status) {
-		super(parentShell, DebugUIMessages.ConditionalBreakpointErrorDialog_Conditional_Breakpoint_Error_1, message, status, IStatus.ERROR); 
+		super(parentShell, DebugUIMessages.ConditionalBreakpointErrorDialog_Conditional_Breakpoint_Error_1, message, status, IStatus.ERROR);
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Edit and Cancel buttons
-		createButton(parent, IDialogConstants.OK_ID, DebugUIMessages.ConditionalBreakpointErrorDialog__Edit_Condition_2, true); 
+		createButton(parent, IDialogConstants.OK_ID, DebugUIMessages.ConditionalBreakpointErrorDialog__Edit_Condition_2, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 

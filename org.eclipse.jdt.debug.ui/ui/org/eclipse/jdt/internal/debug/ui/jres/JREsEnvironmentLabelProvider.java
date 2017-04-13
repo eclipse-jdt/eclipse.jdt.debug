@@ -23,18 +23,18 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Decorates JREs to emphasize those that are strictly compatible with an environment.
- *  
+ *
  * @since 3.2
  *
  */
 public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements IFontProvider {
-	
+
 	private IExecutionEnvironmentProvider fProvider;
 	private Font fFont = null;
-	
+
 	/**
 	 * Returns the current environment or <code>null</code> id none
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public interface IExecutionEnvironmentProvider {
@@ -44,9 +44,9 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 	public JREsEnvironmentLabelProvider(IExecutionEnvironmentProvider provider) {
 		fProvider = provider;
 	}
-	
-	
-	
+
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 	 */
@@ -68,15 +68,15 @@ public class JREsEnvironmentLabelProvider extends JREsLabelProvider implements I
 		String label = super.getText(element);
 		if (isStrictlyCompatible(element)) {
 			label = NLS.bind(JREMessages.JREsEnvironmentLabelProvider_0, new String[]{label, JREMessages.JREsEnvironmentLabelProvider_1});
-		}		
+		}
 		return label;
 	}
-	
+
 	private boolean isStrictlyCompatible(Object element) {
 		IExecutionEnvironment environment = fProvider.getEnvironment();
 		if (environment != null && element instanceof IVMInstall) {
 			return environment.isStrictlyCompatible((IVMInstall)element);
-		}	
+		}
 		return false;
 	}
 

@@ -20,7 +20,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 /**
  * Provides labels for Java stack frames with a specific scheduling rule as
  * not to conflict with implicit evaluations in the variables view.
- * 
+ *
  * @since 3.4
  */
 public class JavaStackFrameLabelProvider extends DebugElementLabelProvider {

@@ -30,17 +30,17 @@ import org.eclipse.osgi.util.NLS;
  * Handles stepping into a selected method, for a specific thread.
  */
 public class StepIntoSelectionHandler implements IDebugEventFilter {
-	
+
 	/**
 	 * The method to step into
 	 */
 	private IMethod fMethod;
-	
+
 	/**
 	 * Resolved signature of the method to step into
 	 */
 	private String fResolvedSignature;
-	
+
 	/**
 	 * The thread in which to step
 	 */
@@ -53,22 +53,22 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	private String fOriginalSignature;
 	private String fOriginalTypeName;
 	private int fOriginalStackDepth;
-	
+
 	/**
 	 * Whether this is the first step into.
 	 */
 	private boolean fFirstStep = true;
-	
+
 	/**
 	 * The state of step filters before the step.
 	 */
 	private boolean fStepFilterEnabledState;
-	
+
 	/**
 	 * Expected event kind
 	 */
 	private int fExpectedKind = -1;
-	
+
 	/**
 	 * Expected event detail
 	 */
@@ -94,38 +94,38 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Returns the target thread for the step.
-	 * 
+	 *
 	 * @return the target thread for the step
 	 */
 	protected IJavaThread getThread() {
 		return fThread;
 	}
-	
+
 	protected IJavaDebugTarget getDebugTarget() {
 		return (IJavaDebugTarget)getThread().getDebugTarget();
 	}
-	
+
 	/**
 	 * Returns the method to step into
-	 * 
+	 *
 	 * @return the method to step into
 	 */
 	protected IMethod getMethod() {
 		return fMethod;
 	}
-	
+
 	/**
 	 * Returns the resolved signature of the method to step into
-	 * 
+	 *
 	 * @return the resolved signature of the method to step into
 	 */
 	protected String getSignature() {
 		return fResolvedSignature;
-	}	
-	
+	}
+
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent)
 	 */
@@ -143,14 +143,14 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 				threadEvents++;
 			} else if (e.getSource() == getThread()) {
 				threadEvents++;
-			} 
+			}
 		}
-		
+
 		if (event == null) {
 			// nothing to process in this event set
 			return events;
 		}
-				
+
 		// create filtered event set
 		DebugEvent[] filtered = new DebugEvent[events.length - 1];
 		if (filtered.length > 0) {
@@ -162,13 +162,13 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 				}
 			}
 		}
-		
+
 		// if more than one event in our thread, abort (filtering our event)
 		if (threadEvents > 1) {
 			cleanup();
 			return filtered;
 		}
-		
+
 		// we have the one expected event - process it
 		switch (event.getKind()) {
 			case DebugEvent.RESUME:
@@ -179,7 +179,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 					return events; // include the first resume event
 				}
 				// secondary step - filter the event
-				return filtered;			
+				return filtered;
 			case DebugEvent.SUSPEND:
 				// compare location to desired location
 				try {
@@ -217,7 +217,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
                                         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
                                     }
                                 }
-                            };                            
+                            };
                         } else {
     						r = new Runnable() {
     							@Override
@@ -244,18 +244,18 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 							public void run() {
 								try {
 									setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_INTO);
-									frame.stepInto();	
+									frame.stepInto();
 								} catch (DebugException e) {
 									JDIDebugUIPlugin.log(e);
 									cleanup();
 									DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
 								}
 							}
-						};																
+						};
 					} else {
 						// we returned from the original frame - never hit the desired method
 						missed();
-						return events;								
+						return events;
 					}
 					DebugPlugin.getDefault().asyncExec(r);
 					// filter the events
@@ -265,14 +265,14 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 					JDIDebugUIPlugin.log(e);
 					cleanup();
 					return events;
-				}			
+				}
 		}
 		// execution should not reach here
 		return events;
-		 
+
 	}
-	
-	/** 
+
+	/**
 	 * Called when stepping returned from the original frame without entering the desired method.
 	 */
 	protected void missed() {
@@ -286,10 +286,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 				} catch (JavaModelException e) {
 					methodName = getMethod().getElementName();
 				}
-				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, NLS.bind(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();    
+				new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),  ActionMessages.StepIntoSelectionHandler_1, null, NLS.bind(ActionMessages.StepIntoSelectionHandler_Execution_did_not_enter____0____before_the_current_method_returned__1, new String[]{methodName}), MessageDialog.INFORMATION, new String[] {ActionMessages.StepIntoSelectionHandler_2}, 0).open();
 			}
 		};
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);		
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 
 	/**
@@ -307,10 +307,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
 			cleanup();
-			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});			
+			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
 		}
 	}
-	
+
 	/**
 	 * Cleans up when the step is complete/aborted.
 	 */
@@ -319,10 +319,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 		// restore step filter state
 		getDebugTarget().setStepFiltersEnabled(fStepFilterEnabledState);
 	}
-	
+
 	/**
 	 * Sets the expected debug event kind and detail we are waiting for next.
-	 * 
+	 *
 	 * @param kind event kind
 	 * @param detail event detail
 	 */
@@ -330,10 +330,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 		fExpectedKind = kind;
 		fExpectedDetail = detail;
 	}
-	
+
 	/**
 	 * Returns whether the given event is what we expected.
-	 * 
+	 *
 	 * @param event fire event
 	 * @return whether the event is what we expected
 	 */

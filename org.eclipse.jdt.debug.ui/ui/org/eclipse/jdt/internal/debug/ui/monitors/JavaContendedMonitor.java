@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -50,7 +50,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 		monitor.addElement(this);
 		fParent= parent;
 	}
-	
+
 	/**
 	 * returns the monitor that is in contention
 	 * @return the monitor that is in contention
@@ -58,7 +58,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 	public JavaMonitor getMonitor() {
 		return fMonitor;
 	}
-	
+
 	/**
 	 * Returns the parent <code>JavaOwningThread</code> or the original <code>IThread</code>
 	 * @return the parent <code>JavaOwningThread</code> or the original <code>IThread</code>
@@ -69,7 +69,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 		}
 		return fParent;
 	}
-	
+
 	/**
 	 * returns the <code>JavaOwningThread</code> that owns this monitor
 	 * @return the <code>JavaOwningThread</code> that owns this monitor
@@ -140,7 +140,7 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 		}
 		return thread;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,11 +36,11 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Edits project default classpath.
- * 
+ *
  * @since 3.2
  */
 public class DefaultClasspathEntryDialog extends MessageDialog {
-	
+
 	private DefaultProjectClasspathEntry fEntry;
 	private Button fButton;
 
@@ -55,9 +55,9 @@ public class DefaultClasspathEntryDialog extends MessageDialog {
 	protected Control createCustomArea(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		boolean wslocked = Platform.getPreferencesService().getBoolean(
-				LaunchingPlugin.ID_PLUGIN, 
-				JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, 
-				false, 
+				LaunchingPlugin.ID_PLUGIN,
+				JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES,
+				false,
 				null);
 		if(wslocked) {
 			Link link = new Link(comp, SWT.NONE);

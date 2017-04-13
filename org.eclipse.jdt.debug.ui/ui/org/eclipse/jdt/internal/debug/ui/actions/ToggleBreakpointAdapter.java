@@ -118,11 +118,11 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 /**
  * Toggles a line breakpoint in a Java editor.
- * 
+ *
  * @since 3.0
  */
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension2 {
-	
+
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 
@@ -170,7 +170,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	switch(element.getElementType()) {
 	    	case IJavaElement.FIELD: {
 	    		return ((IField)element).getDeclaringType();
-	    	}	
+	    	}
 	    	case IJavaElement.METHOD: {
 	    		return ((IMethod)element).getDeclaringType();
 	    	}
@@ -182,7 +182,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	    	}
     	}
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
      */
@@ -190,10 +190,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
     	toggleLineBreakpoints(part, selection, false, null);
     }
-    
+
     /**
      * Toggles a line breakpoint.
-     * @param part the currently active workbench part 
+     * @param part the currently active workbench part
      * @param selection the current selection
      * @param bestMatch if we should make a best match or not
      */
@@ -211,7 +211,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(IWorkbenchPart,
      *      ISelection)
      */
@@ -225,7 +225,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -251,7 +251,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								BreakpointToggleUtils.report(ActionMessages.ToggleBreakpointAdapter_6, part);
 							} else {
 								BreakpointToggleUtils.report(ActionMessages.ToggleBreakpointAdapter_9, part);
-							} 
+							}
                             return Status.OK_STATUS;
                         }
                         IJavaBreakpoint breakpoint = null;
@@ -328,7 +328,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.setSystem(true);
         job.schedule();
     }
-    
+
     /**
      * Performs the actual toggling of the line breakpoint
      * @param selection the current selection (from the editor or view)
@@ -402,7 +402,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						IRegion line = document.getLineInformation(lnumber - 1);
 						charstart = line.getOffset();
 						charend = charstart + line.getLength();
-					} 	
+					}
 					catch (BadLocationException ble) {JDIDebugUIPlugin.log(ble);}
 					BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 					IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(resource, tname, lnumber, charstart, charend, 0, true, attributes);
@@ -429,7 +429,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					BreakpointToggleUtils.report(ActionMessages.ToggleBreakpointAdapter_3, part);
                 	return Status.OK_STATUS;
                 }
-            } 
+            }
             catch (CoreException ce) {return ce.getStatus();}
 			finally {
 				BreakpointToggleUtils.setUnsetTracepoints(false);
@@ -437,7 +437,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return Status.OK_STATUS;
     }
-    
+
     /**
      * Toggles a class load breakpoint
      * @param part the part
@@ -484,7 +484,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						BreakpointToggleUtils.report(ActionMessages.ToggleBreakpointAdapter_0, part);
 						return Status.OK_STATUS;
 					}
-				} 
+				}
                 catch (CoreException e) {
 					return e.getStatus();
 				}
@@ -495,7 +495,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	job.setSystem(true);
     	job.schedule();
     }
-    
+
     /**
      * Returns the class load breakpoint for the specified type or null if none found
      * @param type the type to search for a class load breakpoint for
@@ -513,7 +513,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		}
 		return null;
     }
-    	
+
     /**
      * Returns the binary name for the {@link IType} derived from its {@link ITypeBinding}.
      * <br><br>
@@ -545,11 +545,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			    		}
 					}
 				}
-    		}    		
+    		}
     	}
 		return createQualifiedTypeName(type);
     }
-    
+
     /**
      * Checks if the type or any of its enclosing types are local types.
      * @param type
@@ -576,7 +576,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	}
     	return false;
     }
-    
+
     /**
      * Returns the package qualified name, while accounting for the fact that a source file might
      * not have a project
@@ -599,11 +599,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if(packName != null && !packName.equals(EMPTY_STRING)) {
 				tname =  packName+"."+tname; //$NON-NLS-1$
 			}
-    	} 
+    	}
     	catch (JavaModelException e) {}
     	return tname;
     }
-    
+
     /**
      * Prunes out all naming occurrences of anonymous inner types, since these types have no names
      * and cannot be derived visiting an AST (no positive type name matching while visiting ASTs)
@@ -631,7 +631,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	}
     	return buffer.toString();
     }
-    
+
     /**
      * gets the <code>IJavaElement</code> from the editor input
      * @param input the current editor input
@@ -646,10 +646,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	//try to get from the working copy manager
     	return DebugWorkingCopyManager.getWorkingCopy(input, false);
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -664,11 +664,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return (selection instanceof ITextSelection) && isMethod((ITextSelection) selection, part);
     }
-    
-   
+
+
 	/**
 	 * Returns whether the given part/selection is remote (viewing a repository)
-	 * 
+	 *
 	 * @param part
 	 * @param selection
 	 * @return
@@ -687,15 +687,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		IEditorInput input = editor.getEditorInput();
     		Object adapter = Platform.getAdapterManager().getAdapter(input, "org.eclipse.team.core.history.IFileRevision"); //$NON-NLS-1$
     		return adapter != null;
-    	} 
+    	}
     	return false;
     }
-    
+
     /**
      * Returns the text editor associated with the given part or <code>null</code>
      * if none. In case of a multi-page editor, this method should be used to retrieve
      * the correct editor to perform the breakpoint operation on.
-     * 
+     *
      * @param part workbench part
      * @return text editor part or <code>null</code>
      */
@@ -731,12 +731,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 		methods.add(method);
                 	}
                 }
-            } 
+            }
             catch (JavaModelException e) {}
         }
         return methods.toArray(new IMethod[methods.size()]);
     }
-    
+
     /**
      * Returns the methods from the selection, or an empty array
      * @param selection the selection to get the methods from
@@ -757,7 +757,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 		methods.add(method);
                 	}
                 }
-            } 
+            }
             catch (JavaModelException e) {}
         }
         return methods.toArray(new IMethod[methods.size()]);
@@ -855,11 +855,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					return type != null && type.isInterface();
 				}
 			}
-		} 
+		}
 		catch (CoreException e1) {}
     	return false;
     }
-    
+
     /**
      * Returns if the text selection is a field selection or not
      * @param selection the text selection
@@ -880,13 +880,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	    				element = ((IClassFile) element).getElementAt(selection.getOffset());
 	    			}
 	    			return element != null && element.getElementType() == IJavaElement.FIELD;
-				} 
-    			catch (JavaModelException e) {return false;}		
+				}
+    			catch (JavaModelException e) {return false;}
     		}
     	}
     	return false;
     }
-    
+
 
     /**
      * Determines if the selection is a field or not
@@ -914,10 +914,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -1015,10 +1015,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         job.setSystem(true);
         job.schedule();
     }
-    
+
     /**
      * Returns any existing watchpoint for the given field, or <code>null</code> if none.
-     * 
+     *
      * @param typeName fully qualified type name on which watchpoint may exist
      * @param fieldName field name
      * @return any existing watchpoint for the given field, or <code>null</code> if none
@@ -1038,7 +1038,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return null;
     }
-    
+
     /**
      * Returns the resolved signature of the given method
      * @param method method to resolve
@@ -1062,12 +1062,12 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             return null;
         }
         return Signature.createMethodSignature(resolvedParameterTypes, resolvedReturnType);
-    }    
+    }
 
     /**
      * Returns the resolved type signature for the given signature in the given
      * method, or <code>null</code> if unable to resolve.
-     * 
+     *
      * @param method method containing the type signature
      * @param typeSignature the type signature to resolve
      * @return the resolved type signature
@@ -1103,7 +1103,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
         String[] types = resolvedElementTypeNames[0];
         types[1] = types[1].replace('.', '$');
-        
+
         String resolvedElementTypeName = Signature.toQualifiedName(types);
 		String resolvedElementTypeSignature = EMPTY_STRING;
 		if (types[0].equals(EMPTY_STRING)) {
@@ -1133,7 +1133,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /**
      * Returns a handle to the specified method or <code>null</code> if none.
-     * 
+     *
      * @param editorPart
      *            the editor containing the method
      * @param typeName
@@ -1185,8 +1185,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     }
                     if (container == null) {
                         try {
-                            if (method.getDeclaringType().getFullyQualifiedName().equals(methodBreakpoint.getTypeName()) && 
-                            		method.getElementName().equals(methodBreakpoint.getMethodName()) && 
+                            if (method.getDeclaringType().getFullyQualifiedName().equals(methodBreakpoint.getTypeName()) &&
+                            		method.getElementName().equals(methodBreakpoint.getMethodName()) &&
                             		methodBreakpoint.getMethodSignature().equals(resolveMethodSignature(method))) {
                                 return methodBreakpoint;
                             }
@@ -1228,10 +1228,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return null;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -1246,11 +1246,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         }
         return (selection instanceof ITextSelection) && isField((ITextSelection) selection, part);
     }
-      
+
     /**
      * Returns a selection of the member in the given text selection, or the
      * original selection if none.
-     * 
+     *
      * @param part
      * @param selection
      * @return a structured selection of the member in the given text selection,
@@ -1316,7 +1316,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     	}
     	return root;
     }
-    
+
     /**
      * Return the associated IField (Java model) for the given
      * IJavaFieldVariable (JDI model)
@@ -1330,7 +1330,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
             return null;
         }
         IField field;
-        IJavaType declaringType = variable.getDeclaringType(); 
+        IJavaType declaringType = variable.getDeclaringType();
         IType type = JavaDebugUtils.resolveType(declaringType);
         if (type != null) {
             field = type.getField(varName);
@@ -1343,7 +1343,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -1414,7 +1414,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         			else if(loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
         				toggleLineBreakpoints(part, ts, false, loc);
         			}
-    			} 
+    			}
     		}
     		else if(member.getElementType() == IJavaElement.TYPE) {
 				if (BreakpointToggleUtils.isToggleTracepoints()) {
@@ -1433,7 +1433,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
 	/**
 	 * Deletes the given breakpoint using the operation history, which allows to undo the deletion.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint to delete
 	 * @param part a workbench part, or <code>null</code> if unknown
 	 * @param progressMonitor the progress monitor
@@ -1513,7 +1513,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
@@ -1521,7 +1521,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
     	if (isRemote(part, selection)) {
     		return false;
-    	}    	
+    	}
         return canToggleLineBreakpoints(part, selection);
     }
 
@@ -1576,7 +1576,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 
 	/**
 	 * Returns the {@link ITypeRoot} for the given {@link IEditorInput}
-	 * 
+	 *
 	 * @param input
 	 * @return the type root or <code>null</code> if one cannot be derived
 	 * @since 3.8

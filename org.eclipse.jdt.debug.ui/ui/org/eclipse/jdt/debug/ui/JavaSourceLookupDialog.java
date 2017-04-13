@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A dialog to manipulate the source lookup path for a launch
- * configuration. 
+ * configuration.
  * <p>
  * This class may be instantiated.
  * </p>
@@ -43,19 +43,19 @@ import org.eclipse.swt.widgets.Shell;
  *  lookup among a set of participants, searching a set of source containers.
  *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
- *  has been replaced by a dialog in the debug platform - 
+ *  has been replaced by a dialog in the debug platform -
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupDialog</code>.
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated
 public class JavaSourceLookupDialog extends Dialog {
-		
+
 	private SourceLookupBlock fSourceLookupBlock;
 	private ILaunchConfiguration fConfiguration;
 	private String fMessage;
 	private boolean fNotAskAgain;
 	private Button fAskAgainCheckBox;
-	
+
 	/**
 	 * Constructs a dialog to manipulate the source lookup path of the given
 	 * launch configuration. The source lookup path is retrieved from the given
@@ -63,8 +63,8 @@ public class JavaSourceLookupDialog extends Dialog {
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH</code> and
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH</code>. If the user
 	 * changes the source lookup path and presses "OK", the launch configuration
-	 * is updated with the new source lookup path. 
-	 * 
+	 * is updated with the new source lookup path.
+	 *
 	 * @param shell the shell to open the dialog on
 	 * @param message the message to display in the dialog
 	 * @param configuration the launch configuration from which the source lookup
@@ -78,16 +78,16 @@ public class JavaSourceLookupDialog extends Dialog {
 		fAskAgainCheckBox= null;
 		fConfiguration = configuration;
 	}
-	
+
 	/**
 	 * Returns whether the "do not ask again" check box is selected in the dialog.
-	 * 
+	 *
 	 * @return whether the "do not ask again" check box is selected in the dialog
 	 */
 	public boolean isNotAskAgain() {
 		return fNotAskAgain;
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -95,12 +95,12 @@ public class JavaSourceLookupDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
-		getShell().setText(LauncherMessages.JavaUISourceLocator_selectprojects_title); 
-		
+		getShell().setText(LauncherMessages.JavaUISourceLocator_selectprojects_title);
+
 		Composite composite= (Composite) super.createDialogArea(parent);
 		composite.setLayout(new GridLayout());
 		composite.setFont(font);
-		
+
 		int pixelWidth= convertWidthInCharsToPixels(70);
 		Label message= new Label(composite, SWT.LEFT + SWT.WRAP);
 		message.setText(fMessage);
@@ -108,7 +108,7 @@ public class JavaSourceLookupDialog extends Dialog {
 		data.widthHint= pixelWidth;
 		message.setLayoutData(data);
 		message.setFont(font);
-		
+
 		fSourceLookupBlock.createControl(composite);
 		Control inner = fSourceLookupBlock.getControl();
 		fSourceLookupBlock.initializeFrom(fConfiguration);
@@ -121,8 +121,8 @@ public class JavaSourceLookupDialog extends Dialog {
 		data.widthHint= pixelWidth;
 		fAskAgainCheckBox.setLayoutData(data);
 		fAskAgainCheckBox.setFont(font);
-		fAskAgainCheckBox.setText(LauncherMessages.JavaUISourceLocator_askagain_message); 
-		
+		fAskAgainCheckBox.setText(LauncherMessages.JavaUISourceLocator_askagain_message);
+
 		return composite;
 	}
 

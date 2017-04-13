@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 
 	private NewSnippetFileWizardPage fPage;
 	private IStructuredSelection fSelection;
-	
+
 	public NewSnippetFileCreationWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(SnippetMessages.getString("NewSnippetFileCreationWizard.title")); //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */	
+	 */
 	@Override
 	public boolean performFinish() {
 		return fPage.finish();
@@ -69,7 +69,7 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 		fSelection= selection;
 		setDefaultPageImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_WIZBAN_NEWSCRAPPAGE));
 	}
-	
+
 	/**
 	 * If the current active editor edits a Java element return it, else
 	 * return null
@@ -85,6 +85,6 @@ public class NewSnippetFileCreationWizard extends Wizard implements INewWizard {
 				}
 			}
 		}
-		return null;	
+		return null;
 	}
 }

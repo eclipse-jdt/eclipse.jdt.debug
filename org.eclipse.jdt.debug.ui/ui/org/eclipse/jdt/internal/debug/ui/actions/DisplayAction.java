@@ -49,8 +49,8 @@ public class DisplayAction extends EvaluateAction {
 				}
 			});
 			return;
-		} 		
-		
+		}
+
 		final String snippet= evaluationResult.getSnippet();
 		IJavaValue resultValue= evaluationResult.getValue();
 		try {
@@ -60,18 +60,18 @@ public class DisplayAction extends EvaluateAction {
 				sig= type.getSignature();
 			}
 			if ("V".equals(sig)) { //$NON-NLS-1$
-				displayStringResult(snippet, ActionMessages.DisplayAction_no_result_value); 
+				displayStringResult(snippet, ActionMessages.DisplayAction_no_result_value);
 			} else {
 				final String resultString;
 				if (sig != null) {
-					resultString= NLS.bind(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() }); 
+					resultString= NLS.bind(ActionMessages.DisplayAction_type_name_pattern, new Object[] { resultValue.getReferenceTypeName() });
 				} else {
 					resultString= ""; //$NON-NLS-1$
 				}
 				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					@Override
 					public void detailComputed(IValue value, String result) {
-						displayStringResult(snippet, NLS.bind(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)})); 
+						displayStringResult(snippet, NLS.bind(ActionMessages.DisplayAction_result_pattern, new Object[] { resultString, trimDisplayResult(result)}));
 					}
 				});
 			}
@@ -109,11 +109,11 @@ public class DisplayAction extends EvaluateAction {
 		}
 		super.run();
 	}
-    
+
     /**
      * Trims the result based on the preference of how long the
      * variable details should be.
-     * 
+     *
      * TODO: illegal internal reference to IInternalDebugUIConstants
      */
     public static String trimDisplayResult(String result) {

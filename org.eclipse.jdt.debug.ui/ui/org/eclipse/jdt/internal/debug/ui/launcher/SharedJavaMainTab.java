@@ -38,25 +38,25 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Provides general widgets and methods for a Java type launch configuration 
- * 'Main' tab. 
+ * Provides general widgets and methods for a Java type launch configuration
+ * 'Main' tab.
  * This class provides shared functionality for those main tabs which have a 'main type' field on them;
  * such as a main method for a local Java application, or an Applet for Java Applets
- * 
+ *
  * @since 3.2
  */
 public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 
 	protected Text fMainText;
 	private Button fSearchButton;
-	
+
 	/**
 	 * Creates the widgets for specifying a main type.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
 	protected void createMainTypeEditor(Composite parent, String text) {
-		Group group = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL); 
+		Group group = SWTFactory.createGroup(parent, text, 2, 1, GridData.FILL_HORIZONTAL);
 		fMainText = SWTFactory.createSingleText(group, 1);
 		fMainText.addModifyListener(new ModifyListener() {
 			@Override
@@ -65,7 +65,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 			}
 		});
 		ControlAccessibleListener.addListener(fMainText, group.getText());
-		fSearchButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_2, null); 
+		fSearchButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_2, null);
 		fSearchButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -77,19 +77,19 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		});
 		createMainTypeExtensions(group);
 	}
-	
+
 	/**
 	 * This method allows the group for main type to be extended with custom controls.
 	 * All control added via this method come after the main type text editor and search button in
 	 * the order they are added to the parent composite
-	 * 
+	 *
 	 * @param parent the parent to add to
 	 * @since 3.3
 	 */
 	protected void createMainTypeExtensions(Composite parent) {
 		//do nothing by default
 	}
-	
+
 	/**
 	 * The select button pressed handler
 	 */
@@ -113,13 +113,13 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 			try {
 				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(new IJavaElement[]{javaElement}, false);
 				MainMethodSearchEngine engine = new MainMethodSearchEngine();
-				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);				
+				IType[] types = engine.searchMainMethods(getLaunchConfigurationDialog(), scope, false);
 				if (types != null && (types.length > 0)) {
 					// Simply grab the first main type found in the searched element
 					name = types[0].getFullyQualifiedName();
 				}
 			}
-			catch (InterruptedException ie) {JDIDebugUIPlugin.log(ie);} 
+			catch (InterruptedException ie) {JDIDebugUIPlugin.log(ie);}
 			catch (InvocationTargetException ite) {JDIDebugUIPlugin.log(ite);}
 		}
 		if (name == null) {
@@ -130,12 +130,12 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 			int index = name.lastIndexOf('.');
 			if (index > 0) {
 				name = name.substring(index + 1);
-			}	
+			}
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);
 		}
 	}
-	
+
 	/**
 	 * Loads the main type from the launch configuration's preference store
 	 * @param config the config to load the main type from
@@ -145,7 +145,7 @@ public abstract class SharedJavaMainTab extends AbstractJavaMainTab {
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 		}
-		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}	
-		fMainText.setText(mainTypeName);	
+		catch (CoreException ce) {JDIDebugUIPlugin.log(ce);}
+		fMainText.setText(mainTypeName);
 	}
 }

@@ -41,7 +41,7 @@ import org.eclipse.ui.PlatformUI;
  *  lookup among a set of participants, searching a set of source containers.
  *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
- *  has been replaced by a source lookup tab in the debug platform - 
+ *  has been replaced by a source lookup tab in the debug platform -
  *  <code>org.eclipse.debug.ui.sourcelookup.SourceLookupTab</code>.
  * @noextend This class is not intended to be sub-classed by clients.
  */
@@ -50,7 +50,7 @@ import org.eclipse.ui.PlatformUI;
 public class JavaSourceLookupTab extends JavaLaunchTab {
 
 	protected SourceLookupBlock fSourceLookupBlock;
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -64,16 +64,16 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 		topLayout.marginHeight= 0;
 		topLayout.marginWidth= 0;
 		comp.setLayout(topLayout);
-		comp.setFont(parent.getFont());	
-		
+		comp.setFont(parent.getFont());
+
 		createVerticalSpacer(comp, 1);
-		
+
 		fSourceLookupBlock = new SourceLookupBlock();
 		fSourceLookupBlock.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		fSourceLookupBlock.createControl(comp);
 		GridData gd = (GridData)fSourceLookupBlock.getControl().getLayoutData();
 		gd.heightHint = 200;
-		gd.widthHint = 250;				
+		gd.widthHint = 250;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupBlock.initializeFrom(configuration);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
@@ -106,28 +106,28 @@ public class JavaSourceLookupTab extends JavaLaunchTab {
 
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.jdt.debug.ui.javaSourceLookupTab"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
 	public String getName() {
-		return LauncherMessages.JavaSourceLookupTab_Source_1; 
+		return LauncherMessages.JavaSourceLookupTab_Source_1;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-	}	
-		
+	}
+
 }

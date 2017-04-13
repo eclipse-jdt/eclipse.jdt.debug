@@ -69,8 +69,8 @@ public class MemberActionFilter implements IActionFilter {
 					}
 					try {
 						return type != null && type.isInterface();
-					} 
-					catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}  
+					}
+					catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
 				}
 				if(value.equals("isConstructor")) { //$NON-NLS-1$
 					IMethod method = null;
@@ -81,14 +81,14 @@ public class MemberActionFilter implements IActionFilter {
 						} catch (JavaModelException e) {
 							JDIDebugUIPlugin.log(e);
 							return false;
-						}  
+						}
 					}
 				}
 				if(value.equals("isValidField")) { //$NON-NLS-1$
 					try {
 						int flags = member.getFlags();
 						return (member.getElementType() == IJavaElement.FIELD) & (!Flags.isFinal(flags) & !(Flags.isStatic(flags) & Flags.isFinal(flags)));
-					} 
+					}
 					catch (JavaModelException e) {
 						JDIDebugUIPlugin.log(e);
 						return false;

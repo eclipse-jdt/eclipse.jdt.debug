@@ -18,7 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
  * @since 3.2
  */
 public abstract class MethodBreakpointChange extends LineBreakpointChange {
-	
+
 	private String fMethodName, fSignature;
 	private boolean fEntry, fExit, fNativeOnly;
 
@@ -35,7 +35,7 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 		fExit = breakpoint.isExit();
 		fNativeOnly = breakpoint.isNativeOnly();
 	}
-	
+
 	/**
 	 * Returns the name of the method
 	 * @return the name of the method
@@ -43,7 +43,7 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 	protected String getMethodName() {
 		return fMethodName;
 	}
-	
+
 	/**
 	 * Returns the signature of the method
 	 * @return the signature of the method
@@ -51,7 +51,7 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 	protected String getSignature() {
 		return fSignature;
 	}
-	
+
 	/**
 	 * Returns if it is an entry breakpoint
 	 * @return if it is an entry breakpoint
@@ -59,7 +59,7 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 	protected boolean isEntry() {
 		return fEntry;
 	}
-	
+
 	/**
 	 * Returns if it is an exit breakpoint
 	 * @return if it is an exit breakpoint
@@ -67,7 +67,7 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 	protected boolean isExit() {
 		return fExit;
 	}
-	
+
 	/**
 	 * Returns if it is native only
 	 * @return if it is native only
@@ -86,6 +86,6 @@ public abstract class MethodBreakpointChange extends LineBreakpointChange {
 		breakpoint.setEntry(fEntry);
 		breakpoint.setExit(fExit);
 		breakpoint.setNativeOnly(fNativeOnly);
-	}	
-	
+	}
+
 }

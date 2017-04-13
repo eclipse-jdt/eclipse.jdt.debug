@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,16 +12,16 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 /**
- * Used to provide a description for JRE selections in the 
+ * Used to provide a description for JRE selections in the
  * installed JREs block.
  */
 public abstract class JREDescriptor {
 
 	/**
 	 * Returns a description of the JRE setting.
-	 * 
+	 *
 	 * @return description of the JRE setting
 	 */
 	public abstract String getDescription();
-	
+
 }

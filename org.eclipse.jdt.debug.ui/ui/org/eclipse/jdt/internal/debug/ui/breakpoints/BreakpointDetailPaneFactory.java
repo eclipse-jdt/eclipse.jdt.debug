@@ -27,11 +27,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * Detail pane factory for Java breakpoints.
- * 
+ *
  * @since 3.6
  */
 public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
-	
+
 	/**
 	 * Maps pane IDs to names
 	 */
@@ -126,7 +126,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	public String getDetailPaneDescription(String paneID) {
 		return getNameMap().get(paneID);
 	}
-	
+
 	private Map<String, String> getNameMap() {
 		if (fNameMap == null) {
 			fNameMap = new HashMap<String, String>();

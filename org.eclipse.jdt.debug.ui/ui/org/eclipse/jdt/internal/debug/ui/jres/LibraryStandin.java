@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
@@ -25,7 +25,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
  * Wrapper for an original library location, to support editing.
- * 
+ *
  */
 public final class LibraryStandin {
 	private IPath fSystemLibrary;
@@ -33,45 +33,45 @@ public final class LibraryStandin {
 	private IPath fExternalAnnotations;
 	private IPath fPackageRootPath;
 	private URL fJavadocLocation;
-	
+
 	/**
 	 * Creates a new library standin on the given library location.
-	 */	
+	 */
 	public LibraryStandin(LibraryLocation libraryLocation) {
 		fSystemLibrary= libraryLocation.getSystemLibraryPath();
 		setSystemLibrarySourcePath(libraryLocation.getSystemLibrarySourcePath());
 		setPackageRootPath(libraryLocation.getPackageRootPath());
 		setJavadocLocation(libraryLocation.getJavadocLocation());
 		setExternalAnnotationsPath(libraryLocation.getExternalAnnotationsPath());
-	}		
-		
+	}
+
 	/**
 	 * Returns the JRE library jar location.
-	 * 
+	 *
 	 * @return The JRE library jar location.
 	 */
 	public IPath getSystemLibraryPath() {
 		return fSystemLibrary;
 	}
-	
+
 	/**
 	 * Returns the JRE library source zip location.
-	 * 
+	 *
 	 * @return The JRE library source zip location.
 	 */
 	public IPath getSystemLibrarySourcePath() {
 		return fSystemLibrarySource;
-	}	
-	
+	}
+
 	/**
 	 * Sets the source location for this library.
-	 * 
+	 *
 	 * @param path path source archive or Path.EMPTY if none
 	 */
 	void setSystemLibrarySourcePath(IPath path) {
 		fSystemLibrarySource = path;
 	}
-	
+
 	/**
 	 * Returns the path to the external annotations.
 	 *
@@ -87,22 +87,22 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns the path to the default package in the sources zip file
-	 * 
+	 *
 	 * @return The path to the default package in the sources zip file.
 	 */
 	public IPath getPackageRootPath() {
 		return fPackageRootPath;
 	}
-	
+
 	/**
 	 * Sets the root source location within source archive.
-	 * 
+	 *
 	 * @param path path to root source location or Path.EMPTY if none
 	 */
 	void setPackageRootPath(IPath path) {
 		fPackageRootPath = path;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -110,12 +110,12 @@ public final class LibraryStandin {
 	public boolean equals(Object obj) {
 		if (obj instanceof LibraryStandin) {
 			LibraryStandin lib = (LibraryStandin)obj;
-			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
+			return getSystemLibraryPath().equals(lib.getSystemLibraryPath())
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
 				&& equals(getPackageRootPath(), lib.getPackageRootPath())
 				&& equals(getExternalAnnotationsPath(), lib.getExternalAnnotationsPath())
 				&& equalURLs(getJavadocLocation(), lib.getJavadocLocation());
-		} 
+		}
 		return false;
 	}
 
@@ -126,7 +126,7 @@ public final class LibraryStandin {
 	public int hashCode() {
 		return getSystemLibraryPath().hashCode();
 	}
-	
+
 	/**
 	 * Returns whether the given paths are equal - either may be <code>null</code>.
 	 * @param path1 path to be compared
@@ -136,14 +136,14 @@ public final class LibraryStandin {
 	protected boolean equals(IPath path1, IPath path2) {
 		return equalsOrNull(path1, path2);
 	}
-	
+
 	/**
 	 * Returns whether the given objects are equal - either may be <code>null</code>.
 	 * @param o1 object to be compared
 	 * @param o2 object to be compared
 	 * @return whether the given objects are equal or both null
 	 * @since 3.1
-	 */	
+	 */
 	private boolean equalsOrNull(Object o1, Object o2) {
 		if (o1 == null) {
 			return o2 == null;
@@ -169,10 +169,10 @@ public final class LibraryStandin {
 		}
 		return url1.toExternalForm().equals(url2.toExternalForm());
 	}
-	
+
 	/**
 	 * Returns the Javadoc location associated with this Library location.
-	 * 
+	 *
 	 * @return a url pointing to the Javadoc location associated with
 	 * 	this Library location, or <code>null</code> if none
 	 * @since 3.1
@@ -180,10 +180,10 @@ public final class LibraryStandin {
 	public URL getJavadocLocation() {
 		return fJavadocLocation;
 	}
-	
+
 	/**
 	 * Sets the javadoc location of this library.
-	 *  
+	 *
 	 * @param url The location of the javadoc for <code>library</code> or <code>null</code>
 	 *  if none
 	 */
@@ -193,16 +193,16 @@ public final class LibraryStandin {
 
 	/**
 	 * Returns an equivalent library location.
-	 * 
+	 *
 	 * @return library location
 	 */
 	LibraryLocation toLibraryLocation() {
 		return new LibraryLocation(getSystemLibraryPath(), getSystemLibrarySourcePath(), getPackageRootPath(), getJavadocLocation(), null, getExternalAnnotationsPath());
 	}
-	
+
 	/**
 	 * Returns a status for this library describing any error states
-	 * 
+	 *
 	 * @return
 	 */
 	IStatus validate() {
@@ -232,5 +232,5 @@ public final class LibraryStandin {
 
 		return Status.OK_STATUS;
 	}
-	
+
 }

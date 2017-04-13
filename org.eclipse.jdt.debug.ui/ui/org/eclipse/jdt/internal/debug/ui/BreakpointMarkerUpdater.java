@@ -37,31 +37,31 @@ import org.eclipse.ui.texteditor.IMarkerUpdater;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 /**
- * This class provides a mechanism to correct the placement of a 
+ * This class provides a mechanism to correct the placement of a
  * breakpoint marker when the related document is edited.
- * 
+ *
  * This updater is used to cover the line number discrepancy cases that <code>BasicMarkerUpdater</code> does not:
  * <ul>
- * <li>If you insert a blank line at the start of the line of code, the breakpoint 
- * is moved from the blank line to the next viable line down, 
+ * <li>If you insert a blank line at the start of the line of code, the breakpoint
+ * is moved from the blank line to the next viable line down,
  * following the same breakpoint placement rules as creating a breakpoint</li>
- * 
- * <li>If you select the contents of an entire line and delete them 
+ *
+ * <li>If you select the contents of an entire line and delete them
  * (leaving the line blank), the breakpoint is moved to the next viable line down,
  * following the same breakpoint placement rules as creating a breakpoint</li>
- * 
- * <li>If the breakpoint is on the last viable line of a class file and the line is removed via either of 
+ *
+ * <li>If the breakpoint is on the last viable line of a class file and the line is removed via either of
  * the aforementioned deletion cases, the breakpoint is removed</li>
- * 
+ *
  * <li>If a line breakpoint would be moved to a valid method location with an invalid line number it is removed,
  * see  {@link https://bugs.eclipse.org/bugs/show_bug.cgi?id=188676} for details</li>
- * 
+ *
  * <li>If a line breakpoint will be moved to a line that already has a line breakpoint on it, the one
  * being moved is removed, see {@link https://bugs.eclipse.org/bugs/show_bug.cgi?id=129066} for details</li>
- * 
+ *
  * <li>In the general deletion case if a valid breakpoint location can not be determined, it is removed</li>
  * </ul>
- * 
+ *
  * @since 3.3
  */
 public class BreakpointMarkerUpdater implements IMarkerUpdater {
@@ -139,12 +139,12 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 				ensureRanges(document, marker, line);
 			}
 			return true;
-		} 
-		catch (BadLocationException e) {JDIDebugUIPlugin.log(e);} 
+		}
+		catch (BadLocationException e) {JDIDebugUIPlugin.log(e);}
 		catch (CoreException e) {JDIDebugUIPlugin.log(e);}
 		return false;
 	}
-	
+
 	/**
 	 * Updates the charstart and charend ranges if necessary for the given line.
 	 * Returns immediately if the line is not valid (< 0 or greater than the total line number count)
@@ -163,18 +163,18 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 		MarkerUtilities.setCharStart(marker, charstart);
 		MarkerUtilities.setCharEnd(marker, charend);
 	}
-	
+
 	/**
 	 * Returns if the specified marker is for an <code>IJavaLineBreakpoint</code>
 	 * @param marker
 	 * @return true if the marker is for an <code>IJavalineBreakpoint</code>, false otherwise
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private boolean isLineBreakpoint(IMarker marker) {
 		return MarkerUtilities.isMarkerType(marker, "org.eclipse.jdt.debug.javaLineBreakpointMarker"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Searches for an existing line breakpoint on the specified line in the current type that does not match the id of the specified marker
 	 * @param resource the resource to care about
@@ -183,7 +183,7 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 	 * @param currentmarker the current marker we are comparing to see if it will be moved onto an existing one
 	 * @return an existing line breakpoint on the current line of the given resource and type if there is one
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private IJavaLineBreakpoint lineBreakpointExists(IResource resource, String typeName, int lineNumber, IMarker currentmarker) throws CoreException {
@@ -206,6 +206,6 @@ public class BreakpointMarkerUpdater implements IMarkerUpdater {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 }

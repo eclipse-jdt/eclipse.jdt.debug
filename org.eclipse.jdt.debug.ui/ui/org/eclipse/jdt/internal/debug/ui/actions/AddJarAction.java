@@ -31,17 +31,17 @@ import org.eclipse.jface.action.IAction;
 public class AddJarAction extends RuntimeClasspathAction {
 
 	public AddJarAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddJarAction_Add__JARs_1, viewer); 
-	}	
+		super(ActionMessages.AddJarAction_Add__JARs_1, viewer);
+	}
 
 	/**
 	 * Prompts for a jar to add.
-	 * 
+	 *
 	 * @see IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
-		
+
 		IPath[] paths = BuildPathDialogAccess.chooseJAREntries(getShell(), null, getSelectedJars());
 
 		if (paths != null && paths.length > 0) {
@@ -51,9 +51,9 @@ public class AddJarAction extends RuntimeClasspathAction {
 				res[i]= JavaRuntime.newArchiveRuntimeClasspathEntry(elem);
 			}
 			getViewer().addEntries(res);
-		}	
+		}
 	}
-	
+
 	/**
 	 * Returns a list of resources of currently selected jars
 	 * @return the selected jar paths
@@ -73,7 +73,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 		}
 		return jars.toArray(new IPath[jars.size()]);
 	}
-	
+
 	@Override
 	protected int getActionType() {
 		return ADD;

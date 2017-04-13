@@ -36,12 +36,12 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Manages the current evaluation context (stack frame) for evaluation actions.
  * In each page, the selection is tracked in each debug view (if any). When a stack
- * frame selection exists, the "debuggerActive" System property is set to true. 
+ * frame selection exists, the "debuggerActive" System property is set to true.
  */
 public class EvaluationContextManager implements IWindowListener, IDebugContextListener {
 
 	private static EvaluationContextManager fgManager;
-	
+
 	/**
 	 * System property indicating a stack frame is selected in the debug view with an
 	 * <code>IJavaStackFrame</code> adapter.
@@ -55,20 +55,20 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/**
 	 * System property indicating the frame in the debug view supports 'force return'
 	 */
-	private static final String SUPPORTS_FORCE_RETURN = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsForceReturn"; //$NON-NLS-1$	
+	private static final String SUPPORTS_FORCE_RETURN = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsForceReturn"; //$NON-NLS-1$
 	/**
 	 * System property indicating whether the frame in the debug view supports instance and reference retrieval (1.5 VMs and later).
 	 */
 	private static final String SUPPORTS_INSTANCE_RETRIEVAL = JDIDebugUIPlugin.getUniqueIdentifier() + ".supportsInstanceRetrieval"; //$NON-NLS-1$
-	
+
 	private Map<IWorkbenchPage, IJavaStackFrame> fContextsByPage = null;
-	
+
 	private IWorkbenchWindow fActiveWindow;
-	
+
 	private EvaluationContextManager() {
 		DebugUITools.getDebugContextManager().addDebugContextListener(this);
 	}
-	
+
 	public static void startup() {
 		Runnable r = new Runnable() {
 			@Override
@@ -78,11 +78,11 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 					IWorkbench workbench = PlatformUI.getWorkbench();
 					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 					for (int i = 0; i < windows.length; i++) {
-						fgManager.windowOpened(windows[i]);	
+						fgManager.windowOpened(windows[i]);
 					}
 					workbench.addWindowListener(fgManager);
 					fgManager.fActiveWindow = workbench.getActiveWorkbenchWindow();
-				}				
+				}
 			}
 		};
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
@@ -120,7 +120,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/**
 	 * Sets the evaluation context for the given page, and notes that
 	 * a valid execution context exists.
-	 * 
+	 *
 	 * @param page
 	 * @param frame
 	 */
@@ -150,7 +150,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	/**
 	 * Removes an evaluation context for the given page, and determines if
 	 * any valid execution context remain.
-	 * 
+	 *
 	 * @param page
 	 */
 	private void removeContext(IWorkbenchPage page) {
@@ -164,7 +164,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 			}
 		}
 	}
-	
+
 	private static IJavaStackFrame getContext(IWorkbenchPage page) {
 		if (fgManager != null) {
 			if (fgManager.fContextsByPage != null) {
@@ -173,7 +173,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the evaluation context for the given part, or <code>null</code> if none.
 	 * The evaluation context corresponds to the selected stack frame in the following
@@ -183,7 +183,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 * <li>stack frame in active page of other window</li>
 	 * <li>stack frame in page of other windows</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param part the part that the evaluation action was invoked from
 	 * @return the stack frame that supplies an evaluation context, or <code>null</code>
 	 *   if none
@@ -206,7 +206,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 * <li>stack frame in active page of another window</li>
 	 * <li>stack frame in a page of another window</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param window the window that the evaluation action was invoked from, or
 	 *  <code>null</code> if the current window should be consulted
 	 * @return the stack frame that supplies an evaluation context, or <code>null</code>
@@ -220,7 +220,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		}
 		return getEvaluationContext(window, alreadyVisited);
 	}
-	
+
 	private static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window, List<IWorkbenchWindow> alreadyVisited) {
 		IWorkbenchPage activePage = window.getActivePage();
 		IJavaStackFrame frame = null;
@@ -237,9 +237,9 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 					}
 				}
 			}
-			
+
 			alreadyVisited.add(window);
-			
+
 			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++) {
 				if (!alreadyVisited.contains(windows[i])) {
@@ -253,7 +253,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 		}
 		return frame;
 	}
-	
+
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {

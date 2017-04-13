@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.classpath;
- 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -49,16 +49,16 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * A viewer that displays and manipulates runtime classpath entries.
  */
 public class RuntimeClasspathViewer implements IClasspathViewer {
-		
+
 	/**
 	 * Entry changed listeners
 	 */
 	private ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
-	
+
 	private IClasspathEntry fCurrentParent= null;
-	
+
 	private IPreferenceChangeListener fPrefListeners = new IPreferenceChangeListener() {
-		
+
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
@@ -126,7 +126,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	}
 
 	private final RuntimeClasspathFilteredTree fTree;
-		
+
 	public TreeViewer getTreeViewer() {
 		return fTree.getViewer();
 	}
@@ -137,11 +137,11 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	 * @param parent the parent control
 	 */
 	public RuntimeClasspathViewer(Composite parent) {
-		
+
 		final PatternFilter filter = new PatternFilter();
 		filter.setIncludeLeadingWildcard(true);
 		fTree = new RuntimeClasspathFilteredTree(parent, filter);
-		
+
 		getTreeViewer().getTree().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
@@ -166,7 +166,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 		if(prefs != null) {
 			prefs.addPreferenceChangeListener(fPrefListeners);
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
@@ -180,7 +180,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 		getClasspathContentProvider().setRefreshEnabled(true);
 		notifyChanged();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
@@ -188,7 +188,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	public IRuntimeClasspathEntry[] getEntries() {
 		return getClasspathContentProvider().getModel().getAllEntries();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
@@ -204,15 +204,15 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 			if (!existingEntries.contains(entries[i])) {
 				getClasspathContentProvider().add(fCurrentParent, entries[i], beforeElement);
 			}
-		} 
+		}
 		getClasspathContentProvider().setRefreshEnabled(true);
 		notifyChanged();
 	}
-	
+
 	private boolean resolveCurrentParent(ISelection selection) {
 		fCurrentParent= null;
 		Iterator<?> selected= ((IStructuredSelection)selection).iterator();
-		
+
 		while (selected.hasNext()) {
 			Object element = selected.next();
 			if (element instanceof ClasspathEntry) {
@@ -236,7 +236,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
@@ -244,7 +244,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	/**
 	 * Sets the launch configuration context for this viewer, if any
 	 * @param configuration the backing {@link ILaunchConfiguration}
@@ -254,15 +254,15 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 			((ClasspathLabelProvider) getTreeViewer().getLabelProvider()).setLaunchConfiguration(configuration);
 		}
 	}
-	
+
 	public void addEntriesChangedListener(IEntriesChangedListener listener) {
 		fListeners.add(listener);
 	}
-	
+
 	public void removeEntriesChangedListener(IEntriesChangedListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
 	 */
@@ -272,7 +272,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 			listener.entriesChanged(this);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
@@ -293,9 +293,9 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 				return 1;
 			}
 		}
-		
+
 		return -1;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -305,7 +305,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	public Shell getShell() {
 		return getTreeViewer().getControl().getShell();
 	}
-	
+
 	private ClasspathContentProvider getClasspathContentProvider() {
 		return (ClasspathContentProvider) getTreeViewer().getContentProvider();
 	}
@@ -315,7 +315,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	 */
 	@Override
 	public boolean updateSelection(int actionType, IStructuredSelection selection) {
-		
+
 		if (selection.isEmpty()) {
 			return false;
 		}
@@ -345,7 +345,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 			default :
 				break;
 		}
-		
+
 		return true;
 	}
 
@@ -364,7 +364,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 				entries.add(element);
 			}
 		}
-		
+
 		return new StructuredSelection(entries);
 	}
 

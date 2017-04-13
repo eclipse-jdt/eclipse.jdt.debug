@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,13 +32,13 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Toggles a class prepare breakpoint for a selected type
- * 
+ *
  * @since 3.0
  */
 public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate,	IActionDelegate2 {
-	
+
 	private ISelection fSelection;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -85,7 +85,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					}
 				}
 				if (existing != null) {
-					existing.delete(); 
+					existing.delete();
 				} else {
 					int kind = IJavaClassPrepareBreakpoint.TYPE_CLASS;
 					if (!type.isClass()) {
@@ -93,7 +93,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					}
 					HashMap<String, Object> map = new HashMap<String, Object>(10);
 					BreakpointUtils.addJavaBreakpointAttributes(map, type);
-					
+
 					ISourceRange range= type.getNameRange();
 					int start= -1;
 					int end= -1;
@@ -104,7 +104,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), kind, start, end, true, map);
 				}
 			} catch (CoreException e) {
-				
+
 			}
 		}
 	}

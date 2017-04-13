@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
 public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 
 	private IType fDestType;
-	
+
 	public MethodBreakpointTypeChange(IJavaMethodBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
@@ -59,7 +59,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 		String[] parameterTypes = Signature.getParameterTypes(getSignature());
 		for (int i = 0; i < parameterTypes.length; i++) {
 			parameterTypes[i] = parameterTypes[i].replace('/', '.');
-			
+
 		}
 		IMethod destMethod = fDestType.getMethod(getMethodName(), parameterTypes);
 		if (!destMethod.exists()) {
@@ -88,7 +88,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 				NO_LINE_NUMBER,
 				range[1],
 				range[2],
-				getHitCount(), 
+				getHitCount(),
 				true,
 				map);
 		apply(breakpoint);

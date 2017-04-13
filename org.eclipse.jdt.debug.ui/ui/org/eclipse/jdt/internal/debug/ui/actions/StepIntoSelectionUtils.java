@@ -49,15 +49,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Utility class for aiding step into selection actions and hyper-linking
- * 
+ *
  * @see StepIntoSelectionActionDelegate
  * @see StepIntoSelectionHyperlinkDetector
- * 
+ *
  * @since 3.3
  */
 public class StepIntoSelectionUtils {
 
-	
+
 	/**
      * gets the <code>IJavaElement</code> from the editor input
      * @param input the current editor input
@@ -70,9 +70,9 @@ public class StepIntoSelectionUtils {
     	}
     	return JavaUI.getWorkingCopyManager().getWorkingCopy(input);
     }
-    
+
     /**
-     * Returns the <code>IMethod</code> from the given selection within the given <code>IJavaElement</code>, 
+     * Returns the <code>IMethod</code> from the given selection within the given <code>IJavaElement</code>,
      * or <code>null</code> if the selection does not container or is not an <code>IMethod</code>
      * @param selection
      * @param element
@@ -90,7 +90,7 @@ public class StepIntoSelectionUtils {
 	 * @param offset selection offset
 	 * @param length selection length
 	 * @param codeAssist context
-	 * @return the method at the given position, or <code>null</code> if no method could be resolved 
+	 * @return the method at the given position, or <code>null</code> if no method could be resolved
 	 * @throws JavaModelException
 	 */
 	private static IMethod resolveMethod(int offset, int length, ICodeAssist codeAssist) throws JavaModelException {
@@ -102,7 +102,7 @@ public class StepIntoSelectionUtils {
 		}
 		return null;
 	}
-    
+
 	/**
 	 * @param offset
 	 * @param activeEditor
@@ -137,15 +137,15 @@ public class StepIntoSelectionUtils {
 					if (token == ITerminalSymbols.TokenNameLPAREN) {
 						return resolveMethod(lineInfo.getOffset() + methodStart, 0, (ICodeAssist)element);
 					}
-				} 
+				}
 				else {
 					token = scanner.getNextToken();
 				}
 			}
-		} 
+		}
 		catch (BadLocationException e) {
 			return null;
-		} 
+		}
 		catch (InvalidInputException e) {
 			return null;
 		}
@@ -154,10 +154,10 @@ public class StepIntoSelectionUtils {
 
 	/**
 	 * Steps into the selection described by the given {@link IRegion}
-	 * 
+	 *
 	 * @param region the region of the selection or <code>null</code> if we should use the page's selection service to compute
 	 * the selection
-	 * 
+	 *
 	 * @since 3.6.200
 	 */
 	public static void stepIntoSelection(ITextSelection selection) {
@@ -195,7 +195,7 @@ public class StepIntoSelectionUtils {
 						runToLineBeforeStepIn(editor, callingTypeName, selection, frame.getThread(), method);
 						return;
 					}
-				} 
+				}
 				catch (DebugException e) {
 					showErrorMessage(editor, e.getStatus().getMessage());
 					return;
@@ -205,9 +205,9 @@ public class StepIntoSelectionUtils {
 					return;
 				}
 			}
-		} 
+		}
 	}
-	
+
 	/**
 	 * When the user chooses to "step into selection" on a line other than
 	 * the currently executing one, first perform a "run to line" to get to
@@ -224,11 +224,11 @@ public class StepIntoSelectionUtils {
 			runToLineAction  = editor.getAdapter(IRunToLineTarget.class);
 			if (runToLineAction == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
-				if (adapterManager.hasAdapter(editor,   IRunToLineTarget.class.getName())) { 
-					runToLineAction = (IRunToLineTarget) adapterManager.loadAdapter(editor,IRunToLineTarget.class.getName()); 
+				if (adapterManager.hasAdapter(editor,   IRunToLineTarget.class.getName())) {
+					runToLineAction = (IRunToLineTarget) adapterManager.loadAdapter(editor,IRunToLineTarget.class.getName());
 				}
 			}
-		}	
+		}
 		// if no adapter exists, use the Java adapter
 		if (runToLineAction == null) {
 		  runToLineAction = new RunToLineAdapter();
@@ -311,14 +311,14 @@ public class StepIntoSelectionUtils {
 			runToLineAction.runToLine(editor, textSelection, thread);
 		} catch (CoreException e) {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
-			showErrorMessage(editor, ActionMessages.StepIntoSelectionActionDelegate_4); 
+			showErrorMessage(editor, ActionMessages.StepIntoSelectionActionDelegate_4);
 			JDIDebugUIPlugin.log(e.getStatus());
 		}
 	}
-	
+
 	/**
 	 * Steps into the given method in the given stack frame
-	 * 
+	 *
 	 * @param editor
 	 * @param frame the frame in which the step should begin
 	 * @param method the method to step into
@@ -328,31 +328,31 @@ public class StepIntoSelectionUtils {
 		// ensure top stack frame
 		IStackFrame tos = frame.getThread().getTopStackFrame();
 		if (tos == null) {
-			return; 
-		}		
+			return;
+		}
 		if (!tos.equals(frame)) {
-			showErrorMessage(editor, ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_top_stack_frame__3); 
+			showErrorMessage(editor, ActionMessages.StepIntoSelectionActionDelegate_Step_into_selection_only_available_in_top_stack_frame__3);
 			return;
 		}
 		StepIntoSelectionHandler handler = new StepIntoSelectionHandler((IJavaThread)frame.getThread(), frame, method);
 		handler.step();
 	}
-	
+
 	/**
 	 * Displays an error message in the status area
-	 * 
+	 *
 	 * @param editor
 	 * @param message
 	 */
-	static void showErrorMessage(IEditorPart editor, String message) {	
+	static void showErrorMessage(IEditorPart editor, String message) {
 		if (editor != null) {
 			IEditorStatusLine statusLine = editor.getAdapter(IEditorStatusLine.class);
 			if (statusLine != null) {
 				statusLine.setMessage(true, message, null);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Return the type containing the selected text, or <code>null</code> if the
 	 * selection is not in a type.
@@ -366,11 +366,11 @@ public class StepIntoSelectionUtils {
 			type= member.getDeclaringType();
 		}
 		return type;
-	}	
-	
+	}
+
 	/**
      * Strips inner class names and parameterized type information from the given type name.
-     * 
+     *
      * @param fullyQualifiedName
      */
     static String stripInnerNamesAndParameterType(String fullyQualifiedName) {

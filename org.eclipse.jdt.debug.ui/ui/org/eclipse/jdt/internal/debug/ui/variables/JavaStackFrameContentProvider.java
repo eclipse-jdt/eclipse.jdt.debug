@@ -22,9 +22,9 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Cancels updates when thread is resumed.
-	 * 
+	 *
 	 * @see org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -40,6 +40,6 @@ public class JavaStackFrameContentProvider extends StackFrameContentProvider {
 			throw e;
 		}
 	}
-	
+
 
 }

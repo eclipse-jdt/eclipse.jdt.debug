@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Sebastian Davids <sdavids@gmx.de> - initial API and implementation
  *     IBM Corporation - bug fixes
@@ -22,29 +22,29 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This action reveals the snippet editor in the package explorer. 
- * 
+ * This action reveals the snippet editor in the package explorer.
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @since 3.0
  */
 public class ShowInPackageViewAction extends Action {
-	
+
 	private JavaSnippetEditor fEditor;
-	
+
 	/**
 	 * Creates a new <code>ShowInPackageViewAction</code>.
-	 * 
+	 *
 	 * @param site the site providing context information for this action
 	 */
 	public ShowInPackageViewAction() {
 		super(SnippetMessages.getString("ShowInPackageViewAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("ShowInPackageViewAction.description")); //$NON-NLS-1$
 		setToolTipText(SnippetMessages.getString("ShowInPackageViewAction.tooltip")); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.SHOW_IN_PACKAGEVIEW_ACTION);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.SHOW_IN_PACKAGEVIEW_ACTION);
 	}
-	
+
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
@@ -52,7 +52,7 @@ public class ShowInPackageViewAction extends Action {
 		this();
 		fEditor= editor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -84,7 +84,7 @@ public class ShowInPackageViewAction extends Action {
 	private Object getSelectedElement(PackageExplorerPart view) {
 		return ((IStructuredSelection) view.getSite().getSelectionProvider().getSelection()).getFirstElement();
 	}
-	
+
 	private static String getDialogTitle() {
 		return SnippetMessages.getString("ShowInPackageViewAction.dialog.title"); //$NON-NLS-1$
 	}

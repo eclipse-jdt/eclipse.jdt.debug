@@ -30,23 +30,23 @@ import org.eclipse.swt.widgets.FileDialog;
 public class AddExternalJarAction extends OpenDialogAction {
 
 	public AddExternalJarAction(IClasspathViewer viewer, String dialogSettingsPrefix) {
-		super(ActionMessages.AddExternalJar_Add_E_xternal_JARs_1, viewer, dialogSettingsPrefix); 
-	}	
+		super(ActionMessages.AddExternalJar_Add_E_xternal_JARs_1, viewer, dialogSettingsPrefix);
+	}
 
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
-							
+
 		String lastUsedPath = getDialogSetting(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
 			lastUsedPath = ""; //$NON-NLS-1$
 		}
 		FileDialog dialog = new FileDialog(getShell(), SWT.MULTI);
-		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3); 
+		dialog.setText(ActionMessages.AddExternalJar_Jar_Selection_3);
 		dialog.setFilterExtensions(new String[] {"*.jar;*.zip","*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setFilterPath(lastUsedPath);
 		String res = dialog.open();
@@ -55,12 +55,12 @@ public class AddExternalJarAction extends OpenDialogAction {
 		}
 		String[] fileNames = dialog.getFileNames();
 		int nChosen = fileNames.length;
-			
+
 		IPath filterPath = new Path(dialog.getFilterPath());
 		ArrayList<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>();
 		IPath path = null;
 		for (int i= 0; i < nChosen; i++) {
-			path = filterPath.append(fileNames[i]).makeAbsolute();	
+			path = filterPath.append(fileNames[i]).makeAbsolute();
 			if(path.toFile().exists()) {
 				list.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
 			}
@@ -72,5 +72,5 @@ public class AddExternalJarAction extends OpenDialogAction {
 			setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
 			getViewer().addEntries(list.toArray(new IRuntimeClasspathEntry[list.size()]));
 		}
-	}	
+	}
 }

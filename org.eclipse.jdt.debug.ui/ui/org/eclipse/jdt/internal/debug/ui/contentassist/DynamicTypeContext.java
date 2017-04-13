@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,11 +16,11 @@ import org.eclipse.jdt.core.IType;
 /**
  * Code completion for a dynamic type. Code completion is performed relative to the
  * type with no position information, in a non-static context.
- * 
+ *
  * @since 3.2
  */
 public class DynamicTypeContext extends TypeContext {
-	
+
 	/**
 	 * Provides a type in which to perform completions.
 	 * @since 3.2
@@ -29,18 +29,18 @@ public class DynamicTypeContext extends TypeContext {
 		/**
 		 * Returns the type in which to perform completions or <code>null</code>
 		 * if no type is available.
-		 * 
+		 *
 		 * @return type in which to perform completions or <code>null</code>
 		 * @exception CoreException if a type cannot be resolved
 		 */
 		public IType getType() throws CoreException;
 	}
-	
+
 	private ITypeProvider fTypeProvider;
-	
+
 	/**
 	 * Constructs a completion context on the given type.
-	 * 
+	 *
 	 * @param type type in which to perform completions
 	 */
 	public DynamicTypeContext(ITypeProvider type) {

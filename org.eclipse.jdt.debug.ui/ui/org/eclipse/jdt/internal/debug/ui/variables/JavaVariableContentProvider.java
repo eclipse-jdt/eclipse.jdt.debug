@@ -28,7 +28,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Determines the child content of an IJavaVariable.
- * 
+ *
  * @since 3.3
  * @see VariableContentProvider
  * @see IJavaVariable
@@ -60,7 +60,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 			throw e;
 		}
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
@@ -80,7 +80,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 			throw e;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
@@ -97,12 +97,12 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 				return false;
 			}
 			throw e;
-		}			
+		}
 	}
-	
+
 	/**
 	 * Determines if an all references variable should be added as a child to the passed object.
-	 * 
+	 *
 	 * @param parent element to display references as a child for
 	 * @return whether to display references as a child of the given parent
 	 * @throws DebugException
@@ -132,7 +132,7 @@ public class JavaVariableContentProvider extends VariableContentProvider {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */

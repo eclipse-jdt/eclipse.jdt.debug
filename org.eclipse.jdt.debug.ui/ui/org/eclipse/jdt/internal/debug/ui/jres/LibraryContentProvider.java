@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Provides the content for the JREs selection/edit viewer
- * 
+ *
  * @see ITreeContentProvider
  * @see VMDetailsDialog
  * @see VMLibraryBlock
@@ -37,18 +37,18 @@ import org.eclipse.jface.viewers.Viewer;
  * @see LibraryStandin
  */
 public class LibraryContentProvider implements ITreeContentProvider {
-	
+
 	private Viewer fViewer;
-	
+
 	/**
 	 * Represents a sub-element of a <code>LibraryStandin</code>
 	 */
 	public class SubElement {
-		
+
 		public static final int JAVADOC_URL= 1;
 		public static final int SOURCE_PATH= 2;
 		public static final int EXTERNAL_ANNOTATIONS_PATH = 3;
-		
+
 		private LibraryStandin fParent;
 		private int fType;
 
@@ -56,15 +56,15 @@ public class LibraryContentProvider implements ITreeContentProvider {
 			fParent= parent;
 			fType= type;
 		}
-		
+
 		public LibraryStandin getParent() {
 			return fParent;
 		}
-		
+
 		public int getType() {
 			return fType;
 		}
-		
+
 		public void remove() {
 			switch (fType) {
 				case JAVADOC_URL:
@@ -162,7 +162,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the listing of <code>LibraryLocation</code>s
-	 * 
+	 *
 	 * @return the listing of <code>LibraryLocation</code>s, or an empty
 	 * array, never <code>null</code>
 	 */
@@ -178,7 +178,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * Returns the list of libraries in the given selection. SubElements
 	 * are replaced by their parent libraries.
 	 * @param selection the current selection
-	 * 
+	 *
 	 * @return the current set of selected <code>LibraryStandin</code>s from
 	 * the current viewer selection, or an empty set, never <code>null</code>
 	 */
@@ -290,7 +290,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * Set the given URL as the javadoc location for the libraries contained in
 	 * the given selection.
 	 * @param javadocLocation the new java doc location to set
-	 * @param selection the selection of libraries to set the new javadoc location for 
+	 * @param selection the selection of libraries to set the new javadoc location for
 	 */
 	public void setJavadoc(URL javadocLocation, IStructuredSelection selection) {
 		Set<Object> libraries= getSelectedLibraries(selection);
@@ -325,7 +325,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		}
 		fViewer.refresh();
 	}
-	
+
 	/**
 	 * Set the given paths as the annotations path for the libraries contained in the given selection.
 	 *
@@ -351,7 +351,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Returns the stand-in libraries being edited.
-	 * 
+	 *
 	 * @return stand-ins
 	 */
 	LibraryStandin[] getStandins() {

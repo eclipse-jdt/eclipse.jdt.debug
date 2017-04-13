@@ -24,7 +24,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * A wizard page used to edit the attributes of an installed JRE. A page is 
+ * A wizard page used to edit the attributes of an installed JRE. A page is
  * provided by JDT to edit standard JREs, but clients may contribute a custom
  * page for a VM install type if required.
  * <p>
@@ -32,7 +32,7 @@ import org.eclipse.osgi.util.NLS;
  * point. Following is an example definition of a VM install page.
  * <pre>
  * &lt;extension point="org.eclipse.jdt.debug.ui.vmInstallPages"&gt;
- *   &lt;vmInstallPage 
+ *   &lt;vmInstallPage
  *      vmInstallType="org.eclipse.jdt.launching.EEVMType"
  *      class="org.eclipse.jdt.internal.debug.ui.jres.EEVMPage"&gt;
  *   &lt;/vmInstallPage&gt;
@@ -47,28 +47,28 @@ import org.eclipse.osgi.util.NLS;
  * </ul>
  * </p>
  * <p>
- * Clients contributing a custom VM install page via the <code>vmInstallPages</code> 
+ * Clients contributing a custom VM install page via the <code>vmInstallPages</code>
  * extension point must subclass this class.
  * </p>
  * @since 3.3
  */
 public abstract class AbstractVMInstallPage extends WizardPage {
-	
+
 	/**
 	 * Name of the original VM being edited, or <code>null</code> if none.
 	 */
 	private String fOriginalName = null;
-	
+
 	/**
 	 * Status of VM name (to notify of name already in use)
 	 */
 	private IStatus fNameStatus = Status.OK_STATUS;
-	
+
 	private String[] fExistingNames;
-		
+
 	/**
 	 * Constructs a new page with the given page name.
-	 * 
+	 *
 	 * @param pageName the name of the page
 	 */
 	protected AbstractVMInstallPage(String pageName) {
@@ -89,37 +89,37 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	}
 
 	/**
-	 * Called when the VM install page wizard is closed by selecting 
-	 * the finish button. Implementers typically override this method to 
-	 * store the page result (new/changed vm install returned in 
+	 * Called when the VM install page wizard is closed by selecting
+	 * the finish button. Implementers typically override this method to
+	 * store the page result (new/changed vm install returned in
 	 * getSelection) into its model.
-	 * 
+	 *
 	 * @return if the operation was successful. Only when returned
 	 * <code>true</code>, the wizard will close.
 	 */
 	public abstract boolean finish();
-	
+
 	/**
 	 * Returns the edited or created VM install. This method
 	 * may return <code>null</code> if no VM install exists.
-	 * 
+	 *
 	 * @return the edited or created VM install.
 	 */
 	public abstract VMStandin getSelection();
 
 	/**
-	 * Sets the VM install to be edited. 
-	 * 
+	 * Sets the VM install to be edited.
+	 *
 	 * @param vm the VM install to edit
 	 */
 	public void setSelection(VMStandin vm) {
 		fOriginalName = vm.getName();
 	}
-	
+
 	/**
 	 * Updates the name status based on the new name. This method should be called
 	 * by the page each time the VM name changes.
-	 * 
+	 *
 	 * @param newName new name of VM
 	 */
 	protected void nameChanged(String newName) {
@@ -132,20 +132,20 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 			fNameStatus = new Status(sev, JDIDebugUIPlugin.getUniqueIdentifier(), JREMessages.addVMDialog_enterName);
 		} else {
 			if (isDuplicateName(newName)) {
-				fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), JREMessages.addVMDialog_duplicateName); 
+				fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), JREMessages.addVMDialog_duplicateName);
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(newName, IResource.FILE);
 				if (!s.isOK()) {
-					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), NLS.bind(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()})); 
+					fNameStatus = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), NLS.bind(JREMessages.AddVMDialog_JRE_name_must_be_a_valid_file_name___0__1, new String[]{s.getMessage()}));
 				}
 			}
 		}
 		updatePageStatus();
 	}
-	
+
 	/**
 	 * Returns whether the name is already in use by an existing VM
-	 * 
+	 *
 	 * @param name new name
 	 * @return whether the name is already in use
 	 */
@@ -158,18 +158,18 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 			}
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * Sets the names of existing VMs, not including the VM being edited. This method
 	 * is called by the wizard and clients should not call this method.
-	 * 
+	 *
 	 * @param names existing VM names or an empty array
 	 */
 	public void setExistingNames(String[] names) {
 		fExistingNames = names;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
@@ -177,10 +177,10 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 	public IWizardPage getNextPage() {
 		return null;
 	}
-	
+
 	/**
 	 * Sets this page's message based on the status severity.
-	 * 
+	 *
 	 * @param status status with message and severity
 	 */
 	protected void setStatusMessage(IStatus status) {
@@ -201,17 +201,17 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 				break;
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns the current status of the name being used for the VM.
-	 * 
+	 *
 	 * @return status of current VM name
 	 */
 	protected IStatus getNameStatus() {
 		return fNameStatus;
 	}
-	
+
 	/**
 	 * Updates the status message on the page, based on the status of the VM and other
 	 * status provided by the page.
@@ -234,13 +234,13 @@ public abstract class AbstractVMInstallPage extends WizardPage {
 			setStatusMessage(max);
 		}
 		setPageComplete(max.isOK() || max.getSeverity() == IStatus.INFO);
-	}	
-	
+	}
+
 	/**
 	 * Returns a collection of status messages pertaining to the current edit
 	 * status of the VM on this page. An empty collection or a collection of
 	 * OK status objects indicates all is well.
-	 * 
+	 *
 	 * @return collection of status objects for this page
 	 */
 	protected abstract IStatus[] getVMStatus();

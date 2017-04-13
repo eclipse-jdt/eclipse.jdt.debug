@@ -21,51 +21,51 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 
 /**
  * Common function for Breakpoint editor controls.
- * 
+ *
  * @since 3.6
  */
 public abstract class AbstractJavaBreakpointEditor {
-	
+
 	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
     private boolean fDirty = false;
     private boolean fMnemonics = true;
     private boolean fSuppressPropertyChanges = false;
-	
+
 	/**
 	 * Adds the given property listener to this editor. Property changes
 	 * are reported on the breakpoint being edited. Property identifiers
 	 * are breakpoint attribute keys.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
 		fListeners.add(listener);
 	}
-	
+
 	/**
 	 * Sets whether mnemonics should be displayed in editor controls.
 	 * Only has an effect if set before {@link #createControl(Composite)}
 	 * is called. By default, mnemonics are displayed.
-	 * 
+	 *
 	 * @param mnemonics whether to display mnemonics
 	 */
 	public void setMnemonics(boolean mnemonics) {
 		fMnemonics = mnemonics;
 	}
-	
+
 	/**
 	 * Returns whether mnemonics should be displayed in editor controls.
-	 * 
+	 *
 	 * @return whether mnemonics should be displayed in editor controls
 	 */
 	protected boolean isMnemonics() {
 		return fMnemonics;
 	}
-	
+
 	/**
 	 * Returns text with mnemonics in tact or removed based on {@link #isMnemonics()}.
-	 * 
-	 * @param text string to process 
+	 *
+	 * @param text string to process
 	 * @return text with mnemonics in tact or removed based on {@link #isMnemonics()}
 	 */
 	protected String processMnemonics(String text) {
@@ -74,25 +74,25 @@ public abstract class AbstractJavaBreakpointEditor {
 		}
 		return LegacyActionTools.removeMnemonics(text);
 	}
-	
+
 	/**
 	 * Removes the property listener from this editor.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Creates the condition editor widgets and returns the top level
 	 * control.
-	 * 
+	 *
 	 * @param parent composite to embed the editor controls in
 	 * @return top level control
 	 */
 	public abstract Control createControl(Composite parent);
-	
+
 	/**
 	 * Disposes this editor and its controls. Once disposed, the editor can no
 	 * longer be used.
@@ -100,52 +100,52 @@ public abstract class AbstractJavaBreakpointEditor {
 	protected void dispose() {
 		fListeners.clear();
 	}
-	
+
 	/**
 	 * Gives focus to an appropriate control in the editor.
 	 */
 	public abstract void setFocus();
-	
+
 	/**
 	 * Saves current settings to the breakpoint being edited. Has no
 	 * effect if a breakpoint is not currently being edited or if this
 	 * editor is not dirty.
-	 * 
+	 *
 	 * @exception CoreException if unable to update the breakpoint.
 	 */
 	public abstract void doSave() throws CoreException;
-	
+
 	/**
 	 * Returns a status describing whether the condition editor is in
 	 * a valid state. Returns an OK status when all is good. For example, an error
 	 * status is returned when the conditional expression is empty but enabled.
-	 * 
+	 *
 	 * @return editor status.
 	 */
 	public abstract IStatus getStatus();
-		
+
 	/**
 	 * Returns whether the editor needs saving.
-	 *  
+	 *
 	 * @return whether the editor needs saving
 	 */
 	public boolean isDirty() {
 		return fDirty;
 	}
-	
+
 	/**
 	 * Sets the dirty flag based on the given property change
-	 * 
+	 *
 	 * @param propId the property that changed
 	 */
 	protected void setDirty(int propId) {
 		fDirty = true;
 		firePropertyChange(propId);
 	}
-	
+
 	/**
 	 * Sets the dirty flag and fires a dirty property change if required.
-	 * 
+	 *
 	 * @param dirty whether dirty
 	 */
 	protected void setDirty(boolean dirty) {
@@ -154,10 +154,10 @@ public abstract class AbstractJavaBreakpointEditor {
 			firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
 		}
 	}
-	
+
 	/**
 	 * Fires a property change event to all listeners.
-	 * 
+	 *
 	 * @param source
 	 * @param propId
 	 * @param value
@@ -169,29 +169,29 @@ public abstract class AbstractJavaBreakpointEditor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the breakpoint being displayed or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint or <code>null</code>
 	 */
 	public abstract Object getInput();
-	
+
 	/**
 	 * Sets the breakpoint to display and edit or <code>null</code> if none.
-	 * 
+	 *
 	 * @param breakpoint breakpoint or <code>null</code>
 	 * @exception CoreException if unable to set the input
 	 */
 	public abstract void setInput(Object breakpoint) throws CoreException;
-	
+
 	/**
 	 * Sets whether to suppress property change notification.
-	 * 
+	 *
 	 * @param suppress whether to suppress notification
 	 */
 	protected void suppressPropertyChanges(boolean suppress) {
 		fSuppressPropertyChanges = suppress;
 	}
-	
+
 }

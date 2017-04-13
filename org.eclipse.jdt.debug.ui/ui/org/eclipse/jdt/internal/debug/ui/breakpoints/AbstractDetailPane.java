@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,25 +39,25 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
  * Common detail pane function.
- * 
+ *
  * @since 3.6
  */
 public abstract class AbstractDetailPane implements IDetailPane3 {
-	
+
 	private String fName;
 	private String fDescription;
 	private String fId;
 	private AbstractJavaBreakpointEditor fEditor;
 	private Set<Integer> fAutoSaveProperties = new HashSet<Integer>();
-	private IWorkbenchPartSite fSite; 
-	
+	private IWorkbenchPartSite fSite;
+
 	// property listeners
 	private ListenerList<IPropertyListener> fListeners = new ListenerList<IPropertyListener>();
 	private Composite fEditorParent;
-	
+
 	/**
 	 * Constructs a detail pane.
-	 * 
+	 *
 	 * @param name detail pane name
 	 * @param description detail pane description
 	 * @param id detail pane ID
@@ -90,18 +90,18 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	public ISelectionProvider getSelectionProvider() {
 		return null;
 	}
-	
+
 	/**
 	 * Fires a property change to all listeners.
-	 * 
+	 *
 	 * @param property the property
 	 */
 	protected void firePropertyChange(int property) {
 		for (IPropertyListener listener : fListeners) {
 			listener.propertyChanged(this, property);
-		}	
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
@@ -124,7 +124,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	public String getDescription() {
 		return fDescription;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
 	 */
@@ -135,12 +135,12 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 		fListeners.clear();
 		fAutoSaveProperties.clear();
 		fEditorParent.dispose();
-	}	
-	
+	}
+
 	/**
 	 * Adds the given auto save properties to this detail pain. Whenever one of these properties
 	 * changes, the detail pane editor is immediately saved.
-	 * 
+	 *
 	 * @param autosave the auto-save properties
 	 */
 	protected void addAutosaveProperties(int[] autosave) {
@@ -173,15 +173,15 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 		});
 		return fEditor.createControl(fEditorParent);
 	}
-	
+
 	/**
 	 * Creates the detail pane specific editor.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @return editor
 	 */
 	protected abstract AbstractJavaBreakpointEditor createEditor(Composite parent);
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
@@ -213,7 +213,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	public boolean setFocus() {
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -233,7 +233,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 			}
 		}
 	}
-	
+
 	private IStatusLineManager getStatusLine() {
 		// we want to show messages globally hence we
 		// have to go through the active part
@@ -247,7 +247,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 				IViewSite activeViewSite= activeViewPart.getViewSite();
 				return activeViewSite.getActionBars().getStatusLineManager();
 			}
-	
+
 			if (activePart instanceof IEditorPart) {
 				IEditorPart activeEditorPart= (IEditorPart)activePart;
 				IEditorActionBarContributor contributor= activeEditorPart.getEditorSite().getActionBarContributor();
@@ -259,7 +259,7 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 			return site.getActionBars().getStatusLineManager();
 		}
 		return null;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
@@ -271,13 +271,13 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 
 	/**
 	 * Returns the editor associated with this detail pane.
-	 * 
+	 *
 	 * @return editor
 	 */
 	protected AbstractJavaBreakpointEditor getEditor() {
 		return fEditor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

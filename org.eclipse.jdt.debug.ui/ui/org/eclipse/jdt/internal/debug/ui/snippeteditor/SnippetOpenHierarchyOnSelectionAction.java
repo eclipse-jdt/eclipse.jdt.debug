@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +30,15 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
- * the connected Java source editor. In addition, if the element is a type, it also 
+ * the connected Java source editor. In addition, if the element is a type, it also
  * opens shows the element in the type hierarchy viewer.
  */
 public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyAction {
-	
+
 	private JavaSnippetEditor fEditor;
 	private String fDialogTitle;
 	private String fDialogMessage;
-	
+
 	public SnippetOpenHierarchyOnSelectionAction(JavaSnippetEditor editor) {
 		super(editor.getSite());
 		fEditor= editor;
@@ -49,7 +49,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 		handlerService.activateHandler(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY, handler);
 	}
-	
+
 	protected void setResources() {
 		setText(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionAction.tooltip")); //$NON-NLS-1$
@@ -57,15 +57,15 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		setDialogTitle(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionDialog.title")); //$NON-NLS-1$
 		setDialogMessage(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionDialog.message")); //$NON-NLS-1$
 	}
-	
+
 	protected void setDialogTitle(String title) {
 		fDialogTitle= title;
 	}
-	
+
 	protected void setDialogMessage(String message) {
 		fDialogMessage= message;
 	}
-	
+
 	@Override
 	public void run() {
 		if (fEditor == null) {
@@ -84,14 +84,14 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 			JDIDebugUIPlugin.log(x);
 		}
 	}
-	
+
 	protected void setEditor(JavaSnippetEditor contentEditor) {
 		fEditor= contentEditor;
 	}
-	
+
 	/**
 	 * Filters out source references from the given code resolve results.
-	 * A utility method that can be called by subclassers. 
+	 * A utility method that can be called by subclassers.
 	 */
 	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
@@ -103,33 +103,33 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		}
 		return refs;
 	}
-			
+
 
 	/**
 	 * Shows a dialog for resolving an ambigous Java element.
 	 * Utility method that can be called by subclassers.
 	 */
 	protected IJavaElement selectJavaElement(List<IJavaElement> elements, Shell shell, String title, String message) {
-		
+
 		int nResults= elements.size();
-		
+
 		if (nResults == 0) {
 			return null;
 		}
-		
+
 		if (nResults == 1) {
 			return elements.get(0);
 		}
-		
+
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED
 						| JavaElementLabelProvider.SHOW_ROOT;
-						
+
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 		dialog.setElements(elements.toArray());
-		
+
 		if (dialog.open() == Window.OK) {
 			Object[] selection= dialog.getResult();
 			if (selection != null && selection.length > 0) {
@@ -141,7 +141,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 					}
 				}
 			}
-		}		
+		}
 		return null;
 	}
 }

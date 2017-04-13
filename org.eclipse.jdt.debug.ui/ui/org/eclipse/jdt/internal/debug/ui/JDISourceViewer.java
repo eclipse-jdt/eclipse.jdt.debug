@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,15 +51,15 @@ import com.ibm.icu.text.Bidi;
  * the Java UI plugin.
  */
 public class JDISourceViewer extends SourceViewer implements IPropertyChangeListener {
-	
+
 	/**
 	 * BIDI delimtiers.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static final String BIDI_DELIMITERS= "[ \\p{Punct}&&[^_]]"; //$NON-NLS-1$
 
-	
+
 	private Font fFont;
 	private Color fBackgroundColor;
 	private Color fForegroundColor;
@@ -87,7 +87,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			}
 		});
 	}
-	
+
 	/**
 	 * Updates the viewer's font to match the preferences.
 	 */
@@ -113,28 +113,28 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		// if all the preferences failed
 		applyFont(JFaceResources.getTextFont());
 	}
-	
+
 	/**
 	 * Sets the current font.
-	 * 
+	 *
 	 * @param font the new font
 	 */
 	private void setFont(Font font) {
 		fFont= font;
 	}
-	
+
 	/**
 	 * Returns the current font.
-	 * 
+	 *
 	 * @return the current font
 	 */
 	private Font getFont() {
 		return fFont;
 	}
-	
+
 	/**
 	 * Sets the font for the given viewer sustaining selection and scroll position.
-	 * 
+	 *
 	 * @param font the font
 	 */
 	private void applyFont(Font font) {
@@ -142,20 +142,20 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		if (doc != null && doc.getLength() > 0) {
 			Point selection= getSelectedRange();
 			int topIndex= getTopIndex();
-			
+
 			StyledText styledText= getTextWidget();
 			styledText.setRedraw(false);
-			
+
 			styledText.setFont(font);
 			setSelectedRange(selection.x , selection.y);
 			setTopIndex(topIndex);
-			
+
 			styledText.setRedraw(true);
 		} else {
 			getTextWidget().setFont(font);
 		}
 	}
-	
+
 	/**
 	 * Updates the given viewer's colors to match the preferences.
 	 */
@@ -171,7 +171,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 				getForegroundColor().dispose();
 			}
 			setForegroundColor(color);
-			
+
 			color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
 				? null
 				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
@@ -182,7 +182,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			setBackgroundColor(color);
 		}
 	}
-	
+
 	/**
 	 * Creates a color from the information stored in the given preference store.
 	 * Returns <code>null</code> if there is no such information available.
@@ -201,10 +201,10 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the current background color.
-	 * 
+	 *
 	 * @return the current background color
 	 */
 	protected Color getBackgroundColor() {
@@ -213,7 +213,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 
 	/**
 	 * Sets the current background color.
-	 * 
+	 *
 	 * @param backgroundColor the new background color
 	 */
 	protected void setBackgroundColor(Color backgroundColor) {
@@ -222,7 +222,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 
 	/**
 	 * Returns the current foreground color.
-	 * 
+	 *
 	 * @return the current foreground color
 	 */
 	protected Color getForegroundColor() {
@@ -231,13 +231,13 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 
 	/**
 	 * Sets the current foreground color.
-	 * 
+	 *
 	 * @param foregroundColor the new foreground color
 	 */
 	protected void setForegroundColor(Color foregroundColor) {
 		fForegroundColor = foregroundColor;
 	}
-	
+
 	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
@@ -248,7 +248,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
 		}
 		String property= event.getProperty();
-		
+
 		if (PreferenceConstants.EDITOR_TEXT_FONT.equals(property)) {
 			updateViewerFont();
 		}
@@ -263,10 +263,10 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the current content assistant.
-	 * 
+	 *
 	 * @return the current content assistant
 	 */
 	public IContentAssistant getContentAssistant() {
@@ -321,10 +321,10 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	private IPreferenceStore getPreferenceStore() {
 		return fStore;
 	}
-	
+
 	/**
 	 * Returns a segmentation of the line of the given document appropriate for Bidi rendering.
-	 * 
+	 *
 	 * @param document the document
 	 * @param baseLevel the base level of the line
 	 * @param lineStart the offset of the line
@@ -413,11 +413,11 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 
 	/**
 	 * Checks if the given embedding level is consistent with the base level.
-	 * 
+	 *
 	 * @param level Character embedding level to check.
 	 * @param baseLevel Base level (direction) of the text.
 	 * @return <code>true</code> if the character level is odd and the base level is even OR the character level is even and the base level is odd, and return <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	private static boolean isMismatchingLevel(int level, int baseLevel) {

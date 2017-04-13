@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * Attempts to terminate an evaluation running in an IJavaThread.
  */
 public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugEventSetListener {
-	
+
 	private IJavaThread fThread;
 	private boolean fTerminated;
 
@@ -59,8 +59,8 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 						display.asyncExec(new Runnable() {
 							@Override
 							public void run() {
-								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.TerminateEvaluationActionTerminate_Evaluation_1, null, 
-									ActionMessages.TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0); 
+								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.TerminateEvaluationActionTerminate_Evaluation_1, null,
+									ActionMessages.TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements__The_currently_executing_statement__such_as_a_method_invocation__cannot_be_interrupted__2, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0);
 								dialog.setBlockOnOpen(false);
 								dialog.open();
 							}
@@ -73,7 +73,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 		try {
 			fThread.terminateEvaluation();
 		} catch (DebugException exception) {
-			JDIDebugUIPlugin.statusDialog(exception.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(exception.getStatus());
 		}
 	}
 
@@ -90,7 +90,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 			}
 		}
 	}
-	
+
 	public void setThread(IJavaThread thread) {
 		fThread= thread;
 	}

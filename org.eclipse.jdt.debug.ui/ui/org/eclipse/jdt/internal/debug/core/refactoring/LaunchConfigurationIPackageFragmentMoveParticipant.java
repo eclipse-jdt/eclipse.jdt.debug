@@ -29,7 +29,7 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
 
 	private IPackageFragment fPackageFragment;
 	private IPackageFragmentRoot fDestination;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
@@ -53,7 +53,7 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
 	 */
 	@Override
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0;
 	}
 
 	/* (non-Javadoc)

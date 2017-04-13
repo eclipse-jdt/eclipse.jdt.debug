@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,7 +42,7 @@ public class ExceptionUncaughtToggleAction extends BreakpointToggleAction {
 		IJavaExceptionBreakpoint exception= (IJavaExceptionBreakpoint)breakpoint;
 		exception.setUncaught(!exception.isUncaught());
 	}
-	
+
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(IStructuredSelection)
 	 */
@@ -54,7 +54,7 @@ public class ExceptionUncaughtToggleAction extends BreakpointToggleAction {
 			if (!(element instanceof IJavaExceptionBreakpoint)) {
 				return false;
 			}
-			
+
 		}
 		return true;
 	}

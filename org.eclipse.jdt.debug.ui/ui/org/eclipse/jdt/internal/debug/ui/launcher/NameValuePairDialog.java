@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class NameValuePairDialog extends Dialog {
 	private String fTitle;
 	private String[] fFieldLabels;
 	private String[] fInitialValues;
-	
+
 	private Label fNameLabel;
 	private Text fNameText;
 	private Label fValueLabel;
@@ -53,21 +53,21 @@ public class NameValuePairDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = (Composite) super.createDialogArea(parent);
 		((GridLayout)comp.getLayout()).numColumns=2;
-		
+
 		fNameLabel = new Label(comp, SWT.NONE);
 		fNameLabel.setText(fFieldLabels[0]);
 		fNameLabel.setFont(font);
-		
+
 		ModifyListener listener= new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
 		};
-		
+
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -75,23 +75,23 @@ public class NameValuePairDialog extends Dialog {
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(font);
 		fNameText.addModifyListener(listener);
-		
+
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(fFieldLabels[1]);
 		fValueLabel.setFont(font);
-		
+
 		fValueText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fValueText.setText(fInitialValues[1]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fValueText.setLayoutData(gd);
 		fValueText.setFont(font);
-		fValueText.addModifyListener(listener);		
-		
+		fValueText.addModifyListener(listener);
+
 		applyDialogFont(comp);
 		return comp;
 	}
-	
+
 	/**
 	 * Return the name/value pair entered in this dialog.  If the cancel button was hit,
 	 * both will be <code>null</code>.
@@ -99,7 +99,7 @@ public class NameValuePairDialog extends Dialog {
 	public String[] getNameValuePair() {
 		return new String[] {fName, fValue};
 	}
-	
+
 	/**
 	 * @see Dialog#buttonPressed(int)
 	 */
@@ -114,7 +114,7 @@ public class NameValuePairDialog extends Dialog {
 		}
 		super.buttonPressed(buttonId);
 	}
-	
+
 	/**
 	 * @see Window#configureShell(Shell)
 	 */
@@ -125,7 +125,7 @@ public class NameValuePairDialog extends Dialog {
 			shell.setText(fTitle);
 		}
 	}
-	
+
 	/**
 	 * Enable the OK button if valid input
 	 */
@@ -134,7 +134,7 @@ public class NameValuePairDialog extends Dialog {
 		String value = fValueText.getText().trim();
 		getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) &&(value.length() > 0));
 	}
-	
+
 	/**
 	 * Enable the buttons on creation.
 	 */

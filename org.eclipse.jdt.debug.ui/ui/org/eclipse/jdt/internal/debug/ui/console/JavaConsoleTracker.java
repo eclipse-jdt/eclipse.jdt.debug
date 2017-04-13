@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ import org.eclipse.ui.console.TextConsole;
  * Provides links for stack traces
  */
 public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
-	
+
 	/**
-	 * The console associated with this line tracker 
+	 * The console associated with this line tracker
 	 */
 	private TextConsole fConsole;
 
@@ -42,7 +42,7 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
 	public void disconnect() {
         fConsole = null;
     }
-    
+
     protected TextConsole getConsole() {
         return fConsole;
     }
@@ -56,7 +56,7 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
             int offset = event.getOffset();
             int length = event.getLength();
             IHyperlink link = new JavaStackTraceHyperlink(fConsole);
-            fConsole.addHyperlink(link, offset+1, length-2);   
+            fConsole.addHyperlink(link, offset+1, length-2);
         } catch (BadLocationException e) {
         }
     }

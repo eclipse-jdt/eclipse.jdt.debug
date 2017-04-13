@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,11 +26,11 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * Superclass of for JRE resolution errors.
  */
 public abstract class JREResolution implements IMarkerResolution {
-	
+
 	/**
 	 * Prompts the user to choose a JRE for the given project.
 	 * Returns the selected VM or <code>null</code>.
-	 * 
+	 *
 	 * @param title the title for the dialog
 	 * @param message the message for the dialog
 	 * @return selected VM or <code>null</code>
@@ -44,10 +44,10 @@ public abstract class JREResolution implements IMarkerResolution {
 		dialog.open();
 		return (IVMInstall)dialog.getFirstResult();
 	}
-	
+
 	/**
 	 * Returns all defined VMs
-	 * 
+	 *
 	 * @return IVMInstall[]
 	 */
 	protected static IVMInstall[] getAllVMs() {
@@ -60,7 +60,7 @@ public abstract class JREResolution implements IMarkerResolution {
 				vms.add(installs[j]);
 			}
 		}
-		return vms.toArray(new IVMInstall[vms.size()]);		
+		return vms.toArray(new IVMInstall[vms.size()]);
 	}
 
 }

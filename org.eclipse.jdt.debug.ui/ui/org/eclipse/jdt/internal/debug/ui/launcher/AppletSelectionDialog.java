@@ -88,7 +88,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		setElements(types);
 		return super.open();
 	}
-	
+
 	/**
 	 * Return all types extending <code>java.lang.Applet</code> in the project, or
 	 * all types extending Applet in the workspace if the project is <code>null</code>.
@@ -108,8 +108,8 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		} else {
 			javaProjects = new IJavaProject[] {fProject};
 		}
-		
-		// For each java project, calculate the Applet types it contains and add 
+
+		// For each java project, calculate the Applet types it contains and add
 		// them to the results
 		final int projectCount = javaProjects.length;
 		final Set<IType> results = new HashSet<IType>(projectCount);
@@ -117,14 +117,14 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		try {
 			fRunnableContext.run(true, true, new IRunnableWithProgress() {
 				@Override
-				public void run(IProgressMonitor monitor) {	
-					monitor.beginTask(LauncherMessages.AppletSelectionDialog_Searching____1, projectCount); 
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask(LauncherMessages.AppletSelectionDialog_Searching____1, projectCount);
 					for (int i = 0; i < projectCount; i++) {
 						IJavaProject javaProject = javaProjects[i];
-						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1); 
+						SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 						results.addAll(AppletLaunchConfigurationUtils.collectAppletTypesInProject(subMonitor, javaProject));
 						monitor.worked(1);
-					}					
+					}
 					monitor.done();
 				}
 			});
@@ -138,8 +138,8 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 			return null;
 		}
 		IType[] types = null;
-		types = results.toArray(new IType[results.size()]);		
-		return types; 
+		types = results.toArray(new IType[results.size()]);
+		return types;
 	}
 
 	/**
@@ -167,5 +167,5 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 }

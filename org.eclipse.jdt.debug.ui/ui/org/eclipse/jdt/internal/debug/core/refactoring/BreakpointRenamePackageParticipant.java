@@ -27,7 +27,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for package rename.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointRenamePackageParticipant extends BreakpointRenameParticipant {
@@ -39,7 +39,7 @@ public class BreakpointRenamePackageParticipant extends BreakpointRenameParticip
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IPackageFragment;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */

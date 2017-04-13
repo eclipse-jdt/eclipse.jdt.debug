@@ -27,9 +27,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public abstract class ObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
-	
+
 	IWorkbenchPart fPart = null;
-	
+
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
@@ -37,18 +37,18 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
-	
+
 	protected IWorkbenchPart getPart() {
 		return fPart;
 	}
-	
+
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 	}
-	
+
 	/**
 	 * Returns the currently selected item(s) from the current workbench page or <code>null</code>
 	 * if the current active page could not be resolved.
@@ -60,14 +60,14 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 			ISelection selection= page.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				return (IStructuredSelection)selection;
-			}	
+			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Displays the given error message in the status line.
-	 * 
+	 *
 	 * @param message
 	 */
 	protected void showErrorMessage(String message) {
@@ -77,7 +77,7 @@ public abstract class ObjectActionDelegate implements IObjectActionDelegate, IAc
 			manager.setErrorMessage(message);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */

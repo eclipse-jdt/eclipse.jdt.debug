@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class MoveUpAction extends RuntimeClasspathAction {
 
 	public MoveUpAction(IClasspathViewer viewer) {
-		super(ActionMessages.MoveUpAction_Move_U_p_1, viewer); 
+		super(ActionMessages.MoveUpAction_Move_U_p_1, viewer);
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +54,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 			} else {
 				top = index;
 			}
-		} 
+		}
 		setEntries(list);
 	}
 
@@ -68,7 +68,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 		}
 		return getViewer().updateSelection(getActionType(), selection);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction#getActionType()
 	 */

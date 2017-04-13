@@ -46,7 +46,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 
 	/**
 	 * provides a filter to remove the files from the ElementSelectionDialog
-	 * 
+	 *
 	 * @since 3.2
 	 *
 	 */
@@ -61,21 +61,21 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			}
 			return false;
 		}
-		
+
 	}
-	
+
 	public AddFolderAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddFolderAction_Add__Folders_1, viewer); 
-	}	
+		super(ActionMessages.AddFolderAction_Add__Folders_1, viewer);
+	}
 
 	/**
 	 * Prompts for folder(s) to add.
-	 * 
+	 *
 	 * @see IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
-		
+
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			List<IResource> fAlreadySelected = getSelectedFolders();
 			@Override
@@ -86,12 +86,12 @@ public class AddFolderAction extends RuntimeClasspathAction {
 					} else if (fAlreadySelected.contains(selection[i])) {
 						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Classpath already includes selected folder(s).", null);  //$NON-NLS-1$
 					}
-					
+
 				}
 				return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-			}			
+			}
 		};
-		
+
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
@@ -99,9 +99,9 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		dialog.addFilter(new FileFilter());
         dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.setValidator(validator);
-		dialog.setTitle(ActionMessages.AddFolderAction_Folder_Selection_4); 
-		dialog.setMessage(ActionMessages.AddFolderAction_Choose_folders_to_add__5); 
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setTitle(ActionMessages.AddFolderAction_Folder_Selection_4);
+		dialog.setMessage(ActionMessages.AddFolderAction_Choose_folders_to_add__5);
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
@@ -112,9 +112,9 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			}
 			getViewer().addEntries(res);
 		}
-					
+
 	}
-	
+
 	/**
 	 * Returns a list of resources of currently selected folders
 	 * @return the list of {@link IResource}s
@@ -134,7 +134,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		}
 		return folders;
 	}
-	
+
 	@Override
 	protected int getActionType() {
 		return ADD;

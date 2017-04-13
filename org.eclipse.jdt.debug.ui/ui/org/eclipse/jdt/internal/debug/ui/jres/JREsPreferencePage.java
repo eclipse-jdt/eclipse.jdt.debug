@@ -52,22 +52,22 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * The Installed JREs preference page.
- * 
+ *
  * @since 3.0
  */
 public class JREsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-				
+
 	/**
 	 * ID for the page
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String ID = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
-	
+
 	// JRE Block
 	private InstalledJREsBlock fJREBlock;
 	private Link fCompliance;
-		
+
 	/**
 	 * Constructor
 	 */
@@ -98,34 +98,34 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createContents(Composite ancestor) {
 		initializeDialogUnits(ancestor);
-		
+
 		noDefaultButton();
-		
+
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		ancestor.setLayout(layout);
-		
+
 		SWTFactory.createWrapLabel(ancestor, JREMessages.JREsPreferencePage_2, 1, 300);
 		SWTFactory.createVerticalSpacer(ancestor, 1);
-		
+
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(ancestor);
 		Control control = fJREBlock.getControl();
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 1;
 		control.setLayoutData(data);
-		
+
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
-					
+
 		fCompliance = new Link(ancestor, SWT.NONE);
 		fCompliance.setText(JREMessages.JREsPreferencePage_14);
 		fCompliance.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -136,7 +136,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			@Override
 			public void widgetSelected(SelectionEvent e) {openCompliancePreferencePage();}
 		});
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 		initDefaultVM();
 		fJREBlock.initializeTimeStamp();
 		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -149,10 +149,10 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 						setErrorMessage(JREMessages.JREsPreferencePage_3);
 					}
 					else {
-						setErrorMessage(JREMessages.JREsPreferencePage_13); 
+						setErrorMessage(JREMessages.JREsPreferencePage_13);
 					}
 				} else {
-					//if we change the VM make sure the compliance level supports 
+					//if we change the VM make sure the compliance level supports
 					//generated class files
 					String compliance = getCurrentCompilerCompliance();
 					if(!supportsCurrentCompliance(install, compliance)) {
@@ -202,7 +202,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			SWTFactory.showPreferencePage(compliancepage);
 		}
 	}
-	
+
 	/**
 	 * @return the current compiler compliance level
 	 * @since 3.3
@@ -214,9 +214,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			return wcs.get(JavaCore.COMPILER_COMPLIANCE, JavaCore.getDefaultOptions().get(JavaCore.COMPILER_COMPLIANCE));
 		}
 			return JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
-		
+
 	}
-	
+
 	/**
 	 * Determines if the vm version will run the currently compiled code based on the compiler compliance lvl
 	 * @param vm the vm install
@@ -233,12 +233,12 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				//error sort it out
 				return true;
 			}
-			int val = compliance.compareTo(vmver); 
+			int val = compliance.compareTo(vmver);
 			return  val < 0 || val == 0;
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -256,19 +256,19 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				}
 			}
 		});
-		
+
 		if(canceled[0]) {
 			return false;
 		}
-		
+
 		// save column widths
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
 		fJREBlock.saveColumnSettings(settings, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 		fJREBlock.initializeTimeStamp();
-		
+
 		return super.performOk();
-	}	
-	
+	}
+
 	protected IJavaModel getJavaModel() {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 	}
@@ -280,14 +280,14 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	private void verifyDefaultVM(IVMInstall vm) {
 		if (vm != null) {
-			
+
 			// Verify that all of the specified VM's library locations actually exist
 			LibraryLocation[] locations= JavaRuntime.getLibraryLocations(vm);
 			boolean exist = true;
 			for (int i = 0; i < locations.length; i++) {
 				exist = exist && new File(locations[i].getSystemLibraryPath().toOSString()).exists();
 			}
-			
+
 			// If all library locations exist, check the corresponding entry in the list,
 			// otherwise remove the VM
 			if (exist) {
@@ -307,11 +307,11 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			fJREBlock.setCheckedJRE(null);
 		}
 	}
-	
+
 	private IVMInstall getCurrentDefaultVM() {
 		return fJREBlock.getCheckedJRE();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */

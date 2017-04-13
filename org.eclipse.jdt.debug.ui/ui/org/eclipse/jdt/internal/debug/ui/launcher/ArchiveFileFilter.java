@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,10 +32,10 @@ public class ArchiveFileFilter extends ViewerFilter {
 	private static final String[] fgArchiveExtensions= { "jar", "zip" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private List<IFile> fExcludes;
-	
+
 	/**
 	 * @param excludedFiles Excluded files will not pass the filter.
-	 * <code>null</code> is allowed if no files should be excluded. 
+	 * <code>null</code> is allowed if no files should be excluded.
 	 */
 	public ArchiveFileFilter(IFile[] excludedFiles) {
 		if (excludedFiles != null) {
@@ -44,7 +44,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 			fExcludes= null;
 		}
 	}
-	
+
 	/*
 	 * @see ViewerFilter#select
 	 */
@@ -66,11 +66,11 @@ public class ArchiveFileFilter extends ViewerFilter {
 				}
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e.getStatus());
-			}				
+			}
 		}
 		return false;
 	}
-	
+
 	public static boolean isArchivePath(IPath path) {
 		String ext= path.getFileExtension();
 		if (ext != null && ext.length() != 0) {
@@ -81,7 +81,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 			}
 		}
 		return false;
-	}		
-	
-			
+	}
+
+
 }

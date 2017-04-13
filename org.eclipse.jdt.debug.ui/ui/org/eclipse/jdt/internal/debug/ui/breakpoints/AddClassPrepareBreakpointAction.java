@@ -88,7 +88,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	                final int finalKind = kind;
 	                final int finalStart = start;
 	                final int finalEnd = end;
-	                new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) { 
+	                new Job(BreakpointMessages.AddClassPrepareBreakpointAction_2) {
 	                    @Override
 						protected IStatus run(IProgressMonitor monitor) {
 	                        try {
@@ -98,7 +98,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	                            return e.getStatus();
 	                        }
 	                    }
-	
+
 	                }.schedule();
 	            }
 	        }
@@ -106,7 +106,7 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 	    	JDIDebugUIPlugin.statusDialog(e.getStatus());
 	    }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
@@ -115,18 +115,18 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
         Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
         SelectionDialog dialog = null;
         try {
-        	dialog = JavaUI.createTypeDialog(shell, workbenchWindow, 
-        									 SearchEngine.createWorkspaceScope(), 
-        									 IJavaElementSearchConstants.CONSIDER_CLASSES, 
+        	dialog = JavaUI.createTypeDialog(shell, workbenchWindow,
+        									 SearchEngine.createWorkspaceScope(),
+        									 IJavaElementSearchConstants.CONSIDER_CLASSES,
         									 true, "", null); //$NON-NLS-1$
-            dialog.setTitle(BreakpointMessages.AddClassPrepareBreakpointAction_0); 
-            dialog.setMessage(BreakpointMessages.AddClassPrepareBreakpointAction_1); 
+            dialog.setTitle(BreakpointMessages.AddClassPrepareBreakpointAction_0);
+            dialog.setMessage(BreakpointMessages.AddClassPrepareBreakpointAction_1);
             if (dialog.open() == IDialogConstants.OK_ID) {
                createBreakpoints(dialog.getResult());
             }
         } catch (CoreException e) {JDIDebugUIPlugin.log(e);}
-    } 
-    
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */

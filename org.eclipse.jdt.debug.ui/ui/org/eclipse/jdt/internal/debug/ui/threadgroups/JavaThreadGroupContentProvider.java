@@ -35,7 +35,7 @@ public class JavaThreadGroupContentProvider extends JavaElementContentProvider {
 				count += group.getThreadGroups().length;
 				count += group.getThreads().length;
 			}
-		} 
+		}
 		return count;
 	}
 
@@ -49,7 +49,7 @@ public class JavaThreadGroupContentProvider extends JavaElementContentProvider {
 		}
 		return EMPTY;
 	}
-	
+
 	protected Object[] getChildren(IJavaThreadGroup group) throws CoreException {
 		if (isAvailable(group)) {
 			IJavaThreadGroup[] threadGroups = group.getThreadGroups();
@@ -68,7 +68,7 @@ public class JavaThreadGroupContentProvider extends JavaElementContentProvider {
 		}
 		return EMPTY;
 	}
-	
+
 	protected boolean isAvailable(IJavaThreadGroup group) {
 		IDebugTarget debugTarget = group.getDebugTarget();
 		return !(debugTarget.isTerminated() || debugTarget.isDisconnected());

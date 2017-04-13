@@ -27,16 +27,16 @@ import org.eclipse.jface.wizard.Wizard;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public abstract class VMInstallWizard extends Wizard {
-	
+
 	private VMStandin fEditVM;
 	private String[] fExistingNames;
-	
+
 	/**
 	 * Constructs a new wizard to add/edit a vm install.
-	 * 
+	 *
 	 * @param editVM the VM being edited, or <code>null</code> if none
 	 * @param currentInstalls current VM installs used to validate name changes
 	 */
@@ -51,19 +51,19 @@ public abstract class VMInstallWizard extends Wizard {
 		}
 		fExistingNames = names.toArray(new String[names.size()]);
 	}
-	
+
 	/**
 	 * Returns the VM to edit, or <code>null</code> if creating a VM
-	 * 
+	 *
 	 * @return vm to edit or <code>null</code>
 	 */
 	protected VMStandin getVMInstall() {
 		return fEditVM;
 	}
-	
+
 	/**
 	 * Returns the resulting VM after edit or creation or <code>null</code> if none.
-	 * 
+	 *
 	 * @return resulting VM
 	 */
 	protected abstract VMStandin getResult();
@@ -75,10 +75,10 @@ public abstract class VMInstallWizard extends Wizard {
 	public boolean performFinish() {
 		return getResult() != null;
 	}
-	
+
 	/**
 	 * Returns a page to use for editing a VM install type
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */

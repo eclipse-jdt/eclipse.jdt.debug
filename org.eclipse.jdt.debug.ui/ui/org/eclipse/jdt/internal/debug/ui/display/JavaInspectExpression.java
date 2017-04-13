@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.display;
 
- 
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -35,17 +35,17 @@ import com.sun.jdi.InvocationException;
  * target terminates.
  */
 public class JavaInspectExpression extends PlatformObject implements IErrorReportingExpression, IDebugEventSetListener {
-	
+
 	/**
 	 * The value of this expression
 	 */
 	private IJavaValue fValue;
-	
+
 	/**
 	 * The code snippet for this expression.
 	 */
 	private String fExpression;
-	
+
 	private IEvaluationResult fResult;
 
 	/**
@@ -54,7 +54,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	 * to debug events such that this element will remove
 	 * itself from the expression manager when its debug
 	 * target terminates.
-	 * 
+	 *
 	 * @param expression code snippet
 	 * @param value value of the expression
 	 */
@@ -63,19 +63,19 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 		fExpression = expression;
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
-	
+
 	/**
 	 * Constructs a new inspect result for the given
 	 * evaluation result, which provides a snippet, value,
 	 * and error messages, if any.
-	 * 
+	 *
 	 * @param result the evaluation result
 	 */
 	public JavaInspectExpression(IEvaluationResult result) {
 		this(result.getSnippet(), result.getValue());
 		fResult= result;
 	}
-	
+
 	/**
 	 * @see IExpression#getExpressionText()
 	 */
@@ -157,7 +157,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	 */
 	@Override
 	public void dispose() {
-		DebugPlugin.getDefault().removeDebugEventListener(this);		
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 
 	/**
@@ -170,12 +170,12 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 
 	/**
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
-	 */	
+	 */
 	@Override
-	public String[] getErrorMessages() {	
+	public String[] getErrorMessages() {
 		return getErrorMessages(fResult);
 	}
-	
+
 	public static String[] getErrorMessages(IEvaluationResult result) {
 		if (result == null) {
 			return new String[0];
@@ -189,7 +189,7 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 			Throwable cause= exception.getStatus().getException();
 			if (cause instanceof InvocationException) {
 				String  nestedMessage= ((InvocationException) cause).exception().referenceType().name();
-				return new String[] { NLS.bind(DisplayMessages.JavaInspectExpression_0, new String[] {nestedMessage}) }; 
+				return new String[] { NLS.bind(DisplayMessages.JavaInspectExpression_0, new String[] {nestedMessage}) };
 			}
 			return new String[] { exception.getMessage() };
 		}

@@ -36,16 +36,16 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  * Breakpoint participant for a rename refactoring.
- * 
+ *
  * @since 3.2
  */
 public abstract class BreakpointRenameParticipant extends RenameParticipant {
-	
+
 	/**
 	 * Element being renamed
 	 */
 	private IJavaElement fElement;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
@@ -57,20 +57,20 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 			return false;
 		}
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Returns the element this refactoring is operating on.
-	 * 
+	 *
 	 * @return to original {@link IJavaElement}
 	 */
 	protected IJavaElement getOriginalElement() {
 		return fElement;
 	}
-	
+
 	/**
 	 * Returns whether this given element is a valid target for this operation.
-	 * 
+	 *
 	 * @param element the Java element context
 	 * @return whether this given element is a valid target for this operation
 	 */
@@ -108,10 +108,10 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gathers refactoring specific changes. Subclasses must override.
-	 * 
+	 *
 	 * @param markers the markers
 	 * @param changes the list of changes
 	 * @param destName the destination name
@@ -119,32 +119,32 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 	 * @throws OperationCanceledException if the operation was cancelled
 	 */
 	protected abstract void gatherChanges(IMarker[] markers, List<Change> changes, String destName) throws CoreException, OperationCanceledException;
-	
+
 	/**
 	 * Returns the resource that should be considered when searching for affected breakpoints.
-	 * 
+	 *
 	 * @return resource to search for breakpoint markers.
 	 */
 	protected IResource getBreakpointContainer() {
 		return fElement.getResource();
 	}
-	
+
 	/**
 	 * Returns the breakpoint associated with the given marker.
-	 * 
+	 *
 	 * @param marker breakpoint marker
 	 * @return breakpoint or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint(IMarker marker) {
 		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
 	}
-	
+
 	/**
 	 * Creates a specific type of change for a breakpoint that is changing types.
 	 * @param breakpoint the breakpoint to create the change for
 	 * @param destType the destination type name
 	 * @param originalType the original type name
-	 * 
+	 *
 	 * @return type change or <code>null</code>
 	 * @throws CoreException if creating the change fails
 	 */
@@ -161,11 +161,11 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 			return new LineBreakpointTypeChange((IJavaLineBreakpoint) breakpoint, destType);
 		}
 		return null;
-	}		
-	
+	}
+
 	/**
 	 * Returns whether the given target type is contained in the specified container type.
-	 * 
+	 *
 	 * @param container the container
 	 * @param type the type
 	 * @return if the type is contained in the given container
@@ -179,5 +179,5 @@ public abstract class BreakpointRenameParticipant extends RenameParticipant {
 			parent = parent.getParent();
 		}
 		return false;
-	}	
+	}
 }

@@ -27,5 +27,5 @@ public class EditStepFiltersAction extends ActionDelegate {
 	public void run(IAction action) {
 		SWTFactory.showPreferencePage(JavaStepFilterPreferencePage.PAGE_ID);
 	}
-	
+
 }

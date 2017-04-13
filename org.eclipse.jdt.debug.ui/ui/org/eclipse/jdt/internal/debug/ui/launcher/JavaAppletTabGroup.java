@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,13 +23,13 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 
 public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
-	
+
 	/**
 	 * Constructs a new Java applet tab group.
 	 */
 	public JavaAppletTabGroup() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
@@ -41,10 +41,10 @@ public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AppletArgumentsTab(),
 			new JavaJRETab(),
 			new JavaClasspathTab(),
-			new SourceLookupTab(),	
+			new SourceLookupTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);
 	}
-	
+
 }

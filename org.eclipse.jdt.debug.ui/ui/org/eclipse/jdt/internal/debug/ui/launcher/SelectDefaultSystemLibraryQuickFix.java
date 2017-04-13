@@ -26,10 +26,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Quick fix to select an alternate default JRE. 
+ * Quick fix to select an alternate default JRE.
  */
 public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
-	
+
 	public SelectDefaultSystemLibraryQuickFix() {
 		super();
 	}
@@ -40,9 +40,9 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 	@Override
 	public void run(IMarker marker) {
 		try {
-			String title = LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1; 
-			String message = LauncherMessages.SelectDefaultSystemLibraryQuickFix__Select_the_system_library_to_use_by_default_for_building_and_running_Java_projects__2; 
-		
+			String title = LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_Default_System_Library_1;
+			String message = LauncherMessages.SelectDefaultSystemLibraryQuickFix__Select_the_system_library_to_use_by_default_for_building_and_running_Java_projects__2;
+
 			final IVMInstall vm = chooseVMInstall(title, message);
 			if (vm == null) {
 				return;
@@ -58,7 +58,7 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 						}
 				}
 			};
-		
+
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
@@ -68,18 +68,18 @@ public class SelectDefaultSystemLibraryQuickFix extends JREResolution {
 				throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,	"An exception occurred while updating the default system library.", e.getTargetException()));  //$NON-NLS-1$
 			} catch (InterruptedException e) {
 				// canceled
-			}			
+			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(LauncherMessages.SelectDefaultSystemLibraryQuickFix_Unable_to_update_the_default_system_library__4, e.getStatus());
 		}
 	}
-		
+
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	@Override
 	public String getLabel() {
-		return LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5; 
+		return LauncherMessages.SelectDefaultSystemLibraryQuickFix_Select_default_system_library_5;
 	}
 
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,10 +39,10 @@ import org.eclipse.jdt.ui.JavaElementComparator;
  * exported entries and required projects should also be added.
  */
 public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
-	
+
 	private boolean fAddExportedEntries = true;
 	private boolean fAddRequiredProjects = true;
-	
+
 	private List<IJavaProject> fProjects;
 
 	/**
@@ -64,7 +64,7 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 	protected void addCustomFooterControls(Composite parent) {
 		super.addCustomFooterControls(parent);
 		final Button addExported = new Button(parent, SWT.CHECK);
-		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1); 
+		addExported.setText(ActionMessages.ProjectSelectionDialog_Add_exported_entries_of_selected_projects__1);
 		addExported.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -73,9 +73,9 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 		});
 		addExported.setSelection(fAddExportedEntries);
 		addExported.setFont(parent.getFont());
-		
+
 		final Button addRequired = new Button(parent, SWT.CHECK);
-		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2); 
+		addRequired.setText(ActionMessages.ProjectSelectionDialog_Add_required_projects_of_selected_projects__2);
 		addRequired.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -83,27 +83,27 @@ public class ProjectSelectionDialog extends AbstractDebugCheckboxSelectionDialog
 			}
 		});
 		addRequired.setSelection(fAddRequiredProjects);
-		addRequired.setFont(parent.getFont());		
+		addRequired.setFont(parent.getFont());
 	}
-	
+
 	/**
 	 * Returns whether the user has selected to add exported entries.
-	 * 
+	 *
 	 * @return whether the user has selected to add exported entries
 	 */
 	public boolean isAddExportedEntries() {
 		return fAddExportedEntries;
 	}
-	
+
 	/**
 	 * Returns whether the user has selected to add required projects.
-	 * 
+	 *
 	 * @return whether the user has selected to add required projects
 	 */
 	public boolean isAddRequiredProjects() {
 		return fAddRequiredProjects;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */

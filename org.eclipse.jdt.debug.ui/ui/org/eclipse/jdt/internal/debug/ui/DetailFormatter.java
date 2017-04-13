@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,19 +15,19 @@ package org.eclipse.jdt.internal.debug.ui;
  * Information about a detail formatter.
  */
 public class DetailFormatter implements Comparable<Object> {
-	
+
 	private boolean fEnabled;
-	
+
 	private String fTypeName;
-	
+
 	private String fSnippet;
-	
+
 	public DetailFormatter(String typeName, String snippet, boolean enabled) {
 		fTypeName= typeName;
 		fSnippet= snippet;
 		fEnabled= enabled;
 	}
-	
+
 	/**
 	 * Indicate if this pretty should be used or not.
 	 * @return boolean

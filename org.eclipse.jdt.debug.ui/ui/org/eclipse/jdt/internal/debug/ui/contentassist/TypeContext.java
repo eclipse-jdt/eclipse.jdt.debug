@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,17 +19,17 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * Code completion for a type with position information and no locals.
- * 
+ *
  * @since 3.2
  */
 public class TypeContext implements IJavaDebugContentAssistContext {
-	
+
 	private IType fType;
 	private int fPosition;
-	
+
 	/**
 	 * Constructs a completion context on the given type.
-	 * 
+	 *
 	 * @param type type in which to perform completions
 	 * @param insertionPoistion position in source to perform completions or -1
 	 */
@@ -51,7 +51,7 @@ public class TypeContext implements IJavaDebugContentAssistContext {
 
     /**
      * Throws an exception when unable to resolve a type
-     * 
+     *
      * @throws CoreException
      */
     protected void unableToResolveType() throws CoreException {

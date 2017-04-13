@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.ui.javaeditor.BasicCompilationUnitEditorActionContributor;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,24 +23,24 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * Contributions of the Java Snippet Editor to the Workbench's tool and menu bar.
  */
 public class SnippetEditorActionContributor extends BasicCompilationUnitEditorActionContributor {
- 	
+
 	protected JavaSnippetEditor fSnippetEditor;
-	
+
 	private StopAction fStopAction;
 	private SelectImportsAction fSelectImportsAction;
 	private SnippetOpenOnSelectionAction fOpenOnSelectionAction;
 	private SnippetOpenHierarchyOnSelectionAction fOpenOnTypeSelectionAction;
-	
+
 	public SnippetEditorActionContributor() {
 		super();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
-		
+
 		if (fStopAction == null) {
 			toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 			return;
@@ -49,7 +49,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 		toolBarManager.add(fSelectImportsAction);
 		toolBarManager.update(false);
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -59,7 +59,7 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 			return;
 		}
 		super.contributeToMenu(menu);
-		
+
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnSelectionAction);
@@ -67,13 +67,13 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 			navigateMenu.setVisible(true);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
 	@Override
 	public void setActiveEditor(IEditorPart part) {
-		
+
 		super.setActiveEditor(part);
 		fSnippetEditor= null;
 		if (part instanceof JavaSnippetEditor) {
@@ -86,32 +86,32 @@ public class SnippetEditorActionContributor extends BasicCompilationUnitEditorAc
 		}
 
 		if (fOpenOnSelectionAction != null) {
-			fStopAction.setEditor(fSnippetEditor);		
+			fStopAction.setEditor(fSnippetEditor);
 			fSelectImportsAction.setEditor(fSnippetEditor);
 			fOpenOnSelectionAction.setEditor(fSnippetEditor);
 			fOpenOnTypeSelectionAction.setEditor(fSnippetEditor);
 		}
-			
-		updateStatus(fSnippetEditor);			
+
+		updateStatus(fSnippetEditor);
 	}
-	 
+
 	protected void initializeActions() {
-		 
+
 		fOpenOnSelectionAction= new SnippetOpenOnSelectionAction(fSnippetEditor);
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
-		
+
 		fSelectImportsAction= new SelectImportsAction(fSnippetEditor);
 		if (fSnippetEditor.getFile() == null) {
 			fSelectImportsAction.setEnabled(false);
 		}
-	}	
-	
+	}
+
 	protected void updateStatus(JavaSnippetEditor editor) {
 		String message= ""; //$NON-NLS-1$
 		if (editor != null && editor.isEvaluating()) {
 			message= SnippetMessages.getString("SnippetActionContributor.evalMsg");  //$NON-NLS-1$
-		} 
+		}
 		getActionBars().getStatusLineManager().setMessage(message);
 	}
 }

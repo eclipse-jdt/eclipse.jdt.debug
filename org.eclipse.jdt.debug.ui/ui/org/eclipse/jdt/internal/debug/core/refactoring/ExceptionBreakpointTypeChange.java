@@ -28,9 +28,9 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
-	
+
 	private IType fDestType;
-	
+
 	public ExceptionBreakpointTypeChange(IJavaExceptionBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;

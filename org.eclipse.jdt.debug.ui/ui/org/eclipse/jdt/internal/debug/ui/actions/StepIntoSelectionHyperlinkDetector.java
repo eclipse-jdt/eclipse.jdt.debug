@@ -39,18 +39,18 @@ import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
 
 /**
  * This is a specialization of a hyperlink detector for the step into selection command
- * 
+ *
  * @since 3.3
  */
 public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetector {
-	
+
 	/**
 	 * Specific implementation of a hyperlink for step into command
 	 */
 	class StepIntoSelectionHyperlink implements IHyperlink {
-		
+
 		private ITextSelection fSelection = null;
-		
+
 		/**
 		 * Constructor
 		 * @param region
@@ -86,7 +86,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 		public void open() {
 			StepIntoSelectionUtils.stepIntoSelection(fSelection);
 		}
-		
+
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class StepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDetecto
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor editor = getAdapter(ITextEditor.class);
 		if(editor != null && EvaluationContextManager.getEvaluationContext(JDIDebugUIPlugin.getActiveWorkbenchWindow()) != null) {
-			
+
 			// should only enable step into selection when the current debug context
 			// is an instance of IJavaStackFrame
 			IAdaptable debugContext = DebugUITools.getDebugContext();

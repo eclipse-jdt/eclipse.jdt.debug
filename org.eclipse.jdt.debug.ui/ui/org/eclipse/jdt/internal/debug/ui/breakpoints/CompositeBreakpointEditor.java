@@ -21,17 +21,17 @@ import org.eclipse.ui.IPropertyListener;
 
 /**
  * Combines editors.
- * 
+ *
  * @since 3.6
  */
 public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
-	
+
 	private AbstractJavaBreakpointEditor[] fEditors;
-	
+
 	public CompositeBreakpointEditor(AbstractJavaBreakpointEditor[] editors) {
 		fEditors = editors;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
@@ -41,7 +41,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 			fEditors[i].addPropertyListener(listener);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#removePropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
@@ -51,7 +51,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 			fEditors[i].removePropertyListener(listener);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#dispose()
 	 */
@@ -92,7 +92,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 			fEditors[i].doSave();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#isDirty()
 	 */
@@ -137,7 +137,7 @@ public class CompositeBreakpointEditor extends AbstractJavaBreakpointEditor {
 			fEditors[i].setInput(breakpoint);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.AbstractJavaBreakpointEditor#setMnemonics(boolean)
 	 */

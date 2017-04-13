@@ -19,11 +19,11 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Action to display the instance count for a selected type.
- * 
+ *
  * @since 3.6
  */
 public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayInstaces(org.eclipse.jdt.debug.core.IJavaDebugTarget, org.eclipse.jdt.internal.debug.core.model.JDIReferenceType)
 	 */
@@ -36,7 +36,7 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 			report(Messages.AllInstancesActionDelegate_0,getPart());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.heapwalking.AllInstancesActionDelegate#displayNoInstances(org.eclipse.jdt.debug.core.IJavaDebugTarget, java.lang.String)
 	 */
@@ -44,10 +44,10 @@ public class InstanceCountActionDelegate extends AllInstancesActionDelegate {
 	protected void displayNoInstances(IJavaDebugTarget target, String typeName) {
 		displayNumInstances(typeName, 0);
 	}
-	
+
 	/**
 	 * Displays a message dialog with the number of instances.
-	 * 
+	 *
 	 * @param typeName type name
 	 * @param instanceCount number of instances
 	 */

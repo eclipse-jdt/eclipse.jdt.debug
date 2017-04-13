@@ -27,26 +27,26 @@ import org.eclipse.swt.custom.BusyIndicator;
  * show/hide qualified names.
  */
 public class ShowQualifiedAction extends ViewFilterAction {
-	
+
 	/**
 	 * @see ViewFilterAction#getPreferenceKey()
 	 */
 	@Override
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES; 
-	}	
+		return IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES;
+	}
 
 	/**
 	 * This method is not actually called - this action is not a filter. Instead
 	 * it sets an attribute on the viewer's model presentation.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -64,10 +64,10 @@ public class ShowQualifiedAction extends ViewFilterAction {
 						viewer.refresh();
 						IPreferenceStore store = getPreferenceStore();
 						String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-						store.setValue(key, getValue());				
+						store.setValue(key, getValue());
 					}
 				});
 			}
-		}		
-	}	
+		}
+	}
 }

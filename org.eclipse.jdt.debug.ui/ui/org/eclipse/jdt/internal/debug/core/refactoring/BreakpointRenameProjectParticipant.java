@@ -33,7 +33,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for project rename.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointRenameProjectParticipant extends BreakpointRenameParticipant {
@@ -90,7 +90,7 @@ public class BreakpointRenameProjectParticipant extends BreakpointRenameParticip
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc) returns the root folder path. root.getElementName() does not work if src folder has layers of folders
 	 */

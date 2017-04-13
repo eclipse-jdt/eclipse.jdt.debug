@@ -19,10 +19,10 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  */
 public interface IJavaDebugHelpContextIds {
-	
+
 	public static final String PREFIX= IJavaDebugUIConstants.PLUGIN_ID + '.';
 
 	// view parts
@@ -48,7 +48,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JRE_PREFERENCE_PAGE= PREFIX + "jre_preference_page_context"; //$NON-NLS-1$
 	public static final String JRE_PROFILES_PAGE= PREFIX + "jre_profiles_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_JRE_PROPERTY_PAGE= PREFIX + "launch_jre_property_page_context"; //$NON-NLS-1$
-	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$	
+	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_STEP_FILTER_PREFERENCE_PAGE= PREFIX + "java_step_filter_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_BREAKPOINT_PREFERENCE_PAGE= PREFIX + "java_breakpoint_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE= PREFIX + "java_detail_formatter_preference_page_context"; //$NON-NLS-1$
@@ -61,7 +61,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_EXCEPTION_BREAKPOINT_PROPERTY_PAGE = PREFIX + "java_exception_breakpoint_property_page"; //$NON-NLS-1$
 	public static final String JAVA_EXCEPTION_BREAKPOINT_FILTERING_PROPERTY_PAGE = PREFIX + "java_exception_breakpoint_filtering_property_page"; //$NON-NLS-1$
 	public static final String JAVA_LINE_BREAKPOINT_PROPERTY_PAGE = PREFIX + "java_line_breakpoint_property_page"; //$NON-NLS-1$
-	
+
 	// reused ui-blocks
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
 	public static final String WORKING_DIRECTORY_BLOCK= PREFIX + "working_directory_context"; //$NON-NLS-1$
@@ -73,7 +73,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_DIALOG_JRE_TAB= PREFIX + "launch_configuration_dialog_jre_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB= PREFIX + "launch_configuration_dialog_main_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_SOURCE_TAB= PREFIX + "launch_configuration_dialog_source_tab"; //$NON-NLS-1$
-	
+
 	// applet launch configuration dialog tabs
 	public static final String LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB = PREFIX + "launch_configuration_dialog_applet_main_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB = PREFIX + "launch_configuration_dialog_applet_arguments_tab"; //$NON-NLS-1$
@@ -87,7 +87,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String TERMINATE_SCRAPBOOK_VM_ACTION = PREFIX + "terminate_scrapbook_vm_action_context"; //$NON-NLS-1$
 	public static final String SCRAPBOOK_IMPORTS_ACTION = PREFIX + "scrapbook_imports_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_AUTOFORMAT_STACKTRACES_ACTION = PREFIX + "console_autoformat_stacktraces_action"; //$NON-NLS-1$
-	
+
 	//wizards
 	public static final String ADD_NEW_JRE_WIZARD_PAGE= PREFIX + "add_new_jre_wizard_page_context"; //$NON-NLS-1$
 	public static final String EDIT_JRE_STD_VM_WIZARD_PAGE= PREFIX + "edit_std_vm_jre_wizard_page_context"; //$NON-NLS-1$

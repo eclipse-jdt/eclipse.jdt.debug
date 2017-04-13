@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,14 +38,14 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	private ITextEditor fTextEditor= null;
 	private ISelection fCurrentSelection= null;
 	private IWorkbenchWindow fCurrentWindow= null;
-	
+
 	public static ActionDelegateHelper getDefault() {
 		if (fgDefault == null) {
 			fgDefault= new ActionDelegateHelper();
-		} 
+		}
 		return fgDefault;
 	}
-	
+
 	private ActionDelegateHelper() {
 		fCurrentWindow= JDIDebugUIPlugin.getActiveWorkbenchWindow();
 		if (fCurrentWindow != null) {
@@ -58,7 +58,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
@@ -88,7 +88,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	@Override
-	public void partDeactivated(IWorkbenchPart part) {		
+	public void partDeactivated(IWorkbenchPart part) {
 	}
 
 	/**
@@ -105,17 +105,17 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	protected void setMember(IMember member) {
 		fMember = member;
 	}
-	
+
 	protected void checkToSetTextEditor(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
 			if (part instanceof JavaSnippetEditor) {
 				cleanup();
 			} else {
 				setTextEditor((ITextEditor)part);
-			}	
-		} 
+			}
+		}
 	}
-	
+
 	public IMember getCurrentMember(ITextSelection currentSelection) {
 		if (currentSelection == getCurrentSelection()) {
 			return getMember();
@@ -151,11 +151,11 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
 		}
-		
+
 		setMember(m);
 		return m;
 	}
-	
+
 	protected ITextEditor getTextEditor() {
 		return fTextEditor;
 	}
@@ -163,7 +163,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	protected void setTextEditor(ITextEditor textEditor) {
 		fTextEditor = textEditor;
 	}
-	
+
 	protected ISelection getCurrentSelection() {
 		return fCurrentSelection;
 	}
@@ -171,7 +171,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	protected void setCurrentSelection(ISelection currentSelection) {
 		fCurrentSelection = currentSelection;
 	}
-	
+
 	/**
 	 * @see IWindowListener#windowActivated(IWorkbenchWindow)
 	 */
@@ -213,7 +213,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 	}
-	
+
 	protected void cleanup() {
 		setTextEditor(null);
 		setCurrentSelection(null);

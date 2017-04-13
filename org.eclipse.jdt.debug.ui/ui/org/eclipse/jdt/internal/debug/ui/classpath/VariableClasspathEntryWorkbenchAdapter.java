@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Workbench adapter for a string substitution runtime classpath entry.
- * 
+ *
  * @since 3.0
  */
 public class VariableClasspathEntryWorkbenchAdapter implements IWorkbenchAdapter {
@@ -39,7 +39,7 @@ public class VariableClasspathEntryWorkbenchAdapter implements IWorkbenchAdapter
 		}
 		return null;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */

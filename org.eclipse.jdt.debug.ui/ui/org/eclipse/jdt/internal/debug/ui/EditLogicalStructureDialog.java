@@ -118,7 +118,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		public Object[] getElements(Object inputElement) {
 			return getElements();
 		}
-		
+
 		/**
 		 * Returns the attributes.
 		 * @return the elements
@@ -137,7 +137,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 		/**
 		 * Remove the given attributes
-		 * @param list the list 
+		 * @param list the list
 		 */
 		public void remove(List<String[]> list) {
 			fVariables.removeAll(list);
@@ -170,14 +170,14 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 
 	}
-	
+
 	public class AttributesLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			return ((String[])element)[0];
 		}
 	}
-	
+
 	private final JavaLogicalStructure fLogicalStructure;
 	private Text fQualifiedTypeNameText;
 	private Text fDescriptionText;
@@ -210,11 +210,11 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		if (logicalStructure.getQualifiedTypeName().length() == 0) {
 			setTitle(DebugUIMessages.EditLogicalStructureDialog_32);
 		} else {
-			setTitle(DebugUIMessages.EditLogicalStructureDialog_31); 
+			setTitle(DebugUIMessages.EditLogicalStructureDialog_31);
 		}
 		fLogicalStructure= logicalStructure;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -225,64 +225,64 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				parent,
 				IJavaDebugHelpContextIds.EDIT_LOGICAL_STRUCTURE_DIALOG);
 		fParentComposite= parent;
-		
+
 		IHandler handler = new AbstractHandler() {
 			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				if(fSnippetViewer.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS) && fSnippetViewer.getControl().isFocusControl()){
 					findCorrespondingType();
-					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+					fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				}
 				return null;
 			}
 		};
-		
+
 		IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
         fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
-        
+
 		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
 
 		Composite typeNameDescriptionContainer = SWTFactory.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
-		
+
 		SWTFactory.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_0, 2);
-		
+
 		fQualifiedTypeNameText = SWTFactory.createSingleText(typeNameDescriptionContainer, 1);
 		fQualifiedTypeNameText.addListener(SWT.Modify, this);
-		
+
 		fBrowseTypeButton = SWTFactory.createPushButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_1, DebugUIMessages.EditLogicalStructureDialog_25, null);
-		
+
 		fBrowseTypeButton.addListener(SWT.Selection, this);
-		
+
 		SWTFactory.createLabel(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_2, 2);
-		
+
 		fDescriptionText = SWTFactory.createSingleText(typeNameDescriptionContainer, 2);
 		fDescriptionText.addListener(SWT.Modify, this);
-		
+
 		fSubTypeButton = SWTFactory.createCheckButton(typeNameDescriptionContainer, DebugUIMessages.EditLogicalStructureDialog_3, null, false, 1);
-		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26); 
+		fSubTypeButton.setToolTipText(DebugUIMessages.EditLogicalStructureDialog_26);
 
 		Group radioContainer= SWTFactory.createGroup(container, DebugUIMessages.EditLogicalStructureDialog_33, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fValueButton = SWTFactory.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_4);
 		fValueButton.addListener(SWT.Selection, this);
-		
+
 		fVariablesButton = SWTFactory.createRadioButton(radioContainer, DebugUIMessages.EditLogicalStructureDialog_5);
 
 		fAttributesContainer = SWTFactory.createComposite(container, container.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
-		
+
 		boolean isValue = fLogicalStructure.getValue() != null;
 		if (!isValue) {
 			// creates the attribute list if needed
 			createAttributeListWidgets();
 		}
-		
+
 		fCodeGroup = SWTFactory.createGroup(container, "", 1, 1, GridData.FILL_BOTH); //$NON-NLS-1$
 		createCodeGroupWidgets(isValue);
 
 		applyDialogFont(container);
-		
+
 		initializeData();
-		
+
 		return container;
 	}
 
@@ -292,25 +292,25 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 */
 	private void createCodeGroupWidgets(boolean isValue) {
 		if (isValue) {
-			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9); 
+			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_9);
 		} else {
-			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7); 
-		
+			fCodeGroup.setText(DebugUIMessages.EditLogicalStructureDialog_7);
+
 			Composite attributeNameContainer = SWTFactory.createComposite(fCodeGroup, fCodeGroup.getFont(), 2,  1, GridData.FILL_HORIZONTAL);
 			((GridLayout)attributeNameContainer.getLayout()).marginWidth = 0;
-			
+
 			SWTFactory.createLabel(attributeNameContainer, DebugUIMessages.EditLogicalStructureDialog_8, 1);
-			
+
 			fAttributeNameText = SWTFactory.createSingleText(attributeNameContainer, 1);
 			fAttributeNameText.addListener(SWT.Modify, this);
-            
+
 			SWTFactory.createLabel(fCodeGroup, DebugUIMessages.EditLogicalStructureDialog_9, 1);
 		}
-		
+
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(fCodeGroup,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
-	
+
 		JavaTextTools tools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		if (fSnippetDocument == null) {
 			fSnippetDocument= new Document();
@@ -328,7 +328,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fSnippetViewer.configure(fViewerConfiguration);
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(fSnippetDocument);
-		
+
 		Control control= fSnippetViewer.getControl();
 		GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint= convertHeightInCharsToPixels(isValue ? 20 : 10);
@@ -354,18 +354,18 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fAttributeListViewer.setLabelProvider(new AttributesLabelProvider());
 		fAttributeListViewer.setInput(this);
 		fAttributeListViewer.addSelectionChangedListener(this);
-		
+
 		Composite attributeListButtonsCotnainer = SWTFactory.createComposite(fAttributesContainer, fAttributesContainer.getFont(), 1, 1, SWT.NONE);
-		
+
 		fAttributeAddButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_10, DebugUIMessages.EditLogicalStructureDialog_27, null);
 		fAttributeAddButton.addListener(SWT.Selection, this);
-		
+
 		fAttributeRemoveButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_11, DebugUIMessages.EditLogicalStructureDialog_28, null);
 		fAttributeRemoveButton.addListener(SWT.Selection, this);
-		
+
 		fAttributeUpButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_12, DebugUIMessages.EditLogicalStructureDialog_29, null);
 		fAttributeUpButton.addListener(SWT.Selection, this);
-		
+
 		fAttributeDownButton = SWTFactory.createPushButton(attributeListButtonsCotnainer, DebugUIMessages.EditLogicalStructureDialog_13, DebugUIMessages.EditLogicalStructureDialog_30, null);
 		fAttributeDownButton.addListener(SWT.Selection, this);
 	}
@@ -425,7 +425,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 
 	// code for add attribute button
 	private void addAttribute() {
-		String[] newAttribute= new String[] {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; // 
+		String[] newAttribute= new String[] {DebugUIMessages.EditLogicalStructureDialog_14, DebugUIMessages.EditLogicalStructureDialog_15}; //
 		fAttributesContentProvider.add(newAttribute);
 		fAttributeListViewer.refresh();
 		fAttributeListViewer.setSelection(new StructuredSelection((Object)newAttribute));
@@ -504,7 +504,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				children[i].dispose();
 			}
 		}
-		
+
 		// dispose and recreate the code snippet editor group
 		Control[] children= fCodeGroup.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -532,7 +532,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			} else {
 				fAttributeListViewer.setSelection(fCurrentAttributeSelection);
 			}
-			
+
 		}
 	}
 
@@ -577,30 +577,30 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fQualifiedTypeNameText.getText().trim().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_16); 
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_16);
 		} else if (fDescriptionText.getText().trim().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_17); 
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_17);
 		} else if (fValueButton.getSelection() && fSnippetDocument.get().length() == 0) {
-			status.setError(DebugUIMessages.EditLogicalStructureDialog_18); 
+			status.setError(DebugUIMessages.EditLogicalStructureDialog_18);
 		} else if (fVariablesButton.getSelection()) {
 			Object[] elements= fAttributesContentProvider.getElements(null);
 			boolean oneElementSelected= fCurrentAttributeSelection.size() == 1;
 			if (elements.length == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_19); 
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_19);
 			} else if (oneElementSelected && fAttributeNameText.getText().trim().length() == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_20); 
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_20);
 			} else if (oneElementSelected && fSnippetDocument.get().trim().length() == 0) {
-				status.setError(DebugUIMessages.EditLogicalStructureDialog_21); 
+				status.setError(DebugUIMessages.EditLogicalStructureDialog_21);
 			} else {
 				for (int i= 0; i < elements.length; i++) {
 					String[] variable= (String[]) elements[i];
 					if (variable[0].trim().length() == 0) {
-						status.setError(DebugUIMessages.EditLogicalStructureDialog_22); 
+						status.setError(DebugUIMessages.EditLogicalStructureDialog_22);
 						break;
 					}
 					if (variable[1].trim().length() == 0) {
 						if (!oneElementSelected || fCurrentAttributeSelection.getFirstElement() != variable) {
-							status.setError(NLS.bind(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]})); 
+							status.setError(NLS.bind(DebugUIMessages.EditLogicalStructureDialog_23, new String[] {variable[0]}));
 							break;
 						}
 					}
@@ -609,7 +609,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 		if (!status.isError()) {
 			if (fType == null && fTypeSearched) {
-				status.setWarning(DebugUIMessages.EditLogicalStructureDialog_24); 
+				status.setWarning(DebugUIMessages.EditLogicalStructureDialog_24);
 			}
 		}
 		updateStatus(status);
@@ -626,26 +626,26 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_ALL_TYPES,
                 false, fQualifiedTypeNameText.getText());
 		} catch (JavaModelException jme) {
-			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6; 
-			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7; 
+			String title= DebugUIMessages.DetailFormatterDialog_Select_type_6;
+			String message= DebugUIMessages.DetailFormatterDialog_Could_not_open_type_selection_dialog_for_detail_formatters_7;
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
-	
-		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8); 
-		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9); 
+
+		dialog.setTitle(DebugUIMessages.DetailFormatterDialog_Select_type_8);
+		dialog.setMessage(DebugUIMessages.DetailFormatterDialog_Select_a_type_to_format_when_displaying_its_detail_9);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
-		
+
 		Object[] types= dialog.getResult();
 		if (types != null && types.length > 0) {
 			fType = (IType)types[0];
 			fQualifiedTypeNameText.setText(fType.getFullyQualifiedName());
 			fTypeSearched = true;
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -653,7 +653,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		// nothing to do
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -661,7 +661,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	public void documentChanged(DocumentEvent event) {
 		checkValues();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -700,7 +700,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		final IProgressMonitor monitor = new NullProgressMonitor();
 		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
-			
+
 			@Override
 			public void endReporting() {
 				checkValues();
@@ -720,7 +720,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 				monitor.setCanceled(true);
 			}
 		};
-		
+
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
 		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
@@ -732,7 +732,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		} catch (OperationCanceledException e){
 		}
 	}
-	
+
 	/**
 	 * Return the type object which corresponds to the given name.
 	 * @return the {@link IType}

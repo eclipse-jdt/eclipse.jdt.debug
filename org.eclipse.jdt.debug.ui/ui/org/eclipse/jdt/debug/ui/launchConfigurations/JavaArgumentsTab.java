@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
- 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -56,38 +56,38 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaArgumentsTab extends JavaLaunchTab {
-		
+
 	// Program arguments widgets
 	protected Label fPrgmArgumentsLabel;
 	protected Text fPrgmArgumentsText;
 
 	// VM arguments widgets
 	protected VMArgumentsBlock fVMArgumentsBlock;
-	
+
 	// Working directory
 	protected WorkingDirectoryBlock fWorkingDirectoryBlock;
-		
+
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-		
+
 	public JavaArgumentsTab() {
 		fVMArgumentsBlock = createVMArgsBlock();
 		fWorkingDirectoryBlock = createWorkingDirBlock();
 	}
-	
+
 	protected VMArgumentsBlock createVMArgsBlock() {
 		return new VMArgumentsBlock();
 	}
-	
+
 	/**
 	 * Creates a control to specify a working directory.
-	 * 
+	 *
 	 * @return the new {@link WorkingDirectoryBlock}
 	 * @since 3.4
 	 */
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
 		return new JavaWorkingDirectoryBlock();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
@@ -98,21 +98,21 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		GridLayout layout = new GridLayout(1, true);
 		comp.setLayout(layout);
 		comp.setFont(font);
-		
+
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		setControl(comp);
 		setHelpContextId();
-		
+
 		Group group = new Group(comp, SWT.NONE);
 		group.setFont(font);
 		layout = new GridLayout();
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		String controlName = (LauncherMessages.JavaArgumentsTab__Program_arguments__5); 
+
+		String controlName = (LauncherMessages.JavaArgumentsTab__Program_arguments__5);
 		group.setText(controlName);
-		
+
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		fPrgmArgumentsText.addTraverseListener(new TraverseListener() {
 			@Override
@@ -149,9 +149,9 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 			}
 		});
 		ControlAccessibleListener.addListener(fPrgmArgumentsText, group.getText());
-		
-		String buttonLabel = LauncherMessages.JavaArgumentsTab_5;  
-		Button pgrmArgVariableButton = createPushButton(group, buttonLabel, null); 
+
+		String buttonLabel = LauncherMessages.JavaArgumentsTab_5;
+		Button pgrmArgVariableButton = createPushButton(group, buttonLabel, null);
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -164,27 +164,27 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 				}
 			}
 		});
-		
+
 		fVMArgumentsBlock.createControl(comp);
-		
-		fWorkingDirectoryBlock.createControl(comp);		
+
+		fWorkingDirectoryBlock.createControl(comp);
 	}
-	
+
 	/**
 	 * Set the help context id for this launch config tab.  Subclasses may
 	 * override this method.
 	 */
 	protected void setHelpContextId() {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB);
 	}
-			
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	@Override
 	public void dispose() {
 	}
-		
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
@@ -195,7 +195,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 
 	/**
 	 * Defaults are empty.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 			fVMArgumentsBlock.initializeFrom(configuration);
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); 
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage());
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -232,7 +232,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @param text the widget to get the value from
 	 * @return text or <code>null</code>
 	 */
@@ -243,15 +243,15 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
 	public String getName() {
-		return LauncherMessages.JavaArgumentsTab__Arguments_16; 
-	}	
-	
+		return LauncherMessages.JavaArgumentsTab__Arguments_16;
+	}
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
 	 */
@@ -260,7 +260,7 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
 		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
-	}	
+	}
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
@@ -284,18 +284,18 @@ public class JavaArgumentsTab extends JavaLaunchTab {
 		}
 		return m;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
-	}	
-	
+	}
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override

@@ -67,13 +67,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Class to provide new function of viewing all live objects of the selected type in the current VM
  * Feature of 1.6 VMs
- * 
+ *
  * @since 3.3
  */
 public class AllInstancesActionDelegate  extends ObjectActionDelegate implements IEditorActionDelegate, IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow fWindow;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -98,7 +98,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 						    		IJavaElement[] selectedTypes = ((ICodeAssist)element).codeSelect(selectedWord.getOffset(), selectedWord.getLength());
 						    		// findWord() will only return one element, so only check the first element
 						    		if (selectedTypes.length > 0){
-						    			runForSelection(selectedTypes[0]);  
+						    			runForSelection(selectedTypes[0]);
 						    			return;
 						    		}
 								} catch (JavaModelException e){
@@ -108,7 +108,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 					    	}
 					    }
 					}
-					
+
 				// Otherwise, get the first selected element and check if it is a type
 				} else if (selection instanceof IStructuredSelection){
 					runForSelection(((IStructuredSelection)selection).getFirstElement());
@@ -118,16 +118,16 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		}
 		report(Messages.AllInstancesActionDelegate_3,getPart());
 	}
-	
+
 	/**
 	 * Resolves a debug reference type for the selected element and then
 	 * runs the action.
-	 * 
+	 *
 	 * @param selectedElement a method, type, or variable
 	 */
 	protected void runForSelection(Object selectedElement){
 		if (selectedElement != null){
-						
+
 			IJavaType type = null;
 			try {
 				// If the element is a constructor, get instances of its declaring type
@@ -165,13 +165,13 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 						type = var.getJavaType();
 					}
 				}
-				
+
 			} catch (JavaModelException e){
 				JDIDebugUIPlugin.log(e.getStatus());
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e.getStatus());
 			}
-					
+
 			if(type instanceof JDIReferenceType) {
 				JDIReferenceType rtype = (JDIReferenceType) type;
 				displayInstaces((JDIDebugTarget)rtype.getDebugTarget(), rtype);
@@ -180,33 +180,33 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		}
 		report(Messages.AllInstancesActionDelegate_3,getPart());
 	}
-	
+
 	/**
 	 * No types are loaded in the given target with the specified type name. Displays the result.
-	 * 
+	 *
 	 * @param target target
 	 * @param typeName resolve type name
 	 */
 	protected void displayNoInstances(IJavaDebugTarget target, String typeName) {
 		JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)target, null);
-		InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
-				getAnchor(), 
+		InspectPopupDialog ipd = new InspectPopupDialog(getShell(),
+				getAnchor(),
 				PopupInspectAction.ACTION_DEFININITION_ID,
 				new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, new String[]{typeName}), aiv));
 		ipd.open();
 	}
-	
+
 	/**
 	 * Display instances of the given resolved type.
-	 * 
+	 *
 	 * @param target target
 	 * @param rtype resolved reference type
 	 */
 	protected void displayInstaces(IJavaDebugTarget target, JDIReferenceType rtype) {
 		try{
 			JDIAllInstancesValue aiv = new JDIAllInstancesValue((JDIDebugTarget)rtype.getDebugTarget(), rtype);
-			InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
-					getAnchor(), 
+			InspectPopupDialog ipd = new InspectPopupDialog(getShell(),
+					getAnchor(),
 					PopupInspectAction.ACTION_DEFININITION_ID,
 					new JavaInspectExpression(NLS.bind(Messages.AllInstancesActionDelegate_2, new String[]{rtype.getName()}), aiv));
 			ipd.open();
@@ -215,7 +215,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 			report(Messages.AllInstancesActionDelegate_0,getPart());
 		}
 	}
-	
+
 	 /**
      * Convenience method for printing messages to the status line
      * @param message the message to be displayed
@@ -239,11 +239,11 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 
 	/**
 	 * Compute an anchor based on selected item in the tree.
-	 * 
+	 *
 	 * @return anchor point or <code>null</code> if one could not be obtained
 	 */
     protected Point getAnchor() {
-    	
+
     	// If it's a debug view (variables or expressions), get the location of the selected item
     	IDebugView debugView = getPart().getAdapter(IDebugView.class);
 		if (debugView != null){
@@ -257,7 +257,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 				}
 			}
 		}
-		
+
 		//resolve the current control
 		Control widget = getPart().getAdapter(Control.class);
     	if (widget == null){
@@ -276,7 +276,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	        int midOffset = docRange.x + (docRange.y / 2);
 	        Point point = textWidget.getLocationAtOffset(midOffset);
 	        point = textWidget.toDisplay(point);
-	
+
 	        GC gc = new GC(textWidget);
 	        gc.setFont(textWidget.getFont());
 	        int height = gc.getFontMetrics().getHeight();
@@ -292,9 +292,9 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 				return tree.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
 			}
 		}
-		return null;    	
+		return null;
     }
-    	
+
     /**
      * Gets the <code>IJavaElement</code> from the editor input
      * @param input the current editor input
@@ -308,13 +308,13 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     	//try to get from the working copy manager
     	return DebugWorkingCopyManager.getWorkingCopy(input, false);
     }
-	
-	
+
+
     /**
      * Returns the text editor associated with the given part or <code>null</code>
      * if none. In case of a multi-page editor, this method should be used to retrieve
      * the correct editor to perform the operation on.
-     * 
+     *
      * @param part workbench part
      * @return text editor part or <code>null</code>
      */
@@ -323,14 +323,14 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
     		return (ITextEditor) part;
     	}
     	return part.getAdapter(ITextEditor.class);
-    }	
-    
+    }
+
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		setActivePart(action, targetEditor);	
+		setActivePart(action, targetEditor);
 	}
 
 	/* (non-Javadoc)
@@ -340,7 +340,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
 	}
-	
+
 	/**
 	 * @return the shell to use for new popups or <code>null</code>
 	 */
@@ -353,7 +353,7 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
 	 */
@@ -370,5 +370,5 @@ public class AllInstancesActionDelegate  extends ObjectActionDelegate implements
 		}
 		return null;
 	}
-	
+
 }

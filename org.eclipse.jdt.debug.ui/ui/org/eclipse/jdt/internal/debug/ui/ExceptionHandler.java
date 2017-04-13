@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,11 +30,11 @@ import org.eclipse.swt.widgets.Shell;
 public class ExceptionHandler {
 
 	private static ExceptionHandler fgInstance= new ExceptionHandler();
-	
+
 	/**
 	 * Handles the given <code>CoreException</code>. The workbench shell is used as a parent
 	 * for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -42,10 +42,10 @@ public class ExceptionHandler {
 	public static void handle(CoreException e, String title, String message) {
 		handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>CoreException</code>. 
-	 * 
+	 * Handles the given <code>CoreException</code>.
+	 *
 	 * @param e the <code>CoreException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -54,11 +54,11 @@ public class ExceptionHandler {
 	public static void handle(CoreException e, Shell parent, String title, String message) {
 		fgInstance.perform(e, parent, title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used 
+	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used
 	 * as a parent for the dialog window.
-	 * 
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param title the dialog window's window title
 	 * @param message message to be displayed by the dialog window
@@ -66,10 +66,10 @@ public class ExceptionHandler {
 	public static void handle(InvocationTargetException e, String title, String message) {
 		handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
-	
+
 	/**
-	 * Handles the given <code>InvocationTargetException</code>. 
-	 * 
+	 * Handles the given <code>InvocationTargetException</code>.
+	 *
 	 * @param e the <code>InvocationTargetException</code> to be handled
 	 * @param parent the dialog window's parent shell
 	 * @param title the dialog window's window title
@@ -80,7 +80,7 @@ public class ExceptionHandler {
 	}
 
 	//---- Hooks for subclasses to control exception handling ------------------------------------
-	
+
 	protected void perform(CoreException e, Shell shell, String title, String message) {
 		IStatus status= e.getStatus();
 		JDIDebugUIPlugin.log(e);
@@ -104,7 +104,7 @@ public class ExceptionHandler {
 			}
 		}
 	}
-	
+
 	private void displayMessageDialog(String exceptionMessage, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
@@ -112,11 +112,11 @@ public class ExceptionHandler {
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
 		if (exceptionMessage == null || exceptionMessage.length() == 0) {
-			msg.write(DebugUIMessages.ExceptionHandler_seeErrorLogMessage); 
+			msg.write(DebugUIMessages.ExceptionHandler_seeErrorLogMessage);
 		}
 		else {
 			msg.write(exceptionMessage);
 		}
-		MessageDialog.openError(shell, title, msg.toString());			
-	}	
+		MessageDialog.openError(shell, title, msg.toString());
+	}
 }

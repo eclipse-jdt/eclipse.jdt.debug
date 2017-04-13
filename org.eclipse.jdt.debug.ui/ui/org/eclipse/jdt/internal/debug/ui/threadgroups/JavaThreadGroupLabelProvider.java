@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.3
  */
 public class JavaThreadGroupLabelProvider extends ElementLabelProvider {
-	
+
 	private static ImageDescriptor fgImage = JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_OBJS_THREAD_GROUP);
 
 	/* (non-Javadoc)

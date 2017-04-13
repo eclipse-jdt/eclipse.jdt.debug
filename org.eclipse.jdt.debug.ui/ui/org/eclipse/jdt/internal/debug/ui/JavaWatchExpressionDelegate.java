@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,10 +33,10 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 
 /**
- * 
+ *
  */
 public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
-	
+
 	private String fExpressionText;
 	private IWatchExpressionListener fListener;
 
@@ -58,7 +58,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			}
 		}
 		if (frame == null) {
-			fListener.watchEvaluationFinished(null);	
+			fListener.watchEvaluationFinished(null);
 		} else {
 			// consult the adapter in case of a wrappered debug model
 			final IJavaStackFrame javaStackFrame = ((IAdaptable) frame).getAdapter(IJavaStackFrame.class);
@@ -66,16 +66,16 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 				doEvaluation(javaStackFrame);
 			} else {
 				fListener.watchEvaluationFinished(null);
-			}	
+			}
 		}
 	}
-	
+
 	/**
 	 * Ask to evaluate the expression in the context of the given stack frame.
-	 * 
+	 *
 	 * The evaluation is performed asynchronously. A change debug event, with
 	 * this as the source, is fired when the evaluation is completed.
-	 * 
+	 *
 	 * @param javaStackFrame the stack frame in the context of which performed
 	 * the evaluation.
 	 */
@@ -87,7 +87,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			fListener.watchEvaluationFinished(null);
 		}
 	}
-	
+
 	private boolean preEvaluationCheck(IJavaThread javaThread) {
 		if (javaThread == null) {
 			return false;
@@ -97,18 +97,18 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Runnable used to evaluate the expression.
 	 */
 	private final class EvaluationRunnable implements Runnable {
-		
+
 		private final IJavaStackFrame fStackFrame;
-		
+
 		private EvaluationRunnable(IJavaStackFrame frame) {
 			fStackFrame= frame;
 		}
-		
+
 		@Override
 		public void run() {
 			IJavaProject project = JavaDebugUtils.resolveJavaProject(fStackFrame);

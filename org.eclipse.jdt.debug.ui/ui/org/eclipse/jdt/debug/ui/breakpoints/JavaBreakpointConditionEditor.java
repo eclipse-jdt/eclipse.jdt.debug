@@ -105,9 +105,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * property change notification ({@link #addPropertyListener(IPropertyListener)}). The editor
  * will fire a property change each time a setting is modified. The same editor can be
  * used to display different breakpoints by calling {@link #setInput(Object)} with different
- * breakpoint objects. 
+ * breakpoint objects.
  * </p>
- * 
+ *
  * @since 3.5
  */
 public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointEditor {
@@ -117,7 +117,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	private Button fWhenChange;
 
 	private JDISourceViewer fViewer;
-	private IContentAssistProcessor fCompletionProcessor;	
+	private IContentAssistProcessor fCompletionProcessor;
 	private IJavaLineBreakpoint fBreakpoint;
 	private IHandlerService fHandlerService;
 	private IHandler fContentAssistHandler;
@@ -156,7 +156,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Property id for breakpoint condition suspend policy.
 	 */
 	public static final int PROP_CONDITION_SUSPEND_POLICY= 0x1003;
-	
+
 	private static final int MAX_HISTORY_SIZE= 10;
 	private static final String DS_SECTION_CONDITION_HISTORY= "conditionHistory"; //$NON-NLS-1$
 	private static final String DS_KEY_HISTORY_ENTRY_COUNT= "conditionHistoryEntryCount"; //$NON-NLS-1$
@@ -172,7 +172,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Creates a new Java breakpoint condition editor with a history drop-down list.
-	 * 
+	 *
 	 * @param dialogSettings the dialog settings for the condition history or <code>null</code> to
 	 *            use the default settings (i.e. those used by JDT Debug)
 	 * @since 3.6
@@ -185,27 +185,27 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	 * Adds the given property listener to this editor. Property changes
 	 * are reported on the breakpoint being edited. Property identifiers
 	 * are breakpoint attribute keys.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	@Override
 	public void addPropertyListener(IPropertyListener listener) {
 		super.addPropertyListener(listener);
 	}
-	
+
 	/**
 	 * Removes the property listener from this editor.
-	 * 
+	 *
 	 * @param listener listener
 	 */
 	@Override
 	public void removePropertyListener(IPropertyListener listener) {
 		super.removePropertyListener(listener);
 	}
-	
+
 	/**
 	 * Sets the breakpoint to editor or <code>null</code> if none.
-	 * 
+	 *
 	 * @param input breakpoint or <code>null</code>
 	 * @throws CoreException if unable to access breakpoint attributes
 	 */
@@ -231,13 +231,13 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			suppressPropertyChanges(false);
 		}
 	}
-	
+
 
 	/**
 	 * Sets the breakpoint to edit. Has no effect if the breakpoint responds
 	 * <code>false</code> to {@link IJavaLineBreakpoint#supportsCondition()}.
 	 * The same editor can be used iteratively for different breakpoints.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint to edit or <code>null</code> if none
 	 * @exception CoreException if unable to access breakpoint attributes
 	 */
@@ -273,7 +273,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			ICompilationUnit compilationUnit = type.getCompilationUnit();
 			if (compilationUnit != null && compilationUnit.getJavaProject().getProject().exists()) {
 				source = compilationUnit.getSource();
-			} 
+			}
 			else {
 				IClassFile classFile = type.getClassFile();
 				if (classFile != null) {
@@ -337,21 +337,21 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		checkIfUsedInBreakpointsView();
 		registerViewerUndoRedoActions();
 	}
-	
+
 	/**
 	 * Creates the condition editor widgets and returns the top level
 	 * control.
-	 * 
+	 *
 	 * @param parent composite to embed the editor controls in
 	 * @return top level control
 	 */
 	@Override
 	public Control createControl(Composite parent) {
 		Composite controls = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		fConditional = SWTFactory.createCheckButton(controls, 
-				processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_0), 
-				null, 
-				false, 
+		fConditional = SWTFactory.createCheckButton(controls,
+				processMnemonics(PropertyPageMessages.JavaBreakpointConditionEditor_0),
+				null,
+				false,
 				1);
 		fConditional.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		fConditional.addSelectionListener(new SelectionAdapter() {
@@ -445,7 +445,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			@Override
 			public void focusLost(FocusEvent e) {
 				deactivateHandlers();
-			}				
+			}
 		});
 		parent.addDisposeListener(new DisposeListener() {
 			@Override
@@ -455,7 +455,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		});
 		return parent;
 	}
-	
+
 	/**
 	 * Disposes this editor and its controls. Once disposed, the editor can no
 	 * longer be used.
@@ -467,9 +467,9 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		if (fDocumentListener != null) {
 			fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		}
-		fViewer.dispose();	
+		fViewer.dispose();
 	}
-	
+
 	/**
 	 * Gives focus to an appropriate control in the editor.
 	 */
@@ -477,12 +477,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
-	
+
 	/**
 	 * Saves current settings to the breakpoint being edited. Has no
 	 * effect if a breakpoint is not currently being edited or if this
 	 * editor is not dirty.
-	 * 
+	 *
 	 * @exception CoreException if unable to update the breakpoint.
 	 */
 	@Override
@@ -497,12 +497,12 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns a status describing whether the condition editor is in
 	 * a valid state. Returns an OK status when all is good. For example, an error
 	 * status is returned when the conditional expression is empty but enabled.
-	 * 
+	 *
 	 * @return editor status.
 	 */
 	@Override
@@ -516,29 +516,29 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
 	 * Returns whether the editor needs saving.
-	 *  
+	 *
 	 * @return whether the editor needs saving
 	 */
 	@Override
 	public boolean isDirty() {
 		return super.isDirty();
 	}
-	
+
 	/**
 	 * Sets whether mnemonics should be displayed in editor controls.
 	 * Only has an effect if set before {@link #createControl(Composite)}
 	 * is called. By default, mnemonics are displayed.
-	 * 
+	 *
 	 * @param mnemonics whether to display mnemonics
 	 */
 	@Override
 	public void setMnemonics(boolean mnemonics) {
 		super.setMnemonics(mnemonics);
 	}
-	
+
 	private void activateHandlers() {
 		fContentAssistActivation= fHandlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, fContentAssistHandler);
 		checkIfUsedInBreakpointsView();
@@ -585,7 +585,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Enables controls based on whether the breakpoint's condition is enabled.
-	 * 
+	 *
 	 * @param enabled <code>true</code> if enabled, <code>false</code> otherwise
 	 * @param focus <code>true</code> if focus should be set, <code>false</code> otherwise
 	 */
@@ -601,7 +601,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			}
 		} else {
 			Color color = fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			fViewer.getTextWidget().setBackground(color);			
+			fViewer.getTextWidget().setBackground(color);
 		}
 		if (hasConditionHistory()) {
 			fConditionHistory.setEnabled(enabled);
@@ -610,7 +610,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Returns the breakpoint being edited or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint or <code>null</code>
 	 */
 	@Override
@@ -621,7 +621,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Tells whether this editor shows a condition history drop-down list.
-	 * 
+	 *
 	 * @return <code>true</code> if this editor shows a condition history drop-down list,
 	 *         <code>false</code> otherwise
 	 */
@@ -641,7 +641,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Returns the condition history labels for the current breakpoint.
-	 * 
+	 *
 	 * @return an array of strings containing the condition history labels
 	 */
 	private String[] getConditionHistoryLabels() {
@@ -655,7 +655,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Returns the condition history entries for the current breakpoint.
-	 * 
+	 *
 	 * @return an array of strings containing the history of conditions
 	 */
 	private String[] getConditionHistory() {
@@ -670,7 +670,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			return globalItems;
 		}
 
-		// Create combined history 
+		// Create combined history
 		int localHistorySize= Math.min(localHistory.size(), MAX_HISTORY_SIZE);
 		String[] historyItems= new String[localHistorySize + globalItems.length + 1];
 		for (int i= 0; i < localHistorySize; i++) {
@@ -721,7 +721,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Reads the condition history from the given dialog settings.
-	 * 
+	 *
 	 * @param dialogSettings the dialog settings
 	 * @return the condition history
 	 */
@@ -742,7 +742,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Writes the given conditions into the given dialog settings.
-	 * 
+	 *
 	 * @param conditions an array of strings containing the conditions
 	 * @param dialogSettings the dialog settings
 	 */
@@ -763,7 +763,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Returns the label for the history separator.
-	 * 
+	 *
 	 * @return the label for the history separator
 	 */
 	private String getSeparatorLabel() {
@@ -816,7 +816,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 
 	/**
 	 * Returns this editor's viewer's undo manager undo context.
-	 * 
+	 *
 	 * @return the undo context or <code>null</code> if not available
 	 * @since 3.1
 	 */

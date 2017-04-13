@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -68,7 +68,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action delegate for Open from Clipboard action.
- * 
+ *
  * @since 3.7
  */
 public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
@@ -293,7 +293,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Parse the input text and search for the corresponding Java elements.
-	 * 
+	 *
 	 * @param inputText the line number
 	 * @param matches matched Java elements
 	 * @return the line number
@@ -378,7 +378,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Perform a Java search for the type and return the corresponding Java elements.
-	 * 
+	 *
 	 * @param typeName the Type name
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
@@ -395,7 +395,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Perform a Java search for methods and constructors and return the corresponding Java
 	 * elements.
-	 * 
+	 *
 	 * @param s the method pattern
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
@@ -412,7 +412,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Perform a Java search for fields, methods and constructors and return the corresponding Java
 	 * elements.
-	 * 
+	 *
 	 * @param s the member pattern
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
@@ -429,7 +429,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Perform a Java search for types, fields and methods and return the corresponding Java
 	 * elements.
-	 * 
+	 *
 	 * @param s the qualified name pattern
 	 * @param matches matched Java elements
 	 * @throws InterruptedException if canceled by the user
@@ -456,7 +456,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Handles the given matches.
-	 * 
+	 *
 	 * @param matches matched Java elements
 	 * @param line the line number
 	 * @param inputText the input text
@@ -501,7 +501,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Opens each specified Java element in a Java editor and navigates to the specified line
 	 * number.
-	 * 
+	 *
 	 * @param elements
 	 *            the Java elements
 	 * @param line
@@ -526,7 +526,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Jumps to the given line in the editor if the line number lies within the given Java element.
-	 * 
+	 *
 	 * @param editorPart the Editor part
 	 * @param line the line to jump to
 	 * @param element the Java Element
@@ -561,7 +561,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Opens an text input dialog to let the user refine the input text.
-	 * 
+	 *
 	 * @param inputText the input text
 	 */
 	private static void openInputEditDialog(String inputText) {
@@ -607,13 +607,13 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Perform a Java search for the type and return the corresponding Java elements.
-	 * 
+	 *
 	 * <p>
 	 * TODO: Because of faster performance SearchEngine.searchAllTypeNames(...) is used to do the
 	 * Java Search, instead of the usual SearchEngine.search(...) API. This logic should be moved to
 	 * JDT/Core.
 	 * </p>
-	 * 
+	 *
 	 * @param typeName
 	 *            the Type Name
 	 * @param matches
@@ -647,13 +647,13 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Perform a Java search for one or more of fields, methods and constructors and return the
 	 * corresponding Java elements.
-	 * 
+	 *
 	 * <p>
 	 * TODO: Because of faster performance, if the type name is available
 	 * SearchEngine.searchAllTypeNames(...) is used to narrow the scope of Java Search. This logic
 	 * should be moved to JDT/Core.
 	 * </p>
-	 * 
+	 *
 	 * @param memberName
 	 *            the Member Name
 	 * @param matches

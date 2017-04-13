@@ -24,14 +24,14 @@ public class AutoFormatSettingAction extends Action {
 	private IPreferenceStore fPreferenceStore;
 
 	public AutoFormatSettingAction(JavaStackTraceConsolePage page) {
-		super(ConsoleMessages.AutoFormatSettingAction_0, SWT.TOGGLE); 
+		super(ConsoleMessages.AutoFormatSettingAction_0, SWT.TOGGLE);
 		fPage = page;
-		
-		setToolTipText(ConsoleMessages.AutoFormatSettingAction_1);  
+
+		setToolTipText(ConsoleMessages.AutoFormatSettingAction_1);
 		setImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_ELCL_AUTO_FORMAT));
 		setHoverImageDescriptor(JavaDebugImages.getImageDescriptor(JavaDebugImages.IMG_ELCL_AUTO_FORMAT));
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.CONSOLE_AUTOFORMAT_STACKTRACES_ACTION);
-        
+
         fPreferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
         boolean checked = fPreferenceStore.getBoolean(IJDIPreferencesConstants.PREF_AUTO_FORMAT_JSTCONSOLE);
 		setChecked(checked);

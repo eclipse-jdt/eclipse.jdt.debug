@@ -159,9 +159,9 @@ public class DebugUIMessages extends NLS {
 	public static String JDIModelPresentation_target_suspended;
 	public static String JDIModelPresentation_thread_filtered;
 	public static String JDIModelPresentation_uncaught_62;
-	
+
 	// thread label keys are built programmatically
-	
+
 	public static String thread_terminated;
 	public static String thread_evaluating;
 	public static String thread_running;
@@ -176,7 +176,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_suspended_fieldmodification;
 	public static String thread_suspended_runtoline;
 	public static String thread_suspended_classprepare;
-	
+
 	public static String thread_daemon_terminated;
 	public static String thread_daemon_evaluating;
 	public static String thread_daemon_running;
@@ -191,7 +191,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_daemon_suspended_fieldmodification;
 	public static String thread_daemon_suspended_runtoline;
 	public static String thread_daemon_suspended_classprepare;
-	
+
 	public static String thread_system_terminated;
 	public static String thread_system_evaluating;
 	public static String thread_system_running;
@@ -206,7 +206,7 @@ public class DebugUIMessages extends NLS {
 	public static String thread_system_suspended_fieldmodification;
 	public static String thread_system_suspended_runtoline;
 	public static String thread_system_suspended_classprepare;
-	
+
 	public static String thread_daemon_system_terminated;
 	public static String thread_daemon_system_evaluating;
 	public static String thread_daemon_system_running;
@@ -374,7 +374,7 @@ public class DebugUIMessages extends NLS {
 	public static String JavaPrimitivesPreferencePage_0;
 
 	public static String JavaPrimitivesPreferencePage_1;
-	
+
 	public static String JavaStepFilterPreferencePage__Use_step_filters;
 
 	public static String JavaVariableLabelProvider_0;

@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
- 
- 
+
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -69,62 +69,62 @@ import org.eclipse.osgi.util.NLS;
  */
 
 public class ScrapbookLauncher implements IDebugEventSetListener {
-	
+
 	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch"; //$NON-NLS-1$
-	
+
 	public static final String SCRAPBOOK_FILE_PATH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_file_path"; //$NON-NLS-1$
-	
+
 	/**
 	 * Persistent property associated with snippet files specifying working directory.
 	 * Same format as the associated launch configuration attribute
 	 * <code>ATTR_WORKING_DIR</code>.
 	 */
 	public static final QualifiedName SNIPPET_EDITOR_LAUNCH_CONFIG_HANDLE_MEMENTO = new QualifiedName(IJavaDebugUIConstants.PLUGIN_ID, "snippet_editor_launch_config"); //$NON-NLS-1$
-		
+
 	private IJavaLineBreakpoint fMagicBreakpoint;
-	
+
 	private HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<IFile, IDebugTarget>(10);
 	private HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<IDebugTarget, IBreakpoint>(10);
 	private HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<IDebugTarget, IFile>(10);
-	
+
 	private static ScrapbookLauncher fgDefault = null;
-	
+
 	private ScrapbookLauncher() {
 		//see getDefault()
 	}
-	
+
 	public static ScrapbookLauncher getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new ScrapbookLauncher();
 		}
 		return fgDefault;
 	}
-	
+
 	/**
 	 * Launches a VM for the given scrapbook page, in debug mode.
 	 * Returns an existing launch if the page is already running.
 	 * @param page the scrapbook page file
-	 * 
+	 *
 	 * @return resulting launch, or <code>null</code> on failure
 	 */
 	protected ILaunch launch(IFile page) {
 
 		// clean up orphaned launch configurations
 		cleanupLaunchConfigurations();
-							
+
 		if (!page.getFileExtension().equals("jpage")) { //$NON-NLS-1$
 			showNoPageDialog();
 			return null;
 		}
-		
+
 		IDebugTarget vm = getDebugTarget(page);
 		if (vm != null) {
 			//already launched
 			return vm.getLaunch();
 		}
-		
+
 		IJavaProject javaProject= JavaCore.create(page.getProject());
-			
+
 		URL jarURL = null;
 		try {
 			jarURL = JDIDebugUIPlugin.getDefault().getBundle().getEntry("snippetsupport.jar"); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e); //$NON-NLS-1$
 			return null;
 		}
-		
+
 		List<IRuntimeClasspathEntry> cp = new ArrayList<IRuntimeClasspathEntry>(3);
 		String jarFile = jarURL.getFile();
 		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarFile));
@@ -150,7 +150,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 			}
 			IRuntimeClasspathEntry[] classPath = cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
-			
+
 			return doLaunch(javaProject, page, classPath, jarFile);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog("Unable to launch scrapbook VM", e); //$NON-NLS-1$
@@ -169,18 +169,18 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				config = getLaunchConfigurationTemplate(page);
 				if (config != null) {
-					wc = config.getWorkingCopy();		
+					wc = config.getWorkingCopy();
 				}
 			} catch (CoreException e) {
 				config = null;
 				JDIDebugUIPlugin.errorDialog("Unable to retrieve scrapbook settings", e); //$NON-NLS-1$
 			}
-			
+
 			if (config == null) {
 				config = createLaunchConfigurationTemplate(page);
 				wc = config.getWorkingCopy();
-			}							
-			
+			}
+
 			IPath outputLocation =	p.getProject().getWorkingLocation(JDIDebugUIPlugin.getUniqueIdentifier());
 			File f = outputLocation.toFile();
 			URL u = null;
@@ -210,8 +210,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 					return null;
 				}
 			}
-			
-			// convert to mementos 
+
+			// convert to mementos
 			List<String> classpathList= new ArrayList<String>(classPath.length);
 			for (int i = 0; i < classPath.length; i++) {
 				classpathList.add(classPath[i].getMemento());
@@ -225,7 +225,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			if (wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null) == null) {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.jdt.debug.ui.scrapbookSourcepathProvider"); //$NON-NLS-1$
 			}
-			
+
 			StringBuffer urlsString = new StringBuffer();
 			for (int i = 0; i < urls.length; i++) {
 				urlsString.append(' ');
@@ -233,9 +233,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString.toString());
 			wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
-			
+
 			config = wc.doSave();
-			
+
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			if (launch != null) {
 				IDebugTarget dt = launch.getDebugTarget();
@@ -252,10 +252,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates an "invisible" line breakpoint.
-	 * 
+	 *
 	 * @param jarFile
 	 *            path to the snippetsupport.jar file
 	 * @return the new 'magic' breakpoint
@@ -297,37 +297,37 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the debug target associated with the given
 	 * scrapbook page, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param page file representing scrapbook page
 	 * @return associated debug target or <code>null</code>
 	 */
 	public IDebugTarget getDebugTarget(IFile page) {
 		return fScrapbookToVMs.get(page);
 	}
-	
+
 	/**
 	 * Returns the magic breakpoint associated with the given
 	 * scrapbook VM. The magic breakpoint is the location at
 	 * which an evaluation begins.
-	 * 
-	 * @param target a scrapbook debug target 
+	 *
+	 * @param target a scrapbook debug target
 	 * @return the breakpoint at which an evaluation begins
 	 *  or <code>null</code> if none
 	 */
 	public IBreakpoint getMagicBreakpoint(IDebugTarget target) {
 		return fVMsToBreakpoints.get(target);
 	}
-	
+
 	protected void showNoPageDialog() {
 		String title= SnippetMessages.getString("ScrapbookLauncher.error.title"); //$NON-NLS-1$
 		String msg= SnippetMessages.getString("ScrapbookLauncher.error.pagenotfound"); //$NON-NLS-1$
 		MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(),title, msg);
 	}
-	
+
 	protected void cleanup(IDebugTarget target) {
 		Object page = fVMsToScrapbooks.get(target);
 		if (page != null) {
@@ -344,15 +344,15 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 		}
 	}
-	
+
 	protected URL getEncodedURL(File file) throws MalformedURLException, UnsupportedEncodingException {
-		//looking at File.toURL the delimiter is always '/' 
+		//looking at File.toURL the delimiter is always '/'
 		// NOT File.separatorChar
 		String urlDelimiter= "/"; //$NON-NLS-1$
 		String unencoded= file.toURL().toExternalForm();
 		StringBuffer encoded= new StringBuffer();
 		StringTokenizer tokenizer= new StringTokenizer(unencoded, urlDelimiter);
-		
+
 		encoded.append(tokenizer.nextToken()); //file:
 		encoded.append(urlDelimiter);
 		encoded.append(tokenizer.nextToken()); //drive letter and ':'
@@ -370,7 +370,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return new URL(encoded.toString());
 	}
-	
+
 	/**
 	 * Returns the launch configuration used as a template for launching the
 	 * given scrapbook file, or <code>null</code> if none. The template contains
@@ -386,7 +386,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates and saves template launch configuration for the given scrapbook file.
 	 * @param page the backing page
@@ -398,7 +398,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		String name = NLS.bind(SnippetMessages.getString("ScrapbookLauncher.17"), new String[]{page.getName()}); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 		wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$			
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, page.getProject().getName());
 		wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
 		wc.setAttribute(SCRAPBOOK_FILE_PATH, page.getFullPath().toString());
@@ -406,9 +406,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		JavaMigrationDelegate.updateResourceMapping(wc);
 		ILaunchConfiguration config = wc.doSave();
 		setLaunchConfigMemento(page, config.getMemento());
-		return config;		
-	}	
-		
+		return config;
+	}
+
 	/**
 	 * Returns the handle memento for the given scrapbook's launch configuration
 	 * template, or <code>null</code> if none.
@@ -422,8 +422,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			JDIDebugUIPlugin.log(e);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Sets the handle memento for the given scrapbook's launch configuration
 	 * template.
@@ -436,7 +436,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-	}	
+	}
 
 	/**
 	 * Returns the launch manager.
@@ -445,13 +445,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	protected static ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/**
 	 * Returns the working directory attribute for the given snippet file,
 	 * possibly <code>null</code>.
 	 * @param file the backing file
 	 * @return the working directory
-	 * 
+	 *
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public static String getWorkingDirectoryAttribute(IFile file) throws CoreException {
@@ -461,13 +461,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the VM arguments attribute for the given snippet file,
 	 * possibly <code>null</code>.
 	 * @param file the backing file
 	 * @return the VM arguments
-	 * 
+	 *
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public static String getVMArgsAttribute(IFile file) throws CoreException {
@@ -476,13 +476,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the VM install used to launch the given snippet file.
 	 * @param file the backing file
 	 * @return the VM install
-	 * 
+	 *
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public static IVMInstall getVMInstall(IFile file) throws CoreException {
@@ -492,8 +492,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return JavaRuntime.getVMInstall(pro);
 		}
 		return JavaRuntime.computeVMInstall(config);
-	}	
-	
+	}
+
 	/**
 	 * Deletes any scrapbook launch configurations for scrap books that
 	 * have been deleted. Rather than listening to all resource deltas,

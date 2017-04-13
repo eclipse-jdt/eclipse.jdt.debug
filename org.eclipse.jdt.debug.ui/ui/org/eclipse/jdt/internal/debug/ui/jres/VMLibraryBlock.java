@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
@@ -53,7 +53,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
- 
+
 /**
  * Control used to edit the libraries associated with a VM install
  */
@@ -64,15 +64,15 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	 * dialog.
 	 */
 	protected static final String LAST_PATH_SETTING = "LAST_PATH_SETTING"; //$NON-NLS-1$
-	
+
 	/**
 	 * the prefix for dialog setting pertaining to this block
 	 */
 	protected static final String DIALOG_SETTINGS_PREFIX = "VMLibraryBlock"; //$NON-NLS-1$
-	
+
 	protected boolean fInCallback = false;
 	protected VMStandin fVmInstall;
-	
+
 	//widgets
 	protected LibraryContentProvider fLibraryContentProvider;
 	protected TreeViewer fLibraryViewer;
@@ -83,20 +83,20 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	private Button fJavadocButton;
 	private Button fSourceButton;
 	protected Button fDefaultButton;
-	
+
 	private IStatus[] fLibStatus;
-	
+
 	private Button fAnnotationsButton;
 
 	/**
 	 * Constructs a new wizard page with the given name.
-	 * 
+	 *
 	 * @param pageName page name
 	 */
 	VMLibraryBlock() {
 		super(JREMessages.VMLibraryBlock_2);
 		fLibStatus = new IStatus[]{Status.OK_STATUS};
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -104,9 +104,9 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = SWTFactory.createComposite(parent, font, 2, 1, GridData.FILL_BOTH, 0, 0);
-		
+
 		fLibraryViewer= new TreeViewer(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 6;
@@ -116,11 +116,11 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fLibraryViewer.setLabelProvider(new LibraryLabelProvider());
 		fLibraryViewer.setInput(this);
 		fLibraryViewer.addSelectionChangedListener(this);
-		
-		Composite pathButtonComp = SWTFactory.createComposite(comp, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0); 
+
+		Composite pathButtonComp = SWTFactory.createComposite(comp, font, 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0);
 		fAddButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_7, JREMessages.VMLibraryBlock_16, null);
 		fAddButton.addSelectionListener(this);
-		fJavadocButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3, JREMessages.VMLibraryBlock_17, null); 
+		fJavadocButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_3, JREMessages.VMLibraryBlock_17, null);
 		fJavadocButton.setEnabled(false);
 		fJavadocButton.addSelectionListener(this);
 
@@ -142,7 +142,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 				}
 			}
 		});
-		fRemoveButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6, JREMessages.VMLibraryBlock_12, null);		
+		fRemoveButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_6, JREMessages.VMLibraryBlock_12, null);
 		fRemoveButton.setEnabled(false);
 		fRemoveButton.addSelectionListener(this);
 		fUpButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_4, JREMessages.VMLibraryBlock_13, null);
@@ -153,7 +153,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fDownButton.addSelectionListener(this);
 		fDefaultButton = SWTFactory.createPushButton(pathButtonComp, JREMessages.VMLibraryBlock_9, JREMessages.VMLibraryBlock_15, null);
 		fDefaultButton.addSelectionListener(this);
-		
+
 		setControl(comp);
 	}
 
@@ -192,7 +192,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fLibraryContentProvider.setLibraries(libs);
 		update();
 	}
-	
+
 	/**
 	 * Updates buttons and status based on current libraries
 	 */
@@ -224,7 +224,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 			getContainer().updateButtons();
 		}
 	}
-	
+
 	/**
 	 * Determines if the current libraries displayed to the user are the default location
 	 * for the given vm working copy.
@@ -233,7 +233,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	 */
 	protected boolean isDefaultLocations(IVMInstall vm) {
 		LibraryLocation[] libraryLocations = fLibraryContentProvider.getLibraries();
-        
+
 		if (vm == null || libraryLocations == null) {
 			return true;
 		}
@@ -257,7 +257,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	 */
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		boolean completed = true; 
+		boolean completed = true;
 		Object source= e.getSource();
 		if (source == fUpButton) {
 			fLibraryContentProvider.up((IStructuredSelection) fLibraryViewer.getSelection());
@@ -267,7 +267,7 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 			fLibraryContentProvider.remove((IStructuredSelection) fLibraryViewer.getSelection());
 		} else if (source == fAddButton) {
 			completed = add((IStructuredSelection) fLibraryViewer.getSelection());
-		} 
+		}
 		else if(source == fJavadocButton) {
 			edit((IStructuredSelection) fLibraryViewer.getSelection(), SubElement.JAVADOC_URL);
 		}
@@ -311,14 +311,14 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		}
 		String[] fileNames= dialog.getFileNames();
 		int nChosen= fileNames.length;
-			
+
 		IPath filterPath= new Path(dialog.getFilterPath());
 		LibraryLocation[] libs= new LibraryLocation[nChosen];
 		for (int i= 0; i < nChosen; i++) {
 			libs[i]= new LibraryLocation(filterPath.append(fileNames[i]).makeAbsolute(), Path.EMPTY, Path.EMPTY);
 		}
 		dialogSettings.put(LAST_PATH_SETTING, filterPath.toOSString());
-		
+
 		fLibraryContentProvider.add(libs, selection);
 		return true;
 	}
@@ -344,12 +344,12 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 				if (urls != null) {
 					fLibraryContentProvider.setJavadoc(urls[0], selection);
 				}
-			} 
+			}
 			else if(type == SubElement.SOURCE_PATH){
 				IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(library.getSystemLibraryPath());
 				entry.setSourceAttachmentPath(library.getSystemLibrarySourcePath());
 				entry.setSourceAttachmentRootPath(library.getPackageRootPath());
-				IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry()); 
+				IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(fLibraryViewer.getControl().getShell(), entry.getClasspathEntry());
 				if (classpathEntry != null) {
 					fLibraryContentProvider.setSourcePath(classpathEntry.getSourceAttachmentPath(), classpathEntry.getSourceAttachmentRootPath(), selection);
 				}
@@ -392,9 +392,9 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fLibraryViewer.getSelection();
 		fRemoveButton.setEnabled(!selection.isEmpty());
-		boolean enableUp = true, 
-				enableDown = true, 
-				allSource = true, 
+		boolean enableUp = true,
+				enableDown = true,
+				allSource = true,
 				allJavadoc = true,
 				allAnnotations = true,
 				allRoots = true;
@@ -486,13 +486,13 @@ public class VMLibraryBlock extends AbstractVMInstallPage implements SelectionLi
 		fVmInstall = vm;
 		fLibraryContentProvider.setLibraries(libraryLocations);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#getVMStatus()
 	 */
 	@Override
 	protected IStatus[] getVMStatus() {
 		return fLibStatus;
-	}	
-		
+	}
+
 }

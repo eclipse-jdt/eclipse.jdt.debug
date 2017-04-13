@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
- * 
+ *
  */
 public class JavaBreakpointAdvancedPage extends PropertyPage {
 
@@ -66,7 +66,7 @@ public class JavaBreakpointAdvancedPage extends PropertyPage {
 		setValid(true);
 		return mainComposite;
 	}
-	
+
 	public void createInstanceFilterEditor(Composite parent) {
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		try {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,12 +26,12 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * Represent a Java monitor in the threads and monitors model.
  */
 public class JavaMonitor {
-	
+
 	/**
 	 * The underlying object.
 	 */
 	private IJavaObject fMonitor;
-	
+
 	/**
 	 * The thread which owns this monitor
 	 */
@@ -49,21 +49,21 @@ public class JavaMonitor {
 	 * may have changed.
 	 */
 	private boolean fToUpdate= true;
-	
+
 	/**
 	 * The List of JavaContendedMonitor and JavaOwnedMonitor associated with this
 	 * monitor.
 	 */
 	private List<PlatformObject> fElements= new ArrayList<PlatformObject>();
-	
+
 	public JavaMonitor(IJavaObject monitor) {
 		fMonitor= monitor;
 	}
-	
+
 	public IJavaObject getMonitor() {
 		return fMonitor;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
@@ -82,7 +82,7 @@ public class JavaMonitor {
 	public String getModelIdentifier() {
 		return fMonitor.getModelIdentifier();
 	}
-	
+
 	/**
 	 * Returns the thread which owns this monitor, refresh the data
 	 * first if need.
@@ -93,7 +93,7 @@ public class JavaMonitor {
 		}
 		return fOwningThread;
 	}
-	
+
 	/**
 	 * Returns the threads waiting for this monitor, refresh the data
 	 * first if need.
@@ -104,7 +104,7 @@ public class JavaMonitor {
 		}
 		return fWaitingThreads;
 	}
-	
+
 	/**
 	 * Update the information for this monitor.
 	 * @return <code>true</code> if the owning thread or
@@ -145,7 +145,7 @@ public class JavaMonitor {
 							}
 							changed= true;
 						} else {
-							// we need to check in the new list contains the same threads as the 
+							// we need to check in the new list contains the same threads as the
 							// previous list
 							int sameThread= 0;
 							for (int i= 0; i < waitingThreads.length; i++) {
@@ -171,7 +171,7 @@ public class JavaMonitor {
 				fToUpdate= false;
 			}
 		}
-		
+
 		if (toRemove) {
 			threadMonitorManager.removeJavaMonitor(this);
 		} else if (changed) {
@@ -179,7 +179,7 @@ public class JavaMonitor {
 		}
 		return changed;
 	}
-	
+
 	/**
 	 * Send a change event for theJavaContendedMonitor and JavaOwnedMonitor
 	 * associated with this monitor
@@ -206,15 +206,15 @@ public class JavaMonitor {
 			}
 		}
 	}
-	
+
 	protected void addElement(JavaOwnedMonitor monitor) {
 		fElements.add(monitor);
 	}
-	
+
 	protected void addElement(JavaContendedMonitor monitor) {
 		fElements.add(monitor);
 	}
-	
+
 	public void refresh() {
 		if (fToUpdate && !update()) {
 			if (fOwningThread != null) {
@@ -225,7 +225,7 @@ public class JavaMonitor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Indicate if this monitor is currently part of a deadlock
 	 */

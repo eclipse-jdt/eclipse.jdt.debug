@@ -15,12 +15,12 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
- 
+
 /**
  * Utility class for Java Toggle breakpoints
  */
 public class BreakpointToggleUtils {
-	
+
 	private static boolean isTracepoint = false;
 
 
@@ -34,7 +34,7 @@ public class BreakpointToggleUtils {
 
 	/**
 	 * Convenience method for printing messages to the status line
-	 * 
+	 *
 	 * @param message
 	 *            the message to be displayed
 	 * @param part

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 public class CreateStepFilterDialog extends StatusDialog {
 
 	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
-	
+
 	private Text text;
 	private Filter filter;
 	private Button okButton;
@@ -45,27 +45,27 @@ public class CreateStepFilterDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.filter = filter;
 		this.existingFilters = existingFilters;
-		
-		setTitle(DebugUIMessages.CreateStepFilterDialog_2); 
+
+		setTitle(DebugUIMessages.CreateStepFilterDialog_2);
 		setStatusLineAboveButtons(false);
-		
+
 	}
-	
+
 	static Filter showCreateStepFilterDialog(Shell parent, Filter[] existingFilters) {
 		CreateStepFilterDialog createStepFilterDialog = new CreateStepFilterDialog(parent, new Filter(DEFAULT_NEW_FILTER_TEXT, true), existingFilters);
 		createStepFilterDialog.create();
 		createStepFilterDialog.open();
-		
-		return createStepFilterDialog.filter;		
+
+		return createStepFilterDialog.filter;
 	}
-	
+
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		okButton.setEnabled(false);		
+		okButton.setEnabled(false);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
@@ -78,9 +78,9 @@ public class CreateStepFilterDialog extends StatusDialog {
 
 		int textStyles = SWT.SINGLE | SWT.LEFT;
 		Label label= new Label(container, textStyles);
-		label.setText(DebugUIMessages.CreateStepFilterDialog_3); 
+		label.setText(DebugUIMessages.CreateStepFilterDialog_3);
 		label.setFont(container.getFont());
-		
+
 		// create & configure Text widget for editor
 		// Fix for bug 1766.  Border behavior on for text fields varies per platform.
 		// On Motif, you always get a border, on other platforms,
@@ -90,14 +90,14 @@ public class CreateStepFilterDialog extends StatusDialog {
 		if (!SWT.getPlatform().equals("motif")) {  //$NON-NLS-1$
 			textStyles |= SWT.BORDER;
 		}
-		
+
 		text = new Text(container, textStyles);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);		
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan=1;
 		gridData.widthHint = 300;
 		text.setLayoutData(gridData);
 		text.setFont(container.getFont());
-		
+
 		text.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -105,17 +105,17 @@ public class CreateStepFilterDialog extends StatusDialog {
 				if (!filterValid) {
 					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.CreateStepFilterDialog_4));
 				} else if (isDuplicateFilter(text.getText().trim())) {
-					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.CreateStepFilterDialog_5)); 
+					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.CreateStepFilterDialog_5));
 					return;
 				} else {
 					updateStatus(new StatusInfo());
-				}		
+				}
 			}
 		});
-	
+
 		return container;
 	}
-	
+
 	private void validateChange() {
 		String trimmedValue = text.getText().trim();
 
@@ -129,7 +129,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 			filterValid = false;
 		}
 	}
-	
+
 	private boolean isDuplicateFilter(String trimmedValue) {
 		for (int i=0; i<existingFilters.length; i++) {
 			if(existingFilters[i].getName().equals(trimmedValue)) {
@@ -144,7 +144,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 	 * step filtering must be limited to exact matches or patterns that
 	 * begin with '*' or end with '*'. Beyond this, a string cannot be validated
 	 * as corresponding to an existing type or package (and this is probably not
-	 * even desirable).  
+	 * even desirable).
 	 */
 	private boolean validateInput(String trimmedValue) {
 		char firstChar= trimmedValue.charAt(0);
@@ -168,16 +168,16 @@ public class CreateStepFilterDialog extends StatusDialog {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IJavaDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -189,7 +189,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		}
 		return super.close();
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -199,7 +199,7 @@ public class CreateStepFilterDialog extends StatusDialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
 

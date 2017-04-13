@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Feng(Marvin) Wang <feng.wang@sybase.com> - bug 244395
@@ -33,7 +33,7 @@ import org.eclipse.osgi.util.NLS;
  * The change for the main type project change of a launch configuration
  */
 public class LaunchConfigurationProjectMainTypeChange extends Change {
-	
+
 	private ILaunchConfiguration fLaunchConfiguration;
 	private String fNewMainTypeName;
 	private String fNewProjectName;
@@ -41,7 +41,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	private String fOldMainTypeName;
 	private String fOldProjectName;
     private String fNewConfigContainerName;
-	
+
     /**
 	 * LaunchConfigurationProjectMainTypeChange constructor.
 	 * @param launchConfiguration the launch configuration to modify
@@ -73,30 +73,30 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 	public Object getModifiedElement() {
 		return fLaunchConfiguration;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	@Override
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); 
-		} 
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_0, new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName});
+		}
 		if (fNewProjectName == null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()}); 
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_1, new String[] {fLaunchConfiguration.getName()});
 		}
 		if (fNewMainTypeName == null) {
-			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()}); 
+			return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_2, new String[] {fLaunchConfiguration.getName()});
 		}
-		return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()}); 
+		return NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_3, new String[] {fLaunchConfiguration.getName()});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -110,7 +110,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 					if (fOldProjectName.equals(projectName)) {
 						return new RefactoringStatus();
 					}
-					return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName})); 
+					return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
 				}
 				return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_5, new String[] {fLaunchConfiguration.getName(), fOldMainTypeName}));
 			}
@@ -119,15 +119,15 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 				return new RefactoringStatus();
 			}
 			return RefactoringStatus.createWarningStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_4, new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
-		} 
-		return RefactoringStatus.createFatalErrorStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()})); 
+		}
+		return RefactoringStatus.createFatalErrorStatus(NLS.bind(RefactoringMessages.LaunchConfigurationProjectMainTypeChange_6, new String[] {fLaunchConfiguration.getName()}));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public Change perform(IProgressMonitor pm) throws CoreException {    
+	public Change perform(IProgressMonitor pm) throws CoreException {
 		final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
         if (fNewConfigContainerName != null) {
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -141,14 +141,14 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		if (fNewMainTypeName != null) {
 			oldMainTypeName = fOldMainTypeName;
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fNewMainTypeName);
-		} 
+		}
 		else {
 			oldMainTypeName = null;
 		}
 		if (fNewProjectName != null) {
 			oldProjectName = fOldProjectName;
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
-		} 
+		}
 		else {
 			oldProjectName = null;
 		}
@@ -163,7 +163,7 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		// create the undo change
 		return new LaunchConfigurationProjectMainTypeChange(fLaunchConfiguration, oldMainTypeName, oldProjectName);
 	}
-	
+
 	/**
      * Sets the new container name
      * @param newContainerName the new name for the container

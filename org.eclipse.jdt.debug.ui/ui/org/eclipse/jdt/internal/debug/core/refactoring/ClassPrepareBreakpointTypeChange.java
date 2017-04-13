@@ -30,7 +30,7 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
-	
+
 	private IType fDestType;
 
 	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType) throws CoreException {
@@ -62,7 +62,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 				resource,
 				fDestType.getFullyQualifiedName(),
 				getMemberType(),
-				range.getOffset(), 
+				range.getOffset(),
 				range.getOffset() + range.getLength(),
 				true,
 				map);

@@ -23,13 +23,13 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.6
  */
 public class WatchpointEditor extends StandardJavaBreakpointEditor {
-	
+
 	/**
      * Property id for access/modification suspend.
      */
     public static final int PROP_ACCESS = 0x1010;
     public static final int PROP_MODIFICATION = 0x1011;
-	
+
 	// Watchpoint editors
 	private Button fAccess;
 	private Button fModification;
@@ -47,7 +47,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 		fModification = createSusupendPropertyEditor(watchComp, processMnemonics(PropertyPageMessages.JavaLineBreakpointPage_8), PROP_MODIFICATION);
 		return container;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#setBreakpoint(org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
@@ -67,7 +67,7 @@ public class WatchpointEditor extends StandardJavaBreakpointEditor {
 			fModification.setSelection(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#doSave()
 	 */

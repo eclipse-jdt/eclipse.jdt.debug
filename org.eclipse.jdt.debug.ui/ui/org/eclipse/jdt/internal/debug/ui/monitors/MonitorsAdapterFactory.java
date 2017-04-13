@@ -21,21 +21,21 @@ import org.eclipse.jdt.internal.debug.ui.variables.JavaStackFrameContentProvider
  * provide thread monitor information in the debug view.
  */
 public class MonitorsAdapterFactory implements IAdapterFactory {
-	
+
     private static IElementContentProvider fgCPThread;
     private static IElementContentProvider fgCPFrame = new JavaStackFrameContentProvider();
     private static IElementContentProvider fgCPOwnedMonitor;
     private static IElementContentProvider fgCPWaitingThread;
     private static IElementContentProvider fgCPContendedMonitor;
     private static IElementContentProvider fgCPOwningThread;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		
+
     	if (IElementContentProvider.class.equals(adapterType)) {
     		if (adaptableObject instanceof IJavaThread) {
 				return (T) getThreadPresentation();
@@ -73,32 +73,32 @@ public class MonitorsAdapterFactory implements IAdapterFactory {
 		}
 		return fgCPThread;
 	}
-	
+
 	private IElementContentProvider getOwnedMonitorContentProvider() {
 		if (fgCPOwnedMonitor == null) {
 			fgCPOwnedMonitor = new OwnedMonitorContentProvider();
 		}
 		return fgCPOwnedMonitor;
 	}
-	
+
 	private IElementContentProvider getWaitingThreadContentProvider() {
 		if (fgCPWaitingThread == null) {
 			fgCPWaitingThread = new WaitingThreadContentProvider();
 		}
 		return fgCPWaitingThread;
-	}	
-	
+	}
+
 	private IElementContentProvider getContendedMonitorContentProvider() {
 		if (fgCPContendedMonitor == null) {
 			fgCPContendedMonitor = new ContendedMonitorContentProvider();
 		}
 		return fgCPContendedMonitor;
-	}	
-	
+	}
+
 	private IElementContentProvider getOwningThreadContentProvider() {
 		if (fgCPOwningThread == null) {
 			fgCPOwningThread = new OwningThreadContentProvider();
 		}
 		return fgCPOwningThread;
-	}		
+	}
 }

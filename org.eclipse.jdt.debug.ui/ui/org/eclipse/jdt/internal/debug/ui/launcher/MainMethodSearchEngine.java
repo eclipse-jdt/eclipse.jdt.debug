@@ -38,7 +38,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 public class MainMethodSearchEngine{
-	
+
 	private class MethodCollector extends SearchRequestor {
 		private List<IType> fResult;
 
@@ -48,7 +48,7 @@ public class MainMethodSearchEngine{
 
 		public List<IType> getResult() {
 			return fResult;
-		}	
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
@@ -74,18 +74,18 @@ public class MainMethodSearchEngine{
 	 * Searches for all main methods in the given scope.
 	 * Valid styles are IJavaElementSearchConstants.CONSIDER_BINARIES and
 	 * IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS
-	 * 
+	 *
 	 * @param pm progress monitor
 	 * @param scope search scope
 	 * @param includeSubtypes whether to consider types that inherit a main method
-	 */	
+	 */
 	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, boolean includeSubtypes) {
-		pm.beginTask(LauncherMessages.MainMethodSearchEngine_1, 100); 
+		pm.beginTask(LauncherMessages.MainMethodSearchEngine_1, 100);
 		int searchTicks = 100;
 		if (includeSubtypes) {
 			searchTicks = 25;
 		}
-		
+
 		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		MethodCollector collector = new MethodCollector();
@@ -99,7 +99,7 @@ public class MainMethodSearchEngine{
 		List<IType> result = collector.getResult();
 		if (includeSubtypes) {
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
-			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size()); 
+			subtypesMonitor.beginTask(LauncherMessages.MainMethodSearchEngine_2, result.size());
 			Set<IType> set = addSubtypes(result, subtypesMonitor, scope);
 			return set.toArray(new IType[set.size()]);
 		}
@@ -107,7 +107,7 @@ public class MainMethodSearchEngine{
 	}
 
 	/**
-	 * Adds subtypes and enclosed types to the listing of 'found' types 
+	 * Adds subtypes and enclosed types to the listing of 'found' types
 	 * @param types the list of found types thus far
 	 * @param monitor progress monitor
 	 * @param scope the scope of elements
@@ -129,34 +129,34 @@ public class MainMethodSearchEngine{
 						if (scope.encloses(subtypes[i])) {
 							result.add(subtypes[i]);
 						}
-					}				
-				} 
+					}
+				}
 				catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
 			}
 			monitor.worked(1);
 		}
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Returns the package fragment root of <code>IJavaElement</code>. If the given
 	 * element is already a package fragment root, the element itself is returned.
 	 */
 	public static IPackageFragmentRoot getPackageFragmentRoot(IJavaElement element) {
 		return (IPackageFragmentRoot) element.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-	}	
-	
+	}
+
 	/**
 	 * Searches for all main methods in the given scope.
 	 * Valid styles are IJavaElementSearchConstants.CONSIDER_BINARIES and
 	 * IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS
-	 * 
+	 *
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */
-	public IType[] searchMainMethods(IRunnableContext context, final IJavaSearchScope scope, final boolean includeSubtypes) throws InvocationTargetException, InterruptedException  {		
+	public IType[] searchMainMethods(IRunnableContext context, final IJavaSearchScope scope, final boolean includeSubtypes) throws InvocationTargetException, InterruptedException  {
 		final IType[][] res= new IType[1][];
-		
+
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
@@ -164,8 +164,8 @@ public class MainMethodSearchEngine{
 			}
 		};
 		context.run(true, true, runnable);
-		
+
 		return res[0];
 	}
-			
+
 }

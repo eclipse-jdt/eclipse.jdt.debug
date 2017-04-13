@@ -26,7 +26,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	@Override
@@ -41,12 +41,12 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, false);
-		
+
 		// JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,jrockit.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_STEP_THRU_FILTERS, true);
-		
+
 		store.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
 		store.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false); //$NON-NLS-1$
 		store.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + "." + IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIABLES, false); //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_DETAILS, IJDIPreferencesConstants.DETAIL_PANE);
-		
+
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_SYSTEM_THREADS, false);
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO, true);
 		store.setDefault(IJavaDebugUIConstants.PREF_SHOW_THREAD_GROUPS, false);
@@ -65,10 +65,10 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJavaDebugUIConstants.PREF_ALLINSTANCES_MAX_COUNT, 100);
 		store.setDefault(IJavaDebugUIConstants.PREF_ALLREFERENCES_MAX_COUNT, 100);
 	}
-	
+
 	/**
 	 * Returns the boolean value from the given property change event.
-	 * 
+	 *
 	 * @param event property change event
 	 * @return new boolean value from the event
 	 */

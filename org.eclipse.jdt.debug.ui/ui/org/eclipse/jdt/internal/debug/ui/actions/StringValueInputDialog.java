@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     private Button fTextButton;
     private Button fEvaluationButton;
     private Button fWrapText;
-    
+
     private boolean fUseLiteralValue= true;
     private static final String USE_EVALUATION = "USE_EVALUATION"; //$NON-NLS-1$
     private static final String WRAP_TEXT = "WRAP_TEXT"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     protected StringValueInputDialog(Shell parentShell, IJavaVariable variable) {
         super(parentShell, variable);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -68,7 +68,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 		workbench.getHelpSystem().setHelp(parent, IJavaDebugHelpContextIds.STRING_VALUE_INPUT_DIALOG);
 		return control;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#createInputArea(org.eclipse.swt.widgets.Composite)
      */
@@ -78,7 +78,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     	createRadioButtons(parent);
     	return composite;
     }
-    
+
     /**
      * Override superclass method to create the appropriate viewer
      * (source viewer or simple text viewer) in the input area.
@@ -87,14 +87,14 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 	protected void populateInputArea(Composite parent) {
     	super.populateInputArea(parent);
     	createTextViewer(parent);
-    	
+
     	// Use the stored dialog settings to determine what radio button is selected and what viewer to show.
         boolean useEvaluation= false;
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             useEvaluation= settings.getBoolean(USE_EVALUATION);
         }
-        
+
         setTextViewerVisible(!useEvaluation);
         setSourceViewerVisible(useEvaluation);
         fUseLiteralValue = !useEvaluation;
@@ -109,7 +109,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      */
     private void createTextViewer(Composite parent) {
     	fTextGroup = SWTFactory.createGroup(parent, ActionMessages.StringValueInputDialog_0, 1, 1, GridData.FILL_BOTH);
-    	                
+
         fTextViewer= new TextViewer(fTextGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fTextViewer.setDocument(new Document());
         GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -124,7 +124,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
             JDIDebugUIPlugin.log(e);
         }
         fTextViewer.getControl().setFocus();
-        
+
         boolean wrap= true;
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
@@ -138,7 +138,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
                 updateWordWrap();
             }
         });
-        
+
 		IDocumentListener listener = new IDocumentListener() {
             @Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -148,9 +148,9 @@ public class StringValueInputDialog extends ExpressionInputDialog {
                 refreshValidState(fTextViewer);
             }
         };
-		fTextViewer.getDocument().addDocumentListener(listener);        
+		fTextViewer.getDocument().addDocumentListener(listener);
     }
-    
+
     private void updateWordWrap() {
         fTextViewer.getTextWidget().setWordWrap(fWrapText.getSelection());
     }
@@ -160,7 +160,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * simple text mode and evaluation mode.
      */
     protected void createRadioButtons(Composite parent) {
-    	
+
     	fTextButton = SWTFactory.createRadioButton(parent, ActionMessages.StringValueInputDialog_1);
         fTextButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -170,7 +170,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         });
         fEvaluationButton = SWTFactory.createRadioButton(parent, ActionMessages.StringValueInputDialog_2);
     }
-    
+
     /**
      * The radio button selection has changed update the input widgetry
      * to reflect the user's selection.
@@ -190,7 +190,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 	        refreshValidState();
         }
     }
-    
+
     /**
      * Sets the visibility of the source viewer and the exclude attribute of its layout.
      * @param value If <code>true</code>, the viewer will be visible, if <code>false</code>, the viewer will be hidden.
@@ -202,7 +202,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
 			data.exclude = !value;
     	}
     }
-      
+
     /**
      * Updates the error message based on the user's input.
      */
@@ -214,7 +214,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         	super.refreshValidState();
         }
 	}
-    
+
     /**
      * Override superclass method to persist user's evaluation/literal mode
      * selection.
@@ -231,18 +231,18 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         super.okPressed();
     }
-    
+
     /**
      * Returns <code>true</code> if this dialog's result should be interpreted
      * as a literal value and <code>false</code> if the result should be interpreted
      * as an expression for evaluation.
-     * 
+     *
      * @return whether or not this dialog's result is a literal value.
      */
     public boolean isUseLiteralValue() {
         return fUseLiteralValue;
     }
-    
+
     /**
      * Override superclass method to return text from the simple text
      * viewer if appropriate.
@@ -255,7 +255,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         return super.getText();
     }
-    
+
     /**
      * Returns the dialog settings used for this dialog
      * @return the dialog settings used for this dialog
@@ -263,7 +263,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     protected IDialogSettings getDialogSettings() {
         return JDIDebugUIPlugin.getDefault().getDialogSettings().getSection(getDialogSettingsSectionName());
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ExpressionInputDialog#getDialogSettingsSectionName()
 	 */

@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -28,16 +28,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * UI adapter factory for JDI Debug
- * 
+ *
  * @deprecated
  */
 @Deprecated
 /*package*/ class JavaSourceLocationWorkbenchAdapterFactory implements IAdapterFactory {
 
 	class SourceLocationPropertiesAdapter implements IWorkbenchAdapter {
-		
+
 		private JavaElementLabelProvider fJavaElementLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS);
-	
+
 		/**
 		 * @see IWorkbenchAdapter#getChildren(Object)
 		 */
@@ -89,7 +89,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 			return null;
 		}
 	}
-	
+
 	/**
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */

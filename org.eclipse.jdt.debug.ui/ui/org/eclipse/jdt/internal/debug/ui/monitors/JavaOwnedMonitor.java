@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,12 +26,12 @@ import org.eclipse.debug.core.model.IThread;
  * by the parent thread.
  */
 public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, ITerminate, ISuspendResume {
-	
+
 	/**
 	 * The monitor object in the thread and monitor model.
 	 */
 	private JavaMonitor fMonitor;
-	
+
 	/**
 	 * The threads waiting for this monitor.
 	 */
@@ -51,7 +51,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 		monitor.addElement(this);
 		fParent= parent;
 	}
-	
+
 	/**
 	 * Returns the monitor
 	 * @return the monitor
@@ -59,7 +59,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	public JavaMonitor getMonitor() {
 		return fMonitor;
 	}
-	
+
 	/**
 	 * Returns the original <code>IThread</code> or the parent thread
 	 * @return the original <code>IThread</code> of the parent thread
@@ -70,7 +70,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 		}
 		return fParent;
 	}
-	
+
 	/**
 	 * Returns an array of all of the threads waiting on this monitor
 	 * @return the array of <code>JavaWaitingThread</code>s waiting on this monitor
@@ -99,7 +99,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 		fWaitingThreads = tmp;
 		return fWaitingThreads;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
@@ -155,7 +155,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 		}
 		return thread;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
@@ -179,7 +179,7 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement, I
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */

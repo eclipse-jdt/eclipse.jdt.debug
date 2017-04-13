@@ -38,7 +38,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
@@ -64,21 +64,21 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			JDIDebugUIPlugin.statusDialog(e.getStatus());
 		}
 	}
-	
+
 	protected abstract IDebugElement getDebugElement(IAdaptable element);
-	
+
 	/**
 	 * Returns the type to open based on the given selected debug element, or <code>null</code>.
-	 * 
+	 *
 	 * @param element selected debug element
 	 * @return the type to open or <code>null</code> if none
 	 * @throws DebugException
 	 */
 	protected abstract IJavaType getTypeToOpen(IDebugElement element) throws CoreException;
-	
+
 	/**
 	 * Resolves and returns the source element to open or <code>null</code> if none.
-	 * 
+	 *
 	 * @param e selected element to resolve a source element for
 	 * @return the source element to open or <code>null</code> if none
 	 * @throws CoreException
@@ -120,20 +120,20 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns whether a type hierarchy should be opened.
-	 * 
+	 *
 	 * @return whether a type hierarchy should be opened
 	 */
 	protected boolean isHierarchy() {
 		return false;
 	}
-	
+
 	/**
 	 * Searches for and returns a type with the given name in the workspace,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param typeName fully qualified type name
 	 * @param findOnlyUniqueMatch
 	 *            if <code>true</code>, this method only returns a type iff
@@ -155,7 +155,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 			simpleName= typeName;
 		}
 		char[][] typeNames= new char[][] { simpleName.toCharArray() };
-		
+
 		if (findOnlyUniqueMatch) {
 			return findUniqueTypeInWorkspace(qualifications, typeNames);
 		}
@@ -184,7 +184,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		}
 		return null;
 	}
-	
+
 	private static IType findUniqueTypeInWorkspace(char[][] qualifications,
 			char[][] typeNames) throws JavaModelException {
 		final IType[] result = { null };
@@ -205,9 +205,9 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		}
 		return result[0];
 	}
-	
-	
+
+
 	protected void typeHierarchyError() {
-		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1); 
-	}	
+		showErrorMessage(ActionMessages.ObjectActionDelegate_Unable_to_display_type_hierarchy__The_selected_source_element_is_not_contained_in_the_workspace__1);
+	}
 }

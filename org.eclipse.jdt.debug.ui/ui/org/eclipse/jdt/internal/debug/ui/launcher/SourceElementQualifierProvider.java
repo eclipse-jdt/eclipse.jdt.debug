@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  * A label provider for source element qualifiers found with a JavaSourceLocator
  */
 public class SourceElementQualifierProvider extends LabelProvider implements ILabelProvider {
-	
+
 	private JavaElementLabelProvider fJavaLabels;
 
 	/* (non-Javadoc)
@@ -63,7 +63,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 		}
 		return super.getText(element);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */

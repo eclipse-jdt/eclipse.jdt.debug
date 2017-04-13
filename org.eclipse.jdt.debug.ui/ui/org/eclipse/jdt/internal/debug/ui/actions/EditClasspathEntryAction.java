@@ -28,7 +28,7 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * Moves selected entries in a runtime classpath viewer up one position.
  */
 public class EditClasspathEntryAction extends RuntimeClasspathAction {
-	
+
 	private ILaunchConfiguration fConfiguration;
 
 	public EditClasspathEntryAction(IClasspathViewer viewer, ILaunchConfiguration configuration) {
@@ -37,7 +37,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 	}
 	/**
 	 * Moves all selected entries up one position (if possible).
-	 * 
+	 *
 	 * @see IAction#run()
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 				}
 			}
 		}
-		
+
 	}
 
 	/**
@@ -96,13 +96,13 @@ public class EditClasspathEntryAction extends RuntimeClasspathAction {
 		}
 		return false;
 	}
-	
+
 	protected IClasspathEditor getEditor(IRuntimeClasspathEntry entry) {
 		if (entry instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) entry;
 			return adaptable.getAdapter(IClasspathEditor.class);
-		}		
+		}
 		return null;
 	}
-	
+
 }

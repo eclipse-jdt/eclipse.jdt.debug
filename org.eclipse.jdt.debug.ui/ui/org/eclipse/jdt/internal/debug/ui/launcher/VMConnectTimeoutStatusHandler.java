@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,8 +31,8 @@ public class VMConnectTimeoutStatusHandler implements IStatusHandler {
 		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				String title= LauncherMessages.VMConnectTimeoutStatusHandler_Java_Application_1; 
-				String message= LauncherMessages.jdkLauncher_error_timeout; 
+				String title= LauncherMessages.VMConnectTimeoutStatusHandler_Java_Application_1;
+				String message= LauncherMessages.jdkLauncher_error_timeout;
 				result[0]= (MessageDialog.openQuestion(JDIDebugUIPlugin.getActiveWorkbenchShell(), title, message));
 			}
 		});

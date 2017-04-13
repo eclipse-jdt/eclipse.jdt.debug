@@ -19,14 +19,14 @@ import org.eclipse.jface.wizard.IWizardPage;
  * @since 3.3
  */
 public class AddVMInstallWizard extends VMInstallWizard {
-	
+
 	private IWizardPage fTypePage = null;
-	
+
 	private VMStandin fResult = null;
 
 	/**
 	 * Constructs a wizard to add a new VM install.
-	 * 
+	 *
 	 * @param currentInstalls currently existing VMs, used for name validation
 	 */
 	public AddVMInstallWizard(IVMInstall[] currentInstalls) {
@@ -76,6 +76,6 @@ public class AddVMInstallWizard extends VMInstallWizard {
 		return false;
 	}
 
-	
-	
+
+
 }

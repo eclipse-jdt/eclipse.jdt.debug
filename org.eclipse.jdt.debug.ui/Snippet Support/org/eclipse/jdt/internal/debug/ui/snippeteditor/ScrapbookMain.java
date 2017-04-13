@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,14 +26,14 @@ import java.security.ProtectionDomain;
  * CAUTION: This class gets compiled with target=jsr14, see scripts/buildExtraJAR.xml. Don't use URLClassLoader#close() or other post-1.4 APIs!
  */
 public class ScrapbookMain {
-	
+
 	public static void main(String[] args) {
 
 		URL[] urls= getClasspath(args);
 		if (urls == null) {
 			return;
 		}
-		
+
 		while (true) {
 			try {
 				evalLoop(urls);
@@ -47,9 +47,9 @@ public class ScrapbookMain {
 				return;
 			}
 		}
-	
+
 	}
-	
+
 	static void evalLoop(URL[] urls) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		@SuppressWarnings("resource")
 		ClassLoader cl= new URLClassLoader(urls, null);
@@ -57,7 +57,7 @@ public class ScrapbookMain {
 		Method method= clazz.getDeclaredMethod("eval", new Class[] {Class.class}); //$NON-NLS-1$
 		method.invoke(null, new Object[] {ScrapbookMain.class});
 	}
-	
+
 	/**
 	 * The magic "no-op" method, where {@link org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher#createMagicBreakpoint(String)} sets a
 	 * breakpoint.
@@ -69,14 +69,14 @@ public class ScrapbookMain {
 		} catch(InterruptedException e) {
 		}
 	}
-	
-	
+
+
 	static URL[] getClasspath(String[] urlStrings) {
-		
+
 		//The URL Strings MUST be properly encoded
 		//using URLEncoder...see ScrapbookLauncher for details
 		URL[] urls= new URL[urlStrings.length + 1];
-		
+
 		for (int i = 0; i < urlStrings.length; i++) {
 			try {
 				urls[i + 1] = new URL(URLDecoder.decode(urlStrings[i]));

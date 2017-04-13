@@ -45,27 +45,27 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Sets default VM per execution environment.
- * 
+ *
  * @since 3.2
  */
 public class ExecutionEnvironmentsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	/**
-	 * The ID of the page 
-	 * 
+	 * The ID of the page
+	 *
 	 * @since 3.5
 	 */
 	public static final String ID = "org.eclipse.jdt.debug.ui.jreProfiles"; //$NON-NLS-1$
-	
+
 	private TableViewer fProfilesViewer;
 	private CheckboxTableViewer fJREsViewer;
 	private Text fDescription;
-	
+
 	/**
-	 * Working copy "EE Profile -> Default JRE" 
+	 * Working copy "EE Profile -> Default JRE"
 	 */
 	private Map<Object, Object> fDefaults = new HashMap<Object, Object>();
-	
+
 	class JREsContentProvider implements IStructuredContentProvider {
 
 		/* (non-Javadoc)
@@ -89,14 +89,14 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
-															
+
 	public ExecutionEnvironmentsPreferencePage() {
 		super();
 		// only used when page is shown programatically
-		setTitle(JREMessages.JREProfilesPreferencePage_0);	 
-		setDescription(JREMessages.JREProfilesPreferencePage_1); 
+		setTitle(JREMessages.JREProfilesPreferencePage_0);
+		setDescription(JREMessages.JREProfilesPreferencePage_1);
 	}
 
 	/* (non-Javadoc)
@@ -105,10 +105,10 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.DialogPage(boolean)
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		noDefaultAndApplyButton();
 		// TODO: fix help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PROFILES_PAGE);
-		
+
 		// init default mappings
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
@@ -161,7 +161,7 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 				fDefaults.put(environment, install);
 			}
 		}
-		
+
 		Composite container = new Composite(ancestor, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -172,18 +172,18 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		container.setFont(ancestor.getFont());
-		
+
 		Composite eeContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
 		eeContainer.setLayout(layout);
 		eeContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label label = new Label(eeContainer, SWT.NONE);
 		label.setFont(ancestor.getFont());
 		label.setText(JREMessages.JREProfilesPreferencePage_2);
 		label.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-		
+
 		Table table= new Table(eeContainer, SWT.BORDER | SWT.SINGLE);
 		table.setLayout(layout);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -191,48 +191,48 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 		fProfilesViewer.setContentProvider(new ArrayContentProvider());
 		fProfilesViewer.setLabelProvider(new ExecutionEnvironmentsLabelProvider());
 		fProfilesViewer.setInput(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments());
-		
+
 		Composite jreContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
 		jreContainer.setLayout(layout);
 		jreContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		label = new Label(jreContainer, SWT.NONE);
 		label.setFont(ancestor.getFont());
 		label.setText(JREMessages.JREProfilesPreferencePage_3);
 		label.setLayoutData(new GridData(SWT.FILL, 0, true, false));
-	
+
 		table= new Table(jreContainer, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
 		table.setLayout(layout);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fJREsViewer = new CheckboxTableViewer(table);
 		fJREsViewer.setContentProvider(new JREsContentProvider());
-		fJREsViewer.setLabelProvider(new JREsEnvironmentLabelProvider(new JREsEnvironmentLabelProvider.IExecutionEnvironmentProvider() {		
+		fJREsViewer.setLabelProvider(new JREsEnvironmentLabelProvider(new JREsEnvironmentLabelProvider.IExecutionEnvironmentProvider() {
 			@Override
 			public IExecutionEnvironment getEnvironment() {
 				return (IExecutionEnvironment) fJREsViewer.getInput();
 			}
 		}));
 		fJREsViewer.setComparator(new JREsEnvironmentComparator());
-		
+
 		label = new Label(container, SWT.NONE);
 		label.setFont(ancestor.getFont());
 		label.setText(JREMessages.JREProfilesPreferencePage_4);
 		label.setLayoutData(new GridData(SWT.FILL, 0, true, false, 2, 1));
-		
+
 		Text text = new Text(container, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER);
 		text.setFont(ancestor.getFont());
 		text.setLayoutData(new GridData(SWT.FILL, 0, true, false, 2, 1));
 		fDescription = text;
-					
+
 		fProfilesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleEESelectionAndJREViewer((IStructuredSelection) event.getSelection());
 			}
 		});
-		
+
 		fJREsViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -243,14 +243,14 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 				} else {
 					fDefaults.remove(fJREsViewer.getInput());
 				}
-		
+
 			}
 		});
-		
+
 		Dialog.applyDialogFont(ancestor);
 		return ancestor;
 	}
-			
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -270,6 +270,6 @@ public class ExecutionEnvironmentsPreferencePage extends PreferencePage implemen
 			environment.setDefaultVM(vm);
 		}
 		return super.performOk();
-	}	
-	
+	}
+
 }
