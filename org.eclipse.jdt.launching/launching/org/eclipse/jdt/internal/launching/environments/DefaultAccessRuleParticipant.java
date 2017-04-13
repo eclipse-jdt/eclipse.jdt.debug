@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,11 +29,11 @@ import org.osgi.framework.Constants;
 /**
  * Creates default access rules for standard execution environments
  * based on OSGi profiles.
- * 
+ *
  * @since 3.3
  */
 public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
-	
+
 	/**
 	 * Cache of access rules per environment. Re-use rules between projects.
 	 */
@@ -62,7 +62,7 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 			}
 			allRules = new IAccessRule[libraries.length][];
 			for (int i = 0; i < allRules.length; i++) {
-				allRules[i] = packageRules;	
+				allRules[i] = packageRules;
 			}
 			fgRules.put(environment.getId(), allRules);
 		}

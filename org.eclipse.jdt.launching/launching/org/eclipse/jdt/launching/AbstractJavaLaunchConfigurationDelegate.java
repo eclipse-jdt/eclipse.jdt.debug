@@ -58,7 +58,7 @@ import org.eclipse.osgi.util.NLS;
  * Clients implementing Java launch configuration delegates should subclass this
  * class.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
@@ -68,7 +68,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	private IProject[] fOrderedProjects;
 	/**
 	 * Convenience method to get the launch manager.
-	 * 
+	 *
 	 * @return the launch manager
 	 */
 	protected ILaunchManager getLaunchManager() {
@@ -77,7 +77,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -96,7 +96,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the VM install specified by the given launch configuration, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM install specified by the given launch configuration, or
@@ -111,7 +111,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the VM install name specified by the given launch configuration,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM install name specified by the given launch configuration,
@@ -129,7 +129,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the VM install type specified by the given launch configuration,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM install type specified by the given launch configuration,
@@ -151,7 +151,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the VM install type identifier specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM install type identifier specified by the given launch
@@ -169,7 +169,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Verifies the VM install specified by the given launch configuration
 	 * exists and returns the VM install.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM install specified by the given launch configuration
@@ -183,31 +183,31 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_The_specified_JRE_installation_does_not_exist_4, 
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_The_specified_JRE_installation_does_not_exist_4,
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
 		File location = vm.getInstallLocation();
 		if (location == null) {
 			abort(
 					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, new String[]{vm.getName()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
 		if (!location.exists()) {
 			abort(
-					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, 
+					NLS.bind(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6,
 									new String[]{vm.getName(),
 											location.getAbsolutePath()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); 
+					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
 		return vm;
 	}
 	/**
 	 * Returns the VM connector identifier specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM connector identifier specified by the given launch
@@ -227,7 +227,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * resolved strings. The returned array is <code>null</code> if all
 	 * entries are standard (i.e. appear by default), or empty to represent an
 	 * empty bootpath.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the bootpath specified by the given launch configuration. An
@@ -280,7 +280,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * part of the boot classpath -<code>null</code> represents the default
 	 * bootclasspath. The third array represents the classpath that should be
 	 * appended to the boot classpath.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return a description of the boot classpath specified by the given launch
@@ -347,11 +347,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				// TODO: this test does not tell us if the bootpath entries are different (could still be
 				// the same, as a non-bootpath entry on the JRE may have been removed/added)
 				// We really need a way to ask a VM type for its default bootpath library locations and
-				// compare that to the resolved entries for the "jreEntry" to see if they 
+				// compare that to the resolved entries for the "jreEntry" to see if they
 				// are different (requires explicit bootpath)
 				if (!JRERuntimeClasspathEntryResolver.isSameArchives(libraryLocations, install.getVMInstallType().getDefaultLibraryLocations(install.getInstallLocation()))) {
 					// resolve bootpath entries in JRE entry
-					IRuntimeClasspathEntry[] bootEntries = null; 
+					IRuntimeClasspathEntry[] bootEntries = null;
 					if (jreEntry.getType() == IRuntimeClasspathEntry.CONTAINER) {
 						IRuntimeClasspathEntry bootEntry = JavaRuntime.newRuntimeContainerClasspathEntry(
 								jreEntry.getPath(),
@@ -361,7 +361,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 					} else {
 						bootEntries = JavaRuntime.resolveRuntimeClasspathEntry(jreEntry, configuration);
 					}
-					
+
 					// non-default JRE libraries - use explicit bootpath only
 					String[] bootpath = new String[bootEntriesPrep.length
 							+ bootEntries.length + bootEntriesApp.length];
@@ -397,7 +397,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * classpath as specified by the given launch configuration, as an array of
 	 * resolved strings. The returned array is empty if no classpath is
 	 * specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the classpath specified by the given launch configuration,
@@ -428,7 +428,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the Java project specified by the given launch configuration, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the Java project specified by the given launch configuration, or
@@ -455,7 +455,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the Java project name specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the Java project name specified by the given launch
@@ -472,7 +472,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the main type name specified by the given launch configuration,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the main type name specified by the given launch configuration,
@@ -495,7 +495,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * Returns the program arguments specified by the given launch
 	 * configuration, as a string. The returned string is empty if no program
 	 * arguments are specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the program arguments specified by the given launch
@@ -513,7 +513,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the VM arguments specified by the given launch configuration, as
 	 * a string. The returned string is empty if no VM arguments are specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the VM arguments specified by the given launch configuration,
@@ -547,7 +547,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the Map of VM-specific attributes specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the <code>Map</code> of VM-specific attributes
@@ -578,7 +578,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the working directory specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -593,7 +593,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns the working directory path specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory path specified by the given launch
@@ -616,7 +616,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Verifies a Java project is specified by the given launch configuration,
 	 * and returns the Java project.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the Java project specified by the given launch configuration
@@ -629,23 +629,23 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		String name = getJavaProjectName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9, 
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9,
 					null,
-					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); 
+					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		IJavaProject project = getJavaProject(configuration);
 		if (project == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Project_does_not_exist_or_is_not_a_Java_project_10, 
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Project_does_not_exist_or_is_not_a_Java_project_10,
 					null,
-					IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); 
+					IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
 		}
 		return project;
 	}
 	/**
 	 * Verifies a main type name is specified by the given launch configuration,
 	 * and returns the main type name.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the main type name specified by the given launch configuration
@@ -658,9 +658,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		String name = getMainTypeName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Main_type_not_specified_11, 
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Main_type_not_specified_11,
 					null,
-					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
+					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		return name;
 	}
@@ -668,7 +668,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * Verifies the working directory specified by the given launch
 	 * configuration exists, and returns the working directory, or
 	 * <code>null</code> if none is specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -685,10 +685,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				if (!dir.isDirectory()) {
 					abort(
 							NLS.bind(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
 									new String[]{dir.toString()}),
 									null,
-									IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
+									IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 				return dir;
 			}
@@ -707,10 +707,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				}
 				abort(
 					NLS.bind(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
 									new String[]{path.toString()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot()
 						.findMember(path);
@@ -719,10 +719,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				}
 				abort(
 					NLS.bind(
-									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, 
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12,
 									new String[]{path.toString()}),
 					null,
-					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); 
+					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
 		return null;
@@ -730,7 +730,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns whether the given launch configuration specifies that termination
 	 * is allowed.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return whether termination is allowed
@@ -745,7 +745,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	/**
 	 * Returns whether the given launch configuration specifies that execution
 	 * should suspend on entry of the main method.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return whether execution should suspend in main
@@ -762,7 +762,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * Assigns a default source locator to the given launch if a source locator
 	 * has not yet been assigned to it, and the associated launch configuration
 	 * does not specify a source locator.
-	 * 
+	 *
 	 * @param launch
 	 *            launch object
 	 * @param configuration
@@ -787,7 +787,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * Determines if the given launch configuration specifies the "stop-in-main"
 	 * attribute, and sets up an event listener to handle the option if
 	 * required.
-	 * 
+	 *
 	 * @param configuration
 	 *            configuration being launched
 	 * @exception CoreException
@@ -806,7 +806,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	}
 	/**
 	 * Handles the "stop-in-main" option.
-	 * 
+	 *
 	 * @param events
 	 *            the debug events.
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
@@ -840,7 +840,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 													mainType, "main", //$NON-NLS-1$
 													"([Ljava/lang/String;)V", //$NON-NLS-1$
 													true, false, false, -1, -1,
-													-1, 1, false, map); 
+													-1, 1, false, map);
 									bp.setPersisted(false);
 									target.breakpointAdded(bp);
 									DebugPlugin.getDefault()
@@ -855,10 +855,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
@@ -869,7 +869,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)
 	 */
@@ -879,7 +879,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			throws CoreException {
 		return fOrderedProjects;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#isLaunchProblem(org.eclipse.core.resources.IMarker)
 	 */
@@ -889,7 +889,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -898,7 +898,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
 		if (monitor != null) {
-			monitor.subTask(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_20); 
+			monitor.subTask(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_20);
 		}
 		fOrderedProjects = null;
 		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
@@ -909,7 +909,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		// do generic launch checks
 		return super.preLaunchCheck(configuration, mode, monitor);
 	}
-    
+
      /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBreakpoints(org.eclipse.debug.core.ILaunchConfiguration)
      */
@@ -922,11 +922,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
          }
          return breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
      }
-	
+
 	/**
 	 * Returns the VM runner for the given launch mode to use when launching the
 	 * given configuration.
-	 *  
+	 *
 	 * @param configuration launch configuration
 	 * @param mode launch node
 	 * @return VM runner to use when launching the given configuration in the given mode
@@ -937,29 +937,29 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IVMInstall vm = verifyVMInstall(configuration);
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(NLS.bind(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); 
+			abort(NLS.bind(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);
 		}
 		return runner;
 	}
-	
-	/** 
+
+	/**
 	 * Returns an array of environment variables to be used when
 	 * launching the given configuration or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an array of environment variables to use when launching the given configuration or null if unspecified
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
 	 * @since 3.1
-	 */	
+	 */
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 	}
-	
+
 	/**
 	 * Returns an array of paths to be used for the <code>java.library.path</code>
 	 * system property, or <code>null</code> if unspecified.
-	 * 
+	 *
 	 * @param configuration the config
 	 * @return an array of paths to be used for the <code>java.library.path</code>
 	 * system property, or <code>null</code>
@@ -976,11 +976,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the default working directory for the given launch configuration,
 	 * or <code>null</code> if none. Subclasses may override as necessary.
-	 * 
+	 *
 	 * @param configuration the config
 	 * @return default working directory or <code>null</code> if none
 	 * @throws CoreException if an exception occurs computing the default working

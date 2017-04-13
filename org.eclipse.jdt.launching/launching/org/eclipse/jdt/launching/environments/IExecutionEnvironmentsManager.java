@@ -21,21 +21,21 @@ package org.eclipse.jdt.launching.environments;
 public interface IExecutionEnvironmentsManager {
 
 	/**
-	 * Returns all registered execution environments sorted by their id. 
-	 * 
+	 * Returns all registered execution environments sorted by their id.
+	 *
 	 * @see IExecutionEnvironment#getId()
-	 * 
+	 *
 	 * @return all registered execution environments sorted by their id
 	 */
 	public IExecutionEnvironment[] getExecutionEnvironments();
-	
+
 	/**
 	 * Returns the execution environment associated with the given
 	 * identifier or <code>null</code> if none.
-	 * 
-	 * @param id execution environment identifier 
+	 *
+	 * @param id execution environment identifier
 	 * @return execution environment or <code>null</code>
 	 */
 	public IExecutionEnvironment getEnvironment(String id);
-		
+
 }

@@ -28,7 +28,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  * Delegate for migrating Java launch configurations.
  * The migration process involves a resource mapping being created such that launch configurations
  * can be filtered from the launch configuration dialog based on resource availability
- * 
+ *
  * @since 3.2
  */
 public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
@@ -37,12 +37,12 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	 * represents the empty string
 	 */
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor needed for reflection
 	 */
 	public JavaMigrationDelegate() {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#isCandidate()
 	 */
@@ -68,10 +68,10 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		}
 		return !target.equals(mapped[0]);
 	}
-	
+
 	/**
 	 * Returns whether the given project is available.
-	 * 
+	 *
 	 * @param projectName project name
 	 * @return whether the project exists and is open
 	 */
@@ -83,12 +83,12 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 	/**
 	 * Returns the associated <code>IResource</code> for the specified launch configuration
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param candidate the candidate to get the backing resource for
 	 * @return associated <code>IResource</code> or <code>null</code>
-	 * 
+	 *
 	 * @since 3.3
-	 * 
+	 *
 	 * @throws CoreException if there is an error
 	 */
 	static IResource getResource(ILaunchConfiguration candidate) throws CoreException {
@@ -126,7 +126,7 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		}
 		return resource;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate#migrate(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -136,10 +136,10 @@ public class JavaMigrationDelegate implements ILaunchConfigurationMigrationDeleg
 		updateResourceMapping(wc);
 		wc.doSave();
 	}
-	
+
 	/**
 	 * Updates the resource mapping for the given launch configuration.
-	 * 
+	 *
 	 * @param wc working copy
 	 * @throws CoreException if an exception occurs updating resource mapping.
 	 */

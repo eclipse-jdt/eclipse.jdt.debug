@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
- 
+
 /**
  * Locates source elements in all source folders of the
  * given Java project. Returns instances of <code>ICompilationUnit</code>
@@ -55,7 +55,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
  *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
  *  has been replaced by
- *  <code>org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer</code>. 
+ *  <code>org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer</code>.
  * @noextend This class is not intended to be sub-classed by clients.
  */
 @Deprecated
@@ -65,29 +65,29 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * The project associated with this source location
 	 */
 	private IJavaProject fProject;
-	
+
 	/**
 	 * Corresponding package fragment root locations.
 	 */
 	private IJavaSourceLocation[] fRootLocations = null;
-	
+
 	/**
 	 * Constructs a new empty source location to be initialized
 	 * by a memento.
 	 */
 	public JavaProjectSourceLocation() {
 	}
-	
+
 	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the given Java project.
-	 * 
+	 *
 	 * @param project Java project
 	 */
 	public JavaProjectSourceLocation(IJavaProject project) {
 		setJavaProject(project);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
@@ -107,7 +107,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	/**
 	 * Sets the Java project in which source elements will
 	 * be searched for.
-	 * 
+	 *
 	 * @param project Java project
 	 */
 	private void setJavaProject(IJavaProject project) {
@@ -117,7 +117,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			try {
 				IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
 				ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<PackageFragmentRootSourceLocation>(roots.length);
-				
+
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						list.add(new PackageFragmentRootSourceLocation(roots[i]));
@@ -129,26 +129,26 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the Java project associated with this source
 	 * location.
-	 * 
+	 *
 	 * @return Java project
 	 */
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object object) {		
+	public boolean equals(Object object) {
 		return object instanceof JavaProjectSourceLocation &&
 			 getJavaProject().equals(((JavaProjectSourceLocation)object).getJavaProject());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -156,7 +156,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
@@ -166,7 +166,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
 		doc.appendChild(node);
 		node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
-		return DebugPlugin.serializeDocument(doc);  
+		return DebugPlugin.serializeDocument(doc);
 	}
 
 	/* (non-Javadoc)
@@ -182,35 +182,35 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-												
+
 			String name = root.getAttribute("name"); //$NON-NLS-1$
 			if (isEmpty(name)) {
-				abort(LaunchingMessages.JavaProjectSourceLocation_Unable_to_initialize_source_location___missing_project_name_3, null); 
+				abort(LaunchingMessages.JavaProjectSourceLocation_Unable_to_initialize_source_location___missing_project_name_3, null);
 			} else {
 				IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				setJavaProject(JavaCore.create(proj));
 			}
 			return;
 		} catch (ParserConfigurationException e) {
-			ex = e;			
+			ex = e;
 		} catch (SAXException e) {
 			ex = e;
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.JavaProjectSourceLocation_Exception_occurred_initializing_source_location__4, ex); 
+		abort(LaunchingMessages.JavaProjectSourceLocation_Exception_occurred_initializing_source_location__4, ex);
 	}
 
 	private boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
 	}
-	
+
 	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
-		throw new CoreException(s);		
+		throw new CoreException(s);
 	}
 
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.w3c.dom.Node;
 
 /**
  * Classpath variable source container type.
- * 
+ *
  * @since 3.0
  */
 public class ClasspathVariableSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
 	 */
@@ -37,13 +37,13 @@ public class ClasspathVariableSourceContainerTypeDelegate extends AbstractSource
 			if ("classpathVariable".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_5, null); 
+					abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_5, null);
 				}
 				return new ClasspathVariableSourceContainer(new Path(string));
-			} 
-			abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_6, null); 
+			}
+			abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_6, null);
 		}
-		abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_7, null); 
+		abort(LaunchingMessages.ClasspathVariableSourceContainerTypeDelegate_7, null);
 		return null;
 	}
 	/* (non-Javadoc)

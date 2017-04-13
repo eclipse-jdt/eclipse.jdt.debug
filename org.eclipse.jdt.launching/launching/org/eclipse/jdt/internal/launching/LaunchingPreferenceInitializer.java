@@ -42,10 +42,10 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		} catch (BackingStoreException e) {
 			LaunchingPlugin.log(e);
 		}
-				
+
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=255381
 		// NOTE: only the pref's default value is initialized to avoid deadlock (we don't set the
-		// associated JavaCore options, as this can trigger a job to touch the project (see 
+		// associated JavaCore options, as this can trigger a job to touch the project (see
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=260445)
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
 		dnode = DefaultScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
@@ -78,7 +78,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		else {
 			dnode.put(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, launchFilter);
 		}
-		
+
 		try {
 			dnode.flush();
 		} catch (BackingStoreException e) {

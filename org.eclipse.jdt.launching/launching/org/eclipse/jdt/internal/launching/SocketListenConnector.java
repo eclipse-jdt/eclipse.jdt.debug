@@ -39,10 +39,10 @@ import com.sun.jdi.connect.ListeningConnector;
  * @see SocketListenConnectorProcess
  */
 public class SocketListenConnector implements IVMConnector {
-		
+
 	/**
 	 * Return the socket transport listening connector
-	 * 
+	 *
 	 * @return the new {@link ListeningConnector}
 	 * @exception CoreException if unable to locate the connector
 	 */
@@ -57,7 +57,7 @@ public class SocketListenConnector implements IVMConnector {
 			}
 		}
 		if (connector == null) {
-			abort(LaunchingMessages.SocketListenConnector_0, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); 
+			abort(LaunchingMessages.SocketListenConnector_0, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
 		return connector;
 	}
@@ -75,9 +75,9 @@ public class SocketListenConnector implements IVMConnector {
 	 */
 	@Override
 	public String getName() {
-		return LaunchingMessages.SocketListenConnector_1; 
+		return LaunchingMessages.SocketListenConnector_1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
 	 */
@@ -86,21 +86,21 @@ public class SocketListenConnector implements IVMConnector {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		monitor.subTask(LaunchingMessages.SocketListenConnector_2);
-		
+
 		ListeningConnector connector= getListeningConnector();
-		
+
 		String portNumberString = arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); 
+			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT);
 		}
-	
+
 		Map<String, Connector.Argument> acceptArguments = connector.defaultArguments();
-		
+
         Connector.Argument param= acceptArguments.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
-        
+
 		// retain default behaviour to accept 1 connection only
 		int connectionLimit = 1;
 		if (arguments.containsKey("connectionLimit")) { //$NON-NLS-1$
@@ -113,9 +113,9 @@ public class SocketListenConnector implements IVMConnector {
 			SocketListenConnectorProcess process = new SocketListenConnectorProcess(launch, portNumberString, connectionLimit);
 			process.waitForConnection(connector, acceptArguments);
 		} catch (IOException e) {
-			abort(LaunchingMessages.SocketListenConnector_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(LaunchingMessages.SocketListenConnector_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (IllegalConnectorArgumentsException e) {
-			abort(LaunchingMessages.SocketListenConnector_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(LaunchingMessages.SocketListenConnector_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		}
 	}
 
@@ -146,7 +146,7 @@ public class SocketListenConnector implements IVMConnector {
 	/**
 	 * Throws a core exception with an error status object built from
 	 * the given message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none

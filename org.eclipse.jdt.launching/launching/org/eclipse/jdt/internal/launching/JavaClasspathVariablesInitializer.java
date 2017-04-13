@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
- 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +28,7 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 	 * May be null
 	 */
 	private IProgressMonitor fMonitor;
-	
+
 	/**
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
@@ -78,11 +78,11 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			}
 		}
 	}
-	
+
 	private void setJREVariable(IPath newPath, String var) throws CoreException {
 		JavaCore.setClasspathVariable(var, newPath, getMonitor());
 	}
-	
+
 	protected IProgressMonitor getMonitor() {
 		if (fMonitor == null) {
 			return new NullProgressMonitor();

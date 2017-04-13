@@ -38,7 +38,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * Resolves for JRELIB_VARIABLE and JRE_CONTAINER
  */
 public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
-	
+
 	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
 
 	/**
@@ -49,7 +49,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		IVMInstall jre = null;
 		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
 			// a specific VM
-			jre = JREContainerInitializer.resolveVM(entry.getPath()); 
+			jre = JREContainerInitializer.resolveVM(entry.getPath());
 		} else {
 			// default VM for config
 			jre = JavaRuntime.computeVMInstall(configuration);
@@ -60,7 +60,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		}
 		return resolveLibraryLocations(jre, entry.getClasspathProperty());
 	}
-	
+
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, IJavaProject)
 	 */
@@ -69,7 +69,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		IVMInstall jre = null;
 		if (entry.getType() == IRuntimeClasspathEntry.CONTAINER && entry.getPath().segmentCount() > 1) {
 			// a specific VM
-			jre = JREContainerInitializer.resolveVM(entry.getPath()); 
+			jre = JREContainerInitializer.resolveVM(entry.getPath());
 		} else {
 			// default VM for project
 			jre = JavaRuntime.getVMInstall(project);
@@ -77,7 +77,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		if (jre == null) {
 			// cannot resolve JRE
 			return new IRuntimeClasspathEntry[0];
-		}		
+		}
 		return resolveLibraryLocations(jre, entry.getClasspathProperty());
 	}
 
@@ -98,7 +98,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		} else if (!isSameArchives(libs, defaultLibs)) {
 			// determine if bootpath should be explicit
 			kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-		}		
+		}
 		if (kind == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
 			File vmInstallLocation= vm.getInstallLocation();
 			if (vmInstallLocation != null) {
@@ -134,11 +134,11 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		}
 		return resolvedEntries.toArray(new IRuntimeClasspathEntry[resolvedEntries.size()]);
 	}
-		
+
 	/**
 	 * Return whether the given list of libraries refer to the same archives in the same
-	 * order. Only considers the binary archive (not source or javadoc locations). 
-	 *  
+	 * order. Only considers the binary archive (not source or javadoc locations).
+	 *
 	 * @param libs the locations
 	 * @param defaultLibs the default locations
 	 * @return whether the given list of libraries refer to the same archives in the same
@@ -207,10 +207,10 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns a runtime classpath entry for the given library in the specified VM.
-	 * 
+	 *
 	 * @param vm the VM
 	 * @param location the location
 	 * @param kind the classpath entry kind
@@ -223,7 +223,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		URL javadocLocation = location.getJavadocLocation();
 		if (overrideJavaDoc && javadocLocation == null) {
 			javadocLocation = vm.getJavadocLocation();
-		}							
+		}
 		IClasspathAttribute[] attributes = null;
 		if (javadocLocation == null) {
 			attributes = new IClasspathAttribute[0];

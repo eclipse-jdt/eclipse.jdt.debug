@@ -27,11 +27,11 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Utility class for Standard VM type. Used to generate/retrieve information for
  * VMs defined by EE property file.
- * 
+ *
  * @since 3.4
  */
 public class EEVMType extends AbstractVMInstallType {
-	
+
 	/**
 	 * VM Type id
 	 */
@@ -42,22 +42,22 @@ public class EEVMType extends AbstractVMInstallType {
 	 * to support absolute path names where needed.
 	 */
 	public static final String VAR_EE_HOME = "${ee.home}"; //$NON-NLS-1$
-	
+
 	private static final String[] REQUIRED_PROPERTIES = new String[]{
 		ExecutionEnvironmentDescription.EXECUTABLE,
 		ExecutionEnvironmentDescription.BOOT_CLASS_PATH,
 		ExecutionEnvironmentDescription.LANGUAGE_LEVEL,
 		ExecutionEnvironmentDescription.JAVA_HOME};
-		
+
 	/**
 	 * Returns the default javadoc location specified in the properties or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param properties properties map
 	 * @return javadoc location specified in the properties or <code>null</code> if none
 	 */
 	public static URL getJavadocLocation(Map<String, String> properties) {
-		String javadoc = getProperty(ExecutionEnvironmentDescription.JAVADOC_LOC, properties); 
+		String javadoc = getProperty(ExecutionEnvironmentDescription.JAVADOC_LOC, properties);
 		if (javadoc != null && javadoc.length() > 0){
 			try{
 				URL url = new URL(javadoc);
@@ -79,18 +79,18 @@ public class EEVMType extends AbstractVMInstallType {
 			return StandardVMType.getDefaultJavadocLocation(version);
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * Returns the default index location specified in the properties or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param properties properties map
 	 * @return index location specified in the properties or <code>null</code> if none
 	 * @since 3.7.0
 	 */
 	public static URL getIndexLocation(Map<String, String> properties) {
-		String index = getProperty(ExecutionEnvironmentDescription.INDEX_LOC, properties); 
+		String index = getProperty(ExecutionEnvironmentDescription.INDEX_LOC, properties);
 		if (index != null && index.length() > 0){
 			try{
 				URL url = new URL(index);
@@ -109,10 +109,10 @@ public class EEVMType extends AbstractVMInstallType {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a status indicating if the given definition file is valid.
-	 * 
+	 *
 	 * @param description definition file
 	 * @return status indicating if the given definition file is valid
 	 */
@@ -131,7 +131,7 @@ public class EEVMType extends AbstractVMInstallType {
 	/**
 	 * Returns the specified property value from the given map, as a {@link String},
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param property the name of the property
 	 * @param properties property map
 	 * @return value or <code>null</code>
@@ -139,7 +139,7 @@ public class EEVMType extends AbstractVMInstallType {
 	private static String getProperty(String property, Map<String, String> properties) {
 		return properties.get(property);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#doCreateVMInstall(java.lang.String)
 	 */
@@ -182,5 +182,5 @@ public class EEVMType extends AbstractVMInstallType {
 		}
 		return new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.EEVMType_3, new String[]{installLocation.getPath()}));
 	}
-	
+
 }

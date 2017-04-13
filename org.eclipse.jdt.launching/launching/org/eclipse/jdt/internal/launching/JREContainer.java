@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
@@ -36,7 +36,7 @@ import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
 
-/** 
+/**
  * JRE Container - resolves a classpath container variable to a JRE
  */
 public class JREContainer implements IClasspathContainer {
@@ -45,32 +45,32 @@ public class JREContainer implements IClasspathContainer {
 	 * Corresponding JRE
 	 */
 	private IVMInstall fVMInstall = null;
-	
+
 	/**
 	 * Container path used to resolve to this JRE
 	 */
 	private IPath fPath = null;
-	
+
 	/**
 	 * The project this container is for
 	 */
 	private IJavaProject fProject = null;
-	
+
 	/**
 	 * Cache of classpath entries per VM install. Cleared when a VM changes.
 	 */
 	private static Map<IVMInstall, IClasspathEntry[]> fgClasspathEntries = new HashMap<IVMInstall, IClasspathEntry[]>(10);
-	
+
 	/**
 	 * Variable to return an empty array of <code>IAccessRule</code>s
 	 */
 	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
-	
+
 	/**
-	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}} 
+	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}}
 	 */
 	private static Map<RuleKey, RuleEntry> fgClasspathEntriesWithRules = new HashMap<RuleKey, RuleEntry>(10);
-	
+
 	/**
 	 * A single key entry for the cache of access rules and classpath entries
 	 * A rule key is made up of an <code>IVMInstall</code> and an execution environment id
@@ -79,7 +79,7 @@ public class JREContainer implements IClasspathContainer {
 	static class RuleKey {
 		private String fEnvironmentId = null;
 		private IVMInstall fInstall = null;
-		
+
 		/**
 		 * Constructor
 		 * @param install the VM
@@ -89,7 +89,7 @@ public class JREContainer implements IClasspathContainer {
 			fInstall = install;
 			fEnvironmentId = environmentId;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
@@ -101,7 +101,7 @@ public class JREContainer implements IClasspathContainer {
 			}
 			return false;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
@@ -110,16 +110,16 @@ public class JREContainer implements IClasspathContainer {
 			return fEnvironmentId.hashCode() + fInstall.hashCode();
 		}
 	}
-	
+
 	/**
 	 * Holds an entry for the cache of access rules/classpath entries.
-	 * An entry is made up of an array of classpath entries and the collection of access rules. 
+	 * An entry is made up of an array of classpath entries and the collection of access rules.
 	 * @since 3.3
 	 */
 	static class RuleEntry {
 		private IAccessRule[][] fRules = null;
 		private IClasspathEntry[] fEntries = null;
-		
+
 		/**
 		 * Constructor
 		 * @param rules the rules
@@ -129,7 +129,7 @@ public class JREContainer implements IClasspathContainer {
 			fRules = rules;
 			fEntries = entries;
 		}
-		
+
 		/**
 		 * Returns the collection of classpath entries for this RuleEntry
 		 * @return the cached array of classpath entries
@@ -137,7 +137,7 @@ public class JREContainer implements IClasspathContainer {
 		public IClasspathEntry[] getClasspathEntries() {
 			return fEntries;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
@@ -165,11 +165,11 @@ public class JREContainer implements IClasspathContainer {
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Checks if the two arrays of rules are equal (same rules in each position in the array)
-		 * 
-		 * @param a First list of rules to compare, must not be <code>null</code> 
+		 *
+		 * @param a First list of rules to compare, must not be <code>null</code>
 		 * @param b Second list of rules to compare, must not be <code>null</code>
 		 * @return <code>true</code> if the arrays are equal, <code>false</code> otherwise
 		 */
@@ -188,7 +188,7 @@ public class JREContainer implements IClasspathContainer {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Add a VM changed listener to clear cached values when a VM changes or is removed
 	 */
@@ -200,7 +200,7 @@ public class JREContainer implements IClasspathContainer {
 			 */
 			@Override
 			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
 			 */
@@ -226,7 +226,7 @@ public class JREContainer implements IClasspathContainer {
 				fgClasspathEntries.remove(removedVm);
 				removeRuleEntry(removedVm);
 			}
-			
+
 			/**
 			 * Removes all occurrences of the given VM found as part key members in the current
 			 * cache for classpath entries
@@ -251,11 +251,11 @@ public class JREContainer implements IClasspathContainer {
 		};
 		JavaRuntime.addVMInstallChangedListener(listener);
 	}
-	
+
 	/**
 	 * Returns the classpath entries associated with the given VM
 	 * in the context of the given path and project.
-	 * 
+	 *
 	 * @param vm the VM
 	 * @param containerPath the container path resolution is for
 	 * @param project project the resolution is for
@@ -280,11 +280,11 @@ public class JREContainer implements IClasspathContainer {
 		}
 		return entries;
 	}
-	
+
 	/**
 	 * Computes the classpath entries associated with a VM - one entry per library
 	 * in the context of the given path and project.
-	 * 
+	 *
 	 * @param vm the VM
 	 * @param project the project the resolution is for
 	 * @param environmentId execution environment the resolution is for, or <code>null</code>
@@ -339,11 +339,11 @@ public class JREContainer implements IClasspathContainer {
 		if (key != null && rules != null) {
 			fgClasspathEntriesWithRules.put(key, new RuleEntry(rules, cpEntries));
 		}
-		return cpEntries;		
+		return cpEntries;
 	}
 
 	private static IClasspathAttribute[] buildClasspathAttributes(final IVMInstall vm, final LibraryLocation lib, final boolean overrideJavaDoc) {
-	
+
 		List<IClasspathAttribute> classpathAttributes = new LinkedList<IClasspathAttribute>();
 		// process the javadoc location
 		URL javadocLocation = lib.getJavadocLocation();
@@ -368,10 +368,10 @@ public class JREContainer implements IClasspathContainer {
 
 		return classpathAttributes.toArray(new IClasspathAttribute[classpathAttributes.size()]);
 	}
-	
+
 	/**
 	 * Constructs a JRE classpath container on the given VM install
-	 * 
+	 *
 	 * @param vm VM install - cannot be <code>null</code>
 	 * @param path container path used to resolve this JRE
 	 * @param project the project context
@@ -381,7 +381,7 @@ public class JREContainer implements IClasspathContainer {
 		fPath = path;
 		fProject = project;
 	}
-	
+
 	/**
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */

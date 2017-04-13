@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,12 +16,12 @@ import org.eclipse.jdt.launching.PropertyChangeEvent;
 
 /**
  * Simple VM listener that reports whether VM settings have changed.
- * 
+ *
  * @since 3.2
  *
  */
 public class VMListener implements IVMInstallChangedListener {
-	
+
 	private boolean fChanged = false;
 
 	/* (non-Javadoc)
@@ -55,7 +55,7 @@ public class VMListener implements IVMInstallChangedListener {
 	public void vmRemoved(IVMInstall vm) {
 		fChanged = true;
 	}
-	
+
 	public boolean isChanged() {
 		return fChanged;
 	}

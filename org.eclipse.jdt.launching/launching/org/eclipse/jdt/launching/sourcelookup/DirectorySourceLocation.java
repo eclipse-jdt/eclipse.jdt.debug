@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
- 
+
 /**
  * Locates source elements in a directory in the local
  * file system. Returns instances of <code>LocalFileStorage</code>.
@@ -60,24 +60,24 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 * The directory associated with this source location
 	 */
 	private File fDirectory;
-	
+
 	/**
 	 * Constructs a new empty source location to be initialized from
 	 * a memento.
 	 */
 	public DirectorySourceLocation() {
 	}
-		
+
 	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the given directory.
-	 * 
+	 *
 	 * @param directory a directory
 	 */
 	public DirectorySourceLocation(File directory) {
 		setDirectory(directory);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
@@ -86,7 +86,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		if (getDirectory() == null) {
 			return null;
 		}
-		
+
 		String pathStr= name.replace('.', '/');
 		int lastSlash = pathStr.lastIndexOf('/');
 		try {
@@ -105,8 +105,8 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 					possibleInnerType = true;
 				} else {
 					possibleInnerType = false;
-				}						
-			} while (possibleInnerType);			
+				}
+			} while (possibleInnerType);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), e.getMessage(), e));
 		}
@@ -116,40 +116,40 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	/**
 	 * Sets the directory in which source elements will
 	 * be searched for.
-	 * 
+	 *
 	 * @param directory a directory
 	 */
 	private void setDirectory(File directory) {
 		fDirectory = directory;
 	}
-	
+
 	/**
 	 * Returns the directory associated with this source
 	 * location.
-	 * 
+	 *
 	 * @return directory
 	 */
 	public File getDirectory() {
 		return fDirectory;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object object) {		
+	public boolean equals(Object object) {
 		return object instanceof DirectorySourceLocation &&
 			 getDirectory().equals(((DirectorySourceLocation)object).getDirectory());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return getDirectory().hashCode();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
@@ -176,38 +176,38 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-												
+
 			String path = root.getAttribute("path"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___missing_directory_path_3, null); 
+				abort(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___missing_directory_path_3, null);
 			} else {
 				File dir = new File(path);
 				if (dir.exists() && dir.isDirectory()) {
 					setDirectory(dir);
 				} else {
-					abort(NLS.bind(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___directory_does_not_exist___0__4, new String[] {path}), null); 
+					abort(NLS.bind(LaunchingMessages.DirectorySourceLocation_Unable_to_initialize_source_location___directory_does_not_exist___0__4, new String[] {path}), null);
 				}
 			}
 			return;
 		} catch (ParserConfigurationException e) {
-			ex = e;			
+			ex = e;
 		} catch (SAXException e) {
 			ex = e;
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.DirectorySourceLocation_Exception_occurred_initializing_source_location__5, ex);		 
+		abort(LaunchingMessages.DirectorySourceLocation_Exception_occurred_initializing_source_location__5, ex);
 	}
 
 	private boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
 	}
-	
+
 	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
-		throw new CoreException(s);		
+		throw new CoreException(s);
 	}
 }

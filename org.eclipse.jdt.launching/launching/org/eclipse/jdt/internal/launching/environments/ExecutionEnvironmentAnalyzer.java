@@ -32,11 +32,11 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 /**
  * Environment analyzer for standard execution environments.
- * 
+ *
  * @since 3.3
  */
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
-	
+
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
@@ -47,18 +47,18 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
 	private static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
 	private static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
-	
+
 	private static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
 	private static final String CDC_FOUNDATION_1_0 = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
-	
+
 	private static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	private static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
 	private static final String OSGI_MINIMUM_1_2 = "OSGi/Minimum-1.2"; //$NON-NLS-1$
-	
+
 	private static final String JAVA_SPEC_VERSION = "java.specification.version"; //$NON-NLS-1$
 	private static final String JAVA_SPEC_NAME = "java.specification.name"; //$NON-NLS-1$
 	private static final String JAVA_VERSION = "java.version"; //$NON-NLS-1$
-	
+
 	private static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION, JAVA_VERSION};
 	private static final String FOUNDATION = "foundation"; //$NON-NLS-1$
 	private static final Map<String, String[]> mappings = new HashMap<String, String[]>();
@@ -172,7 +172,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			result.add(new CompatibleEnvironment(env, strict));
 		}
 	}
-	
+
 	// first entry in the list is the perfect match
 	private List<String> getTypes(String type) {
 		List<String> result = new ArrayList<String>();

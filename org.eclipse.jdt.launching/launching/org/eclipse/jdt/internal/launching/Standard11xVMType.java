@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * JDK installion layout, and command line options.
  */
 public class Standard11xVMType extends StandardVMType {
-		
+
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrary(java.io.File)
 	 */
@@ -39,7 +39,7 @@ public class Standard11xVMType extends StandardVMType {
 	protected IVMInstall doCreateVMInstall(String id) {
 		return new Standard11xVM(this, id);
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
 	 */
@@ -48,25 +48,25 @@ public class Standard11xVMType extends StandardVMType {
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
 	@Override
 	public String getName() {
-		return LaunchingMessages.Standard11xVMType_Standard_1_1_x_VM_1; 
-	}	
-	
+		return LaunchingMessages.Standard11xVMType_Standard_1_1_x_VM_1;
+	}
+
 	/**
 	 * Returns <code>null</code> - not supported.
-	 * 
+	 *
 	 * @see StandardVMType#getDefaultExtensionDirectory(File)
 	 */
 	@Override
 	protected File getDefaultExtensionDirectory(File installLocation) {
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultEndorsedDirectory(java.io.File)
 	 */

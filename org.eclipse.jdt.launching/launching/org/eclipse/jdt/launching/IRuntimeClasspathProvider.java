@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * A classpath provider computes an unresolved classpath for a launch
  * configuration, and resolves classpath entries for a launch configuration.
- * A classpath provider is defined as an extension of type 
+ * A classpath provider is defined as an extension of type
  * <code>org.eclipse.jdt.launching.classpathProviders</code>.
  * <p>
  * A provider is registered with an identifier that can be
@@ -34,7 +34,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * extension.
  * <pre>
  * &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
- *   &lt;classpathProvider&gt; 
+ *   &lt;classpathProvider&gt;
  *      id="com.example.ExampleClasspathProvider"
  *      class="com.example.ExampleClasspathProviderImpl"
  *   &lt;/classpathProvider&gt;
@@ -42,7 +42,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * </pre>
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this extension. This 
+ * <li><code>id</code> specifies a unique identifier for this extension. This
  * 	identifier may be used to reference a provider on one of the launch
  *  configuration attributes mentioned above.</li>
  * <li><code>class</code> specifies the fully qualified name of the Java class
@@ -52,27 +52,27 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public interface IRuntimeClasspathProvider {
-	
+
 	/**
 	 * Computes and returns an unresolved classpath for the given launch configuration.
 	 * Variable and container entries are not resolved.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return unresolved path
 	 * @exception CoreException if unable to compute a path
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException;
-	
+
 	/**
 	 * Returns the resolved path corresponding to the given path, in the context of the
 	 * given launch configuration. Variable and container entries are resolved. The returned
 	 * (resolved) path need not have the same number of entries as the given (unresolved)
 	 * path.
-	 * 
+	 *
 	 * @param entries entries to resolve
 	 * @param configuration launch configuration context to resolve in
 	 * @return resolved path

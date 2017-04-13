@@ -46,7 +46,7 @@ import org.eclipse.osgi.util.NLS;
  * files. An execution environment description file can be used to define attributes relevant
  * the launching of a specific JRE configuration. The format of the file is defined by
  * code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
- * 
+ *
  * @since 3.5
  */
 public final class ExecutionEnvironmentDescription {
@@ -57,13 +57,13 @@ public final class ExecutionEnvironmentDescription {
 	public static final String ENDORSED_DIRS = "-Dee.endorsed.dirs";  //$NON-NLS-1$
 	/**
 	 * Boot class path property name in an execution environment description file.
-	 */	
+	 */
 	public static final String BOOT_CLASS_PATH = "-Dee.bootclasspath";  //$NON-NLS-1$
 	/**
 	 * Source archive property name in an execution environment description file.
 	 * Value is a path. When present, the source attachment for each library in the boot
 	 * class path will be the file specified by this property.
-	 */	
+	 */
 	public static final String SOURCE_DEFAULT = "-Dee.src";  //$NON-NLS-1$
 	/**
 	 * Source map property name in an execution environment description file.
@@ -76,7 +76,7 @@ public final class ExecutionEnvironmentDescription {
 	 * wild card replacement in the <code>libPath</code>. In this case the wild card characters in the
 	 * <code>sourcePath</code> must exist in the same order as the <code>libPath</code>.
 	 * For example, <code>lib/foo*.???=source/src*foo.???</code>.
-	 * </p> 
+	 * </p>
 	 */
 	public static final String SOURCE_MAP = "-Dee.src.map";  //$NON-NLS-1$
 	/**
@@ -93,10 +93,10 @@ public final class ExecutionEnvironmentDescription {
 	 * Pre-built index location property in an execution environment description file.
 	 * <p>
 	 * Specifies the location for a pre-built search index. Must be a valid {@link URL}.
-	 * 
+	 *
 	 * You can use <code>${ee.home}</code> and <code>'..'</code> segments to specify a file location
 	 * relative to the ee file.
-	 * 
+	 *
 	 * If this property is not specified the default value of <code>null</code> will be used.
 	 * </p>
 	 * @since 3.7
@@ -143,10 +143,10 @@ public final class ExecutionEnvironmentDescription {
 	/**
 	 * Debug arguments property name in an execution environment description file.
 	 * <p>
-	 * The arguments to use to launch the VM in debug mode. For example 
+	 * The arguments to use to launch the VM in debug mode. For example
 	 * <code>"-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:${port}"</code>.
 	 * The <code>${port}</code> variable will be substituted with a free port at launch time.
-	 * When unspecified, default arguments are constructed based on the language level of the VM. 
+	 * When unspecified, default arguments are constructed based on the language level of the VM.
 	 * </p>
 	 */
 	public static final String DEBUG_ARGS = "-Dee.debug.args";  //$NON-NLS-1$
@@ -156,90 +156,90 @@ public final class ExecutionEnvironmentDescription {
 	 * The name is used as the JRE name when installing an EE JRE into Eclipse.
 	 * </p>
 	 */
-	public static final String EE_NAME = "-Dee.name";  //$NON-NLS-1$	
+	public static final String EE_NAME = "-Dee.name";  //$NON-NLS-1$
 	/**
 	 * The directory containing the execution environment description file. Relative paths are resolved
 	 * relative to this location. This property will be set if not present, it does not need to be
 	 * specified in the file.
 	 */
 	public static final String EE_HOME = "-Dee.home"; //$NON-NLS-1$
-	
+
 	/**
 	 * Substitution in EE file - replaced with directory of EE file,
 	 * to support absolute path names where needed. If the value is not in the
 	 * file, it is set when properties are created.
 	 */
-	private static final String VAR_EE_HOME = "${ee.home}"; //$NON-NLS-1$	
-	
+	private static final String VAR_EE_HOME = "${ee.home}"; //$NON-NLS-1$
+
 	/**
 	 * Any line found in the description starting with this string will not be added to the
 	 * VM argument list
 	 */
-	private static final String EE_ARG_FILTER = "-Dee."; //$NON-NLS-1$	
-	
+	private static final String EE_ARG_FILTER = "-Dee."; //$NON-NLS-1$
+
 	// Regex constants for handling the source mapping
 	private static final Character WILDCARD_SINGLE_CHAR = new Character('?');
 	private static final Character WILDCARD_MULTI_CHAR = new Character('*');
-	private static final String REGEX_SPECIAL_CHARS = "+()^$.{}[]|\\"; //$NON-NLS-1$	
-	
+	private static final String REGEX_SPECIAL_CHARS = "+()^$.{}[]|\\"; //$NON-NLS-1$
+
 	/**
 	 * Execution environment description properties
 	 */
 	private Map<String, String> fProperties = null;
-	
+
 	/**
 	 * Creates an execution environment description based on the properties defined in the given
 	 * execution environment description file. The format of the file is defined by
 	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
-	 * 
+	 *
 	 * @param eeFile execution environment description file
 	 * @throws CoreException if unable to read or parse the file
 	 */
 	public ExecutionEnvironmentDescription(File eeFile) throws CoreException {
 		initProperties(eeFile);
 	}
-	
+
 	/**
 	 * Returns a map of properties defined in this execution environment description.
 	 * Properties in the file that do not have a value assigned to them are returned in the keys
 	 * with an empty string as the value. Variable substitutions for <code>${ee.home}</code>
 	 * have already been performed when resolving property values.
-	 * 
+	 *
 	 * @return properties as a map of {@link String} keys and values
 	 */
 	public Map<String, String> getProperties() {
 		return fProperties;
 	}
-	
+
 	/**
 	 * Returns the specified property from this description, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param property property name
 	 * @return property value or <code>null</code>
 	 */
 	public String getProperty(String property) {
 		return fProperties.get(property);
 	}
-	
+
 	/**
 	 * Returns the location of the system libraries defined in this execution environment.
 	 * Libraries are generated from the endorsed directories, boot class path, additional
 	 * directories, and extension directories specified by this description and are returned
 	 * in that order. Source attachments are configured based on <code>src</code> and
 	 * <code>src.map</code> properties.
-	 * 
+	 *
 	 * @return library locations, possibly empty
-	 */	
+	 */
 	public LibraryLocation[] getLibraryLocations() {
-		List<LibraryLocation> allLibs = new ArrayList<LibraryLocation>(); 
-		
+		List<LibraryLocation> allLibs = new ArrayList<LibraryLocation>();
+
 		String dirs = getProperty(ENDORSED_DIRS);
 		if (dirs != null) {
 			// Add all endorsed libraries - they are first, as they replace
 			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs)));
 		}
-		
+
 		// next is the boot path libraries
 		dirs = getProperty(BOOT_CLASS_PATH);
 		if (dirs != null) {
@@ -250,7 +250,7 @@ public final class ExecutionEnvironmentDescription {
 			URL indexurl = getIndexLocation();
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
-				File lib = path.toFile(); 
+				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
 					LibraryLocation libraryLocation = new LibraryLocation(path,	src, Path.EMPTY, url, indexurl);
 					boot.add(libraryLocation);
@@ -258,20 +258,20 @@ public final class ExecutionEnvironmentDescription {
 			}
 			allLibs.addAll(boot);
 		}
-		
+
 		// Add all additional libraries
 		dirs = getProperty(ADDITIONAL_DIRS);
 		if (dirs != null) {
 			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs)));
 		}
-				
+
 		// Add all extension libraries
 		dirs = getProperty(EXTENSION_DIRS);
 		if (dirs != null) {
 			allLibs.addAll(StandardVMType.gatherAllLibraries(resolvePaths(dirs)));
 		}
-		
-		
+
+
 		//remove duplicates
 		HashSet<String> set = new HashSet<String>();
 		LibraryLocation lib = null;
@@ -282,19 +282,19 @@ public final class ExecutionEnvironmentDescription {
 				liter.remove();
 			}
 		}
-		
+
 		// If the ee.src.map property is specified, use it to associate source locations with the libraries
 		addSourceLocationsToLibraries(getSourceMap(), allLibs);
-		
+
 		return allLibs.toArray(new LibraryLocation[allLibs.size()]);
 	}
-	
+
 	/**
 	 * Returns VM arguments in this description or <code>null</code> if none. VM arguments
 	 * correspond to all properties in this description that do not begin with "-Dee."
 	 * concatenated together with spaces. Any single VM argument that contains spaces
 	 * itself is surrounded with quotes.
-	 * 
+	 *
 	 * @return VM arguments or <code>null</code> if none
 	 */
 	public String getVMArguments() {
@@ -324,14 +324,14 @@ public final class ExecutionEnvironmentDescription {
 		}
 		return arguments.toString();
 	}
-	
+
 	/**
 	 * Returns the executable for this description as a file or <code>null</code> if
 	 * not specified.
-	 * 
+	 *
 	 * @return standard (non-console) executable or <code>null</code> if none
 	 */
-	public File getExecutable() { 
+	public File getExecutable() {
 		String property = getProperty(ExecutionEnvironmentDescription.EXECUTABLE);
 		if (property != null) {
 			String[] paths = resolvePaths(property);
@@ -340,15 +340,15 @@ public final class ExecutionEnvironmentDescription {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the console executable for this description as a file or <code>null</code> if
 	 * not specified.
-	 * 
+	 *
 	 * @return console executable or <code>null</code> if none
 	 */
-	public File getConsoleExecutable() { 
+	public File getConsoleExecutable() {
 		String property = getProperty(ExecutionEnvironmentDescription.EXECUTABLE_CONSOLE);
 		if (property != null) {
 			String[] paths = resolvePaths(property);
@@ -358,11 +358,11 @@ public final class ExecutionEnvironmentDescription {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Initializes the properties in the given execution environment
 	 * description file.
-	 * 
+	 *
 	 * @param eeFile the EE file
 	 * @exception CoreException if unable to read the file
 	 */
@@ -402,7 +402,7 @@ public final class ExecutionEnvironmentDescription {
 		// resolve things with ${ee.home} in them
 		fProperties = properties; // needs to be done to resolve
 		Iterator<Entry<String, String>> entries = properties.entrySet().iterator();
-		Map<String, String> resolved = new LinkedHashMap<String, String>(properties.size()); 
+		Map<String, String> resolved = new LinkedHashMap<String, String>(properties.size());
 		while (entries.hasNext()) {
 			Entry<String, String> entry = entries.next();
 			String key = entry.getKey();
@@ -415,12 +415,12 @@ public final class ExecutionEnvironmentDescription {
 			}
 		}
 		fProperties = resolved;
-	}	
-	
+	}
+
 	/**
 	 * Replaces and returns a string with all occurrences of
 	 * "${ee.home} replaced with its value.
-	 * 
+	 *
 	 * @param value string to process
 	 * @return resolved string
 	 */
@@ -443,12 +443,12 @@ public final class ExecutionEnvironmentDescription {
 			return replaced.toString();
 		}
 		return value;
-	}	
-	
+	}
+
 	/**
 	 * Returns all path strings contained in the given string based on system
 	 * path delimiter, resolved relative to the <code>${ee.home}</code> property.
-	 * 
+	 *
 	 * @param paths the paths to resolve
 	 * @return array of individual paths
 	 */
@@ -461,12 +461,12 @@ public final class ExecutionEnvironmentDescription {
 		}
 		return strings;
 	}
-	
+
 	/**
 	 * Returns a string representing the absolute form of the given path.  If the
 	 * given path is not absolute, it is appended to the given root path.  The returned
 	 * path will always be the OS specific string form of the path.
-	 * 
+	 *
 	 * @param pathString string representing the path to make absolute
 	 * @param root root to append non-absolute paths to
 	 * @return absolute, OS specific path
@@ -478,13 +478,13 @@ public final class ExecutionEnvironmentDescription {
 			return filePath.toOSString();
 		}
 		return path.toOSString();
-	}	
-	
+	}
+
 	/**
 	 * Creates a map (regex string to regex string) mapping library locations to their
 	 * source locations.  This is done by taking the ee.src.map property from the ee file
 	 * which allows a list of mappings that can use the wildcards ? (any one char) and *
-	 * (any series of chars).  The property is converted to a map of regex strings used by 
+	 * (any series of chars).  The property is converted to a map of regex strings used by
 	 * {@link #addSourceLocationsToLibraries(Map, List)}.
 	 * <pre>
 	 * Example property, separated onto separate lines for easier reading
@@ -493,8 +493,8 @@ public final class ExecutionEnvironmentDescription {
 	 *              ${ee.home}\lib\jclDEE\*.zip=lib\jclDEE\source\*-src.zip;
 	 *              ${ee.home}\lib\jclDEE\ext\*.???=lib\jclDEE\source\*-src.???;
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * @return map containing regexs mapping library locations to their source locations
 	 */
 	private Map<String, String> getSourceMap(){
@@ -511,7 +511,7 @@ public final class ExecutionEnvironmentDescription {
 					String value = entries[i].substring(index+1);
 					key = makePathAbsolute(key, root);
 					value = makePathAbsolute(value, root);
-					
+
 					List<Character> wildcards = new ArrayList<Character>();
 					StringBuffer keyBuffer = new StringBuffer();
 				    char [] chars = key.toCharArray();
@@ -529,7 +529,7 @@ public final class ExecutionEnvironmentDescription {
 						    keyBuffer.append(chars[j]);
 						}
 					}
-					
+
 					int currentWild = 0;
 					StringBuffer valueBuffer = new StringBuffer();
 					chars = value.toCharArray();
@@ -555,22 +555,22 @@ public final class ExecutionEnvironmentDescription {
 							valueBuffer.append(chars[j]);
 						}
 					}
-					
+
 					srcMap.put(keyBuffer.toString(), valueBuffer.toString());
-					
+
 				} else {
 					LaunchingPlugin.log(NLS.bind(LaunchingMessages.EEVMType_6, new String[]{entries[i]}));
 				}
 			}
 		}
 		return srcMap;
-	}	
+	}
 
 	/**
 	 * Uses the given src map to find source libraries that are associated with the
 	 * library locations in the list.  The library locations are updated with the
 	 * found source path.
-	 * 
+	 *
 	 * @param srcMap mapping of library location regexs to source location regexs
 	 * @param libraries list of {@link LibraryLocation} objects to update with source locations
 	 * @see #getSourceMap()
@@ -592,16 +592,16 @@ public final class ExecutionEnvironmentDescription {
 					if (sourcePath.toFile().exists()){
 						currentLibrary.setSystemLibrarySource(sourcePath);
 					}
-					
+
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Returns the location of the default source archive for this description or the empty
 	 * path if none.
-	 * 
+	 *
 	 * @return default source archive location or Path.EMPTY if none
 	 */
 	private IPath getSourceLocation() {
@@ -612,21 +612,21 @@ public final class ExecutionEnvironmentDescription {
 			return new Path(src);
 		}
 		return Path.EMPTY;
-	}		
-	
+	}
+
 	/**
 	 * Returns the javadoc location or <code>null</code> if unable to determine one.
 	 * A default one is generated if not present, based on language level.
-	 * 
+	 *
 	 * @return javadoc location or <code>null</code> if none
 	 */
 	private URL getJavadocLocation() {
 		return EEVMType.getJavadocLocation(fProperties);
-	}		
-	
+	}
+
 	/**
 	 * Returns the {@link URL} for the index location or <code>null</code> if one has not been set.
-	 * 
+	 *
 	 * @return the index {@link URL} or <code>null</code>
 	 * @since 3.7.0
 	 */

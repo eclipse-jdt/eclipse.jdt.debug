@@ -28,14 +28,14 @@ import java.io.File;
  */
 @Deprecated
 public class LocalFileStorage extends org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage {
-	
+
 	/**
 	 * Constructs and returns storage for the given file.
-	 * 
+	 *
 	 * @param file a local file
 	 */
 	public LocalFileStorage(File file){
 		super(file);
 	}
-	
+
 }

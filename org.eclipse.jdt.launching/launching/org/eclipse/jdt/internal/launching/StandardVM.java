@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class StandardVM extends AbstractVMInstall {
 
 	/**
 	 * If a StandardVM returns a string for #getDebugArgs(), the string may contain
-	 * the variable ${port}.  This will be replaced with the port that the vm is 
+	 * the variable ${port}.  This will be replaced with the port that the vm is
 	 * using when launching.
 	 */
 	public static final String VAR_PORT = "${port}"; //$NON-NLS-1$
@@ -71,10 +71,10 @@ public class StandardVM extends AbstractVMInstall {
         }
         return null;
     }
-    
+
     /**
      * Returns the java executable for this VM or <code>null</code> if cannot be found
-     * 
+     *
      * @return executable for this VM or <code>null</code> if none
      */
     File getJavaExecutable() {
@@ -83,17 +83,17 @@ public class StandardVM extends AbstractVMInstall {
             return StandardVMType.findJavaExecutable(installLocation);
         }
         return null;
-    }    
-    
+    }
+
     /**
-     * Returns arguments used to start this VM in debug mode or 
+     * Returns arguments used to start this VM in debug mode or
      * <code>null</code> if default arguments should be used.
-     * 
+     *
      * @return arguments used to start this VM in debug mode
      * or <code>null</code> if default arguments should be used
      */
     public String getDebugArgs() {
     	return null;
     }
-    
+
 }

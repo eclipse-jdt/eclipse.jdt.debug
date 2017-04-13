@@ -12,7 +12,7 @@ package org.eclipse.jdt.launching;
 
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
- 
+
 /**
  * Constant definitions for Java launch configurations.
  * <p>
@@ -29,40 +29,40 @@ public interface IJavaLaunchConfigurationConstants {
 	 * (value <code>"org.eclipse.jdt.launching.localJavaApplication"</code>).
 	 */
 	public static final String ID_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".localJavaApplication"; //$NON-NLS-1$
-	
+
 	/**
 	 * Identifier for the Remote Java Application launch configuration type
 	 * (value <code>"org.eclipse.jdt.launching.remoteJavaApplication"</code>).
 	 */
-	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$	
+	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$
 
 	/**
 	 * Identifier for the Java Applet launch configuration type
 	 * (value <code>"org.eclipse.jdt.launching.javaApplet"</code>).
 	 */
-	public static final String ID_JAVA_APPLET = LaunchingPlugin.getUniqueIdentifier() + ".javaApplet"; //$NON-NLS-1$	
+	public static final String ID_JAVA_APPLET = LaunchingPlugin.getUniqueIdentifier() + ".javaApplet"; //$NON-NLS-1$
 
 	/**
 	 * Identifier for the standard Socket Attaching VM connector
 	 * (value <code>"org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
-	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
-	
+	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$
+
 	/**
 	 * Identifier for the standard Socket Listening VM connector
 	 * (value <code>"org.eclipse.jdt.launching.socketListenConnector"</code>).
 	 * @since 3.4
 	 */
 	public static final String ID_SOCKET_LISTEN_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketListenConnector"; //$NON-NLS-1$
-	
+
 	/**
 	 * Identifier for the java process type, which is annotated on processes created
 	 * by the local java application launch delegate.
-	 * 
+	 *
 	 * (value <code>"java"</code>).
 	 */
-	public static final String ID_JAVA_PROCESS_TYPE = "java"; //$NON-NLS-1$ 
-			
+	public static final String ID_JAVA_PROCESS_TYPE = "java"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute key. The value is a name of
 	 * a Java project associated with a Java launch configuration.
@@ -72,36 +72,36 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget#prepareBreakpointsSearchScope()
 	 */
 	public static final String ATTR_PROJECT_NAME = LaunchingPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a fully qualified name
 	 * of a main type to launch.
 	 */
 	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
-		
+
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether execution should stop when main is entered. The default value
 	 * is <code>false</code>.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_STOP_IN_MAIN = LaunchingPlugin.getUniqueIdentifier() + ".STOP_IN_MAIN";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * program arguments for a Java launch configuration, as they should appear
 	 * on the command line.
 	 */
 	public static final String ATTR_PROGRAM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * VM arguments for a Java launch configuration, as they should appear
 	 * on the command line.
 	 */
 	public static final String ATTR_VM_ARGUMENTS = LaunchingPlugin.getUniqueIdentifier() + ".VM_ARGUMENTS";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a string specifying a
 	 * path to the working directory to use when launching a local VM.
@@ -113,7 +113,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * process.
 	 */
 	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a path identifying the JRE used
 	 * when launching a local VM. The path is a classpath container corresponding
@@ -127,30 +127,30 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 3.2
 	 */
 	public static final String ATTR_JRE_CONTAINER_PATH = JavaRuntime.JRE_CONTAINER;
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a name of a VM install
 	 * to use when launching a local VM. This attribute must be qualified
 	 * by a VM install type, via the <code>ATTR_VM_INSTALL_TYPE</code>
 	 * attribute. When unspecified, the default VM is used.
-	 * 
+	 *
 	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
 	@Deprecated
 	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
-		
+
 	/**
 	 * Launch configuration attribute key. The value is an identifier of
-	 * a VM install type. Used in conjunction with a VM install name, to 
+	 * a VM install type. Used in conjunction with a VM install name, to
 	 * specify the VM to use when launching a local Java application.
 	 * The associated VM install name is specified via the attribute
 	 * <code>ATTR_VM_INSTALL_NAME</code>.
-	 * 
+	 *
 	 * @deprecated use <code>ATTR_JRE_CONTAINER_PATH</code>
 	 */
 	@Deprecated
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a Map of attributes specific
 	 * to a particular VM install type, used when launching a local Java
@@ -159,14 +159,14 @@ public interface IJavaLaunchConfigurationConstants {
 	 * and are limited to String keys and values.
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP = LaunchingPlugin.getUniqueIdentifier() + "VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is an identifier of
 	 * a VM connector, specifying a connector to use when attaching to
 	 * a remote VM.
 	 */
 	public static final String ATTR_VM_CONNECTOR= LaunchingPlugin.getUniqueIdentifier() + ".VM_CONNECTOR_ID"; //$NON-NLS-1$
-		
+
 	/**
 	 * Launch configuration attribute key. The attribute value is an ordered list of strings
 	 * which are mementos for runtime class path entries. When unspecified, a default
@@ -174,7 +174,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * configuration (via the <code>ATTR_CLASSPATH_PROVIDER</code> attribute).
 	 */
 	public static final String ATTR_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether a default classpath should be used when launching a local
@@ -196,7 +196,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * provider is used - <code>StandardClasspathProvider</code>.
 	 */
 	public static final String ATTR_CLASSPATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_PROVIDER";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is an ordered list of
 	 * strings which are mementos for associated runtime classpath entries
@@ -206,7 +206,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * <code>ATTR_SOURCE_PATH_PROVIDER</code> attribute).
 	 */
 	public static final String ATTR_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH";	 //$NON-NLS-1$
-		
+
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether a default source lookup path should be used. When
@@ -224,14 +224,14 @@ public interface IJavaLaunchConfigurationConstants {
 	 * path provider is used - <code>StandardSourcePathProvider</code>.
 	 */
 	public static final String ATTR_SOURCE_PATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH_PROVIDER";	 //$NON-NLS-1$
-			
+
 	/**
 	 * Launch configuration attribute key. The value is a boolean, indicating
 	 * whether a VM will support/allow the terminate action.
 	 * This attribute is used for remote debugging.
 	 */
 	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.getUniqueIdentifier() + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for VM specific attributes found in the
 	 * <code>ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP</code>. The value is a String,
@@ -240,18 +240,18 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_JAVA_COMMAND = LaunchingPlugin.getUniqueIdentifier() + ".JAVA_COMMAND";	 //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is 
+	 * Launch configuration attribute key. The value is
 	 * a map. Keys in the map correspond to arguments names
 	 * returned by <code>IVMConnector#getDefaultArguments()</code>.
 	 * Values are strings corresponding to the values to use when
 	 * establishing a connection to a remote VM.
 	 */
 	public static final String ATTR_CONNECT_MAP = LaunchingPlugin.getUniqueIdentifier() + ".CONNECT_MAP";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key. The value is an integer
 	 * indicating the width of the applet viewing area.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_WIDTH = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_WIDTH";	 //$NON-NLS-1$
@@ -259,7 +259,7 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is an integer
 	 * indicating the height of the applet viewing area.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_HEIGHT = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_HEIGHT";	 //$NON-NLS-1$
@@ -267,7 +267,7 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is a String indicating the
 	 * HTML name of the applet.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_NAME = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_NAME";	 //$NON-NLS-1$
@@ -276,7 +276,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a Map. Keys in the map
 	 * represent applet parameter names and the values in the map are the
 	 * corresponding parameter values
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_PARAMETERS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_PARAMETERS";	 //$NON-NLS-1$
@@ -284,19 +284,19 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is a String indicating the
 	 * fully qualified name of the applet viewer utility class to use.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_APPLETVIEWER_CLASS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_APPLETVIEWER_CLASS";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for a VM specific argument. Value is an array
 	 * of strings describing paths in the local file system that
 	 * should be prepended to the bootpath, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
-	 * and placed in the VM specific arguments map by the Java 
+	 * and placed in the VM specific arguments map by the Java
 	 * application launch delegate.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ATTR_BOOTPATH_PREPEND = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath/p:";	 //$NON-NLS-1$
@@ -306,30 +306,30 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of strings describing paths in the local file system that
 	 * should be placed on the bootpath explicitly, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
-	 * and placed in the VM specific arguments map by the Java 
+	 * and placed in the VM specific arguments map by the Java
 	 * application launch delegate.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ATTR_BOOTPATH = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath:";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for a VM specific argument. Value is an array
 	 * of strings describing paths in the local file system that
 	 * should be appended to the bootpath, or <code>null</code>
 	 * if none. The value is computed dynamically at launch time
-	 * and placed in the VM specific arguments map by the Java 
+	 * and placed in the VM specific arguments map by the Java
 	 * application launch delegate.
-	 * 
+	 *
 	 * @since 3.0
-	 */	
+	 */
 	public static final String ATTR_BOOTPATH_APPEND = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath/a:";	 //$NON-NLS-1$
 
 	/**
 	 * Attribute key for a Mac OSX VM-specific argument. Value is a boolean
-	 * indicating if the <code>-XStartOnFirstThread</code> argument should be used 
+	 * indicating if the <code>-XStartOnFirstThread</code> argument should be used
 	 * when launching.
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String ATTR_USE_START_ON_FIRST_THREAD = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_USE_START_ON_FIRST_THREAD"; //$NON-NLS-1$
@@ -337,20 +337,20 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Status code indicating a launch configuration does not
 	 * specify a project when a project is required.
 	 */
-	public static final int ERR_UNSPECIFIED_PROJECT = 100;	
-		
+	public static final int ERR_UNSPECIFIED_PROJECT = 100;
+
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a main type to launch.
 	 */
-	public static final int ERR_UNSPECIFIED_MAIN_TYPE = 101;	
-		
+	public static final int ERR_UNSPECIFIED_MAIN_TYPE = 101;
+
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a VM Install Type.
 	 */
 	public static final int ERR_UNSPECIFIED_VM_INSTALL_TYPE = 102;
-	
+
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a VM Install
@@ -362,31 +362,31 @@ public interface IJavaLaunchConfigurationConstants {
 	 * type could not be found.
 	 */
 	public static final int ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST = 104;
-		
+
 	/**
 	 * Status code indicating a launch configuration's VM install
 	 * could not be found.
 	 */
 	public static final int ERR_VM_INSTALL_DOES_NOT_EXIST = 105;
-	
+
 	/**
 	 * Status code indicating a VM runner could not be located
 	 * for the VM install specified by a launch configuration.
 	 */
-	public static final int ERR_VM_RUNNER_DOES_NOT_EXIST = 106;	
-	
+	public static final int ERR_VM_RUNNER_DOES_NOT_EXIST = 106;
+
 	/**
 	 * Status code indicating the project associated with
 	 * a launch configuration is not a Java project.
 	 */
-	public static final int ERR_NOT_A_JAVA_PROJECT = 107;	
-	
+	public static final int ERR_NOT_A_JAVA_PROJECT = 107;
+
 	/**
 	 * Status code indicating the specified working directory
 	 * does not exist.
 	 */
-	public static final int ERR_WORKING_DIRECTORY_DOES_NOT_EXIST = 108;	
-		
+	public static final int ERR_WORKING_DIRECTORY_DOES_NOT_EXIST = 108;
+
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a host name value
@@ -423,7 +423,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * connector could not be found.
 	 */
 	public static final int ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE = 114;
-	
+
 	/**
 	 * Status code indicating that the Eclipse runtime does not support
 	 * launching a program with a working directory. This feature is only
@@ -434,15 +434,15 @@ public interface IJavaLaunchConfigurationConstants {
 	 * should be relaunched with the default working directory.
 	 * </p>
 	 */
-	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;	
-	
+	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;
+
 	/**
 	 * Status code indicating that an error occurred launching a VM.
 	 * The status error message is the text that
 	 * the VM wrote to standard error before exiting.
 	 */
-	public static final int ERR_VM_LAUNCH_ERROR = 116;	
-	
+	public static final int ERR_VM_LAUNCH_ERROR = 116;
+
 	/**
 	 * Status code indicating that a timeout has occurred waiting for
 	 * the VM to connect with the debugger.
@@ -453,74 +453,74 @@ public interface IJavaLaunchConfigurationConstants {
 	 * timeout period.
 	 * </p>
 	 */
-	public static final int ERR_VM_CONNECT_TIMEOUT = 117;	
-	
+	public static final int ERR_VM_CONNECT_TIMEOUT = 117;
+
 	/**
 	 * Status code indicating that a free socket was not available to
 	 * communicate with the VM.
 	 */
-	public static final int ERR_NO_SOCKET_AVAILABLE = 118;		
-	
+	public static final int ERR_NO_SOCKET_AVAILABLE = 118;
+
 	/**
 	 * Status code indicating that the JDI connector required for a
 	 * debug launch was not available.
 	 */
-	public static final int ERR_CONNECTOR_NOT_AVAILABLE = 119;	
-	
+	public static final int ERR_CONNECTOR_NOT_AVAILABLE = 119;
+
 	/**
 	 * Status code indicating that the debugger failed to connect
 	 * to the VM.
 	 */
-	public static final int ERR_CONNECTION_FAILED = 120;		
+	public static final int ERR_CONNECTION_FAILED = 120;
 
 	/**
 	 * Status code indicating that the applet launcher was asked to
 	 * launch a resource that did not extend <code>java.applet.Applet</code>.
-	 * 
+	 *
 	 * @since 2.1
 	 */
-	public static final int ERR_NOT_AN_APPLET = 121;		
+	public static final int ERR_NOT_AN_APPLET = 121;
 
 	/**
 	 * Status code indicating that no launch configuration was specified.
-	 * 
+	 *
 	 * @since 2.1
 	 */
-	public static final int ERR_UNSPECIFIED_LAUNCH_CONFIG = 122;		
+	public static final int ERR_UNSPECIFIED_LAUNCH_CONFIG = 122;
 
 	/**
 	 * Status code indicating that the .html file used to initiate an applet
 	 * launch could not be built.
-	 * 
+	 *
 	 * @since 2.1
 	 */
-	public static final int ERR_COULD_NOT_BUILD_HTML = 123;		
-	
+	public static final int ERR_COULD_NOT_BUILD_HTML = 123;
+
 	/**
 	 * Status code indicating that the project referenced by a launch configuration
 	 * is closed.
-	 * 
+	 *
 	 * @since 3.0
 	 */
-	public static final int ERR_PROJECT_CLOSED = 124;			
+	public static final int ERR_PROJECT_CLOSED = 124;
 
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
-	public static final int ERR_INTERNAL_ERROR = 150;		
+	public static final int ERR_INTERNAL_ERROR = 150;
 
 	/**
 	 * Default value for the 'ATTR_APPLET_APPLETVIEWER' attribute.
-	 * 
+	 *
 	 * @since 2.1
-	 */	
+	 */
 	public static final String DEFAULT_APPLETVIEWER_CLASS = "sun.applet.AppletViewer";	 //$NON-NLS-1$
-	
-	
+
+
 	/**
 	 * Detail code for a custom debug event that is fired when a remote debug configuration with
 	 * a standard socket listen connector is ready to accept connections from a remote VM.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see org.eclipse.jdt.internal.launching.SocketListenConnector
 	 * @see org.eclipse.jdt.internal.launching.SocketListenConnectorProcess

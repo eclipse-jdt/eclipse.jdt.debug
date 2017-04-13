@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * resolver extension.
  * <pre>
  * &lt;extension point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers"&gt;
- *   &lt;runtimeClasspathEntryResolver 
+ *   &lt;runtimeClasspathEntryResolver
  *      id="com.example.ExampleResolver"
  *      class="com.example.ExampleResolverImpl"
  *      variable="VAR_NAME"
@@ -58,37 +58,37 @@ import org.eclipse.jdt.core.IJavaProject;
  * @since 2.0
  */
 public interface IRuntimeClasspathEntryResolver {
-	
+
 	/**
 	 * Returns resolved runtime classpath entries for the given runtime classpath entry,
 	 * in the context of the given launch configuration.
-	 * 
+	 *
 	 * @param entry runtime classpath entry to resolve, of type
 	 * 	<code>VARIABLE</code> or <code>CONTAINTER</code>
 	 * @param configuration the context in which the runtime classpath entry
 	 * 	needs to be resolved
 	 * @return resolved entries (zero or more)
-	 * @exception CoreException if unable to resolve the entry  
+	 * @exception CoreException if unable to resolve the entry
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
-	
+
 	/**
 	 * Returns resolved runtime classpath entries for the given runtime classpath entry,
 	 * in the context of the given Java project.
-	 * 
+	 *
 	 * @param entry runtime classpath entry to resolve, of type
 	 * 	<code>VARIABLE</code> or <code>CONTAINTER</code>
 	 * @param project context in which the runtime classpath entry
 	 * 	needs to be resolved
 	 * @return resolved entries (zero or more)
-	 * @exception CoreException if unable to resolve the entry  
+	 * @exception CoreException if unable to resolve the entry
 	 */
-	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException;	
-	
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException;
+
 	/**
 	 * Returns a VM install associated with the given classpath entry,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param entry classpath entry
 	 * @return vm install associated with entry or <code>null</code> if none
 	 * @exception CoreException if unable to resolve a VM

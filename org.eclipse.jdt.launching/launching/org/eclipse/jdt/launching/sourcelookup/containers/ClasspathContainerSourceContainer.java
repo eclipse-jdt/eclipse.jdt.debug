@@ -29,13 +29,13 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * <p>
  * This class may be instantiated.
  * </p>
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class ClasspathContainerSourceContainer extends CompositeSourceContainer {
-	
+
 	/**
 	 * Associated classpath container path.
 	 */
@@ -45,16 +45,16 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathContainer</code>).
 	 */
 	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathContainer";   //$NON-NLS-1$
-		
+
 	/**
 	 * Constructs a new source container for the given classpath container.
-	 * 
+	 *
 	 * @param containerPath classpath container path
 	 */
 	public ClasspathContainerSourceContainer(IPath containerPath) {
 		fContainerPath = containerPath;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
@@ -67,7 +67,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 		}
 		if (container == null) {
 			return getPath().lastSegment();
-		} 
+		}
 		return container.getDescription();
 	}
 	/* (non-Javadoc)
@@ -87,10 +87,10 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveSourceLookupPath(new IRuntimeClasspathEntry[]{entry}, getDirector().getLaunchConfiguration());
 		return JavaRuntime.getSourceContainers(entries);
 	}
-	
+
 	/**
 	 * Returns the classpath container's path
-	 * 
+	 *
 	 * @return classpath container's path
 	 */
 	public IPath getPath() {
@@ -114,10 +114,10 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	public int hashCode() {
 		return getPath().hashCode();
 	}
-	
+
 	/**
 	 * Returns the associated container or <code>null</code> if unavailable.
-	 * 
+	 *
 	 * @return classpath container or <code>null</code>
 	 * @throws CoreException if unable to retrieve container
 	 */
@@ -134,5 +134,5 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 		}
 		return null;
 	}
-	
+
 }

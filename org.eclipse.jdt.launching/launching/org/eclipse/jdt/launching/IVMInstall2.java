@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ package org.eclipse.jdt.launching;
  * {@link org.eclipse.jdt.launching.IVMInstall}.
  * <p>
  * When an <code>IVMInstall</code> implements this interface,
- * clients must call <code>getVMArgs()</code> in place of 
+ * clients must call <code>getVMArgs()</code> in place of
  * <code>getVMArguments()</code> and <code>setVMArgs(String)</code> in place of
  * <code>setVMArguments(String[])</code>. This avoids the problem noted
  * in bug 73493.
  * </p>
  * <p>
  * Additionally, this interface optionally provides the Java version
- * associated with a VM install. 
+ * associated with a VM install.
  * </p>
  * <p>
  * Clients that implement {@link org.eclipse.jdt.launching.IVMInstall} may additionally
@@ -35,29 +35,29 @@ package org.eclipse.jdt.launching;
  * @since 3.1
  */
 public interface IVMInstall2 {
-	
+
 	/**
 	 * Returns VM arguments to be used with this vm install whenever this
 	 * VM is launched as a raw string, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return VM arguments to be used with this vm install whenever this
 	 * VM is launched as a raw string, or <code>null</code> if none
-	 */	
+	 */
 	public String getVMArgs();
-	
+
 	/**
 	 * Sets VM arguments to be used with this vm install whenever this
 	 * VM is launched as a raw string, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param vmArgs VM arguments to be used with this vm install whenever this
 	 * VM is launched as a raw string, possibly <code>null</code>
 	 */
 	public void setVMArgs(String vmArgs);
-    
+
     /**
      * Returns a string representing the <code>java.version</code> system property
      * of this VM install, or <code>null</code> if unknown.
-     * 
+     *
      * @return a string representing the <code>java.version</code> system property
      * of this VM install, or <code>null</code> if unknown.
      */

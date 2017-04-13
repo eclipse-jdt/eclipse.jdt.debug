@@ -51,7 +51,7 @@ import org.eclipse.jdt.core.compiler.InvalidInputException;
 
 /**
  * Property tester for context launching menu.
- * 
+ *
  * @since 3.2
  */
 public class JavaLaunchableTester extends PropertyTester {
@@ -60,68 +60,68 @@ public class JavaLaunchableTester extends PropertyTester {
 	 * name for the "has main" property
 	 */
 	private static final String PROPERTY_HAS_MAIN = "hasMain"; //$NON-NLS-1$
-	
+
 	/**
 	 * name for the "has method" property
 	 */
-	private static final String PROPERTY_HAS_METHOD = "hasMethod"; //$NON-NLS-1$	
-	
+	private static final String PROPERTY_HAS_METHOD = "hasMethod"; //$NON-NLS-1$
+
 	/**
 	 * name for the "has method with annotation" property
 	 */
-	private static final String PROPERTY_HAS_METHOD_WITH_ANNOTATION = "hasMethodWithAnnotation"; //$NON-NLS-1$	
+	private static final String PROPERTY_HAS_METHOD_WITH_ANNOTATION = "hasMethodWithAnnotation"; //$NON-NLS-1$
 
 	/**
 	 * name for the "has type with annotation" property
 	 */
-	private static final String PROPERTY_HAS_TYPE_WITH_ANNOTATION = "hasTypeWithAnnotation"; //$NON-NLS-1$	
-	
+	private static final String PROPERTY_HAS_TYPE_WITH_ANNOTATION = "hasTypeWithAnnotation"; //$NON-NLS-1$
+
 	/**
 	 * name for the "extends class" property
 	 */
 	private static final String PROPERTY_EXTENDS_CLASS = "extendsClass"; //$NON-NLS-1$
-	
+
 	/**
 	 * "is container" property
 	 */
 	private static final String PROPERTY_IS_CONTAINER = "isContainer"; //$NON-NLS-1$
-	
+
 	/**
 	 * "is package fragment" property
 	 * @since 3.3
 	 */
 	private static final String PROPERTY_IS_PACKAGE_FRAGMENT = "isPackageFragment"; //$NON-NLS-1$
-	
+
 	/**
 	 * "is package fragment root" property
 	 * @since 3.3
 	 */
-	private static final String PROPERTY_IS_PACKAGE_FRAGMENT_ROOT = "isPackageFragmentRoot"; //$NON-NLS-1$	
-	
+	private static final String PROPERTY_IS_PACKAGE_FRAGMENT_ROOT = "isPackageFragmentRoot"; //$NON-NLS-1$
+
 	/**
 	 * name for the PROPERTY_PROJECT_NATURE property
 	 */
 	private static final String PROPERTY_PROJECT_NATURE = "hasProjectNature"; //$NON-NLS-1$
-	
+
 	/**
 	 * name for the "extends interface" property
 	 */
 	private static final String PROPERTY_EXTENDS_INTERFACE = "extendsInterface"; //$NON-NLS-1$
-	
+
 	/**
 	 * name for the PROPERTY_HAS_SWT_ON_PATH property
 	 */
 	private static final String PROPERTY_BUILDPATH_REFERENCE = "buildpathReference"; //$NON-NLS-1$
-	
+
     /**
      * Map of modifier text to corresponding flag (Integer)
      */
     private static Map<String, Integer> fgModifiers = new HashMap<String, Integer>();
-    
+
     private static final int FLAGS_MASK= Flags.AccPublic | Flags.AccProtected | Flags.AccPrivate | Flags.AccStatic
     	| Flags.AccFinal | Flags.AccSynchronized | Flags.AccAbstract | Flags.AccNative;
-    
-    
+
+
     static {
         fgModifiers.put("public",       new Integer(Flags.AccPublic)); //$NON-NLS-1$
         fgModifiers.put("protected",    new Integer(Flags.AccProtected)); //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class JavaLaunchableTester extends PropertyTester {
         fgModifiers.put("abstract",     new Integer(Flags.AccAbstract)); //$NON-NLS-1$
         fgModifiers.put("native",       new Integer(Flags.AccNative)); //$NON-NLS-1$
     }
-    	
+
 	/**
 	 * gets the type of the IJavaElement
 	 * @param element the element to inspect
@@ -154,11 +154,11 @@ public class JavaLaunchableTester extends PropertyTester {
         }
         return type;
     }
-	
+
 	/**
 	 * Determines is the java element contains a main method.
-	 * 
-	 * @param element the element to check for the method 
+	 *
+	 * @param element the element to check for the method
 	 * @return true if the method is found in the element, false otherwise
 	 */
 	private boolean hasMain(IJavaElement element) {
@@ -181,7 +181,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		catch (CoreException ce){}
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the specified <code>IType</code> has a main method
 	 * @param type the type to inspect for a main type
@@ -198,10 +198,10 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * This method asks the specified <code>IType</code> if it has a main method, if not it recurses through all of its children
-	 * When recursing we only care about child <code>IType</code>s that are static. 
+	 * When recursing we only care about child <code>IType</code>s that are static.
 	 * @param type the <code>IType</code> to inspect for a main method
 	 * @return true if a main method was found in specified <code>IType</code>, false otherwise
 	 * @throws CoreException if there is an error
@@ -221,7 +221,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determines is the java element contains a specific method.
      * <p>
@@ -236,7 +236,7 @@ public class JavaLaunchableTester extends PropertyTester {
      * <li>modifiers - optional space separated list of modifiers, for
      *  example, <code>public static</code>.</li>
      * </ol>
-	 * @param element the element to check for the method 
+	 * @param element the element to check for the method
 	 * @param args first arg is method name, secondary args are parameter types signatures
 	 * @return true if the method is found in the element, false otherwise
 	 */
@@ -277,7 +277,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		catch (JavaModelException e) {}
 		return false;
 	}
-	
+
 	/**
 	 * Determines is the java element contains a type with a specific annotation.
      * <p>
@@ -285,12 +285,12 @@ public class JavaLaunchableTester extends PropertyTester {
      * <li>qualified or unqualified annotation name, required. For example,
      *  <code>org.junit.JUnit</code>.</li>
      * </ol>
-	 * @param element the element to check for the method 
+	 * @param element the element to check for the method
 	 * @param annotationType the qualified or unqualified name of the annotation kind to look for
 	 * @return true if the type is found in the element, false otherwise
 	 */
 	private boolean hasTypeWithAnnotation(IJavaElement element, String annotationType) {
-		try {			
+		try {
 			IType type= getType(element);
 			if (type == null || !type.exists()) {
 				return false;
@@ -306,7 +306,7 @@ public class JavaLaunchableTester extends PropertyTester {
 			if (buffer == null) {
 				return false;
 			}
-			
+
 			ISourceRange sourceRange= type.getSourceRange();
 			ISourceRange nameRange= type.getNameRange();
 			if (sourceRange != null && nameRange != null) {
@@ -317,13 +317,13 @@ public class JavaLaunchableTester extends PropertyTester {
 					return true;
 				}
 			}
-		} 
-		catch (JavaModelException e) {} 
+		}
+		catch (JavaModelException e) {}
 		catch (InvalidInputException e) {}
 		return false;
-	}	
+	}
 
-	
+
 	/**
 	 * Determines is the java element contains a method with a specific annotation.
      * <p>
@@ -333,7 +333,7 @@ public class JavaLaunchableTester extends PropertyTester {
      * <li>modifiers - optional space separated list of modifiers, for
      *  example, <code>public static</code>.</li>
      * </ol>
-	 * @param element the element to check for the method 
+	 * @param element the element to check for the method
 	 * @param args the arguments
 	 * @return true if the method is found in the element, false otherwise
 	 */
@@ -353,7 +353,7 @@ public class JavaLaunchableTester extends PropertyTester {
 			} else {
 				flags= -1;
 			}
-			
+
 			IType type= getType(element);
 			if (type == null || !type.exists()) {
 				return false;
@@ -374,14 +374,14 @@ public class JavaLaunchableTester extends PropertyTester {
 				return false;
 			}
 			IScanner scanner=null; // delay initialization
-			
+
 			for (int i= 0; i < methods.length; i++) {
 				IMethod curr= methods[i];
 				if (curr.isConstructor() || (flags != -1 && flags != (curr.getFlags() & FLAGS_MASK))) {
 					continue;
 				}
-				
-				
+
+
 				ISourceRange sourceRange= curr.getSourceRange();
 				ISourceRange nameRange= curr.getNameRange();
 				if (sourceRange != null && nameRange != null) {
@@ -399,8 +399,8 @@ public class JavaLaunchableTester extends PropertyTester {
 		} catch (InvalidInputException e) {
 		}
 		return false;
-	}	
-	
+	}
+
 	private boolean findAnnotation(IScanner scanner, String annotationName) throws InvalidInputException {
 		String simpleName= Signature.getSimpleName(annotationName);
 		StringBuffer buf= new StringBuffer();
@@ -453,7 +453,7 @@ public class JavaLaunchableTester extends PropertyTester {
         }
     	catch (CoreException e) {return false;}
     }
-	
+
 	/**
 	 * Determines if the element has qname as a parent class
 	 * @param element the element to check for the parent class definition
@@ -470,18 +470,18 @@ public class JavaLaunchableTester extends PropertyTester {
 						return true;
 					}
 				}
-			} 
+			}
 		}
 		catch(JavaModelException e) {}
-		return false; 
+		return false;
 	}
-	
+
 	/**
-	 * Determines if an item or list of items are found on the build path. 
-	 * Once any one single items matches though, the method returns true, this method is intended 
+	 * Determines if an item or list of items are found on the build path.
+	 * Once any one single items matches though, the method returns true, this method is intended
 	 * to be used in OR like situations, where we do not care if all of the items are on the build path, only that one
 	 * of them is.
-	 * 
+	 *
 	 * @param element the element whose build path should be checked
 	 * @param args the value(s) to search for on the build path
 	 * @return true if any one of the args is found on the build path
@@ -495,7 +495,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		return false;
 	}
-	
+
 	private boolean hasItemsOnBuildPath(IJavaProject project, Set<IJavaProject> searched, Object[] args) {
 		try {
 			List<IJavaProject> projects = new ArrayList<IJavaProject>();
@@ -532,7 +532,7 @@ public class JavaLaunchableTester extends PropertyTester {
 		} catch (JavaModelException e) {}
 		return false;
 	}
-	
+
 	/**
 	 * determines if the element implements a given interface
 	 * @param element the element to check for the interface
@@ -548,18 +548,18 @@ public class JavaLaunchableTester extends PropertyTester {
 					if(itypes[i].getFullyQualifiedName().equals(qname)) {
 						return true;
 					}
-				} 
+				}
 			}
 		}
 		catch(JavaModelException e) {}
 		return false;
 	}
-	
+
 	/**
 	 * Method runs the tests defined from extension points for Run As... and Debug As... menu items.
-	 * Currently this test optimistically considers everything not a source file. In this context we 
+	 * Currently this test optimistically considers everything not a source file. In this context we
 	 * consider an optimistic approach to mean that the test will always return true.
-	 * 
+	 *
 	 * There are many reasons for the optimistic choice some of them are outlined below.
 	 * <ul>
 	 * <li>Performance (in terms of time needed to display menu) cannot be preserved. To know what to allow
@@ -624,5 +624,5 @@ public class JavaLaunchableTester extends PropertyTester {
 		}
 		return false;
 	}
-	
+
 }

@@ -30,17 +30,17 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
-	
+
 	private IPath fVariable;
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathVariable</code>).
 	 */
 	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathVariable";   //$NON-NLS-1$
-	
+
 	/**
 	 * Constructs a new source container on the given variable and suffix.
-	 * 
+	 *
 	 * @param variablePath path representing a Java classpath variable.
 	 *  The first segment is the variable name, and the following segments
 	 *  (if any) are appended to the variable.
@@ -48,7 +48,7 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 	public ClasspathVariableSourceContainer(IPath variablePath) {
 		fVariable = variablePath;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
@@ -59,7 +59,7 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 			return new ISourceContainer[0];
 		}
 		if (fVariable.segmentCount() > 1) {
-			path = path.append(fVariable.removeFirstSegments(1));			
+			path = path.append(fVariable.removeFirstSegments(1));
 		}
 		IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 		return JavaRuntime.getSourceContainers(new IRuntimeClasspathEntry[]{entry});
@@ -71,18 +71,18 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 	public String getName() {
 		return fVariable.toOSString();
 	}
-	
+
 	/**
 	 * Returns the variable this container references as a path. The
 	 * first segment is the variable name, and the following segments
 	 * are appended to the variable's value.
-	 * 
+	 *
 	 * @return path representing the variable and suffix
 	 */
 	public IPath getPath() {
 		return fVariable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */

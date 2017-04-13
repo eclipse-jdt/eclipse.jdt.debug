@@ -75,13 +75,13 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		}
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, NLS.bind(LaunchingMessages.ProjectClasspathVariableResolver_1, new String[]{argument})));
 	}
-	
+
 	/**
 	 * Returns the selected resource. Uses the ${selected_resource_path} variable
 	 * to determine the selected resource. This variable is provided by the debug.ui
 	 * plug-in. Selected resource resolution is only available when the debug.ui
 	 * plug-in is present.
-	 * 
+	 *
 	 * @return selected resource
 	 * @throws CoreException if there is no selection
 	 */
@@ -93,7 +93,7 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		} catch (CoreException e) {
 			// unable to resolve a selection
 		}
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.ProjectClasspathVariableResolver_3));	
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, LaunchingMessages.ProjectClasspathVariableResolver_3));
 	}
 
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
- 
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ import com.sun.jdi.connect.Connector;
  * Following is an example definition of a VM connector extension.
  * <pre>
  * &lt;extension point="org.eclipse.jdt.launching.vmConnectors"&gt;
- *   &lt;vmConnector 
+ *   &lt;vmConnector
  *      id="com.example.VMConnector"
  *      class="com.example.VMConnectorClass"
  *   &lt;/vmConnector&gt;
@@ -46,12 +46,12 @@ import com.sun.jdi.connect.Connector;
  */
 
 public interface IVMConnector {
-	
+
 	/**
 	 * Establishes a JDI connection with a debuggable VM using the arguments
 	 * specified in the given map, contributing results (debug targets and processes),
 	 * to the given launch.
-	 * 
+	 *
 	 * @param arguments Argument map to use in establishing a connection. The keys of
 	 * 	the map are strings corresponding to the names of arguments returned by this
 	 * 	connector's <code>getDefaultAgruments()</code> method. The values of the map
@@ -62,40 +62,40 @@ public interface IVMConnector {
 	 * @exception CoreException if unable to establish a connection with the target VM
 	 */
 	public void connect(Map<String, String> arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException;
-		
+
 	/**
 	 * Returns the name of this connector.
-	 * 
+	 *
 	 * @return the name of this connector
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns a unique identifier for this kind of connector.
-	 * 
+	 *
 	 * @return a unique identifier for this kind of connector
 	 */
 	public String getIdentifier();
-	
+
 	/**
-	 * Returns a map of default arguments used by this connector. 
+	 * Returns a map of default arguments used by this connector.
 	 * The keys of the map are names of arguments used by this
 	 * connector, and the values are of type
 	 * <code>com.sun.jdi.connect.Connector.Argument</code>.
-	 * 
+	 *
 	 * @return argument map with default values
 	 * @exception CoreException if unable to retrieve a default argument map
 	 */
 	public Map<String, Connector.Argument> getDefaultArguments() throws CoreException;
-	
+
 	/**
 	 * Returns a list of argument names found in this connector's
 	 * default argument map, defining the order in which arguments
 	 * should be presented to the user. Since a map is not ordered,
-	 * this provides control on how arguments will be presented to 
+	 * this provides control on how arguments will be presented to
 	 * the user.
-	 * 
+	 *
 	 * @return list of argument names
 	 */
-	public List<String> getArgumentOrder();	
+	public List<String> getArgumentOrder();
 }

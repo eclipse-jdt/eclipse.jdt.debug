@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,11 +17,11 @@ import java.util.ArrayList;
  */
 public class CompositeId {
 	private String[] fParts;
-	
+
 	public CompositeId(String[] parts) {
 		fParts= parts;
 	}
-	
+
 	public static CompositeId fromString(String idString) {
 		ArrayList<String> parts= new ArrayList<String>();
 		int commaIndex= idString.indexOf(',');
@@ -35,7 +35,7 @@ public class CompositeId {
 		String[] result= parts.toArray(new String[parts.size()]);
 		return new CompositeId(result);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buf= new StringBuffer();
@@ -46,11 +46,11 @@ public class CompositeId {
 		}
 		return buf.toString();
 	}
-	
+
 	public String get(int index) {
 		return fParts[index];
 	}
-	
+
 	public int getPartCount() {
 		return fParts.length;
 	}

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation 
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     IBM Corporation - initial API and implementation
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.launching;
@@ -104,7 +104,7 @@ import org.xml.sax.SAXException;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class JavaRuntime {
-	
+
 	/**
 	 * Classpath variable name used for the default JRE's library
 	 * (value <code>"JRE_LIB"</code>).
@@ -116,53 +116,53 @@ public final class JavaRuntime {
 	 * (value <code>"JRE_SRC"</code>).
 	 */
 	public static final String JRESRC_VARIABLE= "JRE_SRC"; //$NON-NLS-1$
-	
+
 	/**
 	 * Classpath variable name used for the default JRE's library source root
 	 * (value <code>"JRE_SRCROOT"</code>).
 	 */
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"runtimeClasspathEntryResolvers"</code>) for the
 	 * runtime classpath entry resolvers extension point.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS= "runtimeClasspathEntryResolvers";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"classpathProviders"</code>) for the
 	 * runtime classpath providers extension point.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"executionEnvironments"</code>) for the
 	 * execution environments extension point.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String EXTENSION_POINT_EXECUTION_ENVIRONMENTS= "executionEnvironments";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"vmInstalls"</code>) for the
 	 * VM installs extension point.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String EXTENSION_POINT_VM_INSTALLS = "vmInstalls";	 //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"libraryLocationResolvers"</code>) for the
 	 * Library Resolvers extension point
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	public static final String EXTENSION_POINT_LIBRARY_LOCATION_RESOLVERS = "libraryLocationResolvers"; //$NON-NLS-1$
-	
+
 	/**
 	 * Classpath container used for a project's JRE
 	 * (value <code>"org.eclipse.jdt.launching.JRE_CONTAINER"</code>). A
@@ -191,14 +191,14 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER"; //$NON-NLS-1$
-	
+
 	/**
 	 * Marker type identifier for JRE container problems.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String JRE_CONTAINER_MARKER = LaunchingPlugin.getUniqueIdentifier() + ".jreContainerMarker"; //$NON-NLS-1$
-	
+
 	/**
 	 * A status code indicating that a JRE could not be resolved for a project.
 	 * When a JRE cannot be resolved for a project by this plug-in's container
@@ -207,52 +207,52 @@ public final class JavaRuntime {
 	 * to the status handler is the Java project for which the path could not be
 	 * resolved. The status handler must return an <code>IVMInstall</code> or <code>null</code>.
 	 * The container resolver will re-set the project's classpath if required.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int ERR_UNABLE_TO_RESOLVE_JRE = 160;
-	
+
 	/**
 	 * Preference key for launch/connect timeout. VM Runners should honor this timeout
 	 * value when attempting to launch and connect to a debuggable VM. The value is
 	 * an int, indicating a number of milliseconds.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String PREF_CONNECT_TIMEOUT = LaunchingPlugin.getUniqueIdentifier() + ".PREF_CONNECT_TIMEOUT"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key for the String of XML that defines all installed VMs.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String PREF_VM_XML = LaunchingPlugin.getUniqueIdentifier() + ".PREF_VM_XML"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key for the default problem severity when an execution environment is bound
 	 * to a project's build path for which there is no strictly compatible JRE available in the
 	 * workspace. Value is one of {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, or
 	 * {@link JavaCore#IGNORE}
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.jdt.launching"</code>)
 	 * for the Java launching plug-in.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String ID_PLUGIN = LaunchingPlugin.ID_PLUGIN;
-	
+
 	/**
 	 * Default launch/connect timeout (milliseconds).
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int DEF_CONNECT_TIMEOUT = 20000;
-	
+
 	/**
 	 * Attribute key for a process property. The class
 	 * <code>org.eclipse.debug.core.model.IProcess</code> allows attaching
@@ -260,18 +260,18 @@ public final class JavaRuntime {
 	 * The value of this attribute is the command line a process
 	 * was launched with. Implementers of <code>IVMRunner</code> should use
 	 * this attribute key to attach the command lines to the processes they create.
-	 * 
+	 *
 	 * @deprecated - use <code>IProcess.ATTR_CMDLINE</code>
 	 */
 	@Deprecated
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
-	
+
 	/**
 	 * Boolean preference controlling whether only exported entries should even be included when the runtime classpath is computed
 	 * @since 3.7
 	 */
 	public static final String PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES = ID_PLUGIN + ".only_include_exported_classpath_entries"; //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for a classpath attribute referencing a
 	 * list of shared libraries that should appear on the
@@ -294,15 +294,15 @@ public final class JavaRuntime {
 	 * @see org.eclipse.jdt.core.IClasspathAttribute
 	 */
 	public static final String CLASSPATH_ATTR_LIBRARY_PATH_ENTRY =  LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_ATTR_LIBRARY_PATH_ENTRY"; //$NON-NLS-1$
-	
+
 	// lock for VM initialization
 	private static Object fgVMLock = new Object();
 	private static boolean fgInitializingVMs = false;
-	
+
 	private static HashSet<Object> fgVMTypes = null;
 	private static String fgDefaultVMId = null;
 	private static String fgDefaultVMConnectorId = null;
-	
+
 	/**
 	 * Resolvers keyed by variable name, container id,
 	 * and runtime classpath entry id.
@@ -310,23 +310,23 @@ public final class JavaRuntime {
 	private static Map<String, IRuntimeClasspathEntryResolver> fgVariableResolvers = null;
 	private static Map<String, IRuntimeClasspathEntryResolver> fgContainerResolvers = null;
 	private static Map<String, RuntimeClasspathEntryResolver> fgRuntimeClasspathEntryResolvers = null;
-	
+
 	/**
 	 * Path providers keyed by id
 	 */
 	private static Map<String, RuntimeClasspathProvider> fgPathProviders = null;
-	
+
 	/**
 	 * Default classpath and source path providers.
 	 */
 	private static IRuntimeClasspathProvider fgDefaultClasspathProvider = new StandardClasspathProvider();
 	private static IRuntimeClasspathProvider fgDefaultSourcePathProvider = new StandardSourcePathProvider();
-	
+
 	/**
 	 * VM change listeners
 	 */
 	private static ListenerList<IVMInstallChangedListener> fgVMListeners = new ListenerList<>();
-	
+
 	/**
 	 * Cache of already resolved projects in container entries. Used to avoid
 	 * cycles in project dependencies when resolving classpath container entries.
@@ -334,7 +334,7 @@ public final class JavaRuntime {
 	 */
 	private static ThreadLocal<List<IJavaProject>> fgProjects = new ThreadLocal<List<IJavaProject>>(); // Lists
 	private static ThreadLocal<Integer> fgEntryCount = new ThreadLocal<Integer>(); // Integers
-	
+
     /**
      *  Set of IDs of VMs contributed via vmInstalls extension point.
      */
@@ -376,7 +376,7 @@ public final class JavaRuntime {
 	 * Returns the VM assigned to build the given Java project.
 	 * The project must exist. The VM assigned to a project is
 	 * determined from its build path.
-	 * 
+	 *
 	 * @param project the project to retrieve the VM from
 	 * @return the VM instance that is assigned to build the given Java project
 	 * 		   Returns <code>null</code> if no VM is referenced on the project's build path.
@@ -410,7 +410,7 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the VM install type with the given unique id.
 	 * @param id the VM install type unique id
@@ -426,11 +426,11 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
 	 * change listeners of the change.
-	 * 
+	 *
 	 * @param vm	The VM to make the default. May be <code>null</code> to clear
 	 * 				the default.
 	 * @param monitor progress monitor or <code>null</code>
@@ -439,11 +439,11 @@ public final class JavaRuntime {
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		setDefaultVMInstall(vm, monitor, true);
 	}
-	
+
 	/**
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
 	 * change listeners of the change.
-	 * 
+	 *
 	 * @param vm	The VM to make the default. May be <code>null</code> to clear
 	 * 				the default.
 	 * @param monitor progress monitor or <code>null</code>
@@ -469,7 +469,7 @@ public final class JavaRuntime {
 			notifyDefaultVMChanged(previous, current);
 		}
 	}
-	
+
 	/**
 	 * Sets a VM connector as the system-wide default VM. This setting is persisted when
 	 * saveVMConfiguration is called.
@@ -483,7 +483,7 @@ public final class JavaRuntime {
 		fgDefaultVMConnectorId= connector.getIdentifier();
 		saveVMConfiguration();
 	}
-	
+
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
 	 * @return	Returns the default VM. May return <code>null</code> when no default
@@ -510,7 +510,7 @@ public final class JavaRuntime {
 		}
 		return getVMFromCompositeId(getDefaultVMId());
 	}
-	
+
 	/**
 	 * Return the default VM connector.
 	 * @return	Returns the default VM connector.
@@ -527,19 +527,19 @@ public final class JavaRuntime {
 		}
 		return connector;
 	}
-	
+
 	/**
 	 * Returns the list of registered VM types. VM types are registered via
 	 * <code>"org.eclipse.jdt.launching.vmTypes"</code> extension point.
 	 * Returns an empty list if there are no registered VM types.
-	 * 
+	 *
 	 * @return the list of registered VM types
 	 */
 	public static IVMInstallType[] getVMInstallTypes() {
 		initializeVMs();
 		return fgVMTypes.toArray(new IVMInstallType[fgVMTypes.size()]);
 	}
-	
+
 	/**
 	 * Returns the default VM id determined during the initialization of the VM types
 	 * @return the id of the default VM
@@ -548,7 +548,7 @@ public final class JavaRuntime {
 		initializeVMs();
 		return fgDefaultVMId;
 	}
-	
+
 	/**
 	 * Returns the default VM connector id determined during the initialization of the VM types
 	 * @return the id of the default VM connector
@@ -557,13 +557,13 @@ public final class JavaRuntime {
 		initializeVMs();
 		return fgDefaultVMConnectorId;
 	}
-	
+
 	/**
 	 * Returns a String that uniquely identifies the specified VM across all VM types.
-	 * 
+	 *
 	 * @param vm the instance of IVMInstallType to be identified
 	 * @return the unique identifier for the specified VM
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static String getCompositeIdFromVM(IVMInstall vm) {
@@ -575,14 +575,14 @@ public final class JavaRuntime {
 		CompositeId id = new CompositeId(new String[] { typeID, vm.getId() });
 		return id.toString();
 	}
-	
+
 	/**
 	 * Return the VM corresponding to the specified composite Id.  The id uniquely
 	 * identifies a VM across all VM types.
-	 * 
+	 *
 	 * @param idString the composite id that specifies an instance of IVMInstall
 	 * @return the VM corresponding to the specified composite Id.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static IVMInstall getVMFromCompositeId(String idString) {
@@ -603,7 +603,7 @@ public final class JavaRuntime {
 	 * Returns a new runtime classpath entry for the given expression that
 	 * may contain string substitution variable references. The resulting expression
 	 * refers to an archive (jar or directory) containing class files.
-	 * 
+	 *
 	 * @param expression an expression that resolves to the location of an archive
 	 * @return runtime classpath entry
 	 * @since 3.0
@@ -611,11 +611,11 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry newStringVariableClasspathEntry(String expression) {
 		return new VariableClasspathEntry(expression);
 	}
-	
+
 	/**
 	 * Returns a new runtime classpath entry containing the default classpath
 	 * for the specified Java project.
-	 * 
+	 *
 	 * @param project Java project
 	 * @return runtime classpath entry
 	 * @since 3.0
@@ -623,10 +623,10 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry newDefaultProjectClasspathEntry(IJavaProject project) {
 		return new DefaultProjectClasspathEntry(project);
 	}
-	
+
 	/**
 	 * Returns a new runtime classpath entry for the given project.
-	 * 
+	 *
 	 * @param project Java project
 	 * @return runtime classpath entry
 	 * @since 2.0
@@ -634,11 +634,11 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project) {
 		return newRuntimeClasspathEntry(JavaCore.newProjectEntry(project.getProject().getFullPath()));
 	}
-	
-	
+
+
 	/**
 	 * Returns a new runtime classpath entry for the given archive.
-	 * 
+	 *
 	 * @param resource archive resource
 	 * @return runtime classpath entry
 	 * @since 2.0
@@ -646,11 +646,11 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IResource resource) {
 		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(resource.getFullPath(), null, null));
 	}
-	
+
 	/**
 	 * Returns a new runtime classpath entry for the given archive (possibly
 	 * external).
-	 * 
+	 *
 	 * @param path absolute path to an archive
 	 * @return runtime classpath entry
 	 * @since 2.0
@@ -662,7 +662,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns a new runtime classpath entry for the classpath
 	 * variable with the given path.
-	 * 
+	 *
 	 * @param path variable path; first segment is the name of the variable;
 	 * 	trailing segments are appended to the resolved variable value
 	 * @return runtime classpath entry
@@ -675,7 +675,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns a runtime classpath entry for the given container path with the given
 	 * classpath property.
-	 * 
+	 *
 	 * @param path container path
 	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
 	 * 	<code>BOOTSTRAP_CLASSES</code>, or <code>STANDARD_CLASSES</code>
@@ -686,11 +686,11 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
 		return newRuntimeContainerClasspathEntry(path, classpathProperty, null);
 	}
-	
+
 	/**
 	 * Returns a runtime classpath entry for the given container path with the given
 	 * classpath property to be resolved in the context of the given Java project.
-	 * 
+	 *
 	 * @param path container path
 	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
 	 * 	<code>BOOTSTRAP_CLASSES</code>, or <code>STANDARD_CLASSES</code>
@@ -706,10 +706,10 @@ public final class JavaRuntime {
 		entry.setJavaProject(project);
 		return entry;
 	}
-		
+
 	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
-	 * 
+	 *
 	 * @param memento a memento for a runtime classpath entry
 	 * @return runtime classpath entry
 	 * @exception CoreException if unable to construct a runtime classpath entry
@@ -722,7 +722,7 @@ public final class JavaRuntime {
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-												
+
 			String id = root.getAttribute("id"); //$NON-NLS-1$
 			if (id == null || id.length() == 0) {
 				// assume an old format
@@ -750,12 +750,12 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a runtime classpath entry that corresponds to the given
 	 * classpath entry. The classpath entry may not be of type <code>CPE_SOURCE</code>
 	 * or <code>CPE_CONTAINER</code>.
-	 * 
+	 *
 	 * @param entry a classpath entry
 	 * @return runtime classpath entry
 	 * @since 2.0
@@ -763,11 +763,11 @@ public final class JavaRuntime {
 	private static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
 		return new RuntimeClasspathEntry(entry);
 	}
-			
+
 	/**
 	 * Computes and returns the default unresolved runtime classpath for the
 	 * given project.
-	 * 
+	 *
 	 * @param project the {@link IJavaProject} to compute the unresolved runtime classpath for
 	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the runtime classpath
@@ -810,11 +810,11 @@ public final class JavaRuntime {
 		classpathEntries.add(newDefaultProjectClasspathEntry(project));
 		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
 	}
-	
+
 	/**
 	 * Computes and returns the unresolved source lookup path for the given launch
 	 * configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the source lookup path
@@ -823,11 +823,11 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeUnresolvedSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
 		return getSourceLookupPathProvider(configuration).computeUnresolvedClasspath(configuration);
 	}
-	
+
 	/**
 	 * Resolves the given source lookup path, returning the resolved source lookup path
 	 * in the context of the given launch configuration.
-	 * 
+	 *
 	 * @param entries unresolved entries
 	 * @param configuration launch configuration
 	 * @return resolved entries
@@ -837,10 +837,10 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] resolveSourceLookupPath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		return getSourceLookupPathProvider(configuration).resolveClasspath(entries, configuration);
 	}
-	
+
 	/**
 	 * Returns the classpath provider for the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return classpath provider
 	 * @exception CoreException if unable to resolve the path provider
@@ -859,10 +859,10 @@ public final class JavaRuntime {
 		}
 		return provider;
 	}
-		
+
 	/**
 	 * Returns the source lookup path provider for the given launch configuration.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return source lookup path provider
 	 * @exception CoreException if unable to resolve the path provider
@@ -881,7 +881,7 @@ public final class JavaRuntime {
 		}
 		return provider;
 	}
-		
+
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * launch configuration. If the entry is of kind
@@ -978,7 +978,7 @@ public final class JavaRuntime {
 	/**
 	 * Default resolution for a classpath variable - resolve to an archive. Only
 	 * one of project/configuration can be non-null.
-	 * 
+	 *
 	 * @param entry the {@link IRuntimeClasspathEntry} to try and resolve
 	 * @param project the project context or <code>null</code>
 	 * @param configuration configuration context or <code>null</code>
@@ -1025,12 +1025,12 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns runtime classpath entries corresponding to the output locations
 	 * of the given project, or null if the project only uses the default
 	 * output location.
-	 * 
+	 *
 	 * @param project the {@link IJavaProject} to resolve the output locations for
 	 * @param classpathProperty the type of classpath entries to create
 	 * @return IRuntimeClasspathEntry[] or <code>null</code>
@@ -1066,7 +1066,7 @@ public final class JavaRuntime {
 		}
 		return locations;
 	}
-	
+
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * Java project. If the entry is of kind
@@ -1131,7 +1131,7 @@ public final class JavaRuntime {
 		}
 		return new IRuntimeClasspathEntry[] {entry};
 	}
-		
+
 	/**
 	 * Performs default resolution for a container entry.
 	 * Delegates to the Java model.
@@ -1147,7 +1147,7 @@ public final class JavaRuntime {
 		}
 		return computeDefaultContainerEntries(entry, project);
 	}
-	
+
 	/**
 	 * Performs default resolution for a container entry.
 	 * Delegates to the Java model.
@@ -1232,11 +1232,11 @@ public final class JavaRuntime {
 		}
 		return result;
 	}
-			
+
 	/**
 	 * Computes and returns the unresolved class path for the given launch configuration.
 	 * Variable and container entries are unresolved.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return unresolved runtime classpath entries
 	 * @exception CoreException if unable to compute the classpath
@@ -1245,7 +1245,7 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
 		return getClasspathProvider(configuration).computeUnresolvedClasspath(configuration);
 	}
-	
+
 	/**
 	 * Resolves the given classpath, returning the resolved classpath
 	 * in the context of the given launch configuration.
@@ -1259,12 +1259,12 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
 	}
-	
+
 	/**
 	 * Return the <code>IJavaProject</code> referenced in the specified configuration or
 	 * <code>null</code> if none. This method looks for the existence of the {@link IJavaLaunchConfigurationConstants#ATTR_PROJECT_NAME}
 	 * attribute in the given configuration.
-	 * 
+	 *
 	 * @param configuration the {@link ILaunchConfiguration} to try and compute the {@link IJavaProject} from
 	 * @return the referenced {@link IJavaProject} or <code>null</code>
 	 * @exception CoreException if the referenced Java project does not exist
@@ -1284,7 +1284,7 @@ public final class JavaRuntime {
 		}
 		return javaProject;
 	}
-				
+
 	/**
 	 * Convenience method to get the java model.
 	 * @return the {@link IJavaModel} made against the {@link IWorkspaceRoot}
@@ -1292,7 +1292,7 @@ public final class JavaRuntime {
 	private static IJavaModel getJavaModel() {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 	}
-	
+
 	/**
 	 * Returns the VM install for the given launch configuration.
 	 * The VM install is determined in the following prioritized way:
@@ -1307,7 +1307,7 @@ public final class JavaRuntime {
 	 * <li>If no project is specified, or the project does not specify a custom
 	 * 	VM install, the workspace default VM install is returned.</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return VM install
 	 * @exception CoreException if unable to compute a VM install
@@ -1343,12 +1343,12 @@ public final class JavaRuntime {
 				return resolver.resolveVMInstall(entry);
 			}
 		}
-		
+
 		return getDefaultVMInstall();
 	}
 	/**
 	 * Returns the VM of the given type with the specified name.
-	 * 
+	 *
 	 * @param type VM type identifier
 	 * @param name VM name
 	 * @param configuration the backing {@link ILaunchConfiguration}
@@ -1380,10 +1380,10 @@ public final class JavaRuntime {
 		// won't reach here
 		return null;
 	}
-	
+
 	/**
 	 * Throws a core exception with an internal error status.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
@@ -1392,26 +1392,26 @@ public final class JavaRuntime {
 	private static void abort(String message, Throwable exception) throws CoreException {
 		abort(message, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, exception);
 	}
-		
-		
+
+
 	/**
 	 * Throws a core exception with an internal error status.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param code status code
 	 * @param exception lower level exception associated with the
-	 * 
+	 *
 	 *  error, or <code>null</code> if none
 	 * @throws CoreException a {@link CoreException} wrapper
 	 */
 	private static void abort(String message, int code, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
 	}
-		
+
 	/**
 	 * Computes the default application classpath entries for the given
 	 * project.
-	 * 
+	 *
 	 * @param	jproject The project to compute the classpath for
 	 * @return	The computed classpath. May be empty, but not null.
 	 * @throws	CoreException if unable to compute the default classpath
@@ -1435,7 +1435,7 @@ public final class JavaRuntime {
 		}
 		return resolved.toArray(new String[resolved.size()]);
 	}
-		
+
 	/**
 	 * Saves the VM configuration information to the preferences. This includes
 	 * the following information:
@@ -1456,7 +1456,7 @@ public final class JavaRuntime {
 		InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).put(PREF_VM_XML, xml);
 		savePreferences();
 	}
-	
+
 	/**
 	 * Returns the listing of currently installed VMs as a single XML file
 	 * @return an XML representation of all of the currently installed VMs
@@ -1476,12 +1476,12 @@ public final class JavaRuntime {
 		}
 		return container.getAsXML();
 	}
-	
+
 	/**
 	 * This method loads installed JREs based an existing user preference
 	 * or old VM configurations file. The VMs found in the preference
 	 * or VM configurations file are added to the given VM definitions container.
-	 * 
+	 *
 	 * Returns whether the user preferences should be set - i.e. if it was
 	 * not already set when initialized.
 	 * @param vmDefs the container to add persisted VM information to
@@ -1491,7 +1491,7 @@ public final class JavaRuntime {
 	private static boolean addPersistedVMs(VMDefinitionsContainer vmDefs) throws IOException {
 		// Try retrieving the VM preferences from the preference store
 		String vmXMLString = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(PREF_VM_XML, ""); //$NON-NLS-1$
-		
+
 		// If the preference was found, load VMs from it into memory
 		if (vmXMLString.length() > 0) {
 			try {
@@ -1506,7 +1506,7 @@ public final class JavaRuntime {
 			IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
 			IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 			File file = new File(stateFile.toOSString());
-			
+
 			if (file.exists()) {
 				// If file exists, load VM definitions from it into memory and write the definitions to
 				// the preference store WITHOUT triggering any processing of the new value
@@ -1516,7 +1516,7 @@ public final class JavaRuntime {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Loads contributed VM installs
 	 * @param vmDefs the container to add contributed VM install information to
@@ -1651,10 +1651,10 @@ public final class JavaRuntime {
 			}
 		}
 	}
-    
+
     /**
      * Performs string substitution on the given expression.
-     * 
+     *
      * @param expression the expression to evaluate
      * @return expression after string substitution
      * @throws CoreException if the substitution encounters a problem
@@ -1663,11 +1663,11 @@ public final class JavaRuntime {
     private static String substitute(String expression) throws CoreException {
         return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(expression);
     }
-    
+
     /**
      * Returns whether the VM install with the specified id was contributed via
      * the vmInstalls extension point.
-     * 
+     *
      * @param id VM id
      * @return whether the VM install was contributed via extension point
      * @since 3.2
@@ -1676,7 +1676,7 @@ public final class JavaRuntime {
         getVMInstallTypes(); // ensure VMs are initialized
         return fgContributedVMs.contains(id);
     }
-	
+
 	/**
 	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
 	 * location is evaluated and checked if it exists.
@@ -1716,7 +1716,7 @@ public final class JavaRuntime {
 				if (!libraryPaths[i].toFile().isFile()) {
 					libraryPaths[i]= Path.EMPTY;
 				}
-				
+
 				annotationPaths[i] = Path.EMPTY;
 
 				sourcePaths[i]= dflts[i].getSystemLibrarySourcePath();
@@ -1749,10 +1749,10 @@ public final class JavaRuntime {
 		}
 		return locations;
 	}
-	
+
 	/**
 	 * Detect the VM that Eclipse is running on.
-	 * 
+	 *
 	 * @return a VM stand-in representing the VM that Eclipse is running on, or
 	 * <code>null</code> if unable to detect the runtime VM
 	 */
@@ -1791,7 +1791,7 @@ public final class JavaRuntime {
 		for (int i = 0; i < vmTypes.length; i++) {
 			File detectedLocation= vmTypes[i].detectInstallLocation();
 			if (detectedLocation != null) {
-				
+
 				// Make sure the VM id is unique
 				long unique = System.currentTimeMillis();
 				IVMInstallType vmType = vmTypes[i];
@@ -1818,19 +1818,19 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether the specified option is the same in the given
 	 * map and preference store.
-	 * 
+	 *
 	 * <p>
 	 * Notes:
 	 * <ul>
 	 * <li>Returns <code>false</code> if the option is only contained in one map</li>
 	 * <li>Returns <code>true</code> if the option is not contained in either map</li>
-	 * </ul> 
+	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param optionName name of option to test
 	 * @param options map of options
 	 * @param prefStore preferences node
@@ -1845,10 +1845,10 @@ public final class JavaRuntime {
 		}
 		return !options.containsKey(optionName);
 	}
-	
+
 	/**
 	 * Returns whether the objects are equal or both <code>null</code>
-	 * 
+	 *
 	 * @param o1 an object
 	 * @param o2 an object
 	 * @return whether the objects are equal or both <code>null</code>
@@ -1859,7 +1859,7 @@ public final class JavaRuntime {
 		}
 		return o1.equals(o2);
 	}
-	
+
 	/**
 	 * Make the name of a detected VM stand out.
 	 * @param vm the VM to generate a name for
@@ -1873,11 +1873,11 @@ public final class JavaRuntime {
 		}
 		return name;
 	}
-	
+
 	/**
 	 * Creates and returns a classpath entry describing
 	 * the JRE_LIB classpath variable.
-	 * 
+	 *
 	 * @return a new IClasspathEntry that describes the JRE_LIB classpath variable
 	 */
 	public static IClasspathEntry getJREVariableEntry() {
@@ -1887,33 +1887,33 @@ public final class JavaRuntime {
 			new Path(JRESRCROOT_VARIABLE)
 		);
 	}
-	
+
 	/**
 	 * Creates and returns a classpath entry describing
 	 * the default JRE container entry.
-	 * 
+	 *
 	 * @return a new IClasspathEntry that describes the default JRE container entry
 	 * @since 2.0
 	 */
 	public static IClasspathEntry getDefaultJREContainerEntry() {
 		return JavaCore.newContainerEntry(newDefaultJREContainerPath());
 	}
-	
+
 	/**
 	 * Returns a path for the JRE classpath container identifying the
 	 * default VM install.
-	 * 
+	 *
 	 * @return classpath container path
 	 * @since 3.2
 	 */
 	public static IPath newDefaultJREContainerPath() {
 		return new Path(JRE_CONTAINER);
 	}
-	
+
 	/**
 	 * Returns a path for the JRE classpath container identifying the
 	 * specified VM install by type and name.
-	 * 
+	 *
 	 * @param vm VM install
 	 * @return classpath container path
 	 * @since 3.2
@@ -1921,11 +1921,11 @@ public final class JavaRuntime {
 	public static IPath newJREContainerPath(IVMInstall vm) {
 		return newJREContainerPath(vm.getVMInstallType().getId(), vm.getName());
 	}
-	
+
 	/**
 	 * Returns a path for the JRE classpath container identifying the
 	 * specified VM install by type and name.
-	 * 
+	 *
 	 * @param typeId VM install type identifier
 	 * @param name VM install name
 	 * @return classpath container path
@@ -1937,11 +1937,11 @@ public final class JavaRuntime {
 		path = path.append(name);
 		return path;
 	}
-	
+
 	/**
 	 * Returns a path for the JRE classpath container identifying the
 	 * specified execution environment.
-	 * 
+	 *
 	 * @param environment execution environment
 	 * @return classpath container path
 	 * @since 3.2
@@ -1952,11 +1952,11 @@ public final class JavaRuntime {
 		path = path.append(JREContainerInitializer.encodeEnvironmentId(environment.getId()));
 		return path;
 	}
-	
+
 	/**
 	 * Returns the JRE referenced by the specified JRE classpath container
 	 * path or <code>null</code> if none.
-	 * 
+	 *
 	 * @param jreContainerPath the path to the container to try and resolve the {@link IVMInstall} from
 	 * @return JRE referenced by the specified JRE classpath container
 	 *  path or <code>null</code>
@@ -1965,11 +1965,11 @@ public final class JavaRuntime {
 	public static IVMInstall getVMInstall(IPath jreContainerPath) {
 		return JREContainerInitializer.resolveVM(jreContainerPath);
 	}
-	
+
 	/**
 	 * Returns the identifier of the VM install type referenced by the
 	 * given JRE classpath container path, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param jreContainerPath the path to the container to try and resolve the {@link IVMInstallType} id from
 	 * @return VM install type identifier or <code>null</code>
 	 * @since 3.2
@@ -1984,7 +1984,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns the name of the VM install referenced by the
 	 * given JRE classpath container path, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param jreContainerPath the path to the container to try an resolve the {@link IVMInstall} name from
 	 * @return VM name or <code>null</code>
 	 * @since 3.2
@@ -1995,11 +1995,11 @@ public final class JavaRuntime {
 		}
 		return JREContainerInitializer.getVMName(jreContainerPath);
 	}
-	
+
 	/**
 	 * Returns the execution environment identifier in the following JRE
 	 * classpath container path, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param jreContainerPath classpath container path
 	 * @return execution environment identifier or <code>null</code>
 	 * @since 3.2
@@ -2007,7 +2007,7 @@ public final class JavaRuntime {
 	public static String getExecutionEnvironmentId(IPath jreContainerPath) {
 		return JREContainerInitializer.getExecutionEnvironmentId(jreContainerPath);
 	}
-	
+
 	/**
 	 * Returns a runtime classpath entry identifying the JRE to use when launching the specified
 	 * configuration or <code>null</code> if none is specified. The entry returned represents a
@@ -2061,12 +2061,12 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a runtime classpath entry identifying the JRE referenced by the specified
 	 * project, or <code>null</code> if none. The entry returned represents a either a
 	 * classpath variable or classpath container that resolves to a JRE.
-	 * 
+	 *
 	 * @param project Java project
 	 * @return JRE runtime classpath entry or <code>null</code>
 	 * @exception org.eclipse.core.runtime.CoreException if an exception occurs
@@ -2106,14 +2106,14 @@ public final class JavaRuntime {
 					}
 					break;
 			}
-			
+
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether the given runtime classpath entry refers to a VM install.
-	 * 
+	 *
 	 * @param entry the entry to check
 	 * @return whether the given runtime classpath entry refers to a VM install
 	 * @since 3.2
@@ -2138,11 +2138,11 @@ public final class JavaRuntime {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the VM connector defined with the specified identifier,
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param id VM connector identifier
 	 * @return VM connector or <code>null</code> if none
 	 * @since 2.0
@@ -2150,7 +2150,7 @@ public final class JavaRuntime {
 	public static IVMConnector getVMConnector(String id) {
 		return LaunchingPlugin.getDefault().getVMConnector(id);
 	}
-	
+
 	/**
 	 * Returns all VM connector extensions.
 	 *
@@ -2160,10 +2160,10 @@ public final class JavaRuntime {
 	public static IVMConnector[] getVMConnectors() {
 		return LaunchingPlugin.getDefault().getVMConnectors();
 	}
-	
+
 	/**
 	 * Returns the preference store for the launching plug-in.
-	 * 
+	 *
 	 * @return the preference store for the launching plug-in
 	 * @since 2.0
 	 */
@@ -2171,10 +2171,10 @@ public final class JavaRuntime {
 	public static Preferences getPreferences() {
 		return LaunchingPlugin.getDefault().getPluginPreferences();
 	}
-	
+
 	/**
 	 * Saves the preferences for the launching plug-in.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static void savePreferences() {
@@ -2185,10 +2185,10 @@ public final class JavaRuntime {
 			LaunchingPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Registers the given resolver for the specified variable.
-	 * 
+	 *
 	 * @param resolver runtime classpath entry resolver
 	 * @param variableName variable name to register for
 	 * @since 2.0
@@ -2197,10 +2197,10 @@ public final class JavaRuntime {
 		Map<String, IRuntimeClasspathEntryResolver> map = getVariableResolvers();
 		map.put(variableName, resolver);
 	}
-	
+
 	/**
 	 * Registers the given resolver for the specified container.
-	 * 
+	 *
 	 * @param resolver runtime classpath entry resolver
 	 * @param containerIdentifier identifier of the classpath container to register for
 	 * @since 2.0
@@ -2209,7 +2209,7 @@ public final class JavaRuntime {
 		Map<String, IRuntimeClasspathEntryResolver> map = getContainerResolvers();
 		map.put(containerIdentifier, resolver);
 	}
-	
+
 	/**
 	 * Returns all registered variable resolvers.
 	 * @return the initialized map of {@link RuntimeClasspathEntryResolver}s for variables
@@ -2220,7 +2220,7 @@ public final class JavaRuntime {
 		}
 		return fgVariableResolvers;
 	}
-	
+
 	/**
 	 * Returns all registered container resolvers.
 	 * @return the initialized map of {@link RuntimeClasspathEntryResolver}s for containers
@@ -2231,7 +2231,7 @@ public final class JavaRuntime {
 		}
 		return fgContainerResolvers;
 	}
-	
+
 	/**
 	 * Returns all registered runtime classpath entry resolvers.
 	 * @return the initialized map of {@link RuntimeClasspathEntryResolver}s for classpath entries
@@ -2279,7 +2279,7 @@ public final class JavaRuntime {
 		}
 		return fgPathProviders;
 	}
-		
+
 	/**
 	 * Initializes the listing of classpath providers
 	 */
@@ -2292,11 +2292,11 @@ public final class JavaRuntime {
 			fgPathProviders.put(res.getIdentifier(), res);
 		}
 	}
-		
+
 	/**
 	 * Returns the resolver registered for the given variable, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param variableName the variable to determine the resolver for
 	 * @return the resolver registered for the given variable, or
 	 * <code>null</code> if none
@@ -2304,11 +2304,11 @@ public final class JavaRuntime {
 	private static IRuntimeClasspathEntryResolver2 getVariableResolver(String variableName) {
 		return (IRuntimeClasspathEntryResolver2)getVariableResolvers().get(variableName);
 	}
-	
+
 	/**
 	 * Returns the resolver registered for the given container id, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param containerId the container to determine the resolver for
 	 * @return the resolver registered for the given container id, or
 	 * <code>null</code> if none
@@ -2316,11 +2316,11 @@ public final class JavaRuntime {
 	private static IRuntimeClasspathEntryResolver2 getContainerResolver(String containerId) {
 		return (IRuntimeClasspathEntryResolver2)getContainerResolvers().get(containerId);
 	}
-	
+
 	/**
 	 * Returns the resolver registered for the given contributed classpath
 	 * entry type.
-	 * 
+	 *
 	 * @param typeId the id of the contributed classpath entry
 	 * @return the resolver registered for the given classpath entry
 	 */
@@ -2331,29 +2331,29 @@ public final class JavaRuntime {
 		}
 		return resolver;
 	}
-	
+
 	/**
 	 * Adds the given listener to the list of registered VM install changed
 	 * listeners. Has no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param listener the listener to add
 	 * @since 2.0
 	 */
 	public static void addVMInstallChangedListener(IVMInstallChangedListener listener) {
 		fgVMListeners.add(listener);
 	}
-	
+
 	/**
 	 * Removes the given listener from the list of registered VM install changed
 	 * listeners. Has no effect if an identical listener is not already registered.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 * @since 2.0
 	 */
 	public static void removeVMInstallChangedListener(IVMInstallChangedListener listener) {
 		fgVMListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Notifies registered listeners that the default VM has changed
 	 * @param previous the previous VM
@@ -2364,10 +2364,10 @@ public final class JavaRuntime {
 			listener.defaultVMInstallChanged(previous, current);
 		}
 	}
-	
+
 	/**
 	 * Notifies all VM install changed listeners of the given property change.
-	 * 
+	 *
 	 * @param event event describing the change.
 	 * @since 2.0
 	 */
@@ -2376,10 +2376,10 @@ public final class JavaRuntime {
 			listener.vmChanged(event);
 		}
 	}
-	
+
 	/**
 	 * Notifies all VM install changed listeners of the VM addition
-	 * 
+	 *
 	 * @param vm the VM that has been added
 	 * @since 2.0
 	 */
@@ -2390,10 +2390,10 @@ public final class JavaRuntime {
 			}
 		}
 	}
-	
+
 	/**
 	 * Notifies all VM install changed listeners of the VM removal
-	 * 
+	 *
 	 * @param vm the VM that has been removed
 	 * @since 2.0
 	 */
@@ -2402,13 +2402,13 @@ public final class JavaRuntime {
 			listener.vmRemoved(vm);
 		}
 	}
-	
+
 	/**
 	 * Return the String representation of the default output directory of the
 	 * launch config's project or <code>null</code> if there is no configuration, no
 	 * project or some sort of problem.
 	 * @param config the {@link ILaunchConfiguration}
-	 * 
+	 *
 	 * @return the default output directory for the specified launch
 	 * configuration's project
 	 * @since 2.1
@@ -2433,7 +2433,7 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a collection of source containers corresponding to the given
 	 * resolved runtime classpath entries.
@@ -2448,7 +2448,7 @@ public final class JavaRuntime {
 	public static ISourceContainer[] getSourceContainers(IRuntimeClasspathEntry[] entries) {
 		return JavaSourceLookupUtil.translate(entries);
 	}
-	
+
 	/**
 	 * Returns a collection of paths that should be appended to the given project's
 	 * <code>java.library.path</code> system property when launched. Entries are
@@ -2495,7 +2495,7 @@ public final class JavaRuntime {
 	/**
 	 * Gathers all Java library entries for the given project and optionally its required
 	 * projects.
-	 * 
+	 *
 	 * @param project project to gather entries for
 	 * @param requiredProjects whether to consider required projects
 	 * @param visited projects already considered
@@ -2528,12 +2528,12 @@ public final class JavaRuntime {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds all java library path extra classpath entry values to the given entries collection
 	 * specified on the given project's classpath, and returns a collection of required
 	 * projects, or <code>null</code>.
-	 * 
+	 *
 	 * @param project project being processed
 	 * @param collectRequired whether to collect required projects
 	 * @param classpathEntries the project's raw classpath
@@ -2580,7 +2580,7 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new classpath attribute referencing a list of shared libraries that should
 	 * appear on the <code>-Djava.library.path</code> system property at runtime
@@ -2609,7 +2609,7 @@ public final class JavaRuntime {
 		}
 		return JavaCore.newClasspathAttribute(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, value.toString());
 	}
-	
+
 	/**
 	 * Returns an array of strings referencing shared libraries that should
 	 * appear on the <code>-Djava.library.path</code> system property at runtime
@@ -2638,21 +2638,21 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the execution environments manager.
-	 * 
+	 *
 	 * @return execution environments manager
 	 * @since 3.2
 	 */
 	public static IExecutionEnvironmentsManager getExecutionEnvironmentsManager() {
 		return EnvironmentsManager.getDefault();
 	}
-	
+
 	/**
 	 * Perform VM type and VM install initialization. Does not hold locks
 	 * while performing change notification.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	private static void initializeVMs() {
@@ -2684,7 +2684,7 @@ public final class JavaRuntime {
 								LaunchingPlugin.log(status);
 							}
 						}
-						
+
 						// 3. if there are none, detect the eclipse runtime
 						if (vmDefs.getValidVMList().isEmpty()) {
 							// calling out to detectEclipseRuntime() could allow clients to change
@@ -2733,7 +2733,7 @@ public final class JavaRuntime {
 						}
 						fgDefaultVMId = vmDefs.getDefaultVMInstallCompositeID();
 						fgDefaultVMConnectorId = vmDefs.getDefaultVMInstallConnectorTypeID();
-						
+
 						// Create the underlying VMs for each valid VM
 						List<IVMInstall> vmList = vmDefs.getValidVMList();
 						Iterator<IVMInstall> vmListIterator = vmList.iterator();
@@ -2741,7 +2741,7 @@ public final class JavaRuntime {
 							VMStandin vmStandin = (VMStandin) vmListIterator.next();
 							vmStandin.convertToRealVM();
 						}
-						
+
 
 					} catch (IOException e) {
 						LaunchingPlugin.log(e);
@@ -2761,7 +2761,7 @@ public final class JavaRuntime {
 					fireVMAdded(installs[j]);
 				}
 			}
-			
+
 			// save settings if required
 			if (setPref) {
 				try {
@@ -2777,10 +2777,10 @@ public final class JavaRuntime {
 			}
 		}
 	}
-	
+
 	/**
 	 * Update compiler compliance settings based on the given VM.
-	 * 
+	 *
 	 * @param vm the backing {@link IVMInstall}
 	 */
 	private static void updateCompliance(IVMInstall vm) {
@@ -2820,12 +2820,12 @@ public final class JavaRuntime {
             }
         }
 	}
-	
+
 	/**
 	 * Creates a new VM based on the attributes specified in the given execution
 	 * environment description file. The format of the file is defined by
 	 * <code>http://wiki.eclipse.org/Execution_Environment_Descriptions</code>.
-	 * 
+	 *
 	 * @param eeFile VM definition file
 	 * @param name name for the VM, or <code>null</code> if a default name should be assigned
 	 * @param id id to assign to the new VM

@@ -24,7 +24,7 @@ import java.util.EventObject;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PropertyChangeEvent extends EventObject {
-    
+
     /**
      * All serializable objects should have a stable serialVersionUID
      */
@@ -34,28 +34,28 @@ public class PropertyChangeEvent extends EventObject {
 	 * The name of the changed property.
 	 */
 	private String propertyName;
-	
+
 	/**
 	 * The old value of the changed property, or <code>null</code> if
 	 * not known or not relevant.
 	 */
 	private Object oldValue;
-	
+
 	/**
 	 * The new value of the changed property, or <code>null</code> if
 	 * not known or not relevant.
 	 */
 	private Object newValue;
-	
+
 	/**
 	 * Creates a new property change event.
 	 *
 	 * @param source the object whose property has changed
-	 * @param property the property that has changed (must not be 
+	 * @param property the property that has changed (must not be
 	 *    <code>null</code>)
-	 * @param oldValue the old value of the property, or 
+	 * @param oldValue the old value of the property, or
 	 *    <code>null</code> if none
-	 * @param newValue the new value of the property, or 
+	 * @param newValue the new value of the property, or
 	 *    <code>null</code> if none
 	 */
 	public PropertyChangeEvent(
@@ -63,7 +63,7 @@ public class PropertyChangeEvent extends EventObject {
 		String property,
 		Object oldValue,
 		Object newValue) {
-	
+
 		super(source);
 		if (property == null) {
 			throw new IllegalArgumentException();
@@ -72,7 +72,7 @@ public class PropertyChangeEvent extends EventObject {
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
-	
+
 	/**
 	 * Returns the name of the property that changed.
 	 *
@@ -81,7 +81,7 @@ public class PropertyChangeEvent extends EventObject {
 	public String getProperty() {
 		return propertyName;
 	}
-	
+
 	/**
 	 * Returns the new value of the property.
 	 *
@@ -91,7 +91,7 @@ public class PropertyChangeEvent extends EventObject {
 	public Object getNewValue() {
 		return newValue;
 	}
-	
+
 	/**
 	 * Returns the old value of the property.
 	 *

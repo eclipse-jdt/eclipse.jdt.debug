@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
- 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -27,9 +27,9 @@ import org.eclipse.jdt.launching.IVMInstall;
 public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver2 {
 
 	private IConfigurationElement fConfigurationElement;
-	
+
 	private IRuntimeClasspathEntryResolver fDelegate;
-	
+
 	/**
 	 * Constructs a new resolver on the given configuration element
 	 * @param element the element
@@ -37,7 +37,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	public RuntimeClasspathEntryResolver(IConfigurationElement element) {
 		fConfigurationElement = element;
 	}
-	
+
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
@@ -45,11 +45,11 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		return getResolver().resolveRuntimeClasspathEntry(entry, configuration);
 	}
-	
+
 	/**
-	 * Returns the resolver delegate (and creates if required) 
+	 * Returns the resolver delegate (and creates if required)
 	 * @return the resolver
-	 * @throws CoreException if an error occurs 
+	 * @throws CoreException if an error occurs
 	 */
 	protected IRuntimeClasspathEntryResolver getResolver() throws CoreException {
 		if (fDelegate == null) {
@@ -57,7 +57,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 		}
 		return fDelegate;
 	}
-	
+
 	/**
 	 * Returns the variable name this resolver is registered for, or <code>null</code>
 	 * @return the variable name or <code>null</code>
@@ -65,15 +65,15 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	public String getVariableName() {
 		return fConfigurationElement.getAttribute("variable"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the container id this resolver is registered for, or <code>null</code>
 	 * @return the id or <code>null</code>
 	 */
 	public String getContainerId() {
 		return fConfigurationElement.getAttribute("container"); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Returns the runtime classpath entry id this resolver is registered
 	 * for,or <code>null</code> if none.

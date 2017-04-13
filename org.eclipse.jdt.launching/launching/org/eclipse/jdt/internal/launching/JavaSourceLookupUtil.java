@@ -36,7 +36,7 @@ import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSour
 /**
  * Private source lookup utilities. Translates runtime classpath entries
  * to source containers.
- * 
+ *
  * @since 3.0
  */
 public class JavaSourceLookupUtil {
@@ -44,7 +44,7 @@ public class JavaSourceLookupUtil {
 	/**
 	 * Translates the given runtime classpath entries into associated source
 	 * containers.
-	 * 
+	 *
 	 * @param entries entries to translate
 	 * @return source containers corresponding to the given runtime classpath entries
 	 */
@@ -108,7 +108,7 @@ public class JavaSourceLookupUtil {
 		}
 		return containers.toArray(new ISourceContainer[containers.size()]);
 	}
-	
+
 	/**
 	 * Returns whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal.
@@ -117,7 +117,7 @@ public class JavaSourceLookupUtil {
 	 * then it is considered equal. This way, the corresponding package fragment
 	 * root is used for source lookup if it has a source attachment or not.
 	 * </p>
-	 * 
+	 *
 	 * @param root package fragment root
 	 * @param entry runtime classpath entry
 	 * @return whether the source attachments of the given package fragment
@@ -135,14 +135,14 @@ public class JavaSourceLookupUtil {
 			return false;
 		}
 		return rootPath.equals(entryPath);
-		
+
 	}
-	
+
 	/**
 	 * Determines if the given archive runtime classpath entry exists
 	 * in the workspace as a package fragment root. Returns the associated
 	 * package fragment root or <code>null</code> if none.
-	 *  
+	 *
 	 * @param entry archive runtime classpath entry
 	 * @return package fragment root or <code>null</code>
 	 */
@@ -189,5 +189,5 @@ public class JavaSourceLookupUtil {
 			LaunchingPlugin.log(e);
 		}
 		return null;
-	}	
+	}
 }

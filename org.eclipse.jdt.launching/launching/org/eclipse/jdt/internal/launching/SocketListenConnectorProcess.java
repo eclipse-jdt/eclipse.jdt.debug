@@ -47,7 +47,7 @@ import com.sun.jdi.connect.TransportTimeoutException;
  * A process that represents a VM listening connector that is waiting for some VM(s) to remotely connect. Allows the user to see the status of the
  * connection and terminate it. If a successful connection occurs, the debug target is added to the launch and, if a configured number of connections
  * have been reached, then this process is removed.
- * 
+ *
  * @since 3.4
  * @see SocketListenConnector
  */
@@ -74,7 +74,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	 * The system job that will wait for incoming VM connections.
 	 */
 	private WaitForConnectionJob fWaitForConnectionJob;
-	
+
 	/** Time when this instance was created (milliseconds) */
 	private long fStartTime;
 
@@ -90,14 +90,14 @@ public class SocketListenConnectorProcess implements IProcess {
 		fPort = port;
 		fConnectionLimit = connectionLimit;
 	}
-	
+
 	/**
-	 * Starts a job that will accept a VM remotely connecting to the 
+	 * Starts a job that will accept a VM remotely connecting to the
 	 * given connector.  The #startListening() method must have been
 	 * called on the connector with the same arguments before calling
 	 * this method.  The 'port' argument in the map should have the same
 	 * value as the port specified in this process' constructor.
-	 * 
+	 *
 	 * @param connector the connector that will accept incoming connections
 	 * @param arguments map of arguments that are used by the connector
 	 * @throws CoreException if a problem occurs trying to accept a connection
@@ -151,7 +151,7 @@ public class SocketListenConnectorProcess implements IProcess {
 
 	/**
 	 * Returns an error status using the passed parameters.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
@@ -161,7 +161,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	protected static IStatus getStatus(String message, Throwable exception, int code) {
 		return new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IProcess#getExitValue()
 	 */
@@ -185,7 +185,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
@@ -218,7 +218,7 @@ public class SocketListenConnectorProcess implements IProcess {
 			fireTerminateEvent();
 		}
 	}
-	
+
 	/**
 	 * Fires a terminate event.
 	 */
@@ -228,7 +228,7 @@ public class SocketListenConnectorProcess implements IProcess {
 			manager.fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.TERMINATE)});
 		}
 	}
-	
+
 	/**
 	 * Fires a custom model specific event when this connector is ready to accept incoming
 	 * connections from a remote VM.
@@ -255,7 +255,7 @@ public class SocketListenConnectorProcess implements IProcess {
 	public String getAttribute(String key) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IProcess#setAttribute(java.lang.String, java.lang.String)
 	 */
@@ -299,13 +299,13 @@ public class SocketListenConnectorProcess implements IProcess {
 		 * to close the socket without generating an error.
 		 */
 		private boolean fListeningStopped = false;
-		
+
 		public WaitForConnectionJob(ListeningConnector connector, Map<String, Connector.Argument> arguments) {
 			super(getLabel());
 			fConnector = connector;
 			fArguments = arguments;
 		}
-		
+
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try{
@@ -316,7 +316,7 @@ public class SocketListenConnectorProcess implements IProcess {
 				if (timeout != null){
 					timeout.setValue("3000"); //$NON-NLS-1$
 				}
-				
+
 				VirtualMachine vm = null;
 				while (vm == null && !monitor.isCanceled()){
 					try {
@@ -324,12 +324,12 @@ public class SocketListenConnectorProcess implements IProcess {
 					} catch (TransportTimeoutException e){
 					}
 				}
-				
+
 				if (monitor.isCanceled()){
 					fConnector.stopListening(fArguments);
 					return Status.CANCEL_STATUS;
 				}
-				
+
 				ILaunchConfiguration configuration = fLaunch.getLaunchConfiguration();
 				boolean allowTerminate = false;
 				if (configuration != null) {
@@ -351,10 +351,10 @@ public class SocketListenConnectorProcess implements IProcess {
 				}
 				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 			} catch (IllegalConnectorArgumentsException e) {
-				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+				return getStatus(LaunchingMessages.SocketListenConnectorProcess_4, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
 		 */
@@ -362,7 +362,7 @@ public class SocketListenConnectorProcess implements IProcess {
 		protected void canceling() {
 			stopListening();
 		}
-			
+
 		/**
 		 * Tells the listening connector to stop listening.  Ensures
 		 * that the socket is closed and the port released.  Sets a flag
@@ -375,18 +375,18 @@ public class SocketListenConnectorProcess implements IProcess {
 					fListeningStopped = true;
 					fConnector.stopListening(fArguments);
 				} catch (IOException e) {
-					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
+					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED));
 				} catch (IllegalConnectorArgumentsException e) {
-					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED)); 
+					done(getStatus(LaunchingMessages.SocketListenConnectorProcess_5, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED));
 				}
 			}
 		}
-		
+
 		/**
 		 * Helper method that constructs a human-readable label for a remote VM.
 		 * @param vm the VM
 		 * @param port the port
-		 * @param configuration the configuration 
+		 * @param configuration the configuration
 		 * @return the new VM label
 		 */
 		protected String constructVMLabel(VirtualMachine vm, String port, ILaunchConfiguration configuration) {
@@ -411,11 +411,11 @@ public class SocketListenConnectorProcess implements IProcess {
 				// append the time when each connection was accepted
 				buffer.append('<').append(getRunningTime()).append('>');
 			}
-			buffer.append('['); 
+			buffer.append('[');
 			buffer.append(port);
-			buffer.append(']'); 
+			buffer.append(']');
 			return buffer.toString();
 		}
-		
+
 	}
 }

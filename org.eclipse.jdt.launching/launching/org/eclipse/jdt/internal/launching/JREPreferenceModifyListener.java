@@ -31,11 +31,11 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Manages import of installed JREs. Merges valid imported JREs with existing JREs.
- * 
+ *
  * @since 3.1
  */
 public class JREPreferenceModifyListener extends PreferenceModifyListener {
-	
+
 	class Visitor implements IPreferenceNodeVisitor {
 
 		@Override
@@ -83,12 +83,12 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 							boolean collision = ids.contains(vm.getId());
 							if (collision) {
 								// conflicting id, create a new one with unique id
-								long unique = System.currentTimeMillis();	
+								long unique = System.currentTimeMillis();
 								while(ids.contains(String.valueOf(unique))){
 									unique++;
 								}
 								vm = new VMStandin(vm, String.valueOf(unique));
-								ids.add(vm.getId()); 
+								ids.add(vm.getId());
 							}
 							vms.addVM(vm);
 						}
@@ -119,7 +119,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 			}
 			return true;
 		}
-		
+
 	}
 
 	@Override

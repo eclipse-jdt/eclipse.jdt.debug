@@ -18,7 +18,7 @@ import org.eclipse.jdt.launching.IVMInstall;
  * Analyzes vm installs for compatibility with execution environments.
  * <p>
  * An execution environment analyzer delegate is contributed in plug-in XML via
- * the <code>org.eclipse.jdt.launching.executionEnvironments</code> 
+ * the <code>org.eclipse.jdt.launching.executionEnvironments</code>
  * extension point.
  * </p>
  * <p>
@@ -27,11 +27,11 @@ import org.eclipse.jdt.launching.IVMInstall;
  * @since 3.2
  */
 public interface IExecutionEnvironmentAnalyzerDelegate {
-	
+
 	/**
 	 * Analyzes the given vm install and returns a collection of compatible
 	 * execution environments, possibly empty.
-	 * 
+	 *
 	 * @param vm vm install to analyze
 	 * @param monitor progress monitor
 	 * @return compatible execution environments, possibly empty

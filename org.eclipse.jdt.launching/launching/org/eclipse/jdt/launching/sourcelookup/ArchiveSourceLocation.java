@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
- 
+
 /**
  * Locates source elements in an archive (zip) in the local file system. Returns
  * instances of <code>ZipEntryStorage</code>.
@@ -61,7 +61,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 @Deprecated
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
-	
+
 	/**
 	 * Cache of shared zip files. Zip files are closed
 	 * when the launching plug-in is shutdown.
@@ -70,7 +70,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 
 	/**
 	 * Returns a zip file with the given name
-	 * 
+	 *
 	 * @param name zip file name
 	 * @return The zip file with the given name
 	 * @exception IOException if unable to create the specified zip
@@ -86,7 +86,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			return zip;
 		}
 	}
-	
+
 	/**
 	 * Closes all zip files that have been opened,
 	 * and removes them from the zip file cache.
@@ -109,33 +109,33 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			fZipFileCache.clear();
 		}
 	}
-	
+
 	/**
 	 * The root source folder in the archive
 	 */
 	private IPath fRootPath;
-	
+
 	/**
 	 * Whether the root path has been detected (or set)
 	 */
 	private boolean fRootDetected = false;
-	
+
 	/**
 	 * The name of the archive
 	 */
 	private String fName;
 
 	/**
-	 * Constructs a new empty source location to be initialized with 
+	 * Constructs a new empty source location to be initialized with
 	 * a memento.
 	 */
 	public ArchiveSourceLocation() {
 	}
-		
+
 	/**
 	 * Constructs a new source location that will retrieve source
 	 * elements from the zip file with the given name.
-	 * 
+	 *
 	 * @param archiveName zip file
 	 * @param sourceRoot a path to the root source folder in the
 	 *  specified archive, or <code>null</code> if the root source folder
@@ -146,7 +146,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		setName(archiveName);
 		setRootPath(sourceRoot);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
@@ -156,7 +156,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			if (getArchive() == null) {
 				return null;
 			}
-			
+
 			boolean possibleInnerType = false;
 			String pathStr= name.replace('.', '/');
 			int lastSlash = pathStr.lastIndexOf('/');
@@ -166,7 +166,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 				autoDetectRoot(entryPath);
 				if (getRootPath() != null) {
 					entryPath = getRootPath().append(entryPath);
-				}				
+				}
 				ZipEntry entry = getArchive().getEntry(entryPath.toString());
 				if (entry != null) {
 					return new ZipEntryStorage(getArchive(), entry);
@@ -177,18 +177,18 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 					possibleInnerType = true;
 				} else {
 					possibleInnerType = false;
-				}						
-			} while (possibleInnerType);						
+				}
+			} while (possibleInnerType);
 			return null;
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-				NLS.bind(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e)); 
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+				NLS.bind(LaunchingMessages.ArchiveSourceLocation_Unable_to_locate_source_element_in_archive__0__1, new String[] {getName()}), e));
 		}
 	}
-	
+
 	/**
 	 * Automatically detect the root path, if required.
-	 * 
+	 *
 	 * @param path source file name, excluding root path
 	 * @throws CoreException  if unable to detect the root path for this source archive
 	 */
@@ -198,8 +198,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			try {
 				zip = getArchive();
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-					NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e)); 
+				throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+					NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__1, new String[] {getName()}), e));
 			}
 			synchronized (zip) {
 				Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -219,8 +219,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 						}
 					}
 				} catch (IllegalStateException e) {
-					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-						NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e)); 
+					throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+						NLS.bind(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_while_detecting_root_source_directory_in_archive__0__2, new String[] {getName()}), e));
 				}
 			}
 		}
@@ -229,7 +229,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/**
 	 * Returns the archive associated with this source
 	 * location.
-	 * 
+	 *
 	 * @return zip file
 	 * @throws IOException if unable to create the zip
 	 * 	file associated with this location
@@ -237,12 +237,12 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	protected ZipFile getArchive() throws IOException {
 		return getZipFile(getName());
 	}
-	
+
 	/**
 	 * Sets the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the archive
-	 * 
+	 *
 	 * @param path the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the archive
@@ -255,59 +255,59 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			fRootDetected = true;
 		}
 	}
-	
+
 	/**
 	 * Returns the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the archive
-	 * 
+	 *
 	 * @return the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the archive
 	 */
 	public IPath getRootPath() {
 		return fRootPath;
-	}	
-	
+	}
+
 	/**
-	 * Returns the name of the archive associated with this 
+	 * Returns the name of the archive associated with this
 	 * source location
-	 * 
+	 *
 	 * @return the name of the archive associated with this
 	 *  source location
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
-	 * Sets the name of the archive associated with this 
+	 * Sets the name of the archive associated with this
 	 * source location
-	 * 
+	 *
 	 * @param name the name of the archive associated with this
 	 *  source location
 	 */
 	private void setName(String name) {
 		fName = name;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object object) {		
+	public boolean equals(Object object) {
 		return object instanceof ArchiveSourceLocation &&
 			 getName().equals(((ArchiveSourceLocation)object).getName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
@@ -320,8 +320,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		if (getRootPath() != null) {
 			node.setAttribute("rootPath", getRootPath().toString()); //$NON-NLS-1$
 		}
-	
-		return DebugPlugin.serializeDocument(doc); 
+
+		return DebugPlugin.serializeDocument(doc);
 	}
 
 	/* (non-Javadoc)
@@ -337,35 +337,35 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
-												
+
 			String path = root.getAttribute("archivePath"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort(LaunchingMessages.ArchiveSourceLocation_Unable_to_initialize_source_location___missing_archive_path__3, null); 
+				abort(LaunchingMessages.ArchiveSourceLocation_Unable_to_initialize_source_location___missing_archive_path__3, null);
 			}
 			String rootPath = root.getAttribute("rootPath"); //$NON-NLS-1$
-			
+
 			setName(path);
 			setRootPath(rootPath);
 			return;
 		} catch (ParserConfigurationException e) {
-			ex = e;			
+			ex = e;
 		} catch (SAXException e) {
 			ex = e;
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_initializing_source_location__5, ex);		 
+		abort(LaunchingMessages.ArchiveSourceLocation_Exception_occurred_initializing_source_location__5, ex);
 	}
 
 	private boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
 	}
-	
+
 	/*
 	 * Throws an internal error exception
 	 */
 	private void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
-		throw new CoreException(s);		
-	}	
+		throw new CoreException(s);
+	}
 }

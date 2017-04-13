@@ -44,7 +44,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 				if (jreEntry == null) {
 					return new IRuntimeClasspathEntry[0];
 				}
-				return new IRuntimeClasspathEntry[]{jreEntry};				
+				return new IRuntimeClasspathEntry[]{jreEntry};
 			}
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
 			// replace project JRE with config's JRE
@@ -81,12 +81,12 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 		}
 		return all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
-	
+
 	/**
 	 * Returns a collection of runtime classpath entries that are defined in the
 	 * specified attribute of the given launch configuration. When present,
 	 * the attribute must contain a list of runtime classpath entry mementos.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @param attribute attribute name containing the list of entries
 	 * @return collection of runtime classpath entries that are defined in the
@@ -102,7 +102,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			rtes[i] = JavaRuntime.newRuntimeClasspathEntry(iter.next());
 			i++;
 		}
-		return rtes;		
-	}	
+		return rtes;
+	}
 
 }

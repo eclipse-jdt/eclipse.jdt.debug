@@ -42,7 +42,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	/**
 	 * Throws a core exception with an error status object built from
 	 * the given message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
@@ -52,18 +52,18 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, getPluginIdentifier(), code, message, exception));
 	}
-	
+
 	/**
-	 * Returns the identifier of the plug-in this VM runner 
+	 * Returns the identifier of the plug-in this VM runner
 	 * originated from.
-	 * 
+	 *
 	 * @return plug-in identifier
 	 */
 	protected abstract String getPluginIdentifier();
-	
+
 	/**
 	 * Executes the given command line using the given working directory
-	 * 
+	 *
 	 * @param cmdLine the command line
 	 * @param workingDirectory the working directory
 	 * @return the {@link Process}
@@ -74,10 +74,10 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		cmdLine = quoteWindowsArgs(cmdLine);
 		return DebugPlugin.exec(cmdLine, workingDirectory);
 	}
-	
+
 	/**
 	 * Executes the given command line using the given working directory and environment
-	 * 
+	 *
 	 * @param cmdLine the command line
 	 * @param workingDirectory the working directory
 	 * @param envp the environment
@@ -89,7 +89,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		cmdLine = quoteWindowsArgs(cmdLine);
 		return DebugPlugin.exec(cmdLine, workingDirectory, envp);
-	}	
+	}
 
 	private static String[] quoteWindowsArgs(String[] cmdLine) {
 		// see https://bugs.eclipse.org/387504 , workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6511002
@@ -105,8 +105,8 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		}
 		return cmdLine;
 	}
-	
-	
+
+
 	private static boolean needsQuoting(String s) {
 		int len = s.length();
 		if (len == 0) // empty string has to be quoted
@@ -129,10 +129,10 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Returns the given array of strings as a single space-delimited string.
-	 * 
+	 *
 	 * @param cmdLine array of strings
 	 * @return a single space-delimited string
 	 */
@@ -140,14 +140,14 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		StringBuffer buff= new StringBuffer();
 		for (int i = 0, numStrings= cmdLine.length; i < numStrings; i++) {
 			buff.append(cmdLine[i]);
-			buff.append(' ');	
-		} 
+			buff.append(' ');
+		}
 		return buff.toString().trim();
 	}
-	
+
 	/**
 	 * Returns the default process attribute map for Java processes.
-	 * 
+	 *
 	 * @return default process attribute map for Java processes
 	 */
 	protected Map<String, String> getDefaultProcessMap() {
@@ -155,7 +155,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		map.put(IProcess.ATTR_PROCESS_TYPE, IJavaLaunchConfigurationConstants.ID_JAVA_PROCESS_TYPE);
 		return map;
 	}
-	
+
 	/**
 	 * Returns a new process aborting if the process could not be created.
 	 * @param launch the launch the process is contained in
@@ -170,15 +170,15 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		IProcess process= DebugPlugin.newProcess(launch, p, label, attributes);
 		if (process == null) {
 			p.destroy();
-			abort(LaunchingMessages.AbstractVMRunner_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); 
+			abort(LaunchingMessages.AbstractVMRunner_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		return process;
 	}
-	
+
 	/**
 	 * Combines and returns VM arguments specified by the runner configuration,
 	 * with those specified by the VM install, if any.
-	 * 
+	 *
 	 * @param configuration runner configuration
 	 * @param vmInstall VM install
 	 * @return combined VM arguments specified by the runner configuration

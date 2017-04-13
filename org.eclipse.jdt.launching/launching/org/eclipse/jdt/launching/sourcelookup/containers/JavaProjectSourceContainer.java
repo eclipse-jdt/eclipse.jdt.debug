@@ -35,21 +35,21 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * <p>
  * This class may be instantiated.
  * </p>
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaProjectSourceContainer extends CompositeSourceContainer {
-		
+
 	// Java project
 	private IJavaProject fProject;
 	// Source folders
 	private ISourceContainer[] fSourceFolders;
 	// Generic project container
 	private ISourceContainer[] fOthers;
-	
+
 	private static String[] fgJavaExtensions = null;
-	
+
 	/**
 	 * initialize java file extensions
 	 */
@@ -61,16 +61,16 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 			fgJavaExtensions[i] = '.' + ext;
 		}
 	}
-	
+
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.javaProject</code>).
 	 */
 	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.javaProject";   //$NON-NLS-1$
-	
+
 	/**
 	 * Constructs a source container on the given Java project.
-	 * 
+	 *
 	 * @param project project to look for source in
 	 */
 	public JavaProjectSourceContainer(IJavaProject project) {
@@ -91,10 +91,10 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 	/**
 	 * Returns the Java project associated with this source container.
-	 * 
+	 *
 	 * @return Java project
 	 */
 	public IJavaProject getJavaProject() {
@@ -153,7 +153,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	public Object[] findSourceElements(String name) throws CoreException {
 		// force container initialization
 		getSourceContainers();
-		
+
 		if (isJavaLikeFileName(name)) {
 			// only look in source folders
 			Object[] objects = findSourceElements(name, fSourceFolders);
@@ -175,8 +175,8 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 			if (filtered == null) {
 				return objects;
 			}
-			return filtered.toArray();			
-		} 
+			return filtered.toArray();
+		}
 		// look elsewhere if not a java like file
 		return findSourceElements(name, fOthers);
 	}
@@ -186,7 +186,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		fOthers = null;
 		super.dispose();
 	}
-	
+
 	private boolean isJavaLikeFileName(String name) {
 		for (int i = 0; i < fgJavaExtensions.length; i++) {
 			String ext = fgJavaExtensions[i];

@@ -65,16 +65,16 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @since 3.4
 	 */
 	private Map<String, String> fAttributeMap = new HashMap<String, String>();
-	
+
 	// system properties are cached in user preferences prefixed with this key, followed
 	// by VM type, VM id, and system property name
 	private static final String PREF_VM_INSTALL_SYSTEM_PROPERTY = "PREF_VM_INSTALL_SYSTEM_PROPERTY"; //$NON-NLS-1$
 	// whether change events should be fired
 	private boolean fNotify = true;
-	
+
 	/**
 	 * Constructs a new VM install.
-	 * 
+	 *
 	 * @param	type	The type of this VM install.
 	 * 					Must not be <code>null</code>
 	 * @param	id		The unique identifier of this VM instance
@@ -85,10 +85,10 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	public AbstractVMInstall(IVMInstallType type, String id) {
 		if (type == null) {
 			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_typeNotNull);
-		} 
+		}
 		if (id == null) {
 			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_idNotNull);
-		} 
+		}
 		fType= type;
 		fId= id;
 	}
@@ -185,13 +185,13 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		}
 		LibraryLocation[] newLocations = locations;
 		if (newLocations == null) {
-			newLocations = getVMInstallType().getDefaultLibraryLocations(getInstallLocation()); 
+			newLocations = getVMInstallType().getDefaultLibraryLocations(getInstallLocation());
 		}
 		LibraryLocation[] prevLocations = fSystemLibraryDescriptions;
 		if (prevLocations == null) {
-			prevLocations = getVMInstallType().getDefaultLibraryLocations(getInstallLocation()); 
+			prevLocations = getVMInstallType().getDefaultLibraryLocations(getInstallLocation());
 		}
-		
+
 		if (newLocations.length == prevLocations.length) {
 			int i = 0;
 			boolean equal = true;
@@ -208,7 +208,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS, prevLocations, newLocations);
 		fSystemLibraryDescriptions = locations;
 		if (fNotify) {
-			JavaRuntime.fireVMChanged(event);		
+			JavaRuntime.fireVMChanged(event);
 		}
 	}
 
@@ -234,8 +234,8 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				return;
 			}
 		}
-		
-		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_JAVADOC_LOCATION, fJavadocLocation, url);		
+
+		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_JAVADOC_LOCATION, fJavadocLocation, url);
 		fJavadocLocation = url;
 		if (fNotify) {
 			JavaRuntime.fireVMChanged(event);
@@ -244,7 +244,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 
 	/**
 	 * Whether this VM should fire property change notifications.
-	 * 
+	 *
 	 * @param notify if this VM should fire property change notifications.
 	 * @since 2.1
 	 */
@@ -274,7 +274,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	public int hashCode() {
 		return getVMInstallType().hashCode() + getId().hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#getDefaultVMArguments()
 	 * @since 3.0
@@ -288,7 +288,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		ExecutionArguments ex = new ExecutionArguments(args, ""); //$NON-NLS-1$
 		return ex.getVMArgumentsArray();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall#setDefaultVMArguments(java.lang.String[])
 	 * @since 3.0
@@ -307,7 +307,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			setVMArgs(buf.toString().trim());
 		}
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall2#getVMArgs()
      */
@@ -315,7 +315,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	public String getVMArgs() {
         return fVMArgs;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jdt.launching.IVMInstall2#setVMArgs(java.lang.String)
      */
@@ -333,10 +333,10 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
         PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_VM_ARGUMENTS, fVMArgs, vmArgs);
         fVMArgs = vmArgs;
 		if (fNotify) {
-			JavaRuntime.fireVMChanged(event);		
+			JavaRuntime.fireVMChanged(event);
 		}
-    }	
-    
+    }
+
     /* (non-Javadoc)
      * Subclasses should override.
      * @see org.eclipse.jdt.launching.IVMInstall2#getJavaVersion()
@@ -345,7 +345,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	public String getJavaVersion() {
         return null;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstall3#evaluateSystemProperties(java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -356,9 +356,9 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			monitor = new NullProgressMonitor();
 		}
 		Map<String, String> map = new HashMap<String, String>();
-		
+
 		// first check cache (preference store) to avoid launching VM
-		boolean cached = true; 
+		boolean cached = true;
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
 		if(prefs != null) {
 			for (int i = 0; i < properties.length; i++) {
@@ -374,7 +374,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				}
 			}
 		}
-		if (!cached) {		
+		if (!cached) {
 			// launch VM to evaluate properties
 			File file = LaunchingPlugin.getFileInPlugin(new Path("lib/launchingsupport.jar")); //$NON-NLS-1$
 			if (file != null && file.exists()) {
@@ -401,9 +401,9 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				try {
 					int total = 0;
 					int max = Platform.getPreferencesService().getInt(
-							LaunchingPlugin.ID_PLUGIN, 
-							JavaRuntime.PREF_CONNECT_TIMEOUT, 
-							JavaRuntime.DEF_CONNECT_TIMEOUT, 
+							LaunchingPlugin.ID_PLUGIN,
+							JavaRuntime.PREF_CONNECT_TIMEOUT,
+							JavaRuntime.DEF_CONNECT_TIMEOUT,
 							null);
 					while (!process.isTerminated()) {
 						try {
@@ -424,7 +424,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 				if (monitor.isCanceled()) {
 					return map;
 				}
-				
+
 				monitor.subTask(LaunchingMessages.AbstractVMInstall_3);
 				IStreamsProxy streamsProxy = process.getStreamsProxy();
 				String text = null;
@@ -449,7 +449,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 									map.put(name, value);
 								}
 							}
-						}			
+						}
 					} catch (SAXException e) {
 						String commandLine = process.getAttribute(IProcess.ATTR_CMDLINE);
 						abort(NLS.bind(LaunchingMessages.AbstractVMInstall_4, commandLine), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
@@ -481,7 +481,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	/**
 	 * Generates a key used to cache system property for this VM in this plug-ins
 	 * preference store.
-	 * 
+	 *
 	 * @param property system property name
 	 * @return preference store key
 	 */
@@ -496,11 +496,11 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		buffer.append(property);
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the error, or
 	 *            <code>null</code> if none
@@ -511,13 +511,13 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin
 				.getUniqueIdentifier(), code, message, exception));
-	}	
-	
+	}
+
 	/**
 	 * Sets a VM specific attribute. Attributes are persisted and restored with VM installs.
 	 * Specifying a value of <code>null</code> as a value removes the attribute. Change
 	 * notification is provided to {@link IVMInstallChangedListener} for VM attributes.
-	 * 
+	 *
 	 * @param key attribute key, cannot be <code>null</code>
 	 * @param value attribute value or <code>null</code> to remove the attribute
 	 * @since 3.4
@@ -540,11 +540,11 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 			JavaRuntime.fireVMChanged(event);
 		}
 	}
-    
+
 	/**
-	 * Returns a VM specific attribute associated with the given key or <code>null</code> 
+	 * Returns a VM specific attribute associated with the given key or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param key attribute key, cannot be <code>null</code>
 	 * @return attribute value, or <code>null</code> if none
 	 * @since 3.4
@@ -552,12 +552,12 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	public String getAttribute(String key) {
 		return fAttributeMap.get(key);
 	}
-	
+
 	/**
 	 * Returns a map of VM specific attributes stored with this VM install. Keys
 	 * and values are strings. Modifying the map does not modify the attributes
 	 * associated with this VM install.
-	 * 
+	 *
 	 * @return map of VM attributes
 	 * @since 3.4
 	 */

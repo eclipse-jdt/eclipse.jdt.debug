@@ -11,7 +11,7 @@
 
 package org.eclipse.jdt.launching;
 
- 
+
 import java.util.Map;
 
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -34,9 +34,9 @@ public class VMRunnerConfiguration {
 	private String fWorkingDirectory;
 	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
-	
+
 	private static final String[] fgEmpty= new String[0];
-	
+
 	/**
 	 * Creates a new configuration for launching a VM to run the given main class
 	 * using the given class path.
@@ -46,10 +46,10 @@ public class VMRunnerConfiguration {
 	 */
 	public VMRunnerConfiguration(String classToLaunch, String[] classPath) {
 		if (classToLaunch == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classNotNull); 
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classNotNull);
 		}
 		if (classPath == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classPathNotNull); 
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_classPathNotNull);
 		}
 		fClassToLaunch= classToLaunch;
 		fClassPath= classPath;
@@ -58,7 +58,7 @@ public class VMRunnerConfiguration {
 	/**
 	 * Sets the <code>Map</code> that contains String name/value pairs that represent
 	 * VM-specific attributes.
-	 * 
+	 *
 	 * @param map the <code>Map</code> of VM-specific attributes.
 	 * @since 2.0
 	 */
@@ -67,7 +67,7 @@ public class VMRunnerConfiguration {
 	}
 
 	/**
-	 * Sets the custom VM arguments. These arguments will be appended to the list of 
+	 * Sets the custom VM arguments. These arguments will be appended to the list of
 	 * VM arguments that a VM runner uses when launching a VM. Typically, these VM arguments
 	 * are set by the user.
 	 * These arguments will not be interpreted by a VM runner, the client is responsible for
@@ -77,31 +77,31 @@ public class VMRunnerConfiguration {
 	 */
 	public void setVMArguments(String[] args) {
 		if (args == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_vmArgsNotNull); 
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_vmArgsNotNull);
 		}
 		fVMArgs= args;
 	}
-	
+
 	/**
-	 * Sets the custom program arguments. These arguments will be appended to the list of 
-	 * program arguments that a VM runner uses when launching a VM (in general: none). 
+	 * Sets the custom program arguments. These arguments will be appended to the list of
+	 * program arguments that a VM runner uses when launching a VM (in general: none).
 	 * Typically, these VM arguments are set by the user.
 	 * These arguments will not be interpreted by a VM runner, the client is responsible for
 	 * passing arguments compatible with a particular VM runner.
 	 *
-	 * @param args the list of arguments	
+	 * @param args the list of arguments
 	 */
 	public void setProgramArguments(String[] args) {
 		if (args == null) {
-			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_programArgsNotNull); 
+			throw new IllegalArgumentException(LaunchingMessages.vmRunnerConfig_assert_programArgsNotNull);
 		}
 		fProgramArgs= args;
 	}
-	
+
 	/**
 	 * Sets the environment for the Java program. The Java VM will be
 	 * launched in the given environment.
-	 * 
+	 *
 	 * @param environment the environment for the Java program specified as an array
 	 *  of strings, each element specifying an environment variable setting in the
 	 *  format <i>name</i>=<i>value</i>
@@ -110,9 +110,9 @@ public class VMRunnerConfiguration {
 	public void setEnvironment(String[] environment) {
 		fEnvironment= environment;
 	}
-		
+
 	/**
-	 * Sets the boot classpath. Note that the boot classpath will be passed to the 
+	 * Sets the boot classpath. Note that the boot classpath will be passed to the
 	 * VM "as is". This means it has to be complete. Interpretation of the boot class path
 	 * is up to the VM runner this object is passed to.
 	 * <p>
@@ -128,18 +128,18 @@ public class VMRunnerConfiguration {
 	public void setBootClassPath(String[] bootClassPath) {
 		fBootClassPath= bootClassPath;
 	}
-	
+
 	/**
 	 * Returns the <code>Map</code> that contains String name/value pairs that represent
 	 * VM-specific attributes.
-	 * 
+	 *
 	 * @return The <code>Map</code> of VM-specific attributes or <code>null</code>.
 	 * @since 2.0
 	 */
 	public Map<String, Object> getVMSpecificAttributesMap() {
 		return fVMSpecificAttributesMap;
 	}
-	
+
 	/**
 	 * Returns the name of the class to launch.
 	 *
@@ -148,7 +148,7 @@ public class VMRunnerConfiguration {
 	public String getClassToLaunch() {
 		return fClassToLaunch;
 	}
-	
+
 	/**
 	 * Returns the classpath.
 	 *
@@ -157,14 +157,14 @@ public class VMRunnerConfiguration {
 	public String[] getClassPath() {
 		return fClassPath;
 	}
-	
+
 	/**
 	 * Returns the boot classpath. An empty array indicates an empty
 	 * bootpath and <code>null</code> indicates a default bootpath.
 	 * <p>
 	 * In 3.0, support has been added for prepending and appending to the
 	 * boot classpath. The new attributes are stored in the VM specific
-	 * attributes map using the following keys defined in 
+	 * attributes map using the following keys defined in
 	 * <code>IJavaLaunchConfigurationConstants</code>:
 	 * <ul>
 	 * <li>ATTR_BOOTPATH_PREPEND</li>
@@ -193,7 +193,7 @@ public class VMRunnerConfiguration {
 		}
 		return fVMArgs;
 	}
-	
+
 	/**
 	 * Returns the arguments to the Java program.
 	 *
@@ -206,20 +206,20 @@ public class VMRunnerConfiguration {
 		}
 		return fProgramArgs;
 	}
-	
+
 	/**
 	 * Returns the environment for the Java program or <code>null</code>
-	 * 
+	 *
 	 * @return The Java program environment. Default is <code>null</code>
 	 * @since 3.0
 	 */
 	public String[] getEnvironment() {
 		return fEnvironment;
 	}
-	
+
 	/**
 	 * Sets the working directory for a launched VM.
-	 * 
+	 *
 	 * @param path the absolute path to the working directory
 	 *  to be used by a launched VM, or <code>null</code> if
 	 *  the default working directory is to be inherited from the
@@ -229,10 +229,10 @@ public class VMRunnerConfiguration {
 	public void setWorkingDirectory(String path) {
 		fWorkingDirectory = path;
 	}
-	
+
 	/**
 	 * Returns the working directory of a launched VM.
-	 * 
+	 *
 	 * @return the absolute path to the working directory
 	 *  of a launched VM, or <code>null</code> if the working
 	 *  directory is inherited from the current process
@@ -240,24 +240,24 @@ public class VMRunnerConfiguration {
 	 */
 	public String getWorkingDirectory() {
 		return fWorkingDirectory;
-	}	
-	
+	}
+
 	/**
 	 * Sets whether the VM is resumed on startup when launched in
 	 * debug mode. Has no effect when not in debug mode.
-	 *  
+	 *
 	 * @param resume whether to resume the VM on startup
 	 * @since 3.0
 	 */
 	public void setResumeOnStartup(boolean resume) {
 		fResume = resume;
 	}
-	
+
 	/**
 	 * Returns whether the VM is resumed on startup when launched
 	 * in debug mode. Has no effect when no in debug mode. Default
 	 * value is <code>true</code> for backwards compatibility.
-	 * 
+	 *
 	 * @return whether to resume the VM on startup
 	 * @since 3.0
 	 */

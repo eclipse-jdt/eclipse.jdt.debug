@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 
 /**
  * Package fragment root source container type.
- * 
+ *
  * @since 3.0
  */
 public class PackageFragmentRootSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
@@ -39,18 +39,18 @@ public class PackageFragmentRootSourceContainerTypeDelegate extends AbstractSour
 			if ("packageFragmentRoot".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("handle"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_6, null); 
+					abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_6, null);
 				}
 				IJavaElement root = JavaCore.create(string);
 				if (root != null && root instanceof IPackageFragmentRoot) {
 					return new PackageFragmentRootSourceContainer((IPackageFragmentRoot)root);
 				}
-				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_7, null); 
+				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_7, null);
 			} else {
-				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_8, null); 
+				abort(LaunchingMessages.PackageFragmentRootSourceContainerTypeDelegate_8, null);
 			}
 		}
-		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null); 
+		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null);
 		return null;
 	}
 	/* (non-Javadoc)

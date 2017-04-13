@@ -41,14 +41,14 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(NLS.bind(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1, new String[]{configuration.getName()}), 3); 
+		monitor.beginTask(NLS.bind(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1, new String[]{configuration.getName()}), 3);
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
-		}						
-		try {			
-			monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1); 
-							
+		}
+		try {
+			monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1);
+
 			String connectorId = getVMConnectorId(configuration);
 			IVMConnector connector = null;
 			if (connectorId == null) {
@@ -57,33 +57,33 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 				connector = JavaRuntime.getVMConnector(connectorId);
 			}
 			if (connector == null) {
-				abort(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Connector_not_specified_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); 
+				abort(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Connector_not_specified_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
 			}
-			
+
 			Map<String, String> argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map<String, String>)null);
-	        
+
 	        int connectTimeout = Platform.getPreferencesService().getInt(
-	        		LaunchingPlugin.ID_PLUGIN, 
-	        		JavaRuntime.PREF_CONNECT_TIMEOUT, 
-	        		JavaRuntime.DEF_CONNECT_TIMEOUT, 
+	        		LaunchingPlugin.ID_PLUGIN,
+	        		JavaRuntime.PREF_CONNECT_TIMEOUT,
+	        		JavaRuntime.DEF_CONNECT_TIMEOUT,
 	        		null);
 	        argMap.put("timeout", Integer.toString(connectTimeout));  //$NON-NLS-1$
-	
+
 			// check for cancellation
 			if (monitor.isCanceled()) {
 				return;
 			}
-			
+
 			monitor.worked(1);
-			
-			monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2); 
+
+			monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2);
 			// set the default source locator if required
 			setDefaultSourceLocator(launch, configuration);
-			monitor.worked(1);		
-			
+			monitor.worked(1);
+
 			// connect to remote VM
 			connector.connect(argMap, monitor, launch);
-			
+
 			// check for cancellation
 			if (monitor.isCanceled()) {
 				IDebugTarget[] debugTargets = launch.getDebugTargets();
@@ -100,5 +100,5 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor.done();
 		}
 	}
-	
+
 }

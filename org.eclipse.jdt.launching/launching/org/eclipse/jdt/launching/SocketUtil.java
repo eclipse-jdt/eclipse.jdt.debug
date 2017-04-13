@@ -24,13 +24,13 @@ import java.util.Random;
  */
 public class SocketUtil {
 	private static final Random fgRandom= new Random(System.currentTimeMillis());
-	
+
 	/**
 	 * Returns a free port number on the specified host within the given range,
 	 * or -1 if none found.
-	 * 
+	 *
 	 * @param host name or IP address of host on which to find a free port
-	 * @param searchFrom the port number from which to start searching 
+	 * @param searchFrom the port number from which to start searching
 	 * @param searchTo the port number at which to stop searching
 	 * @return a free port in the specified range, or -1 of none found
 	 * @deprecated Use <code>findFreePort()</code> instead. It is possible that this
@@ -46,26 +46,26 @@ public class SocketUtil {
 			} catch (ConnectException e) {
 				return port;
 			} catch (IOException e) {
-			} 
+			}
 		}
 		return -1;
 	}
-	
+
 	private static int getRandomPort(int low, int high) {
 		return (int)(fgRandom.nextFloat() * (high-low)) + low;
 	}
-	
+
 	/**
 	 * Returns a free port number on localhost, or -1 if unable to find a free port.
-	 * 
+	 *
 	 * @return a free port number on localhost, or -1 if unable to find a free port
 	 * @since 3.0
 	 */
 	public static int findFreePort() {
 		try (ServerSocket socket = new ServerSocket(0)) {
 			return socket.getLocalPort();
-		} catch (IOException e) { 
+		} catch (IOException e) {
 		}
-		return -1;		
-	}	
+		return -1;
+	}
 }

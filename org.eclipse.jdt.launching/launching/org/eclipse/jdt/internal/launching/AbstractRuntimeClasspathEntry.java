@@ -4,10 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  * @since 3.0
  */
 public abstract class AbstractRuntimeClasspathEntry extends PlatformObject implements IRuntimeClasspathEntry2 {
-	
+
 	private IPath sourceAttachmentPath = null;
 	private IPath rootSourcePath = null;
 	private IPath externalAnnotationsPath = null;
@@ -46,20 +46,20 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 * Associated Java project, or <code>null</code>
 	 */
 	private IJavaProject fJavaProject;
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>false</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
 	@Override
 	public boolean isComposite() {
 		return false;
 	}
-	
-	/** 
+
+	/**
 	 * Default implementation returns an empty collection.
 	 * Subclasses should override if required.
 	 * @return the array of entries
@@ -69,10 +69,10 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries() throws CoreException {
 		return new IRuntimeClasspathEntry[0];
 	}
-	
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param exception underlying exception or <code>null</code> if none
 	 * @throws CoreException the new {@link CoreException}
@@ -83,12 +83,12 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation generates a string containing an XML
 	 * document. Subclasses should override <code>buildMemento</code>
 	 * to specify the contents of the required <code>memento</code>
 	 * node.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getMemento()
 	 */
 	@Override
@@ -102,42 +102,42 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		buildMemento(doc, memento);
 		return DebugPlugin.serializeDocument(doc);
 	}
-	
+
 	/**
-	 * Constructs a memento for this classpath entry in the given 
+	 * Constructs a memento for this classpath entry in the given
 	 * document and element. The memento element has already been
 	 * appended to the document.
-	 * 
+	 *
 	 * @param document XML document
 	 * @param memento element node for client specific attributes
-	 * @throws CoreException if unable to create a memento 
+	 * @throws CoreException if unable to create a memento
 	 */
 	protected abstract void buildMemento(Document document, Element memento) throws CoreException;
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
 	@Override
 	public IPath getPath() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
 	@Override
 	public IResource getResource() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
@@ -191,19 +191,19 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		classpathProperty = property;
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
 	@Override
 	public String getLocation() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentLocation()
@@ -213,7 +213,7 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		return null;
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
@@ -223,10 +223,10 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		return null;
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getVariableName()
 	 */
 	@Override
@@ -234,10 +234,10 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 		return null;
 	}
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Default implementation returns <code>null</code>.
 	 * Subclasses should override if required.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getClasspathEntry()
 	 */
 	@Override
@@ -251,10 +251,10 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	public IJavaProject getJavaProject() {
 		return fJavaProject;
 	}
-	
+
 	/**
 	 * Sets the Java project associated with this entry.
-	 * 
+	 *
 	 * @param javaProject the Java project context
 	 */
 	protected void setJavaProject(IJavaProject javaProject) {

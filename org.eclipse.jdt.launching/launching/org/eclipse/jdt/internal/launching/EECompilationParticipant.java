@@ -36,11 +36,11 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Creates build path errors related to execution environment bindings.
- * 
+ *
  * @since 3.5
  */
 public class EECompilationParticipant extends CompilationParticipant {
-	
+
 	/**
 	 * A set of projects that have been cleaned. When the build finishes for
 	 * a project that has been cleaned, we check for EE problems.
@@ -54,7 +54,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	public boolean isActive(IJavaProject project) {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#cleanStarting(org.eclipse.jdt.core.IJavaProject)
 	 */
@@ -63,7 +63,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 		super.cleanStarting(project);
 		fCleaned.add(project);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#buildFinished(org.eclipse.jdt.core.IJavaProject)
 	 */
@@ -91,14 +91,14 @@ public class EECompilationParticipant extends CompilationParticipant {
 			if (container != null && eeId != null) {
 				IVMInstall vm = JREContainerInitializer.resolveVM(container);
 				validateEnvironment(eeId, project, vm);
-				
+
 			}
 		}
 	}
-	
+
 	/**
 	 * Validates the environment, creating a problem marker for the project as required.
-	 * 
+	 *
 	 * @param id execution environment ID
 	 * @param project associated project
 	 * @param vm VM binding resolved for the project
@@ -139,14 +139,14 @@ public class EECompilationParticipant extends CompilationParticipant {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the severity for the specific key from the given {@link IProject},
 	 * or -1 if the problem should be ignored.
 	 * If the project does not have project specific settings, the workspace preference
 	 * is returned. If <code>null</code> is passed in as the project the workspace
 	 * preferences are consulted.
-	 * 
+	 *
 	 * @param prefkey the given preference key
 	 * @param project the given project or <code>null</code>
 	 * @return the severity level for the given preference key or -1
@@ -172,8 +172,8 @@ public class EECompilationParticipant extends CompilationParticipant {
 			return IMarker.SEVERITY_INFO;
 		}
 		return -1;
-	}	
-	
+	}
+
 	/**
 	 * creates a problem marker for a JRE container problem
 	 * @param javaProject the {@link IJavaProject}

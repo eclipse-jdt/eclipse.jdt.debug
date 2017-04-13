@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,30 +39,30 @@ import org.w3c.dom.Element;
  */
 @SuppressWarnings("deprecation")
 public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry {
-	
+
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.defaultClasspath"; //$NON-NLS-1$
-	
+
 	/**
 	 * Whether only exported entries should be on the runtime classpath.
 	 * By default all entries are on the runtime classpath.
 	 */
 	private boolean fExportedEntriesOnly = false;
-	
+
 	/**
 	 * Default constructor need to instantiate extensions
 	 */
 	public DefaultProjectClasspathEntry() {
 	}
-	
+
 	/**
 	 * Constructs a new classpath entry for the given project.
-	 * 
+	 *
 	 * @param project Java project
 	 */
 	public DefaultProjectClasspathEntry(IJavaProject project) {
 		setJavaProject(project);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
@@ -71,7 +71,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		memento.setAttribute("project", getJavaProject().getElementName()); //$NON-NLS-1$
 		memento.setAttribute("exportedEntriesOnly", Boolean.toString(fExportedEntriesOnly)); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
@@ -79,8 +79,8 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public void initializeFrom(Element memento) throws CoreException {
 		String name = memento.getAttribute("project"); //$NON-NLS-1$
 		if (name == null) {
-			abort(LaunchingMessages.DefaultProjectClasspathEntry_3, null); 
-		}		
+			abort(LaunchingMessages.DefaultProjectClasspathEntry_3, null);
+		}
 		IJavaProject project = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 		setJavaProject(project);
 		name = memento.getAttribute("exportedEntriesOnly"); //$NON-NLS-1$
@@ -102,11 +102,11 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public int getType() {
 		return OTHER;
 	}
-	
+
 	protected IProject getProject() {
 		return getJavaProject().getProject();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getLocation()
 	 */
@@ -114,7 +114,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public String getLocation() {
 		return getProject().getLocation().toOSString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getPath()
 	 */
@@ -122,7 +122,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public IPath getPath() {
 		return getProject().getFullPath();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getResource()
 	 */
@@ -130,7 +130,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public IResource getResource() {
 		return getProject();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -147,7 +147,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 				IClasspathEntry cpe = (IClasspathEntry)e;
 				runtimeEntries[i] = new RuntimeClasspathEntry(cpe);
 			} else {
-				runtimeEntries[i] = (IRuntimeClasspathEntry)e;				
+				runtimeEntries[i] = (IRuntimeClasspathEntry)e;
 			}
 		}
 		// remove bootpath entries - this is a default user classpath
@@ -155,15 +155,15 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			if (runtimeEntries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				ordered.add(runtimeEntries[i]);
-			} 
+			}
 		}
-		return ordered.toArray(new IRuntimeClasspathEntry[ordered.size()]);		
+		return ordered.toArray(new IRuntimeClasspathEntry[ordered.size()]);
 	}
-	
+
 	/**
 	 * Returns the transitive closure of classpath entries for the
 	 * given project entry.
-	 * 
+	 *
 	 * @param projectEntry project classpath entry
 	 * @param expandedPath a list of entries already expanded, should be empty
 	 * to begin, and contains the result
@@ -188,7 +188,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			expandedPath.add(projectEntry);
 			return;
 		}
-		
+
 		IClasspathEntry[] buildPath = project.getRawClasspath();
 		List<IClasspathEntry> unexpandedPath = new ArrayList<IClasspathEntry>(buildPath.length);
 		boolean projectAdded = false;
@@ -233,13 +233,13 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 									break;
 								case IClasspathContainer.K_DEFAULT_SYSTEM:
 									property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-									break;	
+									break;
 								case IClasspathContainer.K_SYSTEM:
 									property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 									break;
 							}
 							IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), property, project);
-							// check for duplicate/redundant entries 
+							// check for duplicate/redundant entries
 							boolean duplicate = false;
 							ClasspathContainerInitializer initializer = JavaCore.getClasspathContainerInitializer(r.getPath().segment(0));
 							for (int i = 0; i < expandedPath.size(); i++) {
@@ -281,7 +281,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 							}
 							if (!duplicate) {
 								expandedPath.add(r);
-							}	
+							}
 						}
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
@@ -315,7 +315,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			}
 		}
 		return;
-	}	
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
@@ -331,7 +331,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		if (isExportedEntriesOnly()) {
 			return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_2, new String[] {getJavaProject().getElementName()});
 		}
-		return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()}); 
+		return NLS.bind(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()});
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -352,11 +352,11 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
-	
+
 	/**
 	 * Sets whether the runtime classpath computation should only
 	 * include exported entries in referenced projects.
-	 * 
+	 *
 	 * @param exportedOnly if the runtime classpath computation should only
 	 * include exported entries in referenced projects.
 	 * @since 3.2
@@ -364,20 +364,20 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public void setExportedEntriesOnly(boolean exportedOnly) {
 		fExportedEntriesOnly = exportedOnly;
 	}
-	
+
 	/**
 	 * Returns whether the classpath computation only includes exported
 	 * entries in referenced projects.
-	 * 
+	 *
 	 * @return if the classpath computation only includes exported
 	 * entries in referenced projects.
 	 * @since 3.2
 	 */
 	public boolean isExportedEntriesOnly() {
 		return fExportedEntriesOnly | Platform.getPreferencesService().getBoolean(
-				LaunchingPlugin.ID_PLUGIN, 
-				JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, 
-				false, 
+				LaunchingPlugin.ID_PLUGIN,
+				JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES,
+				false,
 				null);
 	}
 }
