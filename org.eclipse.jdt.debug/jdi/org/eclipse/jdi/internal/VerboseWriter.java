@@ -44,7 +44,7 @@ public class VerboseWriter {
 	 */
 	public VerboseWriter(PrintWriter out) {
 		fOutput = out;
-		fLineBuffer = new ArrayList<StringBuffer>();
+		fLineBuffer = new ArrayList<>();
 		fPosition = 0;
 		fLineBuffer.add(new StringBuffer());
 	}

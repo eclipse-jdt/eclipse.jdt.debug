@@ -239,7 +239,7 @@ public class JDIValue extends JDIDebugElement implements IJavaValue {
 			return fVariables;
 		} else if (fValue instanceof ObjectReference) {
 			ObjectReference object = (ObjectReference) fValue;
-			fVariables = new ArrayList<IJavaVariable>();
+			fVariables = new ArrayList<>();
 			if (isArray()) {
 				try {
 					int length = getArrayLength();

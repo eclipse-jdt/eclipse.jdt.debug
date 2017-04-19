@@ -108,7 +108,7 @@ public class AppletLaunchConfigurationUtils {
 	 */
 	public static Set<IType> collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
 		IType[] types;
-		HashSet<IType> result = new HashSet<IType>(5);
+		HashSet<IType> result = new HashSet<>(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
 			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
@@ -174,7 +174,7 @@ public class AppletLaunchConfigurationUtils {
 	}
 
 	private static List<IType> searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
-		return new ArrayList<IType>(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
+		return new ArrayList<>(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
 	}
 
 	private static boolean isSubclassOfApplet(IProgressMonitor pm, IType type) {
@@ -210,7 +210,7 @@ public class AppletLaunchConfigurationUtils {
 	 * @throws InterruptedException
 	 */
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
-		final Set<Object> result= new HashSet<Object>();
+		final Set<Object> result= new HashSet<>();
 
 		if (elements.length > 0) {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {

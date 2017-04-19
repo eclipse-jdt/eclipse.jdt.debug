@@ -268,7 +268,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private SourceDebugExtensionParser(ReferenceTypeImpl referenceType) {
 		fReferenceType = referenceType;
-		fDefinedStrata = new ArrayList<String>();
+		fDefinedStrata = new ArrayList<>();
 		fDefinedStrata.add(VirtualMachineImpl.JAVA_STRATUM_NAME);
 	}
 

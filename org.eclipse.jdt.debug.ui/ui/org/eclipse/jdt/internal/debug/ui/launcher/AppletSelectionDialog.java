@@ -112,7 +112,7 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		// For each java project, calculate the Applet types it contains and add
 		// them to the results
 		final int projectCount = javaProjects.length;
-		final Set<IType> results = new HashSet<IType>(projectCount);
+		final Set<IType> results = new HashSet<>(projectCount);
 		boolean canceled = false;
 		try {
 			fRunnableContext.run(true, true, new IRunnableWithProgress() {

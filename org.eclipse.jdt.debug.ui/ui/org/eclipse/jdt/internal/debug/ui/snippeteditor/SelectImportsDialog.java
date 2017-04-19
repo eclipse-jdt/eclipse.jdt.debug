@@ -79,7 +79,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		}
 
 		protected void populateImports() {
-			fImportNames= new ArrayList<Filter>(1);
+			fImportNames= new ArrayList<>(1);
 			if (fImports != null) {
 				for (int i = 0; i < fImports.length; i++) {
 					String name = fImports[i];
@@ -196,7 +196,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		ElementListSelectionDialog dialog = null;
 		try {
 			IJavaProject project= fEditor.getJavaProject();
-			List<IJavaElement> projects= new ArrayList<IJavaElement>();
+			List<IJavaElement> projects= new ArrayList<>();
 			projects.add(project);
 			IPackageFragmentRoot[] roots= project.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {

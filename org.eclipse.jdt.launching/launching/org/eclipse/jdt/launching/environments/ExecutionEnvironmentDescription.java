@@ -232,7 +232,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @return library locations, possibly empty
 	 */
 	public LibraryLocation[] getLibraryLocations() {
-		List<LibraryLocation> allLibs = new ArrayList<LibraryLocation>();
+		List<LibraryLocation> allLibs = new ArrayList<>();
 
 		String dirs = getProperty(ENDORSED_DIRS);
 		if (dirs != null) {
@@ -244,7 +244,7 @@ public final class ExecutionEnvironmentDescription {
 		dirs = getProperty(BOOT_CLASS_PATH);
 		if (dirs != null) {
 			String[] bootpath = resolvePaths(dirs);
-			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
+			List<LibraryLocation> boot = new ArrayList<>(bootpath.length);
 			IPath src = getSourceLocation();
 			URL url = getJavadocLocation();
 			URL indexurl = getIndexLocation();
@@ -273,7 +273,7 @@ public final class ExecutionEnvironmentDescription {
 
 
 		//remove duplicates
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		LibraryLocation lib = null;
 		for(ListIterator<LibraryLocation> liter = allLibs.listIterator(); liter.hasNext();) {
 			lib = liter.next();
@@ -367,7 +367,7 @@ public final class ExecutionEnvironmentDescription {
 	 * @exception CoreException if unable to read the file
 	 */
 	private void initProperties(File eeFile) throws CoreException {
-		Map<String, String> properties = new LinkedHashMap<String, String>();
+		Map<String, String> properties = new LinkedHashMap<>();
 		String eeHome = eeFile.getParentFile().getAbsolutePath();
 		try (FileReader reader = new FileReader(eeFile); BufferedReader bufferedReader = new BufferedReader(reader);) {
 			String line = bufferedReader.readLine();
@@ -402,7 +402,7 @@ public final class ExecutionEnvironmentDescription {
 		// resolve things with ${ee.home} in them
 		fProperties = properties; // needs to be done to resolve
 		Iterator<Entry<String, String>> entries = properties.entrySet().iterator();
-		Map<String, String> resolved = new LinkedHashMap<String, String>(properties.size());
+		Map<String, String> resolved = new LinkedHashMap<>(properties.size());
 		while (entries.hasNext()) {
 			Entry<String, String> entry = entries.next();
 			String key = entry.getKey();
@@ -499,7 +499,7 @@ public final class ExecutionEnvironmentDescription {
 	 */
 	private Map<String, String> getSourceMap(){
 		String srcMapString = getProperty(SOURCE_MAP);
-		Map<String, String> srcMap = new HashMap<String, String>();
+		Map<String, String> srcMap = new HashMap<>();
 		if (srcMapString != null){
 			// Entries must be separated by the file separator and have an equals splitting the lib location from the src location
 			String[] entries = srcMapString.split(File.pathSeparator);
@@ -512,7 +512,7 @@ public final class ExecutionEnvironmentDescription {
 					key = makePathAbsolute(key, root);
 					value = makePathAbsolute(value, root);
 
-					List<Character> wildcards = new ArrayList<Character>();
+					List<Character> wildcards = new ArrayList<>();
 					StringBuffer keyBuffer = new StringBuffer();
 				    char [] chars = key.toCharArray();
 				    // Convert lib location to a regex, replace wildcards with grouped equivalents, keep track of used wildcards, allow '\' and '/' to be used, escape special chars

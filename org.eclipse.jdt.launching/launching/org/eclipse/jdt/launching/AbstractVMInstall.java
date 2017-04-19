@@ -64,7 +64,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * Map VM specific attributes that are persisted restored with a VM install.
 	 * @since 3.4
 	 */
-	private Map<String, String> fAttributeMap = new HashMap<String, String>();
+	private Map<String, String> fAttributeMap = new HashMap<>();
 
 	// system properties are cached in user preferences prefixed with this key, followed
 	// by VM type, VM id, and system property name
@@ -355,7 +355,7 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		// first check cache (preference store) to avoid launching VM
 		boolean cached = true;
@@ -562,6 +562,6 @@ public abstract class AbstractVMInstall implements IVMInstall, IVMInstall2, IVMI
 	 * @since 3.4
 	 */
 	public Map<String, String> getAttributes() {
-		return new HashMap<String, String>(fAttributeMap);
+		return new HashMap<>(fAttributeMap);
 	}
 }

@@ -235,7 +235,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements
 	public void setPattern(IJavaDebugTarget target, String pattern)
 			throws CoreException {
 		if (fPatterns == null) {
-			fPatterns = new HashMap<IJavaDebugTarget, String>(2);
+			fPatterns = new HashMap<>(2);
 		}
 		// if pattern is changing then remove and re-add
 		String oldPattern = getPattern(target);

@@ -76,7 +76,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 * @return targets for an action
 	 */
 	protected List<IRuntimeClasspathEntry> getOrderedSelection() {
-		List<IRuntimeClasspathEntry> targets = new ArrayList<IRuntimeClasspathEntry>();
+		List<IRuntimeClasspathEntry> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection)getViewer().getSelection()).toList();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -94,7 +94,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	 */
 	protected List<IRuntimeClasspathEntry> getEntriesAsList() {
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
-		List<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>(entries.length);
+		List<IRuntimeClasspathEntry> list = new ArrayList<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}

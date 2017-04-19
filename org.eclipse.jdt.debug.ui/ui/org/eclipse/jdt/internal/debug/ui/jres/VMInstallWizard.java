@@ -42,7 +42,7 @@ public abstract class VMInstallWizard extends Wizard {
 	 */
 	public VMInstallWizard(VMStandin editVM, IVMInstall[] currentInstalls) {
 		fEditVM = editVM;
-		List<String> names = new ArrayList<String>(currentInstalls.length);
+		List<String> names = new ArrayList<>(currentInstalls.length);
 		for (int i = 0; i < currentInstalls.length; i++) {
 			IVMInstall install = currentInstalls[i];
 			if (!install.equals(editVM)) {

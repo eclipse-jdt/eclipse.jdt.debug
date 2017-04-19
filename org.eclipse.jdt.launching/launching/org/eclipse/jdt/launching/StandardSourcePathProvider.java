@@ -147,7 +147,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 
         public UniqueList(int length) {
             super(length);
-            set = new HashSet<IRuntimeClasspathEntry>(length);
+            set = new HashSet<>(length);
         }
 
         @Override

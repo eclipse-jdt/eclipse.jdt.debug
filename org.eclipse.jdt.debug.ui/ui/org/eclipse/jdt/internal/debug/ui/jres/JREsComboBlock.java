@@ -68,7 +68,7 @@ public class JREsComboBlock {
 	/**
 	 * VMs being displayed
 	 */
-	private List<Object> fVMs = new ArrayList<Object>();
+	private List<Object> fVMs = new ArrayList<>();
 
 	/**
 	 * The main control
@@ -131,7 +131,7 @@ public class JREsComboBlock {
 	/**
 	 * List of execution environments
 	 */
-	private List<Object> fEnvironments = new ArrayList<Object>();
+	private List<Object> fEnvironments = new ArrayList<>();
 
 	private IStatus fStatus = OK_STATUS;
 
@@ -440,7 +440,7 @@ public class JREsComboBlock {
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List<VMStandin> standins = new ArrayList<VMStandin>();
+		List<VMStandin> standins = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];

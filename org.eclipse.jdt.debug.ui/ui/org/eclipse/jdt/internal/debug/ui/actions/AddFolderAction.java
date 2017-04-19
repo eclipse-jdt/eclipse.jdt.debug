@@ -121,7 +121,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 */
 	protected List<IResource> getSelectedFolders() {
 		List<IRuntimeClasspathEntry> list = getEntriesAsList();
-		List<IResource> folders = new ArrayList<IResource>();
+		List<IResource> folders = new ArrayList<>();
 		Iterator<IRuntimeClasspathEntry> iter = list.iterator();
 		while (iter.hasNext()) {
 			IRuntimeClasspathEntry entry = iter.next();

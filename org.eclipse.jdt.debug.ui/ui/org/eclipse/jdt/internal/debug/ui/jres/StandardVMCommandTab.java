@@ -42,7 +42,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	protected Button fDefaultButton;
 	protected Button fSpecificButton;
 
-	protected static final Map<?, ?> EMPTY_MAP = new HashMap<Object, Object>(1);
+	protected static final Map<?, ?> EMPTY_MAP = new HashMap<>(1);
 
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -164,7 +164,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map<String, String>)null);
 		} else {
 			String javaCommand = fJavaCommandText.getText();
-			Map<String, String> attributeMap = new HashMap<String, String>(1);
+			Map<String, String> attributeMap = new HashMap<>(1);
 			attributeMap.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, attributeMap);
 		}

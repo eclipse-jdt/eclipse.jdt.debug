@@ -53,7 +53,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 
 		String program= constructProgramString(config);
 
-		List<String> arguments= new ArrayList<String>();
+		List<String> arguments= new ArrayList<>();
 		arguments.add(program);
 
 		// VM arguments are the first thing after the java program so that users can specify

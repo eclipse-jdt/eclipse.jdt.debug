@@ -72,7 +72,7 @@ public class MethodBreakpointTypeChange extends MethodBreakpointChange {
 				}
 			}
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destMethod);
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		IResource resource = BreakpointUtils.getBreakpointResource(destMethod);

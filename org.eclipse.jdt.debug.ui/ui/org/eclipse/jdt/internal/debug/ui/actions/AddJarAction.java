@@ -60,7 +60,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 	 */
 	protected IPath[] getSelectedJars() {
 		List<IRuntimeClasspathEntry> list = getEntriesAsList();
-		List<IPath> jars = new ArrayList<IPath>();
+		List<IPath> jars = new ArrayList<>();
 		Iterator<IRuntimeClasspathEntry> iter = list.iterator();
 		while (iter.hasNext()) {
 			IRuntimeClasspathEntry entry = iter.next();

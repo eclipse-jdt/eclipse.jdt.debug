@@ -34,7 +34,7 @@ public class PacketSendManager extends PacketManager {
 	 */
 	public PacketSendManager(Connection connection) {
 		super(connection);
-		fOutgoingPackets = new LinkedList<JdwpPacket>();
+		fOutgoingPackets = new LinkedList<>();
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class PacketSendManager extends PacketManager {
 	 */
 	private void sendAvailablePackets() throws InterruptedException,
 			IOException {
-		LinkedList<JdwpPacket> packetsToSend = new LinkedList<JdwpPacket>();
+		LinkedList<JdwpPacket> packetsToSend = new LinkedList<>();
 		synchronized (fOutgoingPackets) {
 			while (fOutgoingPackets.size() == 0) {
 				fOutgoingPackets.wait();

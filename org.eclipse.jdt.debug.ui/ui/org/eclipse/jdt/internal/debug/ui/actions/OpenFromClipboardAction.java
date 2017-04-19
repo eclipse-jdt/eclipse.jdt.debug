@@ -198,7 +198,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		}
 
 		String trimmedText = inputText.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
-		List<Object> matches = new ArrayList<Object>();
+		List<Object> matches = new ArrayList<>();
 		int line = 0;
 		try {
 			line = getJavaElementMatches(trimmedText, matches);
@@ -282,7 +282,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static void handleSingleLineInput(String inputText) {
-		List<Object> matches = new ArrayList<Object>();
+		List<Object> matches = new ArrayList<>();
 		try {
 			int line= getJavaElementMatches(inputText, matches);
 			handleMatches(matches, line, inputText);
@@ -690,7 +690,7 @@ public class OpenFromClipboardAction implements IWorkbenchWindowActionDelegate {
 		if (index != -1) {
 			typeName = memberName.substring(0, index);
 			memberName = memberName.substring(index + 1);
-			final List<Object> typeMatches = new ArrayList<Object>();
+			final List<Object> typeMatches = new ArrayList<>();
 			noOfSearches++;
 			doTypeSearch(typeName, typeMatches, progress.newChild(work / noOfSearches));
 			IType[] types = new IType[typeMatches.size()];

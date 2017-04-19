@@ -166,7 +166,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			return ((ClasspathEntry)parentElement).getChildren(fTab.getLaunchConfiguration());
 		}
 		if (parentElement == null) {
-			List<Object> all= new ArrayList<Object>();
+			List<Object> all= new ArrayList<>();
 			Object[] topEntries= model.getEntries();
 			for (int i = 0; i < topEntries.length; i++) {
 				Object object = topEntries[i];

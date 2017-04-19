@@ -49,7 +49,7 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	 * Constructor
 	 */
 	public JDIDebugOptions(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, JDIDebugPlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

@@ -532,7 +532,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * workspace are considered.
 	 */
 	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] originals, final boolean includeDefaultPackage) throws JavaModelException{
-		final List<IPackageFragment> packageList = new ArrayList<IPackageFragment>();
+		final List<IPackageFragment> packageList = new ArrayList<>();
 		if (originals == null) {
 			IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
 			IJavaModel model= JavaCore.create(wsroot);
@@ -545,7 +545,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			@Override
 			public void run(IProgressMonitor monitor) {
 				try {
-					Set<String> packageNameSet= new HashSet<String>();
+					Set<String> packageNameSet= new HashSet<>();
 					monitor.beginTask(DebugUIMessages.JDIDebugUIPlugin_Searching_1, projects.length);
 					for (int i = 0; i < projects.length; i++) {
 						IPackageFragment[] pkgs= projects[i].getPackageFragments();
@@ -616,7 +616,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeVMInstallTypePageMap() {
-		fVmInstallTypePageMap = new HashMap<String, IConfigurationElement>(10);
+		fVmInstallTypePageMap = new HashMap<>(10);
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), IJavaDebugUIConstants.EXTENSION_POINT_VM_INSTALL_TYPE_PAGE);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();

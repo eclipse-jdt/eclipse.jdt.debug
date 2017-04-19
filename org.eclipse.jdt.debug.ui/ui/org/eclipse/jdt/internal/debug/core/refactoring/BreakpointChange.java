@@ -267,7 +267,7 @@ public abstract class BreakpointChange extends Change {
 	 * @return element's path
 	 */
 	private static List<IJavaElement> getPath(IJavaElement element) {
-		ArrayList<IJavaElement> children = new ArrayList<IJavaElement>();
+		ArrayList<IJavaElement> children = new ArrayList<>();
 		while (element != null && element.getElementType() != IJavaElement.COMPILATION_UNIT) {
 			children.add(element);
 			element = element.getParent();

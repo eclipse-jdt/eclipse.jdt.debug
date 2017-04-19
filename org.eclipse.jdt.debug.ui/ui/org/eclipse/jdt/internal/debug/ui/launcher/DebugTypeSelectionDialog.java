@@ -52,7 +52,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	 * Main list label provider
 	 */
 	public class DebugTypeLabelProvider implements ILabelProvider {
-		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<ImageDescriptor, Image>();
+		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<>();
 
 		@Override
 		public Image getImage(Object element) {

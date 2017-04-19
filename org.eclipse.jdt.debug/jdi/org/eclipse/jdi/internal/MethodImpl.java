@@ -173,8 +173,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			fLowestValidCodeIndex = readLong("lowest index", replyData); //$NON-NLS-1$
 			fHighestValidCodeIndex = readLong("highest index", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			fCodeIndexToLine = new HashMap<Long, Integer>();
-			fLineToCodeIndexes = new HashMap<Integer, List<Long>>();
+			fCodeIndexToLine = new HashMap<>();
+			fLineToCodeIndexes = new HashMap<>();
 			if (nrOfElements == 0) {
 				throw new AbsentInformationException(
 						JDIMessages.MethodImpl_Got_empty_line_number_table_for_this_method_3);
@@ -195,7 +195,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 				List<Long> lineNrEntry = fLineToCodeIndexes.get(lineNrInt);
 				if (lineNrEntry == null) {
-					lineNrEntry = new ArrayList<Long>();
+					lineNrEntry = new ArrayList<>();
 					fLineToCodeIndexes.put(lineNrInt, lineNrEntry);
 				}
 				lineNrEntry.add(lineCodeIndexLong);
@@ -267,7 +267,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return fArguments;
 		}
 
-		List<LocalVariable> result = new ArrayList<LocalVariable>();
+		List<LocalVariable> result = new ArrayList<>();
 		Iterator<LocalVariable> iter = variables().iterator();
 		while (iter.hasNext()) {
 			LocalVariable var = iter.next();
@@ -288,7 +288,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return fArgumentTypeNames;
 		}
 		List<String> argumentTypeSignatures = argumentTypeSignatures();
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Iterator<String> iter = argumentTypeSignatures.iterator(); iter.hasNext();) {
 			result.add(TypeImpl.signatureToName(iter.next()));
 		}
@@ -318,7 +318,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fArgumentTypes != null) {
 			return fArgumentTypes;
 		}
-		List<Type> result = new ArrayList<Type>();
+		List<Type> result = new ArrayList<>();
 		Iterator<String> iter = argumentTypeSignatures().iterator();
 		ClassLoaderReference classLoaderRef = declaringType().classLoader();
 		VirtualMachineImpl vm = virtualMachineImpl();
@@ -540,7 +540,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			DataInputStream replyData = replyPacket.dataInStream();
 			fArgumentSlotsCount = readInt("arg count", replyData); //$NON-NLS-1$
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<LocalVariable> variables = new ArrayList<LocalVariable>(nrOfElements);
+			List<LocalVariable> variables = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				long codeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				String name = readString("name", replyData); //$NON-NLS-1$
@@ -605,7 +605,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		}
 		if (signatures.length > 0) {
 			fArgumentSlotsCount = signatures.length;
-			fVariables = new ArrayList<LocalVariable>(fArgumentSlotsCount);
+			fVariables = new ArrayList<>(fArgumentSlotsCount);
 			for (int i = 0; i < signatures.length; i++) {
 				String name = "arg" + i; //$NON-NLS-1$
 				LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signatures[i], genericSignatures[i], -1, slot, true);
@@ -625,7 +625,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	@Override
 	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
 		Iterator<LocalVariable> iter = variables().iterator();
-		List<LocalVariable> result = new ArrayList<LocalVariable>();
+		List<LocalVariable> result = new ArrayList<>();
 		while (iter.hasNext()) {
 			LocalVariable var = iter.next();
 			if (var.name().equals(name)) {
@@ -832,14 +832,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		Map<String, List<Location>> sourceNameAllLineLocations = null;
 		if (fStratumAllLineLocations == null) { // the stratum map doesn't
 												// exist, create it
-			fStratumAllLineLocations = new HashMap<String, Map<String, List<Location>>>();
+			fStratumAllLineLocations = new HashMap<>();
 		} else {
 			// get the source name map
 			sourceNameAllLineLocations = fStratumAllLineLocations.get(stratum);
 		}
 		if (sourceNameAllLineLocations == null) { // the source name map doesn't
 													// exist, create it
-			sourceNameAllLineLocations = new HashMap<String, List<Location>>();
+			sourceNameAllLineLocations = new HashMap<>();
 			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
 		} else {
 			// get the line locations
@@ -873,7 +873,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * the specified lines.
 	 */
 	protected List<Location> javaStratumLocationsOfLines(List<Integer> javaLines)	throws AbsentInformationException {
-		Set<Long> tmpLocations = new TreeSet<Long>();
+		Set<Long> tmpLocations = new TreeSet<>();
 		for (Iterator<Integer> iter = javaLines.iterator(); iter.hasNext();) {
 			Integer key = iter.next();
 			List<Long> indexes = javaStratumLineToCodeIndexes(key.intValue());
@@ -881,7 +881,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 				tmpLocations.addAll(indexes);
 			}
 		}
-		List<Location> locations = new ArrayList<Location>();
+		List<Location> locations = new ArrayList<>();
 		for (Iterator<Long> iter = tmpLocations.iterator(); iter.hasNext();) {
 			long index = iter.next().longValue();
 			int position = Arrays.binarySearch(fCodeIndexTable, index);

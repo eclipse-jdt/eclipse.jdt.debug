@@ -91,7 +91,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					if (!type.isClass()) {
 						kind = IJavaClassPrepareBreakpoint.TYPE_INTERFACE;
 					}
-					HashMap<String, Object> map = new HashMap<String, Object>(10);
+					HashMap<String, Object> map = new HashMap<>(10);
 					BreakpointUtils.addJavaBreakpointAttributes(map, type);
 
 					ISourceRange range= type.getNameRange();

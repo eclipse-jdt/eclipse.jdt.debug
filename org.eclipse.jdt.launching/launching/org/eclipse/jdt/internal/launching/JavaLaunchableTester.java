@@ -116,7 +116,7 @@ public class JavaLaunchableTester extends PropertyTester {
     /**
      * Map of modifier text to corresponding flag (Integer)
      */
-    private static Map<String, Integer> fgModifiers = new HashMap<String, Integer>();
+    private static Map<String, Integer> fgModifiers = new HashMap<>();
 
     private static final int FLAGS_MASK= Flags.AccPublic | Flags.AccProtected | Flags.AccPrivate | Flags.AccStatic
     	| Flags.AccFinal | Flags.AccSynchronized | Flags.AccAbstract | Flags.AccNative;
@@ -489,7 +489,7 @@ public class JavaLaunchableTester extends PropertyTester {
 	private boolean hasItemOnBuildPath(IJavaElement element, Object[] args) {
 		if(element != null && args != null) {
 			IJavaProject project = element.getJavaProject();
-			Set<IJavaProject> searched = new HashSet<IJavaProject>();
+			Set<IJavaProject> searched = new HashSet<>();
 			searched.add(project);
 			return hasItemsOnBuildPath(project, searched, args);
 		}
@@ -498,7 +498,7 @@ public class JavaLaunchableTester extends PropertyTester {
 
 	private boolean hasItemsOnBuildPath(IJavaProject project, Set<IJavaProject> searched, Object[] args) {
 		try {
-			List<IJavaProject> projects = new ArrayList<IJavaProject>();
+			List<IJavaProject> projects = new ArrayList<>();
 	        if(project != null && project.exists()) {
 	            IClasspathEntry[] entries = project.getResolvedClasspath(true);
 	            for(int i = 0; i < entries.length; i++) {

@@ -290,7 +290,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				innerClassFields = new IVariable[0];
 			}
 			int numLocalsVar = localsVar.length;
-			Set<String> names = new HashSet<String>();
+			Set<String> names = new HashSet<>();
 			// ******
 			// to hide problems with local variable declare as instance of Local
 			// Types

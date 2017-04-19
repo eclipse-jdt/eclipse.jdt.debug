@@ -370,8 +370,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer= viewer;
 			// load the current formatters
 			String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-			fDetailFormattersSet= new TreeSet<DetailFormatter>();
-			fDefinedTypes= new ArrayList<String>(detailFormattersList.length / 3);
+			fDetailFormattersSet= new TreeSet<>();
+			fDefinedTypes= new ArrayList<>(detailFormattersList.length / 3);
 			for (int i= 0, length= detailFormattersList.length; i < length;) {
 				String typeName= detailFormattersList[i++];
 				String snippet= detailFormattersList[i++].replace('\u0000', ',');

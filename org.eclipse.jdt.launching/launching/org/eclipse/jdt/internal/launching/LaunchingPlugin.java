@@ -156,7 +156,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 *
 	 * @since 3.7
 	 */
-	private static HashSet<String> fgHasChanged = new HashSet<String>();
+	private static HashSet<String> fgHasChanged = new HashSet<>();
 	/**
 	 * Mutex for checking the time stamp of an install location
 	 *
@@ -184,7 +184,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		private boolean fDefaultChanged = false;
 
 		// old container ids to new
-		private HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<IPath, IPath>();
+		private HashMap<IPath, IPath> fRenamedContainerIds = new HashMap<>();
 
 		/**
 		 * Returns the JRE container id that the given VM would map to, or
@@ -308,7 +308,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 
 			// re-bind all container entries
 			int length = projects.length;
-			Map<IPath, List<IJavaProject>> projectsMap = new HashMap<IPath, List<IJavaProject>>();
+			Map<IPath, List<IJavaProject>> projectsMap = new HashMap<>();
 			for (int i = 0; i < length; i++) {
 				IJavaProject project = projects[i];
 				IClasspathEntry[] entries = project.getRawClasspath();
@@ -334,7 +334,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 									// @see bug 310789 - batch updates by common container paths
 									List<IJavaProject> projectsList = projectsMap.get(reference);
 									if (projectsList == null) {
-										projectsMap.put(reference, projectsList = new ArrayList<IJavaProject>(length));
+										projectsMap.put(reference, projectsList = new ArrayList<>(length));
 									}
 									projectsList.add(project);
 								} else {
@@ -529,7 +529,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(ID_PLUGIN, new ISaveParticipant() {
@@ -591,7 +591,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, "Exception occurred reading vmConnectors extensions.", null);  //$NON-NLS-1$
-		fVMConnectors = new HashMap<String, IVMConnector>(configs.length);
+		fVMConnectors = new HashMap<>(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {
 				IVMConnector vmConnector= (IVMConnector)configs[i].createExecutableExtension("class"); //$NON-NLS-1$
@@ -630,7 +630,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	private void initializeRuntimeClasspathExtensions() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-		fClasspathEntryExtensions = new HashMap<String, IConfigurationElement>(configs.length);
+		fClasspathEntryExtensions = new HashMap<>(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			fClasspathEntryExtensions.put(configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
 		}
@@ -913,7 +913,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * Restores library information for VMs
 	 */
 	private static void restoreLibraryInfo() {
-		fgLibraryInfoMap = new HashMap<String, LibraryInfo>(10);
+		fgLibraryInfoMap = new HashMap<>(10);
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -1004,7 +1004,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @since 3.7
 	 */
 	private static void readInstallInfo() {
-		fgInstallTimeMap = new HashMap<String, Long>();
+		fgInstallTimeMap = new HashMap<>();
 		IPath libPath = getDefault().getStateLocation();
 		libPath = libPath.append(".install.xml"); //$NON-NLS-1$
 		File file = libPath.toFile();
@@ -1097,7 +1097,7 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @return paths stored in XML
 	 */
 	private static String[] getPathsFromXML(Element lib, String pathType) {
-		List<String> paths = new ArrayList<String>();
+		List<String> paths = new ArrayList<>();
 		NodeList list = lib.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {

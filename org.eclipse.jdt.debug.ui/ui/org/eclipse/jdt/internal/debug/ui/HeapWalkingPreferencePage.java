@@ -48,7 +48,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
-		fErrorMessages = new HashMap<Object, String>();
+		fErrorMessages = new HashMap<>();
 	}
 
 	/* (non-Javadoc)

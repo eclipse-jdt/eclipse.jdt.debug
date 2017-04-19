@@ -66,7 +66,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Cache of shared zip files. Zip files are closed
 	 * when the launching plug-in is shutdown.
 	 */
-	private static HashMap<String, ZipFile> fZipFileCache = new HashMap<String, ZipFile>(5);
+	private static HashMap<String, ZipFile> fZipFileCache = new HashMap<>(5);
 
 	/**
 	 * Returns a zip file with the given name

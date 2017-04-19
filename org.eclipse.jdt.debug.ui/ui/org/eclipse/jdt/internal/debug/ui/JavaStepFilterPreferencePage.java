@@ -418,8 +418,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	public boolean performOk() {
 		DebugUITools.setUseStepFilters(fUseStepFiltersButton.getSelection());
 		IPreferenceStore store = getPreferenceStore();
-		ArrayList<String> active = new ArrayList<String>();
-		ArrayList<String> inactive = new ArrayList<String>();
+		ArrayList<String> active = new ArrayList<>();
+		ArrayList<String> inactive = new ArrayList<>();
 		String name = ""; //$NON-NLS-1$
 		Filter[] filters = getAllFiltersFromTable();
 		for(int i = 0; i < filters.length; i++) {

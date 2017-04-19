@@ -88,7 +88,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		private final List<String[]> fVariables;
 
 		public AttributesContentProvider(String[][] variables) {
-			fVariables= new ArrayList<String[]>();
+			fVariables= new ArrayList<>();
 			for (int i= 0; i < variables.length; i++) {
 				String[] variable= new String[2];
 				variable[0]= variables[i][0];

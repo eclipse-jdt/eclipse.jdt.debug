@@ -101,7 +101,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		DebugUITools.getPreferenceStore().addPropertyChangeListener(this);
-		fCacheMap= new HashMap<Key, Expression>();
+		fCacheMap= new HashMap<>();
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 */
 	private void populateDetailFormattersMap() {
 		String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-		fDetailFormattersMap= new HashMap<String, DetailFormatter>(detailFormattersList.length / 3);
+		fDetailFormattersMap= new HashMap<>(detailFormattersList.length / 3);
 		for (int i= 0, length= detailFormattersList.length; i < length;) {
 			String typeName= detailFormattersList[i++];
 			String snippet= detailFormattersList[i++].replace('\u0000', ',');

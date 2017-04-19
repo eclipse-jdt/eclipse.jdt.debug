@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JavaPrimitivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private List<BooleanFieldEditor> fEdtiors = new ArrayList<BooleanFieldEditor>();
+	private List<BooleanFieldEditor> fEdtiors = new ArrayList<>();
 
 	public JavaPrimitivesPreferencePage() {
 		super(DebugUIMessages.JavaPrimitivesPreferencePage_0);

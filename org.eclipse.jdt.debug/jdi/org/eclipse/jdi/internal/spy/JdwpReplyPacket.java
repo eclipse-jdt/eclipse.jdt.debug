@@ -137,7 +137,7 @@ public class JdwpReplyPacket extends JdwpPacket {
 		}
 
 		Field[] fields = JdwpReplyPacket.class.getDeclaredFields();
-		fErrorMap = new HashMap<Integer, String>(fields.length);
+		fErrorMap = new HashMap<>(fields.length);
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0

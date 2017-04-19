@@ -88,7 +88,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Invalid Type Name", null)); //$NON-NLS-1$
 						}
 						IBreakpoint breakpoint= null;
-						Map<String, Object> attributes = new HashMap<String, Object>(4);
+						Map<String, Object> attributes = new HashMap<>(4);
 						BreakpointUtils.addRunToLineAttributes(attributes);
 						breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
 						errorMessage = "Unable to locate debug target";  //$NON-NLS-1$

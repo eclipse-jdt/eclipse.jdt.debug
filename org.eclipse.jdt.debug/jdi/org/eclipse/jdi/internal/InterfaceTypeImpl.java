@@ -104,7 +104,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	@Override
 	public List<ClassType> implementors() {
 		// Note that this information should not be cached.
-		List<ClassType> implementors = new ArrayList<ClassType>();
+		List<ClassType> implementors = new ArrayList<>();
 		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			ReferenceType refType = itr.next();
@@ -129,7 +129,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	@Override
 	public List<InterfaceType> subinterfaces() {
 		// Note that this information should not be cached.
-		List<InterfaceType> implementors = new ArrayList<InterfaceType>();
+		List<InterfaceType> implementors = new ArrayList<>();
 		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {

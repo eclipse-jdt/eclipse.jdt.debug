@@ -59,7 +59,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Cache of classpath entries per VM install. Cleared when a VM changes.
 	 */
-	private static Map<IVMInstall, IClasspathEntry[]> fgClasspathEntries = new HashMap<IVMInstall, IClasspathEntry[]>(10);
+	private static Map<IVMInstall, IClasspathEntry[]> fgClasspathEntries = new HashMap<>(10);
 
 	/**
 	 * Variable to return an empty array of <code>IAccessRule</code>s
@@ -69,7 +69,7 @@ public class JREContainer implements IClasspathContainer {
 	/**
 	 * Map of {IVMInstall -> Map of {{IExeuctionEnvironment, IAccessRule[][]} -> {IClasspathEntry[]}}
 	 */
-	private static Map<RuleKey, RuleEntry> fgClasspathEntriesWithRules = new HashMap<RuleKey, RuleEntry>(10);
+	private static Map<RuleKey, RuleEntry> fgClasspathEntriesWithRules = new HashMap<>(10);
 
 	/**
 	 * A single key entry for the cache of access rules and classpath entries
@@ -236,7 +236,7 @@ public class JREContainer implements IClasspathContainer {
 				if(obj instanceof IVMInstall) {
 					IVMInstall install = (IVMInstall) obj;
 					RuleKey key = null;
-					ArrayList<RuleKey> list = new ArrayList<RuleKey>();
+					ArrayList<RuleKey> list = new ArrayList<>();
 					for(Iterator<RuleKey> iter = fgClasspathEntriesWithRules.keySet().iterator(); iter.hasNext();) {
 						key  = iter.next();
 						if(key.fInstall.equals(install)) {
@@ -313,7 +313,7 @@ public class JREContainer implements IClasspathContainer {
 				return entry.getClasspathEntries();
 			}
 		}
-		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(libs.length);
+		List<IClasspathEntry> entries = new ArrayList<>(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			if (!libs[i].getSystemLibraryPath().isEmpty()) {
 				IPath sourcePath = libs[i].getSystemLibrarySourcePath();
@@ -344,7 +344,7 @@ public class JREContainer implements IClasspathContainer {
 
 	private static IClasspathAttribute[] buildClasspathAttributes(final IVMInstall vm, final LibraryLocation lib, final boolean overrideJavaDoc) {
 
-		List<IClasspathAttribute> classpathAttributes = new LinkedList<IClasspathAttribute>();
+		List<IClasspathAttribute> classpathAttributes = new LinkedList<>();
 		// process the javadoc location
 		URL javadocLocation = lib.getJavadocLocation();
 		if (overrideJavaDoc && javadocLocation == null) {

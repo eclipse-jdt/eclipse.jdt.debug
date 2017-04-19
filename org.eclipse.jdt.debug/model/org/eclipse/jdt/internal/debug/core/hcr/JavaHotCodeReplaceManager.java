@@ -104,8 +104,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	/**
 	 * The lists of hot swap targets which support HCR and those which don't
 	 */
-	private ArrayList<JDIDebugTarget> fHotSwapTargets = new ArrayList<JDIDebugTarget>(1);
-	private ArrayList<JDIDebugTarget> fNoHotSwapTargets = new ArrayList<JDIDebugTarget>(1);
+	private ArrayList<JDIDebugTarget> fHotSwapTargets = new ArrayList<>(1);
+	private ArrayList<JDIDebugTarget> fNoHotSwapTargets = new ArrayList<>(1);
 
 	/**
 	 * A mapping of the last time projects were built.
@@ -114,13 +114,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * <li>value: build date (ProjectBuildTime)</li>
 	 * </ol>
 	 */
-	private Map<IProject, ProjectBuildTime> fProjectBuildTimes = new HashMap<IProject, ProjectBuildTime>();
+	private Map<IProject, ProjectBuildTime> fProjectBuildTimes = new HashMap<>();
 	private static Date fStartupDate = new Date();
 
 	/**
 	 * Cache of compilation unit deltas renewed on each HCR attempt.
 	 */
-	private Map<ICompilationUnit, CompilationUnitDelta> fDeltaCache = new HashMap<ICompilationUnit, CompilationUnitDelta>();
+	private Map<ICompilationUnit, CompilationUnitDelta> fDeltaCache = new HashMap<>();
 
 	/**
 	 * Utility object used for tracking build times of projects. The HCR manager
@@ -259,7 +259,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		}
 		Object source = event.getSource();
 		if (source instanceof IProject) {
-			List<IProject> list = new ArrayList<IProject>();
+			List<IProject> list = new ArrayList<>();
 			list.add((IProject) source);
 			return list;
 		} else if (source instanceof IWorkspace) {
@@ -377,8 +377,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				// Make a local copy of the resources/names to swap so we can
 				// filter
 				// unloaded types on a per-target basis.
-				List<IResource> resourcesToReplace = new ArrayList<IResource>(resources);
-				List<String> qualifiedNamesToReplace = new ArrayList<String>(qualifiedNames);
+				List<IResource> resourcesToReplace = new ArrayList<>(resources);
+				List<String> qualifiedNamesToReplace = new ArrayList<>(qualifiedNames);
 				filterUnloadedTypes(target, resourcesToReplace,
 						qualifiedNamesToReplace);
 
@@ -407,7 +407,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getHotSwapTargets() {
-		return new ArrayList<JDIDebugTarget>(fHotSwapTargets);
+		return new ArrayList<>(fHotSwapTargets);
 	}
 
 	/**
@@ -415,7 +415,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 * code replace.
 	 */
 	protected synchronized List<JDIDebugTarget> getNoHotSwapTargets() {
-		return new ArrayList<JDIDebugTarget>(fNoHotSwapTargets);
+		return new ArrayList<>(fNoHotSwapTargets);
 	}
 
 	/**
@@ -467,8 +467,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			}
 			// Make a local copy of the resources/names to swap so we can filter
 			// unloaded types on a per-target basis.
-			List<IResource> resourcesToReplace = new ArrayList<IResource>(resources);
-			List<String> qualifiedNamesToReplace = new ArrayList<String>(qualifiedNames);
+			List<IResource> resourcesToReplace = new ArrayList<>(resources);
+			List<String> qualifiedNamesToReplace = new ArrayList<>(qualifiedNames);
 			filterUnloadedTypes(target, resourcesToReplace,
 					qualifiedNamesToReplace);
 			if (qualifiedNamesToReplace.isEmpty()) {
@@ -476,7 +476,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				continue;
 			}
 
-			List<IThread> poppedThreads = new ArrayList<IThread>();
+			List<IThread> poppedThreads = new ArrayList<>();
 			target.setIsPerformingHotCodeReplace(true);
 			try {
 				boolean framesPopped = false;
@@ -720,7 +720,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	 */
 	private Map<ReferenceType, byte[]> getTypesToBytes(JDIDebugTarget target, List<IResource> resources,
 			List<String> qualifiedNames) {
-		Map<ReferenceType, byte[]> typesToBytes = new HashMap<ReferenceType, byte[]>(resources.size());
+		Map<ReferenceType, byte[]> typesToBytes = new HashMap<>(resources.size());
 		Iterator<IResource> resourceIter = resources.iterator();
 		Iterator<String> nameIter = qualifiedNames.iterator();
 		IResource resource;
@@ -885,7 +885,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			List<String> replacedClassNames) throws DebugException {
 		JDIThread thread = null;
 		JDIStackFrame affectedFrame = null;
-		List<JDIStackFrame> popFrames = new ArrayList<JDIStackFrame>();
+		List<JDIStackFrame> popFrames = new ArrayList<>();
 		int numThreads = threads.length;
 		IResource[] resources = new IResource[resourceList.size()];
 		resourceList.toArray(resources);
@@ -1259,8 +1259,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 		 * Resets the file collection to empty
 		 */
 		public void reset() {
-			fFiles = new ArrayList<IResource>();
-			fNames = new ArrayList<String>();
+			fFiles = new ArrayList<>();
+			fNames = new ArrayList<>();
 		}
 
 		/**

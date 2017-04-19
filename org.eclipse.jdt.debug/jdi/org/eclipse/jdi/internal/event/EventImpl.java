@@ -211,7 +211,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 			return;
 
 		java.lang.reflect.Field[] fields = EventImpl.class.getDeclaredFields();
-		fEventKindMap = new HashMap<Integer, String>();
+		fEventKindMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0

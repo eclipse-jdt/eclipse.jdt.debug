@@ -354,7 +354,7 @@ public class RuntimeClasspathViewer implements IClasspathViewer {
 	 */
 	public ISelection getSelectedEntries() {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
-		List<IClasspathEntry> entries= new ArrayList<IClasspathEntry>(selection.size() * 2);
+		List<IClasspathEntry> entries= new ArrayList<>(selection.size() * 2);
 		Iterator<IClasspathEntry> itr= selection.iterator();
 		while (itr.hasNext()) {
 			IClasspathEntry element = itr.next();

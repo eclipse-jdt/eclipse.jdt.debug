@@ -189,7 +189,7 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		List<ILaunchConfiguration> candidateConfigs = Collections.EMPTY_LIST;
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(ctype);
-			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
+			candidateConfigs = new ArrayList<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
 				if (config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "").equals(type.getFullyQualifiedName())) { //$NON-NLS-1$

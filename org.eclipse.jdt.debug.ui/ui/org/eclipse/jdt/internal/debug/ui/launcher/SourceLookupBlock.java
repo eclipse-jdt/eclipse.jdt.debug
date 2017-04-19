@@ -131,7 +131,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 			}
 		});
 
-		List<RuntimeClasspathAction> advancedActions = new ArrayList<RuntimeClasspathAction>(5);
+		List<RuntimeClasspathAction> advancedActions = new ArrayList<>(5);
 
 		GC gc = new GC(parent);
 		gc.setFont(parent.getFont());
@@ -289,7 +289,7 @@ public class SourceLookupBlock extends AbstractJavaClasspathTab implements ILaun
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
 				try {
 					IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
-					List<String> mementos = new ArrayList<String>(entries.length);
+					List<String> mementos = new ArrayList<>(entries.length);
 					for (int i = 0; i < entries.length; i++) {
 						mementos.add(entries[i].getMemento());
 					}

@@ -105,7 +105,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		List<ISourceContainer> containers = new ArrayList<ISourceContainer>();
+		List<ISourceContainer> containers = new ArrayList<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (fProject.getProject().isOpen()) {
 			IClasspathEntry[] entries = fProject.getRawClasspath();
@@ -163,7 +163,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 				if (object instanceof IResource) {
 					if (!getJavaProject().isOnClasspath((IResource)object)) {
 						if (filtered == null) {
-							filtered = new ArrayList<Object>(objects.length);
+							filtered = new ArrayList<>(objects.length);
 							for (int j = 0; j < objects.length; j++) {
 								filtered.add(objects[j]);
 							}

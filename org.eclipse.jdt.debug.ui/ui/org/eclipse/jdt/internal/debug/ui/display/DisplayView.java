@@ -150,8 +150,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	protected IAction fClearDisplayAction;
 	protected DisplayViewAction fContentAssistAction;
 
-	protected Map<String, IAction> fGlobalActions= new HashMap<String, IAction>(4);
-	protected List<String> fSelectionActions= new ArrayList<String>(3);
+	protected Map<String, IAction> fGlobalActions= new HashMap<>(4);
+	protected List<String> fSelectionActions= new ArrayList<>(3);
 
 	protected String fRestoredContents= null;
 	/**

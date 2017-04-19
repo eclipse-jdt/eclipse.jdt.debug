@@ -137,7 +137,7 @@ public class SocketListenConnector implements IVMConnector {
 	 */
 	@Override
 	public List<String> getArgumentOrder() {
-		List<String> list = new ArrayList<String>(1);
+		List<String> list = new ArrayList<>(1);
 		list.add("port"); //$NON-NLS-1$
 		list.add("connectionLimit"); //$NON-NLS-1$
 		return list;

@@ -158,7 +158,7 @@ public class MacInstalledJREs {
 			if (result instanceof Object[]) {
 				Object[] maps = (Object[]) result;
 				smonitor.setWorkRemaining(maps.length);
-				List<VMStandin> jres= new ArrayList<VMStandin>();
+				List<VMStandin> jres= new ArrayList<>();
 				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
 				if(mactype != null) {
 					for (int i = 0; i < maps.length; i++) {

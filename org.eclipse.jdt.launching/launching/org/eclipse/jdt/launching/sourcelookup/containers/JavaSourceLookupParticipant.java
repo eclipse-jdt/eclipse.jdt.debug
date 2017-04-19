@@ -93,7 +93,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
-		fDelegateContainers = new HashMap<ISourceContainer, PackageFragmentRootSourceContainer>();
+		fDelegateContainers = new HashMap<>();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)

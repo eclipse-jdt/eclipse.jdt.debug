@@ -193,15 +193,15 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		if (fEnvironments == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-			fEnvironments = new TreeSet<IExecutionEnvironment>(new Comparator<IExecutionEnvironment>() {
+			fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
 				@Override
 				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
 					return o1.getId().compareTo(o2.getId());
 				}
 			});
-			fRuleParticipants = new LinkedHashSet<AccessRuleParticipant>();
-			fEnvironmentsMap = new HashMap<String, IExecutionEnvironment>(configs.length);
-			fAnalyzers = new HashMap<String, Analyzer>(configs.length);
+			fRuleParticipants = new LinkedHashSet<>();
+			fEnvironmentsMap = new HashMap<>(configs.length);
+			fAnalyzers = new HashMap<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				IConfigurationElement element = configs[i];
 				String name = element.getName();

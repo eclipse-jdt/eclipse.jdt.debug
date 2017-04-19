@@ -114,7 +114,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	 */
 	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
-		List<IJavaElement> refs= new ArrayList<IJavaElement>(nResults);
+		List<IJavaElement> refs= new ArrayList<>(nResults);
 		for (int i= 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference) {
 				refs.add(codeResolveResults[i]);

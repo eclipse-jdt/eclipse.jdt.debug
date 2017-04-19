@@ -276,7 +276,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<StackFrame> frames = new ArrayList<StackFrame>(nrOfElements);
+			List<StackFrame> frames = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				StackFrameImpl frame = StackFrameImpl.readWithLocation(this,
 						this, replyData);
@@ -394,7 +394,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 			DataInputStream replyData = replyPacket.dataInStream();
 
 			int nrOfMonitors = readInt("nr of monitors", replyData); //$NON-NLS-1$
-			List<ObjectReference> result = new ArrayList<ObjectReference>(nrOfMonitors);
+			List<ObjectReference> result = new ArrayList<>(nrOfMonitors);
 			for (int i = 0; i < nrOfMonitors; i++) {
 				result.add(ObjectReferenceImpl.readObjectRefWithTag(this,
 						replyData));
@@ -436,7 +436,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 			DataInputStream replyData = replyPacket.dataInStream();
 
 			int owned = readInt("owned monitors", replyData); //$NON-NLS-1$
-			List<com.sun.jdi.MonitorInfo> result = new ArrayList<com.sun.jdi.MonitorInfo>(owned);
+			List<com.sun.jdi.MonitorInfo> result = new ArrayList<>(owned);
 			ObjectReference monitor = null;
 			int depth = -1;
 			for (int i = 0; i < owned; i++) {
@@ -735,7 +735,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements	ThreadRe
 		}
 
 		Field[] fields = ThreadReferenceImpl.class.getDeclaredFields();
-		fgThreadStatusMap = new HashMap<Integer, String>();
+		fgThreadStatusMap = new HashMap<>();
 		fgSuspendStatusStrings = new String[32]; // Int
 
 		for (Field field : fields) {

@@ -174,7 +174,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		String program= constructProgramString(config);
 
-		List<String> arguments= new ArrayList<String>(12);
+		List<String> arguments= new ArrayList<>(12);
 
 		arguments.add(program);
 

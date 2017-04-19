@@ -104,7 +104,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageMove(IPackageFragment pfragment, IPackageFragmentRoot destination) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(pfragment.getJavaProject().getElementName());
 		String mtname = null;
 		for (int i= 0; i < configs.length; i++) {
@@ -127,7 +127,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageRename(IPackageFragment pfragment, String newname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(pfragment.getJavaProject().getElementName());
 		String mtname;
 		for (int i= 0; i < configs.length; i++) {
@@ -159,7 +159,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForProjectRename(IJavaProject project, String newname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(project.getElementName());
 		LaunchConfigurationProjectMainTypeChange change = null;
 		for (int i= 0; i < configs.length; i++) {
@@ -183,7 +183,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	protected static Change createChangesForTypeChange(IType type, String newfqname, String pname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		String typename = type.getFullyQualifiedName();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(type.getJavaProject().getElementName());
 		String mtname;
@@ -260,7 +260,7 @@ public class JDTDebugRefactoringUtil {
 	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurations(String pname) {
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
-			ArrayList<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+			ArrayList<ILaunchConfiguration> list = new ArrayList<>();
 			String attrib;
 			for(int i = 0; i < configs.length; i++) {
 				attrib = configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);

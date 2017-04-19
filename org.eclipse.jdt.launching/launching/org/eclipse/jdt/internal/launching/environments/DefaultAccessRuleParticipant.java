@@ -37,7 +37,7 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 	/**
 	 * Cache of access rules per environment. Re-use rules between projects.
 	 */
-	private static Map<String, IAccessRule[][]> fgRules = new HashMap<String, IAccessRule[][]>();
+	private static Map<String, IAccessRule[][]> fgRules = new HashMap<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)

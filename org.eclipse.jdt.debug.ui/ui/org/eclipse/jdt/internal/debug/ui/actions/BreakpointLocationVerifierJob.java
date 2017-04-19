@@ -213,7 +213,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	 * Create a new breakpoint at the right position.
 	 */
 	private void createNewBreakpoint(int lineNumber, String typeName) throws CoreException {
-		Map<String, Object> newAttributes = new HashMap<String, Object>(10);
+		Map<String, Object> newAttributes = new HashMap<>(10);
 		int start = -1, end = -1;
 		if (fType != null) {
 			try {

@@ -167,7 +167,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (java_swt == null) {
 			// not started via java_swt -> now we require that the VM supports the "-XstartOnFirstThread" option
 			boolean found = false;
-			ArrayList<String> args = new ArrayList<String>();
+			ArrayList<String> args = new ArrayList<>();
 			for (int i = 0; i < cmdLine.length; i++) {
 				if(XSTART_ON_FIRST_THREAD.equals(cmdLine[i])) {
 					found = true;
@@ -362,7 +362,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		String program= constructProgramString(config);
 
-		List<String> arguments= new ArrayList<String>();
+		List<String> arguments= new ArrayList<>();
 		arguments.add(program);
 
 		// VM args are the first thing after the java program so that users can specify

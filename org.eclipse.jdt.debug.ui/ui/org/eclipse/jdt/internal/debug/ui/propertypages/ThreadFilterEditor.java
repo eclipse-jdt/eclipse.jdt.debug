@@ -299,7 +299,7 @@ public class ThreadFilterEditor {
 				}
 			}
 			if (parent instanceof ILaunchManager) {
-				List<IJavaDebugTarget> children= new ArrayList<IJavaDebugTarget>();
+				List<IJavaDebugTarget> children= new ArrayList<>();
 				ILaunch[] launches= ((ILaunchManager) parent).getLaunches();
 				IDebugTarget[] targets;
 				IJavaDebugTarget target;

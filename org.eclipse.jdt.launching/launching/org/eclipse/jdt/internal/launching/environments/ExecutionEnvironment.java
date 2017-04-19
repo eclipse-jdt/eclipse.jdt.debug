@@ -118,12 +118,12 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	/**
 	 * Set of compatible vm's - just the strictly compatible ones
 	 */
-	private Set<IVMInstall> fStrictlyCompatible = new HashSet<IVMInstall>();
+	private Set<IVMInstall> fStrictlyCompatible = new HashSet<>();
 
 	/**
 	 * All compatible vm's
 	 */
-	private List<IVMInstall> fCompatibleVMs = new ArrayList<IVMInstall>();
+	private List<IVMInstall> fCompatibleVMs = new ArrayList<>();
 
 	/**
 	 * default VM install or <code>null</code> if none
@@ -140,7 +140,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * Caches access rules returned by each participant for a given VM.
 	 * @since 3.3
 	 */
-	private Map<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>> fParticipantMap = new HashMap<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>>();
+	private Map<IVMInstall, Map<IAccessRuleParticipant, IAccessRule[][]>> fParticipantMap = new HashMap<>();
 
 	/**
 	 * Cache of VM -> IAccessRule[][] based on the current state of the participant
@@ -148,7 +148,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * for a specific VM.
 	 * @since 3.3
 	 */
-	private Map<IVMInstall, IAccessRule[][]> fRuleCache = new HashMap<IVMInstall, IAccessRule[][]>();
+	private Map<IVMInstall, IAccessRule[][]> fRuleCache = new HashMap<>();
 
 	/**
 	 * Wild card pattern matching all files
@@ -249,7 +249,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 		if (model != null) {
 			try {
-				List<IJavaProject> updates = new ArrayList<IJavaProject>();
+				List<IJavaProject> updates = new ArrayList<>();
 				IJavaProject[] javaProjects = model.getJavaProjects();
 				IPath path = JavaRuntime.newJREContainerPath(this);
 				for (int i = 0; i < javaProjects.length; i++) {
@@ -320,7 +320,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 		synchronized (this) {
 			Map<IAccessRuleParticipant, IAccessRule[][]> cachedRules = fParticipantMap.get(vm);
 			if (cachedRules == null || !cachedRules.equals(rulesByParticipant)) {
-				ArrayList<List<IAccessRule>> libLists = new ArrayList<List<IAccessRule>>(); // array of lists of access rules
+				ArrayList<List<IAccessRule>> libLists = new ArrayList<>(); // array of lists of access rules
 				for (int i = 0; i < libraries.length; i++) {
 					libLists.add(new ArrayList<IAccessRule>());
 				}
@@ -354,7 +354,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			IAccessRuleParticipant[] participants = EnvironmentsManager.getDefault().getAccessRuleParticipants();
 			if (fRuleParticipant != null) {
 				// ensure environment specific provider is last and not duplicated
-				LinkedHashSet<IAccessRuleParticipant> set = new LinkedHashSet<IAccessRuleParticipant>();
+				LinkedHashSet<IAccessRuleParticipant> set = new LinkedHashSet<>();
 				for (int i = 0; i < participants.length; i++) {
 					set.add(participants[i]);
 				}
@@ -379,7 +379,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @return the mapping of {@link IAccessRuleParticipant} to {@link IAccessRule}s
 	 */
 	private Map<IAccessRuleParticipant, IAccessRule[][]> collectRulesByParticipant(IAccessRuleParticipant[] participants, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
-		Map<IAccessRuleParticipant, IAccessRule[][]> map = new HashMap<IAccessRuleParticipant, IAccessRule[][]>();
+		Map<IAccessRuleParticipant, IAccessRule[][]> map = new HashMap<>();
 		for (int i = 0; i < participants.length; i++) {
 			// TODO: use safe runnable
 			map.put(participants[i], participants[i].getAccessRules(this, vm, libraries, project));
@@ -465,7 +465,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	@Override
 	public IExecutionEnvironment[] getSubEnvironments() {
 		Properties properties = getProfileProperties();
-		Set<IExecutionEnvironment> subenv = new LinkedHashSet<IExecutionEnvironment>();
+		Set<IExecutionEnvironment> subenv = new LinkedHashSet<>();
 		if (properties != null) {
 			@SuppressWarnings("deprecation")
 			String subsets = properties.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
@@ -489,7 +489,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	public Map<String, String> getComplianceOptions() {
 		Properties properties = getProfileProperties();
 		if (properties != null) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			Iterator<?> iterator = properties.keySet().iterator();
 			while (iterator.hasNext()) {
 				String key = (String) iterator.next();

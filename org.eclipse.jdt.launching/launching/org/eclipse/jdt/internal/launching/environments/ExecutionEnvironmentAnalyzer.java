@@ -61,7 +61,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	private static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION, JAVA_VERSION};
 	private static final String FOUNDATION = "foundation"; //$NON-NLS-1$
-	private static final Map<String, String[]> mappings = new HashMap<String, String[]>();
+	private static final Map<String, String[]> mappings = new HashMap<>();
 
 	static {
 		// table where the key is the EE and the value is an array of EEs that it is a super-set of
@@ -79,7 +79,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		ArrayList<CompatibleEnvironment> result = new ArrayList<CompatibleEnvironment>();
+		ArrayList<CompatibleEnvironment> result = new ArrayList<>();
 		if (!(vm instanceof IVMInstall2)) {
 			return new CompatibleEnvironment[0];
 		}
@@ -175,7 +175,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	// first entry in the list is the perfect match
 	private List<String> getTypes(String type) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		result.add(type);
 		String[] values = mappings.get(type);
 		if (values != null) {

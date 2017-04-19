@@ -54,7 +54,7 @@ public class Interpreter {
 	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
 		fInstructions = instructions.getInstructions();
 		fContext = context;
-		fInternalVariables = new HashMap<String, IVariable>();
+		fInternalVariables = new HashMap<>();
 	}
 
 	public void execute() throws CoreException {
@@ -79,7 +79,7 @@ public class Interpreter {
 	}
 
 	private void reset() {
-		fStack = new Stack<Object>();
+		fStack = new Stack<>();
 		fInstructionCounter = 0;
 	}
 
@@ -110,7 +110,7 @@ public class Interpreter {
 	 */
 	private void disableCollection(IJavaObject value) {
 		if (fPermStorage == null) {
-			fPermStorage = new ArrayList<IJavaObject>(5);
+			fPermStorage = new ArrayList<>(5);
 		}
 		try {
 			value.disableCollection();

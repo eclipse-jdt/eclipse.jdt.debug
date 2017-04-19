@@ -381,7 +381,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		});
 
 		if (fConditionHistoryDialogSettings != null) {
-			fLocalConditionHistory= new HashMap<IJavaLineBreakpoint, Stack<String>>();
+			fLocalConditionHistory= new HashMap<>();
 			fConditionHistory= SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 			initializeConditionHistoryDropDown();
 			fConditionHistory.addSelectionListener(new SelectionAdapter() {
@@ -396,7 +396,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 			GridData data= new GridData(GridData.FILL_HORIZONTAL);
 			data.widthHint= 10;
 			fConditionHistory.setLayoutData(data);
-			fLocalConditionHistory= new HashMap<IJavaLineBreakpoint, Stack<String>>(10);
+			fLocalConditionHistory= new HashMap<>(10);
 		}
 
 		fViewer = new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
@@ -694,7 +694,7 @@ public final class JavaBreakpointConditionEditor extends AbstractJavaBreakpointE
 		// Update local history
 		Stack<String> localHistory= fLocalConditionHistory.get(fBreakpoint);
 		if (localHistory == null) {
-			localHistory= new Stack<String>();
+			localHistory= new Stack<>();
 			fLocalConditionHistory.put(fBreakpoint, localHistory);
 		}
 

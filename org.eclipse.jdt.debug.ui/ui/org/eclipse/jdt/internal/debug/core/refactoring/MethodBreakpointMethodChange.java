@@ -50,7 +50,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestMethod);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestMethod);
 		int range[] = getNewLineNumberAndRange(fDestMethod);

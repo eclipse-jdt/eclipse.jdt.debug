@@ -57,7 +57,7 @@ public class WatchpointTypeChange extends WatchpointChange {
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IField destField = fDestType.getField(getFieldName());
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destField);
 		IResource resource = BreakpointUtils.getBreakpointResource(destField);
 		int[] range = getNewLineNumberAndRange(destField);

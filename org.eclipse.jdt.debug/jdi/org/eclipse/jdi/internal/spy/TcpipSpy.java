@@ -51,7 +51,7 @@ public class TcpipSpy extends Thread {
 	private DataOutputStream fDataOut;
 
 	private static VerbosePacketStream out = new VerbosePacketStream(System.out);
-	private static Map<Integer, JdwpConversation> fPackets = new HashMap<Integer, JdwpConversation>();
+	private static Map<Integer, JdwpConversation> fPackets = new HashMap<>();
 
 	private static int fFieldIDSize;
 	private static int fMethodIDSize;

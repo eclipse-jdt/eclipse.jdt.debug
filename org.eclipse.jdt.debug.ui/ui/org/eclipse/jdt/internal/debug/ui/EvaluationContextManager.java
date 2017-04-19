@@ -126,7 +126,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 */
 	private void setContext(IWorkbenchPage page, IJavaStackFrame frame, boolean instOf) {
 		if (fContextsByPage == null) {
-			fContextsByPage = new HashMap<IWorkbenchPage, IJavaStackFrame>();
+			fContextsByPage = new HashMap<>();
 		}
 		fContextsByPage.put(page, frame);
 		System.setProperty(DEBUGGER_ACTIVE, "true"); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class EvaluationContextManager implements IWindowListener, IDebugContextL
 	 * @return IJavaStackFrame
 	 */
 	public static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window) {
-		List<IWorkbenchWindow> alreadyVisited= new ArrayList<IWorkbenchWindow>();
+		List<IWorkbenchWindow> alreadyVisited= new ArrayList<>();
 		if (window == null) {
 			window = fgManager.fActiveWindow;
 		}

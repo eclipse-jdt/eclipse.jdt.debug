@@ -67,7 +67,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	/*
 	 * protected Button fTriggerPointButton; protected Button fTriggerPointButtonActive;
 	 */
-	protected List<String> fErrorMessages= new ArrayList<String>();
+	protected List<String> fErrorMessages= new ArrayList<>();
 	protected String fPrevMessage = null;
 	private AbstractJavaBreakpointEditor fEditor;
 

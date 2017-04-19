@@ -56,7 +56,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(3);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(3);
 
 		// Command
 		StringArgumentImpl strArg = new StringArgumentImpl(

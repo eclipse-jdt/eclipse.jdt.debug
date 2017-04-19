@@ -137,8 +137,8 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	@Override
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
-		List<Object> classpathEntries = new ArrayList<Object>(5);
-		List<IClasspathEntry> expanding = new ArrayList<IClasspathEntry>(5);
+		List<Object> classpathEntries = new ArrayList<>(5);
+		List<IClasspathEntry> expanding = new ArrayList<>(5);
 		expandProject(entry, classpathEntries, expanding);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
@@ -151,7 +151,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			}
 		}
 		// remove bootpath entries - this is a default user classpath
-		List<IRuntimeClasspathEntry> ordered = new ArrayList<IRuntimeClasspathEntry>(runtimeEntries.length);
+		List<IRuntimeClasspathEntry> ordered = new ArrayList<>(runtimeEntries.length);
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			if (runtimeEntries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				ordered.add(runtimeEntries[i]);
@@ -190,7 +190,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		}
 
 		IClasspathEntry[] buildPath = project.getRawClasspath();
-		List<IClasspathEntry> unexpandedPath = new ArrayList<IClasspathEntry>(buildPath.length);
+		List<IClasspathEntry> unexpandedPath = new ArrayList<>(buildPath.length);
 		boolean projectAdded = false;
 		for (int i = 0; i < buildPath.length; i++) {
 			IClasspathEntry classpathEntry = buildPath[i];

@@ -43,7 +43,7 @@ public class MainMethodSearchEngine{
 		private List<IType> fResult;
 
 		public MethodCollector() {
-			fResult = new ArrayList<IType>(200);
+			fResult = new ArrayList<>(200);
 		}
 
 		public List<IType> getResult() {
@@ -115,7 +115,7 @@ public class MainMethodSearchEngine{
 	 */
 	private Set<IType> addSubtypes(List<IType> types, IProgressMonitor monitor, IJavaSearchScope scope) {
 		Iterator<IType> iterator = types.iterator();
-		Set<IType> result = new HashSet<IType>(types.size());
+		Set<IType> result = new HashSet<>(types.size());
 		IType type = null;
 		ITypeHierarchy hierarchy = null;
 		IType[] subtypes = null;

@@ -95,7 +95,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * <li>Field modification (value <code>MODIFICATION_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private HashMap<JDIDebugTarget, Integer> fLastEventTypes = new HashMap<JDIDebugTarget, Integer>(10);
+	private HashMap<JDIDebugTarget, Integer> fLastEventTypes = new HashMap<>(10);
 
 	public JavaWatchpoint() {
 	}

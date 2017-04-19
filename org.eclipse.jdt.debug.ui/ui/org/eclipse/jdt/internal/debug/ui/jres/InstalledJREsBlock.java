@@ -176,7 +176,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	/**
 	 * VMs being displayed
 	 */
-	private List<IVMInstall> fVMs = new ArrayList<IVMInstall>();
+	private List<IVMInstall> fVMs = new ArrayList<>();
 
 	/**
 	 * The main list control
@@ -535,7 +535,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
         IStructuredSelection selection = (IStructuredSelection) fVMList.getSelection();
         Iterator<IVMInstall> it = selection.iterator();
 
-        ArrayList<VMStandin> newEntries = new ArrayList<VMStandin>();
+        ArrayList<VMStandin> newEntries = new ArrayList<>();
         while (it.hasNext()) {
             IVMInstall selectedVM = it.next();
             // duplicate & add VM
@@ -862,15 +862,15 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 
 		// ignore installed locations
-		final Set<File> exstingLocations = new HashSet<File>();
+		final Set<File> exstingLocations = new HashSet<>();
 		for (IVMInstall vm : fVMs) {
 			exstingLocations.add(vm.getInstallLocation());
 		}
 
 		// search
 		final File rootDir = new File(path);
-		final List<File> locations = new ArrayList<File>();
-		final List<IVMInstallType> types = new ArrayList<IVMInstallType>();
+		final List<File> locations = new ArrayList<>();
+		final List<IVMInstallType> types = new ArrayList<>();
 
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			@Override
@@ -939,11 +939,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 * Mac OS location
 	 */
 	private void doMacSearch() {
-		final List<VMStandin> added = new ArrayList<VMStandin>();
+		final List<VMStandin> added = new ArrayList<>();
 		IRunnableWithProgress r = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				Set<String> exists = new HashSet<String>();
+				Set<String> exists = new HashSet<>();
 				for (IVMInstall vm : fVMs) {
 					exists.add(vm.getId());
 				}
@@ -1014,7 +1014,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		if (names == null) {
 			return;
 		}
-		List<File> subDirs = new ArrayList<File>();
+		List<File> subDirs = new ArrayList<>();
 		for (int i = 0; i < names.length; i++) {
 			if (monitor.isCanceled()) {
 				return;
@@ -1157,7 +1157,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List<VMStandin> standins = new ArrayList<VMStandin>();
+		List<VMStandin> standins = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];

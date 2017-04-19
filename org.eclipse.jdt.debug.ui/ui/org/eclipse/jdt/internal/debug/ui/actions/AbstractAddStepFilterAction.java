@@ -64,8 +64,8 @@ public abstract class AbstractAddStepFilterAction extends ObjectActionDelegate {
 		IPreferenceStore prefStore = getPreferenceStore();
 		String[] activeArray = JavaDebugOptionsManager.parseList(prefStore.getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
 		String[] inactiveArray = JavaDebugOptionsManager.parseList(prefStore.getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST));
-		List<String> activeList = new ArrayList<String>(Arrays.asList(activeArray));
-		List<String> inactiveList = new ArrayList<String>(Arrays.asList(inactiveArray));
+		List<String> activeList = new ArrayList<>(Arrays.asList(activeArray));
+		List<String> inactiveList = new ArrayList<>(Arrays.asList(inactiveArray));
 
 		// If the pattern is already in the active list, there's nothing to do
 		// (it can't/shouldn't be in the inactive list)

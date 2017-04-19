@@ -178,8 +178,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			EXPIRED, ENABLED };
 
 	public JavaBreakpoint() {
-		fRequestsByTarget = new HashMap<JDIDebugTarget, List<EventRequest>>(1);
-		fFilteredThreadsByTarget = new HashMap<JDIDebugTarget, IJavaThread>(1);
+		fRequestsByTarget = new HashMap<>(1);
+		fFilteredThreadsByTarget = new HashMap<>(1);
 	}
 
 	/*
@@ -266,7 +266,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected ArrayList<EventRequest> getRequests(JDIDebugTarget target) {
 		ArrayList<EventRequest> list = (ArrayList<EventRequest>) fRequestsByTarget.get(target);
 		if (list == null) {
-			list = new ArrayList<EventRequest>(2);
+			list = new ArrayList<>(2);
 		}
 		return list;
 	}
@@ -780,7 +780,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// removing was previously done is a workspace runnable, but that is
 		// not possible since it can be a resource callback (marker deletion)
 		// that causes a breakpoint to be removed
-		ArrayList<EventRequest> requests = new ArrayList<EventRequest>(getRequests(target));
+		ArrayList<EventRequest> requests = new ArrayList<>(getRequests(target));
 		// Iterate over a copy of the requests since this list of requests
 		// can be changed in other threads which would cause an
 		// ConcurrentModificationException
@@ -937,15 +937,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	private void configureAtStartup() throws CoreException {
 		List<String> attributes = null;
-		List<Object> values = new ArrayList<Object>(3);
+		List<Object> values = new ArrayList<>(3);
 		if (isInstalled()) {
-			attributes = new ArrayList<String>(3);
+			attributes = new ArrayList<>(3);
 			attributes.add(INSTALL_COUNT);
 			values.add(new Integer(0));
 		}
 		if (isExpired()) {
 			if (attributes == null) {
-				attributes = new ArrayList<String>(3);
+				attributes = new ArrayList<>(3);
 			}
 			// if breakpoint was auto-disabled, re-enable it
 			attributes.add(EXPIRED);
@@ -959,7 +959,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		String[] listeners = readBreakpointListeners();
 		if (listeners.length > 0) {
-			fBreakpointListenerIds = new ArrayList<String>();
+			fBreakpointListenerIds = new ArrayList<>();
 			for (String listener : listeners) {
 				fBreakpointListenerIds.add(listener);
 			}
@@ -1109,7 +1109,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void setInstalledIn(IJavaDebugTarget target, boolean installed) {
 		if (installed) {
 			if (fInstalledTargets == null) {
-				fInstalledTargets = new HashSet<IJavaDebugTarget>();
+				fInstalledTargets = new HashSet<>();
 			}
 			fInstalledTargets.add(target);
 		} else {
@@ -1282,7 +1282,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	@Override
 	public void addInstanceFilter(IJavaObject object) throws CoreException {
 		if (fInstanceFilters == null) {
-			fInstanceFilters = new ArrayList<IJavaObject>();
+			fInstanceFilters = new ArrayList<>();
 		}
 		if (!fInstanceFilters.contains(object)) {
 			fInstanceFilters.add(object);
@@ -1422,7 +1422,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public synchronized void addBreakpointListener(String identifier)
 			throws CoreException {
 		if (fBreakpointListenerIds == null) {
-			fBreakpointListenerIds = new ArrayList<String>();
+			fBreakpointListenerIds = new ArrayList<>();
 		}
 		if (!fBreakpointListenerIds.contains(identifier)) {
 			fBreakpointListenerIds.add(identifier);

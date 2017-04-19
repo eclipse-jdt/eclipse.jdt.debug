@@ -308,7 +308,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				}
 
 				Method method = getUnderlyingMethod();
-				fVariables = new ArrayList<IJavaVariable>();
+				fVariables = new ArrayList<>();
 				// #isStatic() does not claim to throw any exceptions - so it is
 				// not try/catch coded
 				if (method.isStatic()) {
@@ -430,7 +430,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// generic signature
 			String[] parameterTypes = Signature
 					.getParameterTypes(genericSignature);
-			List<String> argumentTypeNames = new ArrayList<String>();
+			List<String> argumentTypeNames = new ArrayList<>();
 			for (String parameterType : parameterTypes) {
 				argumentTypeNames.add(Signature.toString(parameterType)
 						.replace('/', '.'));
@@ -762,7 +762,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return null;
 		}
 		IVariable[] variables = getVariables();
-		List<IJavaVariable> possibleMatches = new ArrayList<IJavaVariable>();
+		List<IJavaVariable> possibleMatches = new ArrayList<>();
 		IJavaVariable thisVariable = null;
 		for (IVariable variable : variables) {
 			IJavaVariable var = (IJavaVariable) variable;

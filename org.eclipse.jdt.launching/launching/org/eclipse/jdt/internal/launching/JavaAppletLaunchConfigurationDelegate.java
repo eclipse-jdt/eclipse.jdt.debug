@@ -49,7 +49,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 	 * used to initiate the applet launch.  This is used to delete the HTML
 	 * file when the launch terminates.
 	 */
-	private static Map<ILaunch, File> fgLaunchToFileMap = new HashMap<ILaunch, File>();
+	private static Map<ILaunch, File> fgLaunchToFileMap = new HashMap<>();
 
 	/**
 	 * Used to map temporary file to launch object.

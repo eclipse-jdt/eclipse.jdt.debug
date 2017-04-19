@@ -931,7 +931,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 
 	private void nestLabel(String label) {
 		if (fLabels == null) {
-			fLabels = new ArrayList<String>();
+			fLabels = new ArrayList<>();
 		}
 		fLabels.add(label);
 	}

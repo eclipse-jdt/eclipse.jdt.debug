@@ -71,7 +71,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 	// UI widgets
 	private Button fAllowTerminateButton;
 	private Map<String, Connector.Argument> fArgumentMap;
-	private Map<String, FieldEditor> fFieldEditorMap = new HashMap<String, FieldEditor>();
+	private Map<String, FieldEditor> fFieldEditorMap = new HashMap<>();
 	private Composite fArgumentComposite;
 	private Combo fConnectorCombo;
 
@@ -257,7 +257,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, getSelectedConnector().getIdentifier());
 		mapResources(config);
-		Map<String, String> attrMap = new HashMap<String, String>(fFieldEditorMap.size());
+		Map<String, String> attrMap = new HashMap<>(fFieldEditorMap.size());
 		Iterator<String> keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = keys.next();

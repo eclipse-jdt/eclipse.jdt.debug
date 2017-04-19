@@ -249,7 +249,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-		List<String> bootEntries = new ArrayList<String>(entries.length);
+		List<String> bootEntries = new ArrayList<>(entries.length);
 		boolean empty = true;
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
@@ -294,7 +294,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		String[][] bootpathInfo = new String[3][];
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
-		List<IRuntimeClasspathEntry> bootEntriesPrepend = new ArrayList<IRuntimeClasspathEntry>();
+		List<IRuntimeClasspathEntry> bootEntriesPrepend = new ArrayList<>();
 		int index = 0;
 		IRuntimeClasspathEntry jreEntry = null;
 		while (jreEntry == null && index < entries.length) {
@@ -321,7 +321,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 		if (jreEntry != null) {
-			List<IRuntimeClasspathEntry> bootEntriesAppend = new ArrayList<IRuntimeClasspathEntry>();
+			List<IRuntimeClasspathEntry> bootEntriesAppend = new ArrayList<>();
 			for (; index < entries.length; index++) {
 				IRuntimeClasspathEntry entry = entries[index];
 				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
@@ -410,8 +410,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-		List<String> userEntries = new ArrayList<String>(entries.length);
-		Set<String> set = new HashSet<String>(entries.length);
+		List<String> userEntries = new ArrayList<>(entries.length);
+		Set<String> set = new HashSet<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entries[i].getLocation();
@@ -556,7 +556,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 */
 	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		Map<String, String> map = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP,(Map<String, String>) null);
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		if(map != null) {
 			attributes.putAll(map);
 		}
@@ -827,7 +827,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 							if (isStopInMain(configuration)) {
 								String mainType = getMainTypeName(configuration);
 								if (mainType != null) {
-									Map<String, Object> map = new HashMap<String, Object>();
+									Map<String, Object> map = new HashMap<>();
 									map
 											.put(
 													IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN,

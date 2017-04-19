@@ -47,7 +47,7 @@ public class SignatureExt {
 					throw new IllegalArgumentException();
 				i++; // trailing '>'
 			}
-			ArrayList<char[]> superList = new ArrayList<char[]>();
+			ArrayList<char[]> superList = new ArrayList<>();
 			while (i < length) {
 				int superStart = i;
 				i = Util.scanTypeSignature(typeSignature, i);

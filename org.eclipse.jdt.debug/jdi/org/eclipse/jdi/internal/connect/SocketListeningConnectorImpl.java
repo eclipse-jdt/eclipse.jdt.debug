@@ -47,7 +47,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(1);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(1);
 
 		// Port
 		IntegerArgumentImpl intArg = new IntegerArgumentImpl(

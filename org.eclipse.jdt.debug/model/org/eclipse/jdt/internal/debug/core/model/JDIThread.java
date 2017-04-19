@@ -176,7 +176,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * collection if the thread is not suspended or was not suspended by any
 	 * breakpoint(s).
 	 */
-	private List<IBreakpoint> fCurrentBreakpoints = new ArrayList<IBreakpoint>(2);
+	private List<IBreakpoint> fCurrentBreakpoints = new ArrayList<>(2);
 	/**
 	 * Non-null when this thread is executing an evaluation runnable. An
 	 * evaluation may involve a series of method invocations.
@@ -327,7 +327,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *                initialized
 	 */
 	protected void initialize() throws ObjectCollectedException {
-		fStackFrames = new ArrayList<IJavaStackFrame>();
+		fStackFrames = new ArrayList<>();
 		// system thread
 		try {
 			determineIfSystemThread();
@@ -3492,7 +3492,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		public ThreadJob(JDIThread thread) {
 			super(JDIDebugModelMessages.JDIThread_39);
 			fJDIThread = thread;
-			fRunnables = new Vector<Runnable>(5);
+			fRunnables = new Vector<>(5);
 			setSystem(true);
 		}
 

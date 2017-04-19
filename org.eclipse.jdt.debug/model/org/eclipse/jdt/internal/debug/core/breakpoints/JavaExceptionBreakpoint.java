@@ -584,7 +584,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 		if (list == null) {
 			return ""; //$NON-NLS-1$
 		}
-		Set<String> set = new HashSet<String>(list.length);
+		Set<String> set = new HashSet<>(list.length);
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < list.length; i++) {
 			if (i > 0 && i < list.length) {
@@ -607,7 +607,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	 * Parses the comma separated String into an array of Strings
 	 */
 	protected String[] parseList(String listString) {
-		List<String> list = new ArrayList<String>(10);
+		List<String> list = new ArrayList<>(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

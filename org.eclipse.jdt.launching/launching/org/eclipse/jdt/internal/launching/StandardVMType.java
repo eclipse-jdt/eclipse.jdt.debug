@@ -101,7 +101,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Map of the install path for which we were unable to generate
 	 * the library info during this session.
 	 */
-	private static Map<String, LibraryInfo> fgFailedInstallPath = new HashMap<String, LibraryInfo>();
+	private static Map<String, LibraryInfo> fgFailedInstallPath = new HashMap<>();
 
 	/**
 	 * Cache for default library locations. See {@link #getDefaultLibraryLocations(File)}
@@ -110,7 +110,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 *
 	 * @since 3.7
 	 */
-	private static Map<String, List<LibraryLocation>> fgDefaultLibLocs = new HashMap<String, List<LibraryLocation>>();
+	private static Map<String, List<LibraryLocation>> fgDefaultLibLocs = new HashMap<>();
 
 	/**
 	 * The list of locations in which to look for the java executable in candidate
@@ -160,7 +160,7 @@ public class StandardVMType extends AbstractVMInstallType {
 					return e1.getNamespaceIdentifier().compareTo(e2.getNamespaceIdentifier());
 				}
 			});
-			List<ILibraryLocationResolver> resolvers = new ArrayList<ILibraryLocationResolver>(configs.length);
+			List<ILibraryLocationResolver> resolvers = new ArrayList<>(configs.length);
 			for( int i = 0; i < configs.length; i++ ) {
 				IConfigurationElement e = configs[i];
 				try {
@@ -421,11 +421,11 @@ public class StandardVMType extends AbstractVMInstallType {
 			}
 
 			// Add all endorsed libraries - they are first, as they replace
-			allLibs = new ArrayList<LibraryLocation>(gatherAllLibraries(libInfo.getEndorsedDirs()));
+			allLibs = new ArrayList<>(gatherAllLibraries(libInfo.getEndorsedDirs()));
 
 			// next is the boot path libraries
 			String[] bootpath = libInfo.getBootpath();
-			List<LibraryLocation> boot = new ArrayList<LibraryLocation>(bootpath.length);
+			List<LibraryLocation> boot = new ArrayList<>(bootpath.length);
 			URL url = getDefaultJavadocLocation(installLocation);
 			for (int i = 0; i < bootpath.length; i++) {
 				IPath path = new Path(bootpath[i]);
@@ -444,7 +444,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			allLibs.addAll(gatherAllLibraries(libInfo.getExtensionDirs()));
 
 			//remove duplicates
-			HashSet<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<>();
 			LibraryLocation lib = null;
 			for(ListIterator<LibraryLocation> liter = allLibs.listIterator(); liter.hasNext();) {
 				lib = liter.next();
@@ -496,7 +496,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @return List of all zip's and jars
 	 */
 	public static List<LibraryLocation> gatherAllLibraries(String[] dirPaths) {
-		List<LibraryLocation> libraries = new ArrayList<LibraryLocation>();
+		List<LibraryLocation> libraries = new ArrayList<>();
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
 			if (extDir.isDirectory()) {
@@ -707,7 +707,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	}
 
 	protected String[] parsePaths(String paths) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int pos = 0;
 		int index = paths.indexOf(File.pathSeparatorChar, pos);
 		while (index > 0) {

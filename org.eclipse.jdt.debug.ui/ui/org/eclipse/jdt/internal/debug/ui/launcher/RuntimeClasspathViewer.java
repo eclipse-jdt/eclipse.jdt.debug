@@ -47,7 +47,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/**
 	 * The runtime classpath entries displayed in this viewer
 	 */
-	protected List<IRuntimeClasspathEntry> fEntries = new ArrayList<IRuntimeClasspathEntry>();
+	protected List<IRuntimeClasspathEntry> fEntries = new ArrayList<>();
 
 	class ContentProvider implements IStructuredContentProvider {
 

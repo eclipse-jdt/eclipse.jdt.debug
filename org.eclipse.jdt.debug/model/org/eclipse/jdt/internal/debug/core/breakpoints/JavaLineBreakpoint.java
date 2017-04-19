@@ -95,25 +95,25 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 	/**
 	 * Maps suspended threads to the suspend event that suspended them
 	 */
-	private Map<IJavaThread, ICompiledExpression> fSuspendEvents = new HashMap<IJavaThread, ICompiledExpression>();
+	private Map<IJavaThread, ICompiledExpression> fSuspendEvents = new HashMap<>();
 	/**
 	 * The map of cached compiled expressions (ICompiledExpression) for this
 	 * breakpoint, keyed by thread. This value must be cleared every time the
 	 * breakpoint is added to a target.
 	 */
-	private Map<IJavaThread, ICompiledExpression> fCompiledExpressions = new HashMap<IJavaThread, ICompiledExpression>();
+	private Map<IJavaThread, ICompiledExpression> fCompiledExpressions = new HashMap<>();
 
 	/**
 	 * Cache of projects for stack frames to avoid repetitive project resolution
 	 * on conditional breakpoints.
 	 */
-	private Map<IJavaStackFrame, IJavaProject> fProjectsByFrame = new HashMap<IJavaStackFrame, IJavaProject>();
+	private Map<IJavaStackFrame, IJavaProject> fProjectsByFrame = new HashMap<>();
 
 	/**
 	 * The map of the result value of the condition (IValue) for this
 	 * breakpoint, keyed by debug target.
 	 */
-	private Map<IDebugTarget, IValue> fConditionValues = new HashMap<IDebugTarget, IValue>();
+	private Map<IDebugTarget, IValue> fConditionValues = new HashMap<>();
 
 	/**
 	 * Status code indicating that a request to create a breakpoint in a type
@@ -201,7 +201,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 
 	private void removeCachedThreads(Map<IJavaThread, ICompiledExpression> map, JDIDebugTarget target) {
 		Set<IJavaThread> threads = map.keySet();
-		List<IJavaThread> threadsToRemove = new ArrayList<IJavaThread>();
+		List<IJavaThread> threadsToRemove = new ArrayList<>();
 		Iterator<IJavaThread> iter = threads.iterator();
 		JDIThread thread;
 		while (iter.hasNext()) {
@@ -226,7 +226,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements
 		// clean up cached projects for stack frames
 		synchronized (fProjectsByFrame) {
 			Set<IJavaStackFrame> frames = fProjectsByFrame.keySet();
-			List<IJavaStackFrame> framesToRemove = new ArrayList<IJavaStackFrame>();
+			List<IJavaStackFrame> framesToRemove = new ArrayList<>();
 			Iterator<IJavaStackFrame> iter = frames.iterator();
 			JDIStackFrame frame;
 			while (iter.hasNext()) {

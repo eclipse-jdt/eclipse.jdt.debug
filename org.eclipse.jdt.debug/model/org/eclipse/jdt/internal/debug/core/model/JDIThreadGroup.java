@@ -56,7 +56,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	public synchronized IJavaThread[] getThreads() throws DebugException {
 		try {
 			List<ThreadReference> threads = fGroup.threads();
-			List<JDIThread> modelThreads = new ArrayList<JDIThread>(threads.size());
+			List<JDIThread> modelThreads = new ArrayList<>(threads.size());
 			Iterator<ThreadReference> iterator = threads.iterator();
 			while (iterator.hasNext()) {
 				ThreadReference ref = iterator.next();
@@ -103,7 +103,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	public IJavaThreadGroup[] getThreadGroups() throws DebugException {
 		try {
 			List<ThreadGroupReference> groups = fGroup.threadGroups();
-			List<JDIThreadGroup> modelGroups = new ArrayList<JDIThreadGroup>(groups.size());
+			List<JDIThreadGroup> modelGroups = new ArrayList<>(groups.size());
 			Iterator<ThreadGroupReference> iterator = groups.iterator();
 			while (iterator.hasNext()) {
 				ThreadGroupReference ref = iterator

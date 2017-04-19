@@ -70,7 +70,7 @@ public class VMCapabilitiesPropertyPage extends PropertyPage {
 	 * Constructor
 	 */
 	public VMCapabilitiesPropertyPage() {
-		fExpandedComps = new ArrayList<ExpandableComposite>();
+		fExpandedComps = new ArrayList<>();
 	}
 
 	/* (non-Javadoc)

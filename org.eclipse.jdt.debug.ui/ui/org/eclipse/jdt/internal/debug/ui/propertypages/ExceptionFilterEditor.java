@@ -178,8 +178,8 @@ public class ExceptionFilterEditor {
 
 	protected void doStore() {
 		Object[] filters = fFilterContentProvider.getElements(null);
-		List<String> inclusionFilters = new ArrayList<String>(filters.length);
-		List<String> exclusionFilters = new ArrayList<String>(filters.length);
+		List<String> inclusionFilters = new ArrayList<>(filters.length);
+		List<String> exclusionFilters = new ArrayList<>(filters.length);
 		for (int i = 0; i < filters.length; i++) {
 			Filter filter = (Filter) filters[i];
 			String name = filter.getName();
@@ -512,7 +512,7 @@ public class ExceptionFilterEditor {
 				eFilters = new String[] {
 				};
 			}
-			fFilters = new ArrayList<Filter>();
+			fFilters = new ArrayList<>();
 			populateFilters(iFilters, true);
 			populateFilters(eFilters, false);
 

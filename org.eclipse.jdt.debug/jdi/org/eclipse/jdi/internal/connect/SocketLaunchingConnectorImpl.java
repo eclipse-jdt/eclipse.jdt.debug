@@ -68,7 +68,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(6);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(6);
 
 		// Home
 		StringArgumentImpl strArg = new StringArgumentImpl(

@@ -173,7 +173,7 @@ public class PListParser {
 	 * @throws CoreException if an error occurs
 	 */
 	private Object[] parseArray(Element root) throws CoreException {
-		List<Object> collection = new ArrayList<Object>();
+		List<Object> collection = new ArrayList<>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -199,7 +199,7 @@ public class PListParser {
 	 * @throws CoreException if an error occurs
 	 */
 	private Map<String, Object> parseDictionary(Element root) throws CoreException {
-		Map<String, Object> dict = new HashMap<String, Object>();
+		Map<String, Object> dict = new HashMap<>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;

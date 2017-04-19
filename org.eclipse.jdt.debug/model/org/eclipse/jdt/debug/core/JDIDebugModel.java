@@ -337,7 +337,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaLineBreakpoint(resource, typeName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
@@ -398,7 +398,7 @@ public class JDIDebugModel {
 			int lineNumber, int charStart, int charEnd, int hitCount,
 			boolean register, Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaPatternBreakpoint(resource, sourceName, pattern,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -482,7 +482,7 @@ public class JDIDebugModel {
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaStratumLineBreakpoint(resource, stratum, sourceName,
 				sourcePath, classNamePattern, lineNumber, charStart, charEnd,
 				hitCount, register, attributes);
@@ -538,7 +538,7 @@ public class JDIDebugModel {
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaTargetPatternBreakpoint(resource, sourceName,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -585,7 +585,7 @@ public class JDIDebugModel {
 			boolean uncaught, boolean checked, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaExceptionBreakpoint(resource, exceptionName, caught,
 				uncaught, checked, register, attributes);
 	}
@@ -647,7 +647,7 @@ public class JDIDebugModel {
 			int charEnd, int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
@@ -717,7 +717,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaMethodBreakpoint(resource, typePattern, methodName,
 				methodSignature, entry, exit, nativeOnly, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
@@ -776,7 +776,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaMethodEntryBreakpoint(resource, typeName, methodName,
 				methodSignature, lineNumber, charStart, charEnd, hitCount,
 				register, attributes);
@@ -965,7 +965,7 @@ public class JDIDebugModel {
 			IResource resource, String typeName, int memberType, int charStart,
 			int charEnd, boolean register, Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaClassPrepareBreakpoint(resource, typeName, memberType,
 				charStart, charEnd, register, attributes);
 	}

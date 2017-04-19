@@ -353,7 +353,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		prepareBreakpointsSearchScope();
 		setBreakpoints(new ArrayList<IBreakpoint>(5));
 		setThreadList(new ArrayList<JDIThread>(5));
-		fGroups = new ArrayList<JDIThreadGroup>(5);
+		fGroups = new ArrayList<>(5);
 		setOutOfSynchTypes(new ArrayList<String>(0));
 		setHCROccurred(false);
 		initialize();
@@ -439,7 +439,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		List<JDIThread> threadList;
 		synchronized (fThreads) {
 			//TODO investigate making fThreads be a synchronized collection, to remove all this copying
-			threadList = new ArrayList<JDIThread>(fThreads);
+			threadList = new ArrayList<>(fThreads);
 		}
 		return threadList.iterator();
 	}
@@ -927,7 +927,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Sets the list of out of synch types to the given list.
 	 */
 	private void setOutOfSynchTypes(List<String> qualifiedNames) {
-		fOutOfSynchTypes = new HashSet<String>();
+		fOutOfSynchTypes = new HashSet<>();
 		fOutOfSynchTypes.addAll(qualifiedNames);
 	}
 
@@ -1905,7 +1905,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		List<IBreakpoint> list = new ArrayList<>(getBreakpoints());
 		for(IBreakpoint bp : list) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
@@ -1922,7 +1922,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * target.
 	 */
 	protected void reinstallAllBreakpoints() {
-		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		List<IBreakpoint> list = new ArrayList<>(getBreakpoints());
 		for(IBreakpoint bp : list) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
@@ -2788,7 +2788,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project) {
 		if (fEngines == null) {
-			fEngines = new HashMap<IJavaProject, IAstEvaluationEngine>(2);
+			fEngines = new HashMap<>(2);
 		}
 		IAstEvaluationEngine engine = fEngines
 				.get(project);
@@ -2901,7 +2901,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		if (!isAvailable()) {
 			return;
 		}
-		List<IBreakpoint> list = new ArrayList<IBreakpoint>(getBreakpoints());
+		List<IBreakpoint> list = new ArrayList<>(getBreakpoints());
 		for(IBreakpoint bp : list) {
 			JavaBreakpoint breakpoint = (JavaBreakpoint) bp;
 			try {
@@ -3000,7 +3000,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				return new IJavaThreadGroup[0];
 			}
 			List<ThreadGroupReference> groups = vm.topLevelThreadGroups();
-			List<JDIThreadGroup> modelGroups = new ArrayList<JDIThreadGroup>(groups.size());
+			List<JDIThreadGroup> modelGroups = new ArrayList<>(groups.size());
 			for(ThreadGroupReference ref : groups) {
 				JDIThreadGroup group = findThreadGroup(ref);
 				if (group != null) {
@@ -3163,9 +3163,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 		boolean prevSuspend = isSuspended();
 		int running = 0;
-		List<JDIThread> toSuspend = new ArrayList<JDIThread>();
-		List<JDIThread> toResume = new ArrayList<JDIThread>();
-		List<JDIThread> toRefresh = new ArrayList<JDIThread>();
+		List<JDIThread> toSuspend = new ArrayList<>();
+		List<JDIThread> toResume = new ArrayList<>();
+		List<JDIThread> toRefresh = new ArrayList<>();
 		Iterator<JDIThread> iterator = getThreadIterator();
 		while (iterator.hasNext()) {
 			JDIThread thread = iterator.next();

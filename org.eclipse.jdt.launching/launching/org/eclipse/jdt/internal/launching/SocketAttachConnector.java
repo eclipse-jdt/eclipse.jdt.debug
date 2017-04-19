@@ -212,7 +212,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 */
 	@Override
 	public List<String> getArgumentOrder() {
-		List<String> list = new ArrayList<String>(2);
+		List<String> list = new ArrayList<>(2);
 		list.add("hostname"); //$NON-NLS-1$
 		list.add("port"); //$NON-NLS-1$
 		return list;

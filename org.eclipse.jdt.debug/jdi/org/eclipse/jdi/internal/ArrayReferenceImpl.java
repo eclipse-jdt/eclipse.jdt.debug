@@ -189,7 +189,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 */
 	private List<Value> readObjectSequence(int length, DataInputStream in)
 			throws IOException {
-		List<Value> elements = new ArrayList<Value>(length);
+		List<Value> elements = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			ValueImpl value = ObjectReferenceImpl
 					.readObjectRefWithTag(this, in);
@@ -211,7 +211,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 */
 	private List<Value> readPrimitiveSequence(int length, int type, DataInputStream in)
 			throws IOException {
-		List<Value> elements = new ArrayList<Value>(length);
+		List<Value> elements = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			ValueImpl value = ValueImpl.readWithoutTag(this, type, in);
 			elements.add(value);
@@ -260,7 +260,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	@Override
 	public void setValue(int index, Value value) throws InvalidTypeException,
 			ClassNotLoadedException {
-		ArrayList<Value> list = new ArrayList<Value>(1);
+		ArrayList<Value> list = new ArrayList<>(1);
 		list.add(value);
 		setValues(index, list, 0, 1);
 	}
@@ -397,7 +397,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements
 	 */
 	private List<Value> checkValues(List<? extends Value> values, Type type)
 			throws InvalidTypeException {
-		List<Value> checkedValues = new ArrayList<Value>(values.size());
+		List<Value> checkedValues = new ArrayList<>(values.size());
 		Iterator<? extends Value> iterValues = values.iterator();
 		while (iterValues.hasNext()) {
 			checkedValues.add(ValueImpl.checkValue(iterValues.next(),

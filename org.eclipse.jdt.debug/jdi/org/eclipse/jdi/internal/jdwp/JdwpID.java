@@ -161,8 +161,8 @@ public abstract class JdwpID {
 			return;
 
 		java.lang.reflect.Field[] fields = JdwpID.class.getDeclaredFields();
-		fTagMap = new HashMap<Integer, String>();
-		fTypeTagMap = new HashMap<Integer, String>();
+		fTagMap = new HashMap<>();
+		fTypeTagMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0

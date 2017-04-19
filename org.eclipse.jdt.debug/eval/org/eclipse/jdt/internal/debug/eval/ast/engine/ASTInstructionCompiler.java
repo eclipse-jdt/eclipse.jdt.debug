@@ -155,8 +155,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public ASTInstructionCompiler(int startPosition, String snippet) {
 		fStartPosition = startPosition;
 		fInstructions = new InstructionSequence(snippet);
-		fStack = new Stack<Instruction>();
-		fCompleteInstructions = new ArrayList<CompleteInstruction>();
+		fStack = new Stack<>();
+		fCompleteInstructions = new ArrayList<>();
 	}
 
 	/**
@@ -3900,7 +3900,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	class slot {
-		ArrayList<ConditionalJump> jumps = new ArrayList<ConditionalJump>();
+		ArrayList<ConditionalJump> jumps = new ArrayList<>();
 		ArrayList<Statement> stmts = null;
 	}
 
@@ -3918,7 +3918,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		ArrayList<Statement> statementsDefault = null;
 		Jump jumpDefault = null;
-		ArrayList<slot> jumpsStatements = new ArrayList<slot>();
+		ArrayList<slot> jumpsStatements = new ArrayList<>();
 		slot currentslot = new slot();
 		jumpsStatements.add(currentslot);
 
@@ -3930,7 +3930,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					jumpDefault = new Jump();
 					push(jumpDefault);
 					storeInstruction(); // jump
-					statementsDefault = new ArrayList<Statement>();
+					statementsDefault = new ArrayList<>();
 				} else {
 					if (switchCase.getExpression() instanceof StringLiteral) {
 						push(new SendMessage(
@@ -3957,7 +3957,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					statementsDefault.add(statement);
 				} else {
 					if (currentslot.stmts == null) {
-						currentslot.stmts = new ArrayList<Statement>();
+						currentslot.stmts = new ArrayList<>();
 					}
 					currentslot.stmts.add(statement);
 				}

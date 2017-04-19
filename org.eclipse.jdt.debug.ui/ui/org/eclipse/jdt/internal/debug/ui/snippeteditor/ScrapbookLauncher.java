@@ -83,9 +83,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 
 	private IJavaLineBreakpoint fMagicBreakpoint;
 
-	private HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<IFile, IDebugTarget>(10);
-	private HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<IDebugTarget, IBreakpoint>(10);
-	private HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<IDebugTarget, IFile>(10);
+	private HashMap<IFile, IDebugTarget> fScrapbookToVMs = new HashMap<>(10);
+	private HashMap<IDebugTarget, IBreakpoint> fVMsToBreakpoints = new HashMap<>(10);
+	private HashMap<IDebugTarget, IFile> fVMsToScrapbooks = new HashMap<>(10);
 
 	private static ScrapbookLauncher fgDefault = null;
 
@@ -137,7 +137,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return null;
 		}
 
-		List<IRuntimeClasspathEntry> cp = new ArrayList<IRuntimeClasspathEntry>(3);
+		List<IRuntimeClasspathEntry> cp = new ArrayList<>(3);
 		String jarFile = jarURL.getFile();
 		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarFile));
 		cp.add(supportEntry);
@@ -212,7 +212,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			}
 
 			// convert to mementos
-			List<String> classpathList= new ArrayList<String>(classPath.length);
+			List<String> classpathList= new ArrayList<>(classPath.length);
 			for (int i = 0; i < classPath.length; i++) {
 				classpathList.add(classPath[i].getMemento());
 			}

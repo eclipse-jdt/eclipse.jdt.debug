@@ -127,7 +127,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @throws CoreException if a new locator fails to be created
 	 */
 	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws CoreException {
-		ArrayList<IJavaProject> requiredProjects = new ArrayList<IJavaProject>();
+		ArrayList<IJavaProject> requiredProjects = new ArrayList<>();
 		for (int i= 0; i < projects.length; i++) {
 			if (includeRequired) {
 				collectRequiredProjects(projects[i], requiredProjects);
@@ -139,8 +139,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		}
 
 		// only add external entries with the same location once
-		HashMap<IPath, IPath> external = new HashMap<IPath, IPath>();
-		ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<PackageFragmentRootSourceLocation>();
+		HashMap<IPath, IPath> external = new HashMap<>();
+		ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<>();
 		// compute the default locations for each project, and add unique ones
 		Iterator<IJavaProject> iter = requiredProjects.iterator();
 		while (iter.hasNext()) {
@@ -232,7 +232,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				}
 				return null;
 			}
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			IJavaSourceLocation[] locations = getSourceLocations();
 			for (int i = 0; i < locations.length; i++) {
 				try {
@@ -421,7 +421,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__6, null);
 			}
 
-			List<IJavaSourceLocation> sourceLocations = new ArrayList<IJavaSourceLocation>();
+			List<IJavaSourceLocation> sourceLocations = new ArrayList<>();
 			Bundle bundle = LaunchingPlugin.getDefault().getBundle();
 
 			NodeList list = root.getChildNodes();
@@ -478,7 +478,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @return the array of {@link IJavaSourceLocation}
 	 */
 	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {
-		List<IJavaSourceLocation> locations = new ArrayList<IJavaSourceLocation>(entries.length);
+		List<IJavaSourceLocation> locations = new ArrayList<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			IJavaSourceLocation location = null;

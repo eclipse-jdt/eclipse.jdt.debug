@@ -60,7 +60,7 @@ public class JavaMonitorThread extends PlatformObject {
 	/**
 	 * List of JavaOwningThread and JavaWaitingThread associated with this thread.
 	 */
-	private List<IDebugElement> fElements= new ArrayList<IDebugElement>();
+	private List<IDebugElement> fElements= new ArrayList<>();
 
 	/**
 	 * JavaWaitingThread object used to return the JavaOwnedMonitor for this
@@ -239,7 +239,7 @@ public class JavaMonitorThread extends PlatformObject {
 	 */
 	private void fireChangeEvent(int detail) {
 		Object[] elements= fElements.toArray();
-		List<Object> changedElement= new ArrayList<Object>();
+		List<Object> changedElement= new ArrayList<>();
 		if (fOriginalThread != null) {
 			changedElement.add(fOriginalThread);
 		}

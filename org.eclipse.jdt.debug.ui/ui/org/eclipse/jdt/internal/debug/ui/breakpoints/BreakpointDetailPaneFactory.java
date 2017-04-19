@@ -42,7 +42,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	@Override
 	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		if (selection.size() == 1) {
 			IBreakpoint b = (IBreakpoint) selection.getFirstElement();
 			try {
@@ -129,7 +129,7 @@ public class BreakpointDetailPaneFactory implements IDetailPaneFactory {
 
 	private Map<String, String> getNameMap() {
 		if (fNameMap == null) {
-			fNameMap = new HashMap<String, String>();
+			fNameMap = new HashMap<>();
 			fNameMap.put(LineBreakpointDetailPane.DETAIL_PANE_LINE_BREAKPOINT, BreakpointMessages.BreakpointDetailPaneFactory_0);
 			fNameMap.put(WatchpointDetailPane.DETAIL_PANE_WATCHPOINT, BreakpointMessages.WatchpointDetailPane_0);
 			fNameMap.put(MethodBreakpointDetailPane.DETAIL_PANE_METHOD_BREAKPOINT, BreakpointMessages.BreakpointDetailPaneFactory_1);

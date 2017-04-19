@@ -451,7 +451,7 @@ public class JavaDebugUtils {
 			typeName = typeName.substring(index + 1);
 		}
 		index = typeName.indexOf('$');
-		List<String> list = new ArrayList<String>(1);
+		List<String> list = new ArrayList<>(1);
 		while (index >= 0) {
 			list.add(typeName.substring(0, index));
 			typeName = typeName.substring(index + 1);

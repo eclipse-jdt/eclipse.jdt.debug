@@ -89,10 +89,10 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1);
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Failed to add project(s)", null);  //$NON-NLS-1$
 
-		List<ISourceContainer> sourceContainers = new ArrayList<ISourceContainer>();
+		List<ISourceContainer> sourceContainers = new ArrayList<>();
 		if (dialog.open() == Window.OK) {
 			Object[] selections = dialog.getResult();
-			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
+			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -141,11 +141,11 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
+		List<IJavaProject> remaining = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
+		List<IJavaProject> alreadySelected = new ArrayList<>();
 		ISourceContainer[] containers = director.getSourceContainers();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];

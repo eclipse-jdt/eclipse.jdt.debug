@@ -61,8 +61,8 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 
 	private ThreadMonitorManager() {
-		fJavaMonitorThreads= new HashMap<IDebugElement, Object>();
-		fJavaMonitors= new HashMap<IDebugElement, Object>();
+		fJavaMonitorThreads= new HashMap<>();
+		fJavaMonitors= new HashMap<>();
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(this);
 		fIsEnabled= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
@@ -238,11 +238,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		public void run() {
 			JavaMonitorThread[] threads= getJavaMonitorThreads();
 			JavaMonitor[] monitors= getJavaMonitors();
-			List<Object> inDeadlock= new ArrayList<Object>();
+			List<Object> inDeadlock= new ArrayList<>();
 			for (int i = 0; i < threads.length; i++) {
 				JavaMonitorThread thread= threads[i];
-				List<JavaMonitorThread> threadStack= new ArrayList<JavaMonitorThread>();
-				List<JavaMonitor> monitorStack= new ArrayList<JavaMonitor>();
+				List<JavaMonitorThread> threadStack= new ArrayList<>();
+				List<JavaMonitor> monitorStack= new ArrayList<>();
 				while (thread != null) {
 					boolean isInDeadlock= false;
 					if (inDeadlock.contains(thread) || threadStack.contains(thread)) {

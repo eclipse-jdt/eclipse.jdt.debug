@@ -151,7 +151,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @return default process attribute map for Java processes
 	 */
 	protected Map<String, String> getDefaultProcessMap() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		map.put(IProcess.ATTR_PROCESS_TYPE, IJavaLaunchConfigurationConstants.ID_JAVA_PROCESS_TYPE);
 		return map;
 	}

@@ -389,7 +389,7 @@ public abstract class JDIReferenceType extends JDIType implements
 		if (target.supportsInstanceRetrieval()) {
 			Type type = getUnderlyingType();
 			if(type instanceof ReferenceType) {
-				ArrayList<ReferenceType> list = new ArrayList<ReferenceType>(2);
+				ArrayList<ReferenceType> list = new ArrayList<>(2);
 				list.add((ReferenceType) type);
 				VirtualMachine vm = getVM();
 				try {
@@ -416,7 +416,7 @@ public abstract class JDIReferenceType extends JDIType implements
 		if (args == null) {
 			arguments = Collections.EMPTY_LIST;
 		} else {
-			arguments = new ArrayList<Value>(args.length);
+			arguments = new ArrayList<>(args.length);
 			for (IJavaValue arg : args) {
 				arguments.add(((JDIValue) arg).getUnderlyingValue());
 			}

@@ -57,7 +57,7 @@ public class AddExternalJarAction extends OpenDialogAction {
 		int nChosen = fileNames.length;
 
 		IPath filterPath = new Path(dialog.getFilterPath());
-		ArrayList<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>();
+		ArrayList<IRuntimeClasspathEntry> list = new ArrayList<>();
 		IPath path = null;
 		for (int i= 0; i < nChosen; i++) {
 			path = filterPath.append(fileNames[i]).makeAbsolute();

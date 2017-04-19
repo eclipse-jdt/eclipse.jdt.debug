@@ -57,7 +57,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 	 * @since 3.5
 	 */
 	protected IJavaElement[] getJavaElements(Object[] objects) {
-		List<IJavaElement> list= new ArrayList<IJavaElement>(objects.length);
+		List<IJavaElement> list= new ArrayList<>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IAdaptable) {

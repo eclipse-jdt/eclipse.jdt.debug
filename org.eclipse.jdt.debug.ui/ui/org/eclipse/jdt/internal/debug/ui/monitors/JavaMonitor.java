@@ -54,7 +54,7 @@ public class JavaMonitor {
 	 * The List of JavaContendedMonitor and JavaOwnedMonitor associated with this
 	 * monitor.
 	 */
-	private List<PlatformObject> fElements= new ArrayList<PlatformObject>();
+	private List<PlatformObject> fElements= new ArrayList<>();
 
 	public JavaMonitor(IJavaObject monitor) {
 		fMonitor= monitor;

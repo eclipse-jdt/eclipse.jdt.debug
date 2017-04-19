@@ -147,7 +147,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * @since 3.0
 	 */
 	protected void createPathButtons(Composite pathButtonComp) {
-		List<RuntimeClasspathAction> advancedActions = new ArrayList<RuntimeClasspathAction>(5);
+		List<RuntimeClasspathAction> advancedActions = new ArrayList<>(5);
 
 		createButton(pathButtonComp, new MoveUpAction(fClasspathViewer));
 		createButton(pathButtonComp, new MoveDownAction(fClasspathViewer));
@@ -280,7 +280,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				try {
-					List<String> mementos = new ArrayList<String>(classpath.length);
+					List<String> mementos = new ArrayList<>(classpath.length);
 					for (int i = 0; i < classpath.length; i++) {
 						IRuntimeClasspathEntry entry = classpath[i];
 						mementos.add(entry.getMemento());
@@ -301,7 +301,7 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	private IRuntimeClasspathEntry[] getCurrentClasspath() {
 		IClasspathEntry[] boot = fModel.getEntries(ClasspathModel.BOOTSTRAP);
 		IClasspathEntry[] user = fModel.getEntries(ClasspathModel.USER);
-		List<IRuntimeClasspathEntry> entries = new ArrayList<IRuntimeClasspathEntry>(boot.length + user.length);
+		List<IRuntimeClasspathEntry> entries = new ArrayList<>(boot.length + user.length);
 		IClasspathEntry bootEntry;
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < boot.length; i++) {

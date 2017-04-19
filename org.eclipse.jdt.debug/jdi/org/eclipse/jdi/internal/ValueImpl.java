@@ -160,7 +160,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 */
 	protected static List<Value> checkValues(List<?extends Value> values, List<Type> types,
 			VirtualMachineImpl vm) throws InvalidTypeException {
-		List<Value> result = new ArrayList<Value>(values.size());
+		List<Value> result = new ArrayList<>(values.size());
 		Iterator<? extends Value> iterValues = values.iterator();
 		Iterator<Type> iterTypes = types.iterator();
 		while (iterValues.hasNext()) {

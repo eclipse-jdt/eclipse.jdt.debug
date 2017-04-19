@@ -105,7 +105,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 			} else if (source instanceof IType) {
 				type = (IType) source;
 			}
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 			if (type != null) {
 				res = BreakpointUtils.getBreakpointResource(type);
 				BreakpointUtils.addJavaBreakpointAttributes(map, type);

@@ -31,7 +31,7 @@ public class IllegalConnectorArgumentsException extends Exception {
 
 	public IllegalConnectorArgumentsException(String message, String argName) {
 		super(message);
-		fNames = new ArrayList<String>(1);
+		fNames = new ArrayList<>(1);
 		fNames.add(argName);
 	}
 

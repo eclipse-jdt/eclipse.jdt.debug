@@ -108,9 +108,9 @@ public class VMDefinitionsContainer {
 	 * Constructs an empty VM container
 	 */
 	public VMDefinitionsContainer() {
-		fVMTypeToVMMap = new HashMap<IVMInstallType, List<IVMInstall>>(10);
-		fInvalidVMList = new ArrayList<IVMInstall>(10);
-		fVMList = new ArrayList<IVMInstall>(10);
+		fVMTypeToVMMap = new HashMap<>(10);
+		fInvalidVMList = new ArrayList<>(10);
+		fVMList = new ArrayList<>(10);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class VMDefinitionsContainer {
 			IVMInstallType vmInstallType = vm.getVMInstallType();
 			List<IVMInstall> vmList = fVMTypeToVMMap.get(vmInstallType);
 			if (vmList == null) {
-				vmList = new ArrayList<IVMInstall>(3);
+				vmList = new ArrayList<>(3);
 				fVMTypeToVMMap.put(vmInstallType, vmList);
 			}
 			vmList.add(vm);
@@ -187,7 +187,7 @@ public class VMDefinitionsContainer {
 	 */
 	public List<IVMInstall> getValidVMList() {
 		List<IVMInstall> vms = getVMList();
-		List<IVMInstall> resultList = new ArrayList<IVMInstall>(vms.size());
+		List<IVMInstall> resultList = new ArrayList<>(vms.size());
 		resultList.addAll(vms);
 		resultList.removeAll(fInvalidVMList);
 		return resultList;
@@ -676,7 +676,7 @@ public class VMDefinitionsContainer {
 	private static void setLibraryLocations(IVMInstall vm, Element libLocationsElement) {
 		NodeList list = libLocationsElement.getChildNodes();
 		int length = list.getLength();
-		List<LibraryLocation> locations = new ArrayList<LibraryLocation>(length);
+		List<LibraryLocation> locations = new ArrayList<>(length);
 		for (int i = 0; i < length; ++i) {
 			Node node = list.item(i);
 			short type = node.getNodeType();

@@ -107,11 +107,11 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 					// only return endorsed and bootstrap classpath entries if we have the info
 					// libraries in the 'ext' directories are not loaded by the boot class loader
 					String[] extensionDirsArray = libraryInfo.getExtensionDirs();
-					Set<String> extensionDirsSet = new HashSet<String>();
+					Set<String> extensionDirsSet = new HashSet<>();
 					for (int i = 0; i < extensionDirsArray.length; i++) {
 						extensionDirsSet.add(extensionDirsArray[i]);
 					}
-					List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<IRuntimeClasspathEntry>(libs.length);
+					List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<>(libs.length);
 					for (int i = 0; i < libs.length; i++) {
 						LibraryLocation location = libs[i];
 						IPath libraryPath = location.getSystemLibraryPath();
@@ -125,7 +125,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 				}
 			}
 		}
-		List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<IRuntimeClasspathEntry>(libs.length);
+		List<IRuntimeClasspathEntry> resolvedEntries = new ArrayList<>(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			IPath systemLibraryPath = libs[i].getSystemLibraryPath();
 			if (systemLibraryPath.toFile().exists()) {

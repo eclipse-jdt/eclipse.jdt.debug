@@ -226,8 +226,8 @@ public class BreakpointListenerManager {
 	 */
 	private synchronized void init() {
 		if (fgJavaBreakpointListenersMap == null) {
-			fgJavaBreakpointListenersMap = new HashMap<String, JavaBreakpointListenerProxy>();
-			List<JavaBreakpointListenerProxy> global = new ArrayList<JavaBreakpointListenerProxy>();
+			fgJavaBreakpointListenersMap = new HashMap<>();
+			List<JavaBreakpointListenerProxy> global = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform
 					.getExtensionRegistry()
 					.getExtensionPoint(

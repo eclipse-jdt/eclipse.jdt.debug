@@ -262,7 +262,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray,
 	public void setValues(int offset, int length, IJavaValue[] values,
 			int startOffset) throws DebugException {
 		try {
-			List<Value> list = new ArrayList<Value>(values.length);
+			List<Value> list = new ArrayList<>(values.length);
 			for (IJavaValue value : values) {
 				list.add(((JDIValue) value).getUnderlyingValue());
 			}

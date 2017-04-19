@@ -81,7 +81,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	private HashMap<LibraryStandin, Object[]> fChildren= new HashMap<LibraryStandin, Object[]>();
+	private HashMap<LibraryStandin, Object[]> fChildren= new HashMap<>();
 
 	private LibraryStandin[] fLibraries= new LibraryStandin[0];
 
@@ -183,7 +183,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * the current viewer selection, or an empty set, never <code>null</code>
 	 */
 	private Set<Object> getSelectedLibraries(IStructuredSelection selection) {
-		Set<Object> libraries= new HashSet<Object>();
+		Set<Object> libraries= new HashSet<>();
 		for (Iterator<?> iter= selection.iterator(); iter.hasNext();) {
 			Object element= iter.next();
 			if (element instanceof LibraryStandin) {
@@ -234,7 +234,7 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * @param selection the current viewer selection
 	 */
 	public void remove(IStructuredSelection selection) {
-		List<LibraryStandin> newLibraries = new ArrayList<LibraryStandin>();
+		List<LibraryStandin> newLibraries = new ArrayList<>();
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
@@ -260,11 +260,11 @@ public class LibraryContentProvider implements ITreeContentProvider {
 	 * is empty.
 	 */
 	public void add(LibraryLocation[] libs, IStructuredSelection selection) {
-		List<LibraryStandin> newLibraries = new ArrayList<LibraryStandin>(fLibraries.length + libs.length);
+		List<LibraryStandin> newLibraries = new ArrayList<>(fLibraries.length + libs.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			newLibraries.add(fLibraries[i]);
 		}
-		List<LibraryStandin> toAdd = new ArrayList<LibraryStandin>(libs.length);
+		List<LibraryStandin> toAdd = new ArrayList<>(libs.length);
 		for (int i = 0; i < libs.length; i++) {
 			toAdd.add(new LibraryStandin(libs[i]));
 		}

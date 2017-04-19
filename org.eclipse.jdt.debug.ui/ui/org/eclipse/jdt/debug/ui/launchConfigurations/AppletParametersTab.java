@@ -409,7 +409,7 @@ public class AppletParametersTab extends JavaLaunchTab {
 			fNameText.setText(LauncherMessages.appletlauncher_argumenttab_name_defaultvalue);
 		}
 
-		Map<String, String> input = new HashMap<String, String>();
+		Map<String, String> input = new HashMap<>();
 		try {
 			 Map<String, String> params = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, (Map<String, String>) null);
              if (params != null) {

@@ -101,7 +101,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			Object[] launchChildren = launch.getChildren();
 			delta = delta.addNode(launch, indexOf(launches, launch), IModelDelta.NO_CHANGE, launchChildren.length);
 			IJavaDebugTarget debugTarget = (IJavaDebugTarget) thread.getDebugTarget();
-			List<IJavaThreadGroup> groups = new ArrayList<IJavaThreadGroup>();
+			List<IJavaThreadGroup> groups = new ArrayList<>();
 			try{
 				delta = delta.addNode(debugTarget, indexOf(launchChildren, debugTarget), IModelDelta.NO_CHANGE, debugTarget.getRootThreadGroups().length);
 				IJavaThread javaThread = (IJavaThread) thread;

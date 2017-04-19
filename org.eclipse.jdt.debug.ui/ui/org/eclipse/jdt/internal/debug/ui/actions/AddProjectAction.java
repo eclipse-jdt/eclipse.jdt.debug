@@ -63,7 +63,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		if (dialog.open() == Window.OK) {
 			Object[] selections = dialog.getResult();
 
-			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
+			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -77,7 +77,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 				status.add(e.getStatus());
 			}
 
-			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<IRuntimeClasspathEntry>(additions.size());
+			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<>(additions.size());
 			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
 				IJavaProject jp = iter.next();
@@ -125,11 +125,11 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
+		List<IJavaProject> remaining = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
+		List<IJavaProject> alreadySelected = new ArrayList<>();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {

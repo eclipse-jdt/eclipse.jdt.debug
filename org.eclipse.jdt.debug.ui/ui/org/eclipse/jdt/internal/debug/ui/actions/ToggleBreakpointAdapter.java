@@ -270,7 +270,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                                     start = range.getOffset();
                                     end = start + range.getLength();
                                 }
-                                attributes = new HashMap<String, Object>(10);
+                                attributes = new HashMap<>(10);
                                 BreakpointUtils.addJavaBreakpointAttributes(attributes, members[i]);
                                 type = members[i].getDeclaringType();
                                 signature = members[i].getSignature();
@@ -391,7 +391,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 						}
 						return Status.OK_STATUS;
 					}
-					Map<String, Object> attributes = new HashMap<String, Object>(10);
+					Map<String, Object> attributes = new HashMap<>(10);
 					IDocumentProvider documentProvider = editor.getDocumentProvider();
 					if (documentProvider == null) {
 					    return Status.CANCEL_STATUS;
@@ -469,7 +469,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 							deleteBreakpoint(existing, part, monitor);
 							return Status.OK_STATUS;
 						}
-						HashMap<String, Object> map = new HashMap<String, Object>(10);
+						HashMap<String, Object> map = new HashMap<>(10);
 						BreakpointUtils.addJavaBreakpointAttributes(map, type);
 						ISourceRange range= type.getNameRange();
 						int start = -1;
@@ -715,7 +715,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         if (selection.isEmpty()) {
             return new IMethod[0];
         }
-        List<IMethod> methods = new ArrayList<IMethod>(selection.size());
+        List<IMethod> methods = new ArrayList<>(selection.size());
         Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object thing = iterator.next();
@@ -746,7 +746,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         if (selection.isEmpty()) {
             return new IMethod[0];
         }
-        List<IMethod> methods = new ArrayList<IMethod>(selection.size());
+        List<IMethod> methods = new ArrayList<>(selection.size());
         Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object thing = iterator.next();
@@ -810,7 +810,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
         if (selection.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        List<Object> fields = new ArrayList<Object>(selection.size());
+        List<Object> fields = new ArrayList<>(selection.size());
         Iterator<?> iterator = selection.iterator();
         while (iterator.hasNext()) {
             Object thing = iterator.next();
@@ -984,7 +984,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	                        	}
 	                        	int start = -1;
 	                            int end = -1;
-	                            attributes = new HashMap<String, Object>(10);
+	                            attributes = new HashMap<>(10);
 	                            if (javaField == null) {
 	                            	resource = ResourcesPlugin.getWorkspace().getRoot();
 	                            } else {

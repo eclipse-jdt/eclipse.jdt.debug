@@ -72,7 +72,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		if (args == null) {
 			arguments = Collections.EMPTY_LIST;
 		} else {
-			arguments = new ArrayList<Value>(args.length);
+			arguments = new ArrayList<>(args.length);
 			for (IJavaValue arg : args) {
 				arguments.add(((JDIValue) arg).getUnderlyingValue());
 			}
@@ -118,7 +118,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		if (args == null) {
 			arguments = Collections.EMPTY_LIST;
 		} else {
-			arguments = new ArrayList<Value>(args.length);
+			arguments = new ArrayList<>(args.length);
 			for (IJavaValue arg : args) {
 				arguments.add(((JDIValue) arg).getUnderlyingValue());
 			}
@@ -403,7 +403,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 */
 	@Override
 	public IJavaThread[] getWaitingThreads() throws DebugException {
-		List<JDIThread> waiting = new ArrayList<JDIThread>();
+		List<JDIThread> waiting = new ArrayList<>();
 		try {
 			List<ThreadReference> threads = getUnderlyingObject().waitingThreads();
 			JDIDebugTarget debugTarget = (JDIDebugTarget) getDebugTarget();

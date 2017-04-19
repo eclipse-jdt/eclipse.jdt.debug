@@ -492,8 +492,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 			// set up local variables and 'this' context for evaluation
 			IJavaVariable[] locals = frame.getLocalVariables();
 
-			List<String> typeNames = new ArrayList<String>(locals.length);
-			List<String> varNames = new ArrayList<String>(locals.length);
+			List<String> typeNames = new ArrayList<>(locals.length);
+			List<String> varNames = new ArrayList<>(locals.length);
 
 			for (IJavaVariable var : locals) {
 				String typeName = getTranslatedTypeName(var
@@ -913,7 +913,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 */
 	private void addSnippetFile(File file) {
 		if (fSnippetFiles == null) {
-			fSnippetFiles = new ArrayList<File>();
+			fSnippetFiles = new ArrayList<>();
 		}
 		fSnippetFiles.add(file);
 	}
@@ -927,7 +927,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 */
 	private void addDirectory(File file) {
 		if (fDirectories == null) {
-			fDirectories = new ArrayList<File>();
+			fDirectories = new ArrayList<>();
 		}
 		fDirectories.add(file);
 	}
@@ -1301,7 +1301,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 			typeName = typeName.substring(index + 1);
 		}
 		index = typeName.indexOf('$');
-		ArrayList<String> list = new ArrayList<String>(1);
+		ArrayList<String> list = new ArrayList<>(1);
 		while (index >= 0) {
 			list.add(typeName.substring(0, index));
 			typeName = typeName.substring(index + 1);

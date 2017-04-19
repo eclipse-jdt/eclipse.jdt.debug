@@ -274,7 +274,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	@Override
 	public List<ClassType> subclasses() {
 		// Note that this information should not be cached.
-		List<ClassType> subclasses = new ArrayList<ClassType>();
+		List<ClassType> subclasses = new ArrayList<>();
 		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {

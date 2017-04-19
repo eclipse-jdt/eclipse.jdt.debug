@@ -45,7 +45,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 * A set of projects that have been cleaned. When the build finishes for
 	 * a project that has been cleaned, we check for EE problems.
 	 */
-	private Set<IJavaProject> fCleaned = new HashSet<IJavaProject>();
+	private Set<IJavaProject> fCleaned = new HashSet<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.compiler.CompilationParticipant#isActive(org.eclipse.jdt.core.IJavaProject)
@@ -153,7 +153,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 	 */
 	private int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
-		List<IScopeContext> scopes = new ArrayList<IScopeContext>();
+		List<IScopeContext> scopes = new ArrayList<>();
 		scopes.add(InstanceScope.INSTANCE);
 		if(project != null) {
 			scopes.add(new ProjectScope(project));

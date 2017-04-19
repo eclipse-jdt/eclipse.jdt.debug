@@ -229,7 +229,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 
 	private void cacheSourceElement(Object sourceElement, IJavaReferenceType type) {
 		if (fTypesToSource == null) {
-			fTypesToSource = new HashMap<IJavaReferenceType, Object>();
+			fTypesToSource = new HashMap<>();
 		}
 		fTypesToSource.put(type, sourceElement);
 	}

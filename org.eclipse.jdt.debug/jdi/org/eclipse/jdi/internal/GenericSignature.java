@@ -43,7 +43,7 @@ public class GenericSignature {
 	}
 
 	private static List<String> getTypeSignatureList(String typeSignatureList) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int pos = 0;
 		while (pos < typeSignatureList.length()) {
 			int signatureLength = nextTypeSignatureLength(typeSignatureList, pos);

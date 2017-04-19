@@ -72,7 +72,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		// use an ordered set to avoid duplicates
-		Set<IRuntimeClasspathEntry> all = new LinkedHashSet<IRuntimeClasspathEntry>(entries.length);
+		Set<IRuntimeClasspathEntry> all = new LinkedHashSet<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
 			for (int j = 0; j < resolved.length; j++) {

@@ -216,7 +216,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	@Override
 	public Map<Field, Value> getValues(List<? extends Field> fields) {
 		if (fields.isEmpty()) {
-			return new HashMap<Field, Value>();
+			return new HashMap<>();
 		}
 
 		throw new IllegalArgumentException(

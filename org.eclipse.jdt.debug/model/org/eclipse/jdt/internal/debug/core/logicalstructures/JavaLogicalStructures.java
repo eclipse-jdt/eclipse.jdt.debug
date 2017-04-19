@@ -64,7 +64,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	/**
 	 * The list of java logical structures listeners.
 	 */
-	private static Set<IJavaStructuresListener> fListeners = new HashSet<IJavaStructuresListener>();
+	private static Set<IJavaStructuresListener> fListeners = new HashSet<>();
 
 	/**
 	 * Preference key for the list of user defined Java logical structures
@@ -109,7 +109,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	}
 
 	private static void initJavaLogicalStructureMap() {
-		fJavaLogicalStructureMap = new HashMap<String, List<JavaLogicalStructure>>();
+		fJavaLogicalStructureMap = new HashMap<>();
 		addAllLogicalStructures(fPluginContributedJavaLogicalStructures);
 		addAllLogicalStructures(fUserDefinedJavaLogicalStructures);
 	}
@@ -132,7 +132,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 		String typeName = structure.getQualifiedTypeName();
 		List<JavaLogicalStructure> logicalStructure = fJavaLogicalStructureMap.get(typeName);
 		if (logicalStructure == null) {
-			logicalStructure = new ArrayList<JavaLogicalStructure>();
+			logicalStructure = new ArrayList<>();
 			fJavaLogicalStructureMap.put(typeName, logicalStructure);
 		}
 		logicalStructure.add(structure);
@@ -142,7 +142,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 * Get the configuration elements for the extension point.
 	 */
 	private static void initPluginContributedJavaLogicalStructure() {
-		fPluginContributedJavaLogicalStructures = new ArrayList<JavaLogicalStructure>();
+		fPluginContributedJavaLogicalStructures = new ArrayList<>();
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 				.getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(),
 						JDIDebugPlugin.EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES);
@@ -163,7 +163,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 * Get the user defined logical structures (from the preference store).
 	 */
 	private static void initUserDefinedJavaLogicalStructures() {
-		fUserDefinedJavaLogicalStructures = new ArrayList<JavaLogicalStructure>();
+		fUserDefinedJavaLogicalStructures = new ArrayList<>();
 		String logicalStructuresString = Platform.getPreferencesService().getString(
 				JDIDebugPlugin.getUniqueIdentifier(),
 				PREF_JAVA_LOGICAL_STRUCTURES,
@@ -280,7 +280,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 			return new ILogicalStructureType[0];
 		}
 		IJavaObject javaValue = (IJavaObject) value;
-		List<JavaLogicalStructure> logicalStructures = new ArrayList<JavaLogicalStructure>();
+		List<JavaLogicalStructure> logicalStructures = new ArrayList<>();
 		try {
 			IJavaType type = javaValue.getJavaType();
 			if (!(type instanceof IJavaClassType)) {

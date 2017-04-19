@@ -49,7 +49,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(2);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(2);
 
 		// Host name
 		StringArgumentImpl strArg = new StringArgumentImpl(
@@ -136,7 +136,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements
 			connection = ((SocketTransportImpl) fTransport).attach(fHostname,
 					fPort, fTimeout, 0);
 		} catch (IllegalArgumentException e) {
-			List<String> args = new ArrayList<String>();
+			List<String> args = new ArrayList<>();
 			args.add("hostname"); //$NON-NLS-1$
 			args.add("port"); //$NON-NLS-1$
 			throw new IllegalConnectorArgumentsException(e.getMessage(), args);

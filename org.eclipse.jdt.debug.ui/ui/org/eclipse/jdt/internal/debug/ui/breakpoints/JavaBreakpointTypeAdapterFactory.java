@@ -35,10 +35,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
 
-    private Map<String, Object> fStratumTypes = new HashMap<String, Object>();
+    private Map<String, Object> fStratumTypes = new HashMap<>();
 
     // map of breakpoint type names to breakpoint type categories
-    private Map<String, IBreakpointTypeCategory> fOtherTypes = new HashMap<String, IBreakpointTypeCategory>();
+    private Map<String, IBreakpointTypeCategory> fOtherTypes = new HashMap<>();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)

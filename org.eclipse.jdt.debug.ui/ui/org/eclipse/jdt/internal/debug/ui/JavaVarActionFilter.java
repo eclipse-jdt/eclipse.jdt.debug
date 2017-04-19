@@ -48,7 +48,7 @@ public class JavaVarActionFilter implements IActionFilter {
 	 * @return the set of predefined types
 	 */
 	private static Set<String> initPrimitiveTypes() {
-		HashSet<String> set = new HashSet<String>(8);
+		HashSet<String> set = new HashSet<>(8);
 		set.add("short"); //$NON-NLS-1$
 		set.add("int"); //$NON-NLS-1$
 		set.add("long"); //$NON-NLS-1$

@@ -72,7 +72,7 @@ public class EvaluationResult implements IEvaluationResult {
 		setEvaluationEngine(engine);
 		setThread(thread);
 		setSnippet(snippet);
-		fErrors = new ArrayList<String>();
+		fErrors = new ArrayList<>();
 	}
 
 	/**

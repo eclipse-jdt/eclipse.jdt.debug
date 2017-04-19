@@ -257,7 +257,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 		Field[] fields = JdwpCommandPacket.class.getDeclaredFields();
 
 		// First get the set names.
-		Map<Integer, String> setNames = new HashMap<Integer, String>(fields.length);
+		Map<Integer, String> setNames = new HashMap<>(fields.length);
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
@@ -282,7 +282,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 		}
 
 		// Get the commands.
-		fgCommandMap = new HashMap<Integer, String>();
+		fgCommandMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0

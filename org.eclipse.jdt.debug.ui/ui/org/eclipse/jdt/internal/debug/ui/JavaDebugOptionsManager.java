@@ -129,7 +129,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	private static Set<String> fgDisplayOptions;
 
 	static {
-		fgDisplayOptions = new HashSet<String>();
+		fgDisplayOptions = new HashSet<>();
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_CHAR);
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_HEX);
 		fgDisplayOptions.add(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED);
@@ -442,7 +442,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	 * @return list
 	 */
 	public static String[] parseList(String listString) {
-		List<String> list = new ArrayList<String>(10);
+		List<String> list = new ArrayList<>(10);
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -717,7 +717,7 @@ public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropert
 	@Override
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
 		// if a breakpoint is added, but already has a message, do not update it
-		List<IBreakpoint> update = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> update = new ArrayList<>();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			try {

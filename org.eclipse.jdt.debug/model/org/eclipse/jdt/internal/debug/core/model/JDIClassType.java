@@ -164,7 +164,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType())
 					.allInterfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(interfaceList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(interfaceList.size());
 			for(InterfaceType interfaceType : interfaceList) {
 				if (interfaceType != null) {
 					javaInterfaceTypeList.add(JDIType.createType(
@@ -194,7 +194,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	public IJavaInterfaceType[] getInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType()).interfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(interfaceList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(interfaceList.size());
 			for(InterfaceType interfaceType : interfaceList) {
 				if (interfaceType != null) {
 					javaInterfaceTypeList.add(JDIType.createType(

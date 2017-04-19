@@ -155,7 +155,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private int fSourceMajorLevel;
 	private int fSourceMinorLevel;
 
-	private Stack<Map<String, String>> fTypeParameterStack = new Stack<Map<String, String>>();
+	private Stack<Map<String, String>> fTypeParameterStack = new Stack<>();
 	private Map<String, String> fMatchingTypeParameters = null;
 	private CompilationUnit fCompilationUnit;
 	{
@@ -1604,7 +1604,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	private void pushTypeParameters(List<TypeParameter> typeParameters) {
 		if (!typeParameters.isEmpty()) {
-			HashMap<String,String> newTypeParameters = new HashMap<String,String>(fTypeParameterStack.peek());
+			HashMap<String,String> newTypeParameters = new HashMap<>(fTypeParameterStack.peek());
 			Iterator<TypeParameter> iterator = typeParameters.iterator();
 			while (iterator.hasNext()) {
 				TypeParameter typeParameter = iterator.next();

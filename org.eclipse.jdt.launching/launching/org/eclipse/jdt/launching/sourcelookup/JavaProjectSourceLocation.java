@@ -116,7 +116,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		if (fProject != null) {
 			try {
 				IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-				ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<PackageFragmentRootSourceLocation>(roots.length);
+				ArrayList<PackageFragmentRootSourceLocation> list = new ArrayList<>(roots.length);
 
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {

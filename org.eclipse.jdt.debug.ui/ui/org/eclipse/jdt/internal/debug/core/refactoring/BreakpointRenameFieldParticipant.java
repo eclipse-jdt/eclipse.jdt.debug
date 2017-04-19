@@ -48,7 +48,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers = resource.findMarkers(JavaWatchpoint.JAVA_WATCHPOINT, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes, getArguments().getNewName());

@@ -181,7 +181,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					dialog.setTitle(ActionMessages.InstanceFiltersAction_2);
 
 					// determine initial selection
-					List<IJavaBreakpoint> existing = new ArrayList<IJavaBreakpoint>();
+					List<IJavaBreakpoint> existing = new ArrayList<>();
 					Iterator<IJavaBreakpoint> iter = breakpoints.iterator();
 					while (iter.hasNext()) {
 						IJavaBreakpoint bp = iter.next();
@@ -222,11 +222,11 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 	}
 
 	protected List<IJavaBreakpoint> getApplicableBreakpoints(IJavaVariable variable, IJavaObject object) {
-		List<IJavaBreakpoint> breakpoints = new ArrayList<IJavaBreakpoint>();
+		List<IJavaBreakpoint> breakpoints = new ArrayList<>();
 
 		try {
 			// collect names in type hierarchy
-			List<String> superTypeNames = new ArrayList<String>();
+			List<String> superTypeNames = new ArrayList<>();
 			IJavaType type = object.getJavaType();
 			while (type instanceof IJavaClassType) {
 				superTypeNames.add(type.getName());

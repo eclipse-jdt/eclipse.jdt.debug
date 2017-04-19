@@ -51,7 +51,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestField);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestField);

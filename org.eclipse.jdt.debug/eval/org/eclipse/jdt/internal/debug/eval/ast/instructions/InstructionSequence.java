@@ -30,8 +30,8 @@ public class InstructionSequence implements ICompiledExpression {
 	private CoreException fException;
 
 	public InstructionSequence(String snippet) {
-		fInstructions = new ArrayList<Instruction>(10);
-		fErrors = new ArrayList<String>();
+		fInstructions = new ArrayList<>(10);
+		fErrors = new ArrayList<>();
 		fSnippet = snippet;
 	}
 

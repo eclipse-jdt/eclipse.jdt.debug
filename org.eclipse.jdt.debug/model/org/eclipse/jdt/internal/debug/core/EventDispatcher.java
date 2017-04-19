@@ -76,7 +76,7 @@ public class EventDispatcher implements Runnable {
 	 * Queue of debug model events to fire, created when processing events on
 	 * the target VM. Keyed by event sets, processed independently.
 	 */
-	private Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<EventSet, List<DebugEvent>>();
+	private Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<>();
 
 	/**
 	 * Constructs a new event dispatcher listening for events originating from
@@ -86,7 +86,7 @@ public class EventDispatcher implements Runnable {
 	 *            the target this event dispatcher belongs to
 	 */
 	public EventDispatcher(JDIDebugTarget target) {
-		fEventHandlers = new HashMap<EventRequest, IJDIEventListener>(10);
+		fEventHandlers = new HashMap<>(10);
 		fTarget = target;
 		fShutdown = false;
 	}
@@ -139,7 +139,7 @@ public class EventDispatcher implements Runnable {
 					try {
 						if (((IJavaLineBreakpoint) listener).isConditionEnabled()) {
 							if (deferredEvents == null) {
-								deferredEvents = new ArrayList<Event>(5);
+								deferredEvents = new ArrayList<>(5);
 							}
 							deferredEvents.add(event);
 							continue;
@@ -337,7 +337,7 @@ public class EventDispatcher implements Runnable {
 		synchronized (fSetToQueue) {
 			List<DebugEvent> list = fSetToQueue.get(set);
 			if (list == null) {
-				list = new ArrayList<DebugEvent>(5);
+				list = new ArrayList<>(5);
 				fSetToQueue.put(set, list);
 			}
 			list.add(event);

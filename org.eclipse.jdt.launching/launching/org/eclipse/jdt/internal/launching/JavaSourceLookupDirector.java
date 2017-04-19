@@ -30,7 +30,7 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	private static Set<String> fFilteredTypes;
 
 	static {
-		fFilteredTypes = new HashSet<String>();
+		fFilteredTypes = new HashSet<>();
 		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		// can't reference UI constant

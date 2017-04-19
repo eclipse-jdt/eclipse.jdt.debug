@@ -56,7 +56,7 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		if (javaProject.exists()) {
 			IRuntimeClasspathEntry2 defClassPath = (IRuntimeClasspathEntry2) JavaRuntime.newDefaultProjectClasspathEntry(javaProject);
 			IRuntimeClasspathEntry[] entries = defClassPath.getRuntimeClasspathEntries(null);
-			List<IRuntimeClasspathEntry> collect = new ArrayList<IRuntimeClasspathEntry>();
+			List<IRuntimeClasspathEntry> collect = new ArrayList<>();
 			for (int i = 0; i < entries.length; i++) {
 				IRuntimeClasspathEntry[] children = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], javaProject);
 				for (int j = 0; j < children.length; j++) {

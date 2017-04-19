@@ -48,11 +48,11 @@ public abstract class AbstractDetailPane implements IDetailPane3 {
 	private String fDescription;
 	private String fId;
 	private AbstractJavaBreakpointEditor fEditor;
-	private Set<Integer> fAutoSaveProperties = new HashSet<Integer>();
+	private Set<Integer> fAutoSaveProperties = new HashSet<>();
 	private IWorkbenchPartSite fSite;
 
 	// property listeners
-	private ListenerList<IPropertyListener> fListeners = new ListenerList<IPropertyListener>();
+	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
 	private Composite fEditorParent;
 
 	/**

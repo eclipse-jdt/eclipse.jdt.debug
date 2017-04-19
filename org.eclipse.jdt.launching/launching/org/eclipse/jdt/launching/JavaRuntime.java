@@ -332,13 +332,13 @@ public final class JavaRuntime {
 	 * cycles in project dependencies when resolving classpath container entries.
 	 * Counters used to know when entering/exiting to clear cache
 	 */
-	private static ThreadLocal<List<IJavaProject>> fgProjects = new ThreadLocal<List<IJavaProject>>(); // Lists
-	private static ThreadLocal<Integer> fgEntryCount = new ThreadLocal<Integer>(); // Integers
+	private static ThreadLocal<List<IJavaProject>> fgProjects = new ThreadLocal<>(); // Lists
+	private static ThreadLocal<Integer> fgEntryCount = new ThreadLocal<>(); // Integers
 
     /**
      *  Set of IDs of VMs contributed via vmInstalls extension point.
      */
-    private static Set<String> fgContributedVMs = new HashSet<String>();
+    private static Set<String> fgContributedVMs = new HashSet<>();
 
 	/**
 	 * This class contains only static methods, and is not intended
@@ -355,7 +355,7 @@ public final class JavaRuntime {
 		if(extensionPoint != null) {
 			IConfigurationElement[] configs = extensionPoint.getConfigurationElements();
 			MultiStatus status = new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, "Exceptions occurred", null);  //$NON-NLS-1$
-			fgVMTypes = new HashSet<Object>();
+			fgVMTypes = new HashSet<>();
 			for (int i= 0; i < configs.length; i++) {
 				try {
 					fgVMTypes.add(configs[i].createExecutableExtension("class")); //$NON-NLS-1$
@@ -776,7 +776,7 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry[] entries = project.getRawClasspath();
-		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<IRuntimeClasspathEntry>(3);
+		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
 			switch (entry.getEntryKind()) {
@@ -1037,7 +1037,7 @@ public final class JavaRuntime {
 	 * @throws CoreException if output resolution encounters a problem
 	 */
 	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty) throws CoreException {
-		List<IPath> nonDefault = new ArrayList<IPath>();
+		List<IPath> nonDefault = new ArrayList<>();
 		if (project.exists() && project.getProject().isOpen()) {
 			IClasspathEntry entries[] = project.getRawClasspath();
 			for (int i = 0; i < entries.length; i++) {
@@ -1180,11 +1180,11 @@ public final class JavaRuntime {
 				property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 				break;
 		}
-		List<IRuntimeClasspathEntry> resolved = new ArrayList<IRuntimeClasspathEntry>(cpes.length);
+		List<IRuntimeClasspathEntry> resolved = new ArrayList<>(cpes.length);
 		List<IJavaProject> projects = fgProjects.get();
 		Integer count = fgEntryCount.get();
 		if (projects == null) {
-			projects = new ArrayList<IJavaProject>();
+			projects = new ArrayList<>();
 			fgProjects.set(projects);
 			count = new Integer(0);
 		}
@@ -1420,7 +1420,7 @@ public final class JavaRuntime {
 		IRuntimeClasspathEntry[] unresolved = computeUnresolvedRuntimeClasspath(jproject);
 		// 1. remove bootpath entries
 		// 2. resolve & translate to local file system paths
-		List<String> resolved = new ArrayList<String>(unresolved.length);
+		List<String> resolved = new ArrayList<>(unresolved.length);
 		for (int i = 0; i < unresolved.length; i++) {
 			IRuntimeClasspathEntry entry = unresolved[i];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
@@ -2249,9 +2249,9 @@ public final class JavaRuntime {
 	private static void initializeResolvers() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
-		fgVariableResolvers = new HashMap<String, IRuntimeClasspathEntryResolver>(extensions.length);
-		fgContainerResolvers = new HashMap<String, IRuntimeClasspathEntryResolver>(extensions.length);
-		fgRuntimeClasspathEntryResolvers = new HashMap<String, RuntimeClasspathEntryResolver>(extensions.length);
+		fgVariableResolvers = new HashMap<>(extensions.length);
+		fgContainerResolvers = new HashMap<>(extensions.length);
+		fgRuntimeClasspathEntryResolvers = new HashMap<>(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
 			RuntimeClasspathEntryResolver res = new RuntimeClasspathEntryResolver(extensions[i]);
 			String variable = res.getVariableName();
@@ -2286,7 +2286,7 @@ public final class JavaRuntime {
 	private static void initializeProviders() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
-		fgPathProviders = new HashMap<String, RuntimeClasspathProvider>(extensions.length);
+		fgPathProviders = new HashMap<>(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
 			RuntimeClasspathProvider res = new RuntimeClasspathProvider(extensions[i]);
 			fgPathProviders.put(res.getIdentifier(), res);
@@ -2465,10 +2465,10 @@ public final class JavaRuntime {
 	 * @see JavaRuntime#CLASSPATH_ATTR_LIBRARY_PATH_ENTRY
 	 */
 	public static String[] computeJavaLibraryPath(IJavaProject project, boolean requiredProjects) throws CoreException {
-		Set<IJavaProject> visited = new HashSet<IJavaProject>();
-		List<String> entries = new ArrayList<String>();
+		Set<IJavaProject> visited = new HashSet<>();
+		List<String> entries = new ArrayList<>();
 		gatherJavaLibraryPathEntries(project, requiredProjects, visited, entries);
-		List<String> resolved = new ArrayList<String>(entries.size());
+		List<String> resolved = new ArrayList<>(entries.size());
 		Iterator<String> iterator = entries.iterator();
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -2561,7 +2561,7 @@ public final class JavaRuntime {
 					IClasspathEntry[] requiredProjects = processJavaLibraryPathEntries(project, collectRequired, container.getClasspathEntries(), entries);
 					if (requiredProjects != null) {
 						if (req == null) {
-							req = new ArrayList<IClasspathEntry>();
+							req = new ArrayList<>();
 						}
 						for (int j = 0; j < requiredProjects.length; j++) {
 							req.add(requiredProjects[j]);
@@ -2570,7 +2570,7 @@ public final class JavaRuntime {
 				}
 			} else if (collectRequired && entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 				if (req == null) {
-					req = new ArrayList<IClasspathEntry>();
+					req = new ArrayList<>();
 				}
 				req.add(entry);
 			}

@@ -116,7 +116,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public final static String DISPLAY_QUALIFIED_NAMES= "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
 
-	protected HashMap<String, Object> fAttributes= new HashMap<String, Object>(3);
+	protected HashMap<String, Object> fAttributes= new HashMap<>(3);
 
 	static final Point BIG_SIZE= new Point(16, 16);
 
@@ -1932,7 +1932,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Decompose a comma separated list of generic names (String) to a list of generic names (List)
 	 */
 	private List<String> getNameList(String listName) {
-		List<String> names= new ArrayList<String>();
+		List<String> names= new ArrayList<>();
 		StringTokenizer tokenizer= new StringTokenizer(listName, ",<>", true); //$NON-NLS-1$
 		int enclosingLevel= 0;
 		int startPos= 0;
