@@ -18,6 +18,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
@@ -114,7 +115,10 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
-							getStructuredViewer().refresh();
+							StructuredViewer viewer = getStructuredViewer();
+							if (viewer != null) {
+								viewer.refresh();
+							}
 						}
 					};
 					JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
