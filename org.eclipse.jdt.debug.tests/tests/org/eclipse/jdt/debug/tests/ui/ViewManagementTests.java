@@ -13,16 +13,8 @@ package org.eclipse.jdt.debug.tests.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.test.OrderedTestSuite;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener3;
@@ -30,14 +22,13 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import junit.framework.Test;
 
 /**
  * Tests view management.
  */
-public class ViewManagementTests extends AbstractDebugTest implements IPerspectiveListener3 {
+public class ViewManagementTests extends AbstractDebugUiTests implements IPerspectiveListener3 {
 
 	public static Test suite() {
 		return new OrderedTestSuite(ViewManagementTests.class);
@@ -61,19 +52,12 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	/**
 	 * List of view ids expecting to open.
 	 */
-	private List<String> fExpectingOpenEvents = new ArrayList<String>();
+	private List<String> fExpectingOpenEvents = new ArrayList<>();
 
 	/**
 	 * List of view ids expecting to close.
 	 */
-	private List<String> fExpectingCloseEvents = new ArrayList<String>();
-
-	// prefs to restore
-	private String switch_on_launch;
-	private String switch_on_suspend;
-	private String debug_perspectives;
-	private String user_view_bindings;
-	private boolean activate_debug_view;
+	private List<String> fExpectingCloseEvents = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -84,117 +68,32 @@ public class ViewManagementTests extends AbstractDebugTest implements IPerspecti
 	}
 
 	/**
-	 * Switches to the specified perspective in the given window, and resets the perspective.
-	 *
-	 * @param window
-	 * @param perspectiveId
-	 */
-	protected void switchPerspective(IWorkbenchWindow window, String perspectiveId) {
-		IPerspectiveDescriptor descriptor = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
-		assertNotNull("missing perspective " + perspectiveId, descriptor);
-		IWorkbenchPage page = window.getActivePage();
-		page.setPerspective(descriptor);
-		page.resetPerspective();
-	}
-
-	/**
-	 * Switches to and resets the specified perspective in the active workbench window.
-	 *
-	 * @return the window in which the perspective is ready
-	 */
-	private IWorkbenchWindow resetPerspective(final String id) {
-		final IWorkbenchWindow[] windows = new IWorkbenchWindow[1];
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				switchPerspective(window, id);
-				windows[0] = window;
-			}
-		};
-		sync(r);
-		return windows[0];
-	}
-
-	/**
-	 * Siwtches to and resets the debug perspective in the active workbench window.
-	 *
-	 * @return the window in which the perspective is ready
-	 */
-	protected IWorkbenchWindow resetDebugPerspective() {
-		return resetPerspective(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
-	}
-
-	/**
-	 * Siwtches to and resets the java perspective in the active workbench window.
-	 *
-	 * @return the window in which the perspective is ready
-	 */
-	protected IWorkbenchWindow resetJavaPerspective() {
-		return resetPerspective(JavaUI.ID_PERSPECTIVE);
-	}
-
-	/**
-	 * Sync exec the given runnable
-	 *
-	 * @param r
-	 */
-	protected void sync(Runnable r) {
-		DebugUIPlugin.getStandardDisplay().syncExec(r);
-	}
-
-	/**
 	 * Returns whether the specified view is open
 	 *
 	 * @param window
 	 * @param id
 	 * @return
 	 */
-	protected boolean isViewOpen(final IWorkbenchWindow window, final String id) {
+	protected boolean isViewOpen(final IWorkbenchWindow window, final String id) throws Exception {
 		final IViewReference[] refs = new IViewReference[1];
-		Runnable r = new Runnable() {
+		sync(new Runnable() {
 			@Override
 			public void run() {
 				refs[0] = window.getActivePage().findViewReference(id);
 			}
-		};
-		sync(r);
+		});
 		return refs[0] != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
-		switch_on_launch = preferenceStore.getString(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE);
-		switch_on_suspend = preferenceStore.getString(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND);
-		debug_perspectives = preferenceStore.getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
-		user_view_bindings = preferenceStore.getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS);
-		activate_debug_view = preferenceStore.getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.NEVER);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.NEVER);
-		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE + "," +
-				JavaUI.ID_PERSPECTIVE + ",");
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, true);
 		fExpectingOpenEvents.clear();
 		fExpectingCloseEvents.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
-		IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, switch_on_suspend);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, switch_on_launch);
-		preferenceStore.setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, debug_perspectives);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, user_view_bindings);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate_debug_view);
 		super.tearDown();
 	}
 

@@ -83,6 +83,25 @@ public class TestUtil {
 	 * @return true if the method timed out, false if all the jobs terminated before the timeout
 	 */
 	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs) {
+		return waitForJobs(owner, minTimeMs, maxTimeMs, (Object[]) null);
+	}
+
+	/**
+	 * Utility for waiting until the execution of jobs of any family has finished or timeout is reached. If no jobs are running, the method waits
+	 * given minimum wait time. While this method is waiting for jobs, UI events are processed.
+	 *
+	 * @param owner
+	 *            name of the caller which will be logged as prefix if the wait times out
+	 * @param minTimeMs
+	 *            minimum wait time in milliseconds
+	 * @param maxTimeMs
+	 *            maximum wait time in milliseconds
+	 * @param excludedFamilies
+	 *            optional list of job families to NOT wait for
+	 *
+	 * @return true if the method timed out, false if all the jobs terminated before the timeout
+	 */
+	public static boolean waitForJobs(String owner, long minTimeMs, long maxTimeMs, Object... excludedFamilies) {
 		if (maxTimeMs < minTimeMs) {
 			throw new IllegalArgumentException("Max time is smaller as min time!");
 		}
@@ -96,7 +115,11 @@ public class TestUtil {
 			}
 		}
 		while (!Job.getJobManager().isIdle()) {
-			List<Job> jobs = getRunningOrWaitingJobs((Object) null);
+			List<Job> jobs = getRunningOrWaitingJobs(null, excludedFamilies);
+			if (jobs.isEmpty()) {
+				// only uninteresting jobs running
+				break;
+			}
 
 			if (!Collections.disjoint(runningJobs, jobs)) {
 				// There is a job which runs already quite some time, don't wait for it to avoid test timeouts
@@ -143,11 +166,11 @@ public class TestUtil {
 		return sb.toString();
 	}
 
-	private static List<Job> getRunningOrWaitingJobs(Object jobFamily) {
+	private static List<Job> getRunningOrWaitingJobs(Object jobFamily, Object... excludedFamilies) {
 		List<Job> running = new ArrayList<>();
 		Job[] jobs = Job.getJobManager().find(jobFamily);
 		for (Job job : jobs) {
-			if (isRunningOrWaitingJob(job)) {
+			if (isRunningOrWaitingJob(job) && !belongsToFamilies(job, excludedFamilies)) {
 				running.add(job);
 			}
 		}
@@ -157,6 +180,18 @@ public class TestUtil {
 	private static boolean isRunningOrWaitingJob(Job job) {
 		int state = job.getState();
 		return (state == Job.RUNNING || state == Job.WAITING);
+	}
+
+	private static boolean belongsToFamilies(Job job, Object... excludedFamilies) {
+		if (excludedFamilies == null || excludedFamilies.length == 0) {
+			return false;
+		}
+		for (Object family : excludedFamilies) {
+			if (job.belongsTo(family)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -476,5 +476,15 @@
            modelIdentifier="org.eclipse.jdt.debug">
      </stepFilter>
   </extension>
-
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%DebugViewPerspective"
+            class="org.eclipse.jdt.debug.tests.ui.DebugViewPerspectiveFactory"
+            id="org.eclipse.jdt.debug.tests.ui.DebugViewPerspectiveFactory">
+         <description>
+            %DebugViewPerspectiveDescription
+         </description>
+      </perspective>
+   </extension>
 </plugin>
