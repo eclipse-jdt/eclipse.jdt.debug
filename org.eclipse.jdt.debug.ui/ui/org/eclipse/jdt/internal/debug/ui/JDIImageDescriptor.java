@@ -62,6 +62,8 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render disabled due to trigger point adornment */
 	public final static int TRIGGER_SUPPRESSED = 0x20000;
 
+	public final static int LOGICAL_STRUCTURE = 0x400000;
+
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;

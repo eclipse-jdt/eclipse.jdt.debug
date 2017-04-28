@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,6 +209,23 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		super(DebugUIMessages.JavaLogicalStructuresPreferencePage_0);
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
         setDescription(DebugUIMessages.JavaLogicalStructuresPreferencePage_11);
+	}
+
+	@Override
+	public void applyData(Object data) {
+		if (data instanceof String) {
+			Object[] logicalStructures = fLogicalStructuresContentProvider.getElements(null);
+			for (int i = 0, length = logicalStructures.length; i < length; i++) {
+				JavaLogicalStructure javaLogicalStructure = ((JavaLogicalStructure) logicalStructures[i]);
+				if (((String) data).compareToIgnoreCase(javaLogicalStructure.getId() + javaLogicalStructure.getDescription()
+						+ javaLogicalStructure.hashCode()) == 0) {
+					fLogicalStructuresViewer.setSelection(new StructuredSelection(logicalStructures[i]));
+					return;
+				}
+			}
+		} else {
+			super.applyData(data);
+		}
 	}
 
 	@Override
