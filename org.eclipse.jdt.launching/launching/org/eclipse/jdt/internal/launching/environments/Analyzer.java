@@ -19,16 +19,16 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDeleg
 
 /**
  * Contributed analyzer.
- * 
+ *
  * @since 3.2
  *
  */
 class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
-	
+
 	private IConfigurationElement fElement;
-	
+
 	private IExecutionEnvironmentAnalyzerDelegate fDelegate;
-	
+
 	Analyzer(IConfigurationElement element) {
 		fElement = element;
 	}
@@ -43,7 +43,7 @@ class Analyzer implements IExecutionEnvironmentAnalyzerDelegate {
 
 	/**
 	 * Instantiates and returns the contributed analyzer.
-	 * 
+	 *
 	 * @return analyzer
 	 * @throws CoreException if an error occurs
 	 */

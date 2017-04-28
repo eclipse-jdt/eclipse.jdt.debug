@@ -25,12 +25,12 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for method rename.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipant {
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
@@ -63,5 +63,5 @@ public class BreakpointRenameMethodParticipant extends BreakpointRenameParticipa
 			}
 		}
 	}
-	
+
 }

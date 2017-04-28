@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import com.sun.jdi.event.MonitorWaitedEvent;
 /**
  * This class provides an implementation of MonitorContendedEnterEvent according
  * to Sun's 1.6 specs
- * 
+ *
  * @since 3.3
  */
 public class MonitorWaitedEventImpl extends LocatableEventImpl implements
@@ -70,7 +70,7 @@ public class MonitorWaitedEventImpl extends LocatableEventImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.event.MonitorWaitedEvent#monitor()
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class MonitorWaitedEventImpl extends LocatableEventImpl implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.event.MonitorWaitedEvent#timedout()
 	 */
 	@Override

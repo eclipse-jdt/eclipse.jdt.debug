@@ -37,7 +37,7 @@ import org.eclipse.osgi.util.NLS;
  * Searches for installed JREs on the Mac.
  */
 public class MacInstalledJREs {
-	
+
 	/** The executable for 'java_home' */
 	private static final String JAVA_HOME_PLIST = "/usr/libexec/java_home"; //$NON-NLS-1$
 	/** The plist attribute describing the JRE home directory */
@@ -51,34 +51,34 @@ public class MacInstalledJREs {
 	 * @since 3.8
 	 */
 	private static final String PLIST_JVM_BUNDLE_ID = "JVMBundleID"; //$NON-NLS-1$
-	
+
 	public static final VMStandin[] NO_VMS = new VMStandin[0];
-	
+
 	/**
 	 * Custom stand-in that allows us to provide a version
 	 * @since 3.7.0
 	 */
 	public static class MacVMStandin extends VMStandin {
-		
+
 		String version = null;
-		
+
 		public MacVMStandin(IVMInstallType type, File location, String name, String version, String id) {
 			super(type, id);
 			setInstallLocation(location);
 			setName(name);
 			this.version = version;
 		}
-		
+
 		@Override
 		public String getJavaVersion() {
 			return version;
 		}
 	}
-	
+
 	/**
 	 * Parses the XML output produced from "java_home -X" (see bug 325777), and return a collection
 	 * of descriptions of JRE installations.
-	 * 
+	 *
 	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
 	 * @return array of {@link VMStandin}s installed in the OS
 	 * @exception CoreException if unable to parse the output or the executable does not exist
@@ -120,10 +120,10 @@ public class MacInstalledJREs {
 			}
 		}
 	}
-	
+
 	/**
 	 * Parses the output from 'java_home -X'.
-	 * 
+	 *
 	 * @param process process with output from 'java_home -X'
 	 * @param the {@link IProgressMonitor} or <code>null</code>
 	 * @return array JRE descriptions installed in the OS
@@ -141,11 +141,11 @@ public class MacInstalledJREs {
 		}
 		return NO_VMS;
 	}
-	
+
 	/**
-	 * Parse {@link JREDescriptor}s from the given input stream. The stream is expected to be in the 
+	 * Parse {@link JREDescriptor}s from the given input stream. The stream is expected to be in the
 	 * XML properties format.
-	 * 
+	 *
 	 * @param monitor the {@link IProgressMonitor} or <code>null</code>
 	 * @param stream
 	 * @return the array of {@link VMStandin}s or an empty array never <code>null</code>
@@ -158,7 +158,7 @@ public class MacInstalledJREs {
 			if (result instanceof Object[]) {
 				Object[] maps = (Object[]) result;
 				smonitor.setWorkRemaining(maps.length);
-				List<VMStandin> jres= new ArrayList<VMStandin>();
+				List<VMStandin> jres= new ArrayList<>();
 				AbstractVMInstallType mactype = (AbstractVMInstallType) JavaRuntime.getVMInstallType("org.eclipse.jdt.internal.launching.macosx.MacOSXType"); //$NON-NLS-1$
 				if(mactype != null) {
 					for (int i = 0; i < maps.length; i++) {
@@ -185,9 +185,9 @@ public class MacInstalledJREs {
 								vm.setLibraryLocations(mactype.getDefaultLibraryLocations(loc));
 								vm.setVMArgs(mactype.getDefaultVMArguments(loc));
 								if (!jres.contains(vm)) { // remove duplicates
-									jres.add(vm);	
+									jres.add(vm);
 								}
-							} 
+							}
 						}
 						smonitor.worked(1);
 					}
@@ -202,7 +202,7 @@ public class MacInstalledJREs {
 		}
 		return NO_VMS;
 	}
-	
+
 	/**
 	 * Tries to compute the descriptor id using the {@link #PLIST_JVM_BUNDLE_ID}. If that is not defined
 	 * we fall back to using the version.

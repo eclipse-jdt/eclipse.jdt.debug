@@ -21,28 +21,28 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 
 /**
- * Tests launching / suspending and evaluating within anonymous 
+ * Tests launching / suspending and evaluating within anonymous
  * types
  */
 public class TestAnonymousInspect extends AbstractDebugTest {
 
-	static final String TYPE_NAME = "InspectTests"; 
+	static final String TYPE_NAME = "InspectTests";
 	static final String SNIPPET = "getchar()";
-	
+
 	class Listener implements IEvaluationListener {
 		IEvaluationResult fResult;
-		
+
 		@Override
 		public void evaluationComplete(IEvaluationResult result) {
 			fResult= result;
 		}
-		
+
 		public IEvaluationResult getResult() {
 			return fResult;
 		}
 	}
 	Listener listener= new Listener();
-	
+
 	/**
 	 * Constructor
 	 */
@@ -58,7 +58,7 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 		super.setUp();
 		createLaunchConfiguration(get14Project(), TYPE_NAME);
 	}
-	
+
 	/**
 	 * Perform the actual evaluation (inspect)
 	 * @param thread
@@ -82,11 +82,11 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 			engine.dispose();
 		}
 	}
-	
+
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration that is assigned
 	 * to a field
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInspectInAnonField() throws Exception {
@@ -106,11 +106,11 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 			listener.fResult = null;
 		}
 	}
-	
+
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration within a method
 	 * declaration
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInspectInAnonMethod() throws Exception {
@@ -130,11 +130,11 @@ public class TestAnonymousInspect extends AbstractDebugTest {
 			listener.fResult = null;
 		}
 	}
-	
+
 	/**
 	 * Tests that we can successfully inspect a method call from an anonymous type declaration within a static
-	 * initializer 
-	 * 
+	 * initializer
+	 *
 	 * @throws Exception
 	 */
 	public void testInspectInAnonInitializer() throws Exception {

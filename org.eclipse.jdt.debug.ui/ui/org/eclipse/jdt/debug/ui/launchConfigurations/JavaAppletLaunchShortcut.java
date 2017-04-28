@@ -28,7 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 
 /**
- * 
+ *
  * Launch shortcut for Java applets.
  * <p>
  * This class may be instantiated or subclassed.
@@ -36,7 +36,7 @@ import org.eclipse.jface.operation.IRunnableContext;
  * @since 3.3
  */
 public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
@@ -45,27 +45,27 @@ public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getConfigurationType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(type.getElementName())); 
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(type.getElementName()));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, AppletParametersTab.DEFAULT_APPLET_WIDTH);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, AppletParametersTab.DEFAULT_APPLET_HEIGHT);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
 			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});
-			config = wc.doSave();		
+			config = wc.doSave();
 		} catch (CoreException ce) {
-			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.JavaLaunchShortcut_3, ce.getStatus().getMessage());	
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.JavaLaunchShortcut_3, ce.getStatus().getMessage());
 		}
 		return config;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
 	 */
 	@Override
 	protected ILaunchConfigurationType getConfigurationType() {
 		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);		
+		return lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 	}
 
 	/* (non-Javadoc)
@@ -78,7 +78,7 @@ public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
 		} catch (InvocationTargetException e) {
 			throw (CoreException)e.getTargetException();
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
@@ -102,5 +102,5 @@ public class JavaAppletLaunchShortcut extends JavaLaunchShortcut {
 	@Override
 	protected String getSelectionEmptyMessage() {
 		return LauncherMessages.JavaAppletLaunchShortcut_2;
-	}	
+	}
 }

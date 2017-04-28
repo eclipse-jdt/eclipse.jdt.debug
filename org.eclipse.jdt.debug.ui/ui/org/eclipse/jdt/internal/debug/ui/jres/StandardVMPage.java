@@ -48,11 +48,11 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Page used to edit a standard VM.
- * 
+ *
  * @since 3.3
  */
 public class StandardVMPage extends AbstractVMInstallPage {
-	
+
 	// VM being edited or created
 	private VMStandin fVM;
 	private Text fVMName;
@@ -63,9 +63,9 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	private URL fJavadocLocation = null;
 	private boolean fAutoDetectAttributes = false;
 	private IStatus[] fFieldStatus = new IStatus[1];
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public StandardVMPage() {
 		super(JREMessages.StandardVMPage_0);
@@ -73,14 +73,14 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			fFieldStatus[i] = Status.OK_STATUS;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
 	@Override
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_WIZBAN_LIBRARY);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -93,7 +93,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 	// VM location
 		SWTFactory.createLabel(composite, JREMessages.addVMDialog_jreHome, 1);
 		fJRERoot = SWTFactory.createSingleText(composite, 1);
@@ -109,7 +109,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		Button variables = SWTFactory.createPushButton(composite, JREMessages.StandardVMPage_3, null);
 		data = (GridData) variables.getLayoutData();
 		data.horizontalAlignment = GridData.END;
-	//VM libraries block 
+	//VM libraries block
 		SWTFactory.createLabel(composite, JREMessages.AddVMDialog_JRE_system_libraries__1, 3);
 		fLibraryBlock = new VMLibraryBlock();
 		fLibraryBlock.setWizard(getWizard());
@@ -118,8 +118,8 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		libControl.setLayoutData(gd);
-		
-	
+
+
 	//add the listeners now to prevent them from monkeying with initialized settings
 		fVMName.addModifyListener(new ModifyListener() {
 			@Override
@@ -145,7 +145,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 					text = file.getParentFile().getAbsolutePath();
 				}
 				dialog.setFilterPath(text);
-				dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message); 
+				dialog.setMessage(JREMessages.addVMDialog_pickJRERootDialog_message);
 				String newPath = dialog.open();
 				if (newPath != null) {
 					fJRERoot.setText(newPath);
@@ -167,9 +167,9 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		Dialog.applyDialogFont(composite);
 		setControl(composite);
 		initializeFields();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.EDIT_JRE_STD_VM_WIZARD_PAGE);	
-	}	
-	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.EDIT_JRE_STD_VM_WIZARD_PAGE);
+	}
+
 	/**
 	 * Validates the JRE location
 	 * @return the status after validating the JRE location
@@ -179,16 +179,16 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		IStatus s = null;
 		File file = null;
 		if (locationName.length() == 0) {
-			s = new StatusInfo(IStatus.WARNING, JREMessages.addVMDialog_enterLocation); 
-		} 
+			s = new StatusInfo(IStatus.WARNING, JREMessages.addVMDialog_enterLocation);
+		}
 		else {
 			file = new File(locationName);
 			if (!file.exists()) {
-				s = new StatusInfo(IStatus.ERROR, JREMessages.addVMDialog_locationNotExists); 
-			} 
+				s = new StatusInfo(IStatus.ERROR, JREMessages.addVMDialog_locationNotExists);
+			}
 			else {
 				final IStatus[] temp = new IStatus[1];
-				final File tempFile = file; 
+				final File tempFile = file;
 				Runnable r = new Runnable() {
 					@Override
 					public void run() {
@@ -220,12 +220,12 @@ public class StandardVMPage extends AbstractVMInstallPage {
 						int segs = path.segmentCount();
 						if (segs == 1) {
 							genName = path.segment(0);
-						} 
+						}
 						else if (segs >= 2) {
 							String last = path.lastSegment();
 							if ("jre".equalsIgnoreCase(last)) { //$NON-NLS-1$
 								genName = path.segment(segs - 2);
-							} 
+							}
 							else {
 								genName = last;
 							}
@@ -242,7 +242,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		fLibraryBlock.setSelection(fVM);
 		updatePageStatus();
 	}
-	
+
 	/**
 	 * Auto-detects the default javadoc location
 	 */
@@ -261,14 +261,14 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			fJavadocLocation = fVM.getJavadocLocation();
 		}
 	}
-	
+
 	/**
 	 * Returns the installation location as a file from the JRE root text control
 	 * @return the installation location as a file
 	 */
 	protected File getInstallLocation() {
 		return new File(fJRERoot.getText());
-	}	
+	}
 
 	/**
 	 * Validates the entered name of the VM
@@ -277,7 +277,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	private void validateVMName() {
 		nameChanged(fVMName.getText());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#finish()
 	 */
@@ -295,7 +295,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	public VMStandin getSelection() {
 		return fVM;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage#setSelection(org.eclipse.jdt.launching.VMStandin)
 	 */
@@ -307,7 +307,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		setTitle(JREMessages.StandardVMPage_1);
 		setDescription(JREMessages.StandardVMPage_2);
 	}
-	
+
 	/**
 	 * initialize fields to the specified VM
 	 * @param vm the VM to initialize from
@@ -318,16 +318,16 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		vm.setInstallLocation(file);
 		vm.setName(fVMName.getText());
 		vm.setJavadocLocation(getURL());
-		
+
 		String argString = fVMArgs.getText().trim();
 		if (argString != null && argString.length() > 0) {
-			vm.setVMArgs(argString);			
-		} 
+			vm.setVMArgs(argString);
+		}
 		else {
 			vm.setVMArgs(null);
-		} 
+		}
 	}
-	
+
 	/**
 	 * Returns the URL for the javadoc location
 	 * @return the URL for the javadoc location
@@ -335,7 +335,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	protected URL getURL() {
 		return fJavadocLocation;
 	}
-	
+
 	/**
 	 * Creates a unique name for the VMInstallType
 	 * @param vmType the vm install type
@@ -347,8 +347,8 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			id = String.valueOf(System.currentTimeMillis());
 		} while (vmType.findVMInstall(id) != null);
 		return id;
-	}	
-	
+	}
+
 	/**
 	 * Initialize the dialogs fields
 	 */
@@ -365,11 +365,11 @@ public class StandardVMPage extends AbstractVMInstallPage {
 		}
 		validateVMName();
 		validateJRELocation();
-	}	
-	
+	}
+
 	/**
 	 * Sets the status of the JRE location field.
-	 * 
+	 *
 	 * @param status JRE location status
 	 */
 	private void setJRELocationStatus(IStatus status) {
@@ -407,5 +407,5 @@ public class StandardVMPage extends AbstractVMInstallPage {
 	protected IStatus[] getVMStatus() {
 		return fFieldStatus;
 	}
-	
+
 }

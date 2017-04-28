@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,27 +24,27 @@ import org.eclipse.swt.SWT;
  * Attach source to an archive or variable.
  */
 public class AttachSourceAction extends RuntimeClasspathAction {
-	
+
 	private IRuntimeClasspathEntry[] fEntries;
-	
+
 	/**
 	 * Creates an action to open a source attachment dialog.
-	 * 
+	 *
 	 * @param viewer the viewer the action is associated with or <code>null</code>
 	 * @param style a button or radio button
 	 */
 	public AttachSourceAction(RuntimeClasspathViewer viewer, int style) {
-		super((style == SWT.RADIO) ? ActionMessages.AttachSourceAction_2 : ActionMessages.AttachSourceAction_3, viewer); // 
-	}	
+		super((style == SWT.RADIO) ? ActionMessages.AttachSourceAction_2 : ActionMessages.AttachSourceAction_3, viewer); //
+	}
 
 	/**
 	 * Prompts source attachment.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
-	 */	
+	 */
 	@Override
-	public void run() { 
-		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry()); 
+	public void run() {
+		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry());
 		if (classpathEntry != null) {
 			for (int i = 0; i < fEntries.length; i++) {
 				IRuntimeClasspathEntry entry = fEntries[i];

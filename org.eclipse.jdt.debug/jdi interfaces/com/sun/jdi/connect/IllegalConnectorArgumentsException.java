@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class IllegalConnectorArgumentsException extends Exception {
 
 	public IllegalConnectorArgumentsException(String message, String argName) {
 		super(message);
-		fNames = new ArrayList<String>(1);
+		fNames = new ArrayList<>(1);
 		fNames.add(argName);
 	}
 

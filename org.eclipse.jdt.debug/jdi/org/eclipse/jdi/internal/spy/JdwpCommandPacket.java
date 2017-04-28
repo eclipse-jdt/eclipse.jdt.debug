@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP)
  * packet declared by the JDWP specification.
- * 
+ *
  */
 public class JdwpCommandPacket extends JdwpPacket {
 	/** Command Sets. */
@@ -248,7 +248,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 		Field[] fields = JdwpCommandPacket.class.getDeclaredFields();
 
 		// First get the set names.
-		Map<Integer, String> setNames = new HashMap<Integer, String>(fields.length);
+		Map<Integer, String> setNames = new HashMap<>(fields.length);
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
@@ -273,7 +273,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 		}
 
 		// Get the commands.
-		fgCommandMap = new HashMap<Integer, String>();
+		fgCommandMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0

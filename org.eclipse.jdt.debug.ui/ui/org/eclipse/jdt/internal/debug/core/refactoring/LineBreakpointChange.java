@@ -18,7 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
  * @since 3.2
  */
 public abstract class LineBreakpointChange extends BreakpointChange {
-	
+
 	private int fCharEnd, fCharStart, fLineNumber;
 	private boolean fConditionEnabled, fConditionSuspendOnTrue;
 	private String fCondition;
@@ -61,7 +61,7 @@ public abstract class LineBreakpointChange extends BreakpointChange {
 	protected int getLineNumber() {
 		return fLineNumber;
 	}
-	
+
 	/**
 	 * Returns the char end attribute of the underlying line breakpoint
 	 * @return the char end attribute of the underlying line breakpoint
@@ -69,7 +69,7 @@ public abstract class LineBreakpointChange extends BreakpointChange {
 	protected int getCharEnd() {
 		return fCharEnd;
 	}
-	
+
 	/**
 	 * Returns the char start attribute of the underlying line breakpoint
 	 * @return the char start attribute of the underlying line breakpoint

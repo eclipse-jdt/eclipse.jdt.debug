@@ -30,7 +30,7 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChange {
-	
+
 	private IType fDestType;
 
 	public ClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint breakpoint, IType destType) throws CoreException {
@@ -53,7 +53,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		// TODO - start/end should be adjusted, but can access new CU from model yet
@@ -62,7 +62,7 @@ public class ClassPrepareBreakpointTypeChange extends ClassPrepareBreakpointChan
 				resource,
 				fDestType.getFullyQualifiedName(),
 				getMemberType(),
-				range.getOffset(), 
+				range.getOffset(),
 				range.getOffset() + range.getLength(),
 				true,
 				map);

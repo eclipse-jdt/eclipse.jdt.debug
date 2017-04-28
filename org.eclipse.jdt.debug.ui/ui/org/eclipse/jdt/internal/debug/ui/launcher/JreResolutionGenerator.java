@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator2;
  * Generates quick fixes for unbound JREs.
  */
 public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
-	
+
 	private final static IMarkerResolution[] NO_RESOLUTION = new IMarkerResolution[0];
 
 	/**
@@ -39,10 +39,10 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		try {
-			if(JavaRuntime.JRE_CONTAINER_MARKER.equals(marker.getType())) { 
-				return new IMarkerResolution[] {new OpenPreferencePageResolution(ExecutionEnvironmentsPreferencePage.ID, 
-						new String[] {ExecutionEnvironmentsPreferencePage.ID, JREsPreferencePage.ID}, 
-						LauncherMessages.JreResolutionGenerator_open_ee_prefs, 
+			if(JavaRuntime.JRE_CONTAINER_MARKER.equals(marker.getType())) {
+				return new IMarkerResolution[] {new OpenPreferencePageResolution(ExecutionEnvironmentsPreferencePage.ID,
+						new String[] {ExecutionEnvironmentsPreferencePage.ID, JREsPreferencePage.ID},
+						LauncherMessages.JreResolutionGenerator_open_ee_prefs,
 						LauncherMessages.JreResolutionGenerator_opens_ee_prefs)};
 			}
 			int id = marker.getAttribute(IJavaModelMarker.ID, -1);
@@ -61,7 +61,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 						return new IMarkerResolution[]{new DefineSystemLibraryQuickFix()};
 					}
 					break;
-	
+
 				// unbound classpath variable
 				case IJavaModelStatusConstants.CP_VARIABLE_PATH_UNBOUND :
 					arguments = CorrectionEngine.getProblemArguments(marker);
@@ -76,7 +76,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 					}
 					break;
 				// deprecated JRE library variables
-				case IJavaModelStatusConstants.DEPRECATED_VARIABLE : 
+				case IJavaModelStatusConstants.DEPRECATED_VARIABLE :
 					arguments = CorrectionEngine.getProblemArguments(marker);
 					path = new Path(arguments[0]);
 					if (path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE) ||
@@ -92,7 +92,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 	}
 
 	/**
-	 * Returns the java project from the specified marker, or <code>null</code> if the marker 
+	 * Returns the java project from the specified marker, or <code>null</code> if the marker
 	 * does not have an associated java project
 	 * @param marker
 	 * @return the associated java project or <code>null</code>
@@ -108,7 +108,7 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 	public boolean hasResolutions(IMarker marker) {
 		try {
 			String type = marker.getType();
-			return IJavaModelMarker.BUILDPATH_PROBLEM_MARKER.equals(type) || 
+			return IJavaModelMarker.BUILDPATH_PROBLEM_MARKER.equals(type) ||
 				   JavaRuntime.JRE_CONTAINER_MARKER.equals(type);
 		} catch (CoreException ce) {}
 		return false;

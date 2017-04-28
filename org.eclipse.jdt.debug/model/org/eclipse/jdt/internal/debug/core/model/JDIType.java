@@ -36,7 +36,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 	/**
 	 * Constructs a new type based on the specified underlying type, in the
 	 * given debug target
-	 * 
+	 *
 	 * @param target
 	 *            the debug target this type originated from
 	 * @param type
@@ -49,7 +49,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 
 	/**
 	 * Throws a new debug exception with the given status code.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -81,7 +81,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 	 * <code>TARGET_REQUEST_FAILED</code> with the given underlying exception.
 	 * If the underlying exception is not a JDI exception, the original
 	 * exception is thrown.
-	 * 
+	 *
 	 * @param message
 	 *            Failure message
 	 * @param e
@@ -137,7 +137,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 
 	/**
 	 * Returns the underlying type on the VM.
-	 * 
+	 *
 	 * @return the underlying type on the VM
 	 */
 	public Type getUnderlyingType() {
@@ -146,7 +146,7 @@ public class JDIType extends JDIDebugElement implements IJavaType {
 
 	/**
 	 * Sets the underlying type on the VM.
-	 * 
+	 *
 	 * @param type
 	 *            the underlying type on the VM
 	 */

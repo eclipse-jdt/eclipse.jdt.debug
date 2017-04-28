@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
  * Tests deferred target pattern breakpoints.
  */
 public class TargetPatternBreakpointTests extends AbstractDebugTest implements IJavaBreakpointListener {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -47,7 +47,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 	 */
 	public void testTargetPatternBreakpoints() throws Exception {
 		JDIDebugPlugin.getDefault().addJavaBreakpointListener(this);
-		
+
 		String sourceName = "Breakpoints.java";
 		List<IJavaTargetPatternBreakpoint> bps = new ArrayList<IJavaTargetPatternBreakpoint>();
 		// anonymous class
@@ -74,7 +74,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 		bps.add(createTargetPatternBreakpoint(72, sourceName));
 		// instance method
 		bps.add(createTargetPatternBreakpoint(107, sourceName));
-		// static method 
+		// static method
 		bps.add(createTargetPatternBreakpoint(53, sourceName));
 		// case statement
 		bps.add(createTargetPatternBreakpoint(133, sourceName));
@@ -88,8 +88,8 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 		bps.add(createTargetPatternBreakpoint(118, sourceName));
 		// while
 		bps.add(createTargetPatternBreakpoint(97, sourceName));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint("Breakpoints", false);
@@ -113,7 +113,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			JDIDebugPlugin.getDefault().removeJavaBreakpointListener(this);
-		}		
+		}
 	}
 	/**
 	 * @see IJavaBreakpointListener#addingBreakpoint(IJavaDebugTarget, IJavaBreakpoint)

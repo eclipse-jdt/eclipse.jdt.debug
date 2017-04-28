@@ -22,7 +22,7 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Marker resolution to open a preference page
- * 
+ *
  * @since 3.5
  */
 public class OpenPreferencePageResolution implements IMarkerResolution2 {
@@ -31,10 +31,10 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 	private String label = null;
 	private String description = null;
 	private String[] additional = null;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param pageid the id of the page to show
 	 * @param additional the page ids of additional pages to show as well
 	 * @param label the label to show for the resolution
@@ -46,7 +46,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 		this.label = label;
 		this.description = description;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
@@ -80,7 +80,7 @@ public class OpenPreferencePageResolution implements IMarkerResolution2 {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				SWTFactory.showPreferencePage(
-							OpenPreferencePageResolution.this.pageid, 
+							OpenPreferencePageResolution.this.pageid,
 							OpenPreferencePageResolution.this.additional);
 				return Status.OK_STATUS;
 			}

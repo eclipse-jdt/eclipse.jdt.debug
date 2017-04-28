@@ -30,18 +30,18 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  *  The source viewer configuration for the Java snippet editor.
  */
 public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguration {
-	
+
 	public JavaSnippetViewerConfiguration(JavaTextTools tools, IPreferenceStore preferenceStore, JavaSnippetEditor editor) {
 		super(tools.getColorManager(), preferenceStore, editor, IJavaPartitions.JAVA_PARTITIONING);
 	}
-	
+
 	/**
 	 * @see JDIViewerConfiguration#getContentAssistantProcessor()
 	 */
 	public IContentAssistProcessor getContentAssistantProcessor() {
 		return new JavaSnippetCompletionProcessor((JavaSnippetEditor)getEditor());
 	}
-	
+
 	/**
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
@@ -66,7 +66,7 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 
 		return assistant;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */

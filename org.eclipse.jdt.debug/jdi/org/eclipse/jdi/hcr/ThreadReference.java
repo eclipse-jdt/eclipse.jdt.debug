@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,9 +55,9 @@ public interface ThreadReference {
 	 * Note that a <code>finally</code> block manifests itself as (and is
 	 * indistinguishable from) a <code>catch Throwable</code> block.
 	 * <code>synchronized</code> statements also compile to a
-	 * <code> catch Throwable block<code>.The target program may inadventently 
-	 * end up catching this exception. 
-	 * 
+	 * <code> catch Throwable block<code>.The target program may inadventently
+	 * end up catching this exception.
+	 *
 	 * Since the choices each have their pros and cons, making the decision
 	 * is left to the debugger. However the later option is the  recommended choice.
 	 * <p>

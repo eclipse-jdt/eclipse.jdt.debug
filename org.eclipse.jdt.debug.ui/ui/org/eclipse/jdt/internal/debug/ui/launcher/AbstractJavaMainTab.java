@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -41,11 +41,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * Provides general widgets and methods for a Java type launch configuration 
- * 'Main' tab. 
+ * Provides general widgets and methods for a Java type launch configuration
+ * 'Main' tab.
  * Currently there are only three Java type launch configurations: Local Java Application, Applet, and Remote Debug
  * which this class is used by
- * 
+ *
  * @since 3.2
  */
 public abstract class AbstractJavaMainTab extends JavaLaunchTab {
@@ -55,15 +55,15 @@ public abstract class AbstractJavaMainTab extends JavaLaunchTab {
  * in this tab.
  */
 private class WidgetListener implements ModifyListener, SelectionListener {
-	
+
 	@Override
 	public void modifyText(ModifyEvent e) {
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {/*do nothing*/}
-	
+
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Object source = e.getSource();
@@ -75,15 +75,15 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		}
 	}
 }
-	
+
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	//Project UI widgets
 	protected Text fProjText;
 
 	private Button fProjButton;
-	
+
 	private WidgetListener fListener = new WidgetListener();
-	
+
 	/**
 	 * chooses a project for the type of java launch config that it is
 	 * @return the selected project or <code>null</code> if none
@@ -91,8 +91,8 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	private IJavaProject chooseJavaProject() {
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle(LauncherMessages.AbstractJavaMainTab_4); 
-		dialog.setMessage(LauncherMessages.AbstractJavaMainTab_3); 
+		dialog.setTitle(LauncherMessages.AbstractJavaMainTab_4);
+		dialog.setMessage(LauncherMessages.AbstractJavaMainTab_3);
 		try {
 			dialog.setElements(JavaCore.create(getWorkspaceRoot()).getJavaProjects());
 		}
@@ -101,15 +101,15 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == Window.OK) {			
+		if (dialog.open() == Window.OK) {
 			return (IJavaProject) dialog.getFirstResult();
-		}		
-		return null;		
+		}
+		return null;
 	}
-	
+
 	/**
 	 * Creates the widgets for specifying a main type.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
 	protected void createProjectEditor(Composite parent) {
@@ -117,27 +117,27 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		fProjText = SWTFactory.createSingleText(group, 1);
 		fProjText.addModifyListener(fListener);
 		ControlAccessibleListener.addListener(fProjText, group.getText());
-		fProjButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_1, null); 
+		fProjButton = createPushButton(group, LauncherMessages.AbstractJavaMainTab_1, null);
 		fProjButton.addSelectionListener(fListener);
-	}	
-	
+	}
+
 	/**
 	 * returns the default listener from this class. For all subclasses
 	 * this listener will only provide the functionality of updating the current tab
-	 * 
+	 *
 	 * @return a widget listener
 	 */
 	protected WidgetListener getDefaultListener() {
 		return fListener;
 	}
-	
+
 	/**
 	 * Convenience method to get access to the java model.
 	 */
 	private IJavaModel getJavaModel() {
 		return JavaCore.create(getWorkspaceRoot());
 	}
-	
+
 	/**
 	 * Return the IJavaProject corresponding to the project name in the project name
 	 * text field, or null if the text does not match a project name.
@@ -147,7 +147,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		if (projectName.length() < 1) {
 			return null;
 		}
-		return getJavaModel().getJavaProject(projectName);		
+		return getJavaModel().getJavaProject(projectName);
 	}
 
 	/**
@@ -168,9 +168,9 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 			return;
 		}
 		String projectName = project.getElementName();
-		fProjText.setText(projectName);		
+		fProjText.setText(projectName);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -179,7 +179,7 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		updateProjectFromConfig(config);
 		super.initializeFrom(config);
 	}
-	
+
 	/**
 	 * updates the project text field form the configuration
 	 * @param config the configuration we are editing
@@ -187,17 +187,17 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 	private void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = EMPTY_STRING;
 		try {
-			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
+			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		}
 		catch (CoreException ce) {
 			setErrorMessage(ce.getStatus().getMessage());
 		}
 		fProjText.setText(projectName);
 	}
-	
+
 	/**
 	 * Maps the config to associated java resource
-	 * 
+	 *
 	 * @param config
 	 */
 	protected void mapResources(ILaunchConfigurationWorkingCopy config)  {
@@ -210,6 +210,6 @@ private class WidgetListener implements ModifyListener, SelectionListener {
 		} catch(CoreException ce) {
 			setErrorMessage(ce.getStatus().getMessage());
 		}
-	}	
-	
+	}
+
 }

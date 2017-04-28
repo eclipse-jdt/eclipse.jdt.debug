@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
- 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,17 +47,17 @@ import org.eclipse.jface.operation.IRunnableContext;
  * @since 3.3
  */
 public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
-	
+
 	/**
 	 * Returns the Java elements corresponding to the given objects. Members are translated
 	 * to corresponding declaring types where possible.
-	 * 
+	 *
 	 * @param objects selected objects
 	 * @return corresponding Java elements
 	 * @since 3.5
 	 */
 	protected IJavaElement[] getJavaElements(Object[] objects) {
-		List<IJavaElement> list= new ArrayList<IJavaElement>(objects.length);
+		List<IJavaElement> list= new ArrayList<>(objects.length);
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IAdaptable) {
@@ -76,7 +76,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		}
 		return list.toArray(new IJavaElement[list.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#createConfiguration(org.eclipse.jdt.core.IType)
 	 */
@@ -92,28 +92,28 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});
 			config = wc.doSave();
 		} catch (CoreException exception) {
-			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.JavaLaunchShortcut_3, exception.getStatus().getMessage());	
-		} 
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.JavaLaunchShortcut_3, exception.getStatus().getMessage());
+		}
 		return config;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getConfigurationType()
 	 */
 	@Override
 	protected ILaunchConfigurationType getConfigurationType() {
-		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
+		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 	}
 
 	/**
 	 * Returns the singleton launch manager.
-	 * 
+	 *
 	 * @return launch manager
 	 */
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#findTypes(java.lang.Object[], org.eclipse.jface.operation.IRunnableContext)
 	 */
@@ -136,7 +136,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), e.getMessage(), e));
 		}
 	}
-	
+
 	/**
 	 * Returns the smallest enclosing <code>IType</code> if the specified object is a main method, or <code>null</code>
 	 * @param o the object to inspect
@@ -158,7 +158,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaLaunchShortcut#getTypeSelectionTitle()
 	 */

@@ -49,7 +49,7 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * A Utilities class.
- * 
+ *
  * @since 3.2
  */
 public class JavaDebugUtils {
@@ -60,7 +60,7 @@ public class JavaDebugUtils {
 	/**
 	 * Resolves and returns a type from the Java model that corresponds to the
 	 * declaring type of the given stack frame, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param frame
 	 *            frame to resolve declaring type for
 	 * @return corresponding Java model type or <code>null</code>
@@ -80,7 +80,7 @@ public class JavaDebugUtils {
 	/**
 	 * Resolves and returns a type from the Java model that corresponds to the
 	 * type of the given value, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param value
 	 *            value to resolve type for
 	 * @return corresponding Java model type or <code>null</code>
@@ -98,7 +98,7 @@ public class JavaDebugUtils {
 	/**
 	 * Resolves and returns the Java model type associated with the given Java
 	 * debug type, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param type
 	 *            Java debug model type
 	 * @return Java model type or <code>null</code>
@@ -115,7 +115,7 @@ public class JavaDebugUtils {
 	/**
 	 * Returns the source name associated with the given object, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param object
 	 *            an object with an <code>IJavaStackFrame</code> adapter, an
 	 *            IJavaValue or an IJavaType
@@ -184,7 +184,7 @@ public class JavaDebugUtils {
 	 * Generates and returns a source file path based on a qualified type name.
 	 * For example, when <code>java.lang.String</code> is provided, the returned
 	 * source name is <code>java/lang/String.java</code>.
-	 * 
+	 *
 	 * @param qualifiedTypeName
 	 *            fully qualified type name that may contain inner types denoted
 	 *            with <code>$</code> character
@@ -212,7 +212,7 @@ public class JavaDebugUtils {
 	/**
 	 * Resolves the type corresponding to the given name contained in the given
 	 * top-level Java element (class file, compilation unit, or type).
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            fully qualified type name
 	 * @param javaElement
@@ -294,7 +294,7 @@ public class JavaDebugUtils {
 	/**
 	 * Returns the Java element corresponding to the given object or
 	 * <code>null</code> if none, in the context of the given launch.
-	 * 
+	 *
 	 * @param launch
 	 *            provides source locator
 	 * @param object
@@ -316,7 +316,7 @@ public class JavaDebugUtils {
 	/**
 	 * Returns the {@link IJavaElement} associated with the given source element
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param sourceElement
 	 *            a java element, object that adapts to a java element, or a
 	 *            resource
@@ -344,7 +344,7 @@ public class JavaDebugUtils {
 
 	/**
 	 * Returns the source element corresponding to the given object or <code>null</code> if none, in the context of the given launch.
-	 * 
+	 *
 	 * @param launch
 	 *            provides source locator
 	 * @param object
@@ -360,7 +360,7 @@ public class JavaDebugUtils {
 	/**
 	 * Returns the source element corresponding to the given object in the given stratum or <code>null</code> if none, in the context of the given
 	 * launch.
-	 * 
+	 *
 	 * @param launch
 	 *            provides source locator
 	 * @param object
@@ -400,7 +400,7 @@ public class JavaDebugUtils {
 
 	/**
 	 * Resolves the {@link IJavaProject} within the context of the given {@link IJavaStackFrame}
-	 * 
+	 *
 	 * @param frame
 	 * @return the {@link IJavaProject} or <code>null</code>
 	 * @since 3.8.0
@@ -435,12 +435,12 @@ public class JavaDebugUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns an array of simple type names that are part of the given type's
 	 * qualified name. For example, if the given name is <code>x.y.A$B</code>,
 	 * an array with <code>["A", "B"]</code> is returned.
-	 * 
+	 *
 	 * @param typeName
 	 *            fully qualified type name
 	 * @return array of nested type names
@@ -451,7 +451,7 @@ public class JavaDebugUtils {
 			typeName = typeName.substring(index + 1);
 		}
 		index = typeName.indexOf('$');
-		List<String> list = new ArrayList<String>(1);
+		List<String> list = new ArrayList<>(1);
 		while (index >= 0) {
 			list.add(typeName.substring(0, index));
 			typeName = typeName.substring(index + 1);
@@ -465,7 +465,7 @@ public class JavaDebugUtils {
 	 * Returns the class file or compilation unit containing the given fully
 	 * qualified name in the specified project. All registered java like file
 	 * extensions are considered.
-	 * 
+	 *
 	 * @param qualifiedTypeName
 	 *            fully qualified type name
 	 * @param project
@@ -481,7 +481,7 @@ public class JavaDebugUtils {
 			path = path.substring(0, pos);
 		}
 		path = path.replace('.', IPath.SEPARATOR);
-		path += "."; //$NON-NLS-1$    	
+		path += "."; //$NON-NLS-1$
 		for (String ext : javaLikeExtensions) {
 			IJavaElement element = project.findElement(new Path(path + ext));
 			if (element != null) {
@@ -497,7 +497,7 @@ public class JavaDebugUtils {
 	 * <li>The names are non-null and equal</li>
 	 * <li>The names are both null</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name1
 	 *            The first name
 	 * @param name2

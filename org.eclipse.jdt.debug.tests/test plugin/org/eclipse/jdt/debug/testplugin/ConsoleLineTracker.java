@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,19 +16,19 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Simple console line tracker extension point that delegates messages 
+ * Simple console line tracker extension point that delegates messages
  */
 public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
-	
+
 	/**
-	 * Forwards messages to the delegate when not <code>null</code> 
+	 * Forwards messages to the delegate when not <code>null</code>
 	 */
 	private static IConsoleLineTrackerExtension fDelegate;
 	private static IConsole fConsole;
-	
+
 	/**
 	 * Sets the delegate, possibly <code>null</code>
-	 *  
+	 *
 	 * @param tracker
 	 */
 	public static void setDelegate(IConsoleLineTrackerExtension tracker) {
@@ -57,7 +57,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			fDelegate.init(console);
 		}
 	}
-	
+
 	/**
 	 * Returns the document backing this console
 	 * @return the document backingthis console
@@ -75,7 +75,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			fDelegate.lineAppended(line);
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 	 */
@@ -83,7 +83,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public void consoleClosed() {
 		if (fDelegate != null && fConsole != null) {
 			fDelegate.consoleClosed();
-		}		
+		}
 	}
-	
+
 }

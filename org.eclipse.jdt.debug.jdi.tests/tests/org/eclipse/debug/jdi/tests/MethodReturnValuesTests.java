@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import com.sun.jdi.request.MethodExitRequest;
 
 /**
  * Test cases for method exit event return values in java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class MethodReturnValuesTests extends AbstractJDITest {
-	
+
 	MethodExitRequest req = null;
 	Value val = null;
 	MethodExitEvent event = null;
@@ -38,14 +38,14 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 	EventWaiter waiter = null;
 	BreakpointEvent bpe = null;
 	ThreadReference tref = null;
-	
-	
+
+
 	/** setup test info locally **/
 	@Override
 	public void localSetUp() {
 		erm = fVM.eventRequestManager();
 	}
-	
+
 	/** cleans up local tests **/
 	@Override
 	public void localTearDown() {
@@ -54,9 +54,9 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			erm.deleteAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * test to make sure 1.6 VM supports method return values 
+	 * test to make sure 1.6 VM supports method return values
 	 */
 	public void testCanGetMethodReturnValues() {
 		if(is16OrGreater()) {
@@ -66,7 +66,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			assertFalse("Should not have method return values capabilities", fVM.canGetMethodReturnValues());
 		}
 	}
-	
+
 	/**
 	 * test getting a void return value.
 	 * not applicable to non 1.6 VMs
@@ -108,7 +108,7 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 			assertTrue("thrown exception mean failure", false);
 		}
 	}
-	
+
 	/**
 	 * test to make sure that returnValue is working to spec.
 	 * test is not applicable to non 1.6 VMs
@@ -145,12 +145,12 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertTrue("return value must be StringReferenceImpl", val instanceof StringReferenceImpl);
 				erm.deleteEventRequest(req);
 			}
-		} 
+		}
 		catch (InterruptedException e) {
 			assertTrue("thrown exception mean failure", false);
 		}
 	}
-	
+
 	/**
 	 * test to make sure that returnValue is working to spec.
 	 * test is not applicable to non 1.6 VMs
@@ -187,12 +187,12 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertEquals("return value must be 20", val.virtualMachine().mirrorOf(20), val);
 				erm.deleteEventRequest(req);
 			}
-		} 
+		}
 		catch (InterruptedException e) {
 			assertTrue("thrown exception mean failure", false);
 		}
-	}	
-	
+	}
+
 	/**
 	 * test to make sure that returnValue is working to spec.
 	 * test is not applicable to non 1.6 VMs
@@ -229,12 +229,12 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertEquals("return value must be true", val.virtualMachine().mirrorOf(true), val);
 				erm.deleteEventRequest(req);
 			}
-		} 
+		}
 		catch (InterruptedException e) {
 			assertTrue("thrown exception mean failure", false);
 		}
-	}		
-	
+	}
+
 	/**
 	 * test to make sure that returnValue is working to spec.
 	 * test is not applicable to non 1.6 VMs
@@ -271,9 +271,9 @@ public class MethodReturnValuesTests extends AbstractJDITest {
 				assertEquals("return value must be 123", val.virtualMachine().mirrorOf(123L), val);
 				erm.deleteEventRequest(req);
 			}
-		} 
+		}
 		catch (InterruptedException e) {
 			assertTrue("thrown exception mean failure", false);
 		}
-	}			
+	}
 }

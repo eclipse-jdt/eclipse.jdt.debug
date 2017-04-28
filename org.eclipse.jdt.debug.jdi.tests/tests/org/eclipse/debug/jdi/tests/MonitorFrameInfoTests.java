@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,9 +20,9 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
 /**
- * Test cases for the implementation of providing argument information even if 
+ * Test cases for the implementation of providing argument information even if
  * no debugging information is present in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class MonitorFrameInfoTests extends AbstractJDITest {
@@ -32,7 +32,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 	public void localSetUp() {}
 
 	/**
-	 * test to see if a the 1.6 VM can get monitor frame info and that 
+	 * test to see if a the 1.6 VM can get monitor frame info and that
 	 * a non-1.6VM cannot.
 	 */
 	public void testCanGetMonitorFrameInfo() {
@@ -43,7 +43,7 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 			assertTrue("Should not have monitor frame info", !fVM.canGetMonitorFrameInfo());
 		}
 	}
-	
+
 	/**
 	 * test to make sure the proper frames and monitors are collected for the corresponding thread ref.
 	 * this test has no effect in a non-1.6VM
@@ -73,5 +73,5 @@ public class MonitorFrameInfoTests extends AbstractJDITest {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

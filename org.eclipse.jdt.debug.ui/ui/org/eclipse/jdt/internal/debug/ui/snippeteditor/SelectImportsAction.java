@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
 
 public class SelectImportsAction extends SnippetAction {
-	
+
 	public SelectImportsAction(JavaSnippetEditor editor) {
 		super(editor);
 		setText(SnippetMessages.getString("SelectImports.label")); //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class SelectImportsAction extends SnippetAction {
 		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_OBJS_IMPCONT));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.SCRAPBOOK_IMPORTS_ACTION);
 	}
-	
+
 	/**
 	 * @see IAction#run()
 	 */
@@ -39,14 +39,14 @@ public class SelectImportsAction extends SnippetAction {
 			return;
 		}
 		chooseImports();
-	} 
-	
+	}
+
 	private void chooseImports() {
 		String[] imports= getEditor().getImports();
 		Dialog dialog= new SelectImportsDialog(getEditor(), imports);
-		dialog.open();		
+		dialog.open();
 	}
-	
+
 	/**
 	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
 	 */

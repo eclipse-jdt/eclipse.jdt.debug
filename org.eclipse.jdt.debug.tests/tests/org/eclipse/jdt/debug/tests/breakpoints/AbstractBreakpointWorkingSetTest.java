@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Common code for breakpoint working set tests.
- *  
+ *
  * @since 3.2
  */
 public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugTest {
@@ -31,11 +31,11 @@ public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugTest
 	public AbstractBreakpointWorkingSetTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Creates and returns a breakpoint working set with the given name if not
 	 * already in existence.
-	 * 
+	 *
 	 * @param name working set name
 	 */
 	protected IWorkingSet createSet(String name) {
@@ -51,7 +51,7 @@ public abstract class AbstractBreakpointWorkingSetTest extends AbstractDebugTest
 
 	/**
 	 * Retruns the working set manager.
-	 * 
+	 *
 	 * @return working set manager
 	 */
 	protected IWorkingSetManager getWorkingSetManager() {

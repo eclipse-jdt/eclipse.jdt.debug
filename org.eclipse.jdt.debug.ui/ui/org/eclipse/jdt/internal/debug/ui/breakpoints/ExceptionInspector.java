@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * This class is used to show the inspect pop-up when a thread is suspended due to an exception being thrown
  */
 public class ExceptionInspector implements IDebugContextListener, IPreferenceChangeListener {
-	
+
 	/**
 	 * Constructor
 	 */
@@ -60,8 +60,8 @@ public class ExceptionInspector implements IDebugContextListener, IPreferenceCha
 		}
 		boolean doit = Platform.getPreferencesService().getBoolean(
 JDIDebugUIPlugin.getUniqueIdentifier(),
-				IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
-				false, 
+				IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION,
+				false,
 				null);
 		if (doit) {
 			DebugUITools.getDebugContextManager().addDebugContextListener(this);
@@ -78,7 +78,7 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 			if (part != null) {
 				IWorkbenchPartSite site = part.getSite();
 				if (site != null && IDebugUIConstants.ID_DEBUG_VIEW.equals(site.getId())) {
-					IWorkbenchPage page = site.getWorkbenchWindow().getActivePage(); 
+					IWorkbenchPage page = site.getWorkbenchWindow().getActivePage();
 					if (page != null && page.isPartVisible(part)) {
 						ISelection selection = event.getContext();
 						if (selection instanceof IStructuredSelection) {
@@ -108,7 +108,7 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 														}
 													}
 												}
-											} 
+											}
 										} catch (DebugException e) {}
 									}
 								}
@@ -129,8 +129,8 @@ JDIDebugUIPlugin.getUniqueIdentifier(),
 			IDebugContextManager manager = DebugUITools.getDebugContextManager();
 			boolean doit = Platform.getPreferencesService().getBoolean(
 JDIDebugUIPlugin.getUniqueIdentifier(),
-					IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, 
-					false, 
+					IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION,
+					false,
 					null);
 			if (doit) {
 				manager.addDebugContextListener(this);

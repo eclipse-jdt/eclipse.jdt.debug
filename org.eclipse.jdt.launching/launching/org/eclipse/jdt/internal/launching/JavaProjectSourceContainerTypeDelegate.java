@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,16 +39,16 @@ public class JavaProjectSourceContainerTypeDelegate extends AbstractSourceContai
 			if ("javaProject".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_5, null); 
+					abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_5, null);
 				}
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject project = workspace.getRoot().getProject(string);
 				IJavaProject javaProject = JavaCore.create(project);
 				return new JavaProjectSourceContainer(javaProject);
 			}
-			abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_6, null); 
+			abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_6, null);
 		}
-		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null); 
+		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null);
 		return null;
 	}
 	/* (non-Javadoc)

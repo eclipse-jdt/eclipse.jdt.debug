@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import com.sun.jdi.event.MonitorContendedEnterEvent;
 /**
  * This class provides an implementation of MonitorContendedEnterEvent according
  * to Sun's 1.6 specs
- * 
+ *
  * @since 3.3
  */
 public class MonitorContendedEnterEventImpl extends LocatableEventImpl
@@ -63,7 +63,7 @@ public class MonitorContendedEnterEventImpl extends LocatableEventImpl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.event.MonitorContendedEnterEvent#monitor()
 	 */
 	@Override

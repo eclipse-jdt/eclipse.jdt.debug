@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Moller - bug 341232
@@ -72,16 +72,16 @@ public class EvaluationSourceGenerator {
 		this(new String[0], new String[0], codeSnippet, javaProject);
 	}
 
-	
+
 	/**
 	 * Returns the completed codeSnippet by adding required semicolon and
-	 * return 
+	 * return
 	 */
 	protected String getCompleteSnippet(String codeSnippet) {
 		codeSnippet = codeSnippet.trim(); // remove whitespaces at the end
 		boolean inString = false;
 		byte[] chars = codeSnippet.getBytes();
-		
+
 		int semicolonIndex = -1;
 		int lastSemilcolonIndex = -1;
 		for (int i = 0, numChars = chars.length; i < numChars; i++) {
@@ -104,7 +104,7 @@ public class EvaluationSourceGenerator {
 			}
 		}
 		StringBuffer wordBuffer = new StringBuffer();
-		// if semicolon missing at the end 
+		// if semicolon missing at the end
 		if (lastSemilcolonIndex != chars.length-1)
 			semicolonIndex = lastSemilcolonIndex;
 		int i ;
@@ -119,7 +119,7 @@ public class EvaluationSourceGenerator {
 		String lastSentence  = codeSnippet.substring(i);
 		// don't add return if it there in some condition
 		String returnString = "return "; //$NON-NLS-1$
-		int index = codeSnippet.lastIndexOf(returnString); 
+		int index = codeSnippet.lastIndexOf(returnString);
 		if (index == -1){
 			if (needsReturn(lastSentence))
 				wordBuffer.append(returnString);
@@ -129,7 +129,7 @@ public class EvaluationSourceGenerator {
 				if (needsReturn(lastSentence))
 					wordBuffer.append(returnString);
 			}
-		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+7).equals(returnString)))){ 
+		} else if (chars[chars.length -1] !='}' && ( i+7 > chars.length || (i + 7 <= chars.length && !codeSnippet.substring(i, i+7).equals(returnString)))){
 			// add return if last statement does not have return
 			if (needsReturn(lastSentence))
 				wordBuffer.append(returnString);
@@ -150,12 +150,12 @@ public class EvaluationSourceGenerator {
 		return wordBuffer.toString();
 	}
 
-	
+
 	/**
 	 * Returns <code>true</code> if the snippet required return to be added, or
 	 * <code>false</code> if the snippet does not require return to be added.
 	 */
-	
+
 	private boolean needsReturn(String codeSnippet){
 		if ( codeSnippet.length() == 0) {
 			return false;
@@ -167,7 +167,7 @@ public class EvaluationSourceGenerator {
 			token = scanner.getNextToken();
 			int count = 0;
 			while (token != ITerminalSymbols.TokenNameEOF) {
-				if (count == 0 && (token == ITerminalSymbols.TokenNameIdentifier || token == ITerminalSymbols.TokenNameint || token == ITerminalSymbols.TokenNamefloat || 
+				if (count == 0 && (token == ITerminalSymbols.TokenNameIdentifier || token == ITerminalSymbols.TokenNameint || token == ITerminalSymbols.TokenNamefloat ||
 						token == ITerminalSymbols.TokenNamedouble || token == ITerminalSymbols.TokenNameboolean || token == ITerminalSymbols.TokenNamechar ||
 						token == ITerminalSymbols.TokenNameshort || token == ITerminalSymbols.TokenNamelong)) {
 					int currentToken = token;
@@ -176,7 +176,7 @@ public class EvaluationSourceGenerator {
 						return true;
 					}
 					count = 1;
-				} 
+				}
 				else if ( count == 0 && (token == ITerminalSymbols.TokenNamestatic || token == ITerminalSymbols.TokenNamefinal || token == ITerminalSymbols.TokenNamepackage ||
 						token == ITerminalSymbols.TokenNameprivate || token == ITerminalSymbols.TokenNameprotected || token == ITerminalSymbols.TokenNamepublic)){
 					token = scanner.getNextToken();
@@ -220,19 +220,19 @@ public class EvaluationSourceGenerator {
 				else if ( (count == 3 || count == 1 ) && token == ITerminalSymbols.TokenNameIdentifier ){
 					 return false;
 				}
-				else { 
+				else {
 					return true;
 				}
-				
+
 			}
 		}
 		catch (InvalidInputException e) {
 			// ignore
 		}
-		
+
 		return true;
 	}
-	
+
 	public String getCompilationUnitName() {
 		return fCompilationUnitName;
 	}
@@ -302,7 +302,7 @@ public class EvaluationSourceGenerator {
 	 * Turns all errors and warnings into ignore and disables task tags. The
 	 * customizable set of compiler options only contains additional Eclipse
 	 * options. The standard JDK compiler options can't be changed anyway.
-	 * 
+	 *
 	 * @param element
 	 *            an element (not the Java model)
 	 * @return compiler options

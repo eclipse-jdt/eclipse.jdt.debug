@@ -57,7 +57,7 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -87,7 +87,7 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -147,47 +147,47 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	private Refactoring setupRefactor(String root, String packageName, String cuName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		JavaRenameProcessor proc = new RenameCompilationUnitProcessor(cunit);
 		proc.setNewElementName("RenamedCompilationUnit.java");
 		RenameRefactoring ref= new RenameRefactoring(proc);
-		
+
 		//setup final refactoring conditions
 		RefactoringStatus refactoringStatus= ref.checkAllConditions(new NullProgressMonitor());
 		if(!refactoringStatus.isOK())
 		{
 			System.out.println(refactoringStatus.getMessageMatchingSeverity(refactoringStatus.getSeverity()));
 			return null;
-		}		
-		
+		}
+
 		return ref;
 	}
-	
+
 	public void testInnerAnonmyousTypeClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType$1";
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 	public void testInnerAnonymousTypeLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType$1";
 			int lineNumber = 40;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerAnonymousTypeMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1$anonTypeMethod()V",
@@ -195,126 +195,126 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 					methodName = "anonTypeMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, methodName);
 	}//end testBreakPoint
-	
+
 	public void testInnerAnonymousTypeWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V$1$anAnonInt",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType$1",
 					fieldName = "anAnonInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType";
-	
+
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testInnerLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType";
 			int lineNumber = 35;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType",
 					methodName = "innerChildsMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, methodName);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildInt",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit$InnerChildType",
 					fieldName = "innerChildInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint		
+	}//end testBreakPoint
 
 	public void testNonPublicAnonymousTypeClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					newTargetLineage = pack+"."+"NonPublicChildType$1";
-	
+
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testNonPublicAnonymousTypeLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1",
 					newTargetLineage = pack+"."+"NonPublicChildType$1";
 			int lineNumber = 56;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testNonPublicAnonymousTypeMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1$anonTypeMethod()V",
 					newTargetLineage = pack+"."+"NonPublicChildType$1",
 					methodName = "anonTypeMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, methodName);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testNonPublicAnonymousTypeWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$1$anAnonInt",
 					newTargetLineage = pack+"."+"NonPublicChildType$1",
 					fieldName = "anAnonInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint	
-		
+	}//end testBreakPoint
+
 	public void testNonPublicClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType",
 					newTargetLineage = pack+"."+"NonPublicChildType";
-	
-					
+
+
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint			
-	
+	}//end testBreakPoint
+
 	public void testNonPublicLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType",
 					newTargetLineage = pack+"."+"NonPublicChildType";
 			int lineNumber = 51;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testNonPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V$",
@@ -324,100 +324,100 @@ public class RenameCompilationUnitUnitTests extends AbstractRefactoringDebugTest
 	}//end testBreakPoint
 
 	public void testNonPublicWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildInt",
 					newTargetLineage = pack+"."+"NonPublicChildType",
 					fieldName = "nonPublicChildInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testPublicAnonymousTypeClassLoadpoint() throws Exception {
-		
-		String 	src = "src", 
+
+		String 	src = "src",
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1",
 		newTargetLineage = pack+"."+"RenamedCompilationUnit$1";
 
 		runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicAnonymousTypeLineBreakpoint() throws Exception {
-					
-		String 	src = "src", 
+
+		String 	src = "src",
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1",
 		newTargetLineage = pack+"."+"RenamedCompilationUnit$1";
 		int lineNumber = 26;
-		
+
 		runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicAnonymousTypeMethodBreakpoint() throws Exception {
-		String 	src = "src", 
+		String 	src = "src",
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1$anonTypeMethod()V",
 		newTargetLineage = pack+"."+"RenamedCompilationUnit$1",
 		methodName = "anonTypeMethod";
-		
+
 		runMethodBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, methodName);
 	}//end testBreakPoint
-			
+
 	public void testPublicAnonymousTypeWatchpoint() throws Exception {
-		String 	src = "src", 
+		String 	src = "src",
 		pack = "a.b.c",
 		cunit = "MoveeChild.java",
 		fullTargetName = "MoveeChild$childsMethod()V$1$anAnonInt",
 		newTargetLineage = pack+"."+"RenamedCompilationUnit$1",
 		fieldName = "anAnonInt";
-			
+
 		runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit";
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 public void testPublicLineBreakpoint() throws Exception {
 
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit";
 			int lineNumber = 21;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, lineNumber);
-	}//end testBreakPoint			
-	
+	}//end testBreakPoint
+
 	public void testPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit",
 					methodName = "childsMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, newTargetLineage, methodName);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$aChildInt",
 					newTargetLineage = pack+"."+"RenamedCompilationUnit",
 					fieldName = "aChildInt";
 			runWatchPointTest(src, pack, cunit, fullTargetName, newTargetLineage, fieldName);
-	}//end testBreakPoint			
-	
+	}//end testBreakPoint
+
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
  * Tests performance of stepping.
  */
 public class PerfSteppingTests extends AbstractDebugPerformanceTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -29,9 +29,9 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	public PerfSteppingTests(String name) {
 		super(name);
 	}
-	
+
 	class MyFilter implements IDebugEventFilter {
-		
+
 		private IJavaThread fThread = null;
 		private Object fLock;
 		private DebugEvent[] EMPTY = new DebugEvent[0];
@@ -45,7 +45,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			fThread = thread;
 			fLock = lock;
 		}
-		
+
 		/**
 		 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent[])
 		 */
@@ -64,7 +64,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			}
 			return events;
 		}
-		
+
 		/**
 		 * performs a step operation
 		 */
@@ -81,24 +81,24 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 					assertTrue(e.getMessage(), false);
 				}
 			}
-			 
+
 		}
-		
+
 	}
 
 	/**
 	 * Tests stepping over without taking into account event processing in the UI.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testBareStepOver() throws Exception {
 		String typeName = "PerfLoop";
 		createLineBreakpoint(20, typeName);
-		
+
 		IJavaThread thread= null;
-		try {			
+		try {
 			thread= launchToBreakpoint(typeName, false);
-			
+
 			// warm up
 			Object lock = new Object();
 			MyFilter filter = new MyFilter(thread, lock);
@@ -108,14 +108,14 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 				for (int i = 0; i < 100; i++) {
 					filter.step();
 				}
-			}			
-			DebugPlugin.getDefault().removeDebugEventFilter(filter);			
-			
+			}
+			DebugPlugin.getDefault().removeDebugEventFilter(filter);
+
 			// real test
 			lock = new Object();
 			filter = new MyFilter(thread, lock);
 			DebugPlugin.getDefault().addDebugEventFilter(filter);
-			
+
 			thread.getTopStackFrame();
 			for (int n= 0; n < 150; n++) {
 				startMeasuring();
@@ -127,11 +127,11 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			}
 			commitMeasurements();
 			assertPerformance();
-			
+
 			DebugPlugin.getDefault().removeDebugEventFilter(filter);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 }

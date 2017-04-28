@@ -28,29 +28,29 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * <p>
  * This class may be instantiated.
  * </p>
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PackageFragmentRootSourceContainer extends AbstractSourceContainer {
-	
+
 	private IPackageFragmentRoot fRoot;
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot</code>).
 	 */
 	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.packageFragmentRoot";   //$NON-NLS-1$
-	
+
 	/**
 	 * Constructs a new package fragment root source container on the
 	 * given root. The root must be of kind <code>K_BINARY</code>.
-	 * 
+	 *
 	 * @param root package fragment root
 	 */
 	public PackageFragmentRootSourceContainer(IPackageFragmentRoot root) {
 		fRoot = root;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
@@ -87,7 +87,7 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 						ICompilationUnit unit = fragment.getCompilationUnit(typeName + '.' + ext);
 						if (unit.exists()) {
 							return new Object[]{unit};
-						}	
+						}
 					}
 					break;
 			}
@@ -109,7 +109,7 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -118,10 +118,10 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 		return obj instanceof PackageFragmentRootSourceContainer &&
 		 ((PackageFragmentRootSourceContainer)obj).getPackageFragmentRoot().equals(getPackageFragmentRoot());
 	}
-	
+
 	/**
 	 * Returns the package fragment root this container searches for source.
-	 * 
+	 *
 	 * @return the package fragment root this container searches for source
 	 */
 	public IPackageFragmentRoot getPackageFragmentRoot() {

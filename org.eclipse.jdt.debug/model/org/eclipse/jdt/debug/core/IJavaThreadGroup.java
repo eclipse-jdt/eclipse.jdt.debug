@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 
 /**
  * Represents a thread group in the target VM.
- * 
+ *
  * @since 3.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -25,7 +25,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 	/**
 	 * Returns the threads in this thread group. Does not include threads in
 	 * subgroups.
-	 * 
+	 *
 	 * @return threads in this group
 	 * @throws DebugException
 	 *             if the request fails
@@ -34,7 +34,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 
 	/**
 	 * Returns whether this group contains any threads.
-	 * 
+	 *
 	 * @return whether this group contains any threads
 	 * @throws DebugException
 	 *             if the request fails
@@ -44,7 +44,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 	/**
 	 * Returns the thread group this thread group is contained in or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return parent thread group or <code>null</code>
 	 * @throws DebugException
 	 *             if the request fails
@@ -53,7 +53,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 
 	/**
 	 * Returns whether this thread group contains subgroups.
-	 * 
+	 *
 	 * @return whether this thread group contains subgroups
 	 * @throws DebugException
 	 *             if the request fails
@@ -63,7 +63,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 	/**
 	 * Returns immediate thread groups contained in this thread. Does not
 	 * include subgroups of immediate groups.
-	 * 
+	 *
 	 * @return thread groups contained in this group
 	 * @throws DebugException
 	 *             if the request fails
@@ -72,7 +72,7 @@ public interface IJavaThreadGroup extends IDebugElement {
 
 	/**
 	 * Returns the name of this thread group.
-	 * 
+	 *
 	 * @return thread group name
 	 * @throws DebugException
 	 *             if the request fails

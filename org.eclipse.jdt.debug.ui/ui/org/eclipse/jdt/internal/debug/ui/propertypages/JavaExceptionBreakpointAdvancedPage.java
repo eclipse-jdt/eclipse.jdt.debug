@@ -37,7 +37,7 @@ public class JavaExceptionBreakpointAdvancedPage extends JavaBreakpointAdvancedP
 	protected void createTypeSpecificEditors(Composite parent) {
 		fFilterEditor= new ExceptionFilterEditor(parent, this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */

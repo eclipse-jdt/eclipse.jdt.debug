@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
         try {
             signature= getSignature(variable);
 	    } catch (DebugException e) {
-	        JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); // 
+	        JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaVariableValueEditor_0, ActionMessages.JavaVariableValueEditor_1, e); //
 	    }
 	    if (signature == null) {
 	        return false;
@@ -62,15 +62,15 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
 					return true;
 				}
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+				JDIDebugUIPlugin.statusDialog(e.getStatus());
 			}
     	}
-    	
+
     	// support expressions for primitives as well as literals
         IVariableValueEditor editor= new JavaObjectValueEditor();
         return editor.saveVariable(variable, expression, shell);
     }
-    
+
     public static String getSignature(IVariable variable) throws DebugException {
         String signature= null;
 		IJavaVariable javaVariable = variable.getAdapter(IJavaVariable.class);

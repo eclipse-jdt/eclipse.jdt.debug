@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.w3c.dom.Node;
 
 /**
  * Classpath container source container type.
- * 
+ *
  * @since 3.0
  */
 public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
 	 */
@@ -37,13 +37,13 @@ public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourc
 			if ("classpathContainer".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_5, null); 
+					abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_5, null);
 				}
 				return new ClasspathContainerSourceContainer(new Path(string));
-			} 
-			abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_6, null); 
+			}
+			abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_6, null);
 		}
-		abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_7, null); 
+		abort(LaunchingMessages.ClasspathContainerSourceContainerTypeDelegate_7, null);
 		return null;
 	}
 	/* (non-Javadoc)

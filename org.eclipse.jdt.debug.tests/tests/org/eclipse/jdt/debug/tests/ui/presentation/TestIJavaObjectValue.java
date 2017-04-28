@@ -18,7 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
- * 
+ *
  */
 public class TestIJavaObjectValue extends TestIJavaValue implements IJavaObject {
 

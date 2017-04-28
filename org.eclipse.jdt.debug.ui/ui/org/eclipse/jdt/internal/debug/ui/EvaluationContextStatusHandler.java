@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Supplies a thread that can be used for an evaluation, given an element
  * from a java debug model. Currently use for logical object structure
  * computations.
- * 
+ *
  * @since 3.0
  */
 public class EvaluationContextStatusHandler implements IStatusHandler {

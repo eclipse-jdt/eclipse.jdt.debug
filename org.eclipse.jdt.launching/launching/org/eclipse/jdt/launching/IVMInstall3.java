@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public interface IVMInstall3 {
 	/**
 	 * Evaluates the specified system properties in this VM, returning the result
 	 * as a map of property names to property values.
-	 * 
+	 *
 	 * @param properties the property names to evaluate, for example <code>{"user.home"}</code>
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return map of system property names to associated property values

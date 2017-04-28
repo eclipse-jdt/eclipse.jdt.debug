@@ -41,7 +41,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 
 	/**
 	 * Constructs a new hyper link
-	 * 
+	 *
 	 * @param console
 	 *            the console the link is contained in
 	 * @param exceptionName
@@ -80,7 +80,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 
 	/**
 	 * Show the properties dialog for the given breakpoint.
-	 * 
+	 *
 	 * @param exceptionBreakpoint
 	 */
 	private void showProperties(IJavaExceptionBreakpoint breakpoint) {
@@ -105,7 +105,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 			} else if (source instanceof IType) {
 				type = (IType) source;
 			}
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 			if (type != null) {
 				res = BreakpointUtils.getBreakpointResource(type);
 				BreakpointUtils.addJavaBreakpointAttributes(map, type);

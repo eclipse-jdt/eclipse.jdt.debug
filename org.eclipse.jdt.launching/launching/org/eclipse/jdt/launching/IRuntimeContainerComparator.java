@@ -18,23 +18,23 @@ import org.eclipse.core.runtime.IPath;
  * classpath. If an <code>IClasspathContianer</code> implements this interface,
  * the <code>isDuplicate</code> method is used to determine if containers are
  * duplicates/redundant. Otherwise, containers with the same identifier are
- * considered duplicates. 
- * 
+ * considered duplicates.
+ *
  * @since 2.0.1
  * @deprecated support has been added to <code>ClasspathContainerInitializer</code>
  *  to handle comparison of classpath containers. Use
  *  <code>ClasspathContainerInitializer.getComparisonID(IPath,IJavaProject)</code>.
  *  When a classpath container implements this interface, this interface is
  *  used to determine equality before using the support defined in
- *  <code>ClasspathContainerInitializer</code>. 
+ *  <code>ClasspathContainerInitializer</code>.
  */
 @Deprecated
 public interface IRuntimeContainerComparator {
-	
+
 	/**
 	 * Returns whether this container is a duplicate of the container
 	 * identified by the given path.
-	 * 
+	 *
 	 * @param containerPath the container to compare against
 	 * @return whether this container is a duplicate of the container
 	 * identified by the given path

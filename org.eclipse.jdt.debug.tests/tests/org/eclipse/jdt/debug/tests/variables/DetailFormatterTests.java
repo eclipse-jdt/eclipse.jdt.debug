@@ -23,29 +23,29 @@ import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager;
 
 /**
  * Tests detail formatters
- * 
+ *
  * @since 3.8.100
  */
 public class DetailFormatterTests extends AbstractDebugTest {
-	
+
 	class TestListener implements IValueDetailListener {
 		IValue value;
 		String result;
-		
+
 		@Override
 		public void detailComputed(IValue value, String result) {
 			this.value = value;
 			this.result = result;
 		}
-		
+
 		void reset() {
 			value = null;
 			result = null;
 		}
 	}
-	
+
 	TestListener fListener = new TestListener();
-	
+
 	/**
 	 * @param name
 	 */
@@ -57,13 +57,13 @@ public class DetailFormatterTests extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get15Project();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		fListener.reset();
 		super.tearDown();
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from a large compound expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -104,7 +104,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
@@ -114,7 +114,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from a small compound expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -142,7 +142,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
@@ -152,7 +152,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from a small compound expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -178,7 +178,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
@@ -188,7 +188,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from a small compound expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -214,7 +214,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 		}
@@ -224,7 +224,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from an infix expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -250,10 +250,10 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
-			assertTrue("The returned value from (true && true || !(false&&true) || !(true==true||true!=true&&true)) should be true", 
+			assertTrue("The returned value from (true && true || !(false&&true) || !(true==true||true!=true&&true)) should be true",
 					Boolean.parseBoolean(fListener.result));
 		}
 		finally {
@@ -262,7 +262,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from an infix expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -288,7 +288,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertFalse("The returned value from !true should be false", Boolean.parseBoolean(fListener.result));
@@ -299,7 +299,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a detail formatter made from an infix expression
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
@@ -325,7 +325,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 				Thread.sleep(100);
 			}
 			assertNotNull("The IValue of the detailComputed callback cannot be null", fListener.value);
-			assertTrue("The map should be an instance of java.util.LinkedHashMap", 
+			assertTrue("The map should be an instance of java.util.LinkedHashMap",
 					Signature.getTypeErasure(fListener.value.getReferenceTypeName()).equals("java.util.LinkedHashMap"));
 			assertNotNull("The computed value of the detail should not be null", fListener.result);
 			assertFalse("The returned value from !(true==true||true!=true&&true) should be false", Boolean.parseBoolean(fListener.result));
@@ -339,7 +339,7 @@ public class DetailFormatterTests extends AbstractDebugTest {
 
 	/**
 	 * Tests a detail formatter made from an collection with no type arguments
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484686
 	 * @throws Exception
 	 */

@@ -25,7 +25,7 @@ import org.eclipse.debug.core.model.ITriggerPoint;
  * <li>an installed property that indicates a breakpoint was successfully
  * installed in a VM</li>
  * </ul>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -47,7 +47,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Returns whether this breakpoint is installed in at least one debug
 	 * target.
-	 * 
+	 *
 	 * @return whether this breakpoint is installed
 	 * @exception CoreException
 	 *                if unable to access the property on this breakpoint's
@@ -59,7 +59,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * Returns the fully qualified name of the type this breakpoint is located
 	 * in, or <code>null</code> if this breakpoint is not located in a specific
 	 * type - for example, a pattern breakpoint.
-	 * 
+	 *
 	 * @return the fully qualified name of the type this breakpoint is located
 	 *         in, or <code>null</code>
 	 * @exception CoreException
@@ -71,7 +71,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Returns this breakpoint's hit count or, -1 if this breakpoint does not
 	 * have a hit count.
-	 * 
+	 *
 	 * @return this breakpoint's hit count, or -1
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's
@@ -83,7 +83,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * Sets the hit count attribute of this breakpoint. If this breakpoint is
 	 * currently disabled and the hit count is set greater than -1, this
 	 * breakpoint is automatically enabled.
-	 * 
+	 *
 	 * @param count
 	 *            the new hit count
 	 * @exception CoreException
@@ -97,7 +97,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * breakpoint is hit. When <code>SUSPEND_VM</code> the target VM is
 	 * suspended, and when <code>SUSPEND_THREAD</code> only the thread in which
 	 * this breakpoint occurred is suspended.
-	 * 
+	 *
 	 * @param suspendPolicy
 	 *            one of <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>
 	 * @exception CoreException
@@ -109,7 +109,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Returns the suspend policy used by this breakpoint, one of
 	 * <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>.
-	 * 
+	 *
 	 * @return one of <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's
@@ -123,10 +123,10 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * restricted to one thread per target. Any previous thread filter for the
 	 * same target is lost. A thread filter is not persisted across workbench
 	 * invocations.
-	 * 
+	 *
 	 * @param thread
 	 *            the thread to add the filter to
-	 * 
+	 *
 	 * @exception CoreException
 	 *                if unable to set the thread filter
 	 */
@@ -135,7 +135,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Removes this breakpoint's thread filter in the given target, if any. Has
 	 * no effect if this breakpoint does not have a filter in the given target.
-	 * 
+	 *
 	 * @param target
 	 *            the target whose thread filter will be removed
 	 * @exception CoreException
@@ -148,10 +148,10 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * Returns the thread in the given target in which this breakpoint is
 	 * enabled or <code>null</code> if this breakpoint is enabled in all threads
 	 * in the given target.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target
-	 * 
+	 *
 	 * @return the thread in the given target that this breakpoint is enabled
 	 *         for
 	 * @exception CoreException
@@ -162,7 +162,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 
 	/**
 	 * Returns all thread filters set on this breakpoint.
-	 * 
+	 *
 	 * @return the threads that this breakpoint is restricted to
 	 * @exception CoreException
 	 *                if unable to determine this breakpoint's thread filters
@@ -180,7 +180,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * will never be hit in that target, as the current context cannot be two
 	 * different instances at the same time.
 	 * </p>
-	 * 
+	 *
 	 * @param object
 	 *            instance filter to add
 	 * @exception CoreException
@@ -193,7 +193,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	 * Removes the given object from the list of objects in which this
 	 * breakpoint is restricted to suspend execution. Has no effect if the
 	 * object has not yet been added as an instance filter.
-	 * 
+	 *
 	 * @param object
 	 *            instance filter to remove
 	 * @exception CoreException
@@ -204,7 +204,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 
 	/**
 	 * Returns whether this breakpoints supports instance filters.
-	 * 
+	 *
 	 * @return whether this breakpoints supports instance filters
 	 * @since 3.0
 	 */
@@ -212,7 +212,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 
 	/**
 	 * Returns the current set of active instance filters.
-	 * 
+	 *
 	 * @return the current set of active instance filters.
 	 * @exception CoreException
 	 *                if unable to retrieve the list
@@ -222,7 +222,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 
 	/**
 	 * Returns whether this breakpoints supports thread filters.
-	 * 
+	 *
 	 * @return whether this breakpoints supports thread filters
 	 * @since 3.0
 	 */
@@ -231,7 +231,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Returns a collection of identifiers of breakpoint listener extensions
 	 * registered for this breakpoint, possibly empty.
-	 * 
+	 *
 	 * @return breakpoint listener extension identifiers registered on this
 	 *         breakpoint
 	 * @throws CoreException
@@ -243,7 +243,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Adds the breakpoint listener extension with specified identifier to this
 	 * breakpoint. Has no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param identifier
 	 *            breakpoint listener extension identifier
 	 * @throws CoreException
@@ -255,7 +255,7 @@ public interface IJavaBreakpoint extends IBreakpoint, ITriggerPoint {
 	/**
 	 * Removes the breakpoint listener extension with the specified identifier
 	 * from this breakpoint and returns whether the listener was removed.
-	 * 
+	 *
 	 * @param identifier
 	 *            breakpoint listener extension identifier
 	 * @return whether the listener was removed

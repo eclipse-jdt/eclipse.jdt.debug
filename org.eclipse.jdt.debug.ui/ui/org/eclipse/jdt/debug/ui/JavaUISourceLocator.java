@@ -80,7 +80,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * Launch configuration attribute indicating that this source locator should
 	 * locate all source elements that correspond to a stack frame, rather than
 	 * the first match. Default value is <code>false</code>.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String ATTR_FIND_ALL_SOURCE_ELEMENTS = IJavaDebugUIConstants.PLUGIN_ID + ".ATTR_FIND_ALL_SOURCE_ELEMENTS"; //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * duplicates), or just the first match.
 	 */
 	private boolean fIsFindAllSourceElements = false;
-	
+
 	/**
 	 * A cache of types to associated source elements (when duplicates arise and
 	 * the users chooses a source element, it is remembered).
@@ -126,7 +126,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * Constructs a new source locator that looks in the
 	 * specified project for source, and required projects, if
 	 * <code>includeRequired</code> is <code>true</code>.
-	 * 
+	 *
 	 * @param projects the projects in which to look for source
 	 * @param includeRequired whether to look in required projects
 	 * 	as well
@@ -142,7 +142,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * in the given Java project, and all of its required projects,
 	 * as specified by its build path or default source lookup
 	 * settings.
-	 * 
+	 *
 	 * @param project Java project
 	 * @exception CoreException if unable to read the project's
 	 * 	 build path
@@ -185,7 +185,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 			Object[] sourceElements = fSourceLocator.getSourceElements(stackFrame);
 			if (sourceElements == null || sourceElements.length == 0) {
 				return null;
-			} 
+			}
 			if (sourceElements.length == 1) {
 				return sourceElements[0];
 			}
@@ -198,12 +198,12 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				}
 				// prompt
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(JDIDebugUIPlugin.getActiveWorkbenchShell(), new SourceElementLabelProvider(),new SourceElementQualifierProvider());
-				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1); 
-				dialog.setMessage(NLS.bind(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()})); 
+				dialog.setTitle(DebugUIMessages.JavaUISourceLocator_Select_Source_1);
+				dialog.setMessage(NLS.bind(DebugUIMessages.JavaUISourceLocator__Select_the_source_that_corresponds_to__0__2, new String[]{type.getName()}));
 				dialog.setElements(sourceElements);
 				dialog.setMultipleSelection(false);
-				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3); 
-				dialog.setLowerListLabel(DebugUIMessages.JavaUISourceLocator__Location__4); 
+				dialog.setUpperListLabel(DebugUIMessages.JavaUISourceLocator__Matching_files__3);
+				dialog.setLowerListLabel(DebugUIMessages.JavaUISourceLocator__Location__4);
 				dialog.open();
 				Object[] result = dialog.getResult();
 				if (result == null) {
@@ -219,17 +219,17 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		}
 		return fSourceLocator.getSourceElement(stackFrame);
 	}
-	
+
 	private Object getSourceElement(IJavaReferenceType type) {
 		if (fTypesToSource == null) {
-			return null; 
+			return null;
 		}
 		return fTypesToSource.get(type);
 	}
-	
+
 	private void cacheSourceElement(Object sourceElement, IJavaReferenceType type) {
 		if (fTypesToSource == null) {
-			fTypesToSource = new HashMap<IJavaReferenceType, Object>();
+			fTypesToSource = new HashMap<>();
 		}
 		fTypesToSource.put(type, sourceElement);
 	}
@@ -340,7 +340,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns the locations that this source locator is currently
 	 * searching, in the order that they are searched.
-	 * 
+	 *
 	 * @return the locations that this source locator is currently
 	 * searching, in the order that they are searched
 	 */
@@ -352,7 +352,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * /**
 	 * Sets the locations that will be searched, in the order
 	 * to be searched.
-	 * 
+	 *
 	 * @param locations the locations that will be searched, in the order
 	 *  to be searched
 	 */
@@ -366,7 +366,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * is returned, searching stops on the first match. If there is more than
 	 * one source element that corresponds to a stack frame, the user is
 	 * prompted to choose a source element to open.
-	 * 
+	 *
 	 * @return whether this source locator is configured to search for all
 	 * source elements that correspond to a stack frame
 	 * @since 2.1
@@ -378,7 +378,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Sets whether this source locator is configured to search for all source
 	 * elements that correspond to a stack frame, or the first match.
-	 * 
+	 *
 	 * @param findAll whether this source locator should search for all source
 	 * elements that correspond to a stack frame
 	 * @since 2.1

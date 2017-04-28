@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,22 +25,22 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * Restores default entries in the runtime classpath.
  */
 public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
-	
+
 	private JavaClasspathTab fTab;
-	
+
 	/**
 	 * Constructor
 	 * @param viewer the associated classpath viewer
 	 * @param tab the tab the viewer resides in
 	 */
 	public RestoreDefaultEntriesAction(IClasspathViewer viewer, JavaClasspathTab tab) {
-		super(ActionMessages.RestoreDefaultEntriesAction_0, viewer); 
+		super(ActionMessages.RestoreDefaultEntriesAction_0, viewer);
 		fTab = tab;
-	}	
+	}
 
 	/**
 	 * Only does work if we are not currently using the default classpath
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	@Override
@@ -58,8 +58,8 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 				copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 				getViewer().setEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(copy));
 			}
-		} 
-		catch (CoreException e) {return;}	
+		}
+		catch (CoreException e) {return;}
 	}
 
 	/**

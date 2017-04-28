@@ -68,39 +68,39 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(6);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(6);
 
 		// Home
 		StringArgumentImpl strArg = new StringArgumentImpl(
-				"home", ConnectMessages.SocketLaunchingConnectorImpl_Home_directory_of_the_SDK_or_runtime_environment_used_to_launch_the_application_1, ConnectMessages.SocketLaunchingConnectorImpl_Home_2, false); //$NON-NLS-1$  
+				"home", ConnectMessages.SocketLaunchingConnectorImpl_Home_directory_of_the_SDK_or_runtime_environment_used_to_launch_the_application_1, ConnectMessages.SocketLaunchingConnectorImpl_Home_2, false); //$NON-NLS-1$
 		strArg.setValue(System.getProperty("java.home")); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Options
 		strArg = new StringArgumentImpl(
-				"options", ConnectMessages.SocketLaunchingConnectorImpl_Launched_VM_options_3, ConnectMessages.SocketLaunchingConnectorImpl_Options_4, false); //$NON-NLS-1$  
+				"options", ConnectMessages.SocketLaunchingConnectorImpl_Launched_VM_options_3, ConnectMessages.SocketLaunchingConnectorImpl_Options_4, false); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Main
 		strArg = new StringArgumentImpl(
-				"main", ConnectMessages.SocketLaunchingConnectorImpl_Main_class_and_arguments__or_if__jar_is_an_option__the_main_jar_file_and_arguments_5, ConnectMessages.SocketLaunchingConnectorImpl_Main_6, true); //$NON-NLS-1$  
+				"main", ConnectMessages.SocketLaunchingConnectorImpl_Main_class_and_arguments__or_if__jar_is_an_option__the_main_jar_file_and_arguments_5, ConnectMessages.SocketLaunchingConnectorImpl_Main_6, true); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Suspend
 		BooleanArgumentImpl boolArg = new BooleanArgumentImpl(
-				"suspend", ConnectMessages.SocketLaunchingConnectorImpl_All_threads_will_be_suspended_before_execution_of_main_7, ConnectMessages.SocketLaunchingConnectorImpl_Suspend_8, false); //$NON-NLS-1$  
+				"suspend", ConnectMessages.SocketLaunchingConnectorImpl_All_threads_will_be_suspended_before_execution_of_main_7, ConnectMessages.SocketLaunchingConnectorImpl_Suspend_8, false); //$NON-NLS-1$
 		boolArg.setValue(true);
 		arguments.put(boolArg.name(), boolArg);
 
 		// Quote
 		strArg = new StringArgumentImpl(
-				"quote", ConnectMessages.SocketLaunchingConnectorImpl_Character_used_to_combine_space_delimited_text_into_a_single_command_line_argument_9, ConnectMessages.SocketLaunchingConnectorImpl_Quote_10, true); //$NON-NLS-1$  
+				"quote", ConnectMessages.SocketLaunchingConnectorImpl_Character_used_to_combine_space_delimited_text_into_a_single_command_line_argument_9, ConnectMessages.SocketLaunchingConnectorImpl_Quote_10, true); //$NON-NLS-1$
 		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Launcher
 		strArg = new StringArgumentImpl(
-				"vmexec", ConnectMessages.SocketLaunchingConnectorImpl_Name_of_the_Java_VM_launcher_11, ConnectMessages.SocketLaunchingConnectorImpl_Launcher_12, true); //$NON-NLS-1$  
+				"vmexec", ConnectMessages.SocketLaunchingConnectorImpl_Name_of_the_Java_VM_launcher_11, ConnectMessages.SocketLaunchingConnectorImpl_Launcher_12, true); //$NON-NLS-1$
 		strArg.setValue("java"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
@@ -207,7 +207,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 			proc.destroy();
 			String message = NLS.bind(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1,
 							new String[] { ((Connector.IntegerArgument) args
-									.get("timeout")).value() }); //$NON-NLS-1$ 
+									.get("timeout")).value() }); //$NON-NLS-1$
 			throw new VMStartException(message, proc);
 		}
 
@@ -218,7 +218,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 	/**
 	 * Returns a free port number on localhost, or -1 if unable to find a free
 	 * port.
-	 * 
+	 *
 	 * @return a free port number on localhost, or -1 if unable to find a free
 	 *         port
 	 * @since 3.2

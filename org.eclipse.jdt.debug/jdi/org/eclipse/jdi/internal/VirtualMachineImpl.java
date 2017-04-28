@@ -57,7 +57,7 @@ import com.sun.jdi.request.EventRequestManager;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		org.eclipse.jdi.hcr.VirtualMachine, org.eclipse.jdi.VirtualMachine {
@@ -374,7 +374,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl
 						.readWithTypeTagAndSignature(this,
@@ -423,7 +423,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ThreadReference> elements = new ArrayList<ThreadReference>(nrOfElements);
+			List<ThreadReference> elements = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this,
 						replyData);
@@ -654,7 +654,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this,
 						replyData);
@@ -908,7 +908,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrGroups = readInt("nr of groups", replyData); //$NON-NLS-1$
-			ArrayList<ThreadGroupReference> result = new ArrayList<ThreadGroupReference>(nrGroups);
+			ArrayList<ThreadGroupReference> result = new ArrayList<>(nrGroups);
 			for (int i = 0; i < nrGroups; i++) {
 				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl.read(this, replyData);
 				result.add(threadGroup);
@@ -1184,7 +1184,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 		}
 
 		Field[] fields = VirtualMachineImpl.class.getDeclaredFields();
-		fgHCRResultMap = new HashMap<Integer, String>();
+		fgHCRResultMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & Modifier.STATIC) == 0
@@ -1236,7 +1236,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 	/**
 	 * Returns whether the JDWP version is greater than or equal to the
 	 * specified major/minor version numbers.
-	 * 
+	 *
 	 * @return whether the JDWP version is greater than or equal to the
 	 *         specified major/minor version numbers
 	 */
@@ -1494,7 +1494,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/**
 	 * Returns whether this VM is disconnected.
-	 * 
+	 *
 	 * @return whether this VM is disconnected
 	 */
 	public boolean isDisconnected() {
@@ -1503,7 +1503,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/**
 	 * Sets whether this VM is disconnected.
-	 * 
+	 *
 	 * @param disconected
 	 *            whether this VM is disconnected
 	 */
@@ -1593,7 +1593,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.sun.jdi.VirtualMachine#canBeModified()
 	 */
 	@Override

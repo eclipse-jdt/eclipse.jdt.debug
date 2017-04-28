@@ -19,11 +19,11 @@ import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-// 
+//
 //then check number of and location of created breakpoint
 /**
- * A set of tests which moves a CompilationUnit and verifies if 
- * various breakpoints associated with that C.U. were moved. 
+ * A set of tests which moves a CompilationUnit and verifies if
+ * various breakpoints associated with that C.U. were moved.
  */
 public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 
@@ -42,7 +42,7 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 			int lineNumber = 31;
 			//create lineBreakpoint to test
 			createLineBreakpoint(lineNumber,"a.b.c","Movee.java","NonPublicType");
-			refactor(javaProject, type);		
+			refactor(javaProject, type);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaLineBreakpoint lineBreakpoint = (IJavaLineBreakpoint) breakpoints[0];
@@ -55,20 +55,20 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	/**
 	 * Tests if a MethodBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */	
+	 */
 	public void testMethodBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IType type = cunit.getType("NonPublicType");
-		
+
 		try {
 			//create an EntryMethod Breakpoint to test & do so
 			createMethodBreakpoint("a.b.c","Movee.java","NonPublicType","nonPublicMethod","()V",true, false);
-			refactor(javaProject, type);	
+			refactor(javaProject, type);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoints[0];
@@ -78,23 +78,23 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests if a WatchPointBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */		
+	 */
 	public void testWatchPointBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-		IType type = cunit.getType("NonPublicType");		
+		IType type = cunit.getType("NonPublicType");
 		try {
 			//create a watchPoint to test
 			createNestedTypeWatchPoint("src", "a.b.c", "Movee.java", "NonPublicType$differentInt", true, true);
-			
-			refactor(javaProject, type);		
-			
+
+			refactor(javaProject, type);
+
 			IBreakpoint[] breakPoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of watchpoints", 1, breakPoints .length);
 			IJavaWatchpoint watchPoint = (IJavaWatchpoint) breakPoints [0];
@@ -104,24 +104,24 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}			
+		}
 	}
-	
+
 	/**
 	 * Tests if a ClassLoadBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */			
+	 */
 	public void testClassLoadBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
-		IType type = cunit.getType("NonPublicType");		
-		
+		IType type = cunit.getType("NonPublicType");
+
 		try {
 			//create a classLoad breakpoint to test
 			createClassPrepareBreakpoint("a.b.c","Movee.java","NonPublicType");
-			
-			refactor(javaProject, type);	
-			
+
+			refactor(javaProject, type);
+
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaClassPrepareBreakpoint classPrepareBreakpoint = (IJavaClassPrepareBreakpoint) breakpoints[0];
@@ -130,6 +130,6 @@ public class MoveNonPublicTypeUnitTests extends MoveRefactoringTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}				
+		}
 	}
 }

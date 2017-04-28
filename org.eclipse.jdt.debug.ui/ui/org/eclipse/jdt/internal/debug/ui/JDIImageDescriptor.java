@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.swt.graphics.Point;
  * are computed according to flags set on creation of the descriptor.
  */
 public class JDIImageDescriptor extends CompositeImageDescriptor {
-	
+
 	/** Flag to render the is out of synch adornment */
 	public final static int IS_OUT_OF_SYNCH= 			0x0001;
 	/** Flag to render the may be out of synch adornment */
@@ -42,7 +41,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int UNCAUGHT=					0x0100;
 	/** Flag to render the scoped breakpoint adornment */
 	public final static int SCOPED=						0x0200;
-	
+
 	/** Flag to render the owning a monitor thread adornment */
 	public final static int OWNS_MONITOR=				0x0400;
 	/** Flag to render the owned monitor adornment */
@@ -53,7 +52,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int IN_CONTENTION_FOR_MONITOR=	0x2000;
 	/** Flag to render the in deadlock adornment */
 	public final static int IN_DEADLOCK= 				0x8000;
-	
+
 	/** Flag to render the synchronized stack frame adornment */
 	public final static int SYNCHRONIZED=				0x4000;
 
@@ -66,31 +65,31 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
-	
+
 	/**
 	 * Create a new JDIImageDescriptor.
-	 * 
+	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered
-	 * 
+	 *
 	 */
 	public JDIImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data= getBaseImage().getImageData();
-			setSize(new Point(data.width, data.height));
+			CachedImageDataProvider provider = createCachedImageDataProvider(getBaseImage());
+			setSize(new Point(provider.getWidth(), provider.getHeight()));
 		}
 		return fSize;
 	}
-	
+
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
@@ -99,11 +98,11 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		if (!(object instanceof JDIImageDescriptor)){
 			return false;
 		}
-			
+
 		JDIImageDescriptor other= (JDIImageDescriptor)object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
@@ -111,185 +110,181 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
-	
+
 	/**
 	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg= getBaseImage().getImageData();
-		if (bg == null) {
-			bg= DEFAULT_IMAGE_DATA;
-		}
-		drawImage(bg, 0, 0);
+		drawImage(createCachedImageDataProvider(getBaseImage()), 0, 0);
 		drawOverlays();
 	}
 
-	private ImageData getImageData(String imageDescriptorKey) {
-		return JavaDebugImages.getImageDescriptor(imageDescriptorKey).getImageData();
+	private ImageDescriptor getImageDescriptor(String imageDescriptorKey) {
+		return JavaDebugImages.getImageDescriptor(imageDescriptorKey);
 	}
 	/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
 	protected void drawOverlays() {
-		int flags= getFlags();
-		int x= 0;
-		int y= 0;
-		ImageData data= null;
+		int flags = getFlags();
+		int x = 0;
+		int y = 0;
+		CachedImageDataProvider provider;
 		if ((flags & IS_OUT_OF_SYNCH) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(JavaDebugImages.IMG_OVR_OUT_OF_SYNCH);
-			x -= data.width;
-			drawImage(data, x, y);
+			x = getSize().x;
+			y = 0;
+			provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_OUT_OF_SYNCH));
+			x -= provider.getWidth();
+			drawImage(provider, x, y);
 		} else if ((flags & MAY_BE_OUT_OF_SYNCH) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(JavaDebugImages.IMG_OVR_MAY_BE_OUT_OF_SYNCH);
-			x -= data.width;
-			drawImage(data, x, y);
+			x = getSize().x;
+			y = 0;
+			provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_MAY_BE_OUT_OF_SYNCH));
+			x -= provider.getWidth();
+			drawImage(provider, x, y);
 		} else if ((flags & SYNCHRONIZED) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= getImageData(JavaDebugImages.IMG_OVR_SYNCHRONIZED);
-			x -= data.width;
-			drawImage(data, x, y);
+			x = getSize().x;
+			y = 0;
+			provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_SYNCHRONIZED));
+			x -= provider.getWidth();
+			drawImage(provider, x, y);
 		} else {
 			if ((flags & IN_DEADLOCK) != 0) {
-				x= 0;
-				y= 0;
-				data= getImageData(JavaDebugImages.IMG_OVR_IN_DEADLOCK);
-				drawImage(data, x, y);
+				x = 0;
+				y = 0;
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_IN_DEADLOCK));
+				drawImage(provider, x, y);
 			}
 			if ((flags & TRIGGER_POINT) != 0) {
 				x = getSize().x;
 				y = getSize().y;
-				data = getImageData(JavaDebugImages.IMG_OVR_IN_TRIGGER_POINT);
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_IN_TRIGGER_POINT));
+				x -= provider.getWidth();
+				y -= provider.getHeight();
+				drawImage(provider, x, y);
 			} else if ((flags & TRIGGER_SUPPRESSED) != 0) {
 				x = getSize().x;
 				y = getSize().y;
-				data = getImageData(JavaDebugImages.IMG_OVR_TRIGGER_SUPPRESSED);
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_TRIGGER_SUPPRESSED));
+				x -= provider.getWidth();
+				y -= provider.getHeight();
+				drawImage(provider, x, y);
 			}
 			if ((flags & OWNED_MONITOR) != 0) {
-				x= getSize().x;
-				y= getSize().y;
-				data= getImageData(JavaDebugImages.IMG_OVR_OWNED);
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
+				x = getSize().x;
+				y = getSize().y;
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_OWNED));
+				x -= provider.getWidth();
+				y -= provider.getHeight();
+				drawImage(provider, x, y);
 			} else if ((flags & CONTENTED_MONITOR) != 0) {
-				x= getSize().x;
-				y= getSize().y;
-				data= getImageData(JavaDebugImages.IMG_OVR_IN_CONTENTION);
-				x -= data.width;
-				y -= data.height;
-				drawImage(data, x, y);
+				x = getSize().x;
+				y = getSize().y;
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_IN_CONTENTION));
+				x -= provider.getWidth();
+				y -= provider.getHeight();
+				drawImage(provider, x, y);
 			} else if ((flags & OWNS_MONITOR) != 0) {
-				x= getSize().x;
-				y= 0;
-				data= getImageData(JavaDebugImages.IMG_OVR_OWNS_MONITOR);
-				x -= data.width;
-				drawImage(data, x, y);
+				x = getSize().x;
+				y = 0;
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_OWNS_MONITOR));
+				x -= provider.getWidth();
+				drawImage(provider, x, y);
 			} else if ((flags & IN_CONTENTION_FOR_MONITOR) != 0) {
-				x= getSize().x;
-				y= 0;
-				data= getImageData(JavaDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR);
-				x -= data.width;
-				drawImage(data, x, y);
+				x = getSize().x;
+				y = 0;
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_IN_CONTENTION_FOR_MONITOR));
+				x -= provider.getWidth();
+				drawImage(provider, x, y);
 			} else {
 				drawBreakpointOverlays();
 			}
 		}
 	}
-	
+
 	protected void drawBreakpointOverlays() {
 		int flags= getFlags();
 		int x= 0;
 		int y= 0;
-		ImageData data= null;
+		CachedImageDataProvider provider;
 		if ((flags & INSTALLED) != 0) {
 			x= 0;
 			y= getSize().y;
 			if ((flags & ENABLED) !=0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_BREAKPOINT_INSTALLED_DISABLED));
 			}
-				
-			y -= data.height;
-			drawImage(data, x, y);
+
+			y -= provider.getHeight();
+			drawImage(provider, x, y);
 		}
 		if ((flags & CAUGHT) != 0) {
 			if ((flags & ENABLED) !=0) {
-			data= getImageData(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_CAUGHT_BREAKPOINT_DISABLED));
 			}
 			x= 0;
 			y= 0;
-			drawImage(data, x, y);
+			drawImage(provider, x, y);
 		}
 		if ((flags & UNCAUGHT) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_UNCAUGHT_BREAKPOINT_DISABLED));
 			}
-			x= data.width;
-			y= data.height;
-			drawImage(data, x, y);
+			x = provider.getWidth();
+			y = provider.getHeight();
+			drawImage(provider, x, y);
 		}
 		if ((flags & SCOPED) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_SCOPED_BREAKPOINT_DISABLED));
 			}
 			x= 0;
 			y= getSize().y;
-			y-= data.height;
-			drawImage(data, x, y);
+			y -= provider.getHeight();
+			drawImage(provider, x, y);
 		}
 		if ((flags & CONDITIONAL) != 0) {
 			if ((flags & ENABLED) !=0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_CONDITIONAL_BREAKPOINT_DISABLED));
 			}
 			x= 0;
 			y= 0;
-			drawImage(data, x, y);
+			drawImage(provider, x, y);
 		}
 		if ((flags & ENTRY) != 0) {
 			x= getSize().x;
 			y= 0;
 			if ((flags & ENABLED) !=0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_ENTRY_DISABLED));
 			}
-			x -= data.width;
+			x -= provider.getWidth();
 			x = x - 2;
-			drawImage(data, x, y);
+			drawImage(provider, x, y);
 		}
 		if ((flags & EXIT)  != 0){
 			x= getSize().x;
 			y= getSize().y;
 			if ((flags & ENABLED) != 0) {
-				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT));
 			} else {
-				data= getImageData(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED);
+				provider = createCachedImageDataProvider(getImageDescriptor(JavaDebugImages.IMG_OVR_METHOD_BREAKPOINT_EXIT_DISABLED));
 			}
-			x -= data.width;
+			x -= provider.getWidth();
 			x = x - 2;
-			y -= data.height;
-			drawImage(data, x, y);
+			y -= provider.getHeight();
+			drawImage(provider, x, y);
 		}
 	}
 	protected ImageDescriptor getBaseImage() {

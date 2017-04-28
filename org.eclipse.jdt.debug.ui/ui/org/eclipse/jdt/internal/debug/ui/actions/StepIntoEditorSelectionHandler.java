@@ -21,13 +21,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Default handler for Step Into Editor Selection action
- * 
+ *
  * @since 3.6.200
  */
 public class StepIntoEditorSelectionHandler extends AbstractHandler {
 
 	IDebugEventSetListener listener = null;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */

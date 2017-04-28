@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,19 +36,19 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 	public void testSimpleThreadFilterBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			bp.setThreadFilter(thread);
 			resumeToLineBreakpoint(thread, bp);
-						
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -58,23 +58,23 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 	public void testMultiThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedLoop";
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(17, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp1);
-			
+
 			IJavaLineBreakpoint bp2 = createLineBreakpoint(40, typeName);
 			bp2.setThreadFilter(thread);
-			
+
 			thread = resumeToLineBreakpoint(thread, bp2);
 			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
-						
+
 			bp1.delete();
 			bp2.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -84,23 +84,23 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 	public void testExceptionThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedException";
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(17, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp1);
 			IJavaExceptionBreakpoint ex1 = createExceptionBreakpoint("java.lang.NullPointerException", false, true);
 			ex1.setThreadFilter(thread);
-			
+
 			thread = resume(thread);
 			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
-			
+
 			bp1.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-			
+
 	/**
 	 * Tests that a thread filter works for a specific watchpoint
 	 * @throws Exception
@@ -108,24 +108,24 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 	public void testAccessWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(21, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp1);
-			IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);			
-			wp.setThreadFilter(thread);			
-			
+			IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
+			wp.setThreadFilter(thread);
+
 			thread = resume(thread);
 			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
-			
+
 			bp1.delete();
 			wp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-			
+
 	/**
 	 * Tests that a thread filter is working for a specific modification watchpoint
 	 * @throws Exception
@@ -133,21 +133,21 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 	public void testModificationWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(22, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp1);
-			IJavaWatchpoint wp = createWatchpoint(typeName, "i", false, true);			
-			wp.setThreadFilter(thread);			
-			
+			IJavaWatchpoint wp = createWatchpoint(typeName, "i", false, true);
+			wp.setThreadFilter(thread);
+
 			thread = resume(thread);
 			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
-			
+
 			bp1.delete();
 			wp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -59,7 +59,7 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
         IOConsole console = new IOConsole("Test IOConsole", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 		manager.addConsoles(new IConsole[]{console});
-		OutputStream out = console.newOutputStream(); 
+		OutputStream out = console.newOutputStream();
 		final PrintStream stream = new PrintStream(out);
 		Runnable r = new Runnable() {
 			@Override

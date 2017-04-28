@@ -31,11 +31,11 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Manages import of installed JREs. Merges valid imported JREs with existing JREs.
- * 
+ *
  * @since 3.1
  */
 public class JREPreferenceModifyListener extends PreferenceModifyListener {
-	
+
 	class Visitor implements IPreferenceNodeVisitor {
 
 		@Override
@@ -46,8 +46,8 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 					VMDefinitionsContainer vms = new VMDefinitionsContainer();
 					String pref = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN).get(JavaRuntime.PREF_VM_XML, ""); //$NON-NLS-1$
 					// names -> existing vm's
-					Map<String, IVMInstall> names = new HashMap<String, IVMInstall>();
-					Set<String> ids = new HashSet<String>();
+					Map<String, IVMInstall> names = new HashMap<>();
+					Set<String> ids = new HashSet<>();
 					if (pref.length() > 0) {
 						try {
 							VMDefinitionsContainer container = VMDefinitionsContainer.parseXMLIntoContainer(new ByteArrayInputStream(pref.getBytes("UTF8"))); //$NON-NLS-1$
@@ -83,12 +83,12 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 							boolean collision = ids.contains(vm.getId());
 							if (collision) {
 								// conflicting id, create a new one with unique id
-								long unique = System.currentTimeMillis();	
+								long unique = System.currentTimeMillis();
 								while(ids.contains(String.valueOf(unique))){
 									unique++;
 								}
 								vm = new VMStandin(vm, String.valueOf(unique));
-								ids.add(vm.getId()); 
+								ids.add(vm.getId());
 							}
 							vms.addVM(vm);
 						}
@@ -119,7 +119,7 @@ public class JREPreferenceModifyListener extends PreferenceModifyListener {
 			}
 			return true;
 		}
-		
+
 	}
 
 	@Override

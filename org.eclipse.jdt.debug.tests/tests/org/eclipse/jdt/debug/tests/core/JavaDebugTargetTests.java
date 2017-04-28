@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests IJavaDebugTarget API
- * 
+ *
  * @since 3.4
  */
 public class JavaDebugTargetTests extends AbstractDebugTest {
@@ -28,7 +28,7 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 	public void testGetVMName() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			// do not register launch - see bug 130911
@@ -42,11 +42,11 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	public void testGetVersion() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(52, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			// do not register launch - see bug 130911
@@ -59,6 +59,6 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 }

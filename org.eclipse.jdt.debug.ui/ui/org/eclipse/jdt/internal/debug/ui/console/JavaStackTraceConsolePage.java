@@ -20,7 +20,7 @@ import org.eclipse.ui.console.TextConsolePage;
 import org.eclipse.ui.console.TextConsoleViewer;
 
 public class JavaStackTraceConsolePage extends TextConsolePage {
-	
+
 	private AutoFormatSettingAction fAutoFormat;
 
 	public JavaStackTraceConsolePage(TextConsole console, IConsoleView view) {
@@ -30,7 +30,7 @@ public class JavaStackTraceConsolePage extends TextConsolePage {
 	@Override
 	protected void createActions() {
 		super.createActions();
-		
+
 		IActionBars actionBars= getSite().getActionBars();
 		fAutoFormat = new AutoFormatSettingAction(this);
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();

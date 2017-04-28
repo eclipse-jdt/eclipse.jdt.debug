@@ -32,7 +32,7 @@ public class JDINullValue extends JDIObjectValue {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param target
 	 */
 	public JDINullValue(JDIDebugTarget target) {
@@ -179,7 +179,7 @@ public class JDINullValue extends JDIObjectValue {
 
 	/**
 	 * Creates an artificial NPE for display to the user as an error message
-	 * 
+	 *
 	 * @param selector
 	 * @param signature
 	 * @return
@@ -207,7 +207,7 @@ public class JDINullValue extends JDIObjectValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#disableCollection
 	 * ()
@@ -219,7 +219,7 @@ public class JDINullValue extends JDIObjectValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.core.model.JDIObjectValue#enableCollection
 	 * ()
@@ -231,7 +231,7 @@ public class JDINullValue extends JDIObjectValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.model.JDIValue#isNull()
 	 */
 	@Override

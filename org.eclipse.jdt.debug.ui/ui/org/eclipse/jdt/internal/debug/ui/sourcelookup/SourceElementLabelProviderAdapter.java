@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Class provides the Duplicate JavaElement labels and Images for SourceElementLabelProvider Objects while debugging
- * 
+ *
  * @since 3.7
  */
 @SuppressWarnings("restriction")

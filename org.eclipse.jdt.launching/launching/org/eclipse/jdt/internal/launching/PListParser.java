@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Parses an XML property list into its associated objects.
  */
 public class PListParser {
-	
+
 	/**
 	 * Constants for XML element names and attributes
 	 */
@@ -50,11 +50,11 @@ public class PListParser {
 	private static final String FALSE_ELEMENT = "false"; //$NON-NLS-1$
 	private static final String INT_ELEMENT = "integer"; //$NON-NLS-1$
 	private static final String STRING_ELEMENT = "string"; //$NON-NLS-1$
-	
+
 	/**
 	 * Parses the given input stream which corresponds to an XML plist. See the DTD
 	 * here: http://www.apple.com/DTDs/PropertyList-1.0.dtd
-	 * 
+	 *
 	 * @param stream XML plist input stream
 	 * @return Object(s) in the stream
 	 * @throws CoreException if an error occurs
@@ -64,25 +64,25 @@ public class PListParser {
 			stream = new BufferedInputStream(stream);
 			return parseXML(stream);
 		} catch (FileNotFoundException e) {
-			abort(e);					
+			abort(e);
 		} catch (SAXException e) {
-			abort(e);					
+			abort(e);
 		} catch (ParserConfigurationException e) {
-			abort(e);					
+			abort(e);
 		} catch (IOException e) {
-			abort(e);					
+			abort(e);
 		} finally {
 			if (stream != null) {
 				try {
 					stream.close();
 				} catch (IOException e) {
-					abort(e);					
+					abort(e);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return a LaunchConfigurationInfo object initialized from XML contained in
 	 * the specified stream.  Simply pass out any exceptions encountered so that
@@ -108,7 +108,7 @@ public class PListParser {
 		DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		root = parser.parse(new InputSource(stream)).getDocumentElement();
-		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) { 
+		if (!root.getNodeName().equalsIgnoreCase(PLIST_ELEMENT)) {
 			throw getInvalidFormatException();
 		}
 		NodeList list = root.getChildNodes();
@@ -124,35 +124,35 @@ public class PListParser {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns an invalid format exception
-	 * 
+	 *
 	 * @return an invalid format exception
 	 */
 	private CoreException getInvalidFormatException() {
 		return new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, "Invalid plist XML", null)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Parses and returns an object from the given root element, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param element the root node from the XML document
 	 * @return parsed object or <code>null</code>
 	 * @throws CoreException if an error occurs
 	 */
 	private Object parseObject(Element element) throws CoreException {
 		String nodeName = element.getNodeName();
-		if (nodeName.equalsIgnoreCase(ARRAY_ELEMENT)) { 
+		if (nodeName.equalsIgnoreCase(ARRAY_ELEMENT)) {
 			return parseArray(element);
-		} else if (nodeName.equalsIgnoreCase(DICT_ELEMENT)) { 
+		} else if (nodeName.equalsIgnoreCase(DICT_ELEMENT)) {
 			return parseDictionary(element);
-		} else if (nodeName.equalsIgnoreCase(KEY_ELEMENT))  { 
+		} else if (nodeName.equalsIgnoreCase(KEY_ELEMENT))  {
 			return getText(element);
-		} else if (nodeName.equalsIgnoreCase(TRUE_ELEMENT)) {   
-			return Boolean.TRUE;			
-		} else if (nodeName.equalsIgnoreCase(FALSE_ELEMENT)) {    
-			return Boolean.FALSE;								
+		} else if (nodeName.equalsIgnoreCase(TRUE_ELEMENT)) {
+			return Boolean.TRUE;
+		} else if (nodeName.equalsIgnoreCase(FALSE_ELEMENT)) {
+			return Boolean.FALSE;
 		} else if(nodeName.equalsIgnoreCase(INT_ELEMENT)) {
 			try {
 				return new Integer(Integer.parseInt(getText(element)));
@@ -163,17 +163,17 @@ public class PListParser {
 			return getText(element);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Parses and returns an array from the given root element, possibly empty.
-	 * 
+	 *
 	 * @param root the root array node from the XML document
 	 * @return parsed array or <code>null</code>
 	 * @throws CoreException if an error occurs
 	 */
 	private Object[] parseArray(Element root) throws CoreException {
-		List<Object> collection = new ArrayList<Object>();
+		List<Object> collection = new ArrayList<>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -189,17 +189,17 @@ public class PListParser {
 			}
 		}
 		return collection.toArray();
-	}	
-	
+	}
+
 	/**
 	 * Parses and returns a map from the given dictionary element, possibly empty.
-	 * 
+	 *
 	 * @param root the root dictionary node from the XML document
 	 * @return parsed map or <code>null</code>
 	 * @throws CoreException if an error occurs
 	 */
 	private Map<String, Object> parseDictionary(Element root) throws CoreException {
-		Map<String, Object> dict = new HashMap<String, Object>();
+		Map<String, Object> dict = new HashMap<>();
 		NodeList list = root.getChildNodes();
 		Node node = null;
 		Element element = null;
@@ -211,7 +211,7 @@ public class PListParser {
 			if (nodeType == Node.ELEMENT_NODE) {
 				element = (Element) node;
 				nodeName = element.getNodeName();
-				if (nodeName.equalsIgnoreCase(KEY_ELEMENT)) { 
+				if (nodeName.equalsIgnoreCase(KEY_ELEMENT)) {
 					key = getText(element);
 				} else {
 					dict.put(key, parseObject(element));
@@ -219,12 +219,12 @@ public class PListParser {
 			}
 		}
 		return dict;
-	}		
-	
+	}
+
 	/**
 	 * Returns the value of the first child text node from the given element,
 	 * or <code>null</code>.
-	 * 
+	 *
 	 * @param root the root element
 	 * @return its text or <code>null</code> if none
 	 */
@@ -240,7 +240,7 @@ public class PListParser {
 		}
 		return null;
 	}
-	
+
 	private void abort(Throwable t) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, "Exception occurred parsing property list", t)); //$NON-NLS-1$
 	}

@@ -47,10 +47,10 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.PartInitException;
 
 /**
- * This class provides a search participant to find class references in the 
+ * This class provides a search participant to find class references in the
  * {@linkplain IJavaLaunchConfigurationConstants#ATTR_MAIN_TYPE_NAME} attribute
  * of Java launch configurations
- * 
+ *
  * @since 3.4.0
  */
 public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
@@ -214,7 +214,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 	}
 
 	/**
-	 * Returns the success of the the pattern matching 
+	 * Returns the success of the the pattern matching
 	 * @param scope the search scope
 	 * @param config the backing {@link ILaunchConfiguration}
 	 * @param pattern the search pattern
@@ -277,7 +277,7 @@ public class LaunchConfigurationQueryParticipant implements IQueryParticipant {
 
 	/**
 	 * The UI participant for showing configuration matches in the search view
-	 * 
+	 *
 	 * @since 3.4.0
 	 */
 	private static class UIParticipant implements IMatchPresentation {

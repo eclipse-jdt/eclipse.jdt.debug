@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.environment.Constants;
 
 public class EnvironmentTests extends AbstractDebugTest {
-	
+
 	public EnvironmentTests(String name) {
 		super(name);
 	}
@@ -41,7 +41,7 @@ public class EnvironmentTests extends AbstractDebugTest {
 			assertEquals("env vars should be case insensitive", path1, path2);
 		}
 	}
-	
+
 	/**
 	 * Test that we can override a variable in a case insensitive way on Windows
 	 */

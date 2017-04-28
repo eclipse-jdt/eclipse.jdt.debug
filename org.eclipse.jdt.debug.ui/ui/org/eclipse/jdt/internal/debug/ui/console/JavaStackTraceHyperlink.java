@@ -43,7 +43,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * A hyper-link from a stack trace line of the form "*(*.java:*)"
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
-	
+
 	private TextConsole fConsole;
 
 	/**
@@ -80,20 +80,20 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             typeName = getTypeName(linkText);
             lineNumber = getLineNumber(linkText);
         } catch (CoreException e1) {
-            ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus()); 
+            ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Error, ConsoleMessages.JavaStackTraceHyperlink_Error, e1.getStatus());
             return;
         }
-		
+
 		// documents start at 0
 		if (lineNumber > 0) {
 			lineNumber--;
 		}
 		startSourceSearch(typeName, lineNumber);
 	}
-	
+
 	/**
 	 * Starts a search for the type with the given name. Reports back to 'searchCompleted(...)'.
-	 * 
+	 *
 	 * @param typeName the type to search for
 	 * @param lineNumber the line number to open the editor on
 	 */
@@ -119,14 +119,14 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 				}
 				return Status.OK_STATUS;
 			}
-		
+
 		};
 		search.schedule();
 	}
-	
+
 	/**
 	 * Reported back to from {@link JavaStackTraceHyperlink#startSourceSearch(String, int)} when results are found
-	 * 
+	 *
 	 * @param source the source object
 	 * @param typeName the fully qualified type name
 	 * @param lineNumber the line number in the type
@@ -142,7 +142,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						MessageDialog.openInformation(JDIDebugUIPlugin.getActiveWorkbenchShell(), ConsoleMessages.JavaStackTraceHyperlink_Information_1, NLS.bind(ConsoleMessages.JavaStackTraceHyperlink_Source_not_found_for__0__2, new String[] {typeName}));
 					} else {
 						JDIDebugUIPlugin.statusDialog(ConsoleMessages.JavaStackTraceHyperlink_3, status);
-					}			
+					}
 				} else {
 					processSearchResult(source, typeName, lineNumber);
 				}
@@ -152,10 +152,10 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		job.setSystem(true);
 		job.schedule();
 	}
-	
+
 	/**
 	 * The search succeeded with the given result
-	 * 
+	 *
 	 * @param source resolved source object for the search
 	 * @param typeName type name searched for
 	 * @param lineNumber line number on link
@@ -166,7 +166,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 		if (editorInput != null) {
 			String editorId = presentation.getEditorId(editorInput, source);
 			if (editorId != null) {
-				try { 
+				try {
 					IEditorPart editorPart = JDIDebugUIPlugin.getActivePage().openEditor(editorInput, editorId);
 					if (editorPart instanceof ITextEditor && lineNumber >= 0) {
 						ITextEditor textEditor = (ITextEditor)editorPart;
@@ -182,16 +182,16 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 						provider.disconnect(editorInput);
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+					JDIDebugUIPlugin.statusDialog(e.getStatus());
 				}
 			}
-		}		
+		}
 	}
 
 	/**
 	 * Returns the launch associated with this hyper-link, or
 	 *  <code>null</code> if none
-	 * 
+	 *
 	 * @return the launch associated with this hyper-link, or
 	 *  <code>null</code> if none
 	 */
@@ -240,19 +240,19 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             if (start >= 0) {
                 qualifier = qualifier.substring(0, start);
             }
-            
+
             if (qualifier.length() > 0) {
                 typeName = qualifier + "." + typeName; //$NON-NLS-1$
             }
             return typeName;
         }
-        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null); 
+        IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null);
         throw new CoreException(status);
-    }	
-	
+    }
+
 	/**
 	 * Returns the line number associated with the stack trace or -1 if none.
-	 * 
+	 *
 	 * @param linkText the complete text of the link to be parsed
 	 * @return the line number for the stack trace or -1 if one cannot be computed or has not been provided
 	 * @exception CoreException if unable to parse the number
@@ -268,26 +268,26 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 			try {
 				return Integer.parseInt(numText);
 			} catch (NumberFormatException e) {
-				IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, e); 
+				IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, e);
 				throw new CoreException(status);
-			}		
+			}
 		}
-		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, null); 
-		throw new CoreException(status);			
+		IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_line_number_from_hyperlink__6, null);
+		throw new CoreException(status);
 	}
-	
+
 	/**
 	 * Returns the console this link is contained in.
-	 *  
+	 *
 	 * @return console
 	 */
 	protected TextConsole getConsole() {
 		return fConsole;
 	}
-	
+
 	/**
 	 * Returns this link's text
-	 * 
+	 *
 	 * @return the complete text of the link, never <code>null</code>
 	 * @exception CoreException if unable to retrieve the text
 	 */
@@ -296,22 +296,22 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             IDocument document = getConsole().getDocument();
 	        IRegion region = getConsole().getRegion(this);
             int regionOffset = region.getOffset();
-            
+
 	        int lineNumber = document.getLineOfOffset(regionOffset);
 	        IRegion lineInformation = document.getLineInformation(lineNumber);
             int lineOffset = lineInformation.getOffset();
 	        String line = document.get(lineOffset, lineInformation.getLength());
-            
+
             int regionOffsetInLine = regionOffset - lineOffset;
 
             int linkEnd = line.indexOf(')', regionOffsetInLine);
             int linkStart = line.lastIndexOf(' ', regionOffsetInLine);
-            
+
             return line.substring(linkStart==-1?0:linkStart+1,linkEnd+1);
 		} catch (BadLocationException e) {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e); 
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_retrieve_hyperlink_text__8, e);
 			throw new CoreException(status);
-		}		
+		}
 	}
 
 }

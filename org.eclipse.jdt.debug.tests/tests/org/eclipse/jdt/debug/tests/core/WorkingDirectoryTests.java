@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,15 +25,15 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  * Tests working directories.
  */
 public class WorkingDirectoryTests extends AbstractDebugTest {
-	
+
 	public WorkingDirectoryTests(String name) {
 		super(name);
 	}
 
 	public void testDefaultWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
-		createLineBreakpoint(16, typeName);		
-		
+		createLineBreakpoint(16, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -43,15 +43,15 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			IVariable var = thread.findVariable("dir");
 			String dir = var.getValue().getValueString();
 			IPath path = new Path(dir);
-			assertEquals("default working dir should be the project directory.", get14Project().getProject().getLocation(), path); 
+			assertEquals("default working dir should be the project directory.", get14Project().getProject().getLocation(), path);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
-	 * Sets the working directory attribute of the test launch config 
+	 * Sets the working directory attribute of the test launch config
 	 * @param path
 	 */
 	protected void setWorkingDirectory(IPath path) throws CoreException {
@@ -88,7 +88,7 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			setWorkingDirectory(null);
 		}
 	}
-	
+
 	public void testAbsoluteWorkingDirectory() throws Exception {
 		String typeName = "WorkingDirectoryTest";
 		createLineBreakpoint(16, typeName);
@@ -110,5 +110,5 @@ public class WorkingDirectoryTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			setWorkingDirectory(null);
 		}
-	}	
+	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.ui.editors.text.StorageDocumentProvider;
  * @since 3.0
  */
 public class SnippetEditorStorageDocumentProvider extends StorageDocumentProvider {
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#setupDocument(java.lang.Object,
 	 *      org.eclipse.jface.text.IDocument)

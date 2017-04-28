@@ -27,103 +27,103 @@ public class TypeResolutionTests extends AbstractDebugTest {
 	public TypeResolutionTests(String name) {
 		super(name);
 	}
-	
+
 	public void testTypeAA() throws Exception {
 		resolve(65, "EvalNestedTypeTests$A$AA");
-	}	
-	
+	}
+
 	public void testTypeAB() throws Exception {
 		resolve(94, "EvalNestedTypeTests$A$AB");
-	}	
-	
+	}
+
 	public void testTypeAC() throws Exception {
 		resolve(120, "EvalNestedTypeTests$A$AC");
-	}	
-	
+	}
+
 	public void testAnonTypeA1() throws Exception {
 		resolve(145, "EvalNestedTypeTests$A$1");
 	}
-	
+
 	public void testTypeAE() throws Exception {
 		resolve(179, "EvalNestedTypeTests$A$AE");
 	}
-	
+
 	public void testAnonTypeA2() throws Exception {
 		resolve(203, "EvalNestedTypeTests$A$2");
-	}	
-	
+	}
+
 	public void testTypeBB() throws Exception {
 		resolve(252, "EvalNestedTypeTests$B$BB");
 	}
-	
+
 	public void testTypeBC() throws Exception {
 		resolve(279, "EvalNestedTypeTests$B$BC");
 	}
-	
+
 	public void testAnonTypeB() throws Exception {
 		resolve(304, "EvalNestedTypeTests$B$1");
 	}
-	
+
 	public void testTypeB() throws Exception {
 		resolve(312, "EvalNestedTypeTests$B");
 	}
-	
+
 	public void testTypeCB() throws Exception {
 		resolve(354, "EvalNestedTypeTests$C$CB");
 	}
-	
+
 	public void testTypeCC() throws Exception {
 		resolve(381, "EvalNestedTypeTests$C$CC");
-	}	
-	
+	}
+
 	public void testAnonTypeC1() throws Exception {
 		resolve(406, "EvalNestedTypeTests$C$1");
 	}
-	
+
 	public void testAnonTypeDB() throws Exception {
 		resolve(455, "EvalNestedTypeTests$1$DB");
 	}
-	
+
 	public void testAnonTypeDC() throws Exception {
 		resolve(481, "EvalNestedTypeTests$1$DC");
 	}
-	
+
 	public void testAnonType11() throws Exception {
 		resolve(506, "EvalNestedTypeTests$1$1");
-	}	
+	}
 
 	public void testTopLevelType() throws Exception {
 		resolve(523, "EvalNestedTypeTests");
 	}
-	
+
 	public void testTypeEB() throws Exception {
 		resolve(566, "EvalNestedTypeTests$E$EB");
 	}
-	
+
 	public void testTypeEC() throws Exception {
 		resolve(592, "EvalNestedTypeTests$E$EC");
 	}
-	
+
 	public void testAnonTypeE1() throws Exception {
 		resolve(616, "EvalNestedTypeTests$E$1");
-	}	
-	
+	}
+
 	public void testAnonTypeFB() throws Exception {
 		resolve(664, "EvalNestedTypeTests$2$FB");
 	}
-	
+
 	public void testAnonTypeFC() throws Exception {
 		resolve(690, "EvalNestedTypeTests$2$FC");
 	}
-	
+
 	public void testAnonType21() throws Exception {
 		resolve(714, "EvalNestedTypeTests$2$1");
 	}
-	
+
 	/**
 	 * Performs a resolution test. Debugs to a breakpoint and resolves the
 	 * declaring type of the stack frame.
-	 * 
+	 *
 	 * @param line breakpoint line number
 	 * @param expectedName expected fully qualified name of resolved type
 	 * @throws Exception on failure
@@ -145,7 +145,7 @@ public class TypeResolutionTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}	
-	}	
+		}
+	}
 
 }

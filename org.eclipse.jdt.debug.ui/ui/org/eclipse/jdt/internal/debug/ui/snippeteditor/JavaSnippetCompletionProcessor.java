@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import java.util.Arrays;
 
 import org.eclipse.jdt.core.JavaModelException;
@@ -37,27 +37,27 @@ import org.eclipse.swt.widgets.Shell;
  * Java snippet completion processor.
  */
 public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
-	
+
 	private CompletionProposalCollector fCollector;
 	private JavaSnippetEditor fEditor;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
 	private CompletionProposalComparator fComparator;
 	private String fErrorMessage;
-	
+
 	private char[] fProposalAutoActivationSet;
 	private ContentAssistant fAssistant;
-			
+
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fEditor= editor;
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
-		
+
 		fComparator= new CompletionProposalComparator();
 	}
-	
+
 	public void setContentAssistant(ContentAssistant assistant) {
 		fAssistant = assistant;
 	}
@@ -68,7 +68,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
-	
+
 	protected void setErrorMessage(String message) {
 		if (message != null && message.length() == 0) {
 			message = null;
@@ -102,7 +102,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
-	
+
 	/**
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
@@ -118,15 +118,15 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 				JDIDebugUIPlugin.log(x);
 			}
-			
+
 			IJavaCompletionProposal[] results= fCollector.getJavaCompletionProposals();
-			
+
 			if (fTemplateEngine != null) {
 				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, position, null);			
-			
+				fTemplateEngine.complete(viewer, position, null);
+
 				TemplateProposal[] templateResults= fTemplateEngine.getResults();
-	
+
 				// concatenate arrays
 				IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
 				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
@@ -139,7 +139,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			fCollector = null;
 		}
 	}
-	
+
 	/**
 	 * Order the given proposals.
 	 */
@@ -156,9 +156,9 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			}
 
 		});
-		return proposals;	
-	}	
-	
+		return proposals;
+	}
+
 	/**
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
@@ -166,20 +166,20 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fProposalAutoActivationSet;
 	}
-	
+
 	/**
 	 * Sets this processor's set of characters triggering the activation of the
 	 * completion proposal computation.
-	 * 
+	 *
 	 * @param activationSet the activation set
 	 */
 	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
 		fProposalAutoActivationSet= activationSet;
 	}
-	
+
 	/**
 	 * Tells this processor to order the proposals alphabetically.
-	 * 
+	 *
 	 * @param order <code>true</code> if proposals should be ordered.
 	 */
 	public void orderProposalsAlphabetically(boolean order) {

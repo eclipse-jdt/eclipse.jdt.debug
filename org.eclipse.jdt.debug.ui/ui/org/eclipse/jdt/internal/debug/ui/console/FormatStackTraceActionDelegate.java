@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleView;
 
 public class FormatStackTraceActionDelegate implements IViewActionDelegate {
-    
+
     private JavaStackTraceConsole fConsole;
     private IConsoleView fView;
-    
+
     public FormatStackTraceActionDelegate() {}
-    
+
     public FormatStackTraceActionDelegate(JavaStackTraceConsole console) {
         fConsole = console;
     }
@@ -54,10 +54,10 @@ public class FormatStackTraceActionDelegate implements IViewActionDelegate {
 			}
     	}
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
     @Override
-	public void selectionChanged(IAction action, ISelection selection) {}      
+	public void selectionChanged(IAction action, ISelection selection) {}
 }

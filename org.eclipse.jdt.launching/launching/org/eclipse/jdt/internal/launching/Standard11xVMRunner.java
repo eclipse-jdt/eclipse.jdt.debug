@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -48,22 +48,22 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			monitor = new NullProgressMonitor();
 		}
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2); 
-		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //		
-		
+		subMonitor.beginTask(LaunchingMessages.StandardVMRunner_Launching_VM____1, 2);
+		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Constructing_command_line____2); //
+
 		String program= constructProgramString(config);
-		
-		List<String> arguments= new ArrayList<String>();
+
+		List<String> arguments= new ArrayList<>();
 		arguments.add(program);
-				
+
 		// VM arguments are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first option
 		String[] vmArgs= combineVmArgs(config, fVMInstance);
 		addArguments(vmArgs, arguments);
-				
-		String[] bootCP= config.getBootClassPath();		
+
+		String[] bootCP= config.getBootClassPath();
 		String[] classPath = config.getClassPath();
-		
+
 		String[] combinedPath = null;
 		if (bootCP == null) {
 			LibraryLocation[] locs = JavaRuntime.getLibraryLocations(fVMInstance);
@@ -90,9 +90,9 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			arguments.add(convertClassPath(combinedPath));
 		}
 		arguments.add(config.getClassToLaunch());
-		
+
 		String[] programArgs= config.getProgramArguments();
-		
+
 		String[] envp = prependJREPath(config.getEnvironment());
 		String[] newenvp = checkClasspath(arguments, classPath, envp);
 		if(newenvp != null) {
@@ -101,7 +101,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			arguments.remove(cpidx);
 		}
 		addArguments(programArgs, arguments);
-				
+
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 
@@ -109,10 +109,10 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
+
 		subMonitor.worked(1);
-		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3); 
-		
+		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
+
 		Process p= null;
 		File workingDir = getWorkingDir(config);
 		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
@@ -123,12 +123,12 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		if (p == null) {
 			return;
 		}
-		
+
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			p.destroy();
 			return;
-		}		
+		}
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine, timestamp));
 		process.setAttribute(DebugPlugin.ATTR_PATH, cmdLine[0]);

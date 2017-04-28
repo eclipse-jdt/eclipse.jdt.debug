@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -130,15 +130,15 @@ import com.sun.jdi.ObjectReference;
 /**
  * An editor for Java snippets.
  */
-public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {			
+public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
-	
+
 	public final static int RESULT_DISPLAY= 1;
 	public final static int RESULT_RUN= 2;
 	public final static int RESULT_INSPECT= 3;
-	
+
 	private int fResultMode; // one of the RESULT_* constants
-	
+
 	private IJavaProject fJavaProject;
 	private IEvaluationContext fEvaluationContext;
 	private IDebugTarget fVM;
@@ -146,20 +146,20 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private String fLaunchedWorkingDir;
 	private String fLaunchedVMArgs;
 	private IVMInstall fLaunchedVM;
-	private List<ISnippetStateChangedListener> fSnippetStateListeners;	
-	
+	private List<ISnippetStateChangedListener> fSnippetStateListeners;
+
 	private boolean fEvaluating;
 	private IJavaThread fThread;
 	private boolean fStepFiltersSetting;
-	
+
 	private int fSnippetStart;
 	private int fSnippetEnd;
-	
+
 	private String[] fImports= null;
-	
+
 	private Image fOldTitleImage= null;
 	private IClassFileEvaluationEngine fEngine= null;
-	
+
 	/**
 	 * The debug model presentation used for computing toString
 	 */
@@ -171,7 +171,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	private String fResult;
 
 	/**
-	 * A thread that waits to have a 
+	 * A thread that waits to have a
 	 * thread to perform an evaluation in.
 	 */
 	private static class WaitThread extends Thread {
@@ -179,16 +179,16 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		 * The display used for event dispatching.
 		 */
 		private Display fDisplay;
-		
+
 		/**
 		 * Indicates whether to continue event queue dispatching.
 		 */
 		private volatile boolean fContinueEventDispatching = true;
-		
+
 		private Object fLock;
 		/**
 		 * Creates a "wait" thread
-		 * 
+		 *
 		 * @param display the display to be used to read and dispatch events
 		 * @param lock the monitor to wait on
 		 */
@@ -203,7 +203,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			try {
 				synchronized (fLock) {
 					//should be notified out of #setThread(IJavaThread)
-					fLock.wait(10000);	
+					fLock.wait(10000);
 				}
 			} catch (InterruptedException e) {
 			} finally {
@@ -215,14 +215,14 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 						// do nothing
 					}
 				});
-				
+
 				// Stop event dispatching
 				fContinueEventDispatching= false;
-				
+
 				// Force the event loop to return from sleep () so that
 				// it stops event dispatching.
 				fDisplay.asyncExec(null);
-			}	
+			}
 		}
 		/**
 		 * Processes events.
@@ -235,9 +235,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 					}
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Listens for part activation to set scrapbook active system property
 	 * for action enablement.
@@ -280,22 +280,22 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 		}
-		
+
 	};
-	
+
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
 		IPreferenceStore store = new ChainedPreferenceStore(new IPreferenceStore[] {
 				PreferenceConstants.getPreferenceStore(),
 				EditorsUI.getPreferenceStore()});
-		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), store, this));		
+		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JDIDebugUIPlugin.getDefault().getJavaTextTools(), store, this));
 		fSnippetStateListeners = new ArrayList<>(4);
 		setPreferenceStore(store);
 		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
@@ -310,7 +310,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 	}
-		
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
@@ -332,7 +332,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		getSite().getWorkbenchWindow().getPartService().removePartListener(fActivationListener);
 		super.dispose();
 	}
-	
+
 	/**
 	 * Actions for the editor popup menu
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
@@ -348,16 +348,16 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 			setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 		}
-	} 
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
-		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);		
-		addGroup(menu, ITextEditorActionConstants.GROUP_FIND, IContextMenuConstants.GROUP_SEARCH);		
+		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);
+		addGroup(menu, ITextEditorActionConstants.GROUP_FIND, IContextMenuConstants.GROUP_SEARCH);
 		addGroup(menu, IContextMenuConstants.GROUP_SEARCH,  IContextMenuConstants.GROUP_SHOW);
 		if (getFile() != null) {
 			addAction(menu, IContextMenuConstants.GROUP_SHOW, "ShowInPackageView"); //$NON-NLS-1$
@@ -370,11 +370,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	protected boolean isVMLaunched() {
 		return fVM != null;
 	}
-	
+
 	public boolean isEvaluating() {
 		return fEvaluating;
 	}
-	
+
 	public void evalSelection(int resultMode) {
 		if (!isInJavaProject()) {
 			reportNotInJavaProjectError();
@@ -383,14 +383,14 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		if (isEvaluating()) {
 			return;
 		}
-		
+
 		checkCurrentProject();
-		
+
 		evaluationStarts();
 
 		fResultMode= resultMode;
 		buildAndLaunch();
-		
+
 		if (fVM == null) {
 			evaluationEnds();
 			return;
@@ -401,15 +401,15 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		String snippet= selection.getText();
 		fSnippetStart= selection.getOffset();
 		fSnippetEnd= fSnippetStart + selection.getLength();
-		
-		evaluate(snippet);			
+
+		evaluate(snippet);
 	}
-	
+
 	/**
 	 * Checks if the page has been copied/moved to a different project or the project has been renamed.
 	 * Updates the launch configuration template if a copy/move/rename has occurred.
 	 */
-	protected void checkCurrentProject() {	
+	protected void checkCurrentProject() {
 		IFile file= getFile();
 		if (file == null) {
 			return;
@@ -429,10 +429,10 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, ce.getStatus()); //$NON-NLS-1$
 			evaluationEnds();
 			return;
-			
+
 		}
-	}	
-	
+	}
+
 	protected void buildAndLaunch() {
 		IJavaProject javaProject= getJavaProject();
 		if (javaProject == null) {
@@ -440,13 +440,13 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		boolean build = !javaProject.getProject().getWorkspace().isAutoBuilding()
 			|| !javaProject.hasBuildState();
-		
+
 		if (build) {
 			if (!performIncrementalBuild()) {
 				return;
 			}
 		}
-		
+
 		boolean changed= classPathHasChanged();
 		if (!changed) {
 			changed = workingDirHasChanged();
@@ -462,7 +462,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		if (changed) {
 			shutDownVM();
 		}
-	
+
 		if (fVM == null) {
 			checkMultipleEditors();
 		}
@@ -471,7 +471,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			fVM= ScrapbookLauncher.getDefault().getDebugTarget(getFile());
 		}
 	}
-	
+
 	protected boolean performIncrementalBuild() {
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			@Override
@@ -484,7 +484,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, false, r);		
+			PlatformUI.getWorkbench().getProgressService().run(true, false, r);
 		} catch (InterruptedException e) {
 			JDIDebugUIPlugin.log(e);
 			evaluationEnds();
@@ -496,7 +496,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return true;
 	}
-	
+
 	protected void checkMultipleEditors() {
 		fVM= ScrapbookLauncher.getDefault().getDebugTarget(getFile());
 		//multiple editors are opened on the same page
@@ -515,7 +515,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 	}
-	
+
 	protected void setImports(String[] imports) {
 		fImports= imports;
 		IFile file= getFile();
@@ -534,11 +534,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.imports"), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
-	
+
 	protected String[] getImports() {
 		return fImports;
 	}
-			
+
 	protected IEvaluationContext getEvaluationContext() {
 		if (fEvaluationContext == null) {
 			IJavaProject project= getJavaProject();
@@ -547,7 +547,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 		if (fEvaluationContext != null) {
-			if (getImports() != null) {		
+			if (getImports() != null) {
 				fEvaluationContext.setImports(getImports());
 			} else {
 				fEvaluationContext.setImports(new String[]{});
@@ -555,7 +555,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return fEvaluationContext;
 	}
-	
+
 	protected IJavaProject getJavaProject() {
 		if (fJavaProject == null) {
 			try {
@@ -567,7 +567,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return fJavaProject;
 	}
-	
+
 	protected void shutDownVM() {
 		DebugPlugin.getDefault().removeDebugEventFilter(this);
 
@@ -582,7 +582,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				if (getThread() != null) {
 					getThread().resume();
 				}
-				
+
 				fVM.terminate();
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);
@@ -593,7 +593,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			ScrapbookLauncher.getDefault().cleanup(target);
 		}
 	}
-	
+
 	/**
 	 * The VM has terminated, update state
 	 */
@@ -608,13 +608,13 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fEngine= null;
 		fireEvalStateChanged();
 	}
-	
+
 	public void addSnippetStateChangedListener(ISnippetStateChangedListener listener) {
 		if (fSnippetStateListeners != null && !fSnippetStateListeners.contains(listener)) {
 			fSnippetStateListeners.add(listener);
 		}
 	}
-	
+
 	public void removeSnippetStateChangedListener(ISnippetStateChangedListener listener) {
 		if (fSnippetStateListeners != null) {
 			fSnippetStateListeners.remove(listener);
@@ -640,7 +640,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			getShell().getDisplay().asyncExec(r);
 		}
 	}
-	
+
 	protected void evaluate(String snippet) {
 		if (getThread() == null) {
 			WaitThread eThread= new WaitThread(Display.getCurrent(), this);
@@ -654,9 +654,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			return;
 		}
 		boolean hitBreakpoints = Platform.getPreferencesService().getBoolean(
-				JDIDebugPlugin.getUniqueIdentifier(), 
-				JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, 
-				true, 
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION,
+				true,
 				null);
 		try {
 			getEvaluationEngine().evaluate(snippet,getThread(), this, hitBreakpoints);
@@ -666,7 +666,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			evaluationEnds();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
@@ -680,7 +680,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 					showException(result.getException());
 				}
 				showAllErrors(errors);
-			} 
+			}
 			IJavaValue value= result.getValue();
 			if (value != null && !severeErrors) {
 				switch (fResultMode) {
@@ -698,7 +698,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 			evaluationEnds();
 	}
-	
+
 	/**
 	 * Make the expression view visible or open one
 	 * if required.
@@ -723,20 +723,20 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				}
 			}
 		};
-		
+
 		async(r);
 	}
-		
+
 	protected void codeComplete(CompletionRequestor requestor) throws JavaModelException {
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
 		int start= selection.getOffset();
-		String snippet= getSourceViewer().getDocument().get();	
+		String snippet= getSourceViewer().getDocument().get();
 		IEvaluationContext e= getEvaluationContext();
 		if (e != null) {
 			e.codeComplete(snippet, start, requestor);
 		}
 	}
-		 
+
 	protected IJavaElement[] codeResolve() throws JavaModelException {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer == null) {
@@ -745,27 +745,27 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
 		int start= selection.getOffset();
 		int len= selection.getLength();
-		
-		String snippet= viewer.getDocument().get();	
+
+		String snippet= viewer.getDocument().get();
 		IEvaluationContext e= getEvaluationContext();
 		if (e != null) {
 			return e.codeSelect(snippet, start, len);
 		}
 		return null;
-	}	
-	
+	}
+
 	protected void showError(IStatus status) {
 		evaluationEnds();
 		if (!status.isOK()) {
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating2"), null, status); //$NON-NLS-1$
 		}
 	}
-	
+
 	protected void showError(String message) {
 		Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
 		showError(status);
 	}
-	
+
 	protected void displayResult(IJavaValue result) {
 		StringBuffer resultString= new StringBuffer();
 		try {
@@ -779,7 +779,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 						resultString.append(SnippetMessages.getFormattedString("SnippetEditor.typename", result.getReferenceTypeName())); //$NON-NLS-1$
 					} else {
 						resultString.append(" "); //$NON-NLS-1$
-					}   
+					}
                     resultString.append(DisplayAction.trimDisplayResult(evaluateToString(result)));
 				}
 			} else {
@@ -789,7 +789,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.toString"), null, e.getStatus()); //$NON-NLS-1$
 		}
-		
+
 		final String message = resultString.toString();
 		Runnable r = new Runnable() {
 			@Override
@@ -803,11 +803,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		async(r);
 	}
-	
+
 	/**
 	 * Returns the result of evaluating 'toString' on the given
 	 * value.
-	 * 
+	 *
 	 * @param value object or primitive data type the 'toString'
 	 *  is required for
 	 * @return the result of evaluating toString
@@ -826,7 +826,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return fResult;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 	 */
@@ -835,16 +835,16 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fResult= result;
 		this.notifyAll();
 	}
-	
+
 	protected void showAllErrors(final String[] errors) {
 		IDocument document = getSourceViewer().getDocument();
 		String delimiter = document.getLegalLineDelimiters()[0];
-		
+
 		final StringBuffer errorString = new StringBuffer();
 		for (int i = 0; i < errors.length; i++) {
 			errorString.append(errors[i] + delimiter);
 		}
-		
+
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
@@ -857,7 +857,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		async(r);
 	}
-	
+
 	private void showExpression(final JavaInspectExpression expression) {
 	    Runnable r = new Runnable() {
 	        @Override
@@ -867,8 +867,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	    };
 	    async(r);
 	}
-    
-	
+
+
 	protected void showException(Throwable exception) {
 		if (exception instanceof DebugException) {
 			DebugException de = (DebugException)exception;
@@ -882,7 +882,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		ByteArrayOutputStream bos= new ByteArrayOutputStream();
 		PrintStream ps= new PrintStream(bos, true);
 		exception.printStackTrace(ps);
-		
+
 		final String message = bos.toString();
 		Runnable r = new Runnable() {
 			@Override
@@ -896,7 +896,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		async(r);
 	}
-	
+
 	protected void showUnderlyingException(Throwable t) {
 		if (t instanceof InvocationException) {
 			InvocationException ie= (InvocationException)t;
@@ -918,7 +918,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			showException(t);
 		}
 	}
-	
+
 	protected IJavaProject findJavaProject() throws CoreException {
 		IFile file = getFile();
 		if (file != null) {
@@ -929,7 +929,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return null;
 	}
-		
+
 	protected boolean classPathHasChanged() {
 		String[] classpath= getClassPath(getJavaProject());
 		if (fLaunchedClassPath != null && !classPathsEqual(fLaunchedClassPath, classpath)) {
@@ -938,7 +938,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return false;
 	}
-	
+
 	protected boolean workingDirHasChanged() {
 		String wd = getWorkingDirectoryAttribute();
 		boolean changed = false;
@@ -956,7 +956,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return changed;
 	}
-	
+
 	protected boolean vmArgsChanged() {
 		String args = getVMArgsAttribute();
 		boolean changed = false;
@@ -973,8 +973,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.Warning_1"), SnippetMessages.getString("SnippetEditor.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return changed;
-	}	
-	
+	}
+
 	protected boolean vmHasChanged() {
 		IVMInstall vm = getVMInstall();
 		boolean changed = false;
@@ -992,7 +992,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return changed;
 	}
-			
+
 	protected boolean classPathsEqual(String[] path1, String[] path2) {
 		if (path1.length != path2.length) {
 			return false;
@@ -1004,7 +1004,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return true;
 	}
-		
+
 	protected synchronized void evaluationStarts() {
 		if (fThread != null) {
 			try {
@@ -1016,15 +1016,15 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				showException(e);
 				return;
 			}
-		}		
+		}
 		fEvaluating = true;
 		setTitleImage();
 		fireEvalStateChanged();
 		showStatus(SnippetMessages.getString("SnippetEditor.evaluating")); //$NON-NLS-1$
 		getSourceViewer().setEditable(false);
 	}
-	
-	/** 
+
+	/**
 	 * Sets the tab image to indicate whether in the process of
 	 * evaluating or not.
 	 */
@@ -1041,7 +1041,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			setTitleImage(image);
 		}
 	}
-		
+
 	protected void evaluationEnds() {
 		Runnable r = new Runnable() {
 			@Override
@@ -1055,13 +1055,13 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		async(r);
 	}
-	
+
 	protected void showStatus(String message) {
 		IEditorSite site=(IEditorSite)getSite();
 		EditorActionBarContributor contributor= (EditorActionBarContributor)site.getActionBarContributor();
 		contributor.getActionBars().getStatusLineManager().setMessage(message);
 	}
-	
+
 	protected String[] getClassPath(IJavaProject project) {
 		try {
 			return JavaRuntime.computeDefaultRuntimeClassPath(project);
@@ -1070,14 +1070,14 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			return new String[0];
 		}
 	}
-	
+
 	protected Shell getShell() {
 		return getSite().getShell();
 	}
-	
+
 	/**
 	 * @see IDebugEventFilter#filterDebugEvents(DebugEvent[])
-	 */	
+	 */
 	@Override
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -1113,7 +1113,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 								int lineNumber = f.getLineNumber();
 								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber == 28)
 									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") //$NON-NLS-1$
-									&& jt.getDebugTarget() == fVM) { 
+									&& jt.getDebugTarget() == fVM) {
 								    // restore step filters
 								    target.setStepFiltersEnabled(fStepFiltersSetting);
 									setThread(jt);
@@ -1142,7 +1142,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return events;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -1151,7 +1151,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
         JavaSourceViewerConfiguration sourceViewerConfiguration = (JavaSourceViewerConfiguration) getSourceViewerConfiguration();
         return sourceViewerConfiguration.affectsTextPresentation(event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -1174,11 +1174,11 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			super.handlePreferenceStoreChanged(event);
 		}
 	}
-	
+
 	protected IJavaThread getThread() {
 		return fThread;
 	}
-	
+
 	/**
 	 * Sets the thread to perform any evaluations in.
 	 * Notifies the WaitThread waiting on getting an evaluation thread
@@ -1188,7 +1188,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		fThread= thread;
 		notifyAll();
 	}
-	
+
 	protected void launchVM() {
 		DebugPlugin.getDefault().addDebugEventFilter(this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
@@ -1203,7 +1203,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
-	
+
 	/**
      * Return the <code>IFile</code> associated with the current
      * editor input. Will return <code>null</code> if the current
@@ -1213,7 +1213,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		IEditorInput input= getEditorInput();
 		return input.getAdapter(IFile.class);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateSelectionDependentActions()
 	 */
@@ -1222,7 +1222,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		super.updateSelectionDependentActions();
 		fireEvalStateChanged();
 	}
-	
+
 	/**
      * Terminates existing VM on a rename of the editor
  	 */
@@ -1231,7 +1231,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		cleanupOnRenameOrMove();
 		super.setPartName(title);
 	}
-	
+
 	/**
 	 * If the launch configuration has been copied, moved or
 	 * renamed, shut down any running VM and clear the relevant cached information.
@@ -1243,15 +1243,15 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			fThread= null;
 			fEvaluationContext= null;
 			fLaunchedClassPath= null;
-			
+
 			if (fEngine != null) {
 				fEngine.dispose();
 				fEngine= null;
-			}	
+			}
 		}
 		fJavaProject= null;
 	}
-	
+
 	/**
 	 * Returns whether this editor has been opened on a resource that
 	 * is in a Java project.
@@ -1264,7 +1264,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Displays an error dialog indicating that evaluation
 	 * cannot occur outside of a Java Project.
@@ -1282,7 +1282,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		showError(message + SnippetMessages.getString("JavaSnippetEditor.Unable_to_perform_evaluation_outside_of_a_Java_Project_2")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Asks the user for the workspace path
 	 * of a file resource and saves the document there.
@@ -1294,18 +1294,18 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		SaveAsDialog dialog= new SaveAsDialog(shell);
 		dialog.open();
 		IPath path= dialog.getResult();
-		
+
 		if (path == null) {
 			if (progressMonitor != null) {
 				progressMonitor.setCanceled(true);
 			}
 			return;
 		}
-			
+
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IFile file= workspace.getRoot().getFile(path);
 		final IEditorInput newInput= new FileEditorInput(file);
-		
+
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor monitor) throws CoreException {
@@ -1313,7 +1313,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				dp.saveDocument(monitor, newInput, dp.getDocument(getEditorInput()), true);
 			}
 		};
-		
+
 		boolean success= false;
 		try {
 			getDocumentProvider().aboutToChange(newInput);
@@ -1331,12 +1331,12 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				setInput(newInput);
 			}
 		}
-		
+
 		if (progressMonitor != null) {
 			progressMonitor.setCanceled(!success);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
@@ -1344,7 +1344,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	protected IClassFileEvaluationEngine getEvaluationEngine() {
 		if (fEngine == null) {
 			IPath outputLocation =	getJavaProject().getProject().getWorkingLocation(JDIDebugUIPlugin.getUniqueIdentifier());
@@ -1358,7 +1358,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return fEngine;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
@@ -1374,7 +1374,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 
 		return viewer;
 	}
-	
+
 	/**
 	 * Returns the working directory attribute for this scrapbook
 	 */
@@ -1389,7 +1389,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the working directory attribute for this scrapbook
 	 */
@@ -1403,8 +1403,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the vm install for this scrapbook
 	 */
@@ -1418,8 +1418,8 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Executes the given runnable in the Display thread
 	 */
@@ -1427,9 +1427,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		Control control= getVerticalRuler().getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(r);
-		}		
+		}
 	}
-	
+
 	protected void showAndSelect(final String text, final int offset) {
 		Runnable r = new Runnable() {
 			@Override
@@ -1442,7 +1442,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 				selectAndReveal(offset, text.length());
 			}
 		};
-		async(r);		
+		async(r);
 	}
 
 	@SuppressWarnings("unchecked")

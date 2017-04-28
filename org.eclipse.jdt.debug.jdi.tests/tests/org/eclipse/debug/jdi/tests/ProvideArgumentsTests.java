@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,9 +24,9 @@ import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
+ * Test cases for the implementation of providing argumebnt information even if
  * no debugging information is present in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class ProvideArgumentsTests extends AbstractJDITest {
@@ -34,10 +34,10 @@ public class ProvideArgumentsTests extends AbstractJDITest {
 	/** setup test info locally **/
 	@Override
 	public void localSetUp() {}
-	
+
 	/**
 	 * tests getting argument values from a stackframe when no debugging
-	 * info is available 
+	 * info is available
 	 */
 	public void testGetArgumentValues() {
 		try {
@@ -45,7 +45,7 @@ public class ProvideArgumentsTests extends AbstractJDITest {
 			BreakpointRequest br = getBreakpointRequest(method.location());
 			br.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			br.enable();
-			
+
 			EventWaiter waiter = new EventWaiter(br, true);
 			fEventReader.addEventListener(waiter);
 			triggerEvent("argvalues");
@@ -67,6 +67,6 @@ public class ProvideArgumentsTests extends AbstractJDITest {
 		} catch (IncompatibleThreadStateException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }

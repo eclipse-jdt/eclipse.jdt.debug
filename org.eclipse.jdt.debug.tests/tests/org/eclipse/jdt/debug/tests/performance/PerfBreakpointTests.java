@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
-        
+
         try {
             DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 
@@ -61,13 +61,13 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
             for (int i = 0; i < lineNumbers.length; i++) {
                 lineNumbers[i] = 15 + i;
             }
-            
+
             for (int i = 0; i < 10; i++) {
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
-                breakpointCount = 0;  
+                breakpointCount = 0;
             }
 
             for (int i = 0; i < 100; i++) {
@@ -85,7 +85,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
-            
+
             terminateAndRemove(thread);
         }
     }
@@ -117,7 +117,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 IBreakpoint[] breakpoints = manager.getBreakpoints();
                 manager.removeBreakpoints(breakpoints, true);
                 waitForBreakpointCount(0);
-                
+
             }
 
             lineNumbers = new int[250];
@@ -134,14 +134,14 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 manager.removeBreakpoints(breakpoints, true);
                 waitForBreakpointCount(0);
                 stopMeasuring();
-                
+
             }
             commitMeasurements();
             assertPerformance();
         } finally {
             manager.removeBreakpointListener(this);
             removeAllBreakpoints();
-            
+
             terminateAndRemove(thread);
         }
     }
@@ -154,7 +154,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         tagAsSummary("Install Method Entry Breakpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LargeSourceFile";
         IProject project = get14Project().getProject();
-        
+
         IJavaLineBreakpoint bp = createLineBreakpoint(14, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
@@ -173,7 +173,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 waitForBreakpointCount(methods.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
-                
+
             }
 
             for (int i = 0; i < 100; i++) {
@@ -183,7 +183,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 waitForBreakpointCount(methods.length);
                 stopMeasuring();
                 removeAllBreakpoints();
-                
+
                 breakpointCount = 0;
             }
             commitMeasurements();
@@ -191,9 +191,9 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
-            
+
             terminateAndRemove(thread);
-        }        
+        }
     }
 
     /**
@@ -204,7 +204,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         tagAsSummary("Install Watchpoints", Dimension.ELAPSED_PROCESS);
         String typeName = "LotsOfFields";
         IResource resource = getBreakpointResource(typeName);
-        
+
         IJavaLineBreakpoint bp = createLineBreakpoint(516, typeName);
         IJavaThread thread = launchToBreakpoint(typeName, false);
         bp.delete();
@@ -232,7 +232,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 waitForBreakpointCount(fields.length);
                 stopMeasuring();
                 removeAllBreakpoints();
-                
+
                 breakpointCount = 0;
             }
             commitMeasurements();
@@ -240,11 +240,11 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         } finally {
             DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
             removeAllBreakpoints();
-            
+
             terminateAndRemove(thread);
-        }        
+        }
     }
-    
+
     /**
      * Waits for the specified breakpoint count to be hit
      * @param i
@@ -284,7 +284,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
             JDIDebugModel.createMethodBreakpoint(project, typeName, methodName, "()V", true, false, false, -1, -1, -1, 0, true, null);
         }
     }
-    
+
     /**
      * Creates watchpoints on the specified fields of the specified resource with the given type name
      * @param resource
@@ -299,7 +299,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
             wp.setModification(true);
         }
     }
-    
+
     /**
      * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
      */

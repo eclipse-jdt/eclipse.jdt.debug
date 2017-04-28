@@ -16,9 +16,9 @@ import com.sun.jdi.Method;
 
 /**
  * Class for analysing Java methods while debugging.
- * 
+ *
  * @author jmoeller2
- * 
+ *
  */
 public class JDIMethod {
 
@@ -45,7 +45,7 @@ public class JDIMethod {
 	/**
 	 * Determines if the opcode passes in is one of the value return
 	 * instructions.
-	 * 
+	 *
 	 * @param opCode
 	 *            opCode to check
 	 * @return If <code>opCode</code> is one of 'areturn', 'ireturn', etc.
@@ -58,7 +58,7 @@ public class JDIMethod {
 
 	/**
 	 * Determines if the opcode passes in is one of the 'loado_1' instruxtions.
-	 * 
+	 *
 	 * @param opCode
 	 *            opCode to check
 	 * @return If <code>opCode</code> is one of 'aload_1', 'iload_1', etc.
@@ -71,12 +71,12 @@ public class JDIMethod {
 
 	/**
 	 * Determines if the method in question is a simple getter, JavaBean style.
-	 * 
+	 *
 	 * Simple getters have byte code which look like this, and they start with
 	 * "get" or "is":
-	 * 
+	 *
 	 * 0 aload_0 1 getfield 4 Xreturn
-	 * 
+	 *
 	 * @param method
 	 *            Method to check
 	 * @return true if the method is a simple getter
@@ -94,12 +94,12 @@ public class JDIMethod {
 
 	/**
 	 * Determines if the method in question is a simple getter, JavaBean style.
-	 * 
+	 *
 	 * Simple setters have byte code which look like this, and they start with
 	 * "set":
-	 * 
+	 *
 	 * 0 aload_0 1 Xload_1 2 putfield 5 return
-	 * 
+	 *
 	 * @param method
 	 *            Method to check
 	 * @return true if the method is a simple setter

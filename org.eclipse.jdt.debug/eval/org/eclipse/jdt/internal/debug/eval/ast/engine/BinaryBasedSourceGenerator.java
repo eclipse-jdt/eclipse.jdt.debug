@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Holger Schill - Bug 455199 - [debug] Debugging doesn't work properly when inner classes are used
@@ -604,7 +604,7 @@ public class BinaryBasedSourceGenerator {
 	/**
 	 * Returns whether the source to be generated is greater than or equal to
 	 * the given source level.
-	 * 
+	 *
 	 * @param major
 	 *            major level - e.g. 1 from 1.4
 	 * @param minor

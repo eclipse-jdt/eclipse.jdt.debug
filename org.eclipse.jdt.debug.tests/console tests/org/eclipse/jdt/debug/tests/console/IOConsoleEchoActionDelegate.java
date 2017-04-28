@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -70,33 +70,33 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
             }
         }, "IOConsole Test Thread").start(); //$NON-NLS-1$
     }
-    
+
     /**
      * Actually runs the test
      * @param console
      */
     public void runTest(IOConsole console) {
         final Display display = Display.getDefault();
-        
+
         final IOConsoleInputStream in = console.getInputStream();
         display.asyncExec(new Runnable() {
             @Override
-			public void run() {        
+			public void run() {
                 in.setColor(display.getSystemColor(SWT.COLOR_BLUE));
             }
         });
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         manager.addConsoles(new IConsole[] { console });
-        
-        final IOConsoleOutputStream out = console.newOutputStream(); 
+
+        final IOConsoleOutputStream out = console.newOutputStream();
         Display.getDefault().asyncExec(new Runnable() {
             @Override
 			public void run() {
-                out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));     
+                out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
                 out.setFontStyle(SWT.ITALIC);
             }
         });
-        
+
         PrintStream ps = new PrintStream(out);
         ps.println("Any text entered should be echoed back"); //$NON-NLS-1$
         for(;;) {
@@ -107,7 +107,7 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
             } catch (IOException io) {
                 io.printStackTrace();
             }
-            
+
             try {
                 out.write(b, 0, bRead);
                 ps.println();

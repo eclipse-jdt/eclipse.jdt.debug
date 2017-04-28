@@ -22,12 +22,12 @@ import org.eclipse.osgi.util.NLS;
  * When undoing a refactoring, the "target/original" resource does
  * not exist in time to create a marker on it, and thus the operation
  * cannot be undone. Instead, we delete breakpoints on undo.
- * 
+ *
  * @since 3.2
  *
  */
 public class DeleteBreakpointChange extends BreakpointChange {
-	
+
 	public DeleteBreakpointChange(IJavaBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
 	}

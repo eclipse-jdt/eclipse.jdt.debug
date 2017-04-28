@@ -18,15 +18,15 @@ import org.eclipse.ui.IEditorInput;
 /**
  * Controls access to the java working copy.  Isolated in this class as implementation requires
  * use of internal JDT UI code.  See bug 151260 for more information.
- *  
+ *
  * @since 3.3
  * @see org.eclipse.jdt.internal.ui.javaeditor.WorkingCopyManager
  */
 public class DebugWorkingCopyManager {
-	
+
 	/**
 	 * Returns the working copy remembered for the compilation unit encoded in the
-	 * given editor input.	 
+	 * given editor input.
 	 *
 	 * @param input the editor input
 	 * @param primaryOnly if <code>true</code> only primary working copies will be returned
@@ -38,5 +38,5 @@ public class DebugWorkingCopyManager {
     	//TODO Using JDT UI internal code here, see bug 151260 for more information
 		return ((WorkingCopyManager)JavaUI.getWorkingCopyManager()).getWorkingCopy(input, primaryOnly);
 	}
-	
+
 }

@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
- * 
+ *
  */
 public class TestIJavaValue implements IJavaValue {
 
@@ -28,7 +28,7 @@ public class TestIJavaValue implements IJavaValue {
 	String gsig;
 	String rtname;
 	String vstring;
-	
+
 	public TestIJavaValue(IJavaType type, String sig, String gsig, String rtname, String vstring) {
 		this.type = type;
 		this.sig = sig;

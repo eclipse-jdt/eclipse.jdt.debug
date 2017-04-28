@@ -31,7 +31,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * JavaStackTracePageParticipant
  */
 public class JavaStackTracePageParticipant implements IConsolePageParticipant {
-    
+
     private CloseConsoleAction fCloseAction;
     private FormatStackTraceActionDelegate fFormatAction;
     private IHandlerActivation fHandlerActivation;
@@ -43,10 +43,10 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     @Override
 	public void init(IPageBookViewPage page, IConsole console) {
         fCloseAction = new CloseConsoleAction(console);
-        
+
         IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
         manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fCloseAction);
-        
+
         fFormatAction = new FormatStackTraceActionDelegate((JavaStackTraceConsole) console);
     }
 
@@ -74,7 +74,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         // add EOF submissions
 		IWorkbench workbench = PlatformUI.getWorkbench();
         IHandlerService handlerService = workbench.getAdapter(IHandlerService.class);
-        
+
         IHandler formatHandler = new AbstractHandler() {
             @Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -82,9 +82,9 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
                 return null;
             }
         };
-        
+
         fHandlerActivation = handlerService.activateHandler("org.eclipse.jdt.ui.edit.text.java.format", formatHandler); //$NON-NLS-1$
-		
+
         IContextService contextService = workbench.getAdapter(IContextService.class);
         fContextActivation = contextService.activateContext("org.eclipse.jdt.ui.javaEditorScope"); //$NON-NLS-1$
 	}

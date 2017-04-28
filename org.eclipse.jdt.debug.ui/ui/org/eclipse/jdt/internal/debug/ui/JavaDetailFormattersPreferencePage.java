@@ -55,26 +55,26 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 public class JavaDetailFormattersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	static public final String DETAIL_FORMATTER_IS_ENABLED= "1"; //$NON-NLS-1$
 	static public final String DETAIL_FORMATTER_IS_DISABLED= "0"; //$NON-NLS-1$
-	
+
 	private CheckboxTableViewer fFormatterListViewer;
 	private Button fAddFormatterButton;
 	private Button fRemoveFormatterButton;
 	private Button fEditFormatterButton;
 	private JDISourceViewer fCodeViewer;
 	private Label fTableLabel;
-	
+
 	private FormatterListViewerContentProvider fFormatViewerContentProvider;
     private Button fInlineFormattersButton;
     private Button fInlineAllButton;
-	
+
 	public JavaDetailFormattersPreferencePage() {
 		super();
-		setTitle(DebugUIMessages.JavaDetailFormattersPreferencePage_0); 
+		setTitle(DebugUIMessages.JavaDetailFormattersPreferencePage_0);
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.JavaDetailFormattersPreferencePage_Override_default___toString_____for_Variables_and_Expressions_view_details__1); 
+		setDescription(DebugUIMessages.JavaDetailFormattersPreferencePage_Override_default___toString_____for_Variables_and_Expressions_view_details__1);
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +86,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
         Font font = parent.getFont();
         initializeDialogUnits(parent);
-        
+
         // top level container
         Composite container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -97,10 +97,10 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
         GridData gd = new GridData(GridData.FILL_BOTH);
         container.setLayoutData(gd);
         container.setFont(font);
-        
-		createDetailFormatsPreferences(container);	
+
+		createDetailFormatsPreferences(container);
         createLabelPreferences(container);
-        
+
         Dialog.applyDialogFont(container);
         return container;
 	}
@@ -111,40 +111,40 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	@Override
 	public void init(IWorkbench workbench) {
 	}
-    
+
     private void createLabelPreferences(Composite parent) {
         Group group= new Group(parent, SWT.NONE);
         GridData gridData= new GridData(GridData.FILL_HORIZONTAL);
         gridData.horizontalSpan= 2;
         group.setLayoutData(gridData);
         group.setLayout(new GridLayout());
-        group.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_1); 
-        
+        group.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_1);
+
         String preference= getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
-        
+
         // Create the 3 detail option radio buttons
         fInlineFormattersButton = new Button(group, SWT.RADIO);
-        fInlineFormattersButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_2); 
+        fInlineFormattersButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_2);
         fInlineFormattersButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_FORMATTERS));
-        
+
         fInlineAllButton = new Button(group, SWT.RADIO);
-        fInlineAllButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_3); 
+        fInlineAllButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_3);
         fInlineAllButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_ALL));
-        
+
         Button detailPane = new Button(group, SWT.RADIO);
-        detailPane.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_4); 
+        detailPane.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_4);
         detailPane.setSelection(preference.equals(IJDIPreferencesConstants.DETAIL_PANE));
     }
-	
+
 	/**
 	 * Create a group to contain the detail formatters related widgetry
 	 */
 	private Control createDetailFormatsPreferences(Composite parent) {
         Font font= parent.getFont();
-		
+
 		//table label
 		fTableLabel= new Label(parent, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Types_with_detail_formatters__2); 
+		fTableLabel.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Types_with_detail_formatters__2);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
@@ -187,7 +187,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 					editType();
 				}
 			}
-		}); 
+		});
 		table.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
@@ -195,27 +195,27 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 					removeTypes();
 				}
 			}
-		});	
+		});
 		fFormatterListViewer.setInput(this);
 
 		createDetailFormatsButtons(parent);
 
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Detail_formatter_code_snippet_defined_for_selected_type__3); 
+		label.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Detail_formatter_code_snippet_defined_for_selected_type__3);
 		label.setFont(font);
         gd= new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan= 2;
         label.setLayoutData(gd);
 		createSourceViewer(parent);
-		
+
 		fFormatViewerContentProvider.refreshViewer();
 		return parent;
 	}
-	
+
 
 	private void createDetailFormatsButtons(Composite container) {
 		Font font = container.getFont();
-		
+
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -225,11 +225,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		buttonLayout.marginHeight = 0;
 		buttonLayout.marginWidth = 0;
 		buttonContainer.setLayout(buttonLayout);
-		
+
 		// Add type button
 		fAddFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Add__Formatter____5); 
-		fAddFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Allow_you_to_create_a_new_detail_formatter_6); 
+		fAddFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage_Add__Formatter____5);
+		fAddFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Allow_you_to_create_a_new_detail_formatter_6);
 		fAddFormatterButton.setLayoutData(gd);
 		fAddFormatterButton.setFont(font);
 		setButtonLayoutData(fAddFormatterButton);
@@ -239,11 +239,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 				addType();
 			}
 		});
-		
+
 		// Edit button
 		fEditFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fEditFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Edit____9); 
-		fEditFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Edit_the_selected_detail_formatter_10); 
+		fEditFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Edit____9);
+		fEditFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Edit_the_selected_detail_formatter_10);
 		fEditFormatterButton.setFont(font);
 		setButtonLayoutData(fEditFormatterButton);
 		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
@@ -253,11 +253,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 		});
 		fEditFormatterButton.setEnabled(false);
-		
+
 		// Remove button
 		fRemoveFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Remove_7); 
-		fRemoveFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Remove_all_selected_detail_formatters_8); 
+		fRemoveFormatterButton.setText(DebugUIMessages.JavaDetailFormattersPreferencePage__Remove_7);
+		fRemoveFormatterButton.setToolTipText(DebugUIMessages.JavaDetailFormattersPreferencePage_Remove_all_selected_detail_formatters_8);
 		fRemoveFormatterButton.setFont(font);
 		setButtonLayoutData(fRemoveFormatterButton);
 		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
@@ -268,7 +268,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		});
 		fRemoveFormatterButton.setEnabled(false);
 	}
-	
+
 	public void createSourceViewer(Composite container) {
 		fCodeViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 
@@ -278,7 +278,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fCodeViewer.configure(new DisplayViewerConfiguration());
 		fCodeViewer.setEditable(false);
 		fCodeViewer.setDocument(document);
-		
+
 		Control control= fCodeViewer.getControl();
 		GridData gd= new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan= 2;
@@ -306,7 +306,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fFormatViewerContentProvider.addDetailFormatter(detailFormat);
 		}
 	}
-	
+
 	public void removeTypes() {
 		Object[] all = fFormatViewerContentProvider.getElements(null);
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
@@ -328,7 +328,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fFormatterListViewer.setSelection(new StructuredSelection(all[index]));
 		}
 	}
-	
+
 	public void editType() {
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
 		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), null, true, true).open() == Window.OK) {
@@ -337,12 +337,12 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			updatePage(selection);
 		}
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		if (fFormatViewerContentProvider != null) {
 			fFormatViewerContentProvider.saveDetailFormatters();
-	
+
 	        String value= IJDIPreferencesConstants.DETAIL_PANE;
 	        if (fInlineAllButton.getSelection()) {
 	            value= IJDIPreferencesConstants.INLINE_ALL;
@@ -354,15 +354,15 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		}
 		return true;
 	}
-	
+
 	class FormatterListViewerContentProvider implements IStructuredContentProvider {
-		
+
 		private Set<DetailFormatter> fDetailFormattersSet;
-		
+
 		private List<String> fDefinedTypes;
-		
+
 		private CheckboxTableViewer fViewer;
-		
+
 		/**
 		 * FormatterListViewerContentProvider constructor.
 		 */
@@ -370,8 +370,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer= viewer;
 			// load the current formatters
 			String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-			fDetailFormattersSet= new TreeSet<DetailFormatter>();
-			fDefinedTypes= new ArrayList<String>(detailFormattersList.length / 3);
+			fDetailFormattersSet= new TreeSet<>();
+			fDefinedTypes= new ArrayList<>(detailFormattersList.length / 3);
 			for (int i= 0, length= detailFormattersList.length; i < length;) {
 				String typeName= detailFormattersList[i++];
 				String snippet= detailFormattersList[i++].replace('\u0000', ',');
@@ -381,7 +381,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 				fDefinedTypes.add(typeName);
 			}
 		}
-		
+
 		/**
 		 * Save the detail formatter list.
 		 */
@@ -396,9 +396,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 			String pref = JavaDebugOptionsManager.serializeList(values);
 			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST, pref);
-			
+
 		}
-		
+
 		/**
 		 * Add a detail formatter.
 		 */
@@ -411,7 +411,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer.setSelection(selection);
 			updatePage(selection);
 		}
-		
+
 		/**
 		 * Remove a detailFormatter
 		 */
@@ -423,7 +423,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer.setSelection(selection);
 			updatePage(selection);
 		}
-		
+
 		/**
 		 * Remove detailFormatters
 		 */
@@ -437,9 +437,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer.setSelection(selection);
 			updatePage(selection);
 		}
-		
+
 		/**
-		 * Refresh the formatter list viewer. 
+		 * Refresh the formatter list viewer.
 		 */
 		private void refreshViewer() {
 			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
@@ -455,7 +455,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer.setAllChecked(false);
 			fViewer.setCheckedElements(checkedElements);
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 		 */
@@ -463,11 +463,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		public Object[] getElements(Object inputElement) {
 			return fDetailFormattersSet.toArray();
 		}
-		
+
 		public List<String> getDefinedTypes() {
 			return fDefinedTypes;
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
@@ -482,7 +482,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
@@ -492,5 +492,5 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fCodeViewer.dispose();
 		}
 		return super.performCancel();
-	}	
+	}
 }

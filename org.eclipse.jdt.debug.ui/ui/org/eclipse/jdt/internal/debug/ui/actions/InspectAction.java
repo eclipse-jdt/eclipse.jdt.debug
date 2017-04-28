@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
- 
+
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
@@ -34,7 +34,7 @@ import org.eclipse.ui.PartInitException;
  * Places the result of an evaluation in the debug expression view.
  */
 public class InspectAction extends EvaluateAction {
-	
+
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
@@ -44,7 +44,7 @@ public class InspectAction extends EvaluateAction {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (!display.isDisposed()) {				
+				if (!display.isDisposed()) {
 					showExpressionView();
 					JavaInspectExpression exp = new JavaInspectExpression(result);
 					DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
@@ -53,7 +53,7 @@ public class InspectAction extends EvaluateAction {
 			}
 		});
 	}
-	
+
 	/**
 	 * Make the expression view visible or open one
 	 * if required.
@@ -76,7 +76,7 @@ public class InspectAction extends EvaluateAction {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
@@ -84,13 +84,13 @@ public class InspectAction extends EvaluateAction {
 			((JavaSnippetEditor)part).evalSelection(JavaSnippetEditor.RESULT_INSPECT);
 			return;
 		}
-		
+
 		Object selection= getSelectedObject();
 		if (!(selection instanceof IStructuredSelection)) {
 			super.run();
 			return;
 		}
-		
+
 		//inspecting from the context of the variables view
 		Iterator<IJavaVariable> variables = ((IStructuredSelection)selection).iterator();
 		while (variables.hasNext()) {
@@ -99,13 +99,13 @@ public class InspectAction extends EvaluateAction {
 				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
 				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+				JDIDebugUIPlugin.statusDialog(e.getStatus());
 			}
 		}
-	
+
 		showExpressionView();
 	}
-	
+
 	@Override
 	protected IDataDisplay getDataDisplay() {
 		return getDirectDataDisplay();

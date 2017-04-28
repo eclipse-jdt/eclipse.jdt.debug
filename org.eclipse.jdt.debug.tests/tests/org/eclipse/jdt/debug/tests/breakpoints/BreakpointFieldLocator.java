@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,11 +29,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
  * Compute the name of field declared at a given position from an JDOM CompilationUnit.
  */
 public class BreakpointFieldLocator extends ASTVisitor {
-	
+
 	private int fPosition;
-	
+
 	private String fTypeName;
-	
+
 	private String fFieldName;
 
 	private boolean fFound;
@@ -62,7 +62,7 @@ public class BreakpointFieldLocator extends ASTVisitor {
 	public String getTypeName() {
 		return fTypeName;
 	}
-	
+
 	private boolean containsPosition(ASTNode node) {
 		int startPosition= node.getStartPosition();
 		int endPosition = startPosition + node.getLength();

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
  * automated tests.
  */
 public class ManualSuite extends TestSuite {
-	
+
 	/**
 	 * Flag that indicates test are in progress
 	 */
@@ -44,7 +44,7 @@ public class ManualSuite extends TestSuite {
 	 */
 	public ManualSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
-		
+
 		/**
 		 * This test appears in the manual suite as wee need to be able to specify ports
 		 * and security settings to make sure the client can connect
@@ -52,7 +52,7 @@ public class ManualSuite extends TestSuite {
 		addTest(new TestSuite(RemoteJavaApplicationTests.class));
 
 	}
-	
+
 	/**
 	 * Runs the tests and collects their result in a TestResult.
 	 * The debug tests cannot be run in the UI thread or the event
@@ -73,7 +73,7 @@ public class ManualSuite extends TestSuite {
 						}
 						Test test= e.nextElement();
 						runTest(test, result);
-					}					
+					}
 					fTesting = false;
 					display.wake();
 				}
@@ -83,7 +83,7 @@ public class ManualSuite extends TestSuite {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-				
+
 		while (fTesting) {
 			try {
 				if (!display.readAndDispatch()) {
@@ -91,8 +91,8 @@ public class ManualSuite extends TestSuite {
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
-			}			
-		}		
+			}
+		}
 	}
 
 }

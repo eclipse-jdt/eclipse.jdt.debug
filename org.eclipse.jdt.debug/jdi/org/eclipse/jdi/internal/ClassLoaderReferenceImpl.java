@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import com.sun.jdi.ReferenceType;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements ClassLoaderReference {
 	/** JDWP Tag. */
@@ -58,7 +58,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 	public List<ReferenceType> definedClasses() {
 		// Note that this information should not be cached.
 		List<ReferenceType> visibleClasses = visibleClasses();
-		List<ReferenceType> result = new ArrayList<ReferenceType>(visibleClasses.size());
+		List<ReferenceType> result = new ArrayList<>(visibleClasses.size());
 		Iterator<ReferenceType> iter = visibleClasses.iterator();
 		while (iter.hasNext()) {
 			try {
@@ -87,7 +87,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			List<ReferenceType> elements = new ArrayList<ReferenceType>(nrOfElements);
+			List<ReferenceType> elements = new ArrayList<>(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
 				if (elt == null)

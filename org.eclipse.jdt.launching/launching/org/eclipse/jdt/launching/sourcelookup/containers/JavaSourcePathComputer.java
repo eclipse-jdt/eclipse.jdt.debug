@@ -27,28 +27,28 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * The source path provider computes a collection of <code>IRuntimeClasspathEntry</code>'s
  * which are translated to source containers (<code>ISourceContainer</code>).
  * <p>
- * Clients may subclass this class. 
+ * Clients may subclass this class.
  * </p>
  * @since 3.0
- * 
+ *
  */
 public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
-	
+
 	/**
 	 * Unique identifier for the local Java source path computer
 	 * (value <code>org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer</code>).
 	 */
 	public static final String ID = "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer#getId()
-	 * 
+	 *
      * No longer used.
 	 */
 	public String getId() {
 		return ID;
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -58,5 +58,5 @@ public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, configuration);
 		return JavaRuntime.getSourceContainers(resolved);
 	}
-	
+
 }

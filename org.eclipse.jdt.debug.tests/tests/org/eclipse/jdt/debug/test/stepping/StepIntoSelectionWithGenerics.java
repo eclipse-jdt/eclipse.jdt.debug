@@ -32,7 +32,7 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 	private String pname = "a.b.c";
 	private String jname = "StepIntoSelectionWithGenerics.java";
 	private String mname = "hello";
-	
+
 	/**
 	 * Constructor
 	 */
@@ -47,19 +47,19 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get15Project();
 	}
-	
+
 	/**
 	 * Tests stepping into a method of a top-level class that is generified
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection1() throws Exception {
-		createLineBreakpoint(30, qtypename);		
-		
+		createLineBreakpoint(30, qtypename);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(qtypename);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
 			IJavaProject jp = cu.getJavaProject();
 			NullProgressMonitor monitor = new NullProgressMonitor();
@@ -67,37 +67,37 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertTrue("The top-level type"+qtypename+" must exist", type.exists());
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type "+qtypename, method.exists());
-			
+
 			StepIntoSelectionHandler handler = new StepIntoSelectionHandler(thread, (IJavaStackFrame)thread.getTopStackFrame(), method);
 			DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 			handler.step();
 			Object source = waiter.waitForEvent();
 			assertEquals("Step did not complete", thread, source);
 			thread = (IJavaThread)source;
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in StepIntoSelectionWithGenerics."+mname, mname, frame.getMethodName());
 			assertEquals("Should be stopped on line", 26, frame.getLineNumber());
-						
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests stepping into a method of an inner class that is generified
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection2() throws Exception {
-		createLineBreakpoint(31, qtypename);		
-		
+		createLineBreakpoint(31, qtypename);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(qtypename);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
 			IJavaProject jp = cu.getJavaProject();
 			NullProgressMonitor monitor = new NullProgressMonitor();
@@ -107,18 +107,18 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertNotNull("The iner type InnerClazz must not be null", type);
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type InnerClazz", method.exists());
-			
+
 			StepIntoSelectionHandler handler = new StepIntoSelectionHandler(thread, (IJavaStackFrame)thread.getTopStackFrame(), method);
 			DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 			handler.step();
 			Object source = waiter.waitForEvent();
 			assertEquals("Step did not complete", thread, source);
 			thread = (IJavaThread)source;
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in InnerClazz."+mname, mname, frame.getMethodName());
 			assertEquals("Should be stopped on line", 21, frame.getLineNumber());
-						
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -127,17 +127,17 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 
 	/**
 	 * Tests stepping into a method of an inner-inner class that is generified
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testStepIntoSelection3() throws Exception {
-		createLineBreakpoint(32, qtypename);		
-		
+		createLineBreakpoint(32, qtypename);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(qtypename);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			ICompilationUnit cu = getCompilationUnit(get15Project(), "src", pname, jname);
 			IJavaProject jp = cu.getJavaProject();
 			NullProgressMonitor monitor = new NullProgressMonitor();
@@ -147,18 +147,18 @@ public class StepIntoSelectionWithGenerics extends AbstractDebugTest {
 			assertNotNull("The inner type InnerClazz2 must not be null", type);
 			IMethod method = type.getMethod(mname, new String[0]);
 			assertTrue("Could not find method "+mname+" in type InnerClazz2", method.exists());
-			
+
 			StepIntoSelectionHandler handler = new StepIntoSelectionHandler(thread, (IJavaStackFrame)thread.getTopStackFrame(), method);
 			DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 			handler.step();
 			Object source = waiter.waitForEvent();
 			assertEquals("Step did not complete", thread, source);
 			thread = (IJavaThread)source;
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("Should be in InnerClazz2."+mname, mname, frame.getMethodName());
 			assertEquals("Should be stopped on line", 17, frame.getLineNumber());
-						
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

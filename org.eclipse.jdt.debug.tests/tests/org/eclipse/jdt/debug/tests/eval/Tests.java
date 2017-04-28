@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String xString = "\"minus three\"";
 	static final String xBoolean = "true";
 	static final String xNull = "null";
-	
+
 	static byte xByteValue = (byte)-3;
 	static char xCharValue = (char)-3;
 	static short xShortValue = (short)-3;
@@ -61,7 +61,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String xVarString = "xVarString";
 	static final String xVarBoolean = "xVarBoolean";
 //	static final String xVarNull = "xVarNull";
-	
+
 	static final byte xVarByteValue = (byte)-5;
 	static final char xVarCharValue = (char)-5;
 	static final short xVarShortValue = (short)-5;
@@ -94,7 +94,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String yStringValue = "eight";
 	static final boolean yBooleanValue = false;
 	static final Object yNullValue = null;
-	
+
 	static final String yVarByte = "yVarByte";
 	static final String yVarChar = "yVarChar";
 	static final String yVarShort = "yVarShort";
@@ -105,7 +105,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String yVarString = "yVarString";
 	static final String yVarBoolean = "yVarBoolean";
 //	static final String yVarNull = "yVarNull";
-	
+
 	static final byte yVarByteValue = (byte)7;
 	static final char yVarCharValue = (char)7;
 	static final short yVarShortValue = (short)7;
@@ -116,7 +116,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String yVarStringValue = "seven";
 	static final boolean yVarBooleanValue = false;
 //	static final Object yVarNullValue = null;
-	
+
 	static final String xFieldByte = "xFieldByte";
 	static final String xFieldChar = "xFieldChar";
 	static final String xFieldShort = "xFieldShort";
@@ -156,7 +156,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String yStaticFieldDouble = "yStaticFieldDouble";
 	static final String yStaticFieldString = "yStaticFieldString";
 	static final String yStaticFieldBoolean = "yStaticFieldBoolean";
-	
+
 	static final byte xFieldByteValue = -2;
 	static final char xFieldCharValue = (char)-2;
 	static final short xFieldShortValue = -2;
@@ -196,7 +196,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final double yStaticFieldDoubleValue = 6.5;
 	static final String yStaticFieldStringValue = "six";
 	static final boolean yStaticFieldBooleanValue = false;
-	
+
 	static final String xArrayByte = "xArrayByte";
 	static final String xArrayChar = "xArrayChar";
 	static final String xArrayShort = "xArrayShort";
@@ -236,8 +236,8 @@ public abstract class Tests extends AbstractDebugTest {
 	static final double[] yArrayDoubleValue = new double[]{7.6, 8.7, 9.8};
 	static final String[] yArrayStringValue = new String[]{"seven", "eight", "nine"};
 	static final boolean[] yArrayBooleanValue = new boolean[]{false, true, false};
-		
-	
+
+
 	static final String plusOp = "+";
 	static final String minusOp = "-";
 	static final String multiplyOp = "*";
@@ -273,8 +273,8 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String postfixPlusPlusOp = "++";
 	static final String prefixMinusMinusOp = "--";
 	static final String postfixMinusMinusOp = "--";
-	
-	
+
+
 	static final String aInt = "a";
 	static final String bInt = "b";
 	static final String cInt = "c";
@@ -347,7 +347,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String hStringValue_2 = "eight";
 	static final String iStringValue_2 = "nine";
 	static final String jStringValue_2 = "zero";
-	
+
 	static final String EMPTY= "";
 	static final String THIS= "this.";
 	static final String T_T= "EvalNestedTypeTests.";
@@ -401,7 +401,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final String I_FB= "i_fb.";
 	static final String I_FC= "i_fc.";
 	static final String I_FD= "i_fd.";
-	
+
 
 	/**
 	 * Constructor for Tests.
@@ -412,24 +412,24 @@ public abstract class Tests extends AbstractDebugTest {
 	}
 
 	static protected IJavaThread fSuspendeeThread;
-	
+
 	static protected IJavaStackFrame fFrame;
-	
+
 	static protected ICompilationUnit fCu;
-	
+
 	static protected IEvaluationEngine fEngine;
-	
+
 
 	static protected IValue eval(String command) {
-		
+
 		class Listener implements IEvaluationListener {
 			IEvaluationResult fResult;
-			
+
 			@Override
 			public void evaluationComplete(IEvaluationResult result) {
 				fResult= result;
 			}
-			
+
 			public IEvaluationResult getResult() {
 				return fResult;
 			}
@@ -463,19 +463,19 @@ public abstract class Tests extends AbstractDebugTest {
 		}
 		return result.getValue();
 	}
-	
+
 	protected void initializeFrame(String testClass, int breakPointLine, int numberFrames) throws Exception {
 		fFrame = getStackFrame(breakPointLine, numberFrames, 0, 0, testClass);
 
 		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), get14Project());
 	}
-	
+
 	protected void initializeFrame(String testClass, int breakPointLine, int numberFrames, int hitCount) throws Exception {
 		fFrame = getStackFrame(breakPointLine, numberFrames, 0, hitCount, testClass);
 
 		fEngine = getEvaluationEngine((IJavaDebugTarget)fFrame.getDebugTarget(), get14Project());
 	}
-	
+
 	protected void destroyFrame() throws Exception {
 		try {
 			terminateAndRemove(fSuspendeeThread);
@@ -487,13 +487,13 @@ public abstract class Tests extends AbstractDebugTest {
 		}
 		fFrame = null;
 	}
-	
-	
+
+
 	protected IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project) {
 		IEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(project, vm);
 		return engine;
-	}		
-	
+	}
+
 	protected IJavaStackFrame getStackFrame(int breakpointLine, int numberFrames, int frameNumber, int hitCount, String testClass) throws Exception {
 		IJavaLineBreakpoint breakpoint= createLineBreakpoint(breakpointLine, testClass);
 		breakpoint.setHitCount(hitCount);
@@ -503,5 +503,5 @@ public abstract class Tests extends AbstractDebugTest {
 		IStackFrame stackFrame= stackFrames[frameNumber];
 		return (IJavaStackFrame)stackFrame;
 	}
-	
+
 }

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
 
-	protected List<IClasspathEntry> childEntries = new ArrayList<IClasspathEntry>();
+	protected List<IClasspathEntry> childEntries = new ArrayList<>();
 	protected IClasspathEntry parent = null;
 
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	public IClasspathEntry getParent() {
 		return parent;
 	}
-	
+
 	/**
 	 * @param parent
 	 *            the parent to set

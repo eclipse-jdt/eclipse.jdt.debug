@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class VMInformation {
 	AbstractReader fConsoleReader;
 	String fVMType;
 
-	/** 
+	/**
 	 * Creates a new VMInformation for the given vm, vm type, launched vm, event reader and console reader.
 	 */
 	VMInformation(VirtualMachine vm, String vmType, Process launchedVM, EventReader eventReader, AbstractReader consoleReader) {

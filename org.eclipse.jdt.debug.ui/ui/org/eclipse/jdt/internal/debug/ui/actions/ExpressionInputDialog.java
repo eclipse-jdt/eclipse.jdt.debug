@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class ExpressionInputDialog extends TrayDialog {
 
     protected IJavaVariable fVariable;
     protected String fResult= null;
-    
+
     // Input area composite which acts as a placeholder for
     // input widgetry that is created/disposed dynamically.
     protected Composite fInputArea;
@@ -76,7 +76,7 @@ public class ExpressionInputDialog extends TrayDialog {
 //    protected HandlerSubmission fSubmission;
     // Text for error reporting
     protected Text fErrorText;
-    
+
     /**
      * @param parentShell the shell to create the dialog in
      * @param variable the variable being edited
@@ -96,9 +96,9 @@ public class ExpressionInputDialog extends TrayDialog {
 		workbench.getHelpSystem().setHelp(
 				parent,
 				IJavaDebugHelpContextIds.EXPRESSION_INPUT_DIALOG);
-		
+
         Composite composite= (Composite) super.createDialogArea(parent);
-        
+
         // Create the composite which will hold the input widgetry
         fInputArea = createInputArea(composite);
         // Create the error reporting text area
@@ -108,7 +108,7 @@ public class ExpressionInputDialog extends TrayDialog {
         populateInputArea(fInputArea);
         return composite;
     }
-    
+
     /**
      * Returns the text widget for reporting errors
      * @param parent parent composite
@@ -131,7 +131,7 @@ public class ExpressionInputDialog extends TrayDialog {
     	Dialog.applyDialogFont(composite);
     	return composite;
     }
-    
+
     /**
      * Creates the appropriate widgetry in the input area. This
      * method is intended to be overridden by subclasses who wish
@@ -140,16 +140,16 @@ public class ExpressionInputDialog extends TrayDialog {
      */
     protected void populateInputArea(Composite parent) {
     	fSourceViewerComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-    	
-    	String name= ActionMessages.ExpressionInputDialog_3; 
+
+    	String name= ActionMessages.ExpressionInputDialog_3;
         try {
             name= fVariable.getName();
         } catch (DebugException e) {
             JDIDebugUIPlugin.log(e);
         }
-        
+
         SWTFactory.createWrapLabel(fSourceViewerComposite, NLS.bind(ActionMessages.ExpressionInputDialog_0, new String[] {name}), 1, convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH));
-        
+
         fSourceViewer= new JDISourceViewer(fSourceViewerComposite, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fSourceViewer.setInput(fSourceViewerComposite);
         configureSourceViewer();
@@ -174,7 +174,7 @@ public class ExpressionInputDialog extends TrayDialog {
     		}
     	}
     }
-    
+
     /**
      * Initializes the source viewer. This method is based on code in BreakpointConditionEditor.
      */
@@ -193,18 +193,18 @@ public class ExpressionInputDialog extends TrayDialog {
 		final IUndoManager undoManager= new TextViewerUndoManager(10);
 		fSourceViewer.setUndoManager(undoManager);
 		undoManager.connect(fSourceViewer);
-		
+
 		fSourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
-			
+
 		Control control= fSourceViewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
-			
+
 		gd= (GridData)fSourceViewer.getControl().getLayoutData();
 		gd.heightHint= convertHeightInCharsToPixels(10);
-		gd.widthHint= convertWidthInCharsToPixels(40);	
-		document.set(getInitialText(fVariable));	
-		
+		gd.widthHint= convertWidthInCharsToPixels(40);
+		document.set(getInitialText(fVariable));
+
 		fDocumentListener= new IDocumentListener() {
             @Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -215,10 +215,10 @@ public class ExpressionInputDialog extends TrayDialog {
             }
         };
 		fSourceViewer.getDocument().addDocumentListener(fDocumentListener);
-		
+
 		activateHandler();
     }
-    
+
     /**
      * Activates the content assist handler.
      */
@@ -234,7 +234,7 @@ public class ExpressionInputDialog extends TrayDialog {
 		fService = workbench.getAdapter(IHandlerService.class);
 		fActivation = fService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
     }
-      
+
     /**
      * Returns the text that should be shown in the source viewer upon
      * initialization. The text should be presented in such a way that
@@ -295,7 +295,7 @@ public class ExpressionInputDialog extends TrayDialog {
 		}
 		return fCompletionProcessor;
 	}
-    
+
 	/**
 	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 	 */
@@ -305,16 +305,16 @@ public class ExpressionInputDialog extends TrayDialog {
 			String text= viewer.getDocument().get();
 			boolean valid= text != null && text.trim().length() > 0;
 			if (!valid) {
-				errorMessage= ActionMessages.ExpressionInputDialog_1; 
+				errorMessage= ActionMessages.ExpressionInputDialog_1;
 			}
 	    }
 		setErrorMessage(errorMessage);
 	}
-	
+
 	protected void refreshValidState() {
 		refreshValidState(fSourceViewer);
 	}
-	
+
 	/**
 	 * Sets the error message to display to the user. <code>null</code>
 	 * is the same as the empty string.
@@ -328,7 +328,7 @@ public class ExpressionInputDialog extends TrayDialog {
 	    fErrorText.setText(message);
 	    getButton(IDialogConstants.OK_ID).setEnabled(message.length() == 0);
 	}
-	
+
 	/**
 	 * Persist the dialog size and store the user's input on OK is pressed.
 	 */
@@ -337,7 +337,7 @@ public class ExpressionInputDialog extends TrayDialog {
         fResult= getText();
         super.okPressed();
     }
-    
+
     /**
      * Returns the text that is currently displayed in the source viewer.
      * @return the text that is currently displayed in the source viewer
@@ -345,25 +345,25 @@ public class ExpressionInputDialog extends TrayDialog {
     protected String getText() {
         return fSourceViewer.getDocument().get();
     }
-    
+
 	/**
 	 * Returns the text entered by the user or <code>null</code> if the user cancelled.
-	 * 
+	 *
 	 * @return the text entered by the user or <code>null</code> if the user cancelled
 	 */
     public String getResult() {
         return fResult;
     }
-    
+
     /**
      * Initializes the dialog shell with a title.
      */
     @Override
 	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(ActionMessages.ExpressionInputDialog_2); 
+        newShell.setText(ActionMessages.ExpressionInputDialog_2);
     }
-    
+
     /**
      * Override method to initialize the enablement of the OK button after
      * it is created.
@@ -375,7 +375,7 @@ public class ExpressionInputDialog extends TrayDialog {
         // button
         refreshValidState();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#close()
      */
@@ -397,7 +397,7 @@ public class ExpressionInputDialog extends TrayDialog {
 		fCompletionProcessor = null;
         return super.close();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -407,10 +407,10 @@ public class ExpressionInputDialog extends TrayDialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
-	
+
 	/**
 	 * @return the name to use to save the dialog settings
 	 */

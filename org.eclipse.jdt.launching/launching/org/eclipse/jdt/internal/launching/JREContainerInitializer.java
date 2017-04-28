@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
@@ -73,7 +73,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			} else {
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 					LaunchingPlugin.trace("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
-				}	
+				}
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
@@ -81,10 +81,10 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the specified class path container for all of the given projects.
-	 *  
+	 *
 	 * @param containerPath JRE container path
 	 * @param projects projects set the container on
 	 * @throws CoreException on failure
@@ -112,7 +112,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			} else {
 				if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
 					LaunchingPlugin.trace("\t*** INVALID JRE CONTAINER PATH ***"); //$NON-NLS-1$
-				}	
+				}
 			}
 		} else {
 			if (LaunchingPlugin.DEBUG_JRE_CONTAINER) {
@@ -120,7 +120,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the VM install associated with the container path, or <code>null</code>
 	 * if it does not exist.
@@ -157,14 +157,14 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		} else {
 			// workspace default JRE
 			vm = JavaRuntime.getDefaultVMInstall();
-		}		
+		}
 		return vm;
 	}
-	
+
 	/**
 	 * Returns the VM install bound to the given execution environment
 	 * or <code>null</code>.
-	 * 
+	 *
 	 * @param environment the environment
 	 * @return VM install or <code>null</code>
 	 * @since 3.2
@@ -209,11 +209,11 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		return vm;
 	}
-	
+
 	/**
 	 * Returns the segment from the path containing the execution environment id
 	 * or <code>null</code>
-	 * 
+	 *
 	 * @param path container path
 	 * @return EE id
 	 */
@@ -229,54 +229,54 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether the given path identifies a VM by execution environment.
-	 * 
+	 *
 	 * @param path the path
 	 * @return whether the given path identifies a VM by execution environment
 	 */
 	public static boolean isExecutionEnvironment(IPath path) {
 		return getExecutionEnvironmentId(path) != null;
 	}
-	
+
 	/**
 	 * Escapes forward slashes in environment id.
-	 * 
+	 *
 	 * @param id the environment id
 	 * @return escaped name
 	 */
 	public static String encodeEnvironmentId(String id) {
 		return id.replace('/', '%');
 	}
-	
+
 	public static String decodeEnvironmentId(String id) {
 		return id.replace('%', '/');
 	}
-	
+
 	/**
 	 * Returns the VM type identifier from the given container ID path.
-	 * 
+	 *
 	 * @param path the path
 	 * @return the VM type identifier from the given container ID path
 	 */
 	public static String getVMTypeId(IPath path) {
 		return path.segment(1);
 	}
-	
+
 	/**
 	 * Returns the VM name from the given container ID path.
-	 * 
+	 *
 	 * @param path the path
 	 * @return the VM name from the given container ID path
 	 */
 	public static String getVMName(IPath path) {
 		return path.segment(2);
-	}	
-	
+	}
+
 	/**
 	 * The container can be updated if it refers to an existing VM.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#canUpdateClasspathContainer(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	@Override
@@ -288,10 +288,10 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		return false;
 	}
-	
+
 	private static final IStatus READ_ONLY= new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, ClasspathContainerInitializer.ATTRIBUTE_READ_ONLY, new String(), null);
 	private static final IStatus NOT_SUPPORTED= new Status(IStatus.ERROR, LaunchingPlugin.ID_PLUGIN, ClasspathContainerInitializer.ATTRIBUTE_NOT_SUPPORTED, new String(), null);
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAccessRulesStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
@@ -299,7 +299,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	public IStatus getAccessRulesStatus(IPath containerPath, IJavaProject project) {
 		return READ_ONLY;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getSourceAttachmentStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
@@ -307,7 +307,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	public IStatus getSourceAttachmentStatus(IPath containerPath, IJavaProject project) {
 		return Status.OK_STATUS;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getAttributeStatus(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject, java.lang.String)
 	 */
@@ -331,12 +331,12 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	@Override
 	public void requestClasspathContainerUpdate(IPath containerPath, IJavaProject project, IClasspathContainer containerSuggestion) throws CoreException {
 		IVMInstall vm = resolveVM(containerPath);
-		if (vm == null) { 
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST, NLS.bind(LaunchingMessages.JREContainerInitializer_JRE_referenced_by_classpath_container__0__does_not_exist__1, new String[]{containerPath.toString()}), null); 
+		if (vm == null) {
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST, NLS.bind(LaunchingMessages.JREContainerInitializer_JRE_referenced_by_classpath_container__0__does_not_exist__1, new String[]{containerPath.toString()}), null);
 			throw new CoreException(status);
 		}
 		// update of the VM with new library locations
-		
+
 		IClasspathEntry[] entries = containerSuggestion.getClasspathEntries();
 		LibraryLocation[] libs = new LibraryLocation[entries.length];
 		for (int i = 0; i < entries.length; i++) {
@@ -380,11 +380,11 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					}
 					libs[i] = new LibraryLocation(path, srcPath, rootPath, javadocLocation, null, externalAnnotations);
 				} else {
-					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, NLS.bind(LaunchingMessages.JREContainerInitializer_Classpath_entry__0__does_not_refer_to_an_existing_library__2, new String[]{entry.getPath().toString()}), null); 
+					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, NLS.bind(LaunchingMessages.JREContainerInitializer_Classpath_entry__0__does_not_refer_to_an_existing_library__2, new String[]{entry.getPath().toString()}), null);
 					throw new CoreException(status);
 				}
 			} else {
-				IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, NLS.bind(LaunchingMessages.JREContainerInitializer_Classpath_entry__0__does_not_refer_to_a_library__3, new String[]{entry.getPath().toString()}), null); 
+				IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, NLS.bind(LaunchingMessages.JREContainerInitializer_Classpath_entry__0__does_not_refer_to_a_library__3, new String[]{entry.getPath().toString()}), null);
 				throw new CoreException(status);
 			}
 		}
@@ -405,7 +405,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 		if (tag != null) {
 			return NLS.bind(LaunchingMessages.JREContainer_JRE_System_Library_1, new String[]{tag});
-		} 
-		return LaunchingMessages.JREContainerInitializer_Default_System_Library_1; 
+		}
+		return LaunchingMessages.JREContainerInitializer_Default_System_Library_1;
 	}
 }

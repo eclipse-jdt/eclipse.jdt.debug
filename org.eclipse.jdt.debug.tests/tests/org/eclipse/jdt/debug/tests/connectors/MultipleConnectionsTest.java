@@ -63,7 +63,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	/**
 	 * Ensure out-of-the-box settings mimics previous behaviour of accepting a
 	 * single connection
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -80,7 +80,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 
 	/**
 	 * Ensure connector accepts a single connection
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -99,7 +99,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	/**
 	 * Ensure out-of-the-box settings mimics previous behaviour of accepting a
 	 * single connection
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -118,7 +118,7 @@ public class MultipleConnectionsTest extends AbstractDebugTest {
 	/**
 	 * Ensure out-of-the-box settings mimics previous behaviour of accepting a
 	 * single connection
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	@Test

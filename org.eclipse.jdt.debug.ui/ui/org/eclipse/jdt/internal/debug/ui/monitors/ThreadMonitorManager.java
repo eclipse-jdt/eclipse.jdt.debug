@@ -36,9 +36,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * Manager for the thread and monitor model.
  */
 public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyChangeListener {
-	
+
 	private static ThreadMonitorManager fDefaultManager;
-	
+
 	/**
 	 * HashMap IJavaThread -> JavaMonitorThread
 	 */
@@ -47,9 +47,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * HashMap IJavaObject -> JavaMonitor
 	 */
 	private HashMap<IDebugElement, Object> fJavaMonitors;
-	
+
 	private boolean fIsEnabled;
-	
+
 	/**
 	 * Returns the default ThreadMonitorManager object.
 	 */
@@ -59,10 +59,10 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		}
 		return fDefaultManager;
 	}
-	
+
 	private ThreadMonitorManager() {
-		fJavaMonitorThreads= new HashMap<IDebugElement, Object>();
-		fJavaMonitors= new HashMap<IDebugElement, Object>();
+		fJavaMonitorThreads= new HashMap<>();
+		fJavaMonitors= new HashMap<>();
 		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.addPropertyChangeListener(this);
 		fIsEnabled= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
@@ -119,7 +119,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			}
 		}
 	}
-	
+
 	private void handleSuspendResume() {
 		JavaMonitorThread[] threads = getJavaMonitorThreads();
 		for (int i = 0; i < threads.length; i++) {
@@ -144,7 +144,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	private void clean(Map<IDebugElement, Object> map, IJavaDebugTarget debugTarget) {
 		IDebugElement debugElements[] = null;
 		synchronized(map) {
-			debugElements = new IDebugElement[map.size()]; 
+			debugElements = new IDebugElement[map.size()];
 			debugElements =	map.keySet().toArray(debugElements);
 		}
 		for(int i = 0; i < debugElements.length; ++i) {
@@ -155,7 +155,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the unique JavaMonitorThread object for the given thread.
 	 */
@@ -165,14 +165,14 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			if (javaMonitorThread == null) {
 				javaMonitorThread= new JavaMonitorThread(thread, originalThread);
 				fJavaMonitorThreads.put(thread, javaMonitorThread);
-				DebugPlugin.getDefault().asyncExec(new DetectDeadlock());			
+				DebugPlugin.getDefault().asyncExec(new DetectDeadlock());
 			} else if (originalThread != null) {
 				javaMonitorThread.setOriginalThread(originalThread);
 			}
 			return javaMonitorThread;
 		}
 	}
-	
+
 	/**
 	 * Returns the unique JavaMonitor object for the given monitor.
 	 */
@@ -195,7 +195,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			fJavaMonitors.remove(monitor.getMonitor());
 		}
 	}
-			
+
 	/**
 	 * Returns the monitor the given thread is waiting for.
 	 */
@@ -206,7 +206,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		}
 		return getJavaMonitorThread(javaThread, thread).getContendedMonitor();
 	}
-	
+
 	/**
 	 * Returns the monitors the given thread owns.
 	 */
@@ -219,7 +219,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 
 	/**
-	 *  Runnable to be run asynchronously, to refresh the model and 
+	 *  Runnable to be run asynchronously, to refresh the model and
 	 *  look for deadlocks.
 	 */
 	class RefreshAndDetectDeadlock extends DetectDeadlock {
@@ -238,11 +238,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		public void run() {
 			JavaMonitorThread[] threads= getJavaMonitorThreads();
 			JavaMonitor[] monitors= getJavaMonitors();
-			List<Object> inDeadlock= new ArrayList<Object>();
+			List<Object> inDeadlock= new ArrayList<>();
 			for (int i = 0; i < threads.length; i++) {
 				JavaMonitorThread thread= threads[i];
-				List<JavaMonitorThread> threadStack= new ArrayList<JavaMonitorThread>();
-				List<JavaMonitor> monitorStack= new ArrayList<JavaMonitor>();
+				List<JavaMonitorThread> threadStack= new ArrayList<>();
+				List<JavaMonitor> monitorStack= new ArrayList<>();
 				while (thread != null) {
 					boolean isInDeadlock= false;
 					if (inDeadlock.contains(thread) || threadStack.contains(thread)) {
@@ -296,7 +296,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if SHOW_MONITOR_THREAD_INFO is on and the given thread is
 	 * in a deadlock, <code>false</code> otherwise.
@@ -315,7 +315,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 			return fJavaMonitors.values().toArray(monitors);
 		}
 	}
-	
+
 	private JavaMonitorThread[] getJavaMonitorThreads() {
 		synchronized(fJavaMonitorThreads) {
 			JavaMonitorThread[] threads = new JavaMonitorThread[fJavaMonitorThreads.size()];

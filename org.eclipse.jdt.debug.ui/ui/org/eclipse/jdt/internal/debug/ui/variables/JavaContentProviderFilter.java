@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Provides static methods for filtering the content in Java views.  By filtering in the
  * content provider rather than in the model the UI does not get updated until after the
  * filtering is done.
- * 
+ *
  * @since 3.4
  * @see JavaVariableContentProvider
  * @see JavaExpressionContentProvider
@@ -45,7 +45,7 @@ public class JavaContentProviderFilter {
 		boolean filterConstants = !includeConstants(context);
 
 		if (filterStatics || filterConstants) {
-			List<Object> keep = new ArrayList<Object>(variables.length);
+			List<Object> keep = new ArrayList<>(variables.length);
 			for (int i = 0; i < variables.length; i++) {
 				boolean filter = false;
 				if (variables[i] instanceof IJavaVariable){
@@ -71,7 +71,7 @@ public class JavaContentProviderFilter {
 	 * Returns whether static variables should be displayed in the view
 	 * identified by the given presentation context.  Checks for a preference
 	 * that is specific to the presentation context.
-	 * 
+	 *
 	 * @param context the context of the view being displayed
 	 * @return whether static variable should be displayed
 	 */
@@ -85,13 +85,13 @@ public class JavaContentProviderFilter {
 	 * Returns whether constants should be displayed in the view
 	 * identified by the given presentation context.  Checks for a preference
 	 * that is specific to the presentation context.
-	 * 
+	 *
 	 * @param context the context of the view being displayed
 	 * @return whether constants should be displayed
 	 */
 	private static boolean includeConstants(IPresentationContext context){
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		String constants = context.getId() + "." + IJDIPreferencesConstants.PREF_SHOW_CONSTANTS; //$NON-NLS-1$
-		return store.getBoolean(constants); 
+		return store.getBoolean(constants);
 	}
 }

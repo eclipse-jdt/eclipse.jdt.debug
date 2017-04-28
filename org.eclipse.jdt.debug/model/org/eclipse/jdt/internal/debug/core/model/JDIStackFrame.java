@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 384458 - debug shows value of variable in another scope 
+ *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 384458 - debug shows value of variable in another scope
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
@@ -130,7 +130,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Creates a new stack frame in the given thread.
-	 * 
+	 *
 	 * @param thread
 	 *            The parent JDI thread
 	 * @param frame
@@ -149,7 +149,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * returns a new frame representing the given frame. A frame can only be
 	 * re-bound to an underlying frame if it refers to the same depth on the
 	 * stack in the same method.
-	 * 
+	 *
 	 * @param frame
 	 *            underlying frame, or <code>null</code>
 	 * @param depth
@@ -308,7 +308,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				}
 
 				Method method = getUnderlyingMethod();
-				fVariables = new ArrayList<IJavaVariable>();
+				fVariables = new ArrayList<>();
 				// #isStatic() does not claim to throw any exceptions - so it is
 				// not try/catch coded
 				if (method.isStatic()) {
@@ -430,7 +430,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// generic signature
 			String[] parameterTypes = Signature
 					.getParameterTypes(genericSignature);
-			List<String> argumentTypeNames = new ArrayList<String>();
+			List<String> argumentTypeNames = new ArrayList<>();
 			for (String parameterType : parameterTypes) {
 				argumentTypeNames.add(Signature.toString(parameterType)
 						.replace('/', '.'));
@@ -548,7 +548,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Incrementally updates this stack frames variables.
-	 * 
+	 *
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected void updateVariables() throws DebugException {
@@ -762,7 +762,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return null;
 		}
 		IVariable[] variables = getVariables();
-		List<IJavaVariable> possibleMatches = new ArrayList<IJavaVariable>();
+		List<IJavaVariable> possibleMatches = new ArrayList<>();
 		IJavaVariable thisVariable = null;
 		for (IVariable variable : variables) {
 			IJavaVariable var = (IJavaVariable) variable;
@@ -799,7 +799,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * Retrieves visible variables in this stack frame handling any exceptions.
 	 * Returns an empty list if there are no variables.
-	 * 
+	 *
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected List<LocalVariable> getUnderlyingVisibleVariables() throws DebugException {
@@ -824,7 +824,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * Retrieves 'this' from the underlying stack frame. Returns
 	 * <code>null</code> for static stack frames.
-	 * 
+	 *
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
@@ -1167,7 +1167,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Returns this stack frame's underlying JDI frame.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this stack frame does not currently have an underlying
 	 *                frame (is in an interim state where this frame's thread
@@ -1206,7 +1206,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * Sets the underlying JDI StackFrame. Called by a thread when incrementally
 	 * updating after a step has completed.
-	 * 
+	 *
 	 * @param frame
 	 *            The underlying stack frame
 	 */
@@ -1258,7 +1258,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Java stack frames do not support registers
-	 * 
+	 *
 	 * @see IStackFrame#getRegisterGroups()
 	 */
 	@Override
@@ -1290,7 +1290,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getReferenceType()
 	 */
 	@Override
@@ -1311,7 +1311,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Expression level stepping not supported.
-	 * 
+	 *
 	 * @see IStackFrame#getCharEnd()
 	 */
 	@Override
@@ -1321,7 +1321,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
 	 * Expression level stepping not supported.
-	 * 
+	 *
 	 * @see IStackFrame#getCharStart()
 	 */
 	@Override
@@ -1349,7 +1349,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * Sets whether locals were available. If the setting is not the same as the
 	 * current value, a change event is fired such that a UI client can update.
-	 * 
+	 *
 	 * @param available
 	 *            whether local variable information is available for this stack
 	 *            frame.
@@ -1481,7 +1481,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#isVarargs()
 	 */
 	@Override
@@ -1491,7 +1491,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#canForceReturn()
 	 */
 	@Override
@@ -1518,7 +1518,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaStackFrame#forceReturn(org.eclipse.jdt
 	 * .debug.core.IJavaValue)

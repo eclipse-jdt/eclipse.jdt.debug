@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * The <code>DebugEvent</code> received.
 	 */
 	protected DebugEvent fEvent;
-	
+
 	/**
 	 * The event set that was accepted
 	 */
@@ -166,13 +166,13 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public DebugEvent getEvent() {
 		return fEvent;
 	}
-	
+
 	/**
 	 * Returns the accepted event set, if any.
 	 * @return the even if any
 	 */
 	public DebugEvent[] getEventSet() {
 		return fEventSet;
-	}	
+	}
 }
 

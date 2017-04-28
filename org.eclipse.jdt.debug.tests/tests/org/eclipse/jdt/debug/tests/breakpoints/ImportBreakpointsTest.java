@@ -31,7 +31,7 @@ import org.eclipse.ui.IWorkingSetManager;
 
 /**
  * Tests the import operations of the breakpoint import export feature
- * 
+ *
  * @since 3.2
  */
 public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
@@ -43,7 +43,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 	public ImportBreakpointsTest(String name) {super(name);}
 
 	/**
-	 * Tests import operation from a file. 
+	 * Tests import operation from a file.
 	 * @throws Exception catch all passed to framework
 	 */
 	public void testBreakpointImportFile() throws Exception {
@@ -75,15 +75,15 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 				assertEquals("Missing imported breakpoint", breakpoint, getBreakpointManager().getBreakpoint(breakpoint.getMarker()));
 			}
 			file.delete();
-		} 
+		}
 		finally {
 			removeAllBreakpoints();
-		}	
+		}
 	}
-	
+
 	/**
 	 * Tests import operation from a string buffer.
-	 *  
+	 *
 	 * @throws Exception catch all passed to framework
 	 */
 	public void testBreakpointImportBuffer() throws Exception {
@@ -105,12 +105,12 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportBreakpointsOperation op2 = new ImportBreakpointsOperation(buffer, true, true);
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
-		} 
+		}
 		finally {
 			removeAllBreakpoints();
-		}	
-	}	
-	
+		}
+	}
+
 	/**
 	 * tests and overwrote without remove all
 	 * @throws Exception catch all to pass back to framework
@@ -137,15 +137,15 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			op2.run(new NullProgressMonitor());
 			assertEquals("manager does not contain 6 breakpoints", 6, getBreakpointManager().getBreakpoints().length);
 			file.delete();
-		} 
+		}
 		finally {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a bad filename passed to the import operation
-	 * 
+	 *
 	 * @throws Exception catch all to pass back to framework
 	 */
 	public void testBreakpointImportBadFilename() throws Exception {
@@ -163,10 +163,10 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * tests importing breakpoints with working sets
-	 * 
+	 *
 	 * @throws Exception catch all to be passed back to the framework
 	 */
 	public void testBreakpointImportWithWorkingsets() throws Exception {
@@ -179,7 +179,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			IWorkingSet set = createSet(setName);
 			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setName));
 			WorkingSetCategory category = new WorkingSetCategory(set);
-			
+
 			bporg.addBreakpoint(createClassPrepareBreakpoint(typeName), category);
 			bporg.addBreakpoint(createLineBreakpoint(32, typeName), category);
 			bporg.addBreakpoint(createLineBreakpoint(28, typeName), category);
@@ -192,7 +192,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());
 			op.run(new NullProgressMonitor());
-		
+
 			//remove bps and working set and do the import
 			removeAllBreakpoints();
 			set.setElements(new IAdaptable[] {});
@@ -215,7 +215,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests importing breakpoints to resources that do not exist
 	 * @throws Exception catch all passed to framework
@@ -228,16 +228,16 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			ImportBreakpointsOperation op = new ImportBreakpointsOperation(file.getCanonicalPath(), true, true);
 			op.run(new NullProgressMonitor());
 			assertEquals("should be no breakpoints imported", 0, getBreakpointManager().getBreakpoints().length);
-		} 
+		}
 		finally {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * tests importing breakpoints with working sets where the breakpoints are restored to 
+	 * tests importing breakpoints with working sets where the breakpoints are restored to
 	 * another working set and removed from the current one
-	 * 
+	 *
 	 * @throws Exception catch all to be passed back to the framework
 	 */
 	public void testImportWithWorkingsets() throws Exception {
@@ -251,7 +251,7 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			IWorkingSet set = createSet(setname1);
 			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setname1));
 			WorkingSetCategory category = new WorkingSetCategory(set);
-			
+
 			bporg.addBreakpoint(createClassPrepareBreakpoint(typeName), category);
 			bporg.addBreakpoint(createLineBreakpoint(32, typeName), category);
 			bporg.addBreakpoint(createLineBreakpoint(28, typeName), category);
@@ -264,12 +264,12 @@ public class ImportBreakpointsTest extends AbstractBreakpointWorkingSetTest {
 			assertNotNull("Invalid path", path);
 			ExportBreakpointsOperation op = new ExportBreakpointsOperation(getBreakpointManager().getBreakpoints(), path.toOSString());
 			op.run(new NullProgressMonitor());
-		
+
 			//copy items to the alternate working set
 			IWorkingSet set2 = createSet(setname2);
 			set2.setElements(set.getElements());
 			assertNotNull("workingset does not exist", wsmanager.getWorkingSet(setname2));
-			
+
 			//remove bps and working set and do the import
 			removeAllBreakpoints();
 			set.setElements(new IAdaptable[] {});

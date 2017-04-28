@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests equality of Java types.
  */
 public class TypeTests extends AbstractDebugTest {
-	
+
 	public TypeTests(String name) {
 		super(name);
 	}
@@ -41,8 +41,8 @@ public class TypeTests extends AbstractDebugTest {
 		// threading
 		bps.add(createLineBreakpoint(66, typeName));
 		// InnerRunnable.run
-		bps.add(createLineBreakpoint(61, typeName));		
-		
+		bps.add(createLineBreakpoint(61, typeName));
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -56,15 +56,15 @@ public class TypeTests extends AbstractDebugTest {
 				int lineNumber = breakpoint.getLineNumber();
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				types[index] = frame.getReferenceType();
-				
+
 				if (index == 1) {
 					assertEquals("First two types should be the same", types[0], types[1]);
 				}
-				
+
 				if (index == 2) {
 					assertTrue("Last two types should be different", !types[0].equals(types[2]));
 				}
-				
+
 				index++;
 				int stackLine = frame.getLineNumber();
 				assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
@@ -77,9 +77,9 @@ public class TypeTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-    
+
     public void testClassLoader() throws Exception {
         String typeName = "Breakpoints";
         List<IJavaLineBreakpoint> bps = new ArrayList<IJavaLineBreakpoint>();
@@ -88,7 +88,7 @@ public class TypeTests extends AbstractDebugTest {
         bps.add(createLineBreakpoint(88, typeName));
         IJavaObject[] loaders = new IJavaObject[2];
         int index = 0;
-        
+
         IJavaThread thread= null;
         try {
             thread= launchToBreakpoint(typeName);
@@ -103,11 +103,11 @@ public class TypeTests extends AbstractDebugTest {
                 IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
                 loaders[index] = frame.getReferenceType().getClassLoaderObject();
                 assertNotNull("class loader cannot be null", loaders[index]);
-                
+
                 if (index == 1) {
                     assertEquals("First two class loaders should be the same", loaders[0], loaders[1]);
                 }
-                                
+
                 index++;
                 int stackLine = frame.getLineNumber();
                 assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
@@ -120,7 +120,7 @@ public class TypeTests extends AbstractDebugTest {
         } finally {
             terminateAndRemove(thread);
             removeAllBreakpoints();
-        }               
+        }
     }
 
 }

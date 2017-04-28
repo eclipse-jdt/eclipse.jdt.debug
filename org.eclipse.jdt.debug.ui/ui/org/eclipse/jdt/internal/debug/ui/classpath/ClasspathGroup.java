@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,15 +15,15 @@ import java.util.Iterator;
 
 public class ClasspathGroup extends AbstractClasspathEntry {
 	private String name;
-	
+
 	private boolean canBeRemoved= true;
-	
+
 	public ClasspathGroup(String name, IClasspathEntry parent, boolean canBeRemoved) {
 		this.parent= parent;
 		this.name= name;
 		this.canBeRemoved= canBeRemoved;
 	}
-		
+
 	public void addEntry(IClasspathEntry entry, Object beforeEntry) {
 		if (!childEntries.contains(entry)) {
 			int index = -1;
@@ -37,15 +37,15 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 			}
 		}
 	}
-	
+
 	public void removeEntry(IClasspathEntry entry) {
 		childEntries.remove(entry);
 	}
-	
+
 	public boolean contains(IClasspathEntry entry) {
 		return childEntries.contains(entry);
 	}
-	
+
 	@Override
 	public String toString() {
 		return name;
@@ -61,7 +61,7 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 		}
 		childEntries.clear();
 	}
-	
+
 	public boolean canBeRemoved() {
 		return canBeRemoved;
 	}

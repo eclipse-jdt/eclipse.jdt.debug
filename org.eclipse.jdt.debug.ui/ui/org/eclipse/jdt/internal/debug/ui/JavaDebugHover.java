@@ -63,9 +63,9 @@ import org.eclipse.ui.IEditorPart;
 
 
 public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ITextHoverExtension2 {
-    
+
     private IEditorPart fEditor;
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
@@ -73,7 +73,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public void setEditor(IEditorPart editor) {
 	    fEditor = editor;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
@@ -81,11 +81,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return JavaWordFinder.findWord(textViewer.getDocument(), offset);
 	}
-	
+
 	/**
 	 * Returns the stack frame in which to search for variables, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the stack frame in which to search for variables, or <code>null</code>
 	 * if none
 	 */
@@ -96,24 +96,24 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 		return null;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object object = getHoverInfo2(textViewer, hoverRegion);
-		if (object instanceof IVariable) {	
+		if (object instanceof IVariable) {
 			IVariable var = (IVariable) object;
 			return getVariableText(var);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a local variable in the given frame based on the hover region
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return local variable or <code>null</code>
 	 */
 	private IVariable resolveLocalVariable(IJavaStackFrame frame, ITextViewer textViewer, IRegion hoverRegion) {
@@ -129,11 +129,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a local variable in the given frame based on the the given name
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return local variable or <code>null</code>
 	 */
 	private IVariable findLocalVariable(IJavaStackFrame frame, String variableName) {
@@ -147,7 +147,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 			}
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * Returns HTML text for the given variable
@@ -165,7 +165,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Replaces reserved HTML characters in the given string with
 	 * their escaped equivalents. This is to ensure that variable
@@ -201,7 +201,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 */
 	private static JDIModelPresentation getModelPresentation() {
 		JDIModelPresentation presentation = new JDIModelPresentation();
-		
+
 		String[][] booleanPrefs= {
 				{IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, JDIModelPresentation.DISPLAY_QUALIFIED_NAMES}};
 	    String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
@@ -211,11 +211,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		}
 		return presentation;
 	}
-	
+
 	   /**
      * Returns the value of this filters preference (on/off) for the given
      * view.
-     * 
+     *
      * @param part
      * @return boolean
      */
@@ -279,7 +279,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 		    if (codeAssist == null) {
 		        return resolveLocalVariable(frame, textViewer, hoverRegion);
 		    }
-            
+
             IJavaElement[] resolve = null;
             try {
                 resolve = codeAssist.codeSelect(hoverRegion.getOffset(), 0);
@@ -366,7 +366,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 								} else if (locationInParent == QualifiedName.NAME_PROPERTY) {
 									return null;
 								}
-            		    		
+
             		    		String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
             		    		typeSignature = typeSignature.replace('.', '/');
 								IJavaObject ths = frame.getThis();

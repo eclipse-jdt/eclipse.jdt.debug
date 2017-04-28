@@ -54,7 +54,7 @@ public class Interpreter {
 	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
 		fInstructions = instructions.getInstructions();
 		fContext = context;
-		fInternalVariables = new HashMap<String, IVariable>();
+		fInternalVariables = new HashMap<>();
 	}
 
 	public void execute() throws CoreException {
@@ -79,7 +79,7 @@ public class Interpreter {
 	}
 
 	private void reset() {
-		fStack = new Stack<Object>();
+		fStack = new Stack<>();
 		fInstructionCounter = 0;
 	}
 
@@ -104,13 +104,13 @@ public class Interpreter {
 
 	/**
 	 * Avoid garbage collecting interim results.
-	 * 
+	 *
 	 * @param value
 	 *            object to disable garbage collection for
 	 */
 	private void disableCollection(IJavaObject value) {
 		if (fPermStorage == null) {
-			fPermStorage = new ArrayList<IJavaObject>(5);
+			fPermStorage = new ArrayList<>(5);
 		}
 		try {
 			value.disableCollection();
@@ -193,7 +193,7 @@ public class Interpreter {
 	/**
 	 * Create a new variable in the interpreter with the given name and the
 	 * given type.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the variable to create.
 	 * @param type
@@ -211,7 +211,7 @@ public class Interpreter {
 	 * Return the variable with the given name. This method only looks in the
 	 * list of internal variable (i.e. created by
 	 * Interpreter#createInternalVariable(String, IJavaType))
-	 * 
+	 *
 	 * @param name
 	 *            the name of the variable to retrieve.
 	 * @return the corresponding variable, or <code>null</code> if there is

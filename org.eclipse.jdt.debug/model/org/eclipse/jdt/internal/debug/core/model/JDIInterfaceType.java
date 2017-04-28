@@ -43,7 +43,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getImplementors()
 	 */
 	@Override
@@ -51,7 +51,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 		try {
 			List<ClassType> implementorList = ((InterfaceType) getUnderlyingType())
 					.implementors();
-			List<JDIType> javaClassTypeList = new ArrayList<JDIType>(implementorList.size());
+			List<JDIType> javaClassTypeList = new ArrayList<>(implementorList.size());
 			Iterator<ClassType> iterator = implementorList.iterator();
 			while (iterator.hasNext()) {
 				ClassType classType = iterator.next();
@@ -76,7 +76,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSubInterfaces()
 	 */
 	@Override
@@ -84,7 +84,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 		try {
 			List<InterfaceType> subList = ((InterfaceType) getUnderlyingType())
 					.subinterfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(subList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(subList.size());
 			Iterator<InterfaceType> iterator = subList.iterator();
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = iterator.next();
@@ -109,7 +109,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaInterfaceType#getSuperInterfaces()
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 		try {
 			List<InterfaceType> superList = ((InterfaceType) getUnderlyingType())
 					.superinterfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(superList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(superList.size());
 			Iterator<InterfaceType> iterator = superList.iterator();
 			while (iterator.hasNext()) {
 				InterfaceType interfaceType = iterator.next();
@@ -142,7 +142,7 @@ public class JDIInterfaceType extends JDIReferenceType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaInterfaceType#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],

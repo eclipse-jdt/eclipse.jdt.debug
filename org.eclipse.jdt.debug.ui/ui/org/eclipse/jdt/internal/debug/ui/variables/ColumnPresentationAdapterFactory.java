@@ -18,11 +18,11 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
  * Adapter factory.
- * 
+ *
  * @since 3.2
  */
 public class ColumnPresentationAdapterFactory implements IAdapterFactory {
-	
+
 	private static final IColumnPresentationFactory fgColumnPresentation = new JavaVariableColumnPresentationFactory();
 	private static final IElementEditor fgEEJavaVariable = new JavaVariableEditor();
 

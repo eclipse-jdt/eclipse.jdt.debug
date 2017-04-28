@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,7 +35,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
  * Tests runtime classpath provider extension point
  */
 public class ClasspathProviderTests extends AbstractDebugTest {
-	
+
 	public ClasspathProviderTests(String name) {
 		super(name);
 	}
@@ -43,20 +43,20 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	public void testEmptyProvider() throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-		
+
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.jdt.debug.tests.EmptyClasspathProvider");
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.jdt.debug.tests.EmptyClasspathProvider");
-		
+
 		IRuntimeClasspathProvider cpProvider = JavaRuntime.getClasspathProvider(wc);
 		IRuntimeClasspathProvider spProvider = JavaRuntime.getSourceLookupPathProvider(wc);
-		
+
 		assertNotNull("Did not retrieve classpath provider", cpProvider);
 		assertNotNull("Did not retrieve source path provider", spProvider);
-		
+
 		assertEquals("Classpath should be empty", 0, cpProvider.computeUnresolvedClasspath(config).length);
 		assertEquals("Source path should be empty", 0, spProvider.computeUnresolvedClasspath(config).length);
 	}
-	
+
 	/**
 	 * Test that a variable set to the location of an archive resolves properly.
 	 */
@@ -72,7 +72,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 	}
-	
+
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly.
@@ -91,7 +91,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	}
 
 	// BOOTPATH TESTS
-		
+
 	/**
 	 * Test that a variable added to the bootpath is resolved to be on the bootpath.
 	 */
@@ -107,12 +107,12 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that an extended variable added to the bootpath is resolved to be on the bootpath.
-	 */	
+	 */
 	public void testBootpathVariableExtensionResolution() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
 		IProject root = get14Project().getProject();
@@ -125,9 +125,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project added to the bootpath is resolved to be on the bootpath.
 	 */
@@ -140,9 +140,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
-		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a container added to the bootpath is resolved to have all entries on
 	 * the boothpath.
@@ -155,7 +155,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			assertEquals("Entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
-	
+
 	/**
 	 * Test that a jar added to the bootpath is resolved to be on the bootpath.
 	 */
@@ -169,12 +169,12 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a folder added to the bootpath is resolved to be on the bootpath.
-	 */	
+	 */
 	public void testBootpathFolderResolution() throws Exception {
 		IResource folder = get14Project().getProject().getFolder("src");
 		assertTrue("Folder does not exist", folder.exists());
@@ -185,9 +185,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project with non-default output locations placed on the bootpath
 	 * resolves to entries on the bootpath.
@@ -203,11 +203,11 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			IRuntimeClasspathEntry entry = resolved[i];
 			assertEquals("Resolved entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, entry.getClasspathProperty());
 		}
-				
+
 	}
-	
+
 	// USER CLASSES TESTS
-		
+
 	/**
 	 * Test that a variable added to the user application classpath is resolved to be on
 	 * the user application classpath.
@@ -224,13 +224,13 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that an extended variable added to the user classpath is resolved to be
 	 * on the user classpath.
-	 */	
+	 */
 	public void testUserClassesVariableExtensionResolution() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
 		IProject root = get14Project().getProject();
@@ -243,9 +243,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project added to the user classpath is resolved to be on the
 	 * user classpath.
@@ -259,9 +259,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
-		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a container added to the user classpath is resolved to have all
 	 * entries on the user classpath.
@@ -274,7 +274,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			assertEquals("Entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
-	
+
 	/**
 	 * Test that a jar added to the user classpath is resolved to be on the user classpath.
 	 */
@@ -288,13 +288,13 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a folder added to the user classpath is resolved to be on the
 	 * user classpath.
-	 */	
+	 */
 	public void testUserClassesFolderResolution() throws Exception {
 		IResource folder = get14Project().getProject().getFolder("src");
 		assertTrue("Folder does not exist", folder.exists());
@@ -305,9 +305,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project with non-default output locations placed on the user classpath
 	 * resolves to entries on the user classpath.
@@ -323,11 +323,11 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			IRuntimeClasspathEntry entry = resolved[i];
 			assertEquals("Resolved entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, entry.getClasspathProperty());
 		}
-				
+
 	}
-	
+
 	// STANDARD CLASSES TESTS
-		
+
 	/**
 	 * Test that a variable added to the default bootpath is resolved to be on
 	 * the default bootpath.
@@ -344,13 +344,13 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that an extended variable added to the default bootpath is resolved to be
 	 * on the default bootpath.
-	 */	
+	 */
 	public void testStandardClassesVariableExtensionResolution() throws Exception {
 		IResource archive = get14Project().getProject().getFolder("src").getFile("A.jar");
 		IProject root = get14Project().getProject();
@@ -363,9 +363,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());			
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project added to the default bootpath is resolved to be on the
 	 * default bootpath.
@@ -379,9 +379,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, get14Project());
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", outputFolder.getLocation().toOSString(), resolved[0].getLocation());
-		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a container added to the default bootpath is resolved to have all
 	 * entries on the default bootpath.
@@ -394,7 +394,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			assertEquals("Entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
-	
+
 	/**
 	 * Test that a jar added to the default bootpath is resolved to be on the
 	 * default bootpath.
@@ -409,13 +409,13 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a folder added to the default bootpath is resolved to be on the
 	 * default bootpath.
-	 */	
+	 */
 	public void testStandardClassesFolderResolution() throws Exception {
 		IResource folder = get14Project().getProject().getFolder("src");
 		assertTrue("Folder does not exist", folder.exists());
@@ -426,9 +426,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		assertEquals("Should be one resolved entry", 1, resolved.length);
 		assertEquals("Resolved path not correct", folder.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", folder.getLocation(), new Path(resolved[0].getLocation()));
-		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());		
+		assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[0].getClasspathProperty());
 	}
-	
+
 	/**
 	 * Test that a project with non-default output locations placed on the default bootpath
 	 * resolves to entries on the default bootpath.
@@ -444,13 +444,13 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			IRuntimeClasspathEntry entry = resolved[i];
 			assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, entry.getClasspathProperty());
 		}
-				
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that default classpath computation works for a project with mulitple
 	 * output locations.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMultiOutputDefaultClasspath() throws Exception {
@@ -461,42 +461,42 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		IFolder bin2 = p.getFolder("bin2");
 		String location1 = bin1.getLocation().toOSString();
 		String location2 = bin2.getLocation().toOSString();
-		
+
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
-		
+
 		assertTrue("Classpath is missing " + location1, list.contains(location1));
 		assertTrue("Classpath is missing " + location2, list.contains(location2));
-				
+
 	}
-	
+
 	/**
 	 * Tests that default classpath computation works for a project with a default
 	 * output location.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSingleOutputDefaultClasspath() throws Exception {
 		IJavaProject project = get14Project();
 		String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
-		
+
 		IFolder bin = ResourcesPlugin.getWorkspace().getRoot().getFolder(project.getOutputLocation());
 		String location = bin.getLocation().toOSString();
-		
+
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
-		
+
 		assertTrue("Classpath is missing " + location, list.contains(location));
-				
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that a buildpath with a relative (../..) classpath entry will resolve properly.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRelativeClasspathEntry() throws Exception {
@@ -513,7 +513,7 @@ public class ClasspathProviderTests extends AbstractDebugTest {
         JavaProjectHelper.addContainerEntry(project, path);
         // add relative entry - point to A.jar in DebugTests/src
         JavaProjectHelper.addLibrary(project, new Path("../DebugTests/src/A.jar"));
-     
+
         // test runtime class path resolution
         String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
         String jarPath = get14Project().getProject().getLocation().append("src").append("A.jar").toOSString();
@@ -521,16 +521,16 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
-        
+
         // delete the project
         pro.delete(false, null);
-        
+
         assertTrue("Classpath is missing " + jarPath, list.contains(jarPath));
 	}
-	
+
 	/**
 	 * Tests that a variable with a relative (../..) path will resolve properly.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testVariableWithRelativePath() throws Exception {
@@ -547,9 +547,9 @@ public class ClasspathProviderTests extends AbstractDebugTest {
         JavaProjectHelper.addContainerEntry(project, path);
         // add relative entry - point to A.jar in DebugTests/src
         String varName = "RELATIVE_DEBUG_TESTS";
-		JavaCore.setClasspathVariable(varName, new Path("../DebugTests"), null);        
+		JavaCore.setClasspathVariable(varName, new Path("../DebugTests"), null);
 		JavaProjectHelper.addVariableEntry(project, new Path("RELATIVE_DEBUG_TESTS/src/A.jar"), null, null);
-     
+
         // test runtime class path resolution
         String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
         String jarPath = get14Project().getProject().getLocation().append("src").append("A.jar").toOSString();
@@ -557,10 +557,10 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
-        
+
         // delete the project
         pro.delete(false, null);
-        
+
         assertTrue("Classpath is missing " + jarPath, list.contains(jarPath));
-	}	
+	}
 }

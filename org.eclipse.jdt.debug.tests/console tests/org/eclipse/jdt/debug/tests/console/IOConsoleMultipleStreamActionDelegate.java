@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -65,23 +65,23 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
 	public void run(IAction action) {
         runTest();
     }
-    
+
     /**
-     * Actually runs the test 
+     * Actually runs the test
      */
     public void runTest() {
         ended = false;
-        
+
         final IOConsole console = new IOConsole("IO Test Console", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
 
 //        console.setWaterMarks(5, 10);
 
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         manager.addConsoles(new IConsole[] { console });
-        
+
         final Display display = Display.getDefault();
         final IOConsoleInputStream in = console.getInputStream();
-        final IOConsoleOutputStream echo = console.newOutputStream(); 
+        final IOConsoleOutputStream echo = console.newOutputStream();
         display.asyncExec(new Runnable() {
             @Override
 			public void run() {
@@ -90,12 +90,12 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
             }
         });
         startInputReadThread(in, echo);
-        
-        IOConsoleOutputStream out = console.newOutputStream(); 
+
+        IOConsoleOutputStream out = console.newOutputStream();
         startOutputThread(out);
     }
-        
-    private void startOutputThread(final IOConsoleOutputStream out) {   
+
+    private void startOutputThread(final IOConsoleOutputStream out) {
         new Thread(new Runnable() {
             @Override
 			public void run() {
@@ -110,11 +110,11 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }                
+                }
             }
         }, "OUTPUT").start(); //$NON-NLS-1$
     }
-    
+
     private void startInputReadThread(final InputStream in, final OutputStream out) {
        new Thread(new Runnable() {
            @Override

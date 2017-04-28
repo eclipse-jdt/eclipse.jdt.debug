@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
  * Contributed for local java application launch configs.
  */
 public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
-	
+
 	// the test case to call back when launch is invoked
 	private static LaunchModeTests fgTestCase;
 
@@ -36,10 +36,10 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 			if (fgTestCase == null) {
 				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests",
 				 0, "No test case registered.", null));
-			} 
+			}
 			fgTestCase.launch(configuration, mode);
 	}
-	
+
 	/**
 	 * @param testCase
 	 */

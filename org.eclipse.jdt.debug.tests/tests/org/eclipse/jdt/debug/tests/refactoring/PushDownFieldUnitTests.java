@@ -45,10 +45,10 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-		
-	
+
+
 /////////////////////////////////////////
-	
+
 	/**
 	 * @param parentClassName
 	 * @param className
@@ -59,11 +59,11 @@ public class PushDownFieldUnitTests extends AbstractRefactoringDebugTest {
 	 * @throws Exception
 	 */
 	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);
 		IField clas= parentClas.getField("anInt");
-		
+
         PushDownRefactoringProcessor processor = new PushDownRefactoringProcessor(new IField[] {clas});
 		ProcessorBasedRefactoring ref= new ProcessorBasedRefactoring(processor);
 		ref.checkInitialConditions(new NullProgressMonitor());

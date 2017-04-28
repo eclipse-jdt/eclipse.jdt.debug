@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Used to choose a classpath variable.
- * 
+ *
  * @since 3.0
  */
 public class ClasspathVariableSourceContainerBrowser extends AbstractSourceContainerBrowser {
@@ -38,7 +38,7 @@ public class ClasspathVariableSourceContainerBrowser extends AbstractSourceConta
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		ClasspathVariableSourceContainer container = (ClasspathVariableSourceContainer) containers[0];
 		IPath path = BuildPathDialogAccess.configureVariableEntry(shell, container.getPath(), new IPath[]{container.getPath()});
-		if (path != null) {			
+		if (path != null) {
 			containers = new ISourceContainer[1];
 			containers[0] = new ClasspathVariableSourceContainer(path);
 			return containers;
@@ -51,7 +51,7 @@ public class ClasspathVariableSourceContainerBrowser extends AbstractSourceConta
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		IPath[] paths = BuildPathDialogAccess.chooseVariableEntries(shell, new IPath[0]);
-		if (paths != null) {			
+		if (paths != null) {
 			ISourceContainer[] containers = new ISourceContainer[paths.length];
 			for (int i = 0; i < containers.length; i++) {
 				containers[i] = new ClasspathVariableSourceContainer(paths[i]);

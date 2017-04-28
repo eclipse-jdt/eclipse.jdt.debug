@@ -28,21 +28,21 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 /**
  * Breakpoint participant for type rename.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
      */
     @Override
 	protected boolean accepts(IJavaElement element) {
         return element instanceof IType;
     }
-    
+
 	@Override
 	protected Change createTypeChange(IJavaBreakpoint breakpoint, IType destType, IType originalType) throws CoreException {
 		if (breakpoint instanceof IJavaWatchpoint) {
@@ -50,10 +50,10 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
 		}
 		return super.createTypeChange(breakpoint, destType, originalType);
 	}
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[],
      *      java.util.List, java.lang.String)
      */
@@ -75,11 +75,11 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
             }
             destCU = originalType.getPackageFragment().getCompilationUnit(simpleDestName + ext);
         }
-        
+
         // newType is the type that is changing - it may contain nested members with breakpoints
         IType newType = BreakpointChange.getType(originalType.getParent(), simpleDestName);
         newType = (IType) BreakpointChange.findElement(destCU, newType);
-        
+
 
         for (int i = 0; i < markers.length; i++) {
             IMarker marker = markers[i];
@@ -101,7 +101,7 @@ public class BreakpointRenameTypeParticipant extends BreakpointRenameParticipant
                 		changes.add(createTypeChange(javaBreakpoint, destType, breakpointType));
                 	}
                 }
-                	
+
             }
         }
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,8 +20,8 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 public class ResumeBreakpointListener implements IJavaBreakpointListener {
-	
-	public static boolean WAS_HIT = false; 
+
+	public static boolean WAS_HIT = false;
 
 	public ResumeBreakpointListener() {
 	}

@@ -47,19 +47,19 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	@Override
 	public Map<String, Connector.Argument> defaultArguments() {
-		HashMap<String, Connector.Argument> arguments = new HashMap<String, Connector.Argument>(1);
+		HashMap<String, Connector.Argument> arguments = new HashMap<>(1);
 
 		// Port
 		IntegerArgumentImpl intArg = new IntegerArgumentImpl(
-				"port", ConnectMessages.SocketListeningConnectorImpl_Port_number_at_which_to_listen_for_VM_connections_1, ConnectMessages.SocketListeningConnectorImpl_Port_2, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$  
+				"port", ConnectMessages.SocketListeningConnectorImpl_Port_number_at_which_to_listen_for_VM_connections_1, ConnectMessages.SocketListeningConnectorImpl_Port_2, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 
 		// Timeout
 		intArg = new IntegerArgumentImpl(
-				"timeout", ConnectMessages.SocketListeningConnectorImpl_Timeout_before_accept_returns_3, ConnectMessages.SocketListeningConnectorImpl_Timeout_4, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$  
+				"timeout", ConnectMessages.SocketListeningConnectorImpl_Timeout_before_accept_returns_3, ConnectMessages.SocketListeningConnectorImpl_Timeout_4, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 
-		// FIXME: connectionLimit is not actually used in this class, but in the higher-level controller, SocketListenConnector.  
+		// FIXME: connectionLimit is not actually used in this class, but in the higher-level controller, SocketListenConnector.
 		// But IntegerArgumentImpl is package restricted so we must put it here.
 		intArg = new IntegerArgumentImpl("connectionLimit", ConnectMessages.SocketListeningConnectorImpl_Limit_incoming_connections, ConnectMessages.SocketListeningConnectorImpl_Limit, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
 		intArg.setValue(1);  // mimics previous behaviour, allowing a single connection
@@ -126,7 +126,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 
 	/**
 	 * Listens for one or more connections initiated by target VMs.
-	 * 
+	 *
 	 * @return Returns the address at which the connector is listening for a
 	 *         connection.
 	 */
@@ -154,7 +154,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 
 	/**
 	 * Waits for a target VM to attach to this connector.
-	 * 
+	 *
 	 * @return Returns a connected Virtual Machine.
 	 */
 	@Override

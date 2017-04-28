@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Editor for Java variable columns. Restricts edits to primitives and strings.
- * 
+ *
  * @since 3.2
  *
  */
 public class JavaVariableEditor extends VariableEditor {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */

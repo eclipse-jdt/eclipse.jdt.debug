@@ -121,7 +121,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Array of modifier constants for visible local variables in the current
 	 * evaluation.
-	 * 
+	 *
 	 * XXX: constants should be 'default' or 'final'. Where are these constants
 	 * defined.
 	 */
@@ -178,7 +178,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * specified project. Class files required for the evaluation will be
 	 * deployed to the specified directory (which must be on the class path of
 	 * the VM in order for evaluation to work).
-	 * 
+	 *
 	 * @param project
 	 *            context in which to compile snippets
 	 * @param vm
@@ -273,7 +273,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Initializes the value of instance variables in the 'code snippet object'
 	 * that are used as place-holders for locals and 'this' in the current stack
 	 * frame.
-	 * 
+	 *
 	 * @param object
 	 *            instance of code snippet class that will be run
 	 * @exception DebugException
@@ -322,7 +322,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Restores the value local variables from the instance variables in the
 	 * 'code snippet object' that are used as place-holders for locals in the
 	 * current stack frame.
-	 * 
+	 *
 	 * @param object
 	 *            instance of code snippet class that was run
 	 * @exception DebugException
@@ -374,7 +374,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the debug target in which snippets are executed.
-	 * 
+	 *
 	 * @param debugTarget
 	 *            the debug target in which snippets are executed
 	 */
@@ -392,7 +392,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the Java project in which snippets are compiled.
-	 * 
+	 *
 	 * @param javaProject
 	 *            the Java project in which snippets are compiled
 	 */
@@ -402,7 +402,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns the directory in which snippet class files are deployed.
-	 * 
+	 *
 	 * @return the directory in which snippet class files are deployed.
 	 */
 	public File getOutputDirectory() {
@@ -411,7 +411,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the directory in which snippet class files are deployed.
-	 * 
+	 *
 	 * @param outputDirectory
 	 *            location to deploy snippet class files
 	 */
@@ -492,8 +492,8 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 			// set up local variables and 'this' context for evaluation
 			IJavaVariable[] locals = frame.getLocalVariables();
 
-			List<String> typeNames = new ArrayList<String>(locals.length);
-			List<String> varNames = new ArrayList<String>(locals.length);
+			List<String> typeNames = new ArrayList<>(locals.length);
+			List<String> varNames = new ArrayList<>(locals.length);
 
 			for (IJavaVariable var : locals) {
 				String typeName = getTranslatedTypeName(var
@@ -560,7 +560,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Verifies the receiving type was resolved and is not an inner type.
-	 * 
+	 *
 	 * @param receivingType
 	 * @throws DebugException
 	 */
@@ -657,7 +657,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Throws an exception if this engine has already been disposed.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this engine has been disposed
 	 */
@@ -675,7 +675,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Throws an exception if this engine is already in an evaluation.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this engine is currently performing an evaluation
 	 */
@@ -692,7 +692,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Throws an exception if this engine's current evaluation thread is not
 	 * suspended.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this engine's current evaluation thread is not
 	 *                suspended
@@ -711,7 +711,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Deletes deployed class files, and clears state.
-	 * 
+	 *
 	 * @see IEvaluationEngine#dispose()
 	 */
 	@Override
@@ -782,7 +782,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns the listener to notify when the current evaluation is complete.
-	 * 
+	 *
 	 * @return the listener to notify when the current evaluation is complete
 	 */
 	protected IEvaluationListener getListener() {
@@ -791,7 +791,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the listener to notify when the current evaluation is complete.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to notify when the current evaluation is complete
 	 */
@@ -802,7 +802,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns the stack frame context for the current evaluation, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return the stack frame context for the current evaluation, or
 	 *         <code>null</code> if none
 	 */
@@ -812,7 +812,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the stack frame context for the current evaluation.
-	 * 
+	 *
 	 * @param stackFrame
 	 *            stack frame context or <code>null</code> if none
 	 */
@@ -822,7 +822,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns the thread in which the current evaluation is to be executed.
-	 * 
+	 *
 	 * @return the thread in which the current evaluation is to be executed
 	 */
 	protected IJavaThread getThread() {
@@ -831,7 +831,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns the code snippet being evaluated.
-	 * 
+	 *
 	 * @return the code snippet being evaluated.
 	 */
 	protected String getSnippet() {
@@ -840,7 +840,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns the current evaluation result.
-	 * 
+	 *
 	 * @return the current evaluation result
 	 */
 	protected EvaluationResult getResult() {
@@ -849,7 +849,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the current evaluation result.
-	 * 
+	 *
 	 * @param result
 	 *            the current evaluation result
 	 */
@@ -861,7 +861,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Deploys the given class files to this engine's output location, and adds
 	 * the files to this engines list of temporary files to be deleted when
 	 * disposed.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                if this fails due to a lower level exception.
 	 */
@@ -907,13 +907,13 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Adds the given file to this engine's collection of deployed snippet class
 	 * files, which are to be deleted when this engine is disposed.
-	 * 
+	 *
 	 * @param File
 	 *            snippet class file
 	 */
 	private void addSnippetFile(File file) {
 		if (fSnippetFiles == null) {
-			fSnippetFiles = new ArrayList<File>();
+			fSnippetFiles = new ArrayList<>();
 		}
 		fSnippetFiles.add(file);
 	}
@@ -921,13 +921,13 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Adds the given file to this engine's collection of created directories,
 	 * which are to be deleted when this engine is disposed.
-	 * 
+	 *
 	 * @param file
 	 *            directory created for class file deployment
 	 */
 	private void addDirectory(File file) {
 		if (fDirectories == null) {
-			fDirectories = new ArrayList<File>();
+			fDirectories = new ArrayList<>();
 		}
 		fDirectories.add(file);
 	}
@@ -936,7 +936,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Returns an evaluation context for this evaluation engine. An evaluation
 	 * context is associated with a specific Java project. The evaluation context
 	 * is created lazily on the first access.
-	 * 
+	 *
 	 * @return evaluation context
 	 */
 	protected IEvaluationContext getEvaluationContext() {
@@ -948,7 +948,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets the evaluation context for this evaluation engine.
-	 * 
+	 *
 	 * @param context
 	 *            evaluation context
 	 */
@@ -959,7 +959,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns a collection of snippet class file deployed by this evaluation
 	 * engine, possibly empty.
-	 * 
+	 *
 	 * @return deployed class files
 	 */
 	protected List<File> getSnippetFiles() {
@@ -972,7 +972,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns a collection of directories created by this evaluation engine,
 	 * possibly empty.
-	 * 
+	 *
 	 * @return directories created when deploying class files
 	 */
 	protected List<File> getDirectories() {
@@ -984,7 +984,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns whether this evaluation engine has been disposed.
-	 * 
+	 *
 	 * @return whether this evaluation engine has been disposed
 	 */
 	protected boolean isDisposed() {
@@ -1049,7 +1049,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Constructs and returns a new instance of the specified class on the
 	 * target VM.
-	 * 
+	 *
 	 * @param className
 	 *            fully qualified class name
 	 * @return a new instance on the target, as an <code>IJavaValue</code>
@@ -1112,7 +1112,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * <code>java.lang.Integer</code>, to be interpreted as a
 	 * <code>java.lang.Integer</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param resultType
 	 *            the class of the result
 	 * @param resultValue
@@ -1170,7 +1170,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns the modifiers of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @return array of modifiers
 	 */
 	private int[] getLocalVariableModifiers() {
@@ -1180,7 +1180,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Sets the modifiers of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @param localVariableModifiers
 	 *            array of modifiers
 	 */
@@ -1191,7 +1191,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns the names of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @param array
 	 *            of names
 	 */
@@ -1202,7 +1202,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Sets the names of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @param localVariableNames
 	 *            array of names
 	 */
@@ -1213,7 +1213,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns the type names of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @param array
 	 *            of type names
 	 */
@@ -1224,7 +1224,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Sets the type names of the local variables visible in this evaluation,
 	 * possibly empty.
-	 * 
+	 *
 	 * @param localVariableTypeNames
 	 *            array of type names
 	 */
@@ -1236,7 +1236,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Sets the receiver context for the associated evaluation, possibly
 	 * <code>null</code> if the evaluation is in the context of a static method
 	 * or there is no object context.
-	 * 
+	 *
 	 * @param thisObject
 	 *            the receiver content of the associated evaluation, or
 	 *            <code>null</code>
@@ -1249,7 +1249,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Returns the receiver context for the associated evaluation, or
 	 * <code>null</code> if the evaluation is in the context of a static method
 	 * or there is no object context.
-	 * 
+	 *
 	 * @return the receiver context of the associated evaluation or
 	 *         <code>null</code>
 	 */
@@ -1261,7 +1261,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Returns a copy of the type name with '$' replaced by '.', or returns
 	 * <code>null</code> if the given type name refers to an anonymous inner
 	 * class.
-	 * 
+	 *
 	 * @param typeName
 	 *            a fully qualified type name
 	 * @return a copy of the type name with '$' replaced by '.', or returns
@@ -1290,7 +1290,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	 * Returns an array of simple type names that are part of the given type's
 	 * qualified name. For example, if the given name is <code>x.y.A$B</code>,
 	 * an array with <code>["A", "B"]</code> is returned.
-	 * 
+	 *
 	 * @param typeName
 	 *            fully qualified type name
 	 * @return array of nested type names
@@ -1301,7 +1301,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 			typeName = typeName.substring(index + 1);
 		}
 		index = typeName.indexOf('$');
-		ArrayList<String> list = new ArrayList<String>(1);
+		ArrayList<String> list = new ArrayList<>(1);
 		while (index >= 0) {
 			list.add(typeName.substring(0, index));
 			typeName = typeName.substring(index + 1);
@@ -1330,7 +1330,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Sets the name of the code snippet to instantiate to run the current
 	 * evaluation.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the deployed code snippet to instantiate and run
 	 */
@@ -1341,7 +1341,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 	/**
 	 * Returns the name of the code snippet to instantiate to run the current
 	 * evaluation.
-	 * 
+	 *
 	 * @return the name of the deployed code snippet to instantiate and run
 	 */
 	protected String getCodeSnippetClassName() {
@@ -1357,7 +1357,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Returns whether to hit breakpoints in the evaluation thread.
-	 * 
+	 *
 	 * @return whether to hit breakpoints in the evaluation thread
 	 */
 	protected boolean getHitBreakpoints() {
@@ -1366,7 +1366,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine,
 
 	/**
 	 * Sets whether to hit breakpoints in the evaluation thread.
-	 * 
+	 *
 	 * @param hit
 	 *            whether to hit breakpoints in the evaluation thread
 	 */

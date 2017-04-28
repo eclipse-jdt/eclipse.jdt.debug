@@ -155,8 +155,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public ASTInstructionCompiler(int startPosition, String snippet) {
 		fStartPosition = startPosition;
 		fInstructions = new InstructionSequence(snippet);
-		fStack = new Stack<Instruction>();
-		fCompleteInstructions = new ArrayList<CompleteInstruction>();
+		fStack = new Stack<>();
+		fCompleteInstructions = new ArrayList<>();
 	}
 
 	/**
@@ -208,8 +208,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		catch(EmptyStackException ese) {
 			JDIDebugPlugin.log(new Status(
-					IStatus.WARNING, 
-					JDIDebugPlugin.getUniqueIdentifier(), 
+					IStatus.WARNING,
+					JDIDebugPlugin.getUniqueIdentifier(),
 					NLS.bind(EvaluationEngineMessages.ASTInstructionCompiler_4, fCounter),
 					ese));
 		}
@@ -225,7 +225,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * Prints the given message to the console if verbose mode is on.
-	 * 
+	 *
 	 * @param message
 	 *            the message to display
 	 */
@@ -334,7 +334,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * Return the label associated with the given statement.
-	 * 
+	 *
 	 * @param statement
 	 *            the statement.
 	 * @return the associated label, or <code>null</code> if there is none.
@@ -352,7 +352,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * instruction is added when the expression has a return value, i.e. all
 	 * expressions expect method invocation expressions which have
 	 * <code>void</code> as return type and variable declaration expression.
-	 * 
+	 *
 	 * @param expression
 	 *            the expression to test.
 	 */
@@ -383,7 +383,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void addPopInstruction() {
 		Instruction lastInstruction = fInstructions
@@ -511,7 +511,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * End visit methods
-	 * 
+	 *
 	 * There are two paths to ending a visit to a node:
 	 * <ol>
 	 * <li>For control statements, the necessary control instructions (jump,
@@ -731,7 +731,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		/*
 		 * The structure of generated instructions is :
-		 * 
+		 *
 		 * -- | body -- -- |condition -- - jump to the first instruction of the
 		 * body if the condition is true.
 		 */
@@ -789,7 +789,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
 	 * .EnhancedForStatement)
@@ -801,12 +801,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		/*
 		 * The structure of generated instructions is :
-		 * 
+		 *
 		 * For an array: -- | <ParameterType>[] a= Expression | int i= 0 |
 		 * <ParameterType> <ParameterName> -- -- | i < a.length - jump to the
 		 * instruction after the last jump if the condition is false. -- -- | s=
 		 * a[i] | Body -- -- - jump to the first instruction of the condition.
-		 * 
+		 *
 		 * For an Iterable: -- | Iterator i= Expression.iterator() |
 		 * <ParameterType> <ParameterName> -- -- | i.hasNext() - jump to the
 		 * instruction after the last jump if the condition is false. -- -- | s=
@@ -897,7 +897,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		/*
 		 * The structure of generated instructions is :
-		 * 
+		 *
 		 * -- |initialization -- -- |condition -- - jump to the instruction
 		 * after the last jump if the condition is false. -- | body -- -- |
 		 * updaters -- - jump to the first instruction of the condition.
@@ -1391,7 +1391,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		/*
 		 * The structure of generated instructions is :
-		 * 
+		 *
 		 * -- |condition -- - jump to the instruction after the last jump if the
 		 * condition is false. -- | body -- - jump to the first instruction of
 		 * the condition.
@@ -1445,7 +1445,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * Visit methods
-	 * 
+	 *
 	 * There are two variations of node visiting: <ol> <li>Push the instruction
 	 * corresponding to the node onto the stack and return <code>true</code> to
 	 * visit the children of the node.</li> <li>Push the instruction
@@ -1456,7 +1456,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeDeclaration)
 	 */
@@ -1467,7 +1467,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeMemberDeclaration)
 	 */
@@ -1831,7 +1831,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * BlockComment)
 	 */
@@ -1935,7 +1935,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * return false, visit expression, type name & arguments, don't visit body
 	 * declaration
-	 * 
+	 *
 	 * @see ASTVisitor#visit(ClassInstanceCreation)
 	 */
 	@Override
@@ -2129,7 +2129,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnhancedForStatement)
 	 */
@@ -2259,7 +2259,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumConstantDeclaration)
 	 */
@@ -2275,7 +2275,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumDeclaration)
 	 */
@@ -2312,7 +2312,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, visit expression, don't visit name
-	 * 
+	 *
 	 * @see ASTVisitor#visit(FieldAccess)
 	 */
 	@Override
@@ -2427,7 +2427,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return <code>false</code>, don't use the standard accept order.
-	 * 
+	 *
 	 * @see ASTVisitor#visit(InfixExpression)
 	 */
 	@Override
@@ -2662,10 +2662,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (hasErrors()) {
 			return false;
 		}
-		
+
 		iterator = extendedOperands.iterator();
 
-		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) { 
+		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) {
 			boolean isOrOr = char0 == '|';
 
 			ConditionalJump[] conditionalJumps = new ConditionalJump[operatorNumber];
@@ -2814,7 +2814,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * LineComment)
 	 */
@@ -2825,7 +2825,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MarkerAnnotation)
 	 */
@@ -2836,7 +2836,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef
 	 * )
@@ -2848,7 +2848,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MemberValuePair)
 	 */
@@ -2872,7 +2872,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit name, visit expression & arguments
-	 * 
+	 *
 	 * @see ASTVisitor#visit(MethodInvocation)
 	 */
 	@Override
@@ -2944,7 +2944,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Pushes method arguments onto the stack for a method or constructor
 	 * invocation taking variable arguments and auto-boxing into consideration.
-	 * 
+	 *
 	 * @param methodBinding
 	 *            method or constructor being called
 	 * @param arguments
@@ -2962,8 +2962,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return;
 			}
 		}
-		if (methodBinding.isVarargs() && 
-				!(paramCount == argCount && 
+		if (methodBinding.isVarargs() &&
+				!(paramCount == argCount &&
 				parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using
 			// the varargs syntax
@@ -3013,7 +3013,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef
 	 * )
@@ -3025,7 +3025,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MethodRefParameter)
 	 */
@@ -3036,7 +3036,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier
 	 * )
@@ -3048,7 +3048,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * NormalAnnotation)
 	 */
@@ -3123,7 +3123,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Removes all preamble typing and underscores and returns the base integer
 	 * value
-	 * 
+	 *
 	 * @param token
 	 *            the token to parse
 	 * @return the int value of the token
@@ -3145,7 +3145,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Removes all preamble typing and underscores and returns the base short
 	 * value
-	 * 
+	 *
 	 * @param token
 	 *            the token to parse
 	 * @return the short value of the token
@@ -3167,7 +3167,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Removes all preamble typing and underscores and returns the base byte
 	 * value
-	 * 
+	 *
 	 * @param token
 	 *            the token to parse
 	 * @return the byte value of the token
@@ -3189,7 +3189,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Removes all preamble typing and underscores and returns the base long
 	 * value
-	 * 
+	 *
 	 * @param token
 	 *            the token to parse
 	 * @return the long value of the token
@@ -3211,7 +3211,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Returns the numeric base for the given token according to the Java
 	 * specification. Returns 8, 10, or 16.
-	 * 
+	 *
 	 * @param token
 	 *            the token to get the base from
 	 * @return the numeric base for the given token
@@ -3245,7 +3245,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * ParameterizedType)
 	 */
@@ -3567,7 +3567,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * QualifiedType)
 	 */
@@ -3644,7 +3644,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit child
-	 * 
+	 *
 	 * @see ASTVisitor#visit(SimpleType)
 	 */
 	@Override
@@ -3662,7 +3662,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * SingleMemberAnnotation)
 	 */
@@ -3770,7 +3770,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit name, visit arguments
-	 * 
+	 *
 	 * @see ASTVisitor#visit(SuperMethodInvocation)
 	 */
 	@Override
@@ -3826,8 +3826,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return false;
 			}
 		}
-		if (methodBinding.isVarargs() && 
-				!(paramCount == argCount && 
+		if (methodBinding.isVarargs() &&
+				!(paramCount == argCount &&
 				parameterTypes[paramCount - 1].getDimensions() == lastArgBinding.getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using
 			// the varargs syntax
@@ -3889,7 +3889,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		addErrorMessage(EvaluationEngineMessages.ASTInstructionCompiler_Reference_expressions_cannot_be_used_in_an_evaluation_expression);
 		return false;
 	}
-	
+
 	/**
 	 * @see ASTVisitor#visit(SwitchCase)
 	 */
@@ -3900,10 +3900,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	class slot {
-		ArrayList<ConditionalJump> jumps = new ArrayList<ConditionalJump>();
+		ArrayList<ConditionalJump> jumps = new ArrayList<>();
 		ArrayList<Statement> stmts = null;
 	}
-	
+
 	/**
 	 * @see ASTVisitor#visit(SwitchStatement)
 	 */
@@ -3918,7 +3918,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		ArrayList<Statement> statementsDefault = null;
 		Jump jumpDefault = null;
-		ArrayList<slot> jumpsStatements = new ArrayList<slot>();
+		ArrayList<slot> jumpsStatements = new ArrayList<>();
 		slot currentslot = new slot();
 		jumpsStatements.add(currentslot);
 
@@ -3930,7 +3930,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					jumpDefault = new Jump();
 					push(jumpDefault);
 					storeInstruction(); // jump
-					statementsDefault = new ArrayList<Statement>();
+					statementsDefault = new ArrayList<>();
 				} else {
 					if (switchCase.getExpression() instanceof StringLiteral) {
 						push(new SendMessage(
@@ -3957,7 +3957,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					statementsDefault.add(statement);
 				} else {
 					if (currentslot.stmts == null) {
-						currentslot.stmts = new ArrayList<Statement>();
+						currentslot.stmts = new ArrayList<>();
 					}
 					currentslot.stmts.add(statement);
 				}
@@ -4032,7 +4032,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement
 	 * )
@@ -4044,7 +4044,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TextElement)
 	 */
@@ -4129,7 +4129,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TypeParameter)
 	 */
@@ -4264,7 +4264,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * WildcardType)
 	 */
@@ -4421,7 +4421,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Returns the method signature given the binding and the enclosing type
 	 * signature (if there is one)
-	 * 
+	 *
 	 * @param methodBinding
 	 *            the binding to get the signature for
 	 * @param enclosingTypeSignature
@@ -4486,7 +4486,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Resolves and returns the type binding from the given expression reporting
 	 * an error if the binding is <code>null</code>.
-	 * 
+	 *
 	 * @param expression
 	 *            expression to resolve type binding for
 	 * @return type binding or <code>null</code> if not available
@@ -4505,7 +4505,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Resolves and returns the type binding for the give type reporting an
 	 * error if the binding is <code>null</code>.
-	 * 
+	 *
 	 * @param type
 	 *            type to resolve binding for
 	 * @return type binding or <code>null</code> if not available
@@ -4524,7 +4524,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Resolves and returns the binding for the given name reporting an error if
 	 * the binding is <code>null</code>.
-	 * 
+	 *
 	 * @param name
 	 *            name to resolve binding for
 	 * @return binding or <code>null</code> if not available
@@ -4543,7 +4543,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Resolves and returns the type binding for the given name reporting an
 	 * error if the binding is <code>null</code>.
-	 * 
+	 *
 	 * @param name
 	 *            name to resolve type binding for
 	 * @return type binding or <code>null</code> if not available

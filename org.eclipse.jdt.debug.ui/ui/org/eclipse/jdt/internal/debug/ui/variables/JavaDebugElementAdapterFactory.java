@@ -24,7 +24,7 @@ import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaWatchExpressionFilter;
 
 /**
  * Provides provider adapters for IJavaVariables and IJavaStackFrames
- * 
+ *
  * @see IJavaVariable
  * @see JavaVariableLabelProvider
  * @see JavaVariableContentProvider
@@ -35,7 +35,7 @@ import org.eclipse.jdt.internal.debug.ui.heapwalking.JavaWatchExpressionFilter;
  * @since 3.3
  */
 public class JavaDebugElementAdapterFactory implements IAdapterFactory {
-	
+
 	private static final IElementLabelProvider fgLPVariable = new JavaVariableLabelProvider();
 	private static final IElementContentProvider fgCPVariable = new JavaVariableContentProvider();
 	private static final IElementLabelProvider fgLPExpression = new ExpressionLabelProvider();

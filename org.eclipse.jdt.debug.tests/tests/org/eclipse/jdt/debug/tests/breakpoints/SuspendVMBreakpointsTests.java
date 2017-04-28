@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,18 +44,18 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 		String typeName = "MultiThreadedLoop";
 		IJavaLineBreakpoint bp = createLineBreakpoint(40, typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
-			
+
 			verifyAllThreadsSuspended(thread);
-			
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -64,37 +64,37 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSuspendVmExceptionBreakpoint() throws Exception {
 		String typeName = "ThrowsNPE";
-		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);
 		ex.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("suspended, but not by exception breakpoint", ex ,hit);
-			
+
 			verifyAllThreadsSuspended(thread);
-			
+
 			ex.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that the VM is suspended when a specific access watchpoint is hit
 	 * @throws Exception
 	 */
 	public void testSuspendVmAccessWatchpointBreakpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
-		
+
 		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
 		wp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -104,16 +104,16 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 30", 30, frame.getLineNumber());			
-			
+			assertEquals("Should be line 30", 30, frame.getLineNumber());
+
 			verifyAllThreadsSuspended(thread);
-			
+
 			wp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
+		}
+	}
 
 	/**
 	 * Tests that the VM is suspended when a specific modification watchpoint is hit
@@ -121,10 +121,10 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSuspendVmModificationWatchpointBreakpoint() throws Exception {
 		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
-		
+
 		IJavaWatchpoint wp = createWatchpoint(typeName, "list", false, true);
 		wp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -133,21 +133,21 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
-			
+
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
 			// line 27
 			assertEquals("Should be on line 27", 27, frame.getLineNumber());
-			
+
 			verifyAllThreadsSuspended(thread);
-			
+
 			wp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests that the VM is suspended when a specific method entry breakpoint is hit
 	 * @throws Exception
@@ -156,50 +156,50 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 		String typeName = "DropTests";
 		IJavaBreakpoint bp = createMethodBreakpoint(typeName, "method4", "()V", true, false);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertTrue("breakpoint was not a method breakpoint", hit instanceof IJavaMethodBreakpoint);
 
 			verifyAllThreadsSuspended(thread);
-			
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that the VM is suspended when a specific method exit breakpoint is hit
 	 * @throws Exception
 	 */
 	public void testSuspendVmMethodExitBreakpoint() throws Exception {
 		String typeName = "DropTests";
-		IJavaBreakpoint bp = createMethodBreakpoint(typeName, "method1", "()V", false, true);		
+		IJavaBreakpoint bp = createMethodBreakpoint(typeName, "method1", "()V", false, true);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertTrue("breakpoint was not a method breakpoint", hit instanceof IJavaMethodBreakpoint);
 
 			verifyAllThreadsSuspended(thread);
-						
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Verifies that all of the threads of the related debug target are suspended
 	 * @param thread
@@ -210,9 +210,9 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IThread[] threads = debugTarget.getThreads();
 			for (int i = 0; i < threads.length; i++) {
 				assertTrue("Thread wasn't suspended when a SUSPEND_VM breakpoint was hit, thread=" + threads[i].getName(), threads[i].isSuspended());
-			}		
+			}
 		} catch (DebugException e) {
 			fail(e.getMessage());
 		}
-	}	
+	}
 }

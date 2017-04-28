@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -47,14 +47,14 @@ import org.osgi.service.prefs.BackingStoreException;
  * Java Debugging.
  */
 public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPropertyChangeListener {
-	
+
 	/**
 	 * This class exists to provide visibility to the
 	 * <code>refreshValidState</code> method and to perform more intelligent
 	 * clearing of the error message.
 	 */
-	protected class JavaDebugIntegerFieldEditor extends IntegerFieldEditor {						
-		
+	protected class JavaDebugIntegerFieldEditor extends IntegerFieldEditor {
+
 		public JavaDebugIntegerFieldEditor(String name, String labelText, Composite parent) {
 			super(name, labelText, parent);
 		}
@@ -71,7 +71,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		}
 	}
-	
+
 	// Suspend preference widgets
 	private Button fSuspendButton;
 	private Button fSuspendOnCompilationErrors;
@@ -83,7 +83,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fOnlyIncludeExportedEntries;
 	private Combo fSuspendVMorThread;
 	private Combo fWatchpoint;
-	
+
 	// Hot code replace preference widgets
 	private Button fEnableHCRButton;
 	private Button fAlertHCRButton;
@@ -99,7 +99,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.JavaDebugPreferencePage_description); 
+		setDescription(DebugUIMessages.JavaDebugPreferencePage_description);
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +110,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -122,69 +122,69 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 				"org.eclipse.debug.ui.DebugPreferencePage", DebugUIMessages.JavaDebugPreferencePage_0, //$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 		link.getControl().setFont(composite.getFont());
-		Group group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1, 2, 1, GridData.FILL_HORIZONTAL); 
-		fSuspendButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1, null, false, 2); 
-		fSuspendOnCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1, null, false, 2); 
+		Group group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Suspend_Execution_1, 2, 1, GridData.FILL_HORIZONTAL);
+		fSuspendButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend__execution_on_uncaught_exceptions_1, null, false, 2);
+		fSuspendOnCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Suspend_execution_on_co_mpilation_errors_1, null, false, 2);
 		fSuspendDuringEvaluations = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_14, null, false, 2);
 		fOpenInspector = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_20, null, false, 2);
-		
+
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_21, 1);
 		fSuspendVMorThread = new Combo(group, SWT.BORDER|SWT.READ_ONLY);
 		fSuspendVMorThread.setItems(new String[]{DebugUIMessages.JavaDebugPreferencePage_22, DebugUIMessages.JavaDebugPreferencePage_23});
 		fSuspendVMorThread.setFont(group.getFont());
-		
+
 		SWTFactory.createLabel(group, DebugUIMessages.JavaDebugPreferencePage_24, 1);
 		fWatchpoint = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
 		fWatchpoint.setItems(new String[] {DebugUIMessages.JavaDebugPreferencePage_25, DebugUIMessages.JavaDebugPreferencePage_26, DebugUIMessages.JavaDebugPreferencePage_27});
 		fWatchpoint.setFont(group.getFont());
-			
+
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Hot_Code_Replace_2, 1, 1, GridData.FILL_HORIZONTAL);
 		fEnableHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Enable_hot_code_replace_1, null, true, 1);
-		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1); 
-		fAlertHCRNotSupportedButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1, null, false, 1); 
-		fAlertObsoleteButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1, null, false, 1); 
-		fPerformHCRWithCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1, null, false, 1);  
+		fAlertHCRButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_fails_1, null, false, 1);
+		fAlertHCRNotSupportedButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_hot_code_replace_is_not_supported_1, null, false, 1);
+		fAlertObsoleteButton = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Alert_me_when_obsolete_methods_remain_1, null, false, 1);
+		fPerformHCRWithCompilationErrors = SWTFactory.createCheckButton(group, DebugUIMessages.JavaDebugPreferencePage_Replace_classfiles_containing_compilation_errors_1, null, false, 1);
 
 		group = SWTFactory.createGroup(composite, DebugUIMessages.JavaDebugPreferencePage_Communication_1, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite space = SWTFactory.createComposite(group, group.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
-		
+
 		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage_Debugger__timeout__2, space);
 		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fTimeoutText.setValidRange(JDIDebugModel.DEF_REQUEST_TIMEOUT, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT)})); 
+		fTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JDIDebugModel.DEF_REQUEST_TIMEOUT)}));
 		fTimeoutText.load();
-		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, space); 
+		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.JavaDebugPreferencePage__Launch_timeout__ms___1, space);
 		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fConnectionTimeoutText.setValidRange(JavaRuntime.DEF_CONNECT_TIMEOUT, Integer.MAX_VALUE);
-		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT)})); 
+		fConnectionTimeoutText.setErrorMessage(NLS.bind(DebugUIMessages.JavaDebugPreferencePage_Value_must_be_a_valid_integer_greater_than__0__ms_1, new Object[] {new Integer(JavaRuntime.DEF_CONNECT_TIMEOUT)}));
 		fConnectionTimeoutText.load();
-		
+
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fPromptUnableToInstallBreakpoint = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_19, null, false, 1);
 		fPromptDeleteConditionalBreakpoint= SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_promptWhenDeletingCondidtionalBreakpoint, null, false, 1);
 		fFilterUnrelatedBreakpoints = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_filterUnrelatedBreakpoints, null, false, 1);
-		
+
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fOnlyIncludeExportedEntries = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_only_include_exported_entries, null, false, 1);
 
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fShowStepResult = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_ShowStepResult_1, null, false, 1);
-		
+
 		setValues();
 
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText.setPropertyChangeListener(this);
-		return composite;		
+		return composite;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
@@ -234,7 +234,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -266,9 +266,9 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			fConnectionTimeoutText.setStringValue(new Integer(prefs.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT,JavaRuntime.DEF_CONNECT_TIMEOUT)).toString());
 			fOnlyIncludeExportedEntries.setSelection(prefs.getBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false));
 		}
-		super.performDefaults();	
+		super.performDefaults();
 	}
-	
+
 	/**
 	 * Set the values of the component widgets based on the
 	 * values in the preference store
@@ -314,11 +314,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			if (newValue) {
 				if (fTimeoutText != null && event.getSource() != fTimeoutText) {
 					fTimeoutText.refreshValidState();
-				} 
+				}
 				if (fConnectionTimeoutText != null && event.getSource() != fConnectionTimeoutText) {
 					fConnectionTimeoutText.refreshValidState();
 				}
-			} 
+			}
 			setValid(fTimeoutText.isValid() && fConnectionTimeoutText.isValid());
 			getContainer().updateButtons();
 			updateApplyButton();
@@ -334,5 +334,5 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			return true;
 		}
 		return false;
-	}	
+	}
 }

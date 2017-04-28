@@ -29,16 +29,16 @@ public class TestLogicalStructures extends AbstractDebugTest {
 
 	/**
 	 * Constructs test.
-	 * 
+	 *
 	 * @param name test name
 	 */
 	public TestLogicalStructures(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Test the logical structure for a list.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testListLogicalStructure() throws Exception {
@@ -48,35 +48,35 @@ public class TestLogicalStructures extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("missing top frame", frame);
-			
+
 			IJavaVariable variable = frame.findVariable("list");
 			assertNotNull("Missing variable 'list'", variable);
-			
+
 			IValue value = variable.getValue();
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			assertEquals("Should be one logical structure type", 1, types.length);
-			
+
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
 			assertEquals("Logical value should be an array", "java.lang.Object[]", logicalValue.getJavaType().getName());
-			
+
 			IJavaArray array = (IJavaArray) logicalValue;
 			assertEquals("Should be two elements in the structure", 2, array.getLength());
-			
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
+		}
 	}
 
 	/**
 	 * Test the logical structure for a map.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testMapLogicalStructure() throws Exception {
@@ -86,35 +86,35 @@ public class TestLogicalStructures extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("missing top frame", frame);
-			
+
 			IJavaVariable variable = frame.findVariable("map");
 			assertNotNull("Missing variable 'map'", variable);
-			
+
 			IValue value = variable.getValue();
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			assertEquals("Should be one logical structure type", 1, types.length);
-			
+
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
 			assertEquals("Logical value should be an array", "java.lang.Object[]", logicalValue.getJavaType().getName());
-			
+
 			IJavaArray array = (IJavaArray) logicalValue;
 			assertEquals("Should be two elements in the structure", 2, array.getLength());
-			
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
-	
+		}
+	}
+
 	/**
 	 * Test the logical structure for a map entry.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEntryLogicalStructure() throws Exception {
@@ -124,29 +124,29 @@ public class TestLogicalStructures extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("missing top frame", frame);
-			
+
 			IJavaVariable variable = frame.findVariable("entry");
 			assertNotNull("Missing variable 'entry'", variable);
-			
+
 			IValue value = variable.getValue();
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			assertEquals("Should be one logical structure type", 1, types.length);
-			
+
 			IJavaObject logicalValue = (IJavaObject) types[0].getLogicalStructure(value);
 			IVariable[] children = logicalValue.getVariables();
 			assertEquals("Should be two elements in the structure", 2, children.length);
 			assertEquals("First entry should be key", "key", children[0].getName());
 			assertEquals("Second entry should be value", "value", children[1].getName());
-			
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}				
-	}	
+		}
+	}
 }

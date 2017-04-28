@@ -58,7 +58,7 @@ import com.sun.jdi.VirtualMachine;
  * <p>
  * This class provides static utility methods only.
  * </p>
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -87,7 +87,7 @@ public class JDIDebugModel {
 	 * evaluation operation. If true, breakpoints will be hit as usual during
 	 * evaluations. If false, the breakpoint manager will be automatically
 	 * disabled during evaluations.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION = getPluginIdentifier()
@@ -100,7 +100,7 @@ public class JDIDebugModel {
 	 */
 	public static final String PREF_FILTER_BREAKPOINTS_FROM_UNRELATED_SOURCES = getPluginIdentifier()
 			+ ".do_not_install_breakpoints_from_unrelated_sources"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key for specifying if the value returned or thrown should be displayed as variable after a "step return" or "step over" (if
 	 * supported by the vm)
@@ -125,7 +125,7 @@ public class JDIDebugModel {
 	 * <code>IDisconnect</code>). Launching the actual VM is a client
 	 * responsibility. By default, the target VM will be resumed on startup. The
 	 * debug target is added to the given launch.
-	 * 
+	 *
 	 * @param launch
 	 *            the launch the new debug target will be contained in
 	 * @param vm
@@ -164,7 +164,7 @@ public class JDIDebugModel {
 	 * when the connection to the VM was established). Launching the actual VM
 	 * is a client responsibility. The debug target is added to the given
 	 * launch.
-	 * 
+	 *
 	 * @param launch
 	 *            the launch the new debug target will be contained in
 	 * @param vm
@@ -211,7 +211,7 @@ public class JDIDebugModel {
 
 	/**
 	 * Returns the identifier for the JDI debug model plug-in
-	 * 
+	 *
 	 * @return plug-in identifier
 	 */
 	public static String getPluginIdentifier() {
@@ -227,7 +227,7 @@ public class JDIDebugModel {
 	 * class are not notified of hot code replace events for that target. This
 	 * allows a target to have custom hot code replace notification behavior.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            hot code replace listener
 	 * @see IJavaHotCodeReplaceListener
@@ -242,7 +242,7 @@ public class JDIDebugModel {
 	/**
 	 * Unregisters the given listener for hot code replace notifications. Has no
 	 * effect if an identical listener is not already registered.
-	 * 
+	 *
 	 * @param listener
 	 *            hot code replace listener
 	 * @see IJavaHotCodeReplaceListener
@@ -256,7 +256,7 @@ public class JDIDebugModel {
 	/**
 	 * Registers the given listener for breakpoint notifications. Has no effect
 	 * if an identical listener is already registered.
-	 * 
+	 *
 	 * @param listener
 	 *            breakpoint listener
 	 * @see IJavaBreakpointListener
@@ -270,7 +270,7 @@ public class JDIDebugModel {
 	/**
 	 * Unregisters the given listener for breakpoint notifications. Has no
 	 * effect if an identical listener is not already registered.
-	 * 
+	 *
 	 * @param listener
 	 *            breakpoint listener
 	 * @see IJavaBreakpointListener
@@ -288,7 +288,7 @@ public class JDIDebugModel {
 	 * is known, it may be specified by charStart/charEnd. If hitCount is > 0,
 	 * the breakpoint will suspend execution when it is "hit" the specified
 	 * number of times.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -337,7 +337,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaLineBreakpoint(resource, typeName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
@@ -347,7 +347,7 @@ public class JDIDebugModel {
 	 * given line number, which is installed in all classes whose fully
 	 * qualified name matches the given pattern. If hitCount > 0, the breakpoint
 	 * will suspend execution when it is "hit" the specified number of times.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -398,7 +398,7 @@ public class JDIDebugModel {
 			int lineNumber, int charStart, int charEnd, int hitCount,
 			boolean register, Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaPatternBreakpoint(resource, sourceName, pattern,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -406,7 +406,7 @@ public class JDIDebugModel {
 	/**
 	 * Creates and returns a line breakpoint identified by its source file name
 	 * and/or path, and stratum that it is relative to.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -482,7 +482,7 @@ public class JDIDebugModel {
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaStratumLineBreakpoint(resource, stratum, sourceName,
 				sourcePath, classNamePattern, lineNumber, charStart, charEnd,
 				hitCount, register, attributes);
@@ -493,7 +493,7 @@ public class JDIDebugModel {
 	 * the given line number. Clients must set the class name pattern per target
 	 * for this type of breakpoint. If hitCount > 0, the breakpoint will suspend
 	 * execution when it is "hit" the specified number of times.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -538,7 +538,7 @@ public class JDIDebugModel {
 			int charStart, int charEnd, int hitCount, boolean register,
 			Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaTargetPatternBreakpoint(resource, sourceName,
 				lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
@@ -550,7 +550,7 @@ public class JDIDebugModel {
 	 * should cause thread suspensions - that is, in caught and/or uncaught
 	 * locations. Checked indicates if the given exception is a checked
 	 * exception.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -585,7 +585,7 @@ public class JDIDebugModel {
 			boolean uncaught, boolean checked, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaExceptionBreakpoint(resource, exceptionName, caught,
 				uncaught, checked, register, attributes);
 	}
@@ -595,7 +595,7 @@ public class JDIDebugModel {
 	 * with the given name. The marker associated with the breakpoint will be
 	 * created on the specified resource. If hitCount > 0, the breakpoint will
 	 * suspend execution when it is "hit" the specified number of times.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -647,14 +647,14 @@ public class JDIDebugModel {
 			int charEnd, int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
 	}
 
 	/**
 	 * Creates and returns a method breakpoint with the specified criteria.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -717,7 +717,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaMethodBreakpoint(resource, typePattern, methodName,
 				methodSignature, entry, exit, nativeOnly, lineNumber,
 				charStart, charEnd, hitCount, register, attributes);
@@ -727,7 +727,7 @@ public class JDIDebugModel {
 	 * Creates and returns a method entry breakpoint with the specified
 	 * criteria. A method entry breakpoint will only be installed for methods
 	 * that have executable code (i.e. will not work for native methods).
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -776,7 +776,7 @@ public class JDIDebugModel {
 			int hitCount, boolean register, Map<String, Object> attributes)
 			throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaMethodEntryBreakpoint(resource, typeName, methodName,
 				methodSignature, lineNumber, charStart, charEnd, hitCount,
 				register, attributes);
@@ -786,7 +786,7 @@ public class JDIDebugModel {
 	 * Returns a Java line breakpoint that is already registered with the
 	 * breakpoint manager for a type with the given name at the given line
 	 * number.
-	 * 
+	 *
 	 * @param typeName
 	 *            fully qualified type name
 	 * @param lineNumber
@@ -826,7 +826,7 @@ public class JDIDebugModel {
 	 * Returns a Java line breakpoint that is already registered with the
 	 * breakpoint manager for a type with the given name at the given line
 	 * number in the given resource.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource
 	 * @param typeName
@@ -873,14 +873,14 @@ public class JDIDebugModel {
 	 * convenience method. <br>
 	 * <br>
 	 * For example:
-	 * 
+	 *
 	 * <pre>
 	 * IEclipsePreferences node = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 	 * if(node != null) {
 	 * 	...
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return the preference store for this plug-in
 	 * @since 2.0
 	 * @deprecated the {@link Preferences} class has been deprecated, use the {@link IEclipsePreferences} accessors instead
@@ -896,7 +896,7 @@ public class JDIDebugModel {
 	/**
 	 * Saves the preference store for this plug-in.
 	 * <br><br>
-	 * The Preferences class has been deprecated and clients should directly be using the 
+	 * The Preferences class has been deprecated and clients should directly be using the
 	 * InstanceScope node for JDIDebugPlugin rather than this convenience method.
 	 * <br><br>
 	 * For example:
@@ -928,7 +928,7 @@ public class JDIDebugModel {
 	 * Creates and returns a class prepare breakpoint for a type with the given
 	 * name. The marker associated with the breakpoint will be created on the
 	 * specified resource.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource on which to create the associated breakpoint
 	 *            marker
@@ -965,7 +965,7 @@ public class JDIDebugModel {
 			IResource resource, String typeName, int memberType, int charStart,
 			int charEnd, boolean register, Map<String, Object> attributes) throws CoreException {
 		if (attributes == null)
-			attributes = new HashMap<String, Object>(10);
+			attributes = new HashMap<>(10);
 		return new JavaClassPrepareBreakpoint(resource, typeName, memberType,
 				charStart, charEnd, register, attributes);
 	}

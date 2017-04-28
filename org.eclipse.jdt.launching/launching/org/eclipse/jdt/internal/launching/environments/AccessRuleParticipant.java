@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,27 +22,27 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 
 /**
  * Proxy to an access rule participant for an execution environment.
- * 
+ *
  * @since 3.3
  */
 class AccessRuleParticipant implements IAccessRuleParticipant {
 
 	private IConfigurationElement fElement;
-	
+
 	private IAccessRuleParticipant fDelegate;
-	
+
 	/**
-	 * Constructs a proxy to a rule participant contributed with the 
+	 * Constructs a proxy to a rule participant contributed with the
 	 * given configuration element. The element may be an
 	 * <code>executionEnvironment</code> element or a <code>ruleParticipant</code>
 	 * extension.
-	 * 
+	 *
 	 * @param element the configuration element
 	 */
 	AccessRuleParticipant(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IAccessRuleParticipant#getAccessRules(org.eclipse.jdt.launching.environments.IExecutionEnvironment, org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.LibraryLocation[], org.eclipse.jdt.core.IJavaProject)
 	 */
@@ -59,7 +59,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		}
 		return rules;
 	}
-	
+
 	private IAccessRuleParticipant getDelegate() throws CoreException {
 		if (fDelegate == null) {
 			if (fElement.getName().equals(EnvironmentsManager.ENVIRONMENT_ELEMENT)) {
@@ -70,10 +70,10 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		}
 		return fDelegate;
 	}
-	
+
 	/**
 	 * Returns the id of this participant.
-	 * 
+	 *
 	 * @return participant id
 	 */
 	String getId() {
@@ -82,7 +82,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		}
 		return fElement.getAttribute("id"); //$NON-NLS-1$
 	}
-	
+
 	private String getDelegateClassName() {
 		if (fElement.getName().equals(EnvironmentsManager.ENVIRONMENT_ELEMENT)) {
 			return fElement.getAttribute(EnvironmentsManager.RULE_PARTICIPANT_ELEMENT);
@@ -101,7 +101,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -109,7 +109,7 @@ class AccessRuleParticipant implements IAccessRuleParticipant {
 	public int hashCode() {
 		return getDelegateClassName().hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

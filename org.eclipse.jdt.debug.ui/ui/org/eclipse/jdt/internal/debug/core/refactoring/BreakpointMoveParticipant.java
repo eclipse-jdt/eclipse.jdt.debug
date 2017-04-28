@@ -36,21 +36,21 @@ import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 /**
  * Breakpoint participant for a move refactoring.
- * 
+ *
  * @since 3.2
  */
 public abstract class BreakpointMoveParticipant extends MoveParticipant {
-	
+
 	/**
 	 * Element being moved
 	 */
 	private IJavaElement fElement;
-	
+
 	/**
 	 * Destination container
 	 */
 	private IJavaElement fDestination;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
@@ -63,29 +63,29 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 			return false;
 		}
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * Returns the element this refactoring is operating on.
-	 * 
+	 *
 	 * @return the original element
 	 */
 	protected IJavaElement getOriginalElement() {
 		return fElement;
 	}
-	
+
 	/**
 	 * Returns the destination of the move operation.
-	 * 
+	 *
 	 * @return the destination {@link IJavaElement}
 	 */
 	protected IJavaElement getDestination() {
 		return fDestination;
 	}
-	
+
 	/**
 	 * Returns whether this given element is a valid target for this operation.
-	 * 
+	 *
 	 * @param element the Java model element
 	 * @return whether this given element is a valid target for this operation
 	 */
@@ -112,7 +112,7 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes);
@@ -123,42 +123,42 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gathers refactoring specific changes. Subclasses must override.
-	 * 
+	 *
 	 * @param markers markers to consider during the change
 	 * @param changes the list of changes
 	 * @throws CoreException if a problem occurs
 	 * @throws OperationCanceledException if the operation was cancelled
 	 */
 	protected abstract void gatherChanges(IMarker[] markers, List<Change> changes) throws CoreException, OperationCanceledException;
-	
+
 	/**
 	 * Returns the resource that should be considered when searching for affected breakpoints.
-	 * 
+	 *
 	 * @return resource to search for breakpoint markers.
 	 */
 	protected IResource getBreakpointContainer() {
 		return fElement.getResource();
 	}
-	
+
 	/**
 	 * Returns the breakpoint associated with the given marker.
-	 * 
+	 *
 	 * @param marker breakpoint marker
 	 * @return breakpoint or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint(IMarker marker) {
 		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
 	}
-	
+
 	/**
 	 * Creates a specific type of change for a breakpoint that is changing types.
 	 * @param breakpoint the breakpoint to create a change for
 	 * @param destType the new type
 	 * @param originalType the original type
-	 * 
+	 *
 	 * @return type change or <code>null</code>
 	 * @throws CoreException if creating the change fails
 	 */
@@ -175,11 +175,11 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 			return new LineBreakpointTypeChange((IJavaLineBreakpoint) breakpoint, destType);
 		}
 		return null;
-	}		
-	
+	}
+
 	/**
 	 * Returns whether the given target type is contained in the specified container type.
-	 * 
+	 *
 	 * @param container the containing element
 	 * @param type the target element
 	 * @return if the given type is contained in the given container
@@ -193,5 +193,5 @@ public abstract class BreakpointMoveParticipant extends MoveParticipant {
 			parent = parent.getParent();
 		}
 		return false;
-	}		
+	}
 }

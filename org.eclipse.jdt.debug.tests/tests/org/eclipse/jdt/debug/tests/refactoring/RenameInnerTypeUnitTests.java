@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,7 +60,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -90,7 +90,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -150,9 +150,9 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param root
 	 * @param packageName
 	 * @param cuName
@@ -167,7 +167,7 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		//if this was a non-typed test, get's it's parent type
 		if(!(target instanceof IType))
 			target = (IMember)target.getParent();
-		
+
 		IType targetType = (IType)target;
 		JavaRenameProcessor proc = new RenameTypeProcessor(targetType);
 		proc.setNewElementName("RenamedType");
@@ -178,58 +178,58 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 		{
 			System.out.println(refactoringStatus.getMessageMatchingSeverity(refactoringStatus.getSeverity()));
 			return null;
-		}		
-		
+		}
+
 		return ref;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	public void testInnerClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType",
 					targetLineage = "MoveeChild$RenamedType";
-	
+
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testInnerLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType",
 					targetLineage = "MoveeChild$RenamedType";
 			int lineNumber = 35;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, lineNumber);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildsMethod()V",
 					targetLineage = "MoveeChild$RenamedType",
 					methodName = "innerChildsMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, methodName);
-	}//end testBreakPoint	
-	
+	}//end testBreakPoint
+
 	public void testInnerWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$InnerChildType$innerChildInt",
 					targetLineage = "MoveeChild$RenamedType",
 					fieldName = "innerChildInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, targetLineage, fieldName);
-	}//end testBreakPoint		
+	}//end testBreakPoint
 
 
 	/**
-	 * Creates an exception breakpoint and adds a filter. Refactors & checks 
+	 * Creates an exception breakpoint and adds a filter. Refactors & checks
 	 * if the filter changed appropriately w/ the refactor.
 	 * @param src
 	 * @param pack
@@ -259,11 +259,11 @@ public class RenameInnerTypeUnitTests extends AbstractRefactoringDebugTest {
 
 
 	public void testPublicExceptionBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					refactoringTargetName = "MoveeChild$InnerChildType",
 					exceptionName = "java.lang.NullPointerException";
 			runExceptionBreakpointTest(src, pack, cunit, refactoringTargetName,exceptionName);
-	}//end testBreakPoint		
+	}//end testBreakPoint
 }

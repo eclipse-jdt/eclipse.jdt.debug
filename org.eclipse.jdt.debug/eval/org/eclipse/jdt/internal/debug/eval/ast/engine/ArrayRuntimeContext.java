@@ -51,7 +51,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getVM()
 	 */
@@ -62,7 +62,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThis()
 	 */
@@ -73,7 +73,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#
 	 * getReceivingType()
 	 */
@@ -96,7 +96,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getLocals
 	 * ()
@@ -108,7 +108,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#getThread
 	 * ()
@@ -120,7 +120,7 @@ public class ArrayRuntimeContext extends AbstractRuntimeContext {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext#isConstructor
 	 * ()

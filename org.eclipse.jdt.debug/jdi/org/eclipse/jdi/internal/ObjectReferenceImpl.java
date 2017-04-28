@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -44,7 +44,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	/** JDWP Tag. */
@@ -154,7 +154,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			result.owner = ThreadReferenceImpl.read(this, replyData);
 			result.entryCount = readInt("entry count", replyData); //$NON-NLS-1$
 			int nrOfWaiters = readInt("nr of waiters", replyData); //$NON-NLS-1$
-			result.waiters = new ArrayList<ThreadReference>(nrOfWaiters);
+			result.waiters = new ArrayList<>(nrOfWaiters);
 			for (int i = 0; i < nrOfWaiters; i++)
 				result.waiters.add(ThreadReferenceImpl.read(this, replyData));
 			return result;
@@ -200,7 +200,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 */
 	@Override
 	public Value getValue(Field field) {
-		ArrayList<Field> list = new ArrayList<Field>(1);
+		ArrayList<Field> list = new ArrayList<>(1);
 		list.add(field);
 		return getValues(list).get(field);
 	}
@@ -212,7 +212,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 *         ways, such as from a local variable in a stack frame, or from a
 	 *         JNI global reference. Such non-object referrers are not returned
 	 *         by this method.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override
@@ -250,7 +250,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			if (max > 0 && elements > max) {
 				elements = max;
 			}
-			ArrayList<ObjectReference> list = new ArrayList<ObjectReference>();
+			ArrayList<ObjectReference> list = new ArrayList<>();
 			for (int i = 0; i < elements; i++) {
 				list.add((ObjectReference)ValueImpl.readWithTag(this, replyData));
 			}
@@ -271,7 +271,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	public Map<Field, Value> getValues(List<? extends Field> allFields) {
 		// if the field list is empty, nothing to do.
 		if (allFields.isEmpty()) {
-			return new HashMap<Field, Value>();
+			return new HashMap<>();
 		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -283,8 +283,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			 * Distinguish static fields from non-static fields: For static
 			 * fields ReferenceTypeImpl.getValues() must be used.
 			 */
-			List<Field> staticFields = new ArrayList<Field>();
-			List<FieldImpl> nonStaticFields = new ArrayList<FieldImpl>();
+			List<Field> staticFields = new ArrayList<>();
+			List<FieldImpl> nonStaticFields = new ArrayList<>();
 
 			// Separate static and non-static fields.
 			int allFieldsSize = allFields.size();
@@ -300,7 +300,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			// First get values for the static fields.
 			Map<Field, Value> resultMap;
 			if (staticFields.isEmpty()) {
-				resultMap = new HashMap<Field, Value>();
+				resultMap = new HashMap<>();
 			} else {
 				resultMap = referenceType().getValues(staticFields);
 			}
@@ -381,7 +381,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 
 	/**
 	 * Invokes the specified static Method in the target VM.
-	 * 
+	 *
 	 * @return Returns a Value mirror of the invoked method's return value.
 	 */
 	@Override

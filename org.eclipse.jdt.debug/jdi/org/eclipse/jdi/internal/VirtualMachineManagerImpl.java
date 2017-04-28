@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -52,7 +52,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
-	List<VirtualMachine> fConnectedVMs = new ArrayList<VirtualMachine>();
+	List<VirtualMachine> fConnectedVMs = new ArrayList<>();
 	/** True if in verbose mode. */
 	private boolean fVerbose = false;
 	/** Name of verbose file. */
@@ -143,9 +143,9 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 			IPreferencesService srvc = Platform.getPreferencesService();
 			if(srvc != null) {
 				return Platform.getPreferencesService().getInt(
-						JDIDebugModel.getPluginIdentifier(), 
-						JDIDebugModel.PREF_REQUEST_TIMEOUT, 
-						JDIDebugModel.DEF_REQUEST_TIMEOUT, 
+						JDIDebugModel.getPluginIdentifier(),
+						JDIDebugModel.PREF_REQUEST_TIMEOUT,
+						JDIDebugModel.DEF_REQUEST_TIMEOUT,
 						null);
 			}
 		} catch (NoClassDefFoundError e) {
@@ -182,7 +182,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	@Override
 	public List<Connector> allConnectors() {
-		List<Connector> result = new ArrayList<Connector>(attachingConnectors());
+		List<Connector> result = new ArrayList<>(attachingConnectors());
 		result.addAll(launchingConnectors());
 		result.addAll(listeningConnectors());
 		return result;
@@ -193,7 +193,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	@Override
 	public List<AttachingConnector> attachingConnectors() {
-		ArrayList<AttachingConnector> list = new ArrayList<AttachingConnector>(1);
+		ArrayList<AttachingConnector> list = new ArrayList<>(1);
 		list.add(new SocketAttachingConnectorImpl(this));
 		return list;
 	}
@@ -203,7 +203,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	@Override
 	public List<LaunchingConnector> launchingConnectors() {
-		ArrayList<LaunchingConnector> list = new ArrayList<LaunchingConnector>(2);
+		ArrayList<LaunchingConnector> list = new ArrayList<>(2);
 		list.add(new SocketLaunchingConnectorImpl(this));
 		list.add(new SocketRawLaunchingConnectorImpl(this));
 		return list;
@@ -214,7 +214,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	@Override
 	public List<ListeningConnector> listeningConnectors() {
-		ArrayList<ListeningConnector> list = new ArrayList<ListeningConnector>(1);
+		ArrayList<ListeningConnector> list = new ArrayList<>(1);
 		list.add(new SocketListeningConnectorImpl(this));
 		return list;
 	}

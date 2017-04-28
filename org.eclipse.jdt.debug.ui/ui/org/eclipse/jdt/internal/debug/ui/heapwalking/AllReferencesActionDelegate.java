@@ -38,13 +38,13 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action to browse all references to selected object.
- * 
+ *
  * @since 3.3
  */
 public class AllReferencesActionDelegate extends ObjectActionDelegate implements IWorkbenchWindowActionDelegate{
 
 	protected IWorkbenchWindow fWindow;
-	
+
 	@Override
 	public void run(IAction action) {
 		IStructuredSelection currentSelection = getCurrentSelection();
@@ -52,8 +52,8 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 			IJavaVariable var = (IJavaVariable) currentSelection.getFirstElement();
 			try {
 				JDIReferenceListValue referenceList = new JDIReferenceListValue((IJavaObject) var.getValue());
-				InspectPopupDialog ipd = new InspectPopupDialog(getShell(), 
- getAnchor(getPart().getAdapter(IDebugView.class)), 
+				InspectPopupDialog ipd = new InspectPopupDialog(getShell(),
+ getAnchor(getPart().getAdapter(IDebugView.class)),
 						PopupInspectAction.ACTION_DEFININITION_ID,
 						new JavaInspectExpression(NLS.bind(Messages.AllReferencesActionDelegate_1,new String[]{var.getName()}),referenceList));
 				ipd.open();
@@ -64,10 +64,10 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 			JDIDebugUIPlugin.statusDialog(new Status(IStatus.WARNING,JDIDebugUIPlugin.getUniqueIdentifier(),Messages.AllReferencesActionDelegate_0));
 		}
 	}
-	
+
 	/**
 	 * Compute an anchor based on selected item in the tree.
-	 * 
+	 *
 	 * @param view anchor view
 	 * @return anchor point
 	 */
@@ -81,7 +81,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 				return tree.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
 			}
 		}
-		return control.toDisplay(0, 0);    	
+		return control.toDisplay(0, 0);
     }
 
 	/* (non-Javadoc)
@@ -104,7 +104,7 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#getPart()
 	 */
@@ -118,5 +118,5 @@ public class AllReferencesActionDelegate extends ObjectActionDelegate implements
 		}
 		return null;
 	}
-	
+
 }

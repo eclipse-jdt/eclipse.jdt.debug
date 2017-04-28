@@ -38,7 +38,7 @@ import org.eclipse.osgi.util.NLS;
 public abstract class AbstractVMInstallType implements IVMInstallType, IExecutableExtension {
 	private List<IVMInstall> fVMs;
 	private String fId;
-	
+
 	/**
 	 * Constructs a new VM install type.
 	 */
@@ -100,14 +100,14 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	@Override
 	public synchronized IVMInstall createVMInstall(String id) throws IllegalArgumentException {
 		if (findVMInstall(id) != null) {
-			String format= LaunchingMessages.vmInstallType_duplicateVM; 
+			String format= LaunchingMessages.vmInstallType_duplicateVM;
 			throw new IllegalArgumentException(NLS.bind(format, new String[] { id }));
 		}
 		IVMInstall vm = doCreateVMInstall(id);
 		fVMs.add(vm);
 		return vm;
 	}
-	
+
 	/**
 	 * Subclasses should return a new instance of the appropriate
 	 * <code>IVMInstall</code> subclass from this method.
@@ -122,14 +122,14 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * Initializes the id parameter from the "id" attribute
 	 * in the configuration markup.
 	 * Subclasses should not override this method.
-	 * @param config the configuration element used to trigger this execution. 
+	 * @param config the configuration element used to trigger this execution.
 	 *		It can be queried by the executable extension for specific
 	 *		configuration properties
 	 * @param propertyName the name of an attribute of the configuration element
 	 *		used on the <code>createExecutableExtension(String)</code> call. This
 	 *		argument can be used in the cases where a single configuration element
 	 *		is used to define multiple executable extensions.
-	 * @param data adapter data in the form of a <code>String</code>, 
+	 * @param data adapter data in the form of a <code>String</code>,
 	 *		a <code>Hashtable</code>, or <code>null</code>.
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
@@ -174,15 +174,15 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 * it has been added to the abstract base class that VM install types should
 	 * subclass.
 	 * </p>
-	 * 
+	 *
 	 * @param installLocation home location
 	 * @return default javadoc location or <code>null</code>
 	 * @since 2.1
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * Returns a string of default VM arguments for a VM installed at the
 	 * given home location, or <code>null</code> if none.

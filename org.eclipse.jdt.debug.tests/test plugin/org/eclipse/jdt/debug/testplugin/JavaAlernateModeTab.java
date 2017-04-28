@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Test tab contribution to an existing tab group.
- * 
+ *
  * @since 3.3
  */
 public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
-	
+
 	private Button fAlternateModeCheckBox;
 
 	/** Returns the set of modes this tab supports
@@ -51,7 +51,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	public String getName() {
 		return "Alternate";
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
@@ -71,7 +71,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}	
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -116,7 +116,7 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 		setControl(fAlternateModeCheckBox);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
@@ -142,10 +142,10 @@ public class JavaAlernateModeTab extends AbstractLaunchConfigurationTab implemen
 			});
 		}
 	}
-	
+
 	/**
 	 * handles setting the checked state of the widget
-	 * must check if we are in the UI thread before calling this method, as the launch ocnfiguration 
+	 * must check if we are in the UI thread before calling this method, as the launch ocnfiguration
 	 * notification can come from the non-UI tread.
 	 * @param configuration
 	 */

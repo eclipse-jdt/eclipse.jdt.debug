@@ -29,14 +29,14 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class LineBreakpointTypeChange extends LineBreakpointChange {
-	
+
 	private IType fDestType;
-	
+
 	public LineBreakpointTypeChange(IJavaLineBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
@@ -56,17 +56,17 @@ public class LineBreakpointTypeChange extends LineBreakpointChange {
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		IJavaLineBreakpoint breakpoint = JDIDebugModel.createLineBreakpoint(
 				resource,
 				fDestType.getFullyQualifiedName(),
 				getLineNumber(),
-				getCharStart(), 
+				getCharStart(),
 				getCharEnd(),
-				0, 
-				true, 
+				0,
+				true,
 				map);
 		apply(breakpoint);
 		getOriginalBreakpoint().delete();

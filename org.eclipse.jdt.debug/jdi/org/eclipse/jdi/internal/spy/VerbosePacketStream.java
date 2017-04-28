@@ -553,7 +553,7 @@ public class VerbosePacketStream extends PrintStream {
 			int cset = commandId >> 8;
 			int cmd = commandId & 0xFF;
 			println(MessageFormat
-					.format("Unknown command : {0} {1}", new Object[] { "" + cset, "" + cmd })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+					.format("Unknown command : {0} {1}", new Object[] { "" + cset, "" + cmd })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			break;
 		}
 	}
@@ -859,7 +859,7 @@ public class VerbosePacketStream extends PrintStream {
 			int cset = commandId >> 8;
 			int cmd = commandId & 0xFF;
 			println(MessageFormat
-					.format("Unknown command : {0} {1}", new Object[] { "" + cset, "" + cmd })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+					.format("Unknown command : {0} {1}", new Object[] { "" + cset, "" + cmd })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			break;
 		}
 	}

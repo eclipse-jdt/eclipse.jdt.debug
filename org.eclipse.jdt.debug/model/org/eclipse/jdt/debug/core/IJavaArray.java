@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IIndexedValue;
 
 /**
  * A value referencing an array on a target VM.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,7 +26,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 
 	/**
 	 * Returns the values contained in this array.
-	 * 
+	 *
 	 * @return the values contained in this array
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -40,7 +40,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 
 	/**
 	 * Returns the value at the given index in this array.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the value to return
 	 * @return the value at the given index
@@ -58,7 +58,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 
 	/**
 	 * Returns the length of this array.
-	 * 
+	 *
 	 * @return the length of this array
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -72,7 +72,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 
 	/**
 	 * Sets the value at the given index to the specified value.
-	 * 
+	 *
 	 * @param index
 	 *            the index at which to assign a new value
 	 * @param value
@@ -97,7 +97,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 	 * given array are replaced. If the given replacement values length is
 	 * longer than the length of this array, values in positions greater than
 	 * the length of this array are ignored.
-	 * 
+	 *
 	 * @param values
 	 *            replacement values
 	 * @exception DebugException
@@ -108,7 +108,7 @@ public interface IJavaArray extends IJavaObject, IIndexedValue {
 
 	/**
 	 * Replaces a range of values in this array.
-	 * 
+	 *
 	 * @param offset
 	 *            offset in this array to start replacing values at
 	 * @param length

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class ClassPrepareEventWaiter extends EventWaiter {
 		super(request, shouldGo);
 		fClassName = className;
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.jdi.tests.EventWaiter#classPrepare(com.sun.jdi.event.ClassPrepareEvent)
 	 */
@@ -38,7 +38,7 @@ public class ClassPrepareEventWaiter extends EventWaiter {
 		if (event.referenceType().name().equals(fClassName)) {
 			notifyEvent(event);
 			return fShouldGo;
-		} 
+		}
 		return true;
 	}
 }

@@ -28,7 +28,7 @@ import com.sun.jdi.request.EventRequest;
 /**
  * This class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public abstract class EventImpl extends MirrorImpl implements Event {
 	/** Constants for EventKind. */
@@ -211,7 +211,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 			return;
 
 		java.lang.reflect.Field[] fields = EventImpl.class.getDeclaredFields();
-		fEventKindMap = new HashMap<Integer, String>();
+		fEventKindMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0

@@ -34,7 +34,7 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 
 /**
  * Common refactoring utils.
- * 
+ *
  * @since 3.2
  */
 public class AbstractRefactoringDebugTest extends AbstractDebugTest {
@@ -42,7 +42,7 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 	public AbstractRefactoringDebugTest(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#setUp()
 	 */
@@ -51,11 +51,11 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		super.setUp();
 		cleanTestFiles();
 	}
-	
+
 	/**
 	 * Performs the given refactoring. If a {@link ResourceException} occurs during the refactoring,
 	 * we trap it and throw a {@link TestAgainException} to try the test again.
-	 * 
+	 *
 	 * @param refactoring
 	 * @throws Exception
 	 */
@@ -86,7 +86,7 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 			throw new TestAgainException(ce.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
 	 * Clean up all the test files
 	 * @throws CoreException
@@ -116,7 +116,7 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		if (!fragment.exists()) {
 			root.createPackageFragment("a.b.c", true, new NullProgressMonitor());
 		}
-		
+
 	// cleanup MoveeSource / Movee.java
 		IFile target = project.getFile("src/a/b/Movee.java");
 		if (target.exists()) {
@@ -144,7 +144,7 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		if (target.exists()) {
 			target.delete(true, false, null);
 		}
-		
+
 	// cleanup MoveeChildSource / MoveeChild.java
 		target = project.getFile("src/a/b/MoveeChild.java");
 		if (target.exists()) {
@@ -166,14 +166,14 @@ public class AbstractRefactoringDebugTest extends AbstractDebugTest {
 		SearchEngine engine = new SearchEngine();
 		IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
 		try {
-			engine.searchAllTypeNames(null, 
-					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE, 
-					"!@$#!@".toCharArray(), 
-					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE, 
-					IJavaSearchConstants.CLASS, 
-					scope, 
-					new TypeNameRequestor() {}, 
-					IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, 
+			engine.searchAllTypeNames(null,
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE,
+					"!@$#!@".toCharArray(),
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE,
+					IJavaSearchConstants.CLASS,
+					scope,
+					new TypeNameRequestor() {},
+					IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
 					null);
 		} catch (CoreException e) {
 		}

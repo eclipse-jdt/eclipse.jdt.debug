@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -51,13 +51,13 @@ import org.eclipse.swt.widgets.Widget;
  *
  */
 public class JavaThreadEventHandler extends ThreadEventHandler implements IPropertyChangeListener, TreeListener {
-	
+
 	private boolean fDisplayMonitors;
 	private Tree fTree;
 
 	/**
 	 * Constructs and event handler for a Java thread.
-	 * 
+	 *
 	 * @param proxy
 	 */
 	public JavaThreadEventHandler(AbstractModelProxy proxy) {
@@ -66,7 +66,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		preferenceStore.addPropertyChangeListener(this);
 		fDisplayMonitors= preferenceStore.getBoolean(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO);
 	}
-	
+
 	protected void init(Viewer viewer) {
 		Control control = viewer.getControl();
 		if (control instanceof Tree) {
@@ -79,7 +79,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			});
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#dispose()
 	 */
@@ -101,7 +101,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 			Object[] launchChildren = launch.getChildren();
 			delta = delta.addNode(launch, indexOf(launches, launch), IModelDelta.NO_CHANGE, launchChildren.length);
 			IJavaDebugTarget debugTarget = (IJavaDebugTarget) thread.getDebugTarget();
-			List<IJavaThreadGroup> groups = new ArrayList<IJavaThreadGroup>();
+			List<IJavaThreadGroup> groups = new ArrayList<>();
 			try{
 				delta = delta.addNode(debugTarget, indexOf(launchChildren, debugTarget), IModelDelta.NO_CHANGE, debugTarget.getRootThreadGroups().length);
 				IJavaThread javaThread = (IJavaThread) thread;
@@ -133,7 +133,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		return super.addPathToThread(delta, thread);
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJavaDebugUIConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
@@ -143,8 +143,8 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 
 	protected boolean isDisplayMonitors() {
 	    return fDisplayMonitors;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IStackFrame)
 	 */
@@ -168,10 +168,10 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		return super.indexOf(frame);
 	}
-	
+
 	/**
 	 * Returns the number of children the given thread has in the view.
-	 * 
+	 *
 	 * @param thread thread
 	 * @return number of children
 	 */
@@ -195,8 +195,8 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		} catch (DebugException e) {
 		}
 		return -1;
-	}	
-	
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IThread)
@@ -274,7 +274,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 				queueSuspendedThread((IJavaThread)data);
 			}
 		}
-	}	
+	}
 
 	/**
 	 * Do not update for quiet resume/suspend
@@ -286,12 +286,12 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		super.handleOther(event);
 	}
-	
+
 	/**
 	 * Returns whether the given thread is missing its required thread group in order
-	 * to build a proper delta. See bug 274552. Returns <code>false</code> when not 
+	 * to build a proper delta. See bug 274552. Returns <code>false</code> when not
 	 * displaying thread groups.
-	 * 
+	 *
 	 * @param event thread start/death event
 	 * @return <code>true</code> if the thread group is missing
 	 */
@@ -313,7 +313,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
 	 */
@@ -325,7 +325,7 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 		}
 		super.handleCreate(event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
 	 */

@@ -35,7 +35,7 @@ import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
  * @since 2.0
  */
 public class StandardSourcePathProvider extends StandardClasspathProvider {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -101,7 +101,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 
     /**
      * If the given entry is an archive, adds any archives referenced by the associated manifest.
-     * 
+     *
      * @param entry runtime classpath entry
      * @param all list to add references to
      */
@@ -144,10 +144,10 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
     class UniqueList extends ArrayList<IRuntimeClasspathEntry> {
         private static final long serialVersionUID = -7402160651027036270L;
         HashSet<IRuntimeClasspathEntry> set;
-        
+
         public UniqueList(int length) {
             super(length);
-            set = new HashSet<IRuntimeClasspathEntry>(length);
+            set = new HashSet<>(length);
         }
 
         @Override
@@ -218,7 +218,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 				return super.set(index, element);
 			}
             return null; //should not happen.
-        }        
+        }
     }
 
 }

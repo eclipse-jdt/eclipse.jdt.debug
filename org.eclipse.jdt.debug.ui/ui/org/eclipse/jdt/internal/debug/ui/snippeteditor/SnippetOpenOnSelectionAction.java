@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +36,11 @@ import org.eclipse.ui.handlers.IHandlerService;
  * the code snippet.
  */
 public class SnippetOpenOnSelectionAction extends OpenAction {
-	
+
 	protected JavaSnippetEditor fEditor;
 	private String fDialogTitle;
 	private String fDialogMessage;
-	
+
 	public SnippetOpenOnSelectionAction(JavaSnippetEditor editor) {
 		super(editor.getSite());
 		fEditor= editor;
@@ -51,7 +51,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		IHandlerService service = editor.getSite().getService(IHandlerService.class);
 		service.activateHandler(IJavaEditorActionDefinitionIds.OPEN_EDITOR, handler);
 	}
-	
+
 	protected void setResources() {
 		setText(SnippetMessages.getString("SnippetOpenOnSelectionAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("SnippetOpenOnSelectionAction.tooltip")); //$NON-NLS-1$
@@ -59,19 +59,19 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		setDialogTitle(SnippetMessages.getString("SnippetOpenOnSelectionDialog.title")); //$NON-NLS-1$
 		setDialogMessage(SnippetMessages.getString("SnippetOpenOnSelectionDialog.message")); //$NON-NLS-1$
 	}
-	
+
 	protected void setDialogTitle(String title) {
 		fDialogTitle= title;
 	}
-	
+
 	protected void setDialogMessage(String message) {
 		fDialogMessage= message;
 	}
-	
+
 	protected void setEditor(JavaSnippetEditor contentEditor) {
 		fEditor= contentEditor;
 	}
-	
+
 	/**
 	 * Shows a dialog for resolving an ambiguous java element.
 	 * Utility method that can be called by sub-classes.
@@ -87,7 +87,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED
 						| JavaElementLabelProvider.SHOW_ROOT;
-						
+
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
 		dialog.setTitle(title);
 		dialog.setMessage(message);
@@ -103,18 +103,18 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 					}
 				}
 			}
-		}		
+		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Filters out source references from the given code resolve results.
-	 * A utility method that can be called by sub-classes. 
+	 * A utility method that can be called by sub-classes.
 	 */
 	protected List<IJavaElement> filterResolveResults(IJavaElement[] codeResolveResults) {
 		int nResults= codeResolveResults.length;
-		List<IJavaElement> refs= new ArrayList<IJavaElement>(nResults);
+		List<IJavaElement> refs= new ArrayList<>(nResults);
 		for (int i= 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference) {
 				refs.add(codeResolveResults[i]);
@@ -122,7 +122,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		}
 		return refs;
 	}
-			
+
 	@Override
 	public void run() {
 		if (fEditor == null) {

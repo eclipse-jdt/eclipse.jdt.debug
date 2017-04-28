@@ -101,7 +101,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     /**
      * Evaluates the given expression and sets the given variable's value
      * using the result.
-     * 
+     *
      * @param variable the variable whose value should be set
      * @param expression the expression to evaluate
      * @throws DebugException if an exception occurs evaluating the expression
@@ -137,7 +137,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, cause.getMessage(), null);
             JDIDebugUIPlugin.statusDialog(ActionMessages.JavaObjectValueEditor_3, status);
         } else {
-            JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+            JDIDebugUIPlugin.statusDialog(e.getStatus());
         }
     }
 
@@ -186,7 +186,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
         			    String[] messages = result.getErrorMessages();
         			    for (int i = 0; i < messages.length; i++) {
                             buffer.append(messages[i]).append("\n "); //$NON-NLS-1$
-                        }    			    	
+                        }
     			    } else {
     			    	buffer.append(EvaluateAction.getExceptionMessage(exception));
     			    }
@@ -198,7 +198,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
         }
         return null;
     }
-    
+
     /**
      * (copied from EvaluateAction)
      */
@@ -214,9 +214,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
+		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() });
 		if (exception.getMessage() != null) {
-			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
+			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() });
 		}
 		return message;
 	}
@@ -227,9 +227,9 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
 	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
+			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() });
 	}
-    
+
 	/**
 	 * Return the project associated with the given stack frame.
 	 * (copied from JavaWatchExpressionDelegate)

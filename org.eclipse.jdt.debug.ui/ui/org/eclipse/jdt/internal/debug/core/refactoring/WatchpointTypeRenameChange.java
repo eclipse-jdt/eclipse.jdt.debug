@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,12 +38,12 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		fProcessor = processor;
 		fArguments = arguments;
 	}
-	
+
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		IField originalField = getOriginalType().getField(getFieldName());
 		IField destinationField = null;
-		
+
 		if (fArguments.getUpdateSimilarDeclarations()) {
 			IJavaElement[] similarDeclarations = fArguments.getSimilarDeclarations();
 			if (similarDeclarations != null) {
@@ -60,8 +60,8 @@ public class WatchpointTypeRenameChange extends WatchpointTypeChange {
 		if (destinationField == null) {
 			destinationField = getDestinationType().getField(getFieldName());
 		}
-		
-		Map<String, Object> map = new HashMap<String, Object>();
+
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, destinationField);
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets()); // creating breakpoint in the original working set
 		IResource resource = BreakpointUtils.getBreakpointResource(destinationField);

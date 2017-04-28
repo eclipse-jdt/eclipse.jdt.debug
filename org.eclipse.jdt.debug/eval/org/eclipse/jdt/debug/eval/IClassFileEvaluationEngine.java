@@ -16,7 +16,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 /**
  * An evaluation engine that performs evaluations by deploying and executing
  * class files locally.
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -28,7 +28,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * corresponds to a fully qualified type name, or to an on-demand package
 	 * name as defined by ImportDeclaration (JLS2 7.5). For example,
 	 * <code>"java.util.Hashtable"</code> or <code>"java.util.*"</code>.
-	 * 
+	 *
 	 * @return the list of import names
 	 */
 	public String[] getImports();
@@ -39,7 +39,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * a fully qualified type name, or to an on-demand package name as defined
 	 * by ImportDeclaration (JLS2 7.5). For example,
 	 * <code>"java.util.Hashtable"</code> or <code>"java.util.*"</code>.
-	 * 
+	 *
 	 * @param imports
 	 *            the list of import names
 	 */
@@ -55,7 +55,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * evaluation completes, the thread will be suspened at this original
 	 * location. Compilation and runtime errors are reported in the evaluation
 	 * result.
-	 * 
+	 *
 	 * @param snippet
 	 *            code snippet to evaluate
 	 * @param thread

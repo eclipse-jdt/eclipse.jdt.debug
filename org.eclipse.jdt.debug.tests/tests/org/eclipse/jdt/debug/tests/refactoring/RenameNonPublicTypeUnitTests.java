@@ -32,7 +32,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	public RenameNonPublicTypeUnitTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -61,7 +61,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -92,7 +92,7 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -154,9 +154,9 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param root
 	 * @param packageName
 	 * @param cuName
@@ -166,75 +166,75 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 	 */
 	protected Refactoring setupRefactor(String root, String packageName, String cuName,
 			String type) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMember target = getMember(cunit, type);
 		//if this was a non-typed test, get's it's parent type
 		if(!(target instanceof IType))
 			target = (IMember)target.getParent();
-		
+
 		IType targetType = (IType)target;
-				
+
 		JavaRenameProcessor proc = new RenameTypeProcessor(targetType);
 		proc.setNewElementName("RenamedType");
-			
+
 		RenameRefactoring ref= new RenameRefactoring(proc);
-		
+
 		//setup final refactoring conditions
 		RefactoringStatus refactoringStatus= ref.checkAllConditions(new NullProgressMonitor());
 		if(!refactoringStatus.isOK())
 		{
 			System.out.println(refactoringStatus.getMessageMatchingSeverity(refactoringStatus.getSeverity()));
 			return null;
-		}		
-		
+		}
+
 		return ref;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////
-	
+
 	public void testNonPublicClassLoadpoint() throws Exception {
-		String 	src = "src", 
+		String 	src = "src",
 				pack = "a.b.c",
 				cunit = "MoveeChild.java",
 				fullTargetName = "NonPublicChildType";
 
 		runClassLoadBreakpointTest(src, pack, cunit, fullTargetName);
-	}//end testBreakPoint			
-	
+	}//end testBreakPoint
+
 	public void testNonPublicLineBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType";
 			int lineNumber = 51;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, lineNumber);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testNonPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildsMethod()V",
 					methodName = "nonPublicChildsMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, methodName);
 	}//end testBreakPoint
-	
+
 	public void testNonPublicWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "NonPublicChildType$nonPublicChildInt",
 					fieldName = "nonPublicChildInt";
-						
+
 			runWatchPointTest(src, pack, cunit, fullTargetName, fieldName);
-	}//end testBreakPoint	
+	}//end testBreakPoint
 
 
 	/**
-	 * Creates an exception breakpoint and adds a filter. Refactors & checks 
+	 * Creates an exception breakpoint and adds a filter. Refactors & checks
 	 * if the filter changed appropriately w/ the refactor.
 	 * @param src
 	 * @param pack
@@ -266,11 +266,11 @@ public class RenameNonPublicTypeUnitTests extends AbstractRefactoringDebugTest {
 
 
 	public void testPublicExceptionBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					targetName = "MoveeChild";
 			runExceptionBreakpointTest(src, pack, cunit, targetName);
-	}//end testBreakPoint		
-		
+	}//end testBreakPoint
+
 }

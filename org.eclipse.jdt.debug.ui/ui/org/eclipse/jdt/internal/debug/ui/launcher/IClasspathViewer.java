@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public interface IClasspathViewer extends ISelectionProvider {
 	/**
 	 * Returns the entries in this viewer that are the children of the parent element
 	 * associated with the selected item(s)
-	 * 
+	 *
 	 * @return the entries in this viewer
 	 */
 	public IRuntimeClasspathEntry[] getEntries();
@@ -32,7 +32,7 @@ public interface IClasspathViewer extends ISelectionProvider {
 	/**
 	 * Sets the entries in this viewer to the given runtime classpath
 	 * entries
-	 * 
+	 *
 	 * @param entries runtime classpath entries
 	 */
 	public void setEntries(IRuntimeClasspathEntry[] entries);
@@ -51,10 +51,10 @@ public interface IClasspathViewer extends ISelectionProvider {
 
 	/**
 	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
+	 * in the list, the entries are added at the end of the list,
 	 * otherwise the new entries are added before the (first) selected
 	 * entry. The new entries are selected.
-	 * 
+	 *
 	 * @param entries additions
 	 */
 	public void addEntries(IRuntimeClasspathEntry[] res);
@@ -73,14 +73,14 @@ public interface IClasspathViewer extends ISelectionProvider {
 
 	/**
 	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
+	 *
 	 * @return the index of an equivalent entry, or -1 if none
 	 */
 	public int indexOf(IRuntimeClasspathEntry entry);
 
 	/**
 	 * Returns whether an action of the supplied action type should be enabled based on the supplied selection.
-	 * 
+	 *
 	 * @param actionType One of RuntimeClasspathAction constants defining the action type
 	 * @param selection The selection to use for the update
 	 * @return Whether the action of this type should be enabled based on the selection

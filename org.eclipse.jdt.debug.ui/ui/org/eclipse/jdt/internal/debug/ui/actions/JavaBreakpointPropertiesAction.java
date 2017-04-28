@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
- 
+
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
@@ -27,7 +27,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * the attributes of a Java Breakpoint.
  */
 public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
-	
+
 	private IJavaBreakpoint fBreakpoint;
 
 	/**
@@ -39,10 +39,10 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 		//where conditions randomly seem to have errors while using an IBM VM in testing mode
 		if(fBreakpoint != null && !ErrorDialog.AUTOMATED_MODE) {
 		    PreferencesUtil.createPropertyDialogOn(
-		    		JDIDebugUIPlugin.getActiveWorkbenchShell(), 
-		    		fBreakpoint, 
-		    		null, 
-		    		null, 
+		    		JDIDebugUIPlugin.getActiveWorkbenchShell(),
+		    		fBreakpoint,
+		    		null,
+		    		null,
 		    		null).open();
 		}
 	}
@@ -74,7 +74,7 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	public void setBreakpoint(IJavaBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
-	
+
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */

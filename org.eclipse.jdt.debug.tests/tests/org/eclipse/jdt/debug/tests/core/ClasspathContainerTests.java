@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,9 +37,9 @@ import org.eclipse.jdt.launching.VMStandin;
  * Tests JRE classpath container
  */
 public class ClasspathContainerTests extends AbstractDebugTest {
-	
+
 	class FakeContainer implements IClasspathContainer {
-		
+
 		IClasspathEntry[] entries = new IClasspathEntry[0];
 		/**
 		 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
@@ -72,7 +72,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		public IPath getPath() {
 			return new Path(JavaRuntime.JRE_CONTAINER);
 		}
-		
+
 		/**
 		 * @param cpe
 		 */
@@ -81,7 +81,7 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		}
 
 	}
-	
+
 	/**
 	 * @param name
 	 */
@@ -107,11 +107,11 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		standin.setJavadocLocation(def.getJavadocLocation());
 		standin.setLibraryLocations(JavaRuntime.getLibraryLocations(def));
 		standin.convertToRealVM();
-		
+
 		// ensure the new VM exists
 		IVMInstall newVM = def.getVMInstallType().findVMInstall(vmId);
 		assertNotNull("Failed to create new VM", newVM);
-		
+
 		JREContainer container = new JREContainer(newVM, containerPath, get14Project());
 		JREContainerInitializer initializer = new JREContainerInitializer();
 		// store the current library settings
@@ -119,22 +119,22 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		assertTrue("Libraries should not be empty", originalLibs.length > 0);
 		IClasspathEntry[] originalEntries = container.getClasspathEntries();
 		assertEquals("Libraries should be same size as classpath entries", originalLibs.length, originalEntries.length);
-		
+
 		// ensure we can update
 		assertTrue("Initializer will not accept update", initializer.canUpdateClasspathContainer(containerPath, get14Project()));
-		
+
 		// update to an empty set of libraries
 		FakeContainer fakeContainer = new FakeContainer();
 		initializer.requestClasspathContainerUpdate(containerPath, get14Project(), fakeContainer);
-		
+
 		// ensure the library locations are now empty on the new VM
 		LibraryLocation[] newLibs = JavaRuntime.getLibraryLocations(newVM);
 		assertEquals("Libraries should be empty", 0, newLibs.length);
-		
+
 		// re-set to original libraries
 		fakeContainer.setEntries(originalEntries);
 		initializer.requestClasspathContainerUpdate(containerPath, get14Project(), fakeContainer);
-		
+
 		// ensure libraries are restored
 		newLibs = JavaRuntime.getLibraryLocations(newVM);
 		assertEquals("Libraries should be restored", originalLibs.length, newLibs.length);
@@ -142,13 +142,13 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 			LibraryLocation location = newLibs[i];
 			LibraryLocation origi = originalLibs[i];
 			assertEquals("Library should be the equal", origi.getSystemLibraryPath().toFile(), location.getSystemLibraryPath().toFile());
-		} 
+		}
 	}
-	
-	
+
+
 	/**
 	 * Tests library comparison case sensitivity.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testLibraryCaseSensitivity() {
@@ -166,17 +166,17 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 			set1[i] = new LibraryLocation(p1, null, null);
 			set2[i] = new LibraryLocation(p2, null, null);
 		}
-		boolean equal = JRERuntimeClasspathEntryResolver.isSameArchives(set1, set2); 
+		boolean equal = JRERuntimeClasspathEntryResolver.isSameArchives(set1, set2);
 		if (caseSensitive) {
 			assertFalse("Libraries should *not* be equal on case sensitive platform", equal);
 		} else {
 			assertTrue("Libraries *should* be equal on case sensitive platform", equal);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that an index can be added to a {@link LibraryLocation}
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
 	 * @since 3.8.100
 	 */
@@ -214,11 +214,11 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		// and it should have a value of the original indexURL in its string form.
 		assertEquals(indexURL.toString(), indexloc);
 	}
-	
+
 	/**
 	 * Tests that an index can be added to a {@link LibraryLocation} and that successive calls to
 	 * {@link JavaRuntime#getLibraryLocations(IVMInstall)} does not erase the index infos
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399098
 	 * @since 3.8.100
 	 */
@@ -254,5 +254,5 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 		// return the index URL
 		URL indexURL = indexPath.toFile().toURI().toURL();
 		return indexURL;
-	} 
+	}
 }

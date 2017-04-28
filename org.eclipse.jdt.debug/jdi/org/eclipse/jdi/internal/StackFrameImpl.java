@@ -42,7 +42,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable {
 	/** FrameID that corresponds to this reference. */
@@ -70,7 +70,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	public Value getValue(LocalVariable variable)
 			throws IllegalArgumentException, InvalidStackFrameException,
 			VMMismatchException {
-		ArrayList<LocalVariable> list = new ArrayList<LocalVariable>(1);
+		ArrayList<LocalVariable> list = new ArrayList<>(1);
 		list.add(variable);
 		return getValues(list).get(variable);
 	}
@@ -82,7 +82,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) throws IllegalArgumentException,
 			InvalidStackFrameException, VMMismatchException {
 		// Note that this information should not be cached.
-		Map<LocalVariable, Value> map = new HashMap<LocalVariable, Value>(variables.size());
+		Map<LocalVariable, Value> map = new HashMap<>(variables.size());
 		// if the variable list is empty, nothing to do
 		if (variables.isEmpty()) {
 			return map;
@@ -169,7 +169,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		}
 		try {
 			List<LocalVariable> list = location().method().variables();
-			ArrayList<Value> ret = new ArrayList<Value>();
+			ArrayList<Value> ret = new ArrayList<>();
 			LocalVariable var = null;
 			for (Iterator<LocalVariable> iter = list.iterator(); iter.hasNext();) {
 				var = iter.next();
@@ -294,7 +294,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	public List<LocalVariable> visibleVariables() throws AbsentInformationException {
 		List<LocalVariable> variables = fLocation.method().variables();
 		Iterator<LocalVariable> iter = variables.iterator();
-		List<LocalVariable> visibleVars = new ArrayList<LocalVariable>(variables.size());
+		List<LocalVariable> visibleVars = new ArrayList<>(variables.size());
 		while (iter.hasNext()) {
 			LocalVariableImpl var = (LocalVariableImpl) iter.next();
 			// Only return local variables other than the this pointer.

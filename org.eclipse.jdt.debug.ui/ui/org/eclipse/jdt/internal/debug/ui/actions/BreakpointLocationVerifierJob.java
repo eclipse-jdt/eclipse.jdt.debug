@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,54 +38,54 @@ import org.eclipse.ui.texteditor.IEditorStatusLine;
  * Job used to verify the position of a breakpoint
  */
 public class BreakpointLocationVerifierJob extends Job {
-	
+
 	/**
 	 * The temporary breakpoint that has been set. Can be <code>null</code> if the callee was not able
 	 * to check if a breakpoint was already set at this position.
-	 */	
+	 */
 	private IJavaLineBreakpoint fBreakpoint;
-	
+
 	/**
 	 * The number of the line where the breakpoint has been requested.
 	 */
 	private int fLineNumber;
-	
+
 	/**
 	 * The qualified type name of the class where the temporary breakpoint as been set.
 	 * Can be <code>null</code> if fBreakpoint is null.
-	 */	
+	 */
 	private String fTypeName;
-	
+
 	/**
 	 * The type in which should be set the breakpoint.
 	 */
 	private IType fType;
-	
+
 	/**
 	 * The current IEditorPart
 	 */
 	private IEditorPart fEditorPart;
-	
+
 	/**
 	 * The parsed {@link CompilationUnit}
 	 */
 	CompilationUnit fCunit = null;
-	
+
 	/**
 	 * The document context
 	 */
 	private IDocument fDocument = null;
-	
+
 	/**
 	 * The status line to use to display errors
 	 */
 	private IEditorStatusLine fStatusLine;
-	
+
 	/**
 	 * If a best guess should be made at the breakpoint location
 	 */
 	private boolean fBestMatch = false;
-	
+
 	/**
 	 * Constructor
 	 * @param document
@@ -98,7 +98,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	 * @param bestmatch
 	 */
 	public BreakpointLocationVerifierJob(IDocument document, CompilationUnit cunit, IJavaLineBreakpoint breakpoint, int lineNumber, String typeName, IType type, IEditorPart editorPart, boolean bestmatch) {
-		super(ActionMessages.BreakpointLocationVerifierJob_breakpoint_location); 
+		super(ActionMessages.BreakpointLocationVerifierJob_breakpoint_location);
 		fCunit = cunit;
 		fDocument = document;
 		fBreakpoint = breakpoint;
@@ -110,7 +110,7 @@ public class BreakpointLocationVerifierJob extends Job {
 		fStatusLine = editorPart.getAdapter(IEditorStatusLine.class);
 		setSystem(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -118,7 +118,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		ValidBreakpointLocationLocator locator = new ValidBreakpointLocationLocator(fCunit, fLineNumber, true, fBestMatch);
 		fCunit.accept(locator);
-		int lineNumber = locator.getLineLocation();		
+		int lineNumber = locator.getLineLocation();
 		String typeName = locator.getFullyQualifiedTypeName();
 		if (typeName == null) {
 			return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
@@ -141,19 +141,19 @@ public class BreakpointLocationVerifierJob extends Job {
 					break;
 				default:
 					// cannot find a valid location
-					report(ActionMessages.BreakpointLocationVerifierJob_not_valid_location); 
+					report(ActionMessages.BreakpointLocationVerifierJob_not_valid_location);
 					if (fBreakpoint != null) {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
 					}
-					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null); 
+					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-		return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null); 
-		
+		return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null);
+
 	}
-	
+
 	/**
 	 * Determines the placement of the line breakpoint, and ensures that duplicates are not created
 	 * and that notification is sent in the event of collisions
@@ -171,36 +171,36 @@ public class BreakpointLocationVerifierJob extends Job {
 					if (differentLineNumber) {
 						// There is already a breakpoint on the valid line.
 						report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)}));
-						return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null); 
+						return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 					}
 					// There is already a breakpoint on the valid line, but it's also the requested line.
 					// Removing the existing breakpoint.
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
-					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpointRemoved, null); 
+					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpointRemoved, null);
 				}
 				createNewBreakpoint(lineNumber, typeName);
-				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null); 
+				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null);
 			}
 			if (differentLineNumber) {
 				if (breakpointExist) {
 					// there is already a breakpoint on the valid line.
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
-					report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)})); 
-					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null); 
+					report(NLS.bind(ActionMessages.BreakpointLocationVerifierJob_0, new String[]{Integer.toString(lineNumber)}));
+					return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 				}
 				replaceBreakpoint(lineNumber, typeName);
-				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, ActionMessages.BreakpointLocationVerifierJob_breakpointMovedToValidPosition, null); 
+				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, ActionMessages.BreakpointLocationVerifierJob_breakpointMovedToValidPosition, null);
 			}
 			if (!typeName.equals(fTypeName)) {
 				replaceBreakpoint(lineNumber, typeName);
-				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, ActionMessages.BreakpointLocationVerifierJob_breakpointSetToRightType, null); 
+				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, ActionMessages.BreakpointLocationVerifierJob_breakpointSetToRightType, null);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-		return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null); 
+		return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null);
 	}
-	
+
 	/**
 	 * Remove the temporary breakpoint and create a new breakpoint at the right position.
 	 */
@@ -213,14 +213,14 @@ public class BreakpointLocationVerifierJob extends Job {
 	 * Create a new breakpoint at the right position.
 	 */
 	private void createNewBreakpoint(int lineNumber, String typeName) throws CoreException {
-		Map<String, Object> newAttributes = new HashMap<String, Object>(10);
+		Map<String, Object> newAttributes = new HashMap<>(10);
 		int start = -1, end = -1;
 		if (fType != null) {
 			try {
 				IRegion line = fDocument.getLineInformation(lineNumber - 1);
 				start = line.getOffset();
 				end = start + line.getLength();
-				
+
 			} catch (BadLocationException ble) {
 				JDIDebugUIPlugin.log(ble);
 			}

@@ -51,7 +51,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	public void testExtractionFromNonPublicType() throws Exception {
 		try {
 			int lineNumber = 40;
@@ -75,7 +75,7 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	public void testExtractionFromInternalType() throws Exception {
 		try {
 			int lineNumber = 29;
@@ -98,21 +98,21 @@ public class ExtractMethodUnitTests extends AbstractRefactoringDebugTest {
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testLineBreakPoint	
-	
-	
+	}//end testLineBreakPoint
+
+
 /////////////////////////////////////////
-	
+
 	private Refactoring setupRefactor(int lineNumber, String root, String targetPackageName, String cuName) throws Exception {
-		
+
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, targetPackageName, cuName);
-				
+
 		IDocument sourceCUnit = new Document(cunit.getSource());
-		IRegion lineInfo = sourceCUnit.getLineInformation(lineNumber-1);//-1 Document considers lineNumber different than createBreakpoint 
-						
+		IRegion lineInfo = sourceCUnit.getLineInformation(lineNumber-1);//-1 Document considers lineNumber different than createBreakpoint
+
 		ExtractMethodRefactoring ref= new ExtractMethodRefactoring(cunit,lineInfo.getOffset(), lineInfo.getLength());
-		
+
 		RefactoringStatus preconditionResult= ref.checkInitialConditions(new NullProgressMonitor());
 		if(!preconditionResult.isOK())
 		{

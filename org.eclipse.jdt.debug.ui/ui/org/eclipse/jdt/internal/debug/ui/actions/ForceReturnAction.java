@@ -25,11 +25,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Action for force return from a method.
- * 
+ *
  * @since 3.3
  */
 public class ForceReturnAction extends EvaluateAction {
-	
+
 	private IJavaStackFrame fTargetFrame = null;
 
 	/* (non-Javadoc)
@@ -38,7 +38,7 @@ public class ForceReturnAction extends EvaluateAction {
 	@Override
 	protected void displayResult(final IEvaluationResult result) {
 		evaluationCleanup();
-		
+
 		final Display display = JDIDebugUIPlugin.getStandardDisplay();
 		// error with evaluation
 		if (result.hasErrors()) {
@@ -52,7 +52,7 @@ public class ForceReturnAction extends EvaluateAction {
 				}
 			});
 			return;
-		} 
+		}
 
 		// force return with the result
 		try {
@@ -87,7 +87,7 @@ public class ForceReturnAction extends EvaluateAction {
 	}
 
 	@Override
-	protected void run() {		
+	protected void run() {
 		IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame != null) {
 			try {
@@ -106,9 +106,9 @@ public class ForceReturnAction extends EvaluateAction {
 		// perform evaluation otherwise
 		super.run();
 	}
-	
-	
-	
-	
+
+
+
+
 
 }

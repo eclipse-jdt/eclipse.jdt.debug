@@ -15,7 +15,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * An interface an object implements on a Java debug target.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,7 +26,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	/**
 	 * Returns the class objects associated with the implementors of this
 	 * interface type. Returns an empty array if there are none.
-	 * 
+	 *
 	 * @return the class objects associated with the implementors of this
 	 *         interface type
 	 * @exception DebugException
@@ -46,7 +46,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	 * sub-interfaces are those interfaces that directly extend this interface,
 	 * that is, those interfaces that declared this interface in their
 	 * <code>extends</code> clause.
-	 * 
+	 *
 	 * @return the interface objects associated with the sub-interfaces of this
 	 *         interface type
 	 * @exception DebugException
@@ -66,7 +66,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	 * super-interfaces are those interfaces that are directly extended by this
 	 * interface, that is, those interfaces that this interface declared to be
 	 * extended.
-	 * 
+	 *
 	 * @return the interface objects associated with the super-interfaces of
 	 *         this interface type
 	 * @exception DebugException
@@ -88,7 +88,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	 * complete. This method does not return until the method invocation is
 	 * complete. Resuming the specified thread can result in breakpoints being
 	 * hit, infinite loops, and deadlock.
-	 * 
+	 *
 	 * @param selector
 	 *            the selector of the method to be invoked
 	 * @param signature
@@ -116,7 +116,7 @@ public interface IJavaInterfaceType extends IJavaReferenceType {
 	 *                <li>The given thread was explicitly suspended (status code
 	 *                <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 *                </ul>
-	 *                
+	 *
 	 * @since 3.10
 	 */
 	public IJavaValue sendMessage(String selector, String signature,

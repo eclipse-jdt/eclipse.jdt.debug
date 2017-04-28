@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
- 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,16 +29,16 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * Action used with a runtime classpath viewer.
  */
 public abstract class RuntimeClasspathAction extends SelectionListenerAction {
-	
+
 	public static final int DEFAULT= 0;
 	public static final int ADD= 1;
 	public static final int REMOVE= 2;
 	public static final int MOVE= 3;
-	
+
 	private IClasspathViewer fViewer;
 	private Button fButton;
 	private Shell fShell;
-	
+
 	public RuntimeClasspathAction(String label, IClasspathViewer viewer) {
 		super(label);
 		setViewer(viewer);
@@ -46,7 +46,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 
 	/**
 	 * Sets the viewer on which this action operates.
-	 * 
+	 *
 	 * @param viewer the viewer on which this action operates
 	 */
 	public void setViewer(IClasspathViewer viewer) {
@@ -59,10 +59,10 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 			update();
 		}
 	}
-	
+
 	/**
 	 * Returns the viewer on which this action operates.
-	 * 
+	 *
 	 * @return the viewer on which this action operates
 	 */
 	protected IClasspathViewer getViewer() {
@@ -72,11 +72,11 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * Returns the selected items in the list, in the order they are
 	 * displayed.
-	 * 
+	 *
 	 * @return targets for an action
 	 */
 	protected List<IRuntimeClasspathEntry> getOrderedSelection() {
-		List<IRuntimeClasspathEntry> targets = new ArrayList<IRuntimeClasspathEntry>();
+		List<IRuntimeClasspathEntry> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection)getViewer().getSelection()).toList();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -85,22 +85,22 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 				targets.add(target);
 			}
 		}
-		return targets;		
+		return targets;
 	}
-	
+
 	/**
 	 * Returns a list (copy) of the entries in the viewer
 	 * @return the complete listing of all of the entries in the viewer
 	 */
 	protected List<IRuntimeClasspathEntry> getEntriesAsList() {
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
-		List<IRuntimeClasspathEntry> list = new ArrayList<IRuntimeClasspathEntry>(entries.length);
+		List<IRuntimeClasspathEntry> list = new ArrayList<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Updates the entries to the entries in the given list
 	 * @param list the list of {@link IRuntimeClasspathEntry}s to set
@@ -110,7 +110,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 		// update all selection listeners
 		getViewer().setSelection(getViewer().getSelection());
 	}
-	
+
 	/**
 	 * Returns whether the item at the given index in the list
 	 * (visually) is selected.
@@ -131,8 +131,8 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 			}
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * Sets the {@link Button} that invokes this action
 	 * @param button the new {@link Button} to set as the backing widget for this action
@@ -164,7 +164,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	protected void update() {
 		selectionChanged((IStructuredSelection)getViewer().getSelection());
 	}
-	
+
 	/**
 	 * Returns the shell used to realize this action's dialog (if any).
 	 * @return the current {@link Shell}
@@ -172,10 +172,10 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	protected Shell getShell() {
 		if (fShell == null) {
 			fShell= getViewer().getShell();
-		} 
+		}
 		return fShell;
 	}
-	
+
 	/**
 	 * Sets the shell used to realize this action's dialog (if any).
 	 * @param shell the current shell
@@ -183,8 +183,8 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	public void setShell(Shell shell) {
 		fShell= shell;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

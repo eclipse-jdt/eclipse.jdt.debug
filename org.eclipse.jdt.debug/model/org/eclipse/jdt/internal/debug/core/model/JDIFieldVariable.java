@@ -54,7 +54,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 	 * When created for a logical structure we hold onto the original
 	 * non-logical value for purposes of equality. This way a logical
 	 * structure's children remain more stable in the variables view.
-	 * 
+	 *
 	 * This is <code>null</code> when not created for a logical structure.
 	 */
 	private IJavaValue fLogicalParent;
@@ -263,7 +263,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
 	@Override
@@ -371,7 +371,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaFieldVariable#getObject()
 	 */
 	@Override

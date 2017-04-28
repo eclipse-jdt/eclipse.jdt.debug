@@ -25,11 +25,11 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 	public TestToggleBreakpointsTarget(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests that qualified names get created for line breakpoints in external
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExternalLineBreakpoint() throws Exception {
@@ -49,11 +49,11 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests that qualified names get created for watchpoints in external
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExternalWatchpoint() throws Exception {
@@ -72,12 +72,12 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			manager.removeBreakpointListener(listener);
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that qualified names get created for method breakpoints in external
 	 * files.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testExternalMethodBreakpoint() throws Exception {
@@ -99,6 +99,6 @@ public class TestToggleBreakpointsTarget extends AbstractToggleBreakpointsTarget
 			manager.removeBreakpointListener(listener);
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 }

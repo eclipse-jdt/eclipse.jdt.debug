@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -79,7 +79,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		}
 		assertEquals("dropTopFrame.6", stackSize - 1, newStackSize);
 	}
-	
+
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -223,7 +223,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		org.eclipse.jdi.hcr.VirtualMachine vm =
 			(org.eclipse.jdi.hcr.VirtualMachine) fVM;
 
-		
+
 		// Drop the top a frame
 		try {
 			if (vm.canDoReturn()) {

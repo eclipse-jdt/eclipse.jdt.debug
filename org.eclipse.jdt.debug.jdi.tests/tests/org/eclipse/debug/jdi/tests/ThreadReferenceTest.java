@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -175,7 +175,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 				false);
 		ThreadReference thread = event.thread();
 
-		// Create a java.lang.Throwable instance in 
+		// Create a java.lang.Throwable instance in
 		List<ReferenceType> classes = fVM.classesByName("java.lang.Throwable");
 		assertTrue("1", classes.size() != 0);
 		ClassType threadDeathClass = (ClassType) classes.get(0);
@@ -212,7 +212,7 @@ public class ThreadReferenceTest extends AbstractJDITest {
 
 	}
 	/**
-	 * Test JDI suspend() and resume() 
+	 * Test JDI suspend() and resume()
 	 * and JDWP 'Thread - Suspend' and 'Thread - Resume'.
 	 */
 	public void testJDISuspendResume() {

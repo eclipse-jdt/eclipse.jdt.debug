@@ -19,14 +19,14 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients may implement this interface
  * </p>
- * 
+ *
  * @since 2.0
  */
 public interface IJavaHotCodeReplaceListener {
 
 	/**
 	 * Notification that a hot code replace attempt failed in the given target.
-	 * 
+	 *
 	 * @param target
 	 *            the target in which the hot code replace failed
 	 * @param exception
@@ -40,7 +40,7 @@ public interface IJavaHotCodeReplaceListener {
 	/**
 	 * Notification that a hot code replace attempt succeeded in the given
 	 * target.
-	 * 
+	 *
 	 * @param target
 	 *            the target in which the hot code replace succeeded
 	 */
@@ -49,7 +49,7 @@ public interface IJavaHotCodeReplaceListener {
 	/**
 	 * Notification that obsolete methods remain on the stack in one or more
 	 * threads in the given target after a hot code replace.
-	 * 
+	 *
 	 * @param target
 	 *            the target in which obsolete methods remain after a hot code
 	 *            replace

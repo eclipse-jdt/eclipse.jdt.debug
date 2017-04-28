@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 /**
  * The result of an evaluation. An evaluation result may contain problems and/or
  * a result value.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -36,7 +36,7 @@ public interface IEvaluationResult {
 	 * Since 3.5, this method can also return null if the evaluation was
 	 * terminated before it completed.
 	 * </p>
-	 * 
+	 *
 	 * @return the resulting value, possibly <code>null</code>
 	 */
 	public IJavaValue getValue();
@@ -44,7 +44,7 @@ public interface IEvaluationResult {
 	/**
 	 * Returns whether the evaluation had any problems or if an exception
 	 * occurred while performing the evaluation.
-	 * 
+	 *
 	 * @return whether there were any problems.
 	 * @see #getErrors()
 	 * @see #getException()
@@ -54,7 +54,7 @@ public interface IEvaluationResult {
 	/**
 	 * Returns an array of problem messages. Each message describes a problem
 	 * that occurred while compiling the snippet.
-	 * 
+	 *
 	 * @return compilation error messages, or an empty array if no errors
 	 *         occurred
 	 * @deprecated use getErrorMessages()
@@ -65,7 +65,7 @@ public interface IEvaluationResult {
 	/**
 	 * Returns an array of problem messages. Each message describes a problem
 	 * that occurred while compiling the snippet.
-	 * 
+	 *
 	 * @return compilation error messages, or an empty array if no errors
 	 *         occurred
 	 * @since 2.1
@@ -74,7 +74,7 @@ public interface IEvaluationResult {
 
 	/**
 	 * Returns the snippet that was evaluated.
-	 * 
+	 *
 	 * @return The string code snippet.
 	 */
 	public String getSnippet();
@@ -85,7 +85,7 @@ public interface IEvaluationResult {
 	 * debug exception or a debug exception that wrappers a JDI exception that
 	 * indicates a problem communicating with the target or with actually
 	 * performing some action in the target.
-	 * 
+	 *
 	 * @return The exception that occurred during the evaluation
 	 * @see com.sun.jdi.InvocationException
 	 * @see org.eclipse.debug.core.DebugException
@@ -94,21 +94,21 @@ public interface IEvaluationResult {
 
 	/**
 	 * Returns the thread in which the evaluation was performed.
-	 * 
+	 *
 	 * @return the thread in which the evaluation was performed
 	 */
 	public IJavaThread getThread();
 
 	/**
 	 * Returns the evaluation engine used to evaluate the original snippet.
-	 * 
+	 *
 	 * @return the evaluation engine used to evaluate the original snippet
 	 */
 	public IEvaluationEngine getEvaluationEngine();
 
 	/**
 	 * Returns whether this evaluation was terminated before it completed.
-	 * 
+	 *
 	 * @return whether terminated.
 	 * @since 3.5
 	 */

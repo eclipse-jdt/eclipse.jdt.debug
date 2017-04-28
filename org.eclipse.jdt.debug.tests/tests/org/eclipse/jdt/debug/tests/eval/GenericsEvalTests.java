@@ -17,7 +17,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Group of tests that evaluate operations involving generics
- * 
+ *
  * @since 3.8
  */
 public class GenericsEvalTests extends AbstractDebugTest {
@@ -33,11 +33,11 @@ public class GenericsEvalTests extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get15Project();
 	}
-	
+
 	/**
-	 * Evaluates a generified snippet with a simple single 
+	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalGenerics1() throws Exception {
@@ -55,11 +55,11 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
-	 * Evaluates a generified snippet with a simple single 
+	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalGenerics2() throws Exception {
@@ -77,11 +77,11 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
-	 * Evaluates a generified snippet with a simple single 
+	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalGenerics3() throws Exception {
@@ -99,7 +99,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics4() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -115,7 +115,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics5() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -131,7 +131,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics6() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -147,7 +147,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics7() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -163,7 +163,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics8() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -179,7 +179,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGenerics9() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -195,7 +195,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGeneric10() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -211,7 +211,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGeneric11() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -227,7 +227,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGeneric12() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -244,7 +244,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	public void testEvalGeneric13() throws Exception {
 		IJavaThread thread = null;
 		try {
@@ -261,7 +261,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -281,7 +281,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -301,7 +301,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -321,7 +321,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -341,7 +341,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -361,7 +361,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -381,7 +381,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -401,7 +401,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -421,7 +421,7 @@ public class GenericsEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception

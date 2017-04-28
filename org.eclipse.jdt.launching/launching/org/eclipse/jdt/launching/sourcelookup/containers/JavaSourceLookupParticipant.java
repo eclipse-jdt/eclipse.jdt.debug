@@ -38,28 +38,28 @@ import org.eclipse.jdt.internal.debug.core.JavaDebugUtils;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant {
-	
+
 	/**
 	 * Map of delegate source containers for internal jars.
 	 * Internal jars are translated to package fragment roots
 	 * if possible.
 	 */
 	private Map<ISourceContainer, PackageFragmentRootSourceContainer> fDelegateContainers;
-	
+
 	/**
 	 * Returns the source name associated with the given object, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param object an object with an <code>IJavaStackFrame</code> adapter, an IJavaValue
-	 *  or an IJavaType 
+	 *  or an IJavaType
 	 * @return the source name associated with the given object, or <code>null</code>
 	 * if none
 	 * @exception CoreException if unable to retrieve the source name
 	 */
 	@Override
 	public String getSourceName(Object object) throws CoreException {
-		return JavaDebugUtils.getSourceName(object); 
-	}	
+		return JavaDebugUtils.getSourceName(object);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#dispose()
@@ -73,7 +73,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 		}
 		fDelegateContainers = null;
 		super.dispose();
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -84,8 +84,8 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 		ISourceContainer delegate = fDelegateContainers.get(container);
 		if (delegate == null) {
 			return container;
-		} 
-		return delegate; 
+		}
+		return delegate;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
@@ -93,7 +93,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
-		fDelegateContainers = new HashMap<ISourceContainer, PackageFragmentRootSourceContainer>();
+		fDelegateContainers = new HashMap<>();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)

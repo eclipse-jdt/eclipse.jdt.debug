@@ -30,22 +30,22 @@ import org.eclipse.swt.widgets.Composite;
  * Extension to allow a user to associate a JRE with a Java project.
  */
 public class JREContainerWizardPage extends WizardPage implements IClasspathContainerPage {
-	
+
 	/**
 	 * The classpath entry to be created.
 	 */
 	private IClasspathEntry fSelection;
-	
+
 	/**
 	 * JRE control
 	 */
 	private JREsComboBlock fJREBlock;
-	
+
 	/**
 	 * Constructs a new page.
 	 */
 	public JREContainerWizardPage() {
-		super(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
+		super(JREMessages.JREContainerWizardPage_JRE_System_Library_1);
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +54,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	@Override
 	public boolean finish() {
 		IPath path = fJREBlock.getPath();
-		fSelection = JavaCore.newContainerEntry(path);		
+		fSelection = JavaCore.newContainerEntry(path);
 		return true;
 	}
 
@@ -91,7 +91,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -100,7 +100,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fJREBlock = new JREsComboBlock(false);
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
-		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3); 
+		fJREBlock.setTitle(JREMessages.JREContainerWizardPage_3);
 		fJREBlock.createControl(composite);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJREBlock.getControl().setLayoutData(gd);
@@ -116,10 +116,10 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 				}
 			}
 		});
-		
-		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1); 
-		setMessage(JREMessages.JREContainerWizardPage_4); 
-				
+
+		setTitle(JREMessages.JREContainerWizardPage_JRE_System_Library_1);
+		setMessage(JREMessages.JREContainerWizardPage_4);
+
 		initializeFromSelection();
 	}
 

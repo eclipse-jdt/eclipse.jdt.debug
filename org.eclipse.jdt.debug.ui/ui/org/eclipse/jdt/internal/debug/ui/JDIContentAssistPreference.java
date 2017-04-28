@@ -30,35 +30,35 @@ import org.eclipse.swt.graphics.RGB;
 
 
 public class JDIContentAssistPreference {
-	
+
 	private final static String VISIBILITY= "org.eclipse.jdt.core.codeComplete.visibilityCheck"; //$NON-NLS-1$
 	private final static String ENABLED= "enabled"; //$NON-NLS-1$
 	private final static String DISABLED= "disabled"; //$NON-NLS-1$
-	
+
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);
 		return manager.getColor(rgb);
 	}
-	
+
 	private static Color getColor(IPreferenceStore store, String key) {
 		JavaTextTools textTools= JDIDebugUIPlugin.getDefault().getJavaTextTools();
 		return getColor(store, key, textTools.getColorManager());
 	}
-	
+
 	private static JavaDebugContentAssistProcessor getDisplayProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
 		if (p instanceof JavaDebugContentAssistProcessor)
 			return  (JavaDebugContentAssistProcessor) p;
 		return null;
 	}
-	
+
 	private static JavaSnippetCompletionProcessor getJavaSnippetProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
 		if (p instanceof JavaSnippetCompletionProcessor)
 			return  (JavaSnippetCompletionProcessor) p;
 		return null;
 	}
-	
+
 	private static void configureDisplayProcessor(ContentAssistant assistant, IPreferenceStore store) {
 		JavaDebugContentAssistProcessor dcp= getDisplayProcessor(assistant);
 		if (dcp == null) {
@@ -68,67 +68,67 @@ public class JDIContentAssistPreference {
 		if (triggers != null) {
 			dcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
-			
+
 		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS);
 		restrictProposalsToVisibility(enabled);
-		
+
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
-		
+
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 		dcp.orderProposalsAlphabetically(enabled);
 	}
-	
+
 	private static void configureJavaSnippetProcessor(ContentAssistant assistant, IPreferenceStore store) {
 		JavaSnippetCompletionProcessor cp= getJavaSnippetProcessor(assistant);
 		if (cp == null) {
 			return;
 		}
-			
+
 		String triggers= store.getString(PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA);
 		if (triggers != null) {
 			cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
-			
+
 		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS);
 		restrictProposalsToVisibility(enabled);
-		
+
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
-		
+
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SORTER);
 		cp.orderProposalsAlphabetically(enabled);
 	}
-	
+
 	/**
 	 * Configure the given content assistant from the preference store.
 	 */
 	public static void configure(ContentAssistant assistant, IColorManager manager) {
-		
+
 		IPreferenceStore store= getPreferenceStore();
-		
+
 		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOACTIVATION);
 		assistant.enableAutoActivation(enabled);
-		
+
 		int delay= store.getInt(PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
-		
+
 		Color c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, manager);
 		assistant.setContextInformationPopupForeground(c);
 		assistant.setContextSelectorForeground(c);
-		
+
 		c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND, manager);
 		assistant.setContextInformationPopupBackground(c);
 		assistant.setContextSelectorBackground(c);
-		
+
 		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
 
 		configureDisplayProcessor(assistant, store);
 		configureJavaSnippetProcessor(assistant, store);
 	}
-	
-	
+
+
 	private static void changeDisplayProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
 		JavaDebugContentAssistProcessor dcp= getDisplayProcessor(assistant);
 		if (dcp == null) {
@@ -144,7 +144,7 @@ public class JDIContentAssistPreference {
 			dcp.orderProposalsAlphabetically(enable);
 		}
 	}
-	
+
 	private static void changeJavaSnippetProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
 		JavaSnippetCompletionProcessor cp= getJavaSnippetProcessor(assistant);
 		if (cp == null) {
@@ -160,17 +160,17 @@ public class JDIContentAssistPreference {
 			cp.orderProposalsAlphabetically(enable);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Changes the configuration of the given content assistant according to the given property
 	 * change event.
 	 */
 	public static void changeConfiguration(ContentAssistant assistant, PropertyChangeEvent event) {
-		
+
 		IPreferenceStore store= getPreferenceStore();
 		String p= event.getProperty();
-		
+
 		if (PreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
 			boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			assistant.enableAutoActivation(enabled);
@@ -189,15 +189,15 @@ public class JDIContentAssistPreference {
 			boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOINSERT);
 			assistant.enableAutoInsert(enabled);
 		}
-		
+
 		changeDisplayProcessor(assistant, store, p);
 		changeJavaSnippetProcessor(assistant, store, p);
 	}
-	
+
 	/**
 	 * Tells this processor to restrict its proposal to those element
 	 * visible in the actual invocation context.
-	 * 
+	 *
 	 * @param restrict <code>true</code> if proposals should be restricted
 	 */
 	private static void restrictProposalsToVisibility(boolean restrict) {
@@ -211,17 +211,17 @@ public class JDIContentAssistPreference {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tells this processor to restrict is proposals to those
 	 * starting with matching cases.
-	 * 
+	 *
 	 * @param restrict <code>true</code> if proposals should be restricted
 	 */
 	private static void restrictProposalsToMatchingCases(boolean restrict) {
 		// XXX not yet supported
 	}
-	
+
 	private static IPreferenceStore getPreferenceStore() {
 		return PreferenceConstants.getPreferenceStore();
 	}

@@ -37,9 +37,9 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * Page to create a new Java snippet file.
  */
 public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
-	
+
 	private static final String fgDefaultExtension= ".jpage"; //$NON-NLS-1$
-	
+
 	public NewSnippetFileWizardPage(IStructuredSelection selection) {
 		super("createScrapBookPage", selection); //$NON-NLS-1$
 		setTitle(SnippetMessages.getString("NewSnippetFileWizardPage.title")); //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	public boolean finish() {
-		// add extension if non is provided 
+		// add extension if non is provided
 		String fileName= getFileName();
 		if (fileName != null && !fileName.endsWith(fgDefaultExtension)) {
 			setFileName(fileName + fgDefaultExtension);
@@ -81,7 +81,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
@@ -92,7 +92,7 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 		if (!valid) {
 			return false;
 		}
-		
+
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 		IPath containerPath= getContainerFullPath();
 		if (containerPath != null && containerPath.segmentCount() > 0) {
@@ -106,12 +106,12 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 				JDIDebugUIPlugin.log(e.getStatus());
 			}
 		}
-	
+
 		String fileName= getFileName();
-		if (fileName != null && !fileName.endsWith(fgDefaultExtension)) {		
+		if (fileName != null && !fileName.endsWith(fgDefaultExtension)) {
 			fileName= fileName + fgDefaultExtension;
 			IPath path= getContainerFullPath();
-			
+
 			if (path != null && workspaceRoot.exists(path.append(fileName))) {
 				setErrorMessage(SnippetMessages.getString("NewSnippetFileWizardPage.error.AlreadyExists")); //$NON-NLS-1$
 				return false;
@@ -119,13 +119,13 @@ public class NewSnippetFileWizardPage extends WizardNewFileCreationPage {
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.NEW_SNIPPET_WIZARD_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.NEW_SNIPPET_WIZARD_PAGE);
 	}
 }

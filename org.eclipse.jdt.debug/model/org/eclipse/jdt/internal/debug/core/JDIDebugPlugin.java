@@ -56,16 +56,16 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Boolean preference controlling if hot code replace is enabled.
-	 * 
+	 *
 	 * @since 3.11
 	 */
 	public static final String PREF_ENABLE_HCR = JDIDebugPlugin
 			.getUniqueIdentifier() + ".enable_hcr"; //$NON-NLS-1$
-	
+
 	/**
 	 * integer preference controlling if we should, by default, suspend the VM
 	 * instead of the thread
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String PREF_DEFAULT_BREAKPOINT_SUSPEND_POLICY = JDIDebugPlugin
@@ -74,7 +74,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * integer preference controlling which default suspend option to set on new
 	 * watchpoints
-	 * 
+	 *
 	 * @since 3.3.1
 	 */
 	public static final String PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY = JDIDebugPlugin
@@ -83,7 +83,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Boolean preference controlling if references should be displayed as
 	 * variables in the variables and expressions view
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String PREF_SHOW_REFERENCES_IN_VAR_VIEW = JDIDebugPlugin
@@ -92,7 +92,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Integer preference determining the maximum number of references that
 	 * should be returned to the user when displaying reference information
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String PREF_ALL_REFERENCES_MAX_COUNT = JDIDebugPlugin
@@ -101,7 +101,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Integer preference determining the maximum number of instances that
 	 * should be returned to the user when displaying instance information
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public static final String PREF_ALL_INSTANCES_MAX_COUNT = JDIDebugPlugin
@@ -109,14 +109,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Extension point for java logical structures.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public static final String EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES = "javaLogicalStructures"; //$NON-NLS-1$
 
 	/**
 	 * Extension point for java breakpoint action delegates.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final String EXTENSION_POINT_JAVA_BREAKPOINT_LISTENERS = "breakpointListeners"; //$NON-NLS-1$
@@ -165,7 +165,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 * evaluations, via a status handler. A status handler is contributed by the
 	 * Java debug UI. When not present, the debug model uses any suspended
 	 * thread.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final int INFO_EVALUATION_THREAD = 110;
@@ -175,14 +175,14 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 */
 	public static final IStatus STATUS_GET_EVALUATION_THREAD = new Status(
 			IStatus.INFO, getUniqueIdentifier(), INFO_EVALUATION_THREAD,
-			"Provides thread context for an evaluation", null); //$NON-NLS-1$	
+			"Provides thread context for an evaluation", null); //$NON-NLS-1$
 
 	/**
 	 * Status code used by the debug model to retrieve a frame to use for
 	 * evaluations, via a status handler. A status handler is contributed by the
 	 * Java debug UI. When not present, the debug model uses any suspended
 	 * thread.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final int INFO_EVALUATION_STACK_FRAME = 111;
@@ -201,7 +201,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Returns whether the debug UI plug-in is in trace mode.
-	 * 
+	 *
 	 * @return whether the debug UI plug-in is in trace mode
 	 */
 	public boolean isTraceMode() {
@@ -210,7 +210,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Logs the given message if in trace mode.
-	 * 
+	 *
 	 * @param message the string to log
 	 */
 	public static void logTraceMessage(String message) {
@@ -224,7 +224,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Return the singleton instance of the JDI Debug Model plug-in.
-	 * 
+	 *
 	 * @return the singleton instance of JDIDebugPlugin
 	 */
 	public static JDIDebugPlugin getDefault() {
@@ -245,7 +245,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 * Returns the detected version of JDI support. This is intended to
 	 * distinguish between clients that support JDI 1.4 methods like hot code
 	 * replace.
-	 * 
+	 *
 	 * @return an array of version numbers, major followed by minor
 	 * @since 2.1
 	 */
@@ -262,7 +262,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Returns if the JDI version being used is greater than or equal to the
 	 * given version (major, minor).
-	 * 
+	 *
 	 * @param version the array of version number identifiers to compare
 	 * @return boolean
 	 */
@@ -337,7 +337,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Shutdown the HCR manager and the Java debug targets.
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
@@ -372,9 +372,9 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(JDIDebugModel.PREF_REQUEST_TIMEOUT)) {
 			int value = Platform.getPreferencesService().getInt(
-					JDIDebugPlugin.getUniqueIdentifier(), 
-					JDIDebugModel.PREF_REQUEST_TIMEOUT, 
-					JDIDebugModel.DEF_REQUEST_TIMEOUT, 
+					JDIDebugPlugin.getUniqueIdentifier(),
+					JDIDebugModel.PREF_REQUEST_TIMEOUT,
+					JDIDebugModel.DEF_REQUEST_TIMEOUT,
 					null);
 			IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 			for (IDebugTarget target : targets) {
@@ -384,10 +384,10 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 			}
 		}
 	}
-	
+
 	/**
 	 * Logs the specified {@link Throwable} with this plug-in's log.
-	 * 
+	 *
 	 * @param t {@link Throwable} to log
 	 */
 	public static void log(Throwable t) {
@@ -402,12 +402,12 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		// this message is intentionally not internationalized, as an exception
 		// may be due to the resource bundle itself
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR,
-				"Internal error logged from JDI Debug: ", top)); //$NON-NLS-1$		
+				"Internal error logged from JDI Debug: ", top)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -436,7 +436,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Adds the given breakpoint listener to the JDI debug model.
-	 * 
+	 *
 	 * @param listener
 	 *            breakpoint listener
 	 */
@@ -446,7 +446,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Removes the given breakpoint listener from the JDI debug model.
-	 * 
+	 *
 	 * @param listener
 	 *            breakpoint listener
 	 */
@@ -456,7 +456,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Notifies listeners that the given breakpoint is about to be added.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -469,7 +469,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Notifies listeners that the given breakpoint has been installed.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -483,7 +483,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 	/**
 	 * Notifies listeners that the given breakpoint has been removed.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -497,7 +497,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Notifies listeners that the given breakpoint has been hit. Returns
 	 * whether the thread should suspend.
-	 * 
+	 *
 	 * @param thread the current thread context
 	 * @param breakpoint Java breakpoint
 	 * @return if the thread should suspend
@@ -509,7 +509,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	/**
 	 * Notifies listeners that the given breakpoint is about to be installed in
 	 * the given type. Returns whether the breakpoint should be installed.
-	 * 
+	 *
 	 * @param target
 	 *            Java debug target
 	 * @param breakpoint
@@ -576,7 +576,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * Returns the breakpoint for which notification is proceeding or
 		 * <code>null</code> if not in notification.
-		 * 
+		 *
 		 * @return breakpoint or <code>null</code>
 		 */
 		protected IJavaBreakpoint getBreakpoint() {
@@ -586,7 +586,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * Returns the listener for which notification is proceeding or
 		 * <code>null</code> if not in notification loop.
-		 * 
+		 *
 		 * @return breakpoint listener or <code>null</code>
 		 */
 		protected IJavaBreakpointListener getListener() {
@@ -636,7 +636,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 
 		/**
 		 * Notifies listeners of the given addition, install, or remove.
-		 * 
+		 *
 		 * @param target
 		 *            debug target
 		 * @param breakpoint
@@ -697,7 +697,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		 * Notifies listeners that the given breakpoint is about to be installed
 		 * in the given type. Returns whether the breakpoint should be
 		 * installed.
-		 * 
+		 *
 		 * @param target
 		 *            Java debug target
 		 * @param breakpoint
@@ -757,7 +757,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 		/**
 		 * Notifies listeners that the given breakpoint has been hit. Returns
 		 * whether the thread should suspend.
-		 * 
+		 *
 		 * @param thread
 		 *            thread in which the breakpoint was hit
 		 * @param breakpoint
@@ -780,7 +780,7 @@ public class JDIDebugPlugin extends Plugin implements IEclipsePreferences.IPrefe
 	 * Returns an evaluation engine for the given project in the given debug
 	 * target or <code>null</code> if target does not have a IJavaDebugTarget
 	 * that is a JDIDebugTarget implementation.
-	 * 
+	 *
 	 * @param project java project
 	 * @param target the debug target
 	 * @return evaluation engine or <code>null</code>

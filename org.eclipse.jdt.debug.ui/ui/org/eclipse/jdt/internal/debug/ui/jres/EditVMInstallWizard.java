@@ -18,12 +18,12 @@ import org.eclipse.jdt.launching.VMStandin;
  * @since 3.3
  */
 public class EditVMInstallWizard extends VMInstallWizard {
-	
+
 	private AbstractVMInstallPage fEditPage;
-	
+
 	/**
 	 * Constructs a wizard to edit the given vm.
-	 * 
+	 *
 	 * @param vm vm to edit
 	 * @param allVMs all VMs being edited
 	 */
@@ -61,5 +61,5 @@ public class EditVMInstallWizard extends VMInstallWizard {
 		return fEditPage.getSelection();
 	}
 
-	
+
 }

@@ -31,9 +31,9 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	public TestIntegerAccessUnboxing15(String name) {
 		super(name);
 	}
-	
+
 	class Listener implements IEvaluationListener {
-		
+
 		private Object lock = new Object();
 		private IEvaluationResult endresult;
 
@@ -47,7 +47,7 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 				lock.notifyAll();
 			}
 		}
-		
+
 		IEvaluationResult getResult() throws Exception {
 			synchronized (lock) {
 				if (endresult == null) {
@@ -59,9 +59,9 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 			}
 			return endresult;
 		}
-		
+
 	}
-	
+
 	public void doAccessTest(String snippet, int expected) throws Exception {
 		IJavaThread thread= null;
 		IAstEvaluationEngine engine = null;
@@ -70,11 +70,11 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(get15Project(), typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			IJavaDebugTarget target = (IJavaDebugTarget) thread.getDebugTarget();
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			engine = EvaluationManager.newAstEvaluationEngine(get15Project(), target);
 			Listener listener = new Listener();
@@ -89,8 +89,8 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
@@ -98,19 +98,19 @@ public class TestIntegerAccessUnboxing15 extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get15Project();
 	}
-	
+
 	/**
 	 * Test a row can be accessed
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRowAccess() throws Exception {
 		doAccessTest("matrix[new Integer(0)][0]", 1);
 	}
-	
+
 	/**
 	 * Test a column can be accessed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testColumnAccess() throws Exception {

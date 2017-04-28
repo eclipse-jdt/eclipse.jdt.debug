@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 
 	/**
 	 * Tests the trigger point
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTriggerPointBreakpoint() throws Exception {
@@ -40,7 +40,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 		IJavaLineBreakpoint bp1 = createLineBreakpoint(25, typeName);
 		IJavaLineBreakpoint bp2 = createLineBreakpoint(30, typeName);
 		bp2.setTriggerPoint(true);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread = launchToLineBreakpoint(typeName, bp2);
@@ -48,7 +48,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
-			
+
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			int iValue = value.getIntValue();
@@ -56,7 +56,7 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 
 			var = findVariable(frame, "j");
 			assertNotNull("Could not find variable 'j'", var);
-			
+
 			value = (IJavaPrimitiveValue) var.getValue();
 			assertNotNull("variable 'j' has no value", value);
 			int jValue = value.getIntValue();
@@ -67,6 +67,6 @@ public class TriggerPointBreakpointsTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 }

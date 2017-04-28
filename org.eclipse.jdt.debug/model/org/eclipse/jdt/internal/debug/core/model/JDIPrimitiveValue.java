@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 
 	/**
 	 * Constructs a new primitive value.
-	 * 
+	 *
 	 * @param target
 	 *            the Java debug target
 	 * @param value
@@ -34,7 +34,7 @@ public class JDIPrimitiveValue extends JDIValue implements IJavaPrimitiveValue {
 
 	/**
 	 * Returns this value's underlying primtive value
-	 * 
+	 *
 	 * @return underlying primtive value
 	 */
 	protected PrimitiveValue getUnderlyingPrimitiveValue() {

@@ -20,9 +20,9 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 public class LaunchConfigurationIPackageFragmentRenameParticipant extends RenameParticipant {
-	
+
 	private IPackageFragment fPackageFragment;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
 	 */
@@ -37,7 +37,7 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
 	 */
 	@Override
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0;
 	}
 
 	/* (non-Javadoc)

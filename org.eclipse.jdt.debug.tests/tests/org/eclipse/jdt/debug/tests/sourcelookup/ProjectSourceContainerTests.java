@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
  * Tests project source containers
  */
 public class ProjectSourceContainerTests extends AbstractDebugTest {
-	
+
 	public ProjectSourceContainerTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns a project source container.
 	 */
@@ -34,14 +34,14 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 		director.initializeParticipants();
 		director.setFindDuplicates(duplicates);
 		IProject project = get14Project().getProject();
-		ProjectSourceContainer container = new ProjectSourceContainer(project, referenced);		
+		ProjectSourceContainer container = new ProjectSourceContainer(project, referenced);
 		director.setSourceContainers(new ISourceContainer[]{container});
 		return container;
 	}
-	
+
 	/**
 	 * Tests creation and restoring from a memento.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testProjectSourceContainerMemento() throws Exception {
@@ -52,26 +52,26 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 		assertEquals("Project source container memento failed", container, restore);
 		assertTrue(restore.isSearchReferencedProjects());
 	}
-	
+
 	public void testSimpleSourceLookupPositive() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("Breakpoints.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", container.getProject().getFile("src/Breakpoints.java"), objects[0]);
 	}
-	
+
 	public void testSimpleRootSourceLookupPositive() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements(".classpath");
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", container.getProject().getFile(".classpath"), objects[0]);
-	}	
-	
+	}
+
 	public void testSimpleSourceLookupNegative() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
-	}	
+	}
 
 	public void testQualifiedSourceLookupPositive() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
@@ -79,13 +79,13 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", container.getProject().getFile("src/org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);
 	}
-	
+
 	public void testQualifiedSourceLookupNegative() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("a/b/c/InfiniteLoop.java");
 		assertEquals("Expected 0 files", 0, objects.length);
-	}	
-	
+	}
+
 	public void testCaseSensitiveQualifiedSourceLookup() throws Exception {
 		ProjectSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa");
@@ -97,5 +97,5 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 			assertEquals("Expected 1 result", 1, objects.length);
 			assertEquals("Wrong file", container.getProject().getFile("src/org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);
 		}
-	}	
+	}
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Tests run to line debug functionality
  */
 public class RunToLineTests extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -49,7 +49,7 @@ public class RunToLineTests extends AbstractDebugTest {
 
 	private Object fLock = new Object();
 	private IEditorPart fEditor = null;
-	
+
 	class MyListener implements IPerspectiveListener2 {
 
 		/**
@@ -76,43 +76,43 @@ public class RunToLineTests extends AbstractDebugTest {
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 		 */
 		@Override
-		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
+		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		}
 	}
 
 	/**
 	 * Test a run to line, with no extra breakpoints.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRunToLine() throws Exception {
 	    runToLine(55, 55, true);
 	}
-	
+
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to skip
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRunToLineSkipBreakpoint() throws Exception {
 	    createLineBreakpoint(53, "Breakpoints");
 	    runToLine(55, 55, true);
-	}	
-	
+	}
+
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to *not* skip
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRunToLineHitBreakpoint() throws Exception {
 	    createLineBreakpoint(53, "Breakpoints");
 	    runToLine(55, 53, false);
-	}	
+	}
 
 	/**
 	 * Runs to the given line number in the 'Breakpoints' source file, after stopping at the
 	 * first line in the main method.
-	 * 
+	 *
 	 * @param lineNumber line number to run to, ONE BASED
 	 * @param expectedLineNumber the line number to be on after run-to-line (may differ from
 	 *  the target line number if the option to skip breakpoints is off).
@@ -122,7 +122,7 @@ public class RunToLineTests extends AbstractDebugTest {
 	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints) throws Exception {
 		String typeName = "Breakpoints";
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(52, typeName);
-		
+
 		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
 		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);
 		IJavaThread thread= null;
@@ -139,7 +139,7 @@ public class RunToLineTests extends AbstractDebugTest {
             };
             Display display = DebugUIPlugin.getStandardDisplay();
             display.syncExec(closeAll);
-            
+
 			thread= launchToLineBreakpoint(typeName, breakpoint);
 			// wait for editor to open
 			synchronized (fLock) {
@@ -148,20 +148,20 @@ public class RunToLineTests extends AbstractDebugTest {
 			    }
             }
 			if (fEditor == null) {
-				Runnable r = new Runnable() {				
+				Runnable r = new Runnable() {
 					@Override
 					public void run() {
 						IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	                    IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
                         if (activeEditor != null) {
-                            System.out.println("ACTIVE: " + activeEditor.getTitle());    
+                            System.out.println("ACTIVE: " + activeEditor.getTitle());
                         }
 					}
 				};
 				display.syncExec(r);
 			}
 			assertNotNull("Editor did not open", fEditor);
-			
+
 			final Exception[] exs = new Exception[1];
 			final IJavaThread suspendee = thread;
 			Runnable r = new Runnable() {
@@ -204,7 +204,7 @@ public class RunToLineTests extends AbstractDebugTest {
                 }
             };
             Display display = DebugUIPlugin.getStandardDisplay();
-            display.syncExec(cleanup);			
-		}		
+            display.syncExec(cleanup);
+		}
 	}
 }

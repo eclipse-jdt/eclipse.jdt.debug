@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,14 +14,14 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugElement;
 
 /**
- * This event waiter is used to wait for a certain type of event (create, terminate, suspend, etc.) 
- * on a *specific* debug element.  Contrast this with DebugElementKindEventWaiter which is similar, 
+ * This event waiter is used to wait for a certain type of event (create, terminate, suspend, etc.)
+ * on a *specific* debug element.  Contrast this with DebugElementKindEventWaiter which is similar,
  * but is used to wait for a certain type of event on a *kind* of debug element (thread, debug target, etc.)
  */
 public class SpecificDebugElementEventWaiter extends DebugEventWaiter {
 
 	protected IDebugElement fDebugElement;
-	
+
 	/**
 	 * Constructor
 	 * @param eventKind
@@ -31,7 +31,7 @@ public class SpecificDebugElementEventWaiter extends DebugEventWaiter {
 		super(eventKind);
 		fDebugElement = element;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.debug.testplugin.DebugEventWaiter#accept(org.eclipse.debug.core.DebugEvent)
 	 */

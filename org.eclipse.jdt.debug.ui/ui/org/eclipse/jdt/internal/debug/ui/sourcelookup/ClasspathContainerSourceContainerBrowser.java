@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Used to choose a classpath container.
- * 
+ *
  * @since 3.0
  */
 public class ClasspathContainerSourceContainerBrowser extends AbstractSourceContainerBrowser {
@@ -56,10 +56,10 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 		return editLibraries(shell, director, classpathEntry);
 		//, SourceLookupMessages.getString("ClasspathContainerSourceContainerBrowser.1")
 	}
-	
+
 	/**
 	 * Create or edit a container classpath entry.
-	 * 
+	 *
 	 * @param shell shell to open dialog on
 	 * @param director source lookup director
 	 * @param classpathEntry entry to edit, or <code>null</code> if creating
@@ -96,7 +96,7 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 				newContainers[i] = container;
 			}
 			return newContainers;
-		}			
+		}
 		return new ISourceContainer[0];
-	}	
+	}
 }

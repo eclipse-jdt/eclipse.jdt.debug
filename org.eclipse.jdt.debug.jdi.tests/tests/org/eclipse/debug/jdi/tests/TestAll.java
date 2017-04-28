@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ public class TestAll {
 	 * Returns all the test case classes (a Vector of Class) that are
 	 * relevant for the given VM information.
 	 * NB1: This doesn't include the VirtualMachineTest class.
-	 * NB2: The last element must be the VMDeathEventTest class since 
+	 * NB2: The last element must be the VMDeathEventTest class since
 	 *      it shuts the VM down.
 	 */
 	protected static Vector<Class<?>> getAllTestCases(VMInformation info) {
@@ -58,10 +58,10 @@ public class TestAll {
 		classes.addElement(MethodEntryRequestTest.class);
 		classes.addElement(MethodExitRequestTest.class);
 		classes.addElement(MirrorTest.class);
-	
+
 		if (info.fVM.canWatchFieldModification())
 			classes.addElement(ModificationWatchpointEventTest.class);
-			
+
 		classes.addElement(ObjectReferenceTest.class);
 		classes.addElement(PrimitiveValueTest.class);
 		classes.addElement(ReferenceTypeTest.class);
@@ -76,12 +76,12 @@ public class TestAll {
 		classes.addElement(TypeComponentTest.class);
 		classes.addElement(TypeTest.class);
 		classes.addElement(ValueTest.class);
-	
+
 		if (info.fVM.canWatchFieldAccess() && info.fVM.canWatchFieldModification()) {
 			classes.addElement(WatchpointEventTest.class);
 			classes.addElement(WatchpointRequestTest.class);
 		}
-	
+
 		classes.addElement(VirtualMachineExitTest.class);
 		classes.addElement(VMDisconnectEventTest.class);
 		classes.addElement(VMDisposeTest.class);	// note that this test does not restore the state properly.
@@ -96,20 +96,20 @@ public class TestAll {
 	public static void main(String[] arguments) throws Throwable {
 		// Create test result
 		TextTestResult result= new TextTestResult();
-	
+
 		// Run the VirtualMachineTest
 		AbstractJDITest test= run(result, VirtualMachineTest.class, arguments, null);
-	
+
 		// Was it possible to run the first test?
 		if (test == null)
 			return;
-		
+
 		// Get the VM info
 		VMInformation info = test.getVMInfo();
-	
+
 		// Get all test cases
 		Vector<Class<?>> classes= getAllTestCases(info);
-	
+
 		// Run the other tests
 		Enumeration<Class<?>> enumeration= classes.elements();
 		while (enumeration.hasMoreElements()) {
@@ -117,10 +117,10 @@ public class TestAll {
 			test= run(result, testClass, arguments, info);
 			info= test.getVMInfo(); // In case the test has changed this info
 		}
-	
-		// Shut down the VM 
+
+		// Shut down the VM
 		test.shutDownTarget();
-	
+
 		// Show the result
 		result.print();
 	}
@@ -150,7 +150,7 @@ public class TestAll {
 			return null;
 		test.setVMInfo(info);
 		test.setInControl(false);
-	
+
 		// Run test
 		System.out.println("\n" + new java.util.Date());
 		System.out.println("Begin testing " + test.getName() + "...");
@@ -160,7 +160,7 @@ public class TestAll {
 		long runTime= endTime-startTime;
 		System.out.println("\nTime: "+runTime/1000+"."+runTime%1000);
 		System.out.println("Done testing " + test.getName() + ".");
-		
+
 		return test;
 	}
 }

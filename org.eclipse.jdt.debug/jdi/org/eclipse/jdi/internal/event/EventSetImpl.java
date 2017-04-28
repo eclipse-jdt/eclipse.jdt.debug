@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import com.sun.jdi.request.EventRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class EventSetImpl extends MirrorImpl implements EventSet {
 	/** Set that is used to store events. */
@@ -51,7 +51,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 */
 	public EventSetImpl(VirtualMachineImpl vmImpl, EventImpl[] events) {
 		this(vmImpl);
-		fEvents = new ArrayList<Event>(events.length);
+		fEvents = new ArrayList<>(events.length);
 		for (EventImpl event : events)
 			fEvents.add(event);
 	}
@@ -61,7 +61,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 */
 	public EventSetImpl(VirtualMachineImpl vmImpl, EventImpl event) {
 		this(vmImpl);
-		fEvents = new ArrayList<Event>(1);
+		fEvents = new ArrayList<>(1);
 		fEvents.add(event);
 	}
 
@@ -129,7 +129,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 			return;
 		}
 		Iterator<Event> iter = fEvents.iterator();
-		List<ThreadReference> resumedThreads = new ArrayList<ThreadReference>(fEvents.size());
+		List<ThreadReference> resumedThreads = new ArrayList<>(fEvents.size());
 		while (iter.hasNext()) {
 			EventImpl event = (EventImpl)iter.next();
 			ThreadReference thread = event.thread();
@@ -161,7 +161,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 		// Read size.
 		int size = target.readInt("size", in); //$NON-NLS-1$
 		// Create event list.
-		eventSet.fEvents = new ArrayList<Event>(size);
+		eventSet.fEvents = new ArrayList<>(size);
 
 		while (size-- > 0) {
 			EventImpl event = EventImpl.read(target, in);

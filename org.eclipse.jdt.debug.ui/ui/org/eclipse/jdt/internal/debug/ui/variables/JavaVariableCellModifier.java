@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,13 +18,13 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class JavaVariableCellModifier extends DefaultVariableCellModifier {
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#canModify(java.lang.Object,
      *      java.lang.String)
      */
@@ -53,7 +53,7 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier#getValue(java.lang.Object,
      *      java.lang.String)
      */
@@ -108,7 +108,7 @@ public class JavaVariableCellModifier extends DefaultVariableCellModifier {
 
     /**
      * Returns whether the given variable is a boolean.
-     * 
+     *
      * @param variable
      * @return
      */

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
  * Tests directory source containers
  */
 public class DirectorySourceContainerTests extends AbstractDebugTest {
-	
+
 	public DirectorySourceContainerTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns a directory source container.
 	 */
@@ -41,10 +41,10 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		director.setSourceContainers(new ISourceContainer[]{container});
 		return container;
 	}
-	
+
 	/**
 	 * Tests creation and restoring from a memento.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDirectorySourceContainerMemento() throws Exception {
@@ -54,7 +54,7 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		ISourceContainer restore = container.getType().createSourceContainer(memento);
 		assertEquals("Directory source container memento failed", container, restore);
 		assertTrue(restore.isComposite());
-	}	
+	}
 
 	public void testSimpleSourceLookupPositive() throws Exception {
 		DirectorySourceContainer container = getContainer(false, false);
@@ -62,46 +62,46 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", new File(container.getDirectory(), "Breakpoints.java"), ((LocalFileStorage)objects[0]).getFile());
 	}
-	
+
 	public void testSimpleSourceLookupNegative() throws Exception {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
-	}	
-	
+	}
+
 	public void testSimpleNestedSourceLookupPositive() throws Exception {
 		DirectorySourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
-		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());		
+		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 	}
-	
+
 	public void testSimpleNestedSourceLookupNegative() throws Exception {
 		DirectorySourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("FileNotFound.java");
-		assertEquals("Expected 0 files", 0, objects.length);		
+		assertEquals("Expected 0 files", 0, objects.length);
 	}
-	
+
 	public void testQualifiedSourceLookupPositive() throws Exception {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("org/eclipse/debug/tests/targets/InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 	}
-	
+
 	public void testQualifiedSourceLookupNegative() throws Exception {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("a/b/c/FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
 	}
-	
+
 	public void testPartiallyQualifiedNestedSourceLookupPositive() throws Exception {
 		DirectorySourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("debug/tests/targets/InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
-	}	
-	
+	}
+
 	public void testCaseSensitiveQualifiedSourceLookup() throws Exception {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa");
@@ -117,5 +117,5 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 				assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 			}
 		}
-	}		
+	}
 }

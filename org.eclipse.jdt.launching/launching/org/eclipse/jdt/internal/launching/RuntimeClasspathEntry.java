@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     BEA - Daniel R Somerfield - Bug 88939
- *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching 
+ *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 /**
  * An entry on the runtime classpath that the user can manipulate
  * and share in a launch configuration.
- * 
+ *
  * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry
  * @since 2.0
  */
@@ -52,36 +52,36 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * This entry's type - must be set on creation.
 	 */
 	private int fType = -1;
-	
+
 	/**
 	 * This entry's classpath property.
 	 */
 	private int fClasspathProperty = -1;
-	
+
 	/**
 	 * This entry's associated build path entry.
 	 */
 	private IClasspathEntry fClasspathEntry = null;
-	
+
 	/**
 	 * The entry's resolved entry (lazily initialized)
 	 */
 	private IClasspathEntry fResolvedEntry = null;
-	
+
 	/**
 	 * Associated Java project, or <code>null</code>
 	 */
 	private IJavaProject fJavaProject = null;
-	
+
 	/**
 	 * The path if the entry was invalid and fClasspathEntry is null
 	 */
 	private IPath fInvalidPath;
-	
+
 	/**
 	 * Constructs a new runtime classpath entry based on the
 	 * (build) classpath entry.
-	 * 
+	 *
 	 * @param entry the associated classpath entry
 	 */
 	public RuntimeClasspathEntry(IClasspathEntry entry) {
@@ -96,15 +96,15 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()}));
 		}
 		setClasspathEntry(entry);
 		initializeClasspathProperty();
 	}
-	
+
 	/**
 	 * Constructs a new container entry in the context of the given project
-	 * 
+	 *
 	 * @param entry classpath entry
 	 * @param classpathProperty this entry's classpath property
 	 */
@@ -114,30 +114,30 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(CONTAINER);
 				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()})); 
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()}));
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
-	}	
+	}
 
 	/**
 	 * Reconstructs a runtime classpath entry from the given
 	 * XML document root not.
-	 * 
+	 *
 	 * @param root a memento root doc element created by this class
 	 * @exception CoreException if unable to restore from the given memento
 	 */
-	public RuntimeClasspathEntry(Element root) throws CoreException {									
+	public RuntimeClasspathEntry(Element root) throws CoreException {
 		try {
 			setType(Integer.parseInt(root.getAttribute("type"))); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_type_2, e); 
+			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_type_2, e);
 		}
 		try {
 			setClasspathProperty(Integer.parseInt(root.getAttribute("path"))); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_location_3, e); 
-		}			
+			abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry_location_3, e);
+		}
 
 		// source attachment
 		IPath sourcePath = null;
@@ -149,13 +149,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		path = root.getAttribute("sourceRootPath"); //$NON-NLS-1$
 		if (path != null && path.length() > 0) {
 			rootPath = new Path(path);
-		}			
+		}
 
 		switch (getType()) {
 			case PROJECT :
 				String name = root.getAttribute("projectName"); //$NON-NLS-1$
 				if (isEmpty(name)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_project_name_4, null); 
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_project_name_4, null);
 				} else {
 					IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 					setClasspathEntry(JavaCore.newProjectEntry(proj.getFullPath()));
@@ -167,7 +167,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					// internal
 					path = root.getAttribute("internalArchive"); //$NON-NLS-1$
 					if (isEmpty(path)) {
-						abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_archive_path_5, null); 
+						abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_archive_path_5, null);
 					} else {
 						setClasspathEntry(createLibraryEntry(sourcePath, rootPath, path));
 					}
@@ -179,7 +179,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case VARIABLE :
 				String var = root.getAttribute("containerPath"); //$NON-NLS-1$
 				if (isEmpty(var)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); 
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null);
 				} else {
 					setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
 				}
@@ -187,13 +187,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case CONTAINER :
 				var = root.getAttribute("containerPath"); //$NON-NLS-1$
 				if (isEmpty(var)) {
-					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null); 
+					abort(LaunchingMessages.RuntimeClasspathEntry_Unable_to_recover_runtime_class_path_entry___missing_variable_name_6, null);
 				} else {
 					setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
 				}
 				break;
-		}	
-		
+		}
+
 		String name = root.getAttribute("javaProject"); //$NON-NLS-1$
 		if (isEmpty(name)) {
 			fJavaProject = null;
@@ -209,11 +209,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		{
 			fInvalidPath = p;
 			return null;
-			//abort("There was a problem with path \" " + path + "\": paths must be absolute.", null);			
+			//abort("There was a problem with path \" " + path + "\": paths must be absolute.", null);
 		}
 		return JavaCore.newLibraryEntry(p, sourcePath, rootPath);
 	}
-	
+
 	/**
 	 * Throws an internal error exception
 	 * @param message the message
@@ -222,7 +222,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	protected void abort(String message, Throwable e)	throws CoreException {
 		IStatus s = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, e);
-		throw new CoreException(s);		
+		throw new CoreException(s);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 
 	/**
 	 * Sets this entry's type
-	 * 
+	 *
 	 * @param type this entry's type
 	 */
 	private void setType(int type) {
@@ -287,7 +287,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case CONTAINER :
 				node.setAttribute("containerPath", getPath().toString()); //$NON-NLS-1$
 				break;
-		}		
+		}
 		if (getSourceAttachmentPath() != null) {
 			node.setAttribute("sourceAttachmentPath", getSourceAttachmentPath().toString()); //$NON-NLS-1$
 		}
@@ -325,12 +325,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				return getResource(getPath());
 		}
 	}
-	
+
 	/**
 	 * Returns the resource in the workspace associated with the given
 	 * absolute path, or <code>null</code> if none. The path may have
 	 * a device.
-	 * 
+	 *
 	 * @param path absolute path, or <code>null</code>
 	 * @return resource or <code>null</code>
 	 */
@@ -351,8 +351,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			if (path.getDevice() == null) {
 				// search relative to the workspace if no device present
 				return root.findMember(path);
-			} 
-		}		
+			}
+		}
 		return null;
 	}
 
@@ -404,7 +404,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		updateClasspathEntry(getPath(), getSourceAttachmentPath(), getSourceAttachmentRootPath(), path);
 	}
-	
+
 	/**
 	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
 	 */
@@ -428,7 +428,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		updateClasspathEntry(getPath(), getSourceAttachmentPath(), path, getExternalAnnotationsPath());
 	}
-	
+
 	/**
 	 * Initializes the classpath property based on this entry's type.
 	 */
@@ -449,8 +449,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				break;
 		}
 	}
-	
-	
+
+
 	/**
 	 * @see IRuntimeClasspathEntry#setClasspathProperty(int)
 	 */
@@ -499,7 +499,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return resolveToOSPath(path);
 	}
-	
+
 	/**
 	 * Returns the OS path for the given absolute or workspace relative path
 	 * @param path the path
@@ -514,13 +514,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			}
 			if (res == null) {
 				return path.toOSString();
-			} 
+			}
 			IPath location = res.getLocation();
 			if (location != null) {
 				return location.toOSString();
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	/**
@@ -578,7 +578,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return one.equals(two);
 	}
-	
+
 	/**
 	 * @see Object#hashCode()
 	 */
@@ -657,10 +657,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				break;
 			default:
 				return;
-		}		
-		setClasspathEntry(entry);		
+		}
+		setClasspathEntry(entry);
 	}
-	
+
 	private static IClasspathAttribute[] setClasspathAttribute(IClasspathAttribute[] attributes, String name, String value) {
 		for (int i = attributes.length; --i >= 0;) {
 			if (name.equals(attributes[i].getName())) {
@@ -687,18 +687,18 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return fResolvedEntry;
 	}
-		
+
 	protected boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
 	}
-	
+
 	@Override
 	public String toString() {
 		if (fClasspathEntry != null) {
 			return fClasspathEntry.toString();
 		}
 		return super.toString();
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
@@ -707,10 +707,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public IJavaProject getJavaProject() {
 		return fJavaProject;
 	}
-	
+
 	/**
 	 * Sets the Java project associated with this classpath entry.
-	 * 
+	 *
 	 * @param project Java project
 	 */
 	public void setJavaProject(IJavaProject project) {

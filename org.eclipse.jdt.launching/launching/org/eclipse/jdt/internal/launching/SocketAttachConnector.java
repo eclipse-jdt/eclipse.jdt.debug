@@ -45,10 +45,10 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
  * A standard socket attaching connector
  */
 public class SocketAttachConnector implements IVMConnector {
-		
+
 	/**
 	 * Return the socket transport attaching connector
-	 * 
+	 *
 	 * @return the {@link AttachingConnector}
 	 * @exception CoreException if unable to locate the connector
 	 */
@@ -63,7 +63,7 @@ public class SocketAttachConnector implements IVMConnector {
 			}
 		}
 		if (connector == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Socket_attaching_connector_not_available_3, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); 
+			abort(LaunchingMessages.SocketAttachConnector_Socket_attaching_connector_not_available_3, null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
 		return connector;
 	}
@@ -81,13 +81,13 @@ public class SocketAttachConnector implements IVMConnector {
 	 */
 	@Override
 	public String getName() {
-		return LaunchingMessages.SocketAttachConnector_Standard__Socket_Attach__4; 
+		return LaunchingMessages.SocketAttachConnector_Standard__Socket_Attach__4;
 	}
-	
+
 	/**
 	 * Throws a core exception with an error status object built from
 	 * the given message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
@@ -96,7 +96,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMConnector#connect(java.util.Map, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.ILaunch)
@@ -106,40 +106,40 @@ public class SocketAttachConnector implements IVMConnector {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-		subMonitor.beginTask(LaunchingMessages.SocketAttachConnector_Connecting____1, 2); 
-		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1); 
-		
+		subMonitor.beginTask(LaunchingMessages.SocketAttachConnector_Connecting____1, 2);
+		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Configuring_connection____1);
+
 		AttachingConnector connector= getAttachingConnector();
 		String portNumberString = arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT); 
+			abort(LaunchingMessages.SocketAttachConnector_Port_unspecified_for_remote_connection__2, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT);
 		}
 		String host = arguments.get("hostname"); //$NON-NLS-1$
 		if (host == null) {
-			abort(LaunchingMessages.SocketAttachConnector_Hostname_unspecified_for_remote_connection__4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME); 
+			abort(LaunchingMessages.SocketAttachConnector_Hostname_unspecified_for_remote_connection__4, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME);
 		}
 		Map<String, Connector.Argument> map= connector.defaultArguments();
-		
+
         Connector.Argument param= map.get("hostname"); //$NON-NLS-1$
 		param.setValue(host);
 		param= map.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
-        
+
         String timeoutString = arguments.get("timeout"); //$NON-NLS-1$
         if (timeoutString != null) {
             param= map.get("timeout"); //$NON-NLS-1$
             param.setValue(timeoutString);
         }
-        
+
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		boolean allowTerminate = false;
 		if (configuration != null) {
 			allowTerminate = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 		}
 		subMonitor.worked(1);
-		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Establishing_connection____2); 
+		subMonitor.subTask(LaunchingMessages.SocketAttachConnector_Establishing_connection____2);
 		try {
 			VirtualMachine vm = connector.attach(map);
 			String vmLabel = constructVMLabel(vm, host, portNumberString, configuration);
@@ -150,13 +150,13 @@ public class SocketAttachConnector implements IVMConnector {
         } catch (TimeoutException e) {
             abort(LaunchingMessages.SocketAttachConnector_0, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (UnknownHostException e) {
-			abort(NLS.bind(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(NLS.bind(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_because_of_unknown_host____0___1, new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (ConnectException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_as_connection_was_refused_2, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_as_connection_was_refused_2, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (IOException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		} catch (IllegalConnectorArgumentsException e) {
-			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); 
+			abort(LaunchingMessages.SocketAttachConnector_Failed_to_connect_to_remote_VM_1, e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
 		}
 	}
 
@@ -188,11 +188,11 @@ public class SocketAttachConnector implements IVMConnector {
 		if(!"".equals(name)) { //$NON-NLS-1$
 			buffer.append(' ');
 		}
-		buffer.append('['); 
+		buffer.append('[');
 		buffer.append(host);
-		buffer.append(':'); 
+		buffer.append(':');
 		buffer.append(port);
-		buffer.append(']'); 
+		buffer.append(']');
 		return buffer.toString();
 	}
 
@@ -212,7 +212,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 */
 	@Override
 	public List<String> getArgumentOrder() {
-		List<String> list = new ArrayList<String>(2);
+		List<String> list = new ArrayList<>(2);
 		list.add("hostname"); //$NON-NLS-1$
 		list.add("port"); //$NON-NLS-1$
 		return list;

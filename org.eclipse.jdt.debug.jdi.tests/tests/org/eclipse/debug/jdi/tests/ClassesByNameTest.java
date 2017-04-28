@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -68,9 +68,9 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[[I"));
 	}
-	
+
 	/**
-	 * tests signature for an array of long values 
+	 * tests signature for an array of long values
 	 */
 	public void testJDILongArray() {
 		List<?> classes = fVM.classesByName("long[]");
@@ -79,7 +79,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[J"));
 	}
-	
+
 	/**
 	 * tests signature of a two dimensional array of long values
 	 */
@@ -90,7 +90,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 			classes.size() == 1
 				&& ((Type) classes.get(0)).signature().equals("[[J"));
 	}
-	
+
 	/**
 	 * Test that there is a class object for 'java.lang.String[]'
 	 */
@@ -102,7 +102,7 @@ public class ClassesByNameTest extends AbstractJDITest {
 				&& ((Type) classes.get(0)).signature().equals(
 					"[Ljava/lang/String;"));
 	}
-	
+
 	/**
 	 * Test that there is a class object for 'java.lang.String'
 	 */

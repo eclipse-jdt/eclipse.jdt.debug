@@ -61,27 +61,27 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * Property page for configuring IJavaBreakpoints.
  */
 public class JavaBreakpointPage extends PropertyPage {
-	
+
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
 	/*
 	 * protected Button fTriggerPointButton; protected Button fTriggerPointButtonActive;
 	 */
-	protected List<String> fErrorMessages= new ArrayList<String>();
+	protected List<String> fErrorMessages= new ArrayList<>();
 	protected String fPrevMessage = null;
 	private AbstractJavaBreakpointEditor fEditor;
-	
+
 	/**
 	 * Attribute used to indicate that a breakpoint should be deleted
 	 * when cancel is pressed.
 	 */
 	public static final String ATTR_DELETE_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_DELETE_ON_CANCEL";  //$NON-NLS-1$
-	
+
 	/**
 	 * Constant for the empty string
 	 */
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Store the breakpoint properties.
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
@@ -104,14 +104,14 @@ public class JavaBreakpointPage extends PropertyPage {
 		};
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
-		} 
+		}
 		catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(e.getStatus());
 			JDIDebugUIPlugin.log(e);
 		}
 		return super.performOk();
 	}
-	
+
 	/**
 	 * Adds the given error message to the errors currently displayed on this page.
 	 * The page displays the most recently added error message.
@@ -126,7 +126,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		setErrorMessage(message);
 		setValid(message == null);
 	}
-	
+
 	/**
 	 * Removes the given error message from the errors currently displayed on this page.
 	 * When an error message is removed, the page displays the error that was added
@@ -142,7 +142,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			addErrorMessage(fErrorMessages.get(fErrorMessages.size() - 1));
 		}
 	}
-	
+
 	/**
 	 * Stores the values configured in this page. This method
 	 * should be called from within a workspace runnable to
@@ -168,7 +168,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	private void storeEnabled(IJavaBreakpoint breakpoint) throws CoreException {
 		breakpoint.setEnabled(fEnabledButton.getSelection());
 	}
-	
+
 	/**
 	 * Creates the labels and editors displayed for the breakpoint.
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -192,7 +192,7 @@ public class JavaBreakpointPage extends PropertyPage {
                     @Override
 					public void shellActivated(ShellEvent e) {
                         Shell shell = (Shell)e.getSource();
-                        shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())})); 
+                        shell.setText(NLS.bind(PropertyPageMessages.JavaBreakpointPage_10, new String[]{getName(getBreakpoint())}));
                         shell.removeShellListener(this);
                     }
                     @Override
@@ -213,10 +213,10 @@ public class JavaBreakpointPage extends PropertyPage {
         }
 		return mainComposite;
 	}
-	
+
     /**
      * Returns the name of the given element.
-     * 
+     *
      * @param element the element
      * @return the name of the element
      */
@@ -224,10 +224,10 @@ public class JavaBreakpointPage extends PropertyPage {
 		IWorkbenchAdapter adapter = element.getAdapter(IWorkbenchAdapter.class);
         if (adapter != null) {
             return adapter.getLabel(element);
-        } 
+        }
         return EMPTY_STRING;
-    }	
-	
+    }
+
 	/**
 	 * Creates the labels displayed for the breakpoint.
 	 * @param parent the parent composite
@@ -237,7 +237,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		try {
 			String typeName = ((IJavaBreakpoint) getElement()).getTypeName();
 			if (typeName != null) {
-				createLabel(labelComposite, PropertyPageMessages.JavaBreakpointPage_3); 
+				createLabel(labelComposite, PropertyPageMessages.JavaBreakpointPage_3);
 				Text text = SWTFactory.createText(labelComposite, SWT.READ_ONLY, 1, typeName);
 				text.setBackground(parent.getBackground());
 			}
@@ -252,7 +252,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	 * @param parent the parent composite
 	 */
 	protected void createEnabledButton(Composite parent) {
-		fEnabledButton = createCheckButton(parent, PropertyPageMessages.JavaBreakpointPage_5); 
+		fEnabledButton = createCheckButton(parent, PropertyPageMessages.JavaBreakpointPage_5);
 		try {
 			fEnabledButton.setSelection(getBreakpoint().isEnabled());
 		}
@@ -260,7 +260,7 @@ public class JavaBreakpointPage extends PropertyPage {
 			JDIDebugUIPlugin.log(ce);
 		}
 	}
-	
+
 	/**
 	 * Returns the breakpoint that this preference page configures
 	 * @return the breakpoint this page configures
@@ -268,7 +268,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	protected IJavaBreakpoint getBreakpoint() {
 		return (IJavaBreakpoint) getElement();
 	}
-	
+
 	/**
 	 * Allows subclasses to add type specific labels to the common Java
 	 * breakpoint page.
@@ -289,7 +289,7 @@ public class JavaBreakpointPage extends PropertyPage {
 				JDIDebugUIPlugin.log(ce);
 			}
 			if (lineNumber.length() > 0) {
-				createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2); 
+				createLabel(parent, PropertyPageMessages.JavaLineBreakpointPage_2);
 				Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, lineNumber.toString());
 				text.setBackground(parent.getBackground());
 			}
@@ -299,20 +299,20 @@ public class JavaBreakpointPage extends PropertyPage {
 				if (member == null) {
 					return;
 				}
-				String label = PropertyPageMessages.JavaLineBreakpointPage_3; 
+				String label = PropertyPageMessages.JavaLineBreakpointPage_3;
 				if (breakpoint instanceof IJavaMethodBreakpoint) {
-					label = PropertyPageMessages.JavaLineBreakpointPage_4; 
+					label = PropertyPageMessages.JavaLineBreakpointPage_4;
 				} else if (breakpoint instanceof IJavaWatchpoint) {
-					label = PropertyPageMessages.JavaLineBreakpointPage_5; 
+					label = PropertyPageMessages.JavaLineBreakpointPage_5;
 				}
 				createLabel(parent, label);
 				Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1, fJavaLabelProvider.getText(member));
 				text.setBackground(parent.getBackground());
-			} 
+			}
 			catch (CoreException exception) {JDIDebugUIPlugin.log(exception);}
 		}
 	}
-	
+
 	/**
 	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
@@ -337,7 +337,7 @@ public class JavaBreakpointPage extends PropertyPage {
 						new JavaBreakpointConditionEditor(null) });
 		} else if (JavaMethodBreakpoint.JAVA_METHOD_BREAKPOINT.equals(type)) {
 			setTitle(PropertyPageMessages.JavaLineBreakpointPage_20);
-			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[] 
+			fEditor = new CompositeBreakpointEditor(new AbstractJavaBreakpointEditor[]
 			    {new MethodBreakpointEditor(), new JavaBreakpointConditionEditor(null)});
 		} else {
 			// use standard editor for any other kind of breakpoint (@see bug 325161)
@@ -364,7 +364,7 @@ public class JavaBreakpointPage extends PropertyPage {
 		setErrorMessage(e.getMessage());
 	}
    }
-	
+
 	/**
 	 * Creates a fully configured text editor with the given initial value
 	 * @param parent the parent composite
@@ -404,7 +404,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	protected Button createRadioButton(Composite parent, String text) {
 		return SWTFactory.createRadioButton(parent, text, 1);
 	}
-	
+
 	/**
 	 * Check to see if the breakpoint should be deleted.
 	 * @return <code>true</code> if the page was canceled, <code>false</code> othewise
@@ -417,11 +417,11 @@ public class JavaBreakpointPage extends PropertyPage {
 				getBreakpoint().delete();
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(PropertyPageMessages.JavaBreakpointPage_9, e.getStatus()); 
+			JDIDebugUIPlugin.statusDialog(PropertyPageMessages.JavaBreakpointPage_9, e.getStatus());
 		}
 		return super.performCancel();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */

@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,24 +33,24 @@ import org.eclipse.swt.widgets.Shell;
  * A viewer that displays and manipulates runtime classpath entries.
  */
 public class RuntimeClasspathViewer extends TableViewer implements IClasspathViewer {
-	
+
 	/**
 	 * Whether enabled/editable.
 	 */
 	private boolean fEnabled = true;
-	
+
 	/**
 	 * Entry changed listeners
 	 */
 	private ListenerList<IEntriesChangedListener> fListeners = new ListenerList<>();
-	
+
 	/**
 	 * The runtime classpath entries displayed in this viewer
 	 */
-	protected List<IRuntimeClasspathEntry> fEntries = new ArrayList<IRuntimeClasspathEntry>();
-	
+	protected List<IRuntimeClasspathEntry> fEntries = new ArrayList<>();
+
 	class ContentProvider implements IStructuredContentProvider {
-			
+
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
@@ -72,9 +72,9 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 	}
-		
+
 	/**
 	 * Creates a runtime classpath viewer with the given parent.
 	 *
@@ -86,7 +86,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		RuntimeClasspathEntryLabelProvider lp = new RuntimeClasspathEntryLabelProvider();
 		setLabelProvider(lp);
 		setInput(fEntries);
-		
+
 		getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
@@ -97,8 +97,8 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 					notifyChanged();
 				}
 			}
-		});	
-	}	
+		});
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
@@ -112,7 +112,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		setInput(fEntries);
 		notifyChanged();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
@@ -120,7 +120,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	public IRuntimeClasspathEntry[] getEntries() {
 		return fEntries.toArray(new IRuntimeClasspathEntry[fEntries.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
@@ -145,8 +145,8 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		setSelection(new StructuredSelection(entries));
 		refresh();
 		notifyChanged();
-	}	
-	
+	}
+
 	/**
 	 * Enables/disables this viewer. Note the control is not disabled, since
 	 * we still want the user to be able to scroll if required to see the
@@ -157,7 +157,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		// fire selection change to update actions
 		setSelection(getSelection());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
@@ -165,7 +165,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	public boolean isEnabled() {
 		return fEnabled;
 	}
-	
+
 	/**
 	 * Sets the launch configuration context for this viewer, if any
 	 */
@@ -174,15 +174,15 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 			((RuntimeClasspathEntryLabelProvider)getLabelProvider()).setLaunchConfiguration(configuration);
 		}
 	}
-	
+
 	public void addEntriesChangedListener(IEntriesChangedListener listener) {
 		fListeners.add(listener);
 	}
-	
+
 	public void removeEntriesChangedListener(IEntriesChangedListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
 	 */
@@ -192,7 +192,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 			listener.entriesChanged(this);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */

@@ -26,10 +26,10 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Provides content for the result of an inspect operation that is displayed in the expressions view.
- * 
+ *
  * @since 3.3
  * @see JavaVariableContentProvider
- * @see JavaInspectExpression 
+ * @see JavaInspectExpression
  */
 public class JavaExpressionContentProvider extends ExpressionContentProvider{
 
@@ -50,7 +50,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
         }
         return getElements(variables, index, length);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.VariableContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
@@ -65,7 +65,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 		}
 		return count;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
@@ -76,7 +76,7 @@ public class JavaExpressionContentProvider extends ExpressionContentProvider{
 		}
 		return super.hasChildren(element, context, monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider#getAllChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */

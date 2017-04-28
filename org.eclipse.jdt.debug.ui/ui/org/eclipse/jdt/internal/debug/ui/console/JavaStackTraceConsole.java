@@ -45,7 +45,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * Provides a stack trace console for Java stack traces
  */
 public class JavaStackTraceConsole extends TextConsole {
-	
+
 	/**
 	 * Provides a partitioner for this console type
 	 */
@@ -67,7 +67,7 @@ public class JavaStackTraceConsole extends TextConsole {
         }
 
     }
-	
+
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
     public final static String FILE_NAME = JDIDebugUIPlugin.getDefault().getStateLocation().toOSString() + File.separator + "stackTraceConsole.txt"; //$NON-NLS-1$
 
@@ -86,7 +86,7 @@ public class JavaStackTraceConsole extends TextConsole {
      * Constructor
      */
     public JavaStackTraceConsole() {
-        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true); 
+        super(ConsoleMessages.JavaStackTraceConsoleFactory_0, CONSOLE_TYPE, null, true);
         Font font = JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT);
         setFont(font);
         partitioner.connect(getDocument());
@@ -109,7 +109,7 @@ public class JavaStackTraceConsole extends TextConsole {
             } catch (IOException e) {
             }
         } else {
-			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0); 
+			getDocument().set(ConsoleMessages.JavaStackTraceConsole_0);
 		}
     }
 
@@ -146,7 +146,7 @@ public class JavaStackTraceConsole extends TextConsole {
                     file.delete();
                 }
             }
-        } 
+        }
         catch (IOException e) {}
     }
 
@@ -165,7 +165,7 @@ public class JavaStackTraceConsole extends TextConsole {
 	public String getHelpContextId() {
 		return IJavaDebugHelpContextIds.STACK_TRACE_CONSOLE;
 	}
-    
+
     /**
      * @see org.eclipse.ui.console.TextConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
@@ -173,7 +173,7 @@ public class JavaStackTraceConsole extends TextConsole {
 	public IPageBookViewPage createPage(IConsoleView view) {
     	return new JavaStackTraceConsolePage(this, view);
 	}
-    
+
     /**
      * performs the formatting of the stacktrace console
      */
@@ -194,15 +194,15 @@ public class JavaStackTraceConsole extends TextConsole {
 	            if (orig != null && orig.length() > 0) {
 	                document.set(format(orig));
 	            }
-	            
+
 				return Status.OK_STATUS;
 			}
 		};
 		job.setSystem(true);
 		job.schedule();
-       
+
     }
-    
+
     /**
      * Underlying format operation
      * @param trace the stack trace to format
@@ -211,12 +211,12 @@ public class JavaStackTraceConsole extends TextConsole {
     private String format(String trace) {
         StringTokenizer tokenizer = new StringTokenizer(trace, " \t\n\r\f", true); //$NON-NLS-1$
         StringBuffer formattedTrace = new StringBuffer();
-        
+
         boolean insideAt = false;
         boolean newLine = true;
         int pendingSpaces = 0;
         boolean antTrace = false;
-        
+
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (token.length() == 0)
@@ -274,7 +274,7 @@ public class JavaStackTraceConsole extends TextConsole {
                     formattedTrace.append(token);
                     pendingSpaces = 0;
                     continue;
-                } else if (c == '[') { 
+                } else if (c == '[') {
                     if(antTrace) {
                         formattedTrace.append("\n"); //$NON-NLS-1$
                     }

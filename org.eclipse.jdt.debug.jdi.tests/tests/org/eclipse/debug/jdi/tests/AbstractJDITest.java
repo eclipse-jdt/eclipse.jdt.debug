@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -61,7 +61,7 @@ import com.sun.jdi.request.StepRequest;
 
 /**
  * Tests for com.sun.jdi.* and JDWP commands.
- * These tests assume that the target program is 
+ * These tests assume that the target program is
  * "org.eclipse.debug.jdi.tests.program.MainClass".
  *
  * Examples of arguments:
@@ -116,7 +116,7 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 	/**
 	 * Creates and returns an access watchpoint request
-	 * for the field "fBool" in 
+	 * for the field "fBool" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 * NOTE: This assumes that the VM can watch field access.
 	 */
@@ -148,7 +148,7 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns if the current VM version is greater than or equal to 1.6
 	 * @return <code>true</code> if a 1.6 or higher VM
@@ -158,7 +158,7 @@ public abstract class AbstractJDITest extends TestCase {
 		String ver = fVM.version();
 		return ver.indexOf("1.6") > -1 || ver.indexOf("1.7") > -1;
 	}
-	
+
 	/**
 	 * Returns an array reference.
 	 */
@@ -169,7 +169,7 @@ public abstract class AbstractJDITest extends TestCase {
 		// Get value of "fArray"
 		return (ArrayReference) getMainClass().getValue(field);
 	}
-	
+
 	/**
 	 * Returns another array reference.
 	 */
@@ -180,7 +180,7 @@ public abstract class AbstractJDITest extends TestCase {
 		// Get value of "fDoubleArray"
 		return (ArrayReference) getMainClass().getValue(field);
 	}
-	
+
 	/**
 	 * One-dimensional empty array reference getters
 	 */
@@ -251,7 +251,7 @@ public abstract class AbstractJDITest extends TestCase {
 		Field field = getField("booleanDoubleArray");
 		return (ArrayReference) getMainClass().getValue(field);
 	}
-	
+
 	/**
 	 * Returns the array type.
 	 */
@@ -332,16 +332,16 @@ public abstract class AbstractJDITest extends TestCase {
 		ArrayReference value = getBooleanDoubleArrayReference();
 		return (ArrayType) value.referenceType();
 	}
-	
+
 	/**
-	 * Creates and returns a breakpoint request in the first 
+	 * Creates and returns a breakpoint request in the first
 	 * instruction of the MainClass.triggerBreakpointEvent() method.
 	 */
 	protected BreakpointRequest getBreakpointRequest() {
 		// Create a breakpoint request
 		return fVM.eventRequestManager().createBreakpointRequest(getLocation());
 	}
-	
+
 	/**
 	 * Creates a new breakpoint request for a user specified position
 	 * @param loc the location to set the breakpoint on
@@ -358,7 +358,7 @@ public abstract class AbstractJDITest extends TestCase {
 		List<?> classes = fVM.classesByName(name);
 		if (classes.size() == 0)
 			return null;
-		
+
 		return (ClassType) classes.get(0);
 	}
 	/**
@@ -379,29 +379,29 @@ public abstract class AbstractJDITest extends TestCase {
 		return fVM.eventRequestManager().createExceptionRequest(null, false, true);
 	}
 	/**
-	 * Returns the static field "fObject" in 
+	 * Returns the static field "fObject" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 */
 	protected Field getField() {
 		return getField("fObject");
 	}
 	/**
-	 * Returns the field with the given name in 
+	 * Returns the field with the given name in
 	 * org.eclipse.debug.jdi.tests.program.MainClass.
 	 */
 	protected Field getField(String fieldName) {
 		// Get main class
 		ClassType type = getMainClass();
 
-		// Get field 
+		// Get field
 		Field result = type.fieldByName(fieldName);
 		if (result == null)
 			throw new Error("Unknown field: " + fieldName);
-		
+
 		return result;
 	}
 	/**
-	 * Returns the n frame (starting at the top of the stack) of the thread 
+	 * Returns the n frame (starting at the top of the stack) of the thread
 	 * contained in the static field "fThread" of org.eclipse.debug.jdi.tests.program.MainClass.
 	 */
 	protected StackFrame getFrame(int n) {
@@ -450,7 +450,7 @@ public abstract class AbstractJDITest extends TestCase {
 		return getClass( getMainClassName() );
 	}
 	/**
-	 * Returns the method "print(Ljava/io/OutputStream;)V" 
+	 * Returns the method "print(Ljava/io/OutputStream;)V"
 	 * in org.eclipse.debug.jdi.tests.program.MainClass
 	 */
 	protected Method getMethod() {
@@ -487,7 +487,7 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 		if (method == null)
 			throw new Error("Unknown method: " + name + signature);
-		
+
 		return method;
 	}
 	/**
@@ -504,7 +504,7 @@ public abstract class AbstractJDITest extends TestCase {
 		return fVM.eventRequestManager().createModificationWatchpointRequest(field);
 	}
 	/**
-	 * Returns the value of the static field "fObject" in 
+	 * Returns the value of the static field "fObject" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 */
 	protected ObjectReference getObjectReference() {
@@ -519,7 +519,7 @@ public abstract class AbstractJDITest extends TestCase {
 	}
 	/**
 	 * Creates and returns an access watchpoint request
-	 * for the static field "fString" in 
+	 * for the static field "fString" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 * NOTE: This assumes that the VM can watch field access.
 	 */
@@ -544,7 +544,7 @@ public abstract class AbstractJDITest extends TestCase {
 		return fVM.eventRequestManager().createModificationWatchpointRequest(field);
 	}
 	/**
-	 * Returns the value of the static field "fString" in 
+	 * Returns the value of the static field "fString" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 */
 	protected StringReference getStringReference() {
@@ -561,11 +561,11 @@ public abstract class AbstractJDITest extends TestCase {
 		List<ReferenceType> classes = fVM.classesByName("java.lang.Object");
 		if (classes.size() == 0)
 			return null;
-		
+
 		return (ClassType) classes.get(0);
 	}
 	/**
-	 * Returns the thread contained in the static field "fThread" in 
+	 * Returns the thread contained in the static field "fThread" in
 	 * org.eclipse.debug.jdi.tests.program.MainClass
 	 */
 	protected ThreadReference getThread() {
@@ -595,7 +595,7 @@ public abstract class AbstractJDITest extends TestCase {
 		Value value = type.getValue(field);
 		if (value == null)
 			return null;
-		
+
 		return (ThreadReference) value;
 	}
 	/**
@@ -669,7 +669,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Parse the command {@link String} to make sure we use
 	 * {@link Runtime#exec(String[])}.
-	 * 
+	 *
 	 * @param command
 	 * @return the array of items from the command {@link String}
 	 * @since 4.3
@@ -686,7 +686,7 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 		return commandArray;
 	}
-	
+
 	/**
 	 * Launches the target J9 VM.
 	 */
@@ -700,7 +700,7 @@ public abstract class AbstractJDITest extends TestCase {
 					+ System.getProperty("file.separator")
 					+ "bin"
 					+ System.getProperty("file.separator");
-			
+
 			proxyString[index++] = binDirectory + "j9proxy";
 			proxyString[index++] = "localhost:" + (fBackEndPort - 1);
 			proxyString[index++] = "" + fBackEndPort;
@@ -708,14 +708,14 @@ public abstract class AbstractJDITest extends TestCase {
 
 			// Launch target VM
 			Vector<String> commandLine = new Vector<>();
-			
+
 			String launcher = binDirectory + "j9w.exe";
 			File vm= new File(launcher);
 			if (!vm.exists()) {
 				launcher = binDirectory + "j9";
 			}
 			commandLine.add(launcher);
-			
+
 			if (fBootPath.length() > 0)
 				commandLine.add("-bp:" + fBootPath);
 			commandLine.add("-cp:" + fClassPath);
@@ -792,7 +792,7 @@ public abstract class AbstractJDITest extends TestCase {
 				commandLine.add("-bootpath");
 				commandLine.add(fBootPath);
 			}
-			
+
 			commandLine.add("-classpath");
 			commandLine.add(fClassPath);
 			commandLine.add("-Xdebug");
@@ -812,7 +812,7 @@ public abstract class AbstractJDITest extends TestCase {
 	protected String getMainClassName() {
 		return "org.eclipse.debug.jdi.tests.program.MainClass";
 	}
-	
+
 	protected String getTestPrefix() {
 		return "testJDI";
 	}
@@ -827,10 +827,10 @@ public abstract class AbstractJDITest extends TestCase {
 			String[] args = fVmArgs.split(",");
 			for (int i=0; i < args.length; i++) {
 				commandLine.add(args[i]);
-			}				
-		}		
+			}
+		}
 	}
-	
+
 	/**
 	 * Flattens the variable size command line and calls Runtime.exec().
 	 * @param commandLine A vector of command line argument strings.
@@ -839,18 +839,18 @@ public abstract class AbstractJDITest extends TestCase {
 	 */
 	private Process exec(Vector<String> commandLine) throws IOException {
 		String[] vmString = new String[commandLine.size()];
-		commandLine.toArray(vmString);			
-		return Runtime.getRuntime().exec(vmString);		
+		commandLine.toArray(vmString);
+		return Runtime.getRuntime().exec(vmString);
 	}
 
-	
+
 	/**
 	 * Connects to the target vm.
 	 */
 	protected void connectToVM() {
 		// Start the console reader if possible so that the VM doesn't block when the stdout is full
 		startConsoleReaders();
-		
+
 
 		// Contact the VM (try 10 times)
 		for (int i = 0; i < 10; i++) {
@@ -1271,7 +1271,7 @@ public abstract class AbstractJDITest extends TestCase {
 		waitUntilReady();
 	}
 	/**
-	 * Returns all tests 
+	 * Returns all tests
 	 */
 	protected Test suite() {
 		JDITestSuite suite = new JDITestSuite(this);
@@ -1328,7 +1328,7 @@ public abstract class AbstractJDITest extends TestCase {
 		if (event == null)
 			throw new Error(
 				"Event for " + request + " didn't come in after " + TIMEOUT + "ms");
-		
+
 		return event;
 	}
 	/**

@@ -25,7 +25,7 @@ import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class JDIThreadGroup extends JDIDebugElement implements
 		IJavaThreadGroup, ITerminate {
@@ -36,7 +36,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 	/**
 	 * Constructs a new thread group in the given target based on the underlying
 	 * thread group reference.
-	 * 
+	 *
 	 * @param target
 	 *            debug target
 	 * @param group
@@ -49,14 +49,14 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreads()
 	 */
 	@Override
 	public synchronized IJavaThread[] getThreads() throws DebugException {
 		try {
 			List<ThreadReference> threads = fGroup.threads();
-			List<JDIThread> modelThreads = new ArrayList<JDIThread>(threads.size());
+			List<JDIThread> modelThreads = new ArrayList<>(threads.size());
 			Iterator<ThreadReference> iterator = threads.iterator();
 			while (iterator.hasNext()) {
 				ThreadReference ref = iterator.next();
@@ -78,7 +78,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroup()
 	 */
 	@Override
@@ -96,14 +96,14 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getThreadGroups()
 	 */
 	@Override
 	public IJavaThreadGroup[] getThreadGroups() throws DebugException {
 		try {
 			List<ThreadGroupReference> groups = fGroup.threadGroups();
-			List<JDIThreadGroup> modelGroups = new ArrayList<JDIThreadGroup>(groups.size());
+			List<JDIThreadGroup> modelGroups = new ArrayList<>(groups.size());
 			Iterator<ThreadGroupReference> iterator = groups.iterator();
 			while (iterator.hasNext()) {
 				ThreadGroupReference ref = iterator
@@ -126,7 +126,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#getName()
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreadGroups()
 	 */
 	@Override
@@ -163,7 +163,7 @@ public class JDIThreadGroup extends JDIDebugElement implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaThreadGroup#hasThreads()
 	 */
 	@Override

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  * is currently active on the given object.
  */
 public class EditVariableLogicalStructureAction extends ActionDelegate implements IObjectActionDelegate {
-    
+
     /**
      * The editable structure for the currently selected variable or
      * <code>null</code> if none.
@@ -65,7 +65,7 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
             }
         }
     }
-    
+
     /**
      * @see ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
@@ -92,10 +92,10 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
         }
         action.setEnabled(fStructure != null);
     }
-    
+
     /**
      * Returns the logical structure currently associated with the given
-     * value or <code>null</code> if none. 
+     * value or <code>null</code> if none.
      * @param value the value
      * @return the logical structure currently associated with the given
      *  value or <code>null</code> if none.

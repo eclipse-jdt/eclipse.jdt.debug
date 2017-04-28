@@ -30,14 +30,14 @@ public class AddPackageStepFilterAction extends AbstractAddStepFilterAction {
 		} catch (DebugException de) {
 			return null;
 		}
-		
+
 		// Check for default package, which is not supported by JDI
 		int lastDot = typeName.lastIndexOf('.');
 		if (lastDot < 0) {
 			return null;
-		} 
-				
-		// Append ".*" to the pattern to form a package name	
+		}
+
+		// Append ".*" to the pattern to form a package name
 		String packageName = typeName.substring(0, lastDot + 1);
 		packageName += '*';
 		return packageName;

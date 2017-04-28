@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 
 /**
  * The result of an evaluation.
- * 
+ *
  * @see org.eclipse.jdt.debug.eval.IEvaluationResult
  */
 public class EvaluationResult implements IEvaluationResult {
@@ -72,7 +72,7 @@ public class EvaluationResult implements IEvaluationResult {
 		setEvaluationEngine(engine);
 		setThread(thread);
 		setSnippet(snippet);
-		fErrors = new ArrayList<String>();
+		fErrors = new ArrayList<>();
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * Sets the result of an evaluation, possibly <code>null</code>.
-	 * 
+	 *
 	 * @param value
 	 *            result of an evaluation, possibly <code>null</code>
 	 */
@@ -134,7 +134,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * Sets the code snippet that was evaluated.
-	 * 
+	 *
 	 * @param snippet
 	 *            the source code that was evaluated
 	 */
@@ -153,7 +153,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * Sets an exception that occurred while attempting the associated
 	 * evaluation.
-	 * 
+	 *
 	 * @param e
 	 *            exception
 	 */
@@ -171,7 +171,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * Sets the thread this result was generated from.
-	 * 
+	 *
 	 * @param thread
 	 *            thread in which the associated evaluation was executed
 	 */
@@ -189,7 +189,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * Sets the evaluation that created this result.
-	 * 
+	 *
 	 * @param engine
 	 *            the evaluation that created this result
 	 */
@@ -206,7 +206,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.eval.IEvaluationResult#isTerminated()
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * Sets whether terminated.
-	 * 
+	 *
 	 * @param terminated
 	 *            whether terminated
 	 */

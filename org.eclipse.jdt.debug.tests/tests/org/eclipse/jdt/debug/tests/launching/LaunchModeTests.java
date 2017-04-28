@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ import org.eclipse.jdt.ui.JavaUI;
  * LaunchModeTests
  */
 public class LaunchModeTests extends AbstractDebugTest {
-	
+
 	private ILaunchConfiguration fConfiguration;
 	private String fMode;
 
@@ -60,7 +60,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 
 	/**
 	 * Called by launch "TestModeLaunchDelegate" delegate when launch method invoked.
-	 * 
+	 *
 	 * @param configuration
 	 * @param mode
 	 */
@@ -73,7 +73,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	/**
 	 * Tests that launch delegate for "TEST_MODE" and Java applications is invoked when
 	 * "TEST_MODE" is used.
-	 * 
+	 *
 	 * @throws CoreException
 	 * @see TestModeLaunchDelegate
 	 */
@@ -97,7 +97,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the launch configuration set by the TestModeLaunchDelegate, or <code>null</code>
 	 * if no launch configuration was set (the correct delegate was not called).
@@ -111,10 +111,10 @@ public class LaunchModeTests extends AbstractDebugTest {
 				System.err.println("Interrupted waiting for launch configuration"); //$NON-NLS-1$
 			}
 		}
-		
+
 		return fConfiguration;
 	}
-	
+
 	/**
 	 * Ensure our contributed launch mode exists.
 	 */
@@ -130,7 +130,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		assertContains("Missing run mode", ids, ILaunchManager.RUN_MODE); //$NON-NLS-1$
 		assertContains("Missing TEST_MODE", ids, "alternate"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Asserts that the array contains the given object
 	 * @param message
@@ -141,10 +141,10 @@ public class LaunchModeTests extends AbstractDebugTest {
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].equals(object)) {
 				return;
-			}			
+			}
 		}
 		throw new AssertionFailedError(message);
-	}	
+	}
 
 	/**
 	 * Ensure our contributed mode is supported.
@@ -155,41 +155,41 @@ public class LaunchModeTests extends AbstractDebugTest {
 		assertNotNull(configuration);
 		assertTrue("Java application configuration should support TEST_MODE", configuration.supportsMode("TEST_MODE")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Java application type should support TEST_MODE", configuration.getType().supportsMode("TEST_MODE")); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		assertTrue("Java application configuration should support debug mode", configuration.supportsMode(ILaunchManager.DEBUG_MODE)); //$NON-NLS-1$
 		assertTrue("Java application type should support debug mode", configuration.getType().supportsMode(ILaunchManager.DEBUG_MODE)); //$NON-NLS-1$
-		
+
 		assertTrue("Java application configuration should support run mode", configuration.supportsMode(ILaunchManager.RUN_MODE)); //$NON-NLS-1$
 		assertTrue("Java application type should support run mode", configuration.getType().supportsMode(ILaunchManager.RUN_MODE));		 //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that mode specific tab group contributions work.
 	 * @throws CoreException
 	 */
 	public void testModeSpecificTabGroups() throws CoreException {
-		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION); 
+		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationTabGroup standardGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, ILaunchManager.DEBUG_MODE);
 		ILaunchConfigurationTabGroup testGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(javaType, "TEST_MODE"); //$NON-NLS-1$
 		ILaunchConfigurationDialog dialog = new LaunchConfigurationsDialog(null, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
 		standardGroup.createTabs(dialog, ILaunchManager.DEBUG_MODE);
 		testGroup.createTabs(dialog, "TEST_MODE"); //$NON-NLS-1$
-		
+
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
 		HashSet<Class<? extends ILaunchConfigurationTab>> tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
 		for(int i = 0; i< tabs.length; i++) {
 			tabset.add(tabs[i].getClass());
 		}
 		Class<?>[] classes = new Class<?>[] {
-				JavaMainTab.class, 
-				JavaArgumentsTab.class, 
-				JavaJRETab.class, 
+				JavaMainTab.class,
+				JavaArgumentsTab.class,
+				JavaJRETab.class,
 				JavaClasspathTab.class,
-				SourceLookupTab.class, 
-				EnvironmentTab.class, 
+				SourceLookupTab.class,
+				EnvironmentTab.class,
 				CommonTab.class};
 		assertTrue("Tab set does not contain all default java tabs", tabset.containsAll(new HashSet<Class<?>>(Arrays.asList(classes)))); //$NON-NLS-1$
-		
+
 		tabs = testGroup.getTabs();
 		assertEquals("Wrong number of tabs in the test group", 4, tabs.length); //$NON-NLS-1$
 		tabset = new HashSet<Class<? extends ILaunchConfigurationTab>>();
@@ -197,15 +197,15 @@ public class LaunchModeTests extends AbstractDebugTest {
 			tabset.add(tabs[i].getClass());
 		}
 		classes = new Class<?>[] {
-				JavaMainTab.class, 
-				JavaArgumentsTab.class, 
-				JavaJRETab.class, 
+				JavaMainTab.class,
+				JavaArgumentsTab.class,
+				JavaJRETab.class,
 				JavaClasspathTab.class};
 		assertTrue("Test tab set does not contain all default tabs", tabset.containsAll(new HashSet<Class<?>>(Arrays.asList(classes)))); //$NON-NLS-1$
 		standardGroup.dispose();
 		testGroup.dispose();
 	}
-	
+
 	/**
 	 * Tests that the default debug perspective for java applications is debug.
 	 */
@@ -213,12 +213,12 @@ public class LaunchModeTests extends AbstractDebugTest {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertEquals("Java debug perspective should be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, ILaunchManager.DEBUG_MODE)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Test that the default debug perspective for Java Application types is debug.
 	 * Same notion as <code>testDefaultDebugLaunchPerspective()</code>, but using the new API
 	 * for getting perspectives
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testDefaultDebugLaunchPerspective2() {
@@ -227,20 +227,20 @@ public class LaunchModeTests extends AbstractDebugTest {
 		modes.add(ILaunchManager.DEBUG_MODE);
 		assertEquals("Java debug perspective should be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that the default run perspective for java applications is none (<code>null</code>).
 	 */
 	public void testDefaultRunLaunchPerspective() {
 		ILaunchConfigurationType javaType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		assertNull("Java run perspective should be null", DebugUITools.getLaunchPerspective(javaType, ILaunchManager.RUN_MODE)); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Tests that the default run perspective for java applications is none (<code>null</code>).
 	 * Same notion as <code>testDefaultRunLaunchPerspective()</code>, but using the new API for getting
 	 * launch perspectives
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testDefaultRunLaunchPerspective2() {
@@ -249,7 +249,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		modes.add(ILaunchManager.RUN_MODE);
 		assertNull("Java run perspective should be null", DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that the default debug perspective can be over-ridden and reset
 	 */
@@ -265,14 +265,14 @@ public class LaunchModeTests extends AbstractDebugTest {
 		DebugUITools.setLaunchPerspective(javaType, ILaunchManager.DEBUG_MODE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertEquals("Java debug perspective should now be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, //$NON-NLS-1$
 			DebugUITools.getLaunchPerspective(javaType, ILaunchManager.DEBUG_MODE));
-				
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that the default debug perspective can be over-ridden and reset.
 	 * Same notion as <code>testResetDebugLaunchPerspective()</code>, but using the new API
 	 * for setting an resetting perspectives.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testResetDebugLaunchPerspective2() {
@@ -286,14 +286,14 @@ public class LaunchModeTests extends AbstractDebugTest {
 		// re-set to default
 		DebugUITools.setLaunchPerspective(javaType, null, modes, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertEquals("Java debug perspective should now be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, null, modes)); //$NON-NLS-1$
-				
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that the default debug perspective can be over-ridden and reset
-	 * Same notion as <code>testResetDebugLaunchPerspective2()</code>, but using the 
+	 * Same notion as <code>testResetDebugLaunchPerspective2()</code>, but using the
 	 * JDT Java launch delegate instead of <code>null</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testResetDebugPerspectiveJavaLaunchDelegate() {
@@ -310,7 +310,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		DebugUITools.setLaunchPerspective(javaType, null, modes, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertEquals("Java debug perspective should now be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUITools.getLaunchPerspective(javaType, delegate, modes)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that the default run perspective can be over-ridden and reset
 	 */
@@ -325,14 +325,14 @@ public class LaunchModeTests extends AbstractDebugTest {
 		// re-set to default
 		DebugUITools.setLaunchPerspective(javaType, ILaunchManager.RUN_MODE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertNull("Java run perspective should now be null",  //$NON-NLS-1$
-			DebugUITools.getLaunchPerspective(javaType, ILaunchManager.RUN_MODE));		
-	}	
-	
+			DebugUITools.getLaunchPerspective(javaType, ILaunchManager.RUN_MODE));
+	}
+
 	/**
 	 * Tests that the default run perspective can be over-ridden and reset.
 	 * Same notion as <code>testResetRunLaunchPerspective()</code>, but using the new API
 	 * for getting/setting/re-setting perspective settings.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testResetRunLaunchPerspective2() {
@@ -346,13 +346,13 @@ public class LaunchModeTests extends AbstractDebugTest {
 		// re-set to default
 		DebugUITools.setLaunchPerspective(javaType, ILaunchManager.RUN_MODE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertNull("Java run perspective should now be null", DebugUITools.getLaunchPerspective(javaType, null, modes));		 //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Tests that the default debug perspective can be over-ridden and reset
-	 * Same notion as <code>testResetRunLaunchPerspective2()</code>, but using the 
+	 * Same notion as <code>testResetRunLaunchPerspective2()</code>, but using the
 	 * JDT Java launch delegate instead of <code>null</code>
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testResetRunPerspectiveJavaLaunchDelegate() {
@@ -369,11 +369,11 @@ public class LaunchModeTests extends AbstractDebugTest {
 		DebugUITools.setLaunchPerspective(javaType, null, modes, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 		assertNull("Java run perspective should now be null", DebugUITools.getLaunchPerspective(javaType, delegate, modes)); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Tests that the default launch perspective for the 'debug' modeset and java launch delegate is 
+	 * Tests that the default launch perspective for the 'debug' modeset and java launch delegate is
 	 * <code>ILaunchManager.DEBUG_MODE</code> using the new API.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testDefaultDebugPerspectiveJavaLaunchDelegate() {
@@ -385,11 +385,11 @@ public class LaunchModeTests extends AbstractDebugTest {
 		String p = DebugUITools.getLaunchPerspective(javaType, delegate, modes);
 		assertEquals("Java debug perspective should be debug", IDebugUIConstants.ID_DEBUG_PERSPECTIVE, p); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests that the default launch perspective for the 'run' modeset and java launch delegate
 	 * is <code>null/code> using the new API
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	public void testDefaultRunPerspectiveJavaLaunchDelegate() {
@@ -401,7 +401,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 		String p = DebugUITools.getLaunchPerspective(javaType, delegate, modes);
 		assertNull("Java run perspective should be null", p); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests a perspective contributed with a launch tab group.
 	 */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
 /**
  * From this class all Java Debug Wire Protocol (JDWP) IDs declared by the JDWP
  * specification are derived.
- * 
+ *
  */
 public abstract class JdwpID {
 	/** Tag Constants. */
@@ -161,8 +161,8 @@ public abstract class JdwpID {
 			return;
 
 		java.lang.reflect.Field[] fields = JdwpID.class.getDeclaredFields();
-		fTagMap = new HashMap<Integer, String>();
-		fTypeTagMap = new HashMap<Integer, String>();
+		fTagMap = new HashMap<>();
+		fTypeTagMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0

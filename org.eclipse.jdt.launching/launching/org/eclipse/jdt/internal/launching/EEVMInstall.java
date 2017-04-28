@@ -16,26 +16,26 @@ import org.eclipse.jdt.launching.IVMInstallType;
 
 /**
  * A VM install created from an execution environment description file.
- * 
+ *
  * @since 3.4
  */
 public class EEVMInstall extends StandardVM {
-	
+
 	/**
 	 * Attribute key for Java version property
 	 */
 	public static final String ATTR_JAVA_VERSION = "ATTR_JAVA_VERSION"; //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for supported execution environment by this runtime
 	 */
 	public static final String ATTR_EXECUTION_ENVIRONMENT_ID = "ATTR_EXECUTION_ENVIRONMENT_ID"; //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for Java executable used by this VM
 	 */
 	public static final String ATTR_JAVA_EXE = "ATTR_JAVA_EXE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Attribute key for VM debug arguments
 	 */
@@ -45,10 +45,10 @@ public class EEVMInstall extends StandardVM {
 	 * Path to file used to define the JRE
 	 */
 	public static final String ATTR_DEFINITION_FILE = "ATTR_DEFINITION_FILE"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructs a VM install.
-	 * 
+	 *
 	 * @param type vm type
 	 * @param id unique id
 	 */
@@ -75,7 +75,7 @@ public class EEVMInstall extends StandardVM {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.StandardVM#getDebugArgs()
 	 */

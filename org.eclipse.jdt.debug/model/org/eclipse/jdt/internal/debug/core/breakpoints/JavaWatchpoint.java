@@ -62,7 +62,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * is stored as a <code>boolean</code>, indicating whether a watchpoint is a
 	 * modification watchpoint.
 	 */
-	protected static final String MODIFICATION = "org.eclipse.jdt.debug.core.modification"; //$NON-NLS-1$	
+	protected static final String MODIFICATION = "org.eclipse.jdt.debug.core.modification"; //$NON-NLS-1$
 	/**
 	 * Watchpoint attribute storing the auto_disabled value (value
 	 * <code>"org.eclipse.jdt.debug.core.auto_disabled"</code>). This attribute
@@ -76,7 +76,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * is set. (value <code>"org.eclipse.jdt.debug.core.fieldName"</code>). This
 	 * attribute is a <code>String</code>.
 	 */
-	protected static final String FIELD_NAME = "org.eclipse.jdt.debug.core.fieldName"; //$NON-NLS-1$		
+	protected static final String FIELD_NAME = "org.eclipse.jdt.debug.core.fieldName"; //$NON-NLS-1$
 	/**
 	 * Flag indicating that this breakpoint last suspended execution due to a
 	 * field access
@@ -95,7 +95,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * <li>Field modification (value <code>MODIFICATION_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private HashMap<JDIDebugTarget, Integer> fLastEventTypes = new HashMap<JDIDebugTarget, Integer>(10);
+	private HashMap<JDIDebugTarget, Integer> fLastEventTypes = new HashMap<>(10);
 
 	public JavaWatchpoint() {
 	}
@@ -135,7 +135,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
-	 * 
+	 *
 	 *      Creates and installs an access and modification watchpoint request
 	 *      in the given reference type, configuring the requests as appropriate
 	 *      for this watchpoint. The requests are then enabled based on whether
@@ -187,7 +187,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	/**
 	 * Either access or modification watchpoints are not supported. Throw an
 	 * appropriate exception.
-	 * 
+	 *
 	 * @param message
 	 *            the message that states that access or modification
 	 *            watchpoints are not supported
@@ -218,7 +218,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * Create a watchpoint for the given breakpoint and associated field.
-	 * 
+	 *
 	 * @param target
 	 *            the target in which the request will be installed
 	 * @param field
@@ -227,7 +227,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 *            <code>true</code> if an access watchpoint will be created.
 	 *            <code>false</code> if a modification watchpoint will be
 	 *            created.
-	 * 
+	 *
 	 * @return an WatchpointRequest (AccessWatchpointRequest if access is
 	 *         <code>true</code>; ModificationWatchpointRequest if access is
 	 *         <code>false</code>).
@@ -287,7 +287,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/**
 	 * @see IBreakpoint#setEnabled(boolean)
-	 * 
+	 *
 	 *      If the watchpoint is not watching access or modification, set the
 	 *      default values. If this isn't done, the resulting state (enabled
 	 *      with access and modification both disabled) is ambiguous.
@@ -315,7 +315,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * field is accessed. If true and this watchpoint is disabled, this
 	 * watchpoint is automatically enabled. If both access and modification are
 	 * false, this watchpoint is automatically disabled.
-	 * 
+	 *
 	 * @param access
 	 *            whether to suspend on field access
 	 * @exception CoreException
@@ -350,7 +350,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * field is modified. If true and this watchpoint is disabled, this
 	 * watchpoint is automatically enabled. If both access and modification are
 	 * false, this watchpoint is automatically disabled.
-	 * 
+	 *
 	 * @param modification
 	 *            whether to suspend on field modification
 	 * @exception CoreException
@@ -402,17 +402,17 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * enabled</li>
 	 * </ul>
 	 * The default returned array is <code>{true, true}</code>
-	 * 
+	 *
 	 * @return an array of two boolean values representing the default access
 	 *         and modification settings
-	 * 
+	 *
 	 * @since 3.3.1
 	 */
 	protected boolean[] getDefaultAccessAndModificationValues() {
 		int value = Platform.getPreferencesService().getInt(
-				JDIDebugPlugin.getUniqueIdentifier(), 
-				JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY, 
-				0, 
+				JDIDebugPlugin.getUniqueIdentifier(),
+				JDIDebugPlugin.PREF_DEFAULT_WATCHPOINT_SUSPEND_POLICY,
+				0,
 				null);
 		switch (value) {
 		case 0: {
@@ -467,7 +467,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 	 * superclass. This is useful for correctly generating the thread text when
 	 * asked (assumes thread text is requested after the event is passed to this
 	 * breakpoint.
-	 * 
+	 *
 	 * Also, @see JavaBreakpoint#handleEvent(Event, JDIDebugTarget)
 	 */
 	@Override
@@ -555,7 +555,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
 	 */
 	@Override
@@ -565,7 +565,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
 	 */
 	@Override
@@ -575,7 +575,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#
 	 * installableReferenceType(com.sun.jdi.ReferenceType,
 	 * org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)

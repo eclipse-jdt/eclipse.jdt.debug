@@ -33,36 +33,36 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Displays details of a VM install (read only, for contributed VMs).
- * 
+ *
  * @since 3.2
  */
 public class VMDetailsDialog extends Dialog {
-	
+
 	private IVMInstall fVM;
-		
+
 	public VMDetailsDialog(Shell shell, IVMInstall vm) {
 		super(shell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);		
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fVM= vm;
 	}
-	
+
 	/**
 	 * @see Windows#configureShell
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(JREMessages.VMDetailsDialog_0); 
+		newShell.setText(JREMessages.VMDetailsDialog_0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaDebugHelpContextIds.JRE_DETAILS_DIALOG);
-	}		
-			
+	}
+
 	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		GridLayout layout = new GridLayout(2, false);
 		layout.makeColumnsEqualWidth = false;
 		parent.setLayout(layout);
-		
+
 		// type
 		createLabel(parent, JREMessages.addVMDialog_jreType);
 		createLabel(parent, fVM.getVMInstallType().getName());
@@ -70,11 +70,11 @@ public class VMDetailsDialog extends Dialog {
 		// name
 		createLabel(parent, JREMessages.addVMDialog_jreName);
 		createLabel(parent, fVM.getName());
-		
+
 		// home
 		createLabel(parent, JREMessages.addVMDialog_jreHome);
 		createLabel(parent, fVM.getInstallLocation().getAbsolutePath());
-		
+
 		// vm args
 		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_23, 2);
 		String text = null;
@@ -100,7 +100,7 @@ public class VMDetailsDialog extends Dialog {
 		GridData gd = (GridData) argText.getLayoutData();
 		gd.heightHint = 75;
 		gd.widthHint = 300;
-		
+
 		// libraries
 		SWTFactory.createLabel(parent, JREMessages.AddVMDialog_JRE_system_libraries__1, 2);
 		TreeViewer libraryViewer= new TreeViewer(parent);
@@ -113,26 +113,26 @@ public class VMDetailsDialog extends Dialog {
 		libraryViewer.setLabelProvider(new LibraryLabelProvider());
 		libraryViewer.setInput(this);
 		provider.setLibraries(JavaRuntime.getLibraryLocations(fVM));
-		
+
 		applyDialogFont(parent);
 		return parent;
 	}
-	
+
 	private Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(text);
 		return label;
 	}
-	
+
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
 		return "VM_DETAILS_DIALOG_SECTION"; //$NON-NLS-1$
 	}
-	
+
 	 /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
      */
@@ -142,10 +142,10 @@ public class VMDetailsDialog extends Dialog {
          IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
          if (section == null) {
              section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
+         }
          return section;
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -154,5 +154,5 @@ public class VMDetailsDialog extends Dialog {
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
-	}    
+	}
 }

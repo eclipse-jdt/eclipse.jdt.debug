@@ -155,7 +155,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	private int fSourceMajorLevel;
 	private int fSourceMinorLevel;
 
-	private Stack<Map<String, String>> fTypeParameterStack = new Stack<Map<String, String>>();
+	private Stack<Map<String, String>> fTypeParameterStack = new Stack<>();
 	private Map<String, String> fMatchingTypeParameters = null;
 	private CompilationUnit fCompilationUnit;
 	{
@@ -166,7 +166,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * if the <code>createInAnInstanceMethod</code> flag is set, the method
 	 * created which contains the code snippet is an no-static method, even if
 	 * <code>position</code> is in a static method.
-	 * 
+	 *
 	 * @param type
 	 *            the root {@link IType}
 	 * @param sourcePosition
@@ -202,7 +202,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	/**
 	 * Returns the generated source or <code>null</code> if no source can be
 	 * generated.
-	 * 
+	 *
 	 * @return returns the backing source from the generator
 	 */
 	public String getSource() {
@@ -287,7 +287,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/**
 	 * Adds generic type parameters as needed to the given buffer
-	 * 
+	 *
 	 * @param buffer
 	 * @since 3.8.0
 	 */
@@ -309,11 +309,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns if the specified {@link ASTNode} has the 'correct' parent type to
 	 * match the current type name context
-	 * 
+	 *
 	 * @param node
 	 *            the {@link ASTNode} to check source ranges for
 	 * @return true if the parent type of the given node matches the current
@@ -337,7 +337,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 					ClassInstanceCreation decl = (ClassInstanceCreation) node;
 					Type type = decl.getType();
 					ISourceRange name = fType.getNameRange();
-					return name.getOffset() >= type.getStartPosition() && 
+					return name.getOffset() >= type.getStartPosition() &&
 							name.getOffset()+name.getLength() <= type.getStartPosition()+type.getLength();
 				}
 			}
@@ -398,7 +398,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	/**
 	 * Builds up the given buffer with the source from each of
 	 * {@link BodyDeclaration}s in the given list
-	 * 
+	 *
 	 * @param buffer
 	 *            the buffer to clone and append to
 	 * @param list
@@ -706,7 +706,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * Returns a method name that will be unique in the generated source. The
 	 * generated name is baseName plus as many '_' characters as necessary to
 	 * not duplicate an existing method name.
-	 * 
+	 *
 	 * @param methodName
 	 *            the method name to look for
 	 * @param bodyDeclarations
@@ -735,7 +735,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * Returns a field name that will be unique in the generated source. The
 	 * generated name is baseName plus as many '_' characters as necessary to
 	 * not duplicate an existing method name.
-	 * 
+	 *
 	 * @param fieldName
 	 *            the name of the field to look for
 	 * @param bodyDeclarations
@@ -927,7 +927,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * <br>
 	 * This method adds the new <code>___eval</code> method source to the root
 	 * {@link #fSource} variable directly
-	 * 
+	 *
 	 * @param isstatic
 	 *            if the keyword <code>static</code> should be added to the
 	 *            method source
@@ -964,7 +964,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	 * Recursively finds the parent {@link Type} from the given type, in the
 	 * cases where the type is an {@link ArrayType} or a
 	 * {@link ParameterizedType}
-	 * 
+	 *
 	 * @param type
 	 *            the {@link Type}
 	 * @return the parent {@link Type}
@@ -996,7 +996,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
 	 * .EnumDeclaration)
@@ -1119,7 +1119,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeDeclaration)
 	 */
@@ -1130,7 +1130,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * AnnotationTypeMemberDeclaration)
 	 */
@@ -1229,7 +1229,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * BlockComment)
 	 */
@@ -1373,7 +1373,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnhancedForStatement)
 	 */
@@ -1387,7 +1387,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumConstantDeclaration)
 	 */
@@ -1401,7 +1401,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * EnumDeclaration)
 	 */
@@ -1504,7 +1504,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * InstanceofExpression)
 	 */
@@ -1540,7 +1540,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * LineComment)
 	 */
@@ -1551,7 +1551,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MarkerAnnotation)
 	 */
@@ -1562,7 +1562,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef
 	 * )
@@ -1574,7 +1574,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MemberValuePair)
 	 */
@@ -1590,7 +1590,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	public boolean visit(MethodDeclaration node) {
 		int firstLine = fCompilationUnit.getLineNumber(node.getStartPosition());
 		int lastLine = fCompilationUnit.getLineNumber(node.getStartPosition() + node.getLength());
-		
+
 		List<TypeParameter> typeParameters = node.typeParameters();
 		pushTypeParameters(typeParameters);
 		if (isRightType(node.getParent()) && firstLine <= fLine && fLine <= lastLine) {
@@ -1604,7 +1604,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	private void pushTypeParameters(List<TypeParameter> typeParameters) {
 		if (!typeParameters.isEmpty()) {
-			HashMap<String,String> newTypeParameters = new HashMap<String,String>(fTypeParameterStack.peek());
+			HashMap<String,String> newTypeParameters = new HashMap<>(fTypeParameterStack.peek());
 			Iterator<TypeParameter> iterator = typeParameters.iterator();
 			while (iterator.hasNext()) {
 				TypeParameter typeParameter = iterator.next();
@@ -1630,7 +1630,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef
 	 * )
@@ -1642,7 +1642,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MethodRefParameter)
 	 */
@@ -1653,7 +1653,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier
 	 * )
@@ -1665,7 +1665,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * NormalAnnotation)
 	 */
@@ -1709,7 +1709,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * ParameterizedType)
 	 */
@@ -1778,7 +1778,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * QualifiedType)
 	 */
@@ -1822,7 +1822,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * SingleMemberAnnotation)
 	 */
@@ -1921,7 +1921,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement
 	 * )
@@ -1933,7 +1933,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TextElement)
 	 */
@@ -1977,7 +1977,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.UnionType
 	 * )
@@ -2028,7 +2028,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * TypeParameter)
 	 */
@@ -2083,7 +2083,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * WildcardType)
 	 */
@@ -2095,7 +2095,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 	/**
 	 * Returns whether the source to be generated is greater than or equal to
 	 * the given source level.
-	 * 
+	 *
 	 * @param major
 	 *            major level - e.g. 1 from 1.4
 	 * @param minor
@@ -2110,7 +2110,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor {
 
 	/**
 	 * Appends type parameters to source.
-	 * 
+	 *
 	 * @param source
 	 *            the current buffer of source to append to
 	 * @param typeParameters

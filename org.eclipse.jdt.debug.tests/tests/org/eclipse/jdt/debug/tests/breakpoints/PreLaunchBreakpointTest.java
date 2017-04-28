@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Tests launch notification.
  */
 public class PreLaunchBreakpointTest extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -34,17 +34,17 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 	public PreLaunchBreakpointTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests that the perspective will switch if breakpoints are detected and the program was launched in
 	 * 'run' mode
 	 * @throws Exception
 	 */
 	public void testRunModeLaunchWithBreakpoints() throws Exception {
-		String typeName = "Breakpoints";		
-		
+		String typeName = "Breakpoints";
+
 		ILaunchConfiguration configuration = getLaunchConfiguration(typeName);
-		
+
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.ALWAYS);
 		IJavaThread thread = null;
@@ -56,7 +56,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 			Object suspendee= waiter.waitForEvent();
 			assertTrue("Program did not suspend", suspendee instanceof IJavaThread);
 			thread = (IJavaThread) suspendee;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

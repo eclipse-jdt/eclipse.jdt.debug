@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * A method breakpoint suspends execution when a method is entered or exited.
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -26,7 +26,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * Returns the name of the method(s) this breakpoint suspends execution in,
 	 * or <code>null</code> if this breakpoint does not suspend execution based
 	 * on method name.
-	 * 
+	 *
 	 * @return the name of the method(s) this breakpoint suspends execution in,
 	 *         or <code>null</code> if this breakpoint does not suspend
 	 *         execution based on method name
@@ -40,7 +40,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * Returns the signature of the method(s) this breakpoint suspends execution
 	 * in, or <code>null</code> if this breakpoint does not suspend execution
 	 * based on method signature.
-	 * 
+	 *
 	 * @return the signature of the method(s) this breakpoint suspends execution
 	 *         in, or <code>null</code> if this breakpoint does not suspend
 	 *         execution based on method signature
@@ -54,7 +54,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * Returns the pattern specifying the fully qualified name of type(s) this
 	 * breakpoint suspends execution in. Patterns are limited to exact matches
 	 * and patterns that begin or end with '*'.
-	 * 
+	 *
 	 * @return the pattern specifying the fully qualified name of type(s) this
 	 *         breakpoint suspends execution in
 	 * @exception CoreException
@@ -68,7 +68,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns whether this breakpoint causes execution to suspend on entry to
 	 * methods.
-	 * 
+	 *
 	 * @return whether this breakpoint causes execution to suspend on entry to
 	 *         methods
 	 * @exception CoreException
@@ -80,7 +80,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns whether this breakpoint causes execution to suspend on exit of
 	 * methods.
-	 * 
+	 *
 	 * @return whether this breakpoint causes execution to suspend on exit of
 	 *         methods
 	 * @exception CoreException
@@ -92,7 +92,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Sets whether this breakpoint causes execution to suspend on entry to
 	 * methods.
-	 * 
+	 *
 	 * @param entry
 	 *            whether this breakpoint causes execution to suspend on entry
 	 *            to methods
@@ -105,7 +105,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Sets whether this breakpoint causes execution to suspend on exit of
 	 * methods.
-	 * 
+	 *
 	 * @param exit
 	 *            whether this breakpoint causes execution to suspend on exit of
 	 *            methods
@@ -118,7 +118,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Sets whether this breakpoint causes execution to suspend only on
 	 * entry/exit of native methods.
-	 * 
+	 *
 	 * @param nativeOnly
 	 *            whether this breakpoint causes execution to suspend only on
 	 *            entry/exit of native methods
@@ -131,7 +131,7 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns whether this breakpoint causes execution to suspend only on
 	 * entry/exit of native methods.
-	 * 
+	 *
 	 * @return whether this breakpoint causes execution to suspend only on
 	 *         entry/exit of native methods
 	 * @exception CoreException
@@ -143,10 +143,10 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns whether this breakpoint last suspended in the given target due to
 	 * a method entry (<code>true</code>) or exit (<code>false</code>).
-	 * 
+	 *
 	 * @param target
 	 *            the debug target
-	 * 
+	 *
 	 * @return <code>true</code> if this breakpoint last suspended the given
 	 *         target due to a method entry; <code>false</code> if this
 	 *         breakpoint last suspended in the given target due to a method

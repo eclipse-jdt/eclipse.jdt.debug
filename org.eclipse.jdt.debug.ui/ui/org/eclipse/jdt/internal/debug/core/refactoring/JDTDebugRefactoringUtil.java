@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,11 +28,11 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
 /**
- * 
+ *
  * provides methods to create refactoring changes
  */
 public class JDTDebugRefactoringUtil {
-	
+
 	/**
 	 * Take a list of Changes, and return a unique Change, a CompositeChange, or null.
 	 */
@@ -40,15 +40,15 @@ public class JDTDebugRefactoringUtil {
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
-		} 
+		}
 		else if (nbChanges == 1) {
 			return changes.get(0);
-		} 
+		}
 		else {
 			return new CompositeChange(changeLabel, changes.toArray(new Change[changes.size()]));
 		}
 	}
-	
+
 	/**
 	 * Returns the new container name for the given project and launch configuration
 	 * @param javaProject the java to get the new container name for
@@ -63,7 +63,7 @@ public class JDTDebugRefactoringUtil {
         }
         return null;
     }
-	
+
 	/**
 	 * Returns a change for the given launch configuration if the launch configuration needs to
 	 * be updated for this IType change. It specifically looks to see if the main type of the launch configuration
@@ -94,7 +94,7 @@ public class JDTDebugRefactoringUtil {
 		}
 		return change;
 	}
-	
+
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for moving a package
 	 * @param packageFragment the fragment to move
@@ -104,7 +104,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageMove(IPackageFragment pfragment, IPackageFragmentRoot destination) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(pfragment.getJavaProject().getElementName());
 		String mtname = null;
 		for (int i= 0; i < configs.length; i++) {
@@ -115,9 +115,9 @@ public class JDTDebugRefactoringUtil {
 				}
 			}
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7);
 	}
-	
+
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a package
 	 * @param packageFragment the fragment to rename
@@ -127,7 +127,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForPackageRename(IPackageFragment pfragment, String newname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(pfragment.getJavaProject().getElementName());
 		String mtname;
 		for (int i= 0; i < configs.length; i++) {
@@ -147,9 +147,9 @@ public class JDTDebugRefactoringUtil {
 				changes.add(new LaunchConfigurationProjectMainTypeChange(configs[i], null, null));
 			}
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7);
 	}
-	
+
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a project
 	 * @param javaProject the project to rename
@@ -159,7 +159,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	public static Change createChangesForProjectRename(IJavaProject project, String newname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(project.getElementName());
 		LaunchConfigurationProjectMainTypeChange change = null;
 		for (int i= 0; i < configs.length; i++) {
@@ -170,9 +170,9 @@ public class JDTDebugRefactoringUtil {
             }
 			changes.add(change);
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7);
 	}
-	
+
 	/**
 	 * Creates a <code>Change</code> for a type change
 	 * @param type the type that is changing
@@ -183,7 +183,7 @@ public class JDTDebugRefactoringUtil {
 	 * @since 3.2
 	 */
 	protected static Change createChangesForTypeChange(IType type, String newfqname, String pname) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		String typename = type.getFullyQualifiedName();
 		ILaunchConfiguration[] configs = getJavaTypeLaunchConfigurations(type.getJavaProject().getElementName());
 		String mtname;
@@ -191,7 +191,7 @@ public class JDTDebugRefactoringUtil {
 			mtname = configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			if (typename.equals(mtname)) {
 				changes.add(new LaunchConfigurationProjectMainTypeChange(configs[i], newfqname, pname));
-			} 
+			}
 			else {
 				Change change = createChangesForOuterTypeChange(configs[i], type, newfqname, pname);
 				if (change != null) {
@@ -199,9 +199,9 @@ public class JDTDebugRefactoringUtil {
 				}
 			}
 		}
-		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7); 
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.LaunchConfigurationProjectMainTypeChange_7);
 	}
-	
+
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for moving a type
 	 * @param type the type being moved
@@ -219,15 +219,15 @@ public class JDTDebugRefactoringUtil {
 		String newfqname = type.getElementName();
 		if (destination instanceof IType) {
 			newfqname = ((IType)destination).getFullyQualifiedName() + '$' + type.getElementName();
-		} 
+		}
 		else if (destination instanceof IPackageFragment) {
 			if (!((IPackageFragment) destination).isDefaultPackage()) {
 				newfqname = destination.getElementName() + '.' + type.getElementName();
 			}
-		} 
+		}
 		return createChangesForTypeChange(type, newfqname, newpname);
 	}
-	
+
 	/**
 	 * Provides a public mechanism for creating the <code>Change</code> for renaming a type
 	 * @param type the type to rename
@@ -244,13 +244,13 @@ public class JDTDebugRefactoringUtil {
 			if (!packageFragment.isDefaultPackage()) {
 				newfqname = packageFragment.getElementName() + '.' + newname;
 			}
-		} 
+		}
 		else {
 			newfqname = dtype.getFullyQualifiedName() + '$' + newname;
 		}
 		return createChangesForTypeChange(type, newfqname, null);
 	}
-	
+
 	/**
 	 * Returns a listing of configurations that have a specific project name attribute in them
 	 * @param pname the project attribute to compare against
@@ -260,7 +260,7 @@ public class JDTDebugRefactoringUtil {
 	protected static ILaunchConfiguration[] getJavaTypeLaunchConfigurations(String pname) {
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
-			ArrayList<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+			ArrayList<ILaunchConfiguration> list = new ArrayList<>();
 			String attrib;
 			for(int i = 0; i < configs.length; i++) {
 				attrib = configs[i].getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);

@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
  * A variable value editor that prompts the user to set a primitive's value.
  */
 public class JavaPrimitiveValueEditor implements IVariableValueEditor {
-    
+
     /**
      * The signature of the edited variable.
      */
@@ -43,7 +43,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
     public JavaPrimitiveValueEditor(String signature) {
         fSignature= signature;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#editVariable(org.eclipse.debug.core.model.IVariable, org.eclipse.swt.widgets.Shell)
      */
@@ -51,8 +51,8 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	public boolean editVariable(IVariable variable, Shell shell) {
         try {
             String name= variable.getName();
-            String title= ActionMessages.JavaPrimitiveValueEditor_0; 
-            String message= NLS.bind(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name}); 
+            String title= ActionMessages.JavaPrimitiveValueEditor_0;
+            String message= NLS.bind(ActionMessages.JavaPrimitiveValueEditor_1, new String[] {name});
             String initialValue= variable.getValue().getValueString();
             PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator){
@@ -76,7 +76,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
                 variable.setValue(stringValue);
             }
         } catch (DebugException e) {
-            JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); // 
+            JDIDebugUIPlugin.errorDialog(shell, ActionMessages.JavaPrimitiveValueEditor_2, ActionMessages.JavaPrimitiveValueEditor_3, e); //
         }
         return true;
     }
@@ -108,7 +108,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
     	catch(NumberFormatException nfe) {}
     	return value;
     }
-    
+
     /**
      * Input validator for primitive types
      */
@@ -135,7 +135,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	        					isUnicode(newText)) {
 	        				break;
 	        			}
-	        		} 
+	        		}
 	        		if (newText.length() != 1) {
 	        	        type="char"; //$NON-NLS-1$
 	        	    }
@@ -182,7 +182,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                break;
             }
             if (type != null) {
-                return NLS.bind(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type }); 
+                return NLS.bind(ActionMessages.JavaPrimitiveValueEditor_4, new String[] { type });
             }
             return null;
         }
@@ -201,7 +201,7 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 			}
 			return false;
 		}
-		
+
 		private boolean isOctalEscape(String newText) {
 			char[] chars= newText.toCharArray();
 			if (chars.length < 4) {
@@ -238,16 +238,16 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 				ch == '\'' ||
 				ch == '\\');
 		}
-		
-		
+
+
 		private boolean isOctalDigit(char ch) {
             return Character.digit(ch, 8) != -1;
 		}
-		
+
 		private boolean isHexDigit(char ch) {
             return Character.digit(ch, 16) != -1;
 		}
-		
+
 		/**
 		 * Returns the integer value specified by the given string, which
 		 * represents an octal or hexadecimal escape sequence. Returns

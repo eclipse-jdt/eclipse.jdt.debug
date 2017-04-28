@@ -22,17 +22,17 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Debug flags in options file.
- * 
+ *
  * @since 3.5
  */
 public class JDIDebugOptions implements DebugOptionsListener {
-	
+
 	public static final String DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG = "org.eclipse.jdt.debug/debug/astEvaluations/callingThreads"; //$NON-NLS-1$
 	public static final String DEBUG_AST_EVALUATIONS_FLAG = "org.eclipse.jdt.debug/debug/astEvaluations"; //$NON-NLS-1$
 	public static final String DEBUG_JDI_REQUEST_TIMES_FLAG = "org.eclipse.jdt.debug/debug/jdiRequestTimes"; //$NON-NLS-1$
 	public static final String DEBUG_JDI_EVENTS_FLAG = "org.eclipse.jdt.debug/debug/jdiEvents"; //$NON-NLS-1$
 	public static final String DEBUG_FLAG = "org.eclipse.jdt.debug/debug"; //$NON-NLS-1$
-	
+
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_JDI_EVENTS = false;
 	public static boolean DEBUG_JDI_REQUEST_TIMES = false;
@@ -44,16 +44,16 @@ public class JDIDebugOptions implements DebugOptionsListener {
 	 * @since 3.8
 	 */
 	private static DebugTrace fgDebugTrace;
-	
+
 	/**
 	 * Constructor
 	 */
 	public JDIDebugOptions(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, JDIDebugPlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}
-	
+
 	// used to format debug messages
 	public static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 
@@ -69,7 +69,7 @@ public class JDIDebugOptions implements DebugOptionsListener {
 		DEBUG_AST_EVAL = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_FLAG, false);
 		DEBUG_AST_EVAL_THREAD_TRACE = DEBUG && options.getBooleanOption(DEBUG_AST_EVALUATIONS_CALLING_THREADS_FLAG, false);
 	}
-	
+
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if started)
 	 * @param option the option or <code>null</code>
@@ -83,10 +83,10 @@ public class JDIDebugOptions implements DebugOptionsListener {
 			fgDebugTrace.trace(option, message, throwable);
 		}
 	}
-	
+
 	/**
 	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
-	 * 
+	 *
 	 * @param message the message or <code>null</code>
 	 * @since 3.8
 	 */

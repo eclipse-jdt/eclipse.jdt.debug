@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 /**
  * Creates mementos for Java stack frames. Uses qualified names and signature rather than just
  * simple method name used by the default model.
- * 
+ *
  * @since 3.4
  */
 public class JavaStackFrameMementoProvider extends DebugElementMementoProvider implements IElementMementoProvider {

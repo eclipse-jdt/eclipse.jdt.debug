@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,14 +28,14 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * Tests external archive source containers
  */
 public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
-	
+
 	public ExternalArchiveSourceContainerTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns the JREs source archive.
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -56,7 +56,7 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		assertTrue("Did not find JRE source archive. This failure is expected if you are running the tests with a JRE that does not contain source.", false);
 		return null;
 	}
-	
+
 	/**
 	 * Returns the source archive at the specified path within this plug-in.
 	 */
@@ -70,11 +70,11 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		ExternalArchiveSourceContainer container = new ExternalArchiveSourceContainer(file.getAbsolutePath(), detect);
 		director.setSourceContainers(new ISourceContainer[]{container});
 		return container;
-	}	
-	
+	}
+
 	/**
 	 * Tests creation and restoring from a memento.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testArchiveSourceContainerMemento() throws Exception {
@@ -86,7 +86,7 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		assertEquals("Directory source container memento failed", container, restore);
 		assertFalse(restore.isComposite());
 		assertTrue(restore.isDetectRoot());
-	}	
+	}
 
 	public void testAutoDetectRootSourceLookupPositive() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(true, false);
@@ -95,13 +95,13 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "Object.java", storage.getName());
 	}
-	
+
 	public void testAutoDetectRootSourceLookupNegative() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("java/lang/FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
-	}	
-	
+	}
+
 	public void testSourceLookupPositive() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("java/lang/Object.java");
@@ -109,21 +109,21 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "Object.java", storage.getName());
 	}
-	
+
 	public void testSourceLookupNegative() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("java/lang/FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
 	}
-		
+
 	public void testPartiallyQualifiedSourceLookupPositive() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("lang/Object.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "Object.java", storage.getName());
-	}	
-	
+	}
+
 	public void testAutoDetectUnqualifiedSourceLookupPositive() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer(true, false);
 		// force detection
@@ -134,7 +134,7 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "Object.java", storage.getName());
 	}
-	
+
 	public void testAutoDetectMultipleRoots() throws Exception {
 		ExternalArchiveSourceContainer container = getContainer("testresources/source-test.zip", true, false);
 		// find .java file
@@ -149,6 +149,6 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		// find another .txt file
 		objects = container.findSourceElements("folder/file-c.txt");
 		storage = (ZipEntryStorage) objects[0];
-		assertEquals("Wrong file", "file-c.txt", storage.getName());		
-	}		
+		assertEquals("Wrong file", "file-c.txt", storage.getName());
+	}
 }

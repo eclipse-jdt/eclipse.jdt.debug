@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,13 +16,13 @@ import java.util.Iterator;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
 public class ClasspathModel extends AbstractClasspathEntry {
-	
+
 	public static final int BOOTSTRAP= 0;
 	public static final int USER= 1;
-	
+
 	private ClasspathGroup bootstrapEntries;
 	private ClasspathGroup userEntries;
-	
+
 	public Object addEntry(Object entry) {
 		if (entry instanceof ClasspathGroup) {
 			if (!childEntries.contains(entry)) {
@@ -46,7 +46,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		childEntries.add(newEntry);
 		return newEntry;
 	}
-	
+
 	public Object addEntry(int entryType, IRuntimeClasspathEntry entry) {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
@@ -59,7 +59,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			default :
 				break;
 		}
-			
+
 		ClasspathEntry newEntry= createEntry(entry, entryParent);
 		Iterator<IClasspathEntry> entries= childEntries.iterator();
 		while (entries.hasNext()) {
@@ -77,13 +77,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		} else {
 			childEntries.add(newEntry);
 		}
-		return newEntry;		
+		return newEntry;
 	}
-	
+
 	/**
 	 * Returns the entries of the given type, or an empty
 	 * collection if none.
-	 * 
+	 *
 	 * @param entryType the kind of the entries to get
 	 * @return the entries of the given type, or an empty
 	 * collection if none
@@ -103,7 +103,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 		return new IClasspathEntry[0];
 	}
-	
+
 	public IRuntimeClasspathEntry[] getAllEntries() {
 		IClasspathEntry[] boot = getEntries(BOOTSTRAP);
 		IClasspathEntry[] user = getEntries(USER);
@@ -116,32 +116,32 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 		return all;
 	}
-	
+
 	public void remove(Object entry) {
 		childEntries.remove(entry);
 	}
-	
+
 	public ClasspathEntry createEntry(IRuntimeClasspathEntry entry, IClasspathEntry entryParent) {
 		if (entry instanceof ClasspathEntry) {
 			entry = ((ClasspathEntry)entry).getDelegate();
 		}
 		if (entryParent == null) {
 			entryParent= this;
-		} 
+		}
 		return new ClasspathEntry(entry, entryParent);
 	}
 
 	public void removeAll() {
 		if (bootstrapEntries != null) {
 			bootstrapEntries.removeAll();
-		} 
+		}
 		if (userEntries != null) {
 			userEntries.removeAll();
 		}
 	}
-	
+
 	public void removeAll(Object[] entries) {
-		
+
 		for (int i = 0; i < entries.length; i++) {
 			Object object = entries[i];
 			if (object instanceof ClasspathEntry) {
@@ -156,11 +156,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			}
 		}
 	}
-	
+
 	public void setBootstrapEntries(IRuntimeClasspathEntry[] entries) {
 		if (bootstrapEntries == null) {
 			getBootstrapEntry();
-		} 
+		}
 		bootstrapEntries.removeAll();
 		for (int i = 0; i < entries.length; i++) {
 			bootstrapEntries.addEntry(new ClasspathEntry(entries[i], bootstrapEntries), null);
@@ -168,13 +168,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	private ClasspathGroup createGroupEntry(IRuntimeClasspathEntry[] entries, ClasspathGroup entryParent, String name, boolean canBeRemoved, boolean addEntry) {
-		
+
 		ClasspathGroup group= new ClasspathGroup(name, entryParent, canBeRemoved);
-		
+
 		for (int i = 0; i < entries.length; i++) {
 			group.addEntry(new ClasspathEntry(entries[i], group), null);
 		}
-		
+
 		if (addEntry) {
 			addEntry(group);
 		}
@@ -184,7 +184,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public void setUserEntries(IRuntimeClasspathEntry[] entries) {
 		if (userEntries == null) {
 			getUserEntry();
-		} 
+		}
 		userEntries.removeAll();
 		for (int i = 0; i < entries.length; i++) {
 			userEntries.addEntry(new ClasspathEntry(entries[i], userEntries), null);
@@ -193,22 +193,22 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public IClasspathEntry getBootstrapEntry() {
 		if (bootstrapEntries == null) {
-			String name= ClasspathMessages.ClasspathModel_0; 
+			String name= ClasspathMessages.ClasspathModel_0;
 			bootstrapEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return bootstrapEntries;
 	}
-	
+
 	public IClasspathEntry getUserEntry() {
 		if (userEntries == null) {
-			String name= ClasspathMessages.ClasspathModel_1; 
+			String name= ClasspathMessages.ClasspathModel_1;
 			userEntries= createGroupEntry(new IRuntimeClasspathEntry[0], null, name, false, true);
 		}
 		return userEntries;
 	}
-	
+
 	/**
-	 * Constructs a new classpath model with root entries 
+	 * Constructs a new classpath model with root entries
 	 */
 	public ClasspathModel() {
 		super();

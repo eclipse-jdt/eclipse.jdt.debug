@@ -21,7 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * An evaluation engine performs an evaluation of a code snippet or expression
  * in a specified thread of a debug target. An evaluation engine is associated
  * with a specific debug target and Java project on creation.
- * 
+ *
  * @see IEvaluationResult
  * @see IEvaluationListener
  * @since 2.0
@@ -43,7 +43,7 @@ public interface IEvaluationEngine {
 	 * (@see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor,
 	 * int)). Compilation and runtime errors are reported in the evaluation
 	 * result.
-	 * 
+	 *
 	 * @param snippet
 	 *            code snippet to evaluate
 	 * @param frame
@@ -88,7 +88,7 @@ public interface IEvaluationEngine {
 	 * thread runs the evaluation with the given evaluation detail (@see
 	 * IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)).
 	 * Compilation and runtime errors are reported in the evaluation result.
-	 * 
+	 *
 	 * @param snippet
 	 *            code snippet to evaluate
 	 * @param thisContext
@@ -126,14 +126,14 @@ public interface IEvaluationEngine {
 
 	/**
 	 * Returns the Java project in which expressions are compiled.
-	 * 
+	 *
 	 * @return Java project context
 	 */
 	public IJavaProject getJavaProject();
 
 	/**
 	 * Returns the debug target for which evaluations are executed.
-	 * 
+	 *
 	 * @return Java debug target
 	 */
 	public IJavaDebugTarget getDebugTarget();
@@ -143,7 +143,7 @@ public interface IEvaluationEngine {
 	 * cleanup any resources (such as threads) that it maintains. Clients should
 	 * call this method when they are finished performing evaluations with this
 	 * engine.
-	 * 
+	 *
 	 * This engine must not be used to perform evaluations after it has been
 	 * disposed.
 	 */

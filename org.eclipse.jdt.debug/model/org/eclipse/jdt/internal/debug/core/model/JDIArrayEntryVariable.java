@@ -51,14 +51,14 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * When created for a logical structure we hold onto the original
 	 * non-logical object for purposes of equality. This way a logical
 	 * structure's children remain more stable in the variables view.
-	 * 
+	 *
 	 * This is <code>null</code> when not created for a logical structure.
 	 */
 	private IJavaValue fLogicalParent;
 
 	/**
 	 * Constructs an array entry at the given index in an array.
-	 * 
+	 *
 	 * @param target
 	 *            debug target containing the array entry
 	 * @param array
@@ -192,7 +192,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
 	 */
 	@Override
@@ -240,7 +240,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -262,7 +262,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

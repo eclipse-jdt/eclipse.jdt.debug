@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Run to line target for the Java debugger
  */
 public class RunToLineAdapter implements IRunToLineTarget {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
@@ -88,7 +88,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Invalid Type Name", null)); //$NON-NLS-1$
 						}
 						IBreakpoint breakpoint= null;
-						Map<String, Object> attributes = new HashMap<String, Object>(4);
+						Map<String, Object> attributes = new HashMap<>(4);
 						BreakpointUtils.addRunToLineAttributes(attributes);
 						breakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
 						errorMessage = "Unable to locate debug target";  //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						} else {
 							errorMessage = "Cursor position is not a valid location to run to";  //$NON-NLS-1$
 						}
-	
+
 					}
 				}
 			}
@@ -115,7 +115,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
 				errorMessage, null));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
@@ -128,12 +128,12 @@ public class RunToLineAdapter implements IRunToLineTarget {
         }
 		return false;
 	}
-	
+
     /**
      * Returns the text editor associated with the given part or <code>null</code>
      * if none. In case of a multi-page editor, this method should be used to retrieve
      * the correct editor to perform the operation on.
-     * 
+     *
      * @param part workbench part
      * @return text editor part or <code>null</code>
      */
@@ -142,5 +142,5 @@ public class RunToLineAdapter implements IRunToLineTarget {
     		return (ITextEditor) part;
     	}
     	return part.getAdapter(ITextEditor.class);
-    }	
+    }
 }

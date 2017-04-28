@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,44 +20,44 @@ public class LibraryInfo {
 	private String[] fBootpath;
 	private String[] fExtensionDirs;
 	private String[] fEndorsedDirs;
-	
+
 	public LibraryInfo(String version, String[] bootpath, String[] extDirs, String[] endDirs) {
 		fVersion = version;
 		fBootpath = bootpath;
 		fExtensionDirs = extDirs;
 		fEndorsedDirs = endDirs;
 	}
-	
+
 	/**
 	 * Returns the version of this VM install.
-	 * 
+	 *
 	 * @return version
 	 */
 	public String getVersion() {
-		return fVersion; 
+		return fVersion;
 	}
-	
+
 	/**
 	 * Returns a collection of extension directory paths for this VM install.
-	 * 
+	 *
 	 * @return a collection of absolute paths
 	 */
 	public String[] getExtensionDirs() {
 		return fExtensionDirs;
 	}
-	
+
 	/**
 	 * Returns a collection of bootpath entries for this VM install.
-	 * 
+	 *
 	 * @return a collection of absolute paths
 	 */
 	public String[] getBootpath() {
 		return fBootpath;
 	}
-	
+
 	/**
 	 * Returns a collection of endorsed directory paths for this VM install.
-	 * 
+	 *
 	 * @return a collection of absolute paths
 	 */
 	public String[] getEndorsedDirs() {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
  * Tests method breakpoints.
  */
 public class MethodBreakpointTests extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -51,30 +51,30 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit
 		bps.add(createMethodBreakpoint(typeName, "method1", "()V", false, true));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
 
-			// onto the next breakpoint			
+			// onto the next breakpoint
 			thread = resume(thread);
-			
+
 			hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
-			assertEquals("should hit exit breakpoint second", bps.get(1), hit);			
+			assertEquals("should hit exit breakpoint second", bps.get(1), hit);
 
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests the 'stop in main' launching preference
 	 * {@link IJavaLaunchConfigurationConstants#ATTR_STOP_IN_MAIN}
@@ -86,27 +86,27 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		assertNotNull("Could not find launch config", config);
 		ILaunchConfigurationWorkingCopy wc = config.copy("DropTests - Stop in main");
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
-		config = wc.doSave();		
-		
+		config = wc.doSave();
+
 		IJavaThread thread= null;
 		try {
 			thread= launchAndSuspend(config);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertTrue("Should be in 'main'", frame.getMethodName().equals("main") && frame.isStatic());
 
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
-	 * Tests disabled method entry and exit breakpoints 
+	 * Tests disabled method entry and exit breakpoints
 	 * @throws Exception
 	 */
 	public void testDisabledEntryAndExitBreakpoints() throws Exception {
@@ -116,17 +116,17 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		bp1.setEnabled(false);
 		// method 1 - exit
 		IBreakpoint bp2 = createMethodBreakpoint(typeName, "method1", "()V", false, true);
-		bp2.setEnabled(false);		
-		
+		bp2.setEnabled(false);
+
 		IJavaDebugTarget debugTarget= null;
 		try {
 			debugTarget= launchAndTerminate(typeName);
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that a method is NOT hit in an inner class
 	 * @throws Exception
@@ -136,26 +136,26 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeNamePattern);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
 
-		
+
 			resumeAndExit(thread);
 
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests that a given method IS hit in an inner class
 	 * @throws Exception
@@ -165,13 +165,13 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		List<IJavaMethodBreakpoint> bps = new ArrayList<IJavaMethodBreakpoint>();
 		// method b - entry
 		bps.add(createMethodBreakpoint(typeNamePattern, "b", "()V", true, false));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint("A");
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
@@ -185,17 +185,17 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
-			
+
 			thread= resume(thread);
 			hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
-			
+
 			resumeAndExit(thread);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -206,26 +206,26 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
 		bp.setHitCount(3);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Method entry breakpoint not hit within timeout period", thread);
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable var = findVariable(frame, "sum");
 			assertNotNull("Could not find variable 'sum'", var);
-			
+
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'sum' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'sum' should be '3', but was " + iValue, iValue == 3);			
-			
+			assertTrue("value of 'sum' should be '3', but was " + iValue, iValue == 3);
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	/**
@@ -236,28 +236,28 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", false, true);
 		bp.setHitCount(3);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Method exit breakpoint not hit within timeout period", thread);
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IVariable var = findVariable(frame, "sum");
 			assertNotNull("Could not find variable 'sum'", var);
-			
+
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'sum' has no value", value);
 			int iValue = value.getIntValue();
-			assertTrue("value of 'sum' should be '6', but was " + iValue, iValue == 6);			
-			
+			assertTrue("value of 'sum' should be '6', but was " + iValue, iValue == 6);
+
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests an inclusive thread filter on a method breakpoint
 	 * @throws Exception
@@ -266,29 +266,29 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
 		createLineBreakpoint(18, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName, false);
 			assertNotNull("breakpoint not hit within timeout period", thread);
-			
+
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			
+
 			// set a thread filter (to the main thread)
 			methodBp.setThreadFilter(thread);
-			
+
 			thread = resume(thread);
 			assertNotNull("breakpoint not hit", thread);
-			
+
 			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			assertEquals("should be in 'calucateSum'", "calculateSum", frame.getMethodName());
-			
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Tests an exclusive thread filter on a method breakpoint
 	 * @throws Exception
@@ -297,14 +297,14 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		String typeName = "MethodLoop";
 		IJavaMethodBreakpoint methodBp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
 		createLineBreakpoint(18, typeName);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName, false);
 			assertNotNull("breakpoint not hit within timeout period", thread);
-			
+
 			thread.getTopStackFrame();
-			
+
 			// set a thread filter (*not* the main thread)
 			IThread[] threads = thread.getDebugTarget().getThreads();
 			for (int i = 0; i < threads.length; i++) {
@@ -315,14 +315,14 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 				}
 			}
 			assertNotNull("Did not set thread filter",methodBp.getThreadFilter((IJavaDebugTarget)thread.getDebugTarget()));
-			
+
 			resumeAndExit(thread);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Test for bug 33551
 	 * Tests that a method breakpoint is hit properly in the default package
@@ -330,13 +330,13 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 	 */
 	public void testEntryDefaultPackageReturnType() throws Exception {
 		String typeName = "DefPkgReturnType";
-		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "self", "()LDefPkgReturnType;", true, false);		
-		
+		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "self", "()LDefPkgReturnType;", true, false);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint", bp,hit);
@@ -344,9 +344,9 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Test for bug 43611
 	 * Tests that the debug model presentation is returning the correct signature for a specific method breakpoint
@@ -364,7 +364,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			modelPresentation.dispose();
 		}
 	}
-	
+
 	/**
 	 * Test for bug 43611
 	 * Tests that the debug model presentation handles a label with no name for a specific method breakpoint
@@ -381,8 +381,8 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			modelPresentation.dispose();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Test for bug 43611
 	 * Tests that the debug model presentation handles no signature or method name for a specific
@@ -400,8 +400,8 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 			modelPresentation.dispose();
 		}
-	}		
-	
+	}
+
 	/**
 	 * Tests that a specific method breakpoint is skipped when set to do so
 	 * @throws Exception
@@ -413,23 +413,23 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
 		// method 1 - exit
 		bps.add(createMethodBreakpoint(typeName, "method1", "()V", false, true));
-		
-		
+
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
 
-			getBreakpointManager().setEnabled(false);			
+			getBreakpointManager().setEnabled(false);
 			resumeAndExit(thread);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			getBreakpointManager().setEnabled(true);
-		}		
-	}	
+		}
+	}
 }

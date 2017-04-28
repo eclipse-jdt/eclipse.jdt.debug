@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
@@ -172,7 +172,7 @@ public class CompilationUnitDelta {
 
 	/**
 	 * Returns an AST matcher
-	 * 
+	 *
 	 * @return AST matcher
 	 */
 	private ASTMatcher getMatcher() {

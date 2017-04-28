@@ -18,11 +18,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-// 
+//
 //then check number of and location of created breakpoint
 /**
- * A set of tests which moves a CompilationUnit and verifies if 
- * various breakpoints associated with that C.U. were moved. 
+ * A set of tests which moves a CompilationUnit and verifies if
+ * various breakpoints associated with that C.U. were moved.
  */
 public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 
@@ -42,7 +42,7 @@ public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 			int newLineNumber = 19;
 			//create lineBreakpoint to test
 			createLineBreakpoint(lineNumber, "a.b.c.Movee");
-			refactor(javaProject, type);		
+			refactor(javaProject, type);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaLineBreakpoint lineBreakpoint = (IJavaLineBreakpoint) breakpoints[0];
@@ -55,20 +55,20 @@ public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
+
 	/**
 	 * Tests if a MethodBreakPoint was moved appropriately.
 	 * @throws Exception
-	 */	
+	 */
 	public void testMethodBreakPoint() throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit= getCompilationUnit(javaProject, "src", "a.b.c", "Movee.java");
 		IJavaElement type = cunit.getType("Movee").getMethods()[0];
-		
+
 		try {
 			//create an EntryMethod Breakpoint to test & do so
 			createMethodBreakpoint("a.b.c.Movee", "testMethod1", "()V", true, false);
-			refactor(javaProject, type);	
+			refactor(javaProject, type);
 			IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints();
 			assertEquals("wrong number of breakpoints", 1, breakpoints.length);
 			IJavaMethodBreakpoint methodBreakpoint = (IJavaMethodBreakpoint) breakpoints[0];
@@ -78,6 +78,6 @@ public class MovePublicTypeMethodUnitTests extends MoveRefactoringTest {
 			throw e;
 		} finally {
 			removeAllBreakpoints();
-		}		
+		}
 	}
 }

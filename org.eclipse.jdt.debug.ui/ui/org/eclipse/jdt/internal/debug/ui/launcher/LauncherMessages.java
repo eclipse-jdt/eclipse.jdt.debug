@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *  BEA - Daniel R Somerfield - Bug 88939
@@ -90,7 +90,7 @@ public class LauncherMessages extends NLS {
 	public static String JavaClasspathTab_Invalid_runtime_classpath_1;
 
 	public static String JavaSourceLookupTab_Source_1;
-	
+
 	public static String SourceLookupBlock_Source_1;
 	public static String SourceLookupBlock__Source_Lookup_Path__1;
 	public static String SourceLookupBlock__Search_for_duplicate_source_files_on_path_1;
@@ -106,7 +106,7 @@ public class LauncherMessages extends NLS {
 	public static String AbstractJavaMainTab_2;
 	public static String AbstractJavaMainTab_4;
 	public static String AbstractJavaMainTab_3;
-	
+
 	public static String appletlauncher_argumenttab_widthlabel_text;
 	public static String appletlauncher_argumenttab_heightlabel_text;
 	public static String appletlauncher_argumenttab_namelabel_text;
@@ -156,7 +156,7 @@ public class LauncherMessages extends NLS {
 
 	public static String ExecutionEnvironmentSelector_0;
 	public static String ExecutionEnvironmentSelector_1;
-	
+
 	public static String JavaAppletLaunchShortcut_0;
 	public static String JavaAppletLaunchShortcut_1;
 	public static String JavaAppletLaunchShortcut_2;

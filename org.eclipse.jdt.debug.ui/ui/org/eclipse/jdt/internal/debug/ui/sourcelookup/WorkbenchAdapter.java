@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Workbench adapter for Java source containers and source container
  * types.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchAdapter implements IWorkbenchAdapter {
@@ -55,7 +55,7 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 			JavaProjectSourceContainer container = (JavaProjectSourceContainer) object;
 			IJavaProject javaProject = container.getJavaProject();
 			return getImageDescriptor(javaProject);
-		}		
+		}
 		if (object instanceof ClasspathVariableSourceContainer) {
 			return DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_ENV_VAR);
 		}
@@ -64,11 +64,11 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns an image descriptor for a java element, or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @param element java element
 	 * @return an image descriptor for a java element, or <code>null</code>
 	 * if none
@@ -77,10 +77,10 @@ public class WorkbenchAdapter implements IWorkbenchAdapter {
 		IWorkbenchAdapter adapter = element.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null) {
 			return adapter.getImageDescriptor(element);
-		}	
+		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */

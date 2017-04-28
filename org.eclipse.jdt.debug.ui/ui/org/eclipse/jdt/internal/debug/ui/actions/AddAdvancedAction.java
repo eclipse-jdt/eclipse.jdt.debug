@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,26 +20,26 @@ import org.eclipse.jface.dialogs.Dialog;
  * Opens a dialog to allow the user to choose among advanced actions.
  */
 public class AddAdvancedAction extends RuntimeClasspathAction {
-	
+
 	private IAction[] fActions;
 
 	public AddAdvancedAction(IClasspathViewer viewer, IAction[] actions) {
-		super(ActionMessages.AddAdvancedAction_Ad_vanced____1, viewer); 
+		super(ActionMessages.AddAdvancedAction_Ad_vanced____1, viewer);
 		fActions = actions;
 		setViewer(viewer);
-	}	
+	}
 
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 		Dialog dialog = new RuntimeClasspathAdvancedDialog(getShell(), fActions, getViewer());
-		dialog.open();			
+		dialog.open();
 	}
-		
+
 	/**
 	 * @see RuntimeClasspathAction#setViewer(RuntimeClasspathViewer)
 	 */
@@ -54,7 +54,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 			}
 		}
 	}
-	
+
 	@Override
 	protected int getActionType() {
 		return ADD;

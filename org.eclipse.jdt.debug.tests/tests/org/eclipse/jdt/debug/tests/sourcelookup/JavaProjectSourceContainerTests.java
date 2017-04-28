@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,14 +22,14 @@ import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContai
  * Tests Java project source containers
  */
 public class JavaProjectSourceContainerTests extends AbstractDebugTest {
-	
+
 	public JavaProjectSourceContainerTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Returns a Java project source container
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -41,10 +41,10 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 		director.setSourceContainers(new ISourceContainer[]{container});
 		return container;
 	}
-	
+
 	/**
 	 * Tests creation and restoring from a memento.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSourceContainerMemento() throws Exception {
@@ -52,7 +52,7 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 		String memento = container.getType().getMemento(container);
 		ISourceContainer restore = container.getType().createSourceContainer(memento);
 		assertEquals("Directory source container memento failed", container, restore);
-	}	
+	}
 
 	public void testDefaultPackageLookup() throws Exception {
 		ISourceContainer container = getContainer(get14Project(), false);
@@ -61,20 +61,20 @@ public class JavaProjectSourceContainerTests extends AbstractDebugTest {
 		IFile file = (IFile) objects[0];
 		assertEquals("Wrong file", "Breakpoints.java", file.getName());
 	}
-	
+
 	public void testQualifiedLookup() throws Exception {
 		ISourceContainer container = getContainer(get14Project(), false);
 		Object[] objects = container.findSourceElements("org/eclipse/debug/tests/targets/CallLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		IFile file = (IFile) objects[0];
-		assertEquals("Wrong file", "CallLoop.java", file.getName());		
+		assertEquals("Wrong file", "CallLoop.java", file.getName());
 	}
-	
+
 	public void testNonJavaLookup() throws Exception {
 		ISourceContainer container = getContainer(get14Project(), false);
 		Object[] objects = container.findSourceElements("debug/non-java.txt");
 		assertEquals("Expected 1 result", 1, objects.length);
 		IFile file = (IFile) objects[0];
-		assertEquals("Wrong file", "non-java.txt", file.getName());		
-	}	
+		assertEquals("Wrong file", "non-java.txt", file.getName());
+	}
 }

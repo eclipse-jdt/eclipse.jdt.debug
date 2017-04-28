@@ -40,9 +40,9 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 	 * A dialog that sets the focus to the text area.
 	 */
 	class HitCountDialog extends InputDialog {
-		
+
 		private boolean fHitCountEnabled;
-		
+
 		protected  HitCountDialog(Shell parentShell,
 									String dialogTitle,
 									String dialogMessage,
@@ -50,20 +50,20 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 									IInputValidator validator) {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.InputDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite area= (Composite)super.createDialogArea(parent);
-			
+
 			final Button checkbox = new Button(area, SWT.CHECK);
 			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			checkbox.setLayoutData(data);
 			checkbox.setFont(parent.getFont());
-			checkbox.setText(ActionMessages.BreakpointHitCountAction_Enable_Hit_Count_1); 
+			checkbox.setText(ActionMessages.BreakpointHitCountAction_Enable_Hit_Count_1);
 			checkbox.setSelection(true);
 			fHitCountEnabled = true;
 			checkbox.addSelectionListener(new SelectionListener() {
@@ -74,15 +74,15 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					if (fHitCountEnabled) {
 						validateInput();
 					} else {
-						setErrorMessage(null); 
+						setErrorMessage(null);
 					}
 				}
-				
+
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
-			
+
 			return area;
 		}
 
@@ -111,21 +111,21 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			try {
 				int oldHitCount= breakpoint.getHitCount();
 				int newHitCount= hitCountDialog(breakpoint);
-				if (newHitCount != -1) {					
+				if (newHitCount != -1) {
 					if (oldHitCount == newHitCount && newHitCount == 0) {
 						return;
 					}
 					breakpoint.setHitCount(newHitCount);
 				}
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.statusDialog(ce.getStatus()); 
+				JDIDebugUIPlugin.statusDialog(ce.getStatus());
 			}
 		}
 	}
-	
+
 	protected int hitCountDialog(IJavaBreakpoint breakpoint) {
-		String title= ActionMessages.BreakpointHitCountAction_Set_Breakpoint_Hit_Count_2; 
-		String message= ActionMessages.BreakpointHitCountAction__Enter_the_new_hit_count_for_the_breakpoint__3; 
+		String title= ActionMessages.BreakpointHitCountAction_Set_Breakpoint_Hit_Count_2;
+		String message= ActionMessages.BreakpointHitCountAction__Enter_the_new_hit_count_for_the_breakpoint__3;
 		IInputValidator validator= new IInputValidator() {
 			int hitCount= -1;
 			@Override
@@ -136,7 +136,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					hitCount= -1;
 				}
 				if (hitCount < 1) {
-					return ActionMessages.BreakpointHitCountAction_Value_must_be_positive_integer; 
+					return ActionMessages.BreakpointHitCountAction_Value_must_be_positive_integer;
 				}
 				//no error
 				return null;

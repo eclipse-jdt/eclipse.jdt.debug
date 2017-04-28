@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,10 +42,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 
 	private void executeAssignment() throws CoreException {
-		Object popValue = popValue();
-		if (!(popValue instanceof IJavaValue))
-			return;
-		IJavaValue value = (IJavaValue) popValue;
+		IJavaValue value = popValue();
 		IJavaVariable variable = (IJavaVariable) pop();
 		IJavaValue variableValue = (IJavaValue) variable.getValue();
 
@@ -83,11 +80,8 @@ public abstract class BinaryOperator extends CompoundInstruction {
 	}
 
 	private void executeBinary() throws CoreException {
-		Object popValue = popValue();
-		if (!(popValue instanceof IJavaValue))
-			return;
-		IJavaValue right = (IJavaValue) popValue;
-		IJavaValue left = (IJavaValue) popValue();
+		IJavaValue right = popValue();
+		IJavaValue left = popValue();
 
 		switch (fResultTypeId) {
 		case T_String:

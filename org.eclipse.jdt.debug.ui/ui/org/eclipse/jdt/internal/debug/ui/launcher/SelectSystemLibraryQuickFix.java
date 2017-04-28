@@ -31,16 +31,16 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Quick fix to select an alternate JRE for a project. 
+ * Quick fix to select an alternate JRE for a project.
  */
 public class SelectSystemLibraryQuickFix extends JREResolution {
-	
+
 	private IPath fOldPath;
 	private IJavaProject fProject;
-	
+
 	public SelectSystemLibraryQuickFix(IPath oldPath, IJavaProject project) {
 		fOldPath = oldPath;
-		fProject = project;	
+		fProject = project;
 	}
 
 	/**
@@ -51,12 +51,12 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		try {
 			handleContainerResolutionError(fOldPath, fProject);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.statusDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());  
+			JDIDebugUIPlugin.statusDialog(LauncherMessages.JREContainerResolution_Unable_to_update_classpath_1, e.getStatus());
 		}
 	}
-	
-	protected void handleContainerResolutionError(final IPath oldPath, final IJavaProject project) throws CoreException {			
-		
+
+	protected void handleContainerResolutionError(final IPath oldPath, final IJavaProject project) throws CoreException {
+
 		String lib = oldPath.segment(0);
 		IPath initialPath = null;
 		if (JavaRuntime.JRELIB_VARIABLE.equals(lib)) {
@@ -89,7 +89,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 				}
 			}
 		};
-		
+
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
@@ -100,13 +100,13 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		} catch (InterruptedException e) {
 			// cancelled
 		}
-	}		
+	}
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	@Override
 	public String getLabel() {
-		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()}); 
+		return NLS.bind(LauncherMessages.JREContainerResolution_Select_a_system_library_to_use_when_building__0__2, new String[]{fProject.getElementName()});
 	}
 
 }

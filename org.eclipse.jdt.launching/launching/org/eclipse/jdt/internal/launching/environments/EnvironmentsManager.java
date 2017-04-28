@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -52,7 +52,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Utility class for execution environments.
- * 
+ *
  * @since 3.2
  */
 public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMInstallChangedListener, IPreferenceChangeListener {
@@ -66,21 +66,21 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * Extension configuration element name.
 	 */
 	static final String ENVIRONMENT_ELEMENT = "environment"; //$NON-NLS-1$
-	
+
 	/**
 	 * Extension configuration element name.
 	 */
-	static final String RULE_PARTICIPANT_ELEMENT = "ruleParticipant"; //$NON-NLS-1$	
+	static final String RULE_PARTICIPANT_ELEMENT = "ruleParticipant"; //$NON-NLS-1$
 
 	private static EnvironmentsManager fgManager = null;
-	
+
 	/**
 	 * Preference store key for XML storing default environments.
 	 */
 	private static final String PREF_DEFAULT_ENVIRONMENTS_XML = "org.eclipse.jdt.launching.PREF_DEFAULT_ENVIRONMENTS_XML"; //$NON-NLS-1$
-	
+
 	/**
-	 * List of environments 
+	 * List of environments
 	 */
 	private TreeSet<IExecutionEnvironment> fEnvironments = null;
 
@@ -88,22 +88,22 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * List of access rule participants
 	 */
 	private Set<AccessRuleParticipant> fRuleParticipants = null;
-	
+
 	/**
 	 * Map of environments keyed by id
 	 */
 	private Map<String, IExecutionEnvironment> fEnvironmentsMap = null;
-	
+
 	/**
 	 * Map of analyzers keyed by id
 	 */
 	private Map<String, Analyzer> fAnalyzers = null;
-	
+
 	/**
 	 * <code>true</code> while updating the default settings preferences
 	 */
 	private boolean fIsUpdatingDefaults = false;
-	
+
 	/**
 	 * Whether compatible environments have been initialized
 	 */
@@ -128,10 +128,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 	 * XML document
 	 */
 	private static final String DEFAULT_ENVIRONMENTS = "defaultEnvironments"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the singleton environments manager.
-	 * 
+	 *
 	 * @return environments manager
 	 */
 	public static EnvironmentsManager getDefault() {
@@ -140,7 +140,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		}
 		return fgManager;
 	}
-	
+
 	/**
 	 * Constructs the new manager.
 	 */
@@ -157,10 +157,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		initializeExtensions();
 		return fEnvironments.toArray(new IExecutionEnvironment[fEnvironments.size()]);
 	}
-	
+
 	/**
 	 * Returns all access rule participants that are not specific to an execution environment.
-	 * 
+	 *
 	 * @return all access rule participants that are not specific to an execution environment.
 	 * @since 3.3
 	 */
@@ -168,7 +168,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		initializeExtensions();
 		return fRuleParticipants.toArray(new IAccessRuleParticipant[fRuleParticipants.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager#getEnvironment(java.lang.String)
 	 */
@@ -177,31 +177,31 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		initializeExtensions();
 		return fEnvironmentsMap.get(id);
 	}
-	
+
 	/**
-	 * Returns all registered analyzers 
-	 * 
+	 * Returns all registered analyzers
+	 *
 	 * @return all registered analyzers
 	 */
-	public synchronized Analyzer[] getAnalyzers() { 
+	public synchronized Analyzer[] getAnalyzers() {
 		initializeExtensions();
 		Collection<Analyzer> collection = fAnalyzers.values();
 		return collection.toArray(new Analyzer[collection.size()]);
-	}	
-	
+	}
+
 	private synchronized void initializeExtensions() {
 		if (fEnvironments == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
 			IConfigurationElement[] configs= extensionPoint.getConfigurationElements();
-			fEnvironments = new TreeSet<IExecutionEnvironment>(new Comparator<IExecutionEnvironment>() {
+			fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
 				@Override
 				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
 					return o1.getId().compareTo(o2.getId());
 				}
 			});
-			fRuleParticipants = new LinkedHashSet<AccessRuleParticipant>();
-			fEnvironmentsMap = new HashMap<String, IExecutionEnvironment>(configs.length);
-			fAnalyzers = new HashMap<String, Analyzer>(configs.length);
+			fRuleParticipants = new LinkedHashSet<>();
+			fEnvironmentsMap = new HashMap<>(configs.length);
+			fAnalyzers = new HashMap<>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				IConfigurationElement element = configs[i];
 				String name = element.getName();
@@ -233,7 +233,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			}
 		}
 	}
-	
+
 	/**
 	 * Initializes compatibility settings.
 	 */
@@ -255,7 +255,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
         	}
         }
 	}
-	
+
 	/**
 	 * Reads persisted default VMs from the preference store
 	 */
@@ -264,7 +264,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		try {
 			if (xml.length() > 0) {
 				DocumentBuilder parser = LaunchingPlugin.getParser();
-				
+
 				Document document = parser.parse(new ByteArrayInputStream(xml.getBytes()));
 				Element envs = document.getDocumentElement();
 				NodeList list = envs.getChildNodes();
@@ -286,7 +286,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 							}
 						}
 					}
-				}			
+				}
 			}
 		} catch (CoreException e) {
 			LaunchingPlugin.log(e);
@@ -299,7 +299,7 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 
 	/**
 	 * Returns an XML description of default VMs per environment. Returns
-	 * an empty string when there are none. 
+	 * an empty string when there are none.
 	 * @return an XML description of default VMs per environment. Returns
 	 * an empty string when there are none.
 	 */
@@ -329,10 +329,10 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Analyzes compatible execution environments for the given VM install.
-	 * 
+	 *
 	 * @param vm the {@link IVMInstall} to find environments for
 	 * @param monitor a progress monitor or <code>null</code>
 	 */
@@ -345,12 +345,12 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 				for (int j = 0; j < environments.length; j++) {
 					CompatibleEnvironment compatibleEnvironment = environments[j];
 					ExecutionEnvironment environment = (ExecutionEnvironment) compatibleEnvironment.getCompatibleEnvironment();
-					environment.add(vm, compatibleEnvironment.isStrictlyCompatbile());					
+					environment.add(vm, compatibleEnvironment.isStrictlyCompatbile());
 				}
 			} catch (CoreException e) {
 				LaunchingPlugin.log(e);
 			}
-		}	
+		}
 	}
 
 	/* (non-Javadoc)

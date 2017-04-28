@@ -36,7 +36,7 @@ import com.sun.jdi.VoidType;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public abstract class ValueImpl extends MirrorImpl implements Value {
 	/**
@@ -154,13 +154,13 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * Check the type and the vm of each values, according to the associated
 	 * type. For primitive values, convert the value for match the given type if
 	 * needed. The two list must have the same size.
-	 * 
+	 *
 	 * @return the (converted) values.
 	 * @see checkValue(Value, Type, VirtualMachineImpl)
 	 */
 	protected static List<Value> checkValues(List<?extends Value> values, List<Type> types,
 			VirtualMachineImpl vm) throws InvalidTypeException {
-		List<Value> result = new ArrayList<Value>(values.size());
+		List<Value> result = new ArrayList<>(values.size());
 		Iterator<? extends Value> iterValues = values.iterator();
 		Iterator<Type> iterTypes = types.iterator();
 		while (iterValues.hasNext()) {
@@ -174,7 +174,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	/**
 	 * Check the type and the vm of the given value. In case of primitive value,
 	 * the value is converted if needed.
-	 * 
+	 *
 	 * @return the (converted) value.
 	 * @throws InvalidTypeException
 	 *             if the given value is no assignment compatible with the given
@@ -300,7 +300,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	/**
 	 * Check the type of the given value, and convert the value to the given
 	 * type if needed (see Java Language Spec, section 5.2).
-	 * 
+	 *
 	 * @return the (converted) value.
 	 * @throws InvalidTypeException
 	 *             if the given value is no assignment compatible with the given

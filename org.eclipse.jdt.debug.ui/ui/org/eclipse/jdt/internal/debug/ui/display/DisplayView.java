@@ -90,7 +90,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class DisplayView extends ViewPart implements ITextInputListener, IPerspectiveListener2 {
-		
+
 	class DataDisplay implements IDataDisplay {
 		/**
 		 * @see IDataDisplay#clear()
@@ -102,7 +102,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				document.set(""); //$NON-NLS-1$
 			}
 		}
-		
+
 		/**
 		 * @see IDataDisplay#displayExpression(String)
 		 */
@@ -122,7 +122,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				JDIDebugUIPlugin.log(ble);
 			}
 		}
-		
+
 		/**
 		 * @see IDataDisplay#displayExpressionValue(String)
 		 */
@@ -142,16 +142,16 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fSourceViewer.revealRange(offset, length);
 		}
 	}
-		
+
 	protected IDataDisplay fDataDisplay= new DataDisplay();
 	protected IDocumentListener fDocumentListener= null;
-	
+
 	protected JDISourceViewer fSourceViewer;
 	protected IAction fClearDisplayAction;
 	protected DisplayViewAction fContentAssistAction;
 
-	protected Map<String, IAction> fGlobalActions= new HashMap<String, IAction>(4);
-	protected List<String> fSelectionActions= new ArrayList<String>(3);
+	protected Map<String, IAction> fGlobalActions= new HashMap<>(4);
+	protected List<String> fSelectionActions= new ArrayList<>(3);
 
 	protected String fRestoredContents= null;
 	/**
@@ -162,7 +162,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	private static IMemento fgMemento;
 	private IHandlerActivation fHandlerActivation;
-	
+
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
@@ -188,15 +188,15 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				fillContextMenu(mgr);
 			}
 		});
-		
+
 		Menu menu = menuMgr.createContextMenu(fSourceViewer.getTextWidget());
 		fSourceViewer.getTextWidget().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, fSourceViewer.getSelectionProvider());
-		
+
 		getSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IJavaDebugHelpContextIds.DISPLAY_VIEW);
 		getSite().getWorkbenchWindow().addPerspectiveListener(this);
-		
+
 		initDragAndDrop();
 	}
 
@@ -225,10 +225,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			}
 		};
 		doc.addDocumentListener(fDocumentListener);
-		
+
 		return doc;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
@@ -238,48 +238,48 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fSourceViewer.getControl().setFocus();
 		}
 	}
-	
+
 	/**
 	 * Initialize the actions of this view
 	 */
 	protected void createActions() {
-				
+
 		fClearDisplayAction= new ClearOutputAction(fSourceViewer);
-		
+
 		IAction action= new DisplayViewAction(this, ITextOperationTarget.CUT);
 		action.setText(DisplayMessages.DisplayView_Cut_label);
 		action.setToolTipText(DisplayMessages.DisplayView_Cut_tooltip);
 		action.setDescription(DisplayMessages.DisplayView_Cut_description);
 		setGlobalAction(ActionFactory.CUT.getId(), action);
-		
+
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
 		action.setText(DisplayMessages.DisplayView_Copy_label);
 		action.setToolTipText(DisplayMessages.DisplayView_Copy_tooltip);
 		action.setDescription(DisplayMessages.DisplayView_Copy_description);
 		setGlobalAction(ActionFactory.COPY.getId(), action);
-		
+
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
 		action.setText(DisplayMessages.DisplayView_Paste_label);
 		action.setToolTipText(DisplayMessages.DisplayView_Paste_tooltip);
 		action.setDescription(DisplayMessages.DisplayView_Paste_Description);
 		setGlobalAction(ActionFactory.PASTE.getId(), action);
-		
+
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
 		action.setText(DisplayMessages.DisplayView_SelectAll_label);
 		action.setToolTipText(DisplayMessages.DisplayView_SelectAll_tooltip);
 		action.setDescription(DisplayMessages.DisplayView_SelectAll_description);
 		setGlobalAction(ActionFactory.SELECT_ALL.getId(), action);
-		
+
 		//TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayResourceBundleMessages"); //$NON-NLS-1$
 		FindReplaceAction findReplaceAction = new FindReplaceAction(bundle, "find_replace_action_", this); //$NON-NLS-1$
 		findReplaceAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		setGlobalAction(ActionFactory.FIND.getId(), findReplaceAction);
-		
+
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.PASTE.getId());
-		
+
 		fContentAssistAction= new DisplayViewAction(this, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		fContentAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		fContentAssistAction.setText(DisplayMessages.DisplayView_Co_ntent_Assist_Ctrl_Space_1);
@@ -296,13 +296,13 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				fContentAssistAction.run();
 				return null;
 			}
-			
+
 		};
 
 		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		fHandlerActivation = handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
 	}
-	
+
 	/**
 	 * Creates this editor's undo/redo actions.
 	 * <p>
@@ -314,7 +314,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		IUndoContext undoContext= getUndoContext();
 		if (undoContext != null) {
 			// Use actions provided by global undo/redo
-			
+
 			// Create the undo action
 			OperationHistoryActionHandler undoAction= new UndoActionHandler(getSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
@@ -328,7 +328,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
 		}
 	}
-	
+
 	/**
 	 * Returns this editor's viewer's undo manager undo context.
 	 *
@@ -363,7 +363,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * Adds the context menu actions for the display view.
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		
+
 		if (fSourceViewer.getDocument() == null) {
 			return;
 		}
@@ -388,25 +388,25 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {
-			
+
 		if (ITextOperationTarget.class.equals(required)) {
 			return (T) fSourceViewer.getTextOperationTarget();
 		}
-		
+
 		if (IFindReplaceTarget.class.equals(required)) {
 			return (T) fSourceViewer.getFindReplaceTarget();
 		}
-			
+
 		if (IDataDisplay.class.equals(required)) {
 			return (T) fDataDisplay;
 		}
 		if (ITextViewer.class.equals(required)) {
 			return (T) fSourceViewer;
 		}
-		
+
 		return super.getAdapter(required);
 	}
-	
+
 	protected void updateActions() {
 		Iterator<String> iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
@@ -416,10 +416,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			}
 		}
 	}
-	
+
 	/**
 	 * Saves the contents of the display view and the formatting.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
 	@Override
@@ -433,10 +433,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			memento.putTextData(fRestoredContents);
 		}
 	}
-	
+
 	/**
 	 * Restores the contents of the display view and the formatting.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IViewPart#init(IViewSite, IMemento)
 	 */
 	@Override
@@ -449,10 +449,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fRestoredContents= memento.getTextData();
 		}
 	}
-	
+
     /**
      * Initializes the drag and/or drop adapters for this view.
-     * 
+     *
      * @since 3.4
      */
     protected void initDragAndDrop() {
@@ -466,7 +466,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
         	}
         });
     }
-	
+
 	/**
 	 * Returns the entire trimmed contents of the current document.
 	 * If the contents are "empty" <code>null</code> is returned.
@@ -483,7 +483,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	    }
 	    return null;
 	}
-	
+
 	protected final ISelectionChangedListener getSelectionChangedListener() {
 		return new ISelectionChangedListener() {
 				@Override
@@ -492,7 +492,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 				}
 			};
 	}
-	
+
 	protected void updateSelectionDependentActions() {
 		Iterator<String> iterator= fSelectionActions.iterator();
 		while (iterator.hasNext()) {
@@ -531,10 +531,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			fSourceViewer.dispose();
 			fSourceViewer = null;
 		}
-		
+
 		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		handlerService.deactivateHandler(fHandlerActivation);
-		
+
 		super.dispose();
 	}
 

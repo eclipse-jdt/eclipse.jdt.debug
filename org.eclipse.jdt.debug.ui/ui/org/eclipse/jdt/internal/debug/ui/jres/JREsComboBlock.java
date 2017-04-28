@@ -57,42 +57,42 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  */
 public class JREsComboBlock {
-	
+
 	public static final String PROPERTY_JRE = "PROPERTY_JRE"; //$NON-NLS-1$
-	
+
 	/**
 	 * This block's control
 	 */
 	private Composite fControl;
-	
+
 	/**
 	 * VMs being displayed
 	 */
-	private List<Object> fVMs = new ArrayList<Object>(); 
-	
+	private List<Object> fVMs = new ArrayList<>();
+
 	/**
 	 * The main control
-	 */ 
+	 */
 	private Combo fCombo;
-	
+
 	// Action buttons
 	private Button fManageButton;
-		
+
 	/**
 	 * JRE change listeners
 	 */
 	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
-	
+
 	/**
 	 * Whether the default JRE should be in first position (if <code>false</code>, it becomes last).
 	 */
 	private boolean fDefaultFirst;
-	
+
 	/**
 	 * Default JRE descriptor or <code>null</code> if none.
 	 */
 	private JREDescriptor fDefaultDescriptor = null;
-	
+
 	/**
 	 * Specific JRE descriptor or <code>null</code> if none.
 	 */
@@ -102,44 +102,44 @@ public class JREsComboBlock {
 	 * Default JRE radio button or <code>null</code> if none
 	 */
 	private Button fDefaultButton = null;
-	
+
 	/**
 	 * Selected JRE radio button
 	 */
 	private Button fSpecificButton = null;
-	
+
 	/**
 	 * The title used for the JRE block
 	 */
 	private String fTitle = null;
-	
+
 	/**
 	 * Selected JRE profile radio button
 	 */
 	private Button fEnvironmentsButton = null;
-	
+
 	/**
 	 * Combo box of JRE profiles
 	 */
 	private Combo fEnvironmentsCombo = null;
-	
+
 	private Button fManageEnvironmentsButton = null;
-	
+
 	// a path to an unavailable JRE
 	private IPath fErrorPath;
-	
+
 	/**
 	 * List of execution environments
 	 */
-	private List<Object> fEnvironments = new ArrayList<Object>();
-	
+	private List<Object> fEnvironments = new ArrayList<>();
+
 	private IStatus fStatus = OK_STATUS;
-	
+
 	private static IStatus OK_STATUS = new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
 
 	/**
 	 * Creates a JREs combo block.
-	 * 
+	 *
 	 * @param defaultFirst whether the default JRE should be in first position (if <code>false</code>, it becomes last)
 	 */
 	public JREsComboBlock(boolean defaultFirst) {
@@ -149,31 +149,31 @@ public class JREsComboBlock {
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
-	
+
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
 	}
-	
+
 	private void firePropertyChange() {
 		PropertyChangeEvent event = new PropertyChangeEvent(this, PROPERTY_JRE, null, getPath());
 		for (IPropertyChangeListener listener : fListeners) {
 			listener.propertyChange(event);
 		}
 	}
-	
+
 	/**
 	 * Creates this block's control in the given control.
-	 * 
+	 *
 	 * @param anscestor containing control
 	 */
 	public void createControl(Composite ancestor) {
-		fControl = SWTFactory.createComposite(ancestor, 1, 1, GridData.FILL_BOTH);		
+		fControl = SWTFactory.createComposite(ancestor, 1, 1, GridData.FILL_BOTH);
 		if (fTitle == null) {
-			fTitle = JREMessages.JREsComboBlock_3; 
+			fTitle = JREMessages.JREsComboBlock_3;
 		}
-		Group group = SWTFactory.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL); 
+		Group group = SWTFactory.createGroup(fControl, fTitle, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite comp = SWTFactory.createComposite(group, group.getFont(), 3, 1, GridData.FILL_BOTH, 0, 0);
-		
+
 		if (fDefaultFirst) {
 			createDefaultJREControls(comp);
 		}
@@ -203,8 +203,8 @@ public class JREsComboBlock {
 					firePropertyChange();
 				}
 			}
-		});		
-		
+		});
+
 		fEnvironmentsCombo = SWTFactory.createCombo(comp, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		fEnvironmentsCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -212,16 +212,16 @@ public class JREsComboBlock {
 				setPath(JavaRuntime.newJREContainerPath(getEnvironment()));
 				firePropertyChange();
 			}
-		});		
-		
+		});
+
 		fManageEnvironmentsButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_14, null);
 		fManageEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
 				showPrefPage(ExecutionEnvironmentsPreferencePage.ID);
 			}
-		});		
-		
+		});
+
 		fillWithWorkspaceProfiles();
 	}
 
@@ -243,7 +243,7 @@ public class JREsComboBlock {
 						setError(JREMessages.JREsComboBlock_0);
 					} else {
 						setStatus(OK_STATUS);
-					}					
+					}
 					fEnvironmentsCombo.setEnabled(false);
 					firePropertyChange();
 				}
@@ -258,12 +258,12 @@ public class JREsComboBlock {
 				firePropertyChange();
 			}
 		});
-				
-		fManageButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_2, null); 
+
+		fManageButton = SWTFactory.createPushButton(comp, JREMessages.JREsComboBlock_2, null);
 		fManageButton.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				showPrefPage(JREsPreferencePage.ID); 
+				showPrefPage(JREsPreferencePage.ID);
 			}
 		});
 		fillWithWorkspaceJREs();
@@ -284,10 +284,10 @@ public class JREsComboBlock {
 			});
 		}
 	}
-	
+
 	/**
 	 * Opens the given preference page, and updates when closed.
-	 * 
+	 *
 	 * @param id pref page id
 	 * @param page pref page
 	 */
@@ -306,9 +306,9 @@ public class JREsComboBlock {
 			setUseDefaultJRE();
 		}
 		setPath(getPath());
-		firePropertyChange();		
+		firePropertyChange();
 	}
-	
+
 	private void restoreCombo(List<Object> elements, Object element, Combo combo) {
 		int index = -1;
 		if (element != null) {
@@ -320,19 +320,19 @@ public class JREsComboBlock {
 			combo.select(0);
 		}
 	}
-		
+
 	/**
 	 * Returns this block's control
-	 * 
+	 *
 	 * @return control
 	 */
 	public Control getControl() {
 		return fControl;
 	}
-	
+
 	/**
 	 * Sets the JREs to be displayed in this block
-	 * 
+	 *
 	 * @param vms JREs to be displayed
 	 */
 	protected void setJREs(List<VMStandin> jres) {
@@ -364,14 +364,14 @@ public class JREsComboBlock {
 		fCombo.setItems(names);
 		fCombo.setVisibleItemCount(Math.min(names.length, 20));
 	}
-	
+
 	protected Shell getShell() {
 		return getControl().getShell();
 	}
 
 	/**
 	 * Selects a specific JRE based on type/name.
-	 * 
+	 *
 	 * @param vm JRE or <code>null</code>
 	 */
 	private void selectJRE(IVMInstall vm) {
@@ -383,15 +383,15 @@ public class JREsComboBlock {
 		if (vm != null) {
 			int index = fVMs.indexOf(vm);
 			if (index >= 0) {
-				fCombo.select(index);		
+				fCombo.select(index);
 			}
 		}
 		firePropertyChange();
 	}
-	
+
 	/**
 	 * Selects a JRE based environment.
-	 * 
+	 *
 	 * @param env environment or <code>null</code>
 	 */
 	private void selectEnvironment(IExecutionEnvironment env) {
@@ -403,15 +403,15 @@ public class JREsComboBlock {
 		if (env != null) {
 			int index = fEnvironments.indexOf(env);
 			if (index >= 0) {
-				fEnvironmentsCombo.select(index);		
+				fEnvironmentsCombo.select(index);
 			}
 		}
 		firePropertyChange();
-	}	
-	
+	}
+
 	/**
 	 * Returns the selected JRE or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the selected JRE or <code>null</code> if none
 	 */
 	public IVMInstall getJRE() {
@@ -421,10 +421,10 @@ public class JREsComboBlock {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the selected Environment or <code>null</code> if none.
-	 * 
+	 *
 	 * @return the selected Environment or <code>null</code> if none
 	 */
 	private IExecutionEnvironment getEnvironment() {
@@ -433,14 +433,14 @@ public class JREsComboBlock {
 			return (IExecutionEnvironment)fEnvironments.get(index);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Populates the JRE table with existing JREs defined in the workspace.
 	 */
 	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
-		List<VMStandin> standins = new ArrayList<VMStandin>();
+		List<VMStandin> standins = new ArrayList<>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstallType type = types[i];
@@ -450,9 +450,9 @@ public class JREsComboBlock {
 				standins.add(new VMStandin(install));
 			}
 		}
-		setJREs(standins);	
+		setJREs(standins);
 	}
-	
+
 	/**
 	 * Populates the JRE profile combo with profiles defined in the workspace.
 	 */
@@ -479,18 +479,18 @@ public class JREsComboBlock {
 		}
 		fEnvironmentsCombo.setItems(names);
 		fEnvironmentsCombo.setVisibleItemCount(Math.min(names.length, 20));
-	}	
-	
+	}
+
 	/**
 	 * Sets the Default JRE Descriptor for this block.
-	 * 
+	 *
 	 * @param descriptor default JRE descriptor
 	 */
 	public void setDefaultJREDescriptor(JREDescriptor descriptor) {
 		fDefaultDescriptor = descriptor;
 		setButtonTextFromDescriptor(fDefaultButton, descriptor);
 	}
-	
+
 	private void setButtonTextFromDescriptor(Button button, JREDescriptor descriptor) {
 		if (button != null) {
 			//update the description & JRE in case it has changed
@@ -505,17 +505,17 @@ public class JREsComboBlock {
 
 	/**
 	 * Sets the specific JRE Descriptor for this block.
-	 * 
+	 *
 	 * @param descriptor specific JRE descriptor
 	 */
 	public void setSpecificJREDescriptor(JREDescriptor descriptor) {
 		fSpecificDescriptor = descriptor;
 		setButtonTextFromDescriptor(fSpecificButton, descriptor);
 	}
-	
+
 	/**
 	 * Returns whether the 'use default JRE' button is checked.
-	 * 
+	 *
 	 * @return whether the 'use default JRE' button is checked
 	 */
 	public boolean isDefaultJRE() {
@@ -524,7 +524,7 @@ public class JREsComboBlock {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sets this control to use the 'default' JRE.
 	 */
@@ -538,11 +538,11 @@ public class JREsComboBlock {
 			firePropertyChange();
 		}
 	}
-	
+
 	/**
 	 * Sets the title used for this JRE block
-	 * 
-	 * @param title title for this JRE block 
+	 *
+	 * @param title title for this JRE block
 	 */
 	public void setTitle(String title) {
 		fTitle = title;
@@ -554,10 +554,10 @@ public class JREsComboBlock {
 	public void refresh() {
 		setDefaultJREDescriptor(fDefaultDescriptor);
 	}
-	
+
 	/**
 	 * Returns a classpath container path identifying the selected JRE.
-	 * 
+	 *
 	 * @return classpath container path or <code>null</code>
 	 * @since 3.2
 	 */
@@ -583,13 +583,13 @@ public class JREsComboBlock {
 		}
 		return JavaRuntime.newDefaultJREContainerPath();
 	}
-	
+
 	/**
 	 * Sets the selection based on the given container path and returns
 	 * a status indicating if the selection was successful.
-	 * 
+	 *
 	 * @param containerPath
-	 * @return status 
+	 * @return status
 	 */
 	public void setPath(IPath containerPath) {
 		fErrorPath = null;
@@ -637,29 +637,29 @@ public class JREsComboBlock {
 					selectJRE(install);
 					File location = install.getInstallLocation();
 					if (location == null) {
-						setError(JREMessages.JREsComboBlock_12); 
+						setError(JREMessages.JREsComboBlock_12);
 					} else if (!location.exists()) {
 						setError(JREMessages.JREsComboBlock_13);
-					}							
+					}
 				}
 			}
 		}
 	}
-	
+
 	private void setError(String message) {
 		setStatus(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(),
-				IJavaDebugUIConstants.INTERNAL_ERROR, message, null));		
+				IJavaDebugUIConstants.INTERNAL_ERROR, message, null));
 	}
-	
+
 	/**
 	 * Returns the status of the JRE selection.
-	 * 
+	 *
 	 * @return status
 	 */
 	public IStatus getStatus() {
 		return fStatus;
 	}
-	
+
 	private void setStatus(IStatus status) {
 		fStatus = status;
 	}

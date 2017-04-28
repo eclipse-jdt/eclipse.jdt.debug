@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S Moller - Bug 421938: [1.8] ExecutionEnvironmentDescription#getVMArguments does not preserve VM arguments
@@ -37,20 +37,20 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
  * Tests for ".ee" files - installed JRE definition files
  */
 public class EEDefinitionTests extends AbstractDebugTest {
-	
+
 	public static IPath TEST_EE_FILE = null;
 	{
 		if (Platform.OS_WIN32.equals(Platform.getOS())) {
-			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11-win32.ee"); 
+			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11-win32.ee");
 		} else {
 			TEST_EE_FILE = new Path("testfiles/test-jre/bin/test-foundation11.ee");
 		}
 	}
-		
+
 	public EEDefinitionTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests that the EE file is a valid file
 	 */
@@ -61,7 +61,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		IStatus status = EEVMType.validateDefinitionFile(description);
 		assertTrue("Invalid install location", status.isOK());
 	}
-	
+
 	/**
 	 * Tests that the EE install location validation returns an INFO status.
 	 */
@@ -72,8 +72,8 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE VM type", vmType);
 		IStatus status = vmType.validateInstallLocation(file);
 		assertTrue("Invalid install location", status.getSeverity() == IStatus.INFO);
-	}	
-	
+	}
+
 	/**
 	 * Tests libraries for the EE file
 	 */
@@ -87,11 +87,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		for (int i = 0; i < expected.length; i++) {
 			if (i == 4) {
 				// ext1 and ext2 can be in either order due to file system ordering
-				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
+				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) ||
 						expected[i].equals(libs[i+1].getSystemLibraryPath().lastSegment()));
 			} else if (i == 5) {
 				// ext1 and ext2 can be in either order due to file system ordering
-				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) || 
+				assertTrue("Wrong library", expected[i].equals(libs[i].getSystemLibraryPath().lastSegment()) ||
 						expected[i].equals(libs[i-1].getSystemLibraryPath().lastSegment()));
 			} else {
 				assertEquals("Wrong library", expected[i], libs[i].getSystemLibraryPath().lastSegment());
@@ -101,7 +101,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests source attachments
 	 */
@@ -115,11 +115,11 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		for (int i = 0; i < expected.length; i++) {
 			if (i == 4) {
 				// ext1 and ext2 can be in either order due to file system ordering
-				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) || 
+				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) ||
 						expected[i].equals(libs[i+1].getSystemLibrarySourcePath().lastSegment()));
 			} else if (i == 5) {
 				// ext1 and ext2 can be in either order due to file system ordering
-				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) || 
+				assertTrue("Wrong attachment", expected[i].equals(libs[i].getSystemLibrarySourcePath().lastSegment()) ||
 						expected[i].equals(libs[i-1].getSystemLibrarySourcePath().lastSegment()));
 			} else if (i == 6){
 				assertEquals("Wrong attachment", Path.EMPTY, libs[i].getSystemLibrarySourcePath());
@@ -127,8 +127,8 @@ public class EEDefinitionTests extends AbstractDebugTest {
 				assertEquals("Wrong attachment", expected[i], libs[i].getSystemLibrarySourcePath().lastSegment());
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests default libraries for an EE VM type are empty.
 	 */
@@ -140,7 +140,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		LibraryLocation[] libs = vmType.getDefaultLibraryLocations(file);
 		assertEquals("Wrong number of libraries", 0, libs.length);
 	}
-	
+
 	/**
 	 * Tests that a javadoc location can be specified.
 	 */
@@ -157,10 +157,10 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		}
 		assertEquals("Incorrect javadoc location", expectedLocation, location);
 	}
-	
+
 	/**
 	 * Tests asking for the index from the EE file
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 3.9.0
 	 */
@@ -177,7 +177,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		}
 		assertEquals("Incorrect index location", expectedLocation, location);
 	}
-	
+
 	/**
 	 * Tests that a name with spaces can be specified.
 	 */
@@ -187,8 +187,8 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		String name = ee.getProperty(ExecutionEnvironmentDescription.EE_NAME);
 		assertEquals("Incorrect vm name", "Eclipse JDT Test JRE Definition", name);
-	}	
-	
+	}
+
 	/**
 	 * Tests default VM arguments. All arguments from the EE file should get passed through in the
 	 * same order to the command line.
@@ -211,7 +211,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 			prev = next;
 		}
 	}
-	
+
 	/**
 	 * Test compatible environments
 	 */
@@ -224,7 +224,7 @@ public class EEDefinitionTests extends AbstractDebugTest {
 			assertNotNull("Missing EE VM type", vmType);
 			VMStandin standin = JavaRuntime.createVMFromDefinitionFile(file, "test-ee-file", "test-ee-file-id");
 			install = standin.convertToRealVM();
-			
+
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 			boolean found11 = false;
@@ -244,18 +244,18 @@ public class EEDefinitionTests extends AbstractDebugTest {
 			}
 		}
 	}
-		
+
 	protected File getEEFile() {
 		return JavaTestPlugin.getDefault().getFileInPlugin(TEST_EE_FILE);
 	}
-	
+
 	protected IVMInstallType getVMInstallType() {
 		return JavaRuntime.getVMInstallType(EEVMType.ID_EE_VM_TYPE);
 	}
-	
+
 	/**
 	 * Tests raw EE properties map.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void testParseProperties() throws CoreException {
@@ -263,19 +263,19 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription desc = new ExecutionEnvironmentDescription(file);
 		Map<String, String> map = desc.getProperties();
-		
+
 		// validate expected properties
 		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE, "jrew.txt" , map);
 		validateProperty(ExecutionEnvironmentDescription.EXECUTABLE_CONSOLE, "jre.txt", map);
 		validateProperty("-XspecialArg:123", "", map);
 		validateProperty("-XspecialArg2", "456", map);
-		
+
 	}
-	
+
 	protected void validateProperty(String key, String value, Map<String, String> properties) {
 		assertEquals("Unexpeted value for: " + key, value, properties.get(key));
 	}
-	
+
 	/**
 	 * Tests that a name with spaces can be specified.
 	 */
@@ -284,5 +284,5 @@ public class EEDefinitionTests extends AbstractDebugTest {
 		assertNotNull("Missing EE file", file);
 		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 		validateProperty("-Dee.empty", "", ee.getProperties());
-	}	
+	}
 }

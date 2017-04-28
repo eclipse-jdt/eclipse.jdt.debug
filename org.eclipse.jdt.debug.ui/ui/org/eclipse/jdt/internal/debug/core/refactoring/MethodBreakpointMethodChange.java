@@ -31,7 +31,7 @@ import org.eclipse.osgi.util.NLS;
 public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 
 	private IMethod fDestMethod;
-	
+
 	public MethodBreakpointMethodChange(IJavaMethodBreakpoint breakpoint, IMethod destMethod) throws CoreException {
 		super(breakpoint);
 		fDestMethod = destMethod;
@@ -50,7 +50,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestMethod);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestMethod);
 		int range[] = getNewLineNumberAndRange(fDestMethod);
@@ -66,7 +66,7 @@ public class MethodBreakpointMethodChange extends MethodBreakpointChange {
 				NO_LINE_NUMBER,
 				range[1],
 				range[2],
-				getHitCount(), 
+				getHitCount(),
 				true,
 				map);
 		apply(breakpoint);

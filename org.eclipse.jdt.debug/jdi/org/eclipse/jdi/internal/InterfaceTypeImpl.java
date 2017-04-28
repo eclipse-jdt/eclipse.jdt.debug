@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper Steen Møller <jesper@selskabet.org> - Bug 430839
@@ -37,7 +37,7 @@ import com.sun.jdi.Value;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		InterfaceType {
@@ -104,7 +104,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	@Override
 	public List<ClassType> implementors() {
 		// Note that this information should not be cached.
-		List<ClassType> implementors = new ArrayList<ClassType>();
+		List<ClassType> implementors = new ArrayList<>();
 		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			ReferenceType refType = itr.next();
@@ -129,7 +129,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 	@Override
 	public List<InterfaceType> subinterfaces() {
 		// Note that this information should not be cached.
-		List<InterfaceType> implementors = new ArrayList<InterfaceType>();
+		List<InterfaceType> implementors = new ArrayList<>();
 		Iterator<ReferenceType> itr = virtualMachineImpl().allRefTypes();
 		while (itr.hasNext()) {
 			try {
@@ -200,7 +200,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements
 		return null;
 	}
 
-	
+
 	/**
 	 * @return Returns true if this type has been initialized.
 	 */

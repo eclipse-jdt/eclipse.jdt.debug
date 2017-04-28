@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 /**
  * A local variable, field slot, or receiver (this) in a Java virtual machine.
- * 
+ *
  * @see org.eclipse.debug.core.model.IVariable
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -26,7 +26,7 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 * Returns the JNI-style signature for the declared type of this variable,
 	 * or <code>null</code> if the type associated with the signature is not yet
 	 * loaded in the target VM.
-	 * 
+	 *
 	 * @return signature, or <code>null</code> if not accessible
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -46,7 +46,7 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 * associated with the signature is not yet loaded in the target VM. Returns
 	 * the same value as #getSignature() if the declared type of this variable
 	 * is not a generic type.
-	 * 
+	 *
 	 * @return generic signature, or <code>null</code> if not accessible
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -63,7 +63,7 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 
 	/**
 	 * Returns the declared type of this variable.
-	 * 
+	 *
 	 * @return the declared type of this variable
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -80,7 +80,7 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 
 	/**
 	 * Returns whether this variable is local.
-	 * 
+	 *
 	 * @return whether this variable is a local variable
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:

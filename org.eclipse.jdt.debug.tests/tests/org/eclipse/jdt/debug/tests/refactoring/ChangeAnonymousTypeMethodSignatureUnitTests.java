@@ -28,10 +28,10 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefacto
 		super(name);
 	}
 
-	
+
 	public void testAnonymousTypeMethodChange() throws Exception {
 		try {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V$1$anonTypeMethod()QString",
@@ -55,16 +55,16 @@ public class ChangeAnonymousTypeMethodSignatureUnitTests extends AbstractRefacto
 		} finally {
 			removeAllBreakpoints();
 		}
-	}//end testBreakPoint	
-		
+	}//end testBreakPoint
+
 	private Refactoring setupRefactor(String root, String packageName, String cuName, String fullTargetName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		ICompilationUnit cunit = getCompilationUnit(javaProject, root, packageName, cuName);
 		IMethod method = (IMethod)(getMember(cunit,fullTargetName));
-		
+
         ChangeSignatureProcessor processor = new ChangeSignatureProcessor(method);
         ProcessorBasedRefactoring ref= new ProcessorBasedRefactoring(processor);
-        
+
         //configure the processor a little more here!
         processor.setNewMethodName("changedMethod");
         processor.setNewReturnTypeName("Object");

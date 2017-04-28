@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * A variable that contains the value of an instance or class variable.
- * 
+ *
  * @see org.eclipse.debug.core.model.IVariable
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -24,7 +24,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 
 	/**
 	 * Returns whether this variable is declared as transient.
-	 * 
+	 *
 	 * @return whether this variable has been declared as transient
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -38,7 +38,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 
 	/**
 	 * Returns whether this variable is declared as volatile.
-	 * 
+	 *
 	 * @return whether this variable has been declared as volatile
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -52,7 +52,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 
 	/**
 	 * Returns the type that declares this variable.
-	 * 
+	 *
 	 * @return the type that declares this variable
 	 */
 	public IJavaType getDeclaringType();
@@ -61,7 +61,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 	 * Returns the object that contains this field variable, or
 	 * <code>null</code> if no object contains this field variable (static field
 	 * variable).
-	 * 
+	 *
 	 * @return the object that contains this field variable
 	 * @since 3.0
 	 */
@@ -69,7 +69,7 @@ public interface IJavaFieldVariable extends IJavaVariable {
 
 	/**
 	 * Returns the type that contains this field variable.
-	 * 
+	 *
 	 * @return the type that contains this field variable
 	 * @since 3.0
 	 */

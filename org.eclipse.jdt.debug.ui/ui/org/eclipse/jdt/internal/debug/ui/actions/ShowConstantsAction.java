@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,9 +27,9 @@ public class ShowConstantsAction extends ToggleBooleanPreferenceAction {
 	 */
 	@Override
 	protected String getPreferenceKey() {
-		return IJDIPreferencesConstants.PREF_SHOW_CONSTANTS; 
+		return IJDIPreferencesConstants.PREF_SHOW_CONSTANTS;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ToggleBooleanPreferenceAction#getViewKey()
 	 */
@@ -37,5 +37,5 @@ public class ShowConstantsAction extends ToggleBooleanPreferenceAction {
 	protected String getViewKey() {
 		return getCompositeKey();
 	}
-	
+
 }

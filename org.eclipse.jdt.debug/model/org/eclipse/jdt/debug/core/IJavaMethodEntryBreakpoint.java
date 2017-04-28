@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * the implementation is based on line breakpoints and does not require method
  * enter/exit tracing in the target VM.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -32,7 +32,7 @@ public interface IJavaMethodEntryBreakpoint extends IJavaLineBreakpoint {
 
 	/**
 	 * Returns the name of the method this breakpoint suspends execution in.
-	 * 
+	 *
 	 * @return the name of the method this breakpoint suspends execution in
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's
@@ -43,7 +43,7 @@ public interface IJavaMethodEntryBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns the signature of the method this breakpoint suspends execution
 	 * in.
-	 * 
+	 *
 	 * @return the signature of the method this breakpoint suspends execution in
 	 * @exception CoreException
 	 *                if unable to access the property from this breakpoint's

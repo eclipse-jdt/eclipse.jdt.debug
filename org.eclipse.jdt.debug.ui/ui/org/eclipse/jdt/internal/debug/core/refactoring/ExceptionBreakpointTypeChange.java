@@ -28,9 +28,9 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
-	
+
 	private IType fDestType;
-	
+
 	public ExceptionBreakpointTypeChange(IJavaExceptionBreakpoint breakpoint, IType destType) throws CoreException {
 		super(breakpoint);
 		fDestType = destType;
@@ -50,7 +50,7 @@ public class ExceptionBreakpointTypeChange extends ExceptionBreakpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestType);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestType);
 		IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(

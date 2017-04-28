@@ -36,7 +36,7 @@ public class ExcludeExceptionLocationAction extends ObjectActionDelegate {
 			return;
 		}
 		Iterator<IJavaThread> itr= selection.iterator();
-		
+
 		while (itr.hasNext()) {
 			IJavaThread thread= itr.next();
 			try {

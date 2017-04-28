@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
@@ -25,7 +25,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 /**
  * A UI block allowing a working directory to be specified for a launch
  * configuration.
- * 
+ *
  * @since 3.4
  */
 public class JavaWorkingDirectoryBlock extends WorkingDirectoryBlock {

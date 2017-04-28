@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ public class ProjectClasspathArgumentSelector implements IArgumentSelector {
 		dialog.setTitle(LauncherMessages.ProjectClasspathArugumentSelector_0);
 		dialog.setMultipleSelection(false);
 		dialog.setMessage(LauncherMessages.ProjectClasspathArugumentSelector_1);
-		List<IJavaProject> javaProjects = new ArrayList<IJavaProject>();
+		List<IJavaProject> javaProjects = new ArrayList<>();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IJavaProject jp = JavaCore.create(projects[i]);
@@ -46,7 +46,7 @@ public class ProjectClasspathArgumentSelector implements IArgumentSelector {
 				javaProjects.add(jp);
 			}
 		}
-		dialog.setElements(javaProjects.toArray()); 
+		dialog.setElements(javaProjects.toArray());
 		if (dialog.open() == Window.OK) {
 			return (((IJavaProject)dialog.getResult()[0]).getElementName());
 		}

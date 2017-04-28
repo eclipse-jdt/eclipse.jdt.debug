@@ -40,17 +40,17 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
     public ProjectCreationDecorator() {
         super("Project creation decorator tests");
     }
-    
+
     /* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.tests.AbstractDebugTest#getProjectContext()
 	 */
 	@Override
 	protected IJavaProject getProjectContext() {
 		return get14Project();
-	}	
-    
+	}
+
     /**
-     * 
+     *
      */
     public void testPerspectiveSwtich() {
         DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {

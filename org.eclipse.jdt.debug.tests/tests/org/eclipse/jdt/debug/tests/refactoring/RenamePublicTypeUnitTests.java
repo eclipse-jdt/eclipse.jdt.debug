@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -60,12 +60,12 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * Creates an exception breakpoint and adds a filter. Refactors & checks 
+	 * Creates an exception breakpoint and adds a filter. Refactors & checks
 	 * if the filter changed appropriately w/ the refactor.
 	 * @param src name of src file
-	 * @param pack 
+	 * @param pack
 	 * @param cunit
 	 * @param targetName
 	 * @param exceptionName TODO
@@ -75,7 +75,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		try {
 			//create breakpoint to test
 			IJavaExceptionBreakpoint breakpoint = createExceptionBreakpoint(exceptionName, true, true);
-			
+
 			//refactor
 			Refactoring ref = setupRefactor(src, pack, cunit, targetName);
 			performRefactor(ref);
@@ -91,7 +91,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -151,7 +151,7 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * @param src
 	 * @param pack
@@ -181,9 +181,9 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param root
 	 * @param packageName
 	 * @param cuName
@@ -198,12 +198,12 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		//if this was a non-typed test, get's it's parent type
 		if(!(target instanceof IType))
 			target = (IMember)target.getParent();
-		
+
 		IType targetType = (IType)target;
-				
+
 		JavaRenameProcessor proc = new RenameTypeProcessor(targetType);
 		proc.setNewElementName("RenamedType");
-			
+
 		RenameRefactoring ref= new RenameRefactoring(proc);
 		//setup final refactoring conditions
 		RefactoringStatus refactoringStatus= ref.checkAllConditions(new NullProgressMonitor());
@@ -211,60 +211,60 @@ public class RenamePublicTypeUnitTests extends AbstractRefactoringDebugTest {
 		{
 			System.out.println(refactoringStatus.getMessageMatchingSeverity(refactoringStatus.getSeverity()));
 			return null;
-		}		
-		
+		}
+
 		return ref;
 	}
-	
+
 	public void testPublicClassLoadpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild",
 					targetLineage = pack+"."+"RenamedType";
 			runClassLoadBreakpointTest(src, pack, cunit, fullTargetName, targetLineage);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicLineBreakpoint() throws Exception {
 
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild",
 					targetLineage = "RenamedType";
 			int lineNumber = 21;
-			
+
 			runLineBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, lineNumber);
-	}//end testBreakPoint			
-	
+	}//end testBreakPoint
+
 	public void testPublicMethodBreakpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$childsMethod()V",
 					targetLineage = pack+"."+"RenamedType",
 					methodName = "childsMethod";
 			runMethodBreakpointTest(src, pack, cunit, fullTargetName, targetLineage, methodName);
-	}//end testBreakPoint		
-	
+	}//end testBreakPoint
+
 	public void testPublicExceptionBreakpoint() throws Exception {
-		String 	src = "src", 
+		String 	src = "src",
 				pack = "a.b.c",
 				cunit = "MoveeChild.java",
 				typeName = "MoveeChild",
 				exceptionName = "java.lang.NullPointerException";
 		runExceptionBreakpointTest(src, pack, cunit, typeName, exceptionName);
-}//end testBreakPoint		
+}//end testBreakPoint
 
 
 
 	public void testPublicWatchpoint() throws Exception {
-			String 	src = "src", 
+			String 	src = "src",
 					pack = "a.b.c",
 					cunit = "MoveeChild.java",
 					fullTargetName = "MoveeChild$aChildInt",
 					targetLineage = pack+"."+"RenamedType",
 					fieldName = "aChildInt";
 			runWatchPointTest(src, pack, cunit, fullTargetName, targetLineage, fieldName);
-	}//end testBreakPoint		
+	}//end testBreakPoint
 }

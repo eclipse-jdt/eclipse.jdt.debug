@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
- * Tests for the new capability of getting the file encoding for a launch configuration given a variety of 
+ * Tests for the new capability of getting the file encoding for a launch configuration given a variety of
  * scenarios
  * @since 3.4
  */
@@ -42,7 +42,7 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	protected Preferences getResourcesPreferences() {
 		return ResourcesPlugin.getPlugin().getPluginPreferences();
 	}
-	
+
 	/**
 	 * Returns the default workbench encoding
 	 * @return the default workbench encoding
@@ -50,7 +50,7 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 	protected String getDefaultEncoding() {
 		return getResourcesPreferences().getDefaultString(ResourcesPlugin.PREF_ENCODING);
 	}
-	
+
 	/**
 	 * Tests that if no encoding is set on the configuration and there is no encoding changes to the workspace pref
 	 * than the encoding retrieved for the configuration matches the system encoding
@@ -74,7 +74,7 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			System.setProperty("file.encoding", oldsystemencoding);
 		}
 	}
-	
+
 	/**
 	 * Tests that if a specific encoding is set for the workspace and there is no encoding set on the configuration
 	 * than the returned encoding matches the workspace pref
@@ -95,7 +95,7 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			getResourcesPreferences().setValue(ResourcesPlugin.PREF_ENCODING, (oldencoding == null ? getDefaultEncoding() : oldencoding));
 		}
 	}
-	
+
 	/**
 	 * Tests that if a specific encoding is set on the configuration itself that that is the encoding returned
 	 */
@@ -125,7 +125,7 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 	/**
 	 * Tests that if there is no specified encoding for the config itself, and there is a mapped resource,
 	 * the encoding will come from the mapped resource (if a specific one is set)
@@ -156,9 +156,9 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 	/**
-	 * Tests that if there is no specific encoding set on the config and there is more than one mapped resource, 
+	 * Tests that if there is no specific encoding set on the config and there is more than one mapped resource,
 	 * the first mapped resource is used to derive the encoding
 	 */
 	public void testGetSpecificResourcesEncoding() throws CoreException {
@@ -196,5 +196,5 @@ public class ConfigurationEncodingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 }

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ import com.sun.jdi.connect.Connector;
  * Tests attaching to a remote java application
  */
 public class RemoteJavaApplicationTests extends AbstractDebugTest {
-	
+
 	public RemoteJavaApplicationTests(String name) {
 		super(name);
 	}
@@ -51,7 +51,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 	public void testAttach() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(52, typeName);
-		
+
 		// create launch config to launch VM in debug mode waiting for attach
 		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "Launch Remote VM");
@@ -61,9 +61,9 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
 		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);		
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		ILaunchConfiguration launchRemoteVMConfig = config.doSave();
-		
+
 		// create a launch config to do the attach
 		type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION);
 		config = type.newInstance(null, "Remote Breakpoints");
@@ -77,15 +77,15 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		while (iter.hasNext()) {
 			String key = iter.next();
 			Connector.Argument arg = def.get(key);
-			argMap.put(key, arg.toString()); 
+			argMap.put(key, arg.toString());
 		}
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);		
-		ILaunchConfiguration attachConfig = config.doSave();		
-			
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);
+		ILaunchConfiguration attachConfig = config.doSave();
+
 		// launch remote VM
 		ILaunch launch = launchRemoteVMConfig.launch(ILaunchManager.RUN_MODE, null);
-		
-		// attach	
+
+		// attach
 		IJavaThread thread= null;
 		try {
 			CoreException exception = null;
@@ -119,9 +119,9 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests a Standard (Socket Listen) VM connection.
 	 * @throws Exception
@@ -129,7 +129,7 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 	public void testListen() throws Exception {
 		String typeName = "Breakpoints";
 		createLineBreakpoint(52, typeName);
-		
+
 		// create a launch config to listen for the vm
 		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "Remote Breakpoints");
@@ -143,10 +143,10 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		while (iter.hasNext()) {
 			String key = iter.next();
 			Connector.Argument arg = def.get(key);
-			argMap.put(key, arg.toString()); 
+			argMap.put(key, arg.toString());
 		}
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);		
-		ILaunchConfiguration listenConfig = config.doSave();		
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, argMap);
+		ILaunchConfiguration listenConfig = config.doSave();
 
 		// create launch config to launch VM that will connect to the waiting listener
 		type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -157,18 +157,18 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 		// use 'java' instead of 'javaw' to launch tests (javaw is problematic on JDK1.4.2)
 		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);		
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		ILaunchConfiguration launchRemoteVMConfig = config.doSave();
-				
+
 		ILaunch listenerLaunch = null;
 		IJavaThread thread = null;
-		
-		
+
+
 		try {
-			
+
 			DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.MODEL_SPECIFIC, IProcess.class, IJavaLaunchConfigurationConstants.DETAIL_CONFIG_READY_TO_ACCEPT_REMOTE_VM_CONNECTION);
 			waiter.setTimeout(DEFAULT_TIMEOUT);
-			
+
 			IProcess process = null;
 			CoreException exception = null;
 			int attempts = 0;
@@ -188,14 +188,14 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 			if (exception != null) {
 				throw exception;
 			}
-			
+
 			assertNotNull("Launch of the not successful", process);
 			listenerLaunch = process.getLaunch();
-			
-			
+
+
 			waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 			waiter.setTimeout(DEFAULT_TIMEOUT);
-			
+
 			exception = null;
 			attempts = 0;
 			connected = false;
@@ -223,8 +223,8 @@ public class RemoteJavaApplicationTests extends AbstractDebugTest {
 			int stackLine = thread.getTopStackFrame().getLineNumber();
 			assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
 			breakpoint.delete();
-			
-			
+
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,14 +31,14 @@ import com.sun.jdi.IncompatibleThreadStateException;
  * Represent a Java thread in the threads and monitors model.
  */
 public class JavaMonitorThread extends PlatformObject {
-	
+
 	/**
 	 * The underlying thread.
 	 */
 	private IJavaThread fThread;
 
 	private IThread fOriginalThread;
-	
+
 	/**
 	 * The monitor this thread is waiting for.
 	 */
@@ -56,11 +56,11 @@ public class JavaMonitorThread extends PlatformObject {
 	 * may have changed.
 	 */
 	private boolean fToUpdate= true;
-	
+
 	/**
 	 * List of JavaOwningThread and JavaWaitingThread associated with this thread.
 	 */
-	private List<IDebugElement> fElements= new ArrayList<IDebugElement>();
+	private List<IDebugElement> fElements= new ArrayList<>();
 
 	/**
 	 * JavaWaitingThread object used to return the JavaOwnedMonitor for this
@@ -77,15 +77,15 @@ public class JavaMonitorThread extends PlatformObject {
 		fThread= underlyingThread;
 		fOriginalThread= originalThread;
 	}
-	
+
 	public IJavaThread getThread() {
 		return fThread;
 	}
-	
+
 	public IThread getOriginalThread() {
 		return fOriginalThread;
 	}
-	
+
 	protected void setOriginalThread(IThread originalThread) {
 		fOriginalThread= originalThread;
 	}
@@ -110,14 +110,14 @@ public class JavaMonitorThread extends PlatformObject {
 	public ILaunch getLaunch() {
 		return fThread.getLaunch();
 	}
-	
+
 	/**
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return fThread.isSuspended();
 	}
-	
+
 	/**
 	 * Returns the contended monitor to be used as a child
 	 * of the underlying thread in the debug launch view.
@@ -139,7 +139,7 @@ public class JavaMonitorThread extends PlatformObject {
 		}
 		return fBaseWaitingThread.getOwnedMonitors();
 	}
-	
+
 	/**
 	 * Returns the monitor this thread is waiting for.
 	 */
@@ -149,7 +149,7 @@ public class JavaMonitorThread extends PlatformObject {
 		}
 		return fContendedMonitor;
 	}
-	
+
 	/**
 	 * Returns the monitors owned by this thread.
 	 */
@@ -159,7 +159,7 @@ public class JavaMonitorThread extends PlatformObject {
 		}
 		return fOwnedMonitors;
 	}
-	
+
 	/**
 	 * Update the information for this thread.
 	 * @return <code>true</code> if the contended monitor or
@@ -197,7 +197,7 @@ public class JavaMonitorThread extends PlatformObject {
 						}
 						changed= true;
 					} else {
-						// we need to check in the new list contains the same monitors as the 
+						// we need to check in the new list contains the same monitors as the
 						// previous list
 						int sameMonitor= 0;
 						for (int i= 0; i < ownedMonitors.length; i++) {
@@ -232,20 +232,20 @@ public class JavaMonitorThread extends PlatformObject {
 		}
 		return changed;
 	}
-	
+
 	/**
 	 * send a change event for theJavaWaitingThread and JavaOwningThread
 	 * associated with this thread
 	 */
 	private void fireChangeEvent(int detail) {
 		Object[] elements= fElements.toArray();
-		List<Object> changedElement= new ArrayList<Object>();
+		List<Object> changedElement= new ArrayList<>();
 		if (fOriginalThread != null) {
 			changedElement.add(fOriginalThread);
 		}
 		for (int i= 0; i < elements.length; i++) {
 			Object element= elements[i];
-			// the two 'base' elements are not part of the hierarchy, they are 
+			// the two 'base' elements are not part of the hierarchy, they are
 			// used to get the children of the Thread.
 			if (element != fBaseOwningThread && element != fBaseWaitingThread) {
 			    changedElement.add(element);
@@ -272,15 +272,15 @@ public class JavaMonitorThread extends PlatformObject {
 			}
 		}
 	}
-	
+
 	protected void addElement(JavaOwningThread thread) {
 		fElements.add(thread);
 	}
-	
+
 	protected void addElement(JavaWaitingThread thread) {
 		fElements.add(thread);
 	}
-	
+
 	public void refresh() {
 		if (fToUpdate && !update()) {
 			if (fContendedMonitor != null) {
@@ -291,7 +291,7 @@ public class JavaMonitorThread extends PlatformObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * Indicate if this thread is currently part of a deadlock
 	 */

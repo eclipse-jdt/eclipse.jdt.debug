@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -90,7 +90,7 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 					try {
 						int lineNumber= lineBreakpoint.getLineNumber();
 						if (lineNumber != -1) {
-							label.append(DebugUIMessages.JavaBreakpointWorkbenchAdapterFactory_1); 
+							label.append(DebugUIMessages.JavaBreakpointWorkbenchAdapterFactory_1);
 							label.append(lineNumber);
 							label.append(']');
 						}
@@ -114,10 +114,10 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 			public Object getParent(Object o) {
 				return null;
 			}
-			
+
 			protected JavaElementLabelProvider getJavaLabelProvider() {
 				if (fJavaLabelProvider == null) {
-					fJavaLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);		
+					fJavaLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 				}
 				return fJavaLabelProvider;
 			}

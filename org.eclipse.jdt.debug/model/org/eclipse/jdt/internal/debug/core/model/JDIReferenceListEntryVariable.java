@@ -16,7 +16,7 @@ import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIPlaceholderVaria
 /**
  * This variable is created as the child of <code>JDIReferenceListValue</code>.
  * It represents one reference to a root object stored in the parent value.
- * 
+ *
  * @see JDIReferenceListValue
  * @since 3.3
  */
@@ -24,7 +24,7 @@ public class JDIReferenceListEntryVariable extends JDIPlaceholderVariable {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name
 	 *            The name that this variable should use as its label
 	 * @param reference

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,10 +18,10 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
  *
  */
 public abstract class ExceptionBreakpointChange extends BreakpointChange {
-	
+
 	private String[] fExclusionFilters, fInclusionFilters;
 	boolean fCaught, fUncaught, fChecked;
-	
+
 	public ExceptionBreakpointChange(IJavaExceptionBreakpoint breakpoint) throws CoreException {
 		super(breakpoint);
 		fExclusionFilters = breakpoint.getExclusionFilters();
@@ -30,19 +30,19 @@ public abstract class ExceptionBreakpointChange extends BreakpointChange {
 		fUncaught = breakpoint.isUncaught();
 		fChecked  = breakpoint.isChecked();
 	}
-	
+
 	protected boolean isChecked() {
 		return fChecked;
 	}
-	
+
 	protected boolean isCaught() {
 		return fCaught;
 	}
-	
+
 	protected boolean isUncaught() {
 		return fUncaught;
 	}
-	
+
 	protected void apply(IJavaExceptionBreakpoint breakpoint) throws CoreException {
 		super.apply(breakpoint);
 		breakpoint.setExclusionFilters(fExclusionFilters);

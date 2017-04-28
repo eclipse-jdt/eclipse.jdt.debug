@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,11 +25,11 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 public class RemoveAction extends RuntimeClasspathAction {
 
 	public RemoveAction(IClasspathViewer viewer) {
-		super(ActionMessages.RemoveAction__Remove_1, viewer); 
+		super(ActionMessages.RemoveAction__Remove_1, viewer);
 	}
 	/**
 	 * Removes all selected entries.
-	 * 
+	 *
 	 * @see IAction#run()
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 		}
 		return getViewer().updateSelection(getActionType(), selection);
 	}
-	
+
 	@Override
 	protected int getActionType() {
 		return REMOVE;

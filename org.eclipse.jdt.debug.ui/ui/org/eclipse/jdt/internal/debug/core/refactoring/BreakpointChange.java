@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -42,14 +42,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  *
  */
 public abstract class BreakpointChange extends Change {
-	
+
 	/**
 	 * constant for no line number
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	protected static final int NO_LINE_NUMBER = -1;
-	
+
 	private IJavaBreakpoint fBreakpoint;
 	private String fTypeName;
 	private int fHitCount;
@@ -74,10 +74,10 @@ public abstract class BreakpointChange extends Change {
 		fEnabled = breakpoint.isEnabled();
 		fWorkingSetNames = (String) breakpoint.getMarker().getAttribute(IInternalDebugUIConstants.WORKING_SET_NAME);
 	}
-	
+
 	/**
 	 * Applies the original attributes to the new breakpoint
-	 * 
+	 *
 	 * @param breakpoint the new breakpoint
 	 * @throws CoreException
 	 */
@@ -92,7 +92,7 @@ public abstract class BreakpointChange extends Change {
 		}
 		breakpoint.setEnabled(fEnabled);
 	}
-	
+
 	/**
 	 * Returns the original breakpoints prior to the change
 	 * @return the original breakpoint prior to the change
@@ -100,32 +100,32 @@ public abstract class BreakpointChange extends Change {
 	protected IJavaBreakpoint getOriginalBreakpoint() {
 		return fBreakpoint;
 	}
-	
+
 	/**
 	 * Returns the original name of the type the associated breakpoint was set on.
 	 * This can be different than the type being changed.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getOriginalBreakpointTypeName() {
 		return fTypeName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		// do nothing
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
@@ -133,12 +133,12 @@ public abstract class BreakpointChange extends Change {
 	@Override
 	public Object getModifiedElement() {
 		return fBreakpoint;
-	}	
-	
+	}
+
 	/**
 	 * Returns an array of ints representing the new line number, char start and char end
 	 * of the member.
-	 * 
+	 *
 	 * @param member
 	 * @return array of 3 ints or <code>null</code>
 	 */
@@ -148,7 +148,7 @@ public abstract class BreakpointChange extends Change {
 		int lineNumber = getNewLineNumber(member, offset);
 		return new int[]{lineNumber, offset, offset + nameRange.getLength()};
 	}
-	
+
 	/**
 	 * Returns the new line number of the from the source of the specified member's compilation unit
 	 * @param member the member to query
@@ -165,7 +165,7 @@ public abstract class BreakpointChange extends Change {
 		}
 		return lineNumber;
 	}
-	
+
 	/**
 	 * Return the line number for the breakpoint
 	 * @return the line number for the breakpoint
@@ -173,7 +173,7 @@ public abstract class BreakpointChange extends Change {
 	protected int getLineNumber() {
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the hit count for the breakpoint
 	 * @return the hit count for the breakpoint
@@ -181,7 +181,7 @@ public abstract class BreakpointChange extends Change {
 	protected int getHitCount() {
 		return fHitCount;
 	}
-	
+
 	/**
 	 * Returns the <code>IType</code> within the specified parent type given by simpleName
 	 * @param parent
@@ -201,7 +201,7 @@ public abstract class BreakpointChange extends Change {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the <code>IJavaElement</code> contained within the specified parent one, or the parent one
 	 * by default
@@ -254,37 +254,37 @@ public abstract class BreakpointChange extends Change {
 					currentElement = ((IType)currentElement).getMethod(child.getElementName(), ((IMethod)child).getParameterTypes());
 					break;
 			}
-			
+
 		}
 		return currentElement;
-	}	
-	
+	}
+
 	/**
 	 * Returns the path of the given element up to but not including its compilation unit,
 	 * in bottom up order.
-	 * 
+	 *
 	 * @param element
 	 * @return element's path
 	 */
 	private static List<IJavaElement> getPath(IJavaElement element) {
-		ArrayList<IJavaElement> children = new ArrayList<IJavaElement>();
+		ArrayList<IJavaElement> children = new ArrayList<>();
 		while (element != null && element.getElementType() != IJavaElement.COMPILATION_UNIT) {
 			children.add(element);
 			element = element.getParent();
 		}
 		return children;
 	}
-	
+
 	/**
 	 * Returns a label for the given breakpoint generated from the JDI model presentation.
-	 * 
+	 *
 	 * @param breakpoint a breakpoint
 	 * @return standard label for the breakpoint
 	 */
 	protected String getBreakpointLabel(IBreakpoint breakpoint) {
 		return JDIDebugUIPlugin.getDefault().getModelPresentation().getText(breakpoint);
 	}
-	
+
 	/**
 	 * Returns the original breakpoint working set names
 	 * @return the original breakpoint working set names

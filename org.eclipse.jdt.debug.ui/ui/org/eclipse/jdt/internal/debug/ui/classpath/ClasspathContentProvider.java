@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,11 +32,11 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	private boolean refreshEnabled= false;
 	private boolean refreshRequested= false;
 	private JavaClasspathTab fTab;
-	
+
 	public ClasspathContentProvider(JavaClasspathTab tab) {
 		fTab = tab;
 	}
-		
+
 	public void add(IClasspathEntry parent, IRuntimeClasspathEntry child, Object beforeElement) {
 		Object newEntry= null;
 		if (parent == null || parent == model) {
@@ -45,7 +45,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		} else if (parent instanceof ClasspathGroup) {
 			newEntry= model.createEntry(child, parent);
 			((ClasspathGroup)parent).addEntry((ClasspathEntry)newEntry, beforeElement);
-		} 
+		}
 		if (newEntry != null) {
 			treeViewer.add(parent, newEntry);
 			treeViewer.setExpandedState(parent, true);
@@ -53,7 +53,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			refresh();
 		}
 	}
-	
+
 	public void add(int entryType, IRuntimeClasspathEntry child) {
 		Object newEntry= model.addEntry(entryType, child);
 		if (newEntry != null) {
@@ -66,7 +66,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		model.removeAll();
 		refresh();
 	}
-	
+
 	private void refresh() {
 		if (refreshEnabled) {
 			treeViewer.refresh();
@@ -75,7 +75,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			refreshRequested= true;
 		}
 	}
-	
+
 	public void removeAll(IClasspathEntry parent) {
 		if (parent instanceof ClasspathGroup) {
 			((ClasspathGroup)parent).removeAll();
@@ -94,7 +94,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		if (element instanceof ClasspathGroup) {
 			return model;
 		}
-		
+
 		return null;
 	}
 
@@ -108,9 +108,9 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		}
 		if (element instanceof ClasspathGroup) {
 			return ((ClasspathGroup)element).hasEntries();
-			
-		} 
-		
+
+		}
+
 		if (element instanceof ClasspathModel) {
 			return ((ClasspathModel) element).hasEntries();
 		}
@@ -125,7 +125,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		return getChildren(inputElement);
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
@@ -140,7 +140,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		treeViewer = (TreeViewer) viewer;
-		
+
 		if (newInput != null) {
 			model= (ClasspathModel)newInput;
 		} else {
@@ -166,7 +166,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			return ((ClasspathEntry)parentElement).getChildren(fTab.getLaunchConfiguration());
 		}
 		if (parentElement == null) {
-			List<Object> all= new ArrayList<Object>();
+			List<Object> all= new ArrayList<>();
 			Object[] topEntries= model.getEntries();
 			for (int i = 0; i < topEntries.length; i++) {
 				Object object = topEntries[i];
@@ -178,7 +178,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			}
 			return all.toArray();
 		}
-		
+
 		return null;
 	}
 
@@ -188,7 +188,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		treeViewer.remove(array);
 		refresh();
 	}
-	
+
 	public IClasspathEntry[] getUserClasspathEntries() {
 		return model.getEntries(ClasspathModel.USER);
 	}
@@ -196,7 +196,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	public IClasspathEntry[] getBootstrapClasspathEntries() {
 		return model.getEntries(ClasspathModel.BOOTSTRAP);
 	}
-	
+
 	public void handleMove(boolean direction, IClasspathEntry entry) {
 		IClasspathEntry parent = (IClasspathEntry)getParent(entry);
 		parent.moveChild(direction, entry);
@@ -227,7 +227,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
 					break;
 			}
-		}	
+		}
 		refresh();
 	}
 }

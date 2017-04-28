@@ -49,7 +49,7 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 
 /**
  * Default implementation covering the import of all platform Java breakpoints
- * 
+ *
  * @since 3.5
  */
 public class JavaBreakpointImportParticipant implements
@@ -69,7 +69,7 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param breakpoint
 		 * @param unit
 		 */
@@ -79,13 +79,13 @@ public class JavaBreakpointImportParticipant implements
 			fSignature = getMemberSignature(breakpoint);
 			fBreakpoint = breakpoint;
 			fUnit = unit;
-			fTypeNameStack = new Stack<String>();
+			fTypeNameStack = new Stack<>();
 		}
 
 		/**
 		 * Returns the value of the {@link JavaBreakpoint#TYPE_NAME} attribute
 		 * from the breakpoint or <code>null</code>
-		 * 
+		 *
 		 * @param breakpoint
 		 * @return the value of the type name attribute
 		 */
@@ -101,7 +101,7 @@ public class JavaBreakpointImportParticipant implements
 		 * {@link JavaMethodBreakpoint#METHOD_NAME} if the breakpoint is a
 		 * method or method entry breakpoint (3) <code>null</code> if there is
 		 * no member name
-		 * 
+		 *
 		 * @param breakpoint
 		 * @return the member name or <code>null</code>
 		 */
@@ -118,7 +118,7 @@ public class JavaBreakpointImportParticipant implements
 		 * Returns the signature of the member, defined with the
 		 * {@link JavaMethodBreakpoint#METHOD_SIGNATURE} attribute, or
 		 * <code>null</code>
-		 * 
+		 *
 		 * @param breakpoint
 		 * @return the signature of the member or <code>null</code>
 		 */
@@ -130,7 +130,7 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Returns the fully qualified name of the enclosing type for the given
 		 * node
-		 * 
+		 *
 		 * @param node
 		 * @return the fully qualified name of the enclosing type
 		 */
@@ -140,7 +140,7 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Constructs the qualified name of the enclosing parent type
-		 * 
+		 *
 		 * @param node
 		 *            the node to get the parent name for
 		 * @param buffer
@@ -223,7 +223,7 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Visits the type node and return if children should be visited
-		 * 
+		 *
 		 * @param node
 		 * @return true if child nodes should be visited false otherwise
 		 */
@@ -319,7 +319,7 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Creates a method signature from a specified {@link MethodDeclaration}
-		 * 
+		 *
 		 * @param node
 		 * @return the signature for the given method node or <code>null</code>
 		 */
@@ -355,12 +355,12 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Returns the listing of the signatures of the parameters passed in
-		 * 
+		 *
 		 * @param rawparams
 		 * @return a listing of signatures for the specified parameters
 		 */
 		private List<String> getParametersTypeNames(List<SingleVariableDeclaration> rawparams) {
-			List<String> rparams = new ArrayList<String>(rawparams.size());
+			List<String> rparams = new ArrayList<>(rawparams.size());
 			String pname = null;
 			for (SingleVariableDeclaration param : rawparams) {
 				pname = getTypeSignature(param.getType());
@@ -373,7 +373,7 @@ public class JavaBreakpointImportParticipant implements
 
 		/**
 		 * Processes the signature for the given {@link Type}
-		 * 
+		 *
 		 * @param type
 		 *            the type to process
 		 * @return the signature for the type or <code>null</code> if one could
@@ -410,7 +410,7 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Collects the synthetic parameter of the fully qualified name of the
 		 * enclosing context for a constructor of an inner type
-		 * 
+		 *
 		 * @param method
 		 *            the constructor declaration
 		 * @param rparams
@@ -454,7 +454,7 @@ public class JavaBreakpointImportParticipant implements
 		/**
 		 * Determines if the given {@link MethodDeclaration} is present in a top
 		 * level type
-		 * 
+		 *
 		 * @param method
 		 * @return
 		 */
@@ -466,7 +466,7 @@ public class JavaBreakpointImportParticipant implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
 	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
@@ -524,7 +524,7 @@ public class JavaBreakpointImportParticipant implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#verify(org.
 	 * eclipse.debug.core.model.IBreakpoint)
@@ -584,7 +584,7 @@ public class JavaBreakpointImportParticipant implements
 
 	/**
 	 * Compares two attributes in a <code>null</code> safe way
-	 * 
+	 *
 	 * @param attr1
 	 *            the first attribute
 	 * @param attr2
@@ -604,7 +604,7 @@ public class JavaBreakpointImportParticipant implements
 
 	/**
 	 * Returns if the given map of attributes matches the given line breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -621,7 +621,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given class prepare
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -641,7 +641,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given exception
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -658,7 +658,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given method
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -678,7 +678,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given method entry
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -697,7 +697,7 @@ public class JavaBreakpointImportParticipant implements
 
 	/**
 	 * Returns if the given map of attributes matches the given watchpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the watchpoints' attributes, false
@@ -715,7 +715,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given stratum line
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -738,7 +738,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given pattern
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false
@@ -760,7 +760,7 @@ public class JavaBreakpointImportParticipant implements
 	/**
 	 * Returns if the given map of attributes matches the given target pattern
 	 * breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoints' attributes, false

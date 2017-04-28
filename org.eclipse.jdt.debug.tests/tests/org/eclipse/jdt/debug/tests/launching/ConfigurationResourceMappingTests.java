@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 	public ConfigurationResourceMappingTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests that setting the mapped resources to <code>null</code> removes
 	 * the resource mapping
@@ -58,9 +58,9 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 	/**
-	 * Tests that setting the resource mapping to an empty array of <code>IResource</code> removes 
+	 * Tests that setting the resource mapping to an empty array of <code>IResource</code> removes
 	 * the resource mapping
 	 */
 	public void testRemovingMappedResources2() throws CoreException {
@@ -87,7 +87,7 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 	/**
 	 * Tests that a single element array can be set as a mapped resource
 	 */
@@ -139,5 +139,5 @@ public class ConfigurationResourceMappingTests extends AbstractDebugTest {
 			copy.doSave();
 		}
 	}
-	
+
 }

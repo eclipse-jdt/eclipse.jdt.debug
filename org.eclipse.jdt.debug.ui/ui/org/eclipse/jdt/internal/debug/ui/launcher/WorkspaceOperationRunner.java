@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,15 +26,15 @@ import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
  * @since 3.0
  */
 class WorkspaceOperationRunner implements IRunnableContext {
-	
+
 	private IProgressMonitor fProgressMonitor;
-	
+
 	public WorkspaceOperationRunner() {
 	}
-	
+
 	/**
 	 * Sets the progress monitor.
-	 * 
+	 *
 	 * @param progressMonitor the progress monitor to set
 	 */
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
@@ -44,7 +44,7 @@ class WorkspaceOperationRunner implements IRunnableContext {
 	/**
 	 * Returns the progress monitor. It there is no progress monitor the monitor\
 	 * is set to the <code>NullProgressMonitor</code>.
-	 * 
+	 *
 	 * @return the progress monitor
 	 */
 	public IProgressMonitor getProgressMonitor() {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 /**
  */
 public class AutomatedSuite extends TestSuite {
-	
+
 	/**
 	 * returns an instance of AutomatedSuite
 	 * @return a new test suite
@@ -23,7 +23,7 @@ public class AutomatedSuite extends TestSuite {
 	public static TestSuite suite() {
 		return new AutomatedSuite();
 	}
-	
+
 	/**
 	 * runs the specified tests
 	 */
@@ -62,7 +62,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(MirrorTest.class));
 
 		addTest(new TestSuite(ModificationWatchpointEventTest.class));
-			
+
 		addTest(new TestSuite(ObjectReferenceTest.class));
 		addTest(new TestSuite(PrimitiveValueTest.class));
 		addTest(new TestSuite(ReferenceTypeTest.class));
@@ -84,7 +84,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VirtualMachineExitTest.class));
 		addTest(new TestSuite(VMDisconnectEventTest.class));
 		addTest(new TestSuite(VMDisposeTest.class));
-		
+
 	//Java 1.6 capability tests
 		addTest(new TestSuite(HeapWalkingTests.class));
 		addTest(new TestSuite(ConstantPoolTests.class));
@@ -95,5 +95,5 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ProvideArgumentsTests.class));
 		addTest(new TestSuite(ContendedMonitorTests.class));
 	}
-	
+
 }

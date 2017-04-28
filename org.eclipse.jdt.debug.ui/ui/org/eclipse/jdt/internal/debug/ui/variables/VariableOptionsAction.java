@@ -20,7 +20,7 @@ import org.eclipse.ui.IViewPart;
  * Action which opens preference settings for Java variables.
  */
 public class VariableOptionsAction implements IViewActionDelegate {
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class RuntimeClasspathEntryListComparator implements Comparator<Object> {
 	public int compare(Object o1, Object o2) {
 		List<?> list1 = (List<?>)o1;
 		List<?> list2 = (List<?>)o2;
-		
+
 		if (list1.size() == list2.size()) {
 			for (int i = 0; i < list1.size(); i++) {
 				String memento1 = (String)list1.get(i);
@@ -39,7 +39,7 @@ public class RuntimeClasspathEntryListComparator implements Comparator<Object> {
 		}
 		return -1;
 	}
-	
+
 	protected boolean equalsIgnoreWhitespace(String one, String two) {
 		int i1 = 0;
 		int i2 = 0;
@@ -59,7 +59,7 @@ public class RuntimeClasspathEntryListComparator implements Comparator<Object> {
 			}
 			if (ch1 != ch2) {
 				return false;
-			}			
+			}
 			i1++;
 			i2++;
 		}

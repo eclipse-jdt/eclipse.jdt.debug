@@ -17,6 +17,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -44,17 +45,17 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	private static final String SAMPLE_JAR_PATH = "/JarProject/lib/sample.jar";
 	public static final String A_RUN_JAR = "testJar.RunJar";
 	static IJavaProject fgJarProject = null;
-	
+
 	String RefPjName = "JarRefProject";
 	String fJarProject = "JarProject";
-	
+
 	/**
 	 * Constructor
 	 */
 	public JarSourceLookupTests() {
 		super("JarSourceLookupTests");
 	}
-	
+
 	/**
 	 * Disposes all source containers after a test, ensures no containers are still holding open Jar references, which can lead to {@link ResourceException}s
 	 * when we try to delete / setup following tests
@@ -67,17 +68,17 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			}
 		}
 	}
-	
+
 	@Override
 	protected IJavaProject getProjectContext() {
 		return fgJarProject;
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "setUp");
 		assertWelcomeScreenClosed();
-		TestUtil.runEventLoop();
-		TestUtil.cleanUp();
+		TestUtil.cleanUp(getName());
 		IPath testrpath = new Path("testresources");
 		IProject jarProject = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
 
@@ -104,22 +105,21 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		}
 		waitForBuild();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		removeAllBreakpoints();
 		if (fgJarProject.exists()) {
 			fgJarProject.getProject().delete(true, null);
 		}
-		TestUtil.cleanUp();
 		super.tearDown();
 	}
-	
+
 	/**
 	 * Ensures the translation of source containers yields the correct containers
-	 * 
+	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testTranslateContainers() throws Exception {
@@ -166,12 +166,12 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			disposeContainers(containers);
 		}
 	}
-	
+
 	/**
 	 * Tests that the class file is found as source when the lookup is done from a jar from another project
-	 * 
+	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
@@ -193,12 +193,12 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * Tests that the class file is found as source when the lookup is done from a jar from another project
-	 * 
+	 *
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=346116
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testShowClassFileFromJar() throws Exception {
@@ -215,11 +215,11 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			assertNotNull("We should have found source for the main class testJar.RunJar", source);
 			 assertTrue("The found source should be an IFile", source instanceof IFile);
 			 assertEquals("We should have found a file named RunJar.java", ((IFile)source).getName(), "RunJar.java");
-			 
+
 			 stepInto((IJavaStackFrame)frame);
 			 frame = thread.getTopStackFrame();
 			 assertNotNull("The top stack frame cannot be null", frame);
-			 
+
 			 source = lookupSource(frame);
 			 assertNotNull("We should have found source for the jar class a.JarClass", source);
 			 assertTrue("The found source should be a ClassFile", source instanceof ClassFile);
@@ -229,7 +229,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * Looks up source for the given frame using its backing {@link ISourceLocator} from its {@link ILaunch}
 	 * @param frame the frame to look up source for

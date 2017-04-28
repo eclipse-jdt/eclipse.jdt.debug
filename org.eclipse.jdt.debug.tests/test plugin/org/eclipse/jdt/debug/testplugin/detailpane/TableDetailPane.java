@@ -41,7 +41,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * An example detail pane that creates a composite containing several controls, all of which
  * will be displayed in the detail pane.
- * 
+ *
  * @since 3.3
  * @see TestDetailPaneFactory
  * @see IDetailPane
@@ -51,22 +51,22 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	public static final String ID = "org.eclipse.jdt.debug.testplugin.detailpane.TableDetailPane";
 	public static final String NAME = "Example Pane: Table Detail Pane";
 	public static final String DESCRIPTION = "Example detail pane that displays details as a composite containing several controls";
-	
+
 	IWorkbenchPartSite fWorkbenchPartSite;
 	private Table fTable;
 	private TextViewer fText;
 	private Composite fComposite;
 	private Button fWordWrapButton;
 	private IDebugModelPresentation fModelPresentation;
-	
+
 	/**
 	 * Job to calculate detail string
 	 */
 	class DetailJob implements Runnable{
-		
+
 		private IValue fValue;
 		private IValueDetailListener fListener;
-		
+
 		public DetailJob(IValue value, IValueDetailListener listener){
 			fValue = value;
 			fListener = listener;
@@ -74,21 +74,21 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 
 		@Override
 		public void run() {
-			fModelPresentation.computeDetail(fValue, fListener);		
+			fModelPresentation.computeDetail(fValue, fListener);
 		}
-			
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
 	 */
 	@Override
 	public void init(IWorkbenchPartSite workbenchPartSite) {
 		fWorkbenchPartSite = workbenchPartSite;
-		
+
 		fModelPresentation = new VariablesViewModelPresentation();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -112,21 +112,21 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 					TableItem item = fTable.getItem(index);
 					if (item != null){
 						Thread detailJob = new Thread(new DetailJob((IValue)item.getData(),getValueDetailListener()));
-						detailJob.start();						
+						detailJob.start();
 					}
 					else{
 						fText.setDocument(null);
 					}
 				}
 			}
-			
-			
+
+
 		});
-		
+
 		Composite composite = new Composite(fComposite,SWT.NONE);
 		composite.setLayout(new FillLayout(SWT.VERTICAL));
 		fText = new TextViewer(composite,SWT.READ_ONLY);
-		
+
 		fWordWrapButton = new Button(composite,SWT.CHECK);
 		fWordWrapButton.setText("Word Wrap");
 		fWordWrapButton.setSelection(false);
@@ -149,28 +149,28 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	 */
 	@Override
 	public void display(IStructuredSelection element) {
-		
+
 		if (element != null){
-			
+
 			fTable.removeAll();
 			fText.setDocument(null);
-			
+
 			Iterator<?> iterator = element.iterator();
 			while (iterator.hasNext()){
-				
+
 				Object selection = iterator.next();
 				if (selection != null && selection instanceof IVariable){
-				
+
 					IValue val = null;
 					try {
-						
+
 						val = ((IVariable)selection).getValue();
 						TableItem newItem = new TableItem(fTable,SWT.NONE);
 						newItem.setText(val.getValueString());
 						newItem.setData(val);
-					
+
 					} catch (DebugException e) {
-						
+
 					}
 				}
 			}
@@ -180,7 +180,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 		}
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
 	 */
@@ -233,7 +233,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 	protected IValueDetailListener getValueDetailListener(){
 		return this;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 	 */
@@ -244,7 +244,7 @@ public class TableDetailPane implements IDetailPane, IValueDetailListener {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				fText.setDocument(new Document(result));
 				return Status.OK_STATUS;
-				
+
 			}
 		};
 		append.setSystem(true);

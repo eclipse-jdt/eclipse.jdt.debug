@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,20 +20,20 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests strata.
  */
 public class StratumTests extends AbstractDebugTest {
-	
+
 	public StratumTests(String name) {
 		super(name);
 	}
 
 	/**
 	 * Test available strata on a type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAvailableStrata() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(81, typeName);		
-		
+		createLineBreakpoint(81, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -45,18 +45,18 @@ public class StratumTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Test default stratum on a type.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testDefaultStratum() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(81, typeName);		
-		
+		createLineBreakpoint(81, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -67,18 +67,18 @@ public class StratumTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
-	}	
+		}
+	}
 
 	/**
 	 * Test set / get default stratum on a java debug target.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSetGetDefaultStratum() throws Exception {
 		String typeName = "Breakpoints";
-		createLineBreakpoint(81, typeName);		
-		
+		createLineBreakpoint(81, typeName);
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToBreakpoint(typeName);
@@ -92,7 +92,7 @@ public class StratumTests extends AbstractDebugTest {
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
 
 	public void testGetLineInStratum() throws Exception {

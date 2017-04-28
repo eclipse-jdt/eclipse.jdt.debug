@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -69,12 +69,12 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIAccessWatchpointRequest() {
 		if (!fVM.canWatchFieldAccess())
 			return;
-		
+
 		// Create an access watchpoint request
 		Field field = getField();
 		AccessWatchpointRequest request = fManager.createAccessWatchpointRequest(field);
 		assertEquals("1", field, request.field());
-	
+
 		// Get all access watchpoint requests
 		List<?> requests = fManager.accessWatchpointRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -82,13 +82,13 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("2."+i++, iterator.next() instanceof AccessWatchpointRequest);
 		}
-		
+
 		// Delete an access watchpoint request
 		fManager.deleteEventRequest(request);
 		assertEquals("3", 0, fManager.accessWatchpointRequests().size());
 	}
 	/**
-	 * Test JDI createBreakpointRequest(Location), breakpointRequests(), 
+	 * Test JDI createBreakpointRequest(Location), breakpointRequests(),
 	 * deleteEventRequest(EventRequest) and deleteAllBreakpoints()
 	 */
 	public void testJDIBreakpointRequest() {
@@ -104,11 +104,11 @@ public class EventRequestManagerTest extends AbstractJDITest {
 			Object breakpoint = iterator.next();
 			assertTrue("3", breakpoint instanceof BreakpointRequest);
 		}
-		
+
 		// Delete a breakpoint
 		fManager.deleteEventRequest(bp);
 		assertEquals("4", 0, fManager.breakpointRequests().size());
-	
+
 		// Delete all breakpoints
 		fManager.createBreakpointRequest(location);
 		fManager.deleteAllBreakpoints();
@@ -121,7 +121,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIClassPrepareRequest() {
 		// Create a class prepare request
 		ClassPrepareRequest request= fManager.createClassPrepareRequest();
-	
+
 		// Get all class prepare requests
 		List<?> requests = fManager.classPrepareRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -129,7 +129,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ClassPrepareRequest);
 		}
-		
+
 		// Delete a class prepare request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", 0, fManager.classPrepareRequests().size());
@@ -141,7 +141,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIClassUnloadRequest() {
 		// Create a class unload request
 		ClassUnloadRequest request= fManager.createClassUnloadRequest();
-	
+
 		// Get all class unload requests
 		List<?> requests = fManager.classUnloadRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -149,7 +149,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ClassUnloadRequest);
 		}
-		
+
 		// Delete a class unload request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", 0, fManager.classUnloadRequests().size());
@@ -161,7 +161,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIExceptionRequest() {
 		// Create a exception request
 		ExceptionRequest request= fManager.createExceptionRequest(null, true, true);
-	
+
 		// Get all exception requests
 		List<?> requests = fManager.exceptionRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -169,24 +169,24 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ExceptionRequest);
 		}
-		
+
 		// Delete a exception request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", i-1, fManager.exceptionRequests().size());
 	}
 	/**
-	 * Test JDI createModificationWatchpointRequest(Field), 
+	 * Test JDI createModificationWatchpointRequest(Field),
 	 * accessWatchpointRequests() and deleteEventRequest(EventRequest)
 	 */
 	public void testJDIModificationWatchpointRequest() {
 		if (!fVM.canWatchFieldAccess())
 			return;
-	
+
 		// Create a modification watchpoint
 		Field field = getField();
 		ModificationWatchpointRequest request = fManager.createModificationWatchpointRequest(field);
 		assertEquals("1", field, request.field());
-	
+
 		// Get all modification watchpoints
 		List<?> requests = fManager.modificationWatchpointRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -194,7 +194,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("2."+i++, iterator.next() instanceof ModificationWatchpointRequest);
 		}
-		
+
 		// Delete a modification watchpoint
 		fManager.deleteEventRequest(request);
 		assertEquals("3", 0, fManager.modificationWatchpointRequests().size());
@@ -206,7 +206,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIStepRequest() {
 		// Create a step request
 		StepRequest request= fManager.createStepRequest(getThread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
-	
+
 		// Get all step requests
 		List<?> requests = fManager.stepRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -214,7 +214,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof StepRequest);
 		}
-		
+
 		// Delete a step request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", 0, fManager.stepRequests().size());
@@ -226,7 +226,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIThreadDeathRequest() {
 		// Create a ThreadDeath request
 		ThreadDeathRequest request= fManager.createThreadDeathRequest();
-	
+
 		// Get all ThreadDeath requests
 		List<?> requests = fManager.threadDeathRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -234,7 +234,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ThreadDeathRequest);
 		}
-		
+
 		// Delete a ThreadDeath request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", 0, fManager.threadDeathRequests().size());
@@ -246,7 +246,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 	public void testJDIThreadStartRequest() {
 		// Create a ThreadStart request
 		ThreadStartRequest request= fManager.createThreadStartRequest();
-	
+
 		// Get all ThreadStart requests
 		List<?> requests = fManager.classUnloadRequests();
 		ListIterator<?> iterator = requests.listIterator();
@@ -254,7 +254,7 @@ public class EventRequestManagerTest extends AbstractJDITest {
 		while (iterator.hasNext()) {
 			assertTrue("1."+i++, iterator.next() instanceof ThreadStartRequest);
 		}
-		
+
 		// Delete a ThreadStart request
 		fManager.deleteEventRequest(request);
 		assertEquals("2", 0, fManager.classUnloadRequests().size());

@@ -49,8 +49,8 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testLineBreakPoint
-	
-	
+
+
 	public void testMethodBreakPoint() throws Exception {
 		try {
 			//create Breakpoint to test
@@ -70,8 +70,8 @@ public class PushDownMethodUnitTests extends AbstractRefactoringDebugTest {
 			removeAllBreakpoints();
 		}
 	}//end testBreakPoint
-		
-	
+
+
 	private Refactoring setupRefactor(String parentClassName, String className, String root, String targetPackageName, String cuName) throws Exception {
 		IJavaProject javaProject = get14Project();
 		IType parentClas= getCompilationUnit(javaProject, root, targetPackageName, cuName).getType(parentClassName);

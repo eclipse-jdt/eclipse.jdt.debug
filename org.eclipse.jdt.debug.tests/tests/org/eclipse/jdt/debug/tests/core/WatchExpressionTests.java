@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -35,11 +35,11 @@ import org.eclipse.ui.WorkbenchException;
  * WatchExpressionTests
  */
 public class WatchExpressionTests extends AbstractDebugTest {
-	
+
 	public WatchExpressionTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Test a watch expression that is created before a program is executed.
 	 */
@@ -53,7 +53,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			waiter.setTimeout(60000);
 			thread= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread); 
+			assertNotNull("Breakpoint not hit within timeout period", thread);
 			Object source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
 			IValue value = expression.getValue();
@@ -65,16 +65,16 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			removeAllExpressions();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Test a watch expression that is created while a program is suspended.
-     * 
+     *
      * see bug 81519. This test is flawed as expressions added to the manager
      * are note updated automatically. They are updated by the action that
      * creates the expression, or when a selection change occurrs in the debug view.
-     * This test can pass as the ordering of expression addition and selection 
+     * This test can pass as the ordering of expression addition and selection
      * change events can vary. However, it it attempting to test behavior that
      * does not exist, and is removed from the test suite.
 	 */
@@ -86,12 +86,12 @@ public class WatchExpressionTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-			
+
 			// create the expression, waiter, and then add it (to be evaluated)
 			expression = getExpressionManager().newWatchExpression("((Integer)fVector.get(3)).intValue()");
 			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			getExpressionManager().addExpression(expression);
-			 
+
 			Object source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
 			IValue value = expression.getValue();
@@ -103,12 +103,12 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			removeAllExpressions();
-		}				
+		}
 	}
-	
+
 	/**
 	 * Test a watch expression updates while stepping.
-	 * 
+	 *
 	 * THIS TEST HAS BEEN DISABLED DUE TO BUG 228400
 	 */
 	public void DisabledtestStepping() throws Exception {
@@ -121,7 +121,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			waiter.setTimeout(60000);
 			thread= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit within timeout period", thread); 
+			assertNotNull("Breakpoint not hit within timeout period", thread);
 			Object source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
 			IValue value = expression.getValue();
@@ -129,42 +129,42 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
 			IJavaValue compare = target.newValue(0);
 			assertEquals("Watch expression should be 0", compare, value);
-			
+
 			// now step once - should still be 0
 			waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			stepOver((IJavaStackFrame)thread.getTopStackFrame());
 			source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
-			
+
 			// check for errors
 			dumpErrors(expression);
 			assertFalse("Should not have errors in expression", expression.hasErrors());
-			
+
 			// now step again - should be 1
 			waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			stepOver((IJavaStackFrame)thread.getTopStackFrame());
 			source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
-			
+
 			// check for errors
 			dumpErrors(expression);
 			assertFalse("Should not have errors in expression", expression.hasErrors());
-			
-			value = expression.getValue();			
+
+			value = expression.getValue();
 			// create comparison value
 			compare = target.newValue(1);
 			assertEquals("Watch expression should be 1", compare, value);
-						
+
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			removeAllExpressions();
-		}				
+		}
 	}
-		
+
 	/**
 	 * Dumps any error messages to the console.
-	 * 
+	 *
      * @param expression
      */
     private void dumpErrors(IWatchExpression expression) {
@@ -179,13 +179,13 @@ public class WatchExpressionTests extends AbstractDebugTest {
 
     /**
 	 * Returns the expression manager
-	 * 
+	 *
 	 * @return expression manager
 	 */
 	protected IExpressionManager getExpressionManager() {
 		return DebugPlugin.getDefault().getExpressionManager();
 	}
-	
+
 	/**
 	 * Ensure the expression view is visible
 	 */
@@ -207,7 +207,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			}
 		});
 	}
-	
+
 	/**
 	 * Removes all expressions from the manager
 	 */

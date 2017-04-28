@@ -17,7 +17,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
  * Contributes access rules for an execution environment. Contributed with
- * an execution environments extension. 
+ * an execution environments extension.
  * <p>
  * Clients contributing an access rule participant may implement this interface.
  * </p>
@@ -30,10 +30,10 @@ public interface IAccessRuleParticipant {
 	 * libraries and execution environment in the context of the given project.
 	 * An array of access rules is returned for each library specified by
 	 * <code>libraries</code>, possibly empty.
-	 * 
+	 *
 	 * @param environment the environment that access rules are requested for
 	 * @param vm the vm that access rules are requested for
-	 * @param libraries the libraries that access rules are requested for 
+	 * @param libraries the libraries that access rules are requested for
 	 * @param project the project the access rules are requested for or <code>null</code> if none
 	 * @return a collection of arrays of access rules - one array per library, possibly empty
 	 * @since 3.3

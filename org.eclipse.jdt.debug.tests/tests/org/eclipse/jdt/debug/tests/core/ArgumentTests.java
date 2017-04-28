@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.jface.text.IRegion;
  * Tests for program and VM arguments
  */
 public class ArgumentTests extends AbstractDebugTest {
-    
+
     private Object fLock = new Object();
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
@@ -44,7 +44,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		StringBuffer buffer;
 		IDocument document;
 		boolean closed = false;
-		
+
 		/**
 		 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 		 */
@@ -67,13 +67,13 @@ public class ArgumentTests extends AbstractDebugTest {
 		public void lineAppended(IRegion line) {
 			try {
                 assertNotNull("received notification of invalid line", line);
-                assertNotNull("buffer is null", buffer); 
+                assertNotNull("buffer is null", buffer);
                 buffer.append(document.get(line.getOffset(), line.getLength()));
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		/**
 		 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 		 */
@@ -99,11 +99,11 @@ public class ArgumentTests extends AbstractDebugTest {
 		    	}
 		    }
 		    if (!closed) {
-				// output contents to console in case of error 
+				// output contents to console in case of error
 				if (buffer != null) {
 				    System.out.println();
 				    System.out.println(ArgumentTests.this.getName());
-				    System.out.println("\treceived " + buffer.length() + " chars: " + buffer.toString()); 
+				    System.out.println("\treceived " + buffer.length() + " chars: " + buffer.toString());
 				}
 		    }
 		    assertNotNull("Line tracker did not receive init notification", buffer);
@@ -121,7 +121,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		super(name);
 	}
 
-	/** 
+	/**
 	 * Creates and returns a new launch config the given name
 	 */
 	protected ILaunchConfigurationWorkingCopy newConfiguration(IContainer container, String name) throws CoreException {
@@ -167,7 +167,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	}
 	/**
 	 * Test a VM argument with the quoting style we recommended as a workaround
-	 * to a bug (now fixed) that we suggested in the past. 
+	 * to a bug (now fixed) that we suggested in the past.
 	 * Program output should be: foo bar
 	 * @throws CoreException
 	 */
@@ -200,7 +200,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	public void testVMArgEmbeddedCreativeQuotes() throws CoreException {
 		testWithVMArg("-Dfoo=fo\"\\\"o b\\\"\"ar", "fo\"o b\"ar");
 	}
-	
+
 	/*
 	 * Program argument tests
 	 */
@@ -262,7 +262,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	public void testProgramArgCreativeEmbeddedQuotes() throws CoreException {
 		testWithProgramArg("f\\\"o\\\"o", "f\"o\"o");
 	}
-	
+
 	/**
 	 * Test a program argument with one empty string
      *
@@ -274,28 +274,28 @@ public class ArgumentTests extends AbstractDebugTest {
 		// assert that it's really the empty string:
 		testWithProgramArg("\"\"", "");
 	}
-	
+
 	/**
 	 * Test a program with an empty string among other args.
-	 * 
+	 *
 	 * Program output should be: 4
 	 * @throws CoreException
 	 */
 	public void testProgramArgEmptyStringWithOthers() throws CoreException {
 		testProgramArgCount("word1 \"\" \"part1 part2\" word2", "4");
 	}
-	
+
 	/**
 	 * Test a program argument with one double quote. We should pass in the
 	 * empty string to match Java console behavior.
-	 * 
+	 *
 	 * Program output should be: 1
 	 * @throws CoreException
 	 */
 	public void testProgramArgOneQuote() throws CoreException {
 		testProgramArgCount("\"", "1");
 	}
-	
+
 	/**
 	 * Runs the FooPropertyPrinter with the given VM arguments and checks for
 	 * the given output.
@@ -305,7 +305,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	private void testWithVMArg(String argString, String outputValue) throws CoreException {
 		testOutput("FooPropertyPrinter", argString, null, outputValue);
 	}
-	
+
 	/**
 	 * Runs the ArgumentPrinter with the given program arguments
 	 * @param argString
@@ -315,7 +315,7 @@ public class ArgumentTests extends AbstractDebugTest {
 	private void testWithProgramArg(String argString, String outputValue) throws CoreException {
 		testOutput("ArgumentPrinter", null, argString, outputValue);
 	}
-	
+
 	/**
 	 * Runs the ArgumentCounter with the given program arguments
 	 * @param argString
@@ -324,8 +324,8 @@ public class ArgumentTests extends AbstractDebugTest {
 	 */
 	private void testProgramArgCount(String argString, String outputValue) throws CoreException {
 		testOutput("ArgumentCounter", null, argString, outputValue);
-	}	
-	
+	}
+
 	/**
 	 * Runs the given program with the given VM arguments and the given program arguments and
 	 * asserts that the output matches the given output.
@@ -349,7 +349,7 @@ public class ArgumentTests extends AbstractDebugTest {
 		Map<String, String> map = new HashMap<String, String>(1);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
-		
+
 		ConsoleArgumentOutputRetriever retriever = new ConsoleArgumentOutputRetriever();
 		ConsoleLineTracker.setDelegate(retriever);
 		IProcess process = null;
@@ -383,7 +383,7 @@ public class ArgumentTests extends AbstractDebugTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests the default VM args
 	 * @throws CoreException

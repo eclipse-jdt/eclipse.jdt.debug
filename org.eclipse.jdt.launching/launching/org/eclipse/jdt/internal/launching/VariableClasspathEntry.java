@@ -24,12 +24,12 @@ import org.w3c.dom.Element;
 public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.variableClasspathEntry"; //$NON-NLS-1$
 	private String variableString;
-	
+
 	/**
 	 * Constructor
 	 */
 	public VariableClasspathEntry() {}
-	
+
 	/**
 	 * Constructor
 	 * @param variableString the string value
@@ -37,7 +37,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public VariableClasspathEntry(String variableString) {
 		this.variableString = variableString;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
@@ -46,7 +46,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 		memento.setAttribute("variableString", variableString); //$NON-NLS-1$
 		memento.setAttribute("path", Integer.toString(getClasspathProperty())); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
@@ -60,9 +60,9 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 			}
 			catch(NumberFormatException nfe) {/*do nothing, but don't throw an exception*/}
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
@@ -70,7 +70,7 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public String getTypeId() {
 		return TYPE_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -78,21 +78,21 @@ public class VariableClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		return new IRuntimeClasspathEntry[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	@Override
 	public String getName() {
-		return variableString; 
+		return variableString;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
 	@Override
 	public int getType() {
-		return OTHER; 
+		return OTHER;
 	}
 	/**
 	 * @return Returns the variableString.

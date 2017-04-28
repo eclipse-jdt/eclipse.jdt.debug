@@ -46,14 +46,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Label provider for runtime classpath entries.
  */
 public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
-		
+
 	private WorkbenchLabelProvider lp = new WorkbenchLabelProvider();
-	
+
 	/**
 	 * Context in which to render containers, or <code>null</code>
 	 */
 	private ILaunchConfiguration fLaunchConfiguration;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
@@ -87,7 +87,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 	                        key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
 						} else {
 							key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
-						}	
+						}
 					}
 
 				} else {
@@ -99,7 +99,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				}
 				return JavaUI.getSharedImages().getImage(key);
 			case IRuntimeClasspathEntry.VARIABLE:
-				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);				
+				return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);
 			case IRuntimeClasspathEntry.CONTAINER:
                 return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 			case IRuntimeClasspathEntry.OTHER:
@@ -115,7 +115,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
                     return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
 				}
 				return lp.getImage(resource);
-		}	
+		}
 		return null;
 	}
 
@@ -151,7 +151,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						displayPath.append(device);
 					}
 					displayPath.append(File.separator);
-					for (int i = 0; i < segments.length - 1; i++) { 
+					for (int i = 0; i < segments.length - 1; i++) {
 						displayPath.append(segments[i]).append(File.separator);
 					}
 				} else {
@@ -170,12 +170,12 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						buf.append(IPath.SEPARATOR);
 						buf.append(rootPath.toString());
 					}
-					buf.append(']'); 
+					buf.append(']');
 				}
 				// append JRE name if we can compute it
 				if (path.equals(new Path(JavaRuntime.JRELIB_VARIABLE)) && fLaunchConfiguration != null) {
 					try {
-						IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfiguration);					
+						IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfiguration);
 						buf.append(" - "); //$NON-NLS-1$
 						buf.append(vm.getName());
 					} catch (CoreException e) {
@@ -219,10 +219,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					return ((IRuntimeClasspathEntry2)delegate).getName();
 				}
 				return name;
-		}	
+		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
@@ -231,7 +231,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 		super.dispose();
 		lp.dispose();
 	}
-	
+
 	/**
 	 * Sets the launch configuration context for this label provider
 	 */

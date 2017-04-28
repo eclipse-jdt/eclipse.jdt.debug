@@ -30,11 +30,11 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 
 /**
  * Breakpoint participant for field rename.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipant {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#accepts(org.eclipse.jdt.core.IJavaElement)
 	 */
@@ -42,13 +42,13 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 	protected boolean accepts(IJavaElement element) {
 		return element instanceof IField;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		IResource resource = getBreakpointContainer();
 		IMarker[] markers = resource.findMarkers(JavaWatchpoint.JAVA_WATCHPOINT, true, IResource.DEPTH_INFINITE);
 		gatherChanges(markers, changes, getArguments().getNewName());
@@ -59,7 +59,7 @@ public class BreakpointRenameFieldParticipant extends BreakpointRenameParticipan
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.BreakpointRenameParticipant#gatherChanges(org.eclipse.core.resources.IMarker[], java.util.List, java.lang.String)
 	 */

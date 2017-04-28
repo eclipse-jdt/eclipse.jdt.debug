@@ -8,7 +8,7 @@
  * This is an implementation of an early-draft specification developed under the Java
  * Community Process (JCP) and is made available for testing and evaluation purposes
  * only. The code is not compatible with any specification of the JCP.
- * 
+ *
  * Contributors:
  *     Jesper S. Møller - initial API and implementation
  *     Jesper Steen Møller - bug 426903: [1.8] Cannot evaluate super call to default method
@@ -25,7 +25,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Group of tests that evaluate operations involving generics
- * 
+ *
  * @since 3.8
  */
 public class Java8Tests extends AbstractDebugTest {
@@ -41,11 +41,11 @@ public class Java8Tests extends AbstractDebugTest {
 	protected IJavaProject getProjectContext() {
 		return get18Project();
 	}
-	
+
 	/**
-	 * Evaluates a generified snippet with a simple single 
+	 * Evaluates a generified snippet with a simple single
 	 * generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalDefaultMethod() throws Exception {
@@ -66,7 +66,7 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a snippet in the context of interface method generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalInterfaceMethod() throws Exception {
@@ -85,10 +85,10 @@ public class Java8Tests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * Evaluates a snippet in the context of interface method generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testBugEvalIntfSuperDefault() throws Exception {
@@ -111,7 +111,7 @@ public class Java8Tests extends AbstractDebugTest {
 
 	/**
 	 * Evaluates a static method on an object generic statement
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEvalStatictMethod() throws Exception {

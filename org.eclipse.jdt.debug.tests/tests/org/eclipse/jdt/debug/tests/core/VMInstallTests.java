@@ -38,7 +38,7 @@ public class VMInstallTests extends AbstractDebugTest {
 	public VMInstallTests() {
 		super("VM Install tests");
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param name the name of the test
@@ -57,7 +57,7 @@ public class VMInstallTests extends AbstractDebugTest {
         String javaVersion = vm2.getJavaVersion();
         assertNotNull("default VM is missing java.version", javaVersion);
 	}
-	
+
 	/**
 	 * Test acquiring the set of system properties
 	 * @throws CoreException
@@ -72,7 +72,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		String value = map.get("user.home");
 		assertNotNull("missing user.home", value);
 	}
-	
+
 	/**
 	 * Test acquiring the set of system properties that have been asked for - they should be cached in JDT launching
 	 * @throws CoreException
@@ -89,17 +89,17 @@ public class VMInstallTests extends AbstractDebugTest {
 		//check the prefs
 		String key = getSystemPropertyKey(def, "user.home");
 		value = Platform.getPreferencesService().getString(
-				LaunchingPlugin.ID_PLUGIN, 
-				key, 
-				null, 
+				LaunchingPlugin.ID_PLUGIN,
+				key,
+				null,
 				null);
 		assertNotNull("'user.home' system property should be cached", value);
 	}
-	
+
 	/**
 	 * Tests the new support for {@link ILibraryLocationResolver}s asking for {@link LibraryLocation}s
 	 * using the {@link JavaRuntime#getLibraryLocations(IVMInstall)}s API
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
 	 * @throws Exception
 	 */
@@ -107,7 +107,7 @@ public class VMInstallTests extends AbstractDebugTest {
 		VMInstallTestsLibraryLocationResolver.isTesting = true;
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("There must be a default VM", vm);
-		
+
 		//invalidate it, causing a reset, then collect it again
 		vm.getVMInstallType().disposeVMInstall(vm.getId());
 		vm = JavaRuntime.getDefaultVMInstall();
@@ -123,10 +123,10 @@ public class VMInstallTests extends AbstractDebugTest {
 			vm.getVMInstallType().disposeVMInstall(vm.getId());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link ILibraryLocationResolver} asking for libs using an EE description file
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
 	 * @throws Exception
 	 */
@@ -146,10 +146,10 @@ public class VMInstallTests extends AbstractDebugTest {
 			VMInstallTestsLibraryLocationResolver.isTesting = false;
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link ILibraryLocationResolver} asking for libs directly from the backing type of the {@link IVMInstall}
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
 	 * @throws Exception
 	 */
@@ -162,7 +162,7 @@ public class VMInstallTests extends AbstractDebugTest {
 			vm.getVMInstallType().disposeVMInstall(vm.getId());
 			vm = JavaRuntime.getDefaultVMInstall();
 			assertNotNull("There must be a default VM", vm);
-			
+
 			LibraryLocation[] locs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 			assertResolvedLibraryLocations(locs);
 		}
@@ -171,11 +171,11 @@ public class VMInstallTests extends AbstractDebugTest {
 			vm.getVMInstallType().disposeVMInstall(vm.getId());
 		}
 	}
-	
+
 	/**
 	 * Tests the {@link ILibraryLocationResolver} asking for libs using an EE description file that provides
 	 * a source path for the ext dirs does *not* get overridden by the resolver
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=399798
 	 * @throws Exception
 	 */
@@ -203,10 +203,10 @@ public class VMInstallTests extends AbstractDebugTest {
 			VMInstallTestsLibraryLocationResolver.isTesting = false;
 		}
 	}
-	
+
 	/**
 	 * Checks the given {@link LibraryLocation}s to ensure they reference the testing resolver paths
-	 * 
+	 *
 	 * @param locs
 	 */
 	void assertResolvedLibraryLocations(LibraryLocation[] locs) {
@@ -221,16 +221,16 @@ public class VMInstallTests extends AbstractDebugTest {
 				assertTrue("The source root path should be 'src' for ext lib ["+locpath+"]", root.toString().equals("src"));
 				URL url = locs[i].getJavadocLocation();
 				assertNotNull("There should be a Javadoc URL set for ext lib ["+locpath+"]", url);
-				assertTrue("There should be a javadoc path of test_resolver_javadoc.zip on the ext lib ["+locpath+"]", 
+				assertTrue("There should be a javadoc path of test_resolver_javadoc.zip on the ext lib ["+locpath+"]",
 						url.getPath().indexOf("test_resolver_javadoc.zip") > -1);
 				url = locs[i].getIndexLocation();
 				assertNotNull("There should be an index path of test_resolver_index.index on the ext lib ["+locpath+"]", url);
-				assertTrue("There should be an index path of test_resolver_index.index on the ext lib ["+locpath+"]", 
+				assertTrue("There should be an index path of test_resolver_index.index on the ext lib ["+locpath+"]",
 						url.getPath().indexOf("test_resolver_index.index") > -1);
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates a {@link VMStandin} for the given EE file. Does not return <code>null</code>
 	 * @param filename
@@ -244,11 +244,11 @@ public class VMInstallTests extends AbstractDebugTest {
 		assertNotNull("the VM standin should exist for "+filename, vm);
 		return vm;
 	}
-	
+
 	/**
 	 * Generates a key used to cache system property for this VM in this plug-ins
 	 * preference store.
-	 * 
+	 *
 	 * @param property system property name
 	 * @return preference store key
 	 */
@@ -263,5 +263,5 @@ public class VMInstallTests extends AbstractDebugTest {
 		buffer.append(property);
 		return buffer.toString();
 	}
-	
+
 }

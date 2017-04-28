@@ -26,14 +26,14 @@ import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 public class AddLibraryAction extends RuntimeClasspathAction {
 
 	public AddLibraryAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddLibraryAction_0, viewer); 
-	}	
+		super(ActionMessages.AddLibraryAction_0, viewer);
+	}
 
 	/**
 	 * Prompts for folder(s) to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 
@@ -45,14 +45,14 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 				try {
 					res[i] = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.statusDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e.getStatus()); 
+					JDIDebugUIPlugin.statusDialog(LauncherMessages.RuntimeClasspathAdvancedDialog_Unable_to_create_new_entry__3, e.getStatus());
 					return;
 				}
 			}
 			getViewer().addEntries(res);
-		}								
+		}
 	}
-		
+
 	@Override
 	protected int getActionType() {
 		return ADD;

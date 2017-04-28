@@ -24,14 +24,14 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.6
  */
 public class ExceptionBreakpointEditor extends StandardJavaBreakpointEditor {
-	
+
 	/**
      * Property id's
      */
     public static final int PROP_CAUGHT = 0x1020;
     public static final int PROP_UNCAUGHT = 0x1021;
     public static final int PROP_SUBCLASSES = 0x1022;
-	
+
 	// editors
 	private Button fCaught;
 	private Button fUncaught;
@@ -52,7 +52,7 @@ public class ExceptionBreakpointEditor extends StandardJavaBreakpointEditor {
 		fSubclasses = createSusupendPropertyEditor(composite, processMnemonics(PropertyPageMessages.ExceptionBreakpointEditor_3), PROP_SUBCLASSES);
 		return container;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#setBreakpoint(org.eclipse.jdt.debug.core.IJavaBreakpoint)
 	 */
@@ -73,7 +73,7 @@ public class ExceptionBreakpointEditor extends StandardJavaBreakpointEditor {
 			fSubclasses.setEnabled(false);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.breakpoints.StandardJavaBreakpointEditor#doSave()
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public abstract class Instruction {
 
 	/**
 	 * Return the internal variable with the given name.
-	 * 
+	 *
 	 * @see Interpreter#getInternalVariable(String)
 	 */
 	protected IVariable getInternalVariable(String name) {
@@ -75,7 +75,7 @@ public abstract class Instruction {
 	/**
 	 * Create and return a new internal variable with the given name and the
 	 * given type.
-	 * 
+	 *
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
 	protected IVariable createInternalVariable(String name,
@@ -105,12 +105,12 @@ public abstract class Instruction {
 		return fInterpreter.pop();
 	}
 
-	protected Object popValue() throws CoreException {
+	protected IJavaValue popValue() throws CoreException {
 		Object element = fInterpreter.pop();
 		if (element instanceof IJavaVariable) {
-			return ((IJavaVariable) element).getValue();
+			return (IJavaValue) ((IJavaVariable) element).getValue();
 		}
-		return  element;
+		return (IJavaValue) element;
 	}
 
 	protected void pushNewValue(boolean value) {
@@ -215,7 +215,7 @@ public abstract class Instruction {
 
 	/**
 	 * Returns the primitive type with the given name.
-	 * 
+	 *
 	 * @param name
 	 *            type name, for example - "int"
 	 * @return primitive type

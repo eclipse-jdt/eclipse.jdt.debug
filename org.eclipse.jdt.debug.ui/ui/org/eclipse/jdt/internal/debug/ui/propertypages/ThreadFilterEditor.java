@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * 
+ *
  */
 public class ThreadFilterEditor {
 
@@ -49,20 +49,20 @@ public class ThreadFilterEditor {
 	private ThreadFilterContentProvider fContentProvider;
 	private CheckHandler fCheckHandler;
 	private static String MAIN= "main"; //$NON-NLS-1$
-	
+
 	public ThreadFilterEditor(Composite parent, JavaBreakpointAdvancedPage page) {
 		fPage= page;
 		fContentProvider= new ThreadFilterContentProvider();
-		fCheckHandler= new CheckHandler();		
+		fCheckHandler= new CheckHandler();
 		createThreadViewer(parent);
 	}
-	
+
 	private void createThreadViewer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText(PropertyPageMessages.ThreadFilterEditor_1); 
+		label.setText(PropertyPageMessages.ThreadFilterEditor_1);
 		label.setFont(parent.getFont());
 		label.setLayoutData(new GridData());
-		
+
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.heightHint= 100;
 		fThreadViewer= new CheckboxTreeViewer(parent, SWT.BORDER);
@@ -74,7 +74,7 @@ public class ThreadFilterEditor {
 		fThreadViewer.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setInitialCheckedState();
 	}
-	
+
 	protected void doStore() {
 		IDebugTarget[] targets= getDebugTargets();
 		IJavaDebugTarget target;
@@ -127,7 +127,7 @@ public class ThreadFilterEditor {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Returns the debug targets that appear in the tree
 	 */
@@ -139,8 +139,8 @@ public class ThreadFilterEditor {
 		ILaunchManager launchManager= (ILaunchManager)input;
 		return launchManager.getDebugTargets();
 	}
-	
-	class CheckHandler implements ICheckStateListener {	
+
+	class CheckHandler implements ICheckStateListener {
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Object element= event.getElement();
@@ -151,7 +151,7 @@ public class ThreadFilterEditor {
 			}
 			verifyCheckedState();
 		}
-		
+
 		/**
 		 * Check or uncheck a debug target in the tree viewer.
 		 * When a debug target is checked, attempt to
@@ -207,7 +207,7 @@ public class ThreadFilterEditor {
 				}
 			}
 		}
-	
+
 		/**
 		 * Check or uncheck a thread.
 		 * When a thread is checked, make sure its debug
@@ -215,14 +215,14 @@ public class ThreadFilterEditor {
 		 * When a thread is unchecked, uncheck its debug
 		 * target.
 		 */
-		protected void checkThread(IThread thread, boolean checked) {	
+		protected void checkThread(IThread thread, boolean checked) {
 			fThreadViewer.setChecked(thread, checked);
 			IDebugTarget target= (thread).getDebugTarget();
 			if (checked) {
 				// When a thread is checked, make sure the target
 				// is checked and all other threads are
 				// unchecked (simulate radio button behavior)
-				if (!fThreadViewer.getChecked(target)) {					
+				if (!fThreadViewer.getChecked(target)) {
 					fThreadViewer.setChecked(target, true);
 				}
 				IThread[] threads;
@@ -243,7 +243,7 @@ public class ThreadFilterEditor {
 				fThreadViewer.setChecked(target, false);
 			}
 		}
-	
+
 		/**
 		 * Verify the state of the tree viewer.
 		 * If the user selects a debug target, they must select
@@ -275,13 +275,13 @@ public class ThreadFilterEditor {
 				if (checkedThread) {
 					fPage.setErrorMessage(null);
 				} else {
-					fPage.setErrorMessage(PropertyPageMessages.ThreadFilterEditor_2); 
+					fPage.setErrorMessage(PropertyPageMessages.ThreadFilterEditor_2);
 				}
 			}
 		}
-		
+
 	}
-	
+
 	class ThreadFilterContentProvider implements ITreeContentProvider {
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
@@ -297,9 +297,9 @@ public class ThreadFilterEditor {
 						JDIDebugUIPlugin.log(e);
 					}
 				}
-			}		
+			}
 			if (parent instanceof ILaunchManager) {
-				List<IJavaDebugTarget> children= new ArrayList<IJavaDebugTarget>();
+				List<IJavaDebugTarget> children= new ArrayList<>();
 				ILaunch[] launches= ((ILaunchManager) parent).getLaunches();
 				IDebugTarget[] targets;
 				IJavaDebugTarget target;
@@ -344,7 +344,7 @@ public class ThreadFilterEditor {
 			}
 			if (element instanceof IDebugElement) {
 				return getChildren(element).length > 0;
-			} 
+			}
 			if (element instanceof ILaunch) {
 				return true;
 			}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,15 +19,15 @@ import com.sun.jdi.request.MonitorWaitRequest;
 import com.sun.jdi.request.MonitorWaitedRequest;
 
 /**
- * Test cases for the implementation of providing argument information even if 
+ * Test cases for the implementation of providing argument information even if
  * no debugging information is present in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class ContendedMonitorTests extends AbstractJDITest {
 
 	EventRequestManager erm = null;
-	
+
 	/** setup test info locally **/
 	@Override
 	public void localSetUp() {
@@ -35,7 +35,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 	}
 
 	/**
-	 * test to see if a the 1.6 VM can get monitor events info and that 
+	 * test to see if a the 1.6 VM can get monitor events info and that
 	 * a non-1.6VM cannot.
 	 */
 	public void testCanRequestMonitorEvents() {
@@ -46,7 +46,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 			assertTrue("Should not have ability to request monitor events info", !fVM.canRequestMonitorEvents());
 		}
 	}
-	
+
 	/**
 	 * test getting monitor contended enter requests from the event request manager
 	 * this test is not applicable to non 1.6 VMs
@@ -62,7 +62,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorContendedEnterRequest)list.get(0)).isEnabled());
 	}
-	
+
 	/**
 	 * test getting monitor contended entered requests from the event request manager
 	 * this test is not applicable to non 1.6 VMs
@@ -78,7 +78,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorContendedEnteredRequest)list.get(0)).isEnabled());
 	}
-	
+
 	/**
 	 * test getting monitor wait requests from the event request manager
 	 * this test is not applicable to non 1.6 VMs
@@ -86,7 +86,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 	public void testMonitorWaitRequest() {
 		if(!fVM.canRequestMonitorEvents()) {
 			return;
-		}	
+		}
 		MonitorWaitRequest req = erm.createMonitorWaitRequest();
 		req.enable();
 		List<?> list = erm.monitorWaitRequests();
@@ -94,7 +94,7 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorWaitRequest)list.get(0)).isEnabled());
 	}
-	
+
 	/**
 	 * test getting monitor waited requests from the event request manager
 	 * this test is not applicable to non 1.6 VMs
@@ -110,5 +110,5 @@ public class ContendedMonitorTests extends AbstractJDITest {
 		assertTrue("list should be of size 1", list.size() == 1);
 		assertTrue("req should be enabled", ((MonitorWaitedRequest)list.get(0)).isEnabled());
 	}
-	
+
 }

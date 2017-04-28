@@ -34,7 +34,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 /**
  * Manages breakpoint listener extensions.
- * 
+ *
  * @since 3.5
  */
 public class BreakpointListenerManager {
@@ -69,7 +69,7 @@ public class BreakpointListenerManager {
 
 		/**
 		 * Returns the underlying delegate or <code>null</code> if none/error
-		 * 
+		 *
 		 * @return breakpoint listener extension
 		 */
 		private synchronized IJavaBreakpointListener getDelegate() {
@@ -87,7 +87,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#addingBreakpoint
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
@@ -104,7 +104,7 @@ public class BreakpointListenerManager {
 
 		/**
 		 * Whether this listener is for all breakpoints.
-		 * 
+		 *
 		 * @return whether for all breakpoints
 		 */
 		boolean isGlobal() {
@@ -117,7 +117,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#
 		 * breakpointHasCompilationErrors
 		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
@@ -134,7 +134,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jdt.debug.core.IJavaBreakpointListener#
 		 * breakpointHasRuntimeException
 		 * (org.eclipse.jdt.debug.core.IJavaLineBreakpoint,
@@ -151,7 +151,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointHit(
 		 * org.eclipse.jdt.debug.core.IJavaThread,
@@ -168,7 +168,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointInstalled
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
@@ -185,7 +185,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#breakpointRemoved
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
@@ -202,7 +202,7 @@ public class BreakpointListenerManager {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.debug.core.IJavaBreakpointListener#installingBreakpoint
 		 * (org.eclipse.jdt.debug.core.IJavaDebugTarget,
@@ -226,8 +226,8 @@ public class BreakpointListenerManager {
 	 */
 	private synchronized void init() {
 		if (fgJavaBreakpointListenersMap == null) {
-			fgJavaBreakpointListenersMap = new HashMap<String, JavaBreakpointListenerProxy>();
-			List<JavaBreakpointListenerProxy> global = new ArrayList<JavaBreakpointListenerProxy>();
+			fgJavaBreakpointListenersMap = new HashMap<>();
+			List<JavaBreakpointListenerProxy> global = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform
 					.getExtensionRegistry()
 					.getExtensionPoint(
@@ -261,7 +261,7 @@ public class BreakpointListenerManager {
 	/**
 	 * Returns the listener registered with the given identifier or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param id
 	 *            extension identifier
 	 * @return breakpoint listener or <code>null</code>
@@ -274,7 +274,7 @@ public class BreakpointListenerManager {
 	/**
 	 * Returns breakpoint listener extensions registered to listen for changes
 	 * to all breakpoints.
-	 * 
+	 *
 	 * @return global listeners
 	 */
 	public IJavaBreakpointListener[] getGlobalListeners() {

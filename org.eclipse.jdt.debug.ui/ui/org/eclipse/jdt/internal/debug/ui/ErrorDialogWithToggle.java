@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * An error dialog which allows the user to set
  * a boolean preference.
- * 
+ *
  * This is typically used to set a preference that
  * determines if the dialog should be shown in
  * the future
@@ -63,21 +63,21 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		applyDialogFont(dialogComposite);
 		return dialogComposite;
 	}
-	
+
 	/**
-	 * Creates a button with the given label and sets the default 
+	 * Creates a button with the given label and sets the default
 	 * configuration data.
 	 */
 	private Button createCheckButton(Composite parent, String label) {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
-		button.setText(label);		
+		button.setText(label);
 
 		GridData data = new GridData(SWT.NONE);
 		data.horizontalSpan= 2;
 		data.horizontalAlignment= GridData.CENTER;
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
-		
+
 		return button;
 	}
 
@@ -88,7 +88,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		}
 		super.buttonPressed(id);
 	}
-	
+
 	private void storePreference() {
 		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 	}
@@ -100,7 +100,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 	protected void setToggleButton(Button button) {
 		fToggleButton = button;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */

@@ -60,9 +60,9 @@ public class PacketReceiveManager extends PacketManager {
 	public PacketReceiveManager(Connection connection, VirtualMachineImpl vmImpl) {
 		super(connection);
 		fVM = vmImpl;
-		fCommandPackets = new LinkedList<JdwpCommandPacket>();
-		fReplyPackets = new LinkedList<JdwpReplyPacket>();
-		fTimedOutPackets = new ArrayList<Integer>();
+		fCommandPackets = new LinkedList<>();
+		fReplyPackets = new LinkedList<>();
+		fTimedOutPackets = new ArrayList<>();
 	}
 
 	@Override

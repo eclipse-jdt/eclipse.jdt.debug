@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 /**
  * Java thread presentation adapter.
- * 
+ *
  * @since 3.3
  */
 public class JavaThreadContentProvider extends JavaElementContentProvider {
@@ -67,7 +67,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 		}
 		return getElements(getChildren(thread), index, length);
 	}
-	
+
 	protected Object[] getChildren(IJavaThread thread) {
 		try {
 			if (thread instanceof JDIThread) {
@@ -109,7 +109,7 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 			return children;
 		} catch (DebugException e) {
 			return EMPTY;
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -152,12 +152,12 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 	protected ISchedulingRule getRule(IHasChildrenUpdate[] updates) {
 		return getThreadRule(updates);
 	}
-	
+
 	/**
 	 * Returns a scheduling rule to ensure we aren't trying to get thread content
 	 * while executing an implicit evaluation (like toString() for the details
 	 * pane).
-	 * 
+	 *
 	 * @param updates viewer updates
 	 * @return scheduling rule or <code>null</code>
 	 */
@@ -170,6 +170,6 @@ public class JavaThreadContentProvider extends JavaElementContentProvider {
 		}
 		return null;
 	}
-	
+
 
 }

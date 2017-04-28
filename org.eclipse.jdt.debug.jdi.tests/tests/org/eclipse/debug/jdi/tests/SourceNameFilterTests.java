@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequestManager;
 
 /**
- * Test cases for the implementation of providing argumebnt information even if 
+ * Test cases for the implementation of providing argumebnt information even if
  * no debugging information is present in the new java 1.6 VM
- * 
+ *
  * @since 3.3
  */
 public class SourceNameFilterTests extends AbstractJDITest {
@@ -25,11 +25,11 @@ public class SourceNameFilterTests extends AbstractJDITest {
 	/** setup test info locally **/
 	@Override
 	public void localSetUp() {}
-	
+
 	/**
-	 * test to see if we can use source name filters from a 1.6 VM, and 
+	 * test to see if we can use source name filters from a 1.6 VM, and
 	 * that we cannot from a pre 1.6 VM
-	 * 
+	 *
 	 */
 	public void testCanUseSourceNameFilters() {
 		if(fVM.version().indexOf("1.6") > -1) {
@@ -40,7 +40,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 			assertTrue("Should not have source name filter capabilities", !fVM.canUseSourceNameFilters());
 		}
 	}
-	
+
 	/**
 	 * test to make sure the source name filter capability is working to spec.
 	 * this test does not apply to non-1.6 VMs
@@ -57,7 +57,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 		assertNotNull("event should not be null", event);
 		assertEquals(event.referenceType().name(), "org.eclipse.debug.jdi.tests.program.TestClass1");
 		rm.deleteEventRequest(request);
-		
+
 		//filter is *Test3.java
 		request = rm.createClassPrepareRequest();
 		request.addSourceNameFilter("*TestClass3.java");
@@ -65,7 +65,7 @@ public class SourceNameFilterTests extends AbstractJDITest {
 		assertNotNull("event should not be null", event);
 		assertEquals(event.referenceType().name(), "org.eclipse.debug.jdi.tests.program.TestClass3");
 		rm.deleteEventRequest(request);
-		
+
 		//filter is *TestClazz6.java
 		request = rm.createClassPrepareRequest();
 		request.addSourceNameFilter("*TestClazz6.java");

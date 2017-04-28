@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.ui.console.TextConsole;
  * Test the hyperlink action delegate for the console
  */
 public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
- 
+
     /**
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
@@ -52,7 +52,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
 			public String getPattern() {
                 return "1234567890"; //$NON-NLS-1$
             }
-            
+
             @Override
 			public String getLineQualifier() {
             	return "1234567890"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
 			public void disconnect() {
             }
         };
-        
+
         backingconsole.addPatternMatchListener(listener);
         IOConsoleOutputStream stream = backingconsole.newOutputStream();
         stream.setFontStyle(SWT.ITALIC | SWT.BOLD);
@@ -92,7 +92,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             }
         }).start();
     }
-    
+
     private class MyHyperlink implements IHyperlink {
         /**
          * @see org.eclipse.ui.console.IHyperlink#linkEntered()
@@ -118,19 +118,19 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             System.out.println("link activated");
         }
     }
-    
+
     /**
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void init(IAction action) {        
+	public void init(IAction action) {
     }
 
     /**
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
     @Override
-	public void dispose() {        
+	public void dispose() {
     }
 
     /**
@@ -152,7 +152,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
     @Override
-	public void init(IWorkbenchWindow window) {       
+	public void init(IWorkbenchWindow window) {
     }
 
 }

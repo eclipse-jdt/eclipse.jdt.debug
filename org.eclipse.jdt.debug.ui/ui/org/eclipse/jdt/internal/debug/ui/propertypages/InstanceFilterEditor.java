@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * 
+ *
  */
 public class InstanceFilterEditor {
 	private IJavaBreakpoint fBreakpoint;
@@ -38,15 +38,15 @@ public class InstanceFilterEditor {
 	private Composite fParent;
 	private InstanceFilterContentProvider fContentProvider;
 	private CheckHandler fCheckHandler;
-	
+
 	public InstanceFilterEditor(Composite parent, IJavaBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
 		fContentProvider= new InstanceFilterContentProvider();
 		fCheckHandler= new CheckHandler();
 		Label label= new Label(parent, SWT.NONE);
 		label.setFont(parent.getFont());
-		label.setText(PropertyPageMessages.InstanceFilterEditor_0); 
-		
+		label.setText(PropertyPageMessages.InstanceFilterEditor_0);
+
 		fParent= parent;
 		//fOuter= new Composite(parent, SWT.NONE);
 		//fOuter.setFont(parent.getFont());
@@ -56,13 +56,13 @@ public class InstanceFilterEditor {
 		//layout.marginHeight = 0;
 		//layout.numColumns = 2;
 		//fOuter.setLayout(layout);
-		
+
 		//GridData data= new GridData(GridData.FILL_BOTH);
 		//fOuter.setLayoutData(data);
-		
+
 		createViewer();
 	}
-	
+
 	/**
 	 * Create and initialize the thread filter tree viewer.
 	 */
@@ -98,7 +98,7 @@ public class InstanceFilterEditor {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
-	
+
 	protected void doStore() {
 		try {
 			IJavaObject[] objects = fBreakpoint.getInstanceFilters();
@@ -109,24 +109,24 @@ public class InstanceFilterEditor {
 			}
 		}  catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
-		}						
+		}
 	}
-	
-	class CheckHandler implements ICheckStateListener {	
-		
+
+	class CheckHandler implements ICheckStateListener {
+
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			fInstanceViewer.setChecked(event.getElement(), event.getChecked());
 		}
-		
+
 		public void checkObject(IJavaObject object, boolean checked) {
 			fInstanceViewer.setChecked(object, checked);
 		}
-		
+
 	}
-	
+
 	class InstanceFilterContentProvider implements ITreeContentProvider {
-		
+
 		/**
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
@@ -160,7 +160,7 @@ public class InstanceFilterEditor {
 		public boolean hasChildren(Object element) {
 			if (element instanceof IJavaBreakpoint) {
 				return getChildren(element).length > 0;
-			} 
+			}
 			return false;
 		}
 

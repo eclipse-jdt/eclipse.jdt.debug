@@ -41,29 +41,29 @@ import org.eclipse.ui.actions.SelectionListenerAction;
  * Adds a project to the runtime class path.
  */
 public class AddProjectAction extends RuntimeClasspathAction {
-	
-	
+
+
 
 	public AddProjectAction(IClasspathViewer viewer) {
-		super(ActionMessages.AddProjectAction_Add_Project_1, viewer); 
-	}	
+		super(ActionMessages.AddProjectAction_Add_Project_1, viewer);
+	}
 
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see IAction#run()
-	 */	
+	 */
 	@Override
 	public void run() {
 		List<IJavaProject> projects = getPossibleAdditions();
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(),projects);
-		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2); 
+		dialog.setTitle(ActionMessages.AddProjectAction_Project_Selection_2);
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "One or more exceptions occurred while adding projects.", null);  //$NON-NLS-1$
-				
-		if (dialog.open() == Window.OK) {			
+
+		if (dialog.open() == Window.OK) {
 			Object[] selections = dialog.getResult();
-			
-			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
+
+			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -76,8 +76,8 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			} catch (JavaModelException e) {
 				status.add(e.getStatus());
 			}
-			
-			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<IRuntimeClasspathEntry>(additions.size());
+
+			List<IRuntimeClasspathEntry> runtimeEntries = new ArrayList<>(additions.size());
 			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
 				IJavaProject jp = iter.next();
@@ -92,8 +92,8 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			}
 			IRuntimeClasspathEntry[] entries = runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
 			getViewer().addEntries(entries);
-		}	
-		
+		}
+
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);
 		}
@@ -106,12 +106,12 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return getViewer().updateSelection(getActionType(), selection) && !getPossibleAdditions().isEmpty();
 	}
-	
+
 	@Override
 	protected int getActionType() {
 		return ADD;
 	}
-	
+
 	/**
 	 * Returns the possible projects that can be added
 	 * @return the list of projects
@@ -125,11 +125,11 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
+		List<IJavaProject> remaining = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
+		List<IJavaProject> alreadySelected = new ArrayList<>();
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
@@ -139,13 +139,13 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			}
 		}
 		remaining.removeAll(alreadySelected);
-		return remaining;		
+		return remaining;
 	}
-	
+
 	/**
 	 * Adds all projects required by <code>proj</code> to the list
 	 * <code>res</code>
-	 * 
+	 *
 	 * @param proj the project for which to compute required
 	 *  projects
 	 * @param res the list to add all required projects too
@@ -154,9 +154,9 @@ public class AddProjectAction extends RuntimeClasspathAction {
 	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
-			
+
 			IJavaModel model= proj.getJavaModel();
-			
+
 			IClasspathEntry[] entries= proj.getRawClasspath();
 			for (int i= 0; i < entries.length; i++) {
 				IClasspathEntry curr= entries[i];
@@ -168,12 +168,12 @@ public class AddProjectAction extends RuntimeClasspathAction {
 				}
 			}
 		}
-	}		
-	
+	}
+
 	/**
 	 * Adds all exported entries defined by <code>proj</code> to the list
 	 * <code>runtimeEntries</code>.
-	 * 
+	 *
 	 * @param proj the project
 	 * @param runtimeEntries the entries
 	 * @throws CoreException if an exception occurs

@@ -43,19 +43,19 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Browser to select Java projects to add to the source lookup path.
- * 
+ *
  * @since 3.0
  */
 public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBrowser {
-	
+
 	class ContentProvider implements IStructuredContentProvider {
-		
+
 		private List<IJavaProject> fProjects;
-		
+
 		public ContentProvider(List<IJavaProject> projects) {
 			fProjects = projects;
 		}
-		
+
 		/**
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
@@ -78,7 +78,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
-	}		
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -86,13 +86,13 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		List<IJavaProject> projects = getPossibleAdditions(director);
 		ProjectSelectionDialog dialog= new ProjectSelectionDialog(shell, projects);
-		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1); 
+		dialog.setTitle(SourceLookupMessages.JavaProjectSourceContainerBrowser_1);
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Failed to add project(s)", null);  //$NON-NLS-1$
-				
-		List<ISourceContainer> sourceContainers = new ArrayList<ISourceContainer>();
-		if (dialog.open() == Window.OK) {			
+
+		List<ISourceContainer> sourceContainers = new ArrayList<>();
+		if (dialog.open() == Window.OK) {
 			Object[] selections = dialog.getResult();
-			List<IJavaProject> additions = new ArrayList<IJavaProject>(selections.length);
+			List<IJavaProject> additions = new ArrayList<>(selections.length);
 			try {
 				for (int i = 0; i < selections.length; i++) {
 					IJavaProject jp = (IJavaProject)selections[i];
@@ -105,7 +105,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			} catch (JavaModelException e) {
 				status.add(e.getStatus());
 			}
-			
+
 			Iterator<IJavaProject> iter = additions.iterator();
 			while (iter.hasNext()) {
 				IJavaProject jp = iter.next();
@@ -118,8 +118,8 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 					}
 				}
 			}
-		}	
-		
+		}
+
 		if (!status.isOK()) {
 			JDIDebugUIPlugin.statusDialog(status);
 		}
@@ -128,7 +128,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 
 	/**
 	 * Returns the possible projects that can be added
-	 * 
+	 *
 	 * @param director the source lookup director currently being edited
 	 * @return the listing of {@link IJavaProject}s to add
 	 */
@@ -141,11 +141,11 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			JDIDebugUIPlugin.log(e);
 			projects= new IJavaProject[0];
 		}
-		List<IJavaProject> remaining = new ArrayList<IJavaProject>();
+		List<IJavaProject> remaining = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			remaining.add(projects[i]);
 		}
-		List<IJavaProject> alreadySelected = new ArrayList<IJavaProject>();
+		List<IJavaProject> alreadySelected = new ArrayList<>();
 		ISourceContainer[] containers = director.getSourceContainers();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
@@ -154,13 +154,13 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 			}
 		}
 		remaining.removeAll(alreadySelected);
-		return remaining;		
+		return remaining;
 	}
 
 	/**
 	 * Adds all projects required by <code>proj</code> to the list
 	 * <code>res</code>
-	 * 
+	 *
 	 * @param proj the project for which to compute required
 	 *  projects
 	 * @param res the list to add all required projects too
@@ -169,9 +169,9 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 	protected void collectRequiredProjects(IJavaProject proj, List<IJavaProject> res) throws JavaModelException {
 		if (!res.contains(proj)) {
 			res.add(proj);
-			
+
 			IJavaModel model= proj.getJavaModel();
-			
+
 			IClasspathEntry[] entries= proj.getRawClasspath();
 			for (int i= 0; i < entries.length; i++) {
 				IClasspathEntry curr= entries[i];
@@ -183,12 +183,12 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 				}
 			}
 		}
-	}		
-	
+	}
+
 	/**
 	 * Adds all exported entries defined by <code>proj</code> to the list
 	 * <code>list</code>.
-	 * 
+	 *
 	 * @param proj the project to inspect
 	 * @param list the listing of containers
 	 * @throws CoreException if an exception occurs
@@ -233,5 +233,5 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 				}
 			}
 		}
-	}	
+	}
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
- 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,24 +62,24 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	private TableViewer fImportsViewer;
 	private Table fImportsTable;
 	private JavaSnippetEditor fEditor;
-	
+
 	private ImportsContentProvider fImportContentProvider;
-	
+
 	/**
 	 * Content provider for the table.  Content consists of instances of Filter.
-	 */	
+	 */
 	protected class ImportsContentProvider implements IStructuredContentProvider {
-		
+
 		private TableViewer fViewer;
 		private List<Filter> fImportNames;
-		
+
 		public ImportsContentProvider(TableViewer viewer) {
 			fViewer = viewer;
 			populateImports();
 		}
-		
+
 		protected void populateImports() {
-			fImportNames= new ArrayList<Filter>(1);
+			fImportNames= new ArrayList<>(1);
 			if (fImports != null) {
 				for (int i = 0; i < fImports.length; i++) {
 					String name = fImports[i];
@@ -87,7 +87,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				}
 			}
 		}
-		
+
 		protected void addImport(String name) {
 			Filter imprt = new Filter(name, false);
 			if (!fImportNames.contains(imprt)) {
@@ -95,8 +95,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				fViewer.add(imprt);
 			}
 		}
-		
-		
+
+
 		protected void removeImports(Object[] imports) {
 			for (int i = 0; i < imports.length; i++) {
 				Filter imprt = (Filter)imports[i];
@@ -104,7 +104,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			}
 			fViewer.remove(imports);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
@@ -112,35 +112,35 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		public Object[] getElements(Object inputElement) {
 			return fImportNames.toArray();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		@Override
 		public void dispose() {
-		}		
+		}
 	}
-	
+
 	public SelectImportsDialog(JavaSnippetEditor editor, String[] imports) {
 		super(editor.getShell());
 		fEditor= editor;
 		fImports= imports;
 	}
-	
+
 	private void createImportButtons(Composite container) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
 		Composite bcomp = SWTFactory.createComposite(container, container.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0);
 		GridLayout gl = (GridLayout) bcomp.getLayout();
 		gl.verticalSpacing = 0;
 		// Add type button
-		fAddTypeButton = SWTFactory.createPushButton(bcomp, 
+		fAddTypeButton = SWTFactory.createPushButton(bcomp,
 				SnippetMessages.getString("SelectImportsDialog.Add_&Type_1"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2"),  //$NON-NLS-1$
 				null);
@@ -153,9 +153,9 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			public void widgetDefaultSelected(SelectionEvent se) {
 			}
 		});
-		
+
 		// Add package button
-		fAddPackageButton = SWTFactory.createPushButton(bcomp, 
+		fAddPackageButton = SWTFactory.createPushButton(bcomp,
 				SnippetMessages.getString("SelectImportsDialog.Add_&Package_3"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4"),  //$NON-NLS-1$
 				null);
@@ -168,9 +168,9 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			public void widgetDefaultSelected(SelectionEvent se) {
 			}
 		});
-		
+
 		// Remove button
-		fRemoveImportsButton = SWTFactory.createPushButton(bcomp, 
+		fRemoveImportsButton = SWTFactory.createPushButton(bcomp,
 				SnippetMessages.getString("SelectImportsDialog.&Remove_5"),  //$NON-NLS-1$
 				SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6"),  //$NON-NLS-1$
 				null);
@@ -185,18 +185,18 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});
 		fRemoveImportsButton.setEnabled(false);
 	}
-	
+
 	private void removeImports() {
-		IStructuredSelection selection = (IStructuredSelection)fImportsViewer.getSelection();		
+		IStructuredSelection selection = (IStructuredSelection)fImportsViewer.getSelection();
 		fImportContentProvider.removeImports(selection.toArray());
 	}
-	
+
 	private void addPackage() {
 		Shell shell= fAddPackageButton.getDisplay().getActiveShell();
 		ElementListSelectionDialog dialog = null;
 		try {
 			IJavaProject project= fEditor.getJavaProject();
-			List<IJavaElement> projects= new ArrayList<IJavaElement>();
+			List<IJavaElement> projects= new ArrayList<>();
 			projects.add(project);
 			IPackageFragmentRoot[] roots= project.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -208,7 +208,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			String title= SnippetMessages.getString("SelectImportsDialog.Add_package_as_import_7"); //$NON-NLS-1$
 			String message= SnippetMessages.getString("SelectImportsDialog.Could_not_open_package_selection_dialog_8");  //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
-			return;			
+			return;
 		}
 		if (dialog == null) {
 			return;
@@ -227,9 +227,9 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				filter += ".*"; //$NON-NLS-1$
 				fImportContentProvider.addImport(filter);
 			}
-		}		
+		}
 	}
-				
+
 	private void addType() {
 		Shell shell= fAddTypeButton.getDisplay().getActiveShell();
 		SelectionDialog dialog= null;
@@ -242,20 +242,20 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
-	
+
 		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12")); //$NON-NLS-1$
 		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_type_to_add_to_add_as_an_import_15")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
-		
+
 		Object[] types= dialog.getResult();
 		if (types != null && types.length > 0) {
 			IType type = (IType)types[0];
 			fImportContentProvider.addImport(type.getFullyQualifiedName());
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -287,10 +287,10 @@ public class SelectImportsDialog extends TitleAreaDialog {
 				if (selection.isEmpty()) {
 					fRemoveImportsButton.setEnabled(false);
 				} else {
-					fRemoveImportsButton.setEnabled(true);					
+					fRemoveImportsButton.setEnabled(true);
 				}
 			}
-		});		
+		});
 		createImportButtons(outer);
 		applyDialogFont(outer);
 		return parent;
@@ -313,10 +313,10 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		fEditor.setImports(imports);
 		super.okPressed();
 	}
-	
+
 	/**
 	 * Sets the title for the dialog and establishes the help context.
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
 	 */
 	@Override

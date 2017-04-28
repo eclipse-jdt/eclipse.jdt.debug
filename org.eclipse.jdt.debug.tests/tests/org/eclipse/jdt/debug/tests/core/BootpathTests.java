@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,14 +28,14 @@ import org.eclipse.jdt.launching.JavaRuntime;
  * Tests bootpath settings
  */
 public class BootpathTests extends AbstractDebugTest {
-	
+
 	public BootpathTests(String name) {
 		super(name);
 	}
 
 	public void testDefaultBootpath() throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
-		
+
 		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		String[] path = delegate.getBootpath(config);
 		assertNull("Default bootpath should be null", path);
@@ -46,13 +46,13 @@ public class BootpathTests extends AbstractDebugTest {
 		assertNull("Main bootpath should be null", pathInfo[1]);
 		assertNull("Append bootpath should be null", pathInfo[2]);
 	}
-	
+
 	public void testEmptyBootpath() throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-		
+
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-		
+
 		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		String[] path = delegate.getBootpath(wc);
 		assertNotNull("Empty bootpath should be empty array", path);
@@ -64,7 +64,7 @@ public class BootpathTests extends AbstractDebugTest {
 		assertNull("Main bootpath should be empty array", pathInfo[1]);
 		assertNull("Append bootpath should be null", pathInfo[2]);
 	}
-	
+
 	public void testPrependBootpath() throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
@@ -80,10 +80,10 @@ public class BootpathTests extends AbstractDebugTest {
 			IRuntimeClasspathEntry entry = newpath[i];
 			mementos.add(entry.getMemento());
 		}
-		
+
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
-		
+
 		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		Map<String, Object> map = delegate.getVMSpecificAttributesMap(wc);
 		assertNotNull("Missing VM specific attributes map", map);
@@ -91,6 +91,6 @@ public class BootpathTests extends AbstractDebugTest {
 		assertNotNull("Missing bootpath prepend", pre);
 		assertEquals("Incorrect number of prepends", 1, prepath.length);
 		assertEquals("wrong prepended path", jar.getLocation().toOSString(), prepath[0]);
-	}	
-		
+	}
+
 }

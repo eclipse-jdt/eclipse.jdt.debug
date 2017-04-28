@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Tests adding breakpoints and automatic addition to working sets.
- * 
+ *
  * @since 3.2
  */
 public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest {
@@ -57,7 +57,7 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 			getWorkingSetManager().removeWorkingSet(set);
 		}
 	}
-	
+
 	/**
 	 * Tests adding a breakpoint with no default working set
 	 * @throws Exception
@@ -74,14 +74,14 @@ public class BreakpointWorkingSetTests extends AbstractBreakpointWorkingSetTest 
 			removeAllBreakpoints();
 			getWorkingSetManager().removeWorkingSet(set);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that we can have N working set shown in the view and add additional breakpoints
 	 * to the default ones without causing exceptions
-	 * 
+	 *
 	 * In this test we have to open / show the view to cause the insert update to occur
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=380614
 	 * @throws Exception
 	 * @since 3.8.100

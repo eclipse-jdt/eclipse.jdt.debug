@@ -17,11 +17,11 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 
 /**
  * Adapter factory for Java debug target.
- * 
+ *
  * @since 3.3
  */
 public class TargetAdapterFactory implements IAdapterFactory{
-	
+
 	private static IModelProxyFactory fgJavaModelProxyFactory = new JavaModelProxyFactory();
 	private static IElementContentProvider fgCPTarget = new JavaDebugTargetContentProvider();
 
@@ -43,7 +43,7 @@ public class TargetAdapterFactory implements IAdapterFactory{
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */

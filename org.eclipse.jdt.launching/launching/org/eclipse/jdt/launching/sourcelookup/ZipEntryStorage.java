@@ -13,7 +13,7 @@ package org.eclipse.jdt.launching.sourcelookup;
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
- 
+
 /**
  * Storage implementation for zip entries.
  * <p>
@@ -29,11 +29,11 @@ import java.util.zip.ZipFile;
  */
 @Deprecated
 public class ZipEntryStorage extends org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage {
-		
+
 	/**
 	 * Constructs a new storage implementation for the
 	 * given zip entry in the specified zip file
-	 * 
+	 *
 	 * @param archive zip file
 	 * @param entry zip entry
 	 */

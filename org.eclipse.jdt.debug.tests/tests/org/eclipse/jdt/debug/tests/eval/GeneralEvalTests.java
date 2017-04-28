@@ -16,12 +16,12 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests that evaluations in non-generified source
- * 
+ *
  * @since 3.8.100
  */
 public class GeneralEvalTests extends AbstractDebugTest {
 
-	
+
 	/**
 	 * @param name
 	 */
@@ -48,7 +48,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -68,7 +68,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -88,7 +88,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=329294
 	 * @throws Exception
@@ -108,7 +108,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -129,7 +129,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -150,7 +150,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -171,7 +171,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -192,7 +192,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -213,7 +213,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -234,7 +234,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -255,7 +255,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -276,7 +276,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -297,7 +297,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -318,7 +318,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -339,7 +339,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -360,7 +360,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -381,7 +381,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -402,7 +402,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -423,7 +423,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=401270
 	 * @throws Exception
@@ -444,7 +444,7 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
 	 * @throws Exception

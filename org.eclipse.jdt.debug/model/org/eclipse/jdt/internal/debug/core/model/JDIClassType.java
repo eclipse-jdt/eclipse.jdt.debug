@@ -43,7 +43,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassType#newInstance(java.lang.String,
 	 * org.eclipse.jdt.debug.core.IJavaValue[],
@@ -88,7 +88,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jdt.debug.core.IJavaClassType#sendMessage(java.lang.String,
 	 * java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[],
@@ -132,7 +132,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getSuperclass()
 	 */
 	@Override
@@ -156,7 +156,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getAllInterfaces()
 	 */
 	@Override
@@ -164,7 +164,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType())
 					.allInterfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(interfaceList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(interfaceList.size());
 			for(InterfaceType interfaceType : interfaceList) {
 				if (interfaceType != null) {
 					javaInterfaceTypeList.add(JDIType.createType(
@@ -187,14 +187,14 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getInterfaces()
 	 */
 	@Override
 	public IJavaInterfaceType[] getInterfaces() throws DebugException {
 		try {
 			List<InterfaceType> interfaceList = ((ClassType) getUnderlyingType()).interfaces();
-			List<JDIType> javaInterfaceTypeList = new ArrayList<JDIType>(interfaceList.size());
+			List<JDIType> javaInterfaceTypeList = new ArrayList<>(interfaceList.size());
 			for(InterfaceType interfaceType : interfaceList) {
 				if (interfaceType != null) {
 					javaInterfaceTypeList.add(JDIType.createType(
@@ -217,7 +217,7 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#isEnum()
 	 */
 	@Override

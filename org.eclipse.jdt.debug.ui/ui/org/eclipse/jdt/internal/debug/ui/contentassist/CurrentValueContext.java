@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2012 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -49,7 +49,7 @@ public class CurrentValueContext extends CurrentFrameContext {
     		// completion in context of Object
     		IJavaType[] types = ((IJavaDebugTarget)value.getDebugTarget()).getJavaTypes("java.lang.Object"); //$NON-NLS-1$
     		if (types.length > 0) {
-    			type = JavaDebugUtils.resolveType(types[0]);  
+    			type = JavaDebugUtils.resolveType(types[0]);
     		}
     	} else {
     		type = JavaDebugUtils.resolveType(value);
@@ -59,10 +59,10 @@ public class CurrentValueContext extends CurrentFrameContext {
     	}
     	return type;
      }
-    
+
     /**
      * Returns the value for which completions are to be computed for, or <code>null</code> if none.
-     * 
+     *
      * @return the value for which completions are to be computed for, or <code>null</code> if none
      * @throws CoreException if an exception occurs
      */
@@ -71,7 +71,7 @@ public class CurrentValueContext extends CurrentFrameContext {
         if (stackFrame == null) {
             unableToResolveType();
         }
-        
+
         IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
         if (window == null) {
             unableToResolveType();
@@ -90,8 +90,8 @@ public class CurrentValueContext extends CurrentFrameContext {
             if (viewerSelection.size() > 1) {
                 unableToResolveType();
             }
-            Object element= viewerSelection.getFirstElement();  
-            
+            Object element= viewerSelection.getFirstElement();
+
             IValue value= null;
             if (element instanceof IVariable) {
                 IVariable variable = (IVariable)element;
@@ -99,7 +99,7 @@ public class CurrentValueContext extends CurrentFrameContext {
                 	value= variable.getValue();
                 }
             } else if (element instanceof IExpression) {
-                value= ((IExpression)element).getValue();   
+                value= ((IExpression)element).getValue();
             }
             if (value instanceof IJavaValue) {
     			return (IJavaValue) value;
@@ -147,5 +147,5 @@ public class CurrentValueContext extends CurrentFrameContext {
 		return super.isStatic();
 	}
 
-    
+
 }

@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
- 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -23,9 +23,9 @@ import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
 public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 
 	private IConfigurationElement fConfigurationElement;
-	
+
 	private IRuntimeClasspathProvider fDelegate;
-	
+
 	/**
 	 * Constructs a new resolver on the given configuration element
 	 * @param element the element
@@ -33,9 +33,9 @@ public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 	public RuntimeClasspathProvider(IConfigurationElement element) {
 		fConfigurationElement = element;
 	}
-		
+
 	/**
-	 * Returns the resolver delegate (and creates if required) 
+	 * Returns the resolver delegate (and creates if required)
 	 * @return the provider
 	 * @throws CoreException if an error occurs
 	 */
@@ -45,7 +45,7 @@ public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 		}
 		return fDelegate;
 	}
-	
+
 	public String getIdentifier() {
 		return fConfigurationElement.getAttribute("id"); //$NON-NLS-1$
 	}

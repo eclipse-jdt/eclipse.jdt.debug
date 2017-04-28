@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 /**
  * This test class provides test methods for contributing tabs to a given (existing)
  * tab group and their relative placement (if applicable)
- * 
+ *
  * @since 3.3
  */
 public class ContributedTabTests extends AbstractDebugTest {
@@ -39,9 +39,9 @@ public class ContributedTabTests extends AbstractDebugTest {
 	public ContributedTabTests(String name) {
 		super(name);
 	}
-	
+
 	/**
-	 * Checks to make sure that all of the contributed tabs to the java tab group are present 
+	 * Checks to make sure that all of the contributed tabs to the java tab group are present
 	 * @throws CoreException
 	 */
 	public void testContributedTab() throws CoreException {
@@ -59,7 +59,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		contribs.add(JavaAlernateModeTab.class);
 		assertTrue("java tab group should contain all contributed tabs", tabset.containsAll(contribs)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Checks to make sure that a contributed tab with a relative placement to an existing tab is in the correct place
 	 * @throws CoreException
@@ -81,7 +81,7 @@ public class ContributedTabTests extends AbstractDebugTest {
 		assertTrue("The TestTab1 must appear in the tab listing", found);
 		assertTrue("The TestTab1 must appear after the MainTab", idx > 0); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Checks to see that if a contributor supplies a bad tab id as a placement id that the tab will be added
 	 * to the end of the group
@@ -94,9 +94,9 @@ public class ContributedTabTests extends AbstractDebugTest {
 		ILaunchConfigurationTab[] tabs = javagroup.getTabs();
 		assertTrue("Alternate tab should be the last tab in the group", tabs[tabs.length-1].getClass().equals(JavaAlernateModeTab.class)); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Checks to see that the two tabs following the arguments tab are TestTab2, and TestTab3. They can be in either order depending 
+	 * Checks to see that the two tabs following the arguments tab are TestTab2, and TestTab3. They can be in either order depending
 	 * on when they were loaded, so this test only checks that they are the next two following tabs not their order
 	 * @throws CoreException
 	 */

@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IDebugElement;
  * <p>
  * Since 3.2, an <code>IJavaType</code> is also a debug element
  * </p>
- * 
+ *
  * @see IJavaValue
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -27,7 +27,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 public interface IJavaType extends IDebugElement {
 	/**
 	 * Returns the JNI-style signature for this type.
-	 * 
+	 *
 	 * @return signature
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -42,7 +42,7 @@ public interface IJavaType extends IDebugElement {
 	/**
 	 * Returns the name of this type. For example,
 	 * <code>"java.lang.String"</code>.
-	 * 
+	 *
 	 * @return the name of this type
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:

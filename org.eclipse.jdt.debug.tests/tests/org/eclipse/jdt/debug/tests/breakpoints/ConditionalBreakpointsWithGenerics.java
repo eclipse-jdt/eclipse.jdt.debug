@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Jesper Steen Moller - initial API and implementation, adapted from
  *     Stefan Mandels contribution in bug 341232, and existing debug tests
@@ -21,7 +21,7 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
  * Tests conditional breakpoints.
  */
 public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -41,7 +41,7 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * multiple use of the same generic type 'T'
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -51,20 +51,20 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 		createConditionalLineBreakpoint(33, typeName, "false", true);
 		createConditionalLineBreakpoint(44, typeName, "false", true);
 		ILineBreakpoint bp = createConditionalLineBreakpoint(56, innerTypeName, "true", true);
-		
+
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp); // If compiled correctly, this will jump over bp1-bp3 !!
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -81,11 +81,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -102,11 +102,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with many inner types with generics
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -123,11 +123,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with multiple generic types 'T', 'E', 'K'
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -144,11 +144,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a simple condition does not cause errors
 	 * with multiple generic types 'T', 'E', 'K'
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -165,10 +165,10 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a condition that includes generics
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -188,11 +188,11 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a generified condition in a type that includes
 	 * duplicate generic declarations
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -211,10 +211,10 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a condition that includes generics from nested classes
-	 * 
+	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=341232
 	 * @throws Exception
 	 */
@@ -236,10 +236,10 @@ public class ConditionalBreakpointsWithGenerics extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
-	
+
 	/**
 	 * Tests a breakpoint with a condition that includes generics from nested classes
-	 * 
+	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=403028
 	 * @throws Exception
 	 */

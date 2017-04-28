@@ -17,10 +17,10 @@ import org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage;
 import org.eclipse.ui.IMarkerResolution;
 
 /**
- * Quick fix to define a new system library (none were found). 
+ * Quick fix to define a new system library (none were found).
  */
 public class DefineSystemLibraryQuickFix implements IMarkerResolution {
-	
+
 	public DefineSystemLibraryQuickFix() {
 		super();
 	}
@@ -32,12 +32,12 @@ public class DefineSystemLibraryQuickFix implements IMarkerResolution {
 	public void run(IMarker marker) {
 		JDIDebugUIPlugin.showPreferencePage(JREsPreferencePage.ID);
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	@Override
 	public String getLabel() {
-		return LauncherMessages.DefineSystemLibraryQuickFix_Create_a_system_library_definition_2; 
+		return LauncherMessages.DefineSystemLibraryQuickFix_Create_a_system_library_definition_2;
 	}
 }

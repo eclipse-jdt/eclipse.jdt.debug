@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * Allows the user to choose what source to display from available strata
  */
 public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
-    
+
     private IStructuredSelection fSelection;
     private IWorkbenchPart fPart;
 
@@ -100,7 +100,7 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
 
     /**
      * Fills the given menu with available stratum.
-     * 
+     *
      * @param m
      */
     private void fillMenu(Menu m) {
@@ -123,11 +123,11 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
 	        }
         }
     }
-    
+
     private MenuItem createMenuItem(Menu m, final String stratum, final IJavaStackFrame frame, final IJavaDebugTarget target) {
         MenuItem item = new MenuItem(m, SWT.CHECK);
         if (stratum == null) {
-            item.setText(ActionMessages.ShowStratumAction_0); 
+            item.setText(ActionMessages.ShowStratumAction_0);
         } else {
             item.setText(stratum);
         }
@@ -156,6 +156,6 @@ public class ShowStratumAction implements IObjectActionDelegate, IMenuCreator {
     @Override
 	public void dispose() {
     }
-    
+
 
 }

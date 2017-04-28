@@ -100,33 +100,33 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	private IWorkbenchWindow fWindow;
 	private Object fSelection;
 	private IRegion fRegion;
-	
+
 	/**
 	 * Is the action waiting for an evaluation.
 	 */
 	private boolean fEvaluating;
-	
+
 	/**
 	 * The new target part to use with the evaluation completes.
 	 */
 	private IWorkbenchPart fNewTargetPart= null;
-	
+
 	/**
 	 * Used to resolve editor input for selected stack frame
 	 */
 	private IDebugModelPresentation fPresentation;
-			
+
 	public EvaluateAction() {
 		super();
 	}
-	
+
 	/**
 	 * Returns the 'object' context for this evaluation,
 	 * or <code>null</code> if none. If the evaluation is being performed
 	 * in the context of the variables view/inspector. Then
 	 * perform the evaluation in the context of the
 	 * selected value.
-	 * 
+	 *
 	 * @return Java object or <code>null</code>
 	 */
 	protected IJavaObject getObjectContext() {
@@ -151,7 +151,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 											if (value instanceof IJavaObject) {
 												return (IJavaObject)value;
 											}
-										} 
+										}
 									} catch (DebugException e) {
 										JDIDebugUIPlugin.log(e);
 									}
@@ -167,9 +167,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * Finds the currently selected stack frame in the UI.
 	 * Stack frames from a scrapbook launch are ignored.
@@ -181,10 +181,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			frame = EvaluationContextManager.getEvaluationContext(getWindow());
 		} else {
 			frame = EvaluationContextManager.getEvaluationContext(part);
-		}		
+		}
 		return frame;
 	}
-	
+
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
@@ -194,7 +194,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (JDIDebugUIPlugin.getDefault() == null) {
 			return;
 		}
-		
+
 		final IJavaValue value= result.getValue();
 		if (result.hasErrors() || value != null) {
 			final Display display= JDIDebugUIPlugin.getStandardDisplay();
@@ -204,7 +204,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			displayResult(result);
 		}
 	}
-	
+
 	protected void evaluationCleanup() {
 		setEvaluating(false);
 		setTargetPart(fNewTargetPart);
@@ -212,26 +212,26 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * Display the given evaluation result.
 	 */
-	abstract protected void displayResult(IEvaluationResult result);	
-	
-	protected void run() {		
+	abstract protected void displayResult(IEvaluationResult result);
+
+	protected void run() {
 		// eval in context of object or stack frame
-		final IJavaObject object = getObjectContext();		
+		final IJavaObject object = getObjectContext();
 		final IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
-			reportError(ActionMessages.Evaluate_error_message_stack_frame_context); 
+			reportError(ActionMessages.Evaluate_error_message_stack_frame_context);
 			return;
 		}
-		
+
 		// check for nested evaluation
 		IJavaThread thread = (IJavaThread)stackFrame.getThread();
 		if (thread.isPerformingEvaluation()) {
-			reportError(ActionMessages.EvaluateAction_Cannot_perform_nested_evaluations__1); 
+			reportError(ActionMessages.EvaluateAction_Cannot_perform_nested_evaluations__1);
 			return;
 		}
-		
+
 		setNewTargetPart(getTargetPart());
-        
+
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             @Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -245,13 +245,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                                 return;
                             }
                             String expression= (String)selection;
-                            
+
                             engine = JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
                             setEvaluating(true);
                             boolean hitBreakpoints= Platform.getPreferencesService().getBoolean(
-                            		JDIDebugPlugin.getUniqueIdentifier(), 
-                            		JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION, 
-                            		true, 
+                            		JDIDebugPlugin.getUniqueIdentifier(),
+                            		JDIDebugModel.PREF_SUSPEND_FOR_BREAKPOINTS_DURING_EVALUATION,
+                            		true,
                             		null);
                             if (object == null) {
                                 engine.evaluate(expression, stackFrame, EvaluateAction.this, DebugEvent.EVALUATION, hitBreakpoints);
@@ -263,13 +263,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
                             throw new InvocationTargetException(e, getExceptionMessage(e));
                         }
                     }
-                    throw new InvocationTargetException(null, ActionMessages.Evaluate_error_message_src_context); 
+                    throw new InvocationTargetException(null, ActionMessages.Evaluate_error_message_src_context);
                 }
                 // thread not suspended
-                throw new InvocationTargetException(null, ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1); 
+                throw new InvocationTargetException(null, ActionMessages.EvaluateAction_Thread_not_suspended___unable_to_perform_evaluation__1);
             }
         };
-        
+
         IWorkbench workbench = JDIDebugUIPlugin.getDefault().getWorkbench();
         try {
             workbench.getProgressService().busyCursorWhile(runnable);
@@ -289,9 +289,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
         } catch (InterruptedException e) {
         }
 	}
-		
+
 	protected IJavaProject getJavaProject(IStackFrame stackFrame) {
-		
+
 		// Get the corresponding element.
 		ILaunch launch = stackFrame.getLaunch();
 		if (launch == null) {
@@ -303,7 +303,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return javaProject;
 	}
-	
+
 	/**
 	 * Updates the enabled state of the action that this is a
 	 * delegate for.
@@ -314,7 +314,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			resolveSelectedObject();
 		}
 	}
-	
+
 	/**
 	 * Resolves the selected object in the target part, or <code>null</code>
 	 * if there is no selection.
@@ -361,12 +361,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 						}
 					}
 					selectedObject= ss;
-				}			
+				}
 			}
 		}
 		setSelectedObject(selectedObject);
 	}
-	
+
 	private Object resolveSelectedObjectUsingToken(Object selectedObject, ITextSelection ts, IEditorPart editor) {
 		ITextEditor textEditor= (ITextEditor) editor;
 		IDocument doc= textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
@@ -390,7 +390,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Resolve an editor input from the source element of the stack frame
 	 * argument, and return whether it's equal to the editor input for the
@@ -417,14 +417,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return false;
 	}
-	
+
 	protected Shell getShell() {
 		if (getTargetPart() != null) {
 			return getTargetPart().getSite().getShell();
 		}
 		return JDIDebugUIPlugin.getActiveWorkbenchShell();
 	}
-	
+
 	protected IDataDisplay getDataDisplay() {
 		IDataDisplay display= getDirectDataDisplay();
 		if (display != null) {
@@ -439,7 +439,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					try {
 						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 					} catch (PartInitException e) {
-						JDIDebugUIPlugin.statusDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e.getStatus()); 
+						JDIDebugUIPlugin.statusDialog(ActionMessages.EvaluateAction_Cannot_open_Display_view, e.getStatus());
 					} finally {
 						page.activate(activePart);
 					}
@@ -447,13 +447,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				if (view != null) {
 					page.bringToTop(view);
 					return view.getAdapter(IDataDisplay.class);
-				}			
+				}
 			}
 		}
-		
-		return null;		
-	}	
-	
+
+		return null;
+	}
+
 	protected IDataDisplay getDirectDataDisplay() {
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
@@ -478,12 +478,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				IDataDisplay display= activePart.getAdapter(IDataDisplay.class);
 				if (display != null) {
 					return display;
-				}	
+				}
 			}
 		}
 		return null;
 	}
-	
+
 	protected boolean textHasContent(String text) {
 		if (text != null) {
 			int length= text.length();
@@ -497,7 +497,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Displays a failed evaluation message in the data display.
 	 */
@@ -505,21 +505,21 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		String message= getErrorMessage(result);
 		reportError(message);
 	}
-	
+
 	protected void reportError(String message) {
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)})); 
+				dataDisplay.displayExpressionValue(NLS.bind(ActionMessages.EvaluateAction__evaluation_failed__Reason, new String[] {format(message)}));
 			} else {
-				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1); 
+				dataDisplay.displayExpressionValue(ActionMessages.EvaluateAction__evaluation_failed__1);
 			}
 		} else {
 			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status); 
+			ErrorDialog.openError(getShell(), ActionMessages.Evaluate_error_title_eval_problems, null, status);
 		}
 	}
-	
+
 	private String format(String message) {
 		StringBuffer result= new StringBuffer();
 		int index= 0, pos;
@@ -531,7 +531,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return result.toString();
 	}
-	
+
 	public static String getExceptionMessage(Throwable exception) {
 		if (exception instanceof CoreException) {
 			CoreException ce = (CoreException)exception;
@@ -544,9 +544,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			}
 			return ce.getStatus().getMessage();
 		}
-		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() }); 
+		String message= NLS.bind(ActionMessages.Evaluate_error_message_direct_exception, new Object[] { exception.getClass() });
 		if (exception.getMessage() != null) {
-			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() }); 
+			message= NLS.bind(ActionMessages.Evaluate_error_message_exception_pattern, new Object[] { message, exception.getMessage() });
 		}
 		return message;
 	}
@@ -557,9 +557,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected static String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
 			InvocationException ie= exception;
 			ObjectReference ref= ie.exception();
-			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() }); 
+			return NLS.bind(ActionMessages.Evaluate_error_message_wrapped_exception, new Object[] { ref.referenceType().name() });
 	}
-	
+
 	protected String getErrorMessage(IEvaluationResult result) {
 		String[] errors= result.getErrorMessages();
 		if (errors.length == 0) {
@@ -567,7 +567,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return getErrorMessage(errors);
 	}
-	
+
 	protected String getErrorMessage(String[] errors) {
 		String message= ""; //$NON-NLS-1$
 		for (int i= 0; i < errors.length; i++) {
@@ -575,12 +575,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (i == 0) {
 				message= msg;
 			} else {
-				message= NLS.bind(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg }); 
+				message= NLS.bind(ActionMessages.Evaluate_error_problem_append_pattern, new Object[] { message, msg });
 			}
 		}
 		return message;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
@@ -594,9 +594,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	@Override
-	public void selectionChanged(IAction action, ISelection selection) { 
+	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
-	}	
+	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
@@ -631,11 +631,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void setAction(IAction action) {
 		fAction = action;
 	}
-	
+
 	/**
 	 * Returns a debug model presentation (creating one
 	 * if necessary).
-	 * 
+	 *
 	 * @return debug model presentation
 	 */
 	protected IDebugModelPresentation getDebugModelPresentation() {
@@ -644,8 +644,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return fPresentation;
 	}
-	
-	/** 
+
+	/**
 	 * Disposes this action's debug model presentation, if
 	 * one was created.
 	 */
@@ -705,7 +705,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
-	
+
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
@@ -741,7 +741,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void setWindow(IWorkbenchWindow window) {
 		fWindow = window;
 	}
-	
+
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
@@ -751,15 +751,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		setTargetPart(targetPart);
 		update();
 	}
-	
+
 	protected Object getSelectedObject() {
 		return fSelection;
 	}
-	
+
 	protected void setSelectedObject(Object selection) {
 		fSelection = selection;
 	}
-	
+
 	/**
 	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
 	 */
@@ -780,7 +780,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void setNewTargetPart(IWorkbenchPart newTargetPart) {
 		fNewTargetPart = newTargetPart;
 	}
-	
+
 	protected boolean isEvaluating() {
 		return fEvaluating;
 	}
@@ -788,20 +788,20 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void setEvaluating(boolean evaluating) {
 		fEvaluating = evaluating;
 	}
-	
+
 	/**
 	 * Returns the selected text region, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return
 	 */
 	protected IRegion getRegion() {
 		return fRegion;
 	}
-	
+
 	/**
 	 * Returns the styled text widget associated with the given part
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param part workbench part
 	 * @return associated style text widget or <code>null</code>
 	 */
@@ -818,11 +818,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return textWidget;
 	}
-	
+
 	/**
 	 * Returns an anchor point for a popup dialog on top of a styled text
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @param part or <code>null</code>
 	 * @return anchor point or <code>null</code>
 	 */
@@ -832,7 +832,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	        int midOffset = docRange.x + (docRange.y / 2);
 	        Point point = textWidget.getLocationAtOffset(midOffset);
 	        point = textWidget.toDisplay(point);
-	
+
 	        GC gc = new GC(textWidget);
 	        gc.setFont(textWidget.getFont());
 	        int height = gc.getFontMetrics().getHeight();

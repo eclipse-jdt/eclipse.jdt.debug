@@ -26,13 +26,13 @@ public class LibraryDetector {
 	 * <li>java.ext.dirs</li>
 	 * <li>java.endorsed.dirs</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
 		// if we are running raw j9
 		if ("j9".equalsIgnoreCase(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			// Map class lib versions onto things that the launch infrastructure understands.  J9 
+			// Map class lib versions onto things that the launch infrastructure understands.  J9
 			// behaves like 1.4 with-respect-to launch/debug
 			String configuration = System.getProperty("com.ibm.oti.configuration"); //$NON-NLS-1$
 			if ("found10".equals(configuration)) //$NON-NLS-1$

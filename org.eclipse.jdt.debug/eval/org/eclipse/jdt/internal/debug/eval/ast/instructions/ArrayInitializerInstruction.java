@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
-import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class ArrayInitializerInstruction extends ArrayInstruction {
 
@@ -25,7 +24,7 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 
 	/**
 	 * Constructor for ArrayInitializerInstruction.
-	 * 
+	 *
 	 * @param start
 	 */
 	public ArrayInitializerInstruction(String typeSignature, int length,
@@ -47,10 +46,7 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 		IJavaArray array = arrayType.newInstance(fLength);
 
 		for (int i = fLength - 1; i >= 0; i--) {
-			Object popValue = popValue();
-			if (popValue instanceof IJavaValue) {
-				array.setValue(i, (IJavaValue) popValue);
-			}
+			array.setValue(i, popValue());
 		}
 
 		push(array);

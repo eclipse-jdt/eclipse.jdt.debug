@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,38 +25,38 @@ import org.eclipse.ui.console.MessageConsole;
  * Tests console line tracker.
  */
 public class ConsoleTests extends AbstractDebugTest {
-	
+
 	public ConsoleTests(String name) {
 		super(name);
 	}
-	
+
 	class TestConsole extends MessageConsole {
-	    
+
 	    public boolean fInit = false;
 	    public boolean fDispose = false;
 
         public TestConsole(boolean autoLifecycle) {
             super("Life's like that", null, autoLifecycle);
         }
-        
+
         @Override
 		protected void init() {
             super.init();
             fInit = true;
         }
-        
+
         @Override
 		protected void dispose() {
             super.dispose();
             fDispose = true;
         }
-	    
+
 	}
-	
-	/** 
+
+	/**
 	 * Test that when a process is removed from a launch, the associated
 	 * console is closed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testRemoveProcess() throws Exception {
@@ -84,12 +84,12 @@ public class ConsoleTests extends AbstractDebugTest {
 					IConsole console = DebugUITools.getConsole(otherTarget);
 					assertNull("Console should no longer exist", console);
 				}
-			});			
+			});
 		} finally {
 			terminateAndRemove(target);
-		}				
-	} 
-	
+		}
+	}
+
 	public void testAutoLifecycle() {
 	    TestConsole console = new TestConsole(true);
 	    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
@@ -98,7 +98,7 @@ public class ConsoleTests extends AbstractDebugTest {
 	    assertTrue("Console was not initialized", console.fInit);
 	    assertTrue("Console was not disposed", console.fDispose);
 	}
-	
+
 	public void testManualLifecycle() {
 	    TestConsole console = new TestConsole(false);
 	    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
@@ -107,6 +107,6 @@ public class ConsoleTests extends AbstractDebugTest {
 	    assertTrue("Console was initialized", !console.fInit);
 	    assertTrue("Console was disposed", !console.fDispose);
 	    console.dispose();
-	}	
+	}
 
 }

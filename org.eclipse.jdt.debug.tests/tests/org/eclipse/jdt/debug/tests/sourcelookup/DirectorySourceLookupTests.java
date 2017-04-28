@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,11 +25,11 @@ import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
  */
 @SuppressWarnings("deprecation")
 public class DirectorySourceLookupTests extends AbstractDebugTest {
-	
+
 	public DirectorySourceLookupTests(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests source lookup in a top level type, in the default package.
 	 */
@@ -37,14 +37,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints"));
 	}
-	
+
 	/**
 	 * Tests source lookup in an inner type, the default package.
 	 */
@@ -52,15 +52,15 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", IInternalDebugCoreConstants.EMPTY_STRING, "Breakpoints.java");
 		assertTrue("did not find compilation unit for Breakpoints.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("Breakpoints$InnerRunnable"));
 	}
-	
-	
+
+
 	/**
 	 * Tests source lookup in a top level type.
 	 */
@@ -68,14 +68,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup"));
 	}
-	
+
 	/**
 	 * Tests source lookup in an inner type.
 	 */
@@ -83,14 +83,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup$Inner"));
 	}
-	
+
 	/**
 	 * Tests source lookup in an inner, inner type.
 	 */
@@ -98,14 +98,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "SourceLookup.java");
 		assertTrue("did not find compilation unit for SourceLookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.SourceLookup$Inner$Nested"));
 	}
-		
+
 	/**
 	 * Tests source lookup in a top level type, with a $ named class
 	 */
@@ -113,14 +113,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup"));
 	}
-	
+
 	/**
 	 * Tests source lookup in an inner type in a $ named class.
 	 */
@@ -128,14 +128,14 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup$Inner"));
-	}	
-	
+	}
+
 	/**
 	 * Tests source lookup in an inner type in a $ named class.
 	 */
@@ -143,11 +143,11 @@ public class DirectorySourceLookupTests extends AbstractDebugTest {
 		IPackageFragmentRoot root = getPackageFragmentRoot(get14Project(), "src");
 		File rootFile = root.getResource().getLocation().toFile();
 		IJavaSourceLocation location = new DirectorySourceLocation(rootFile);
-		
+
 		ICompilationUnit cu = getCompilationUnit(get14Project(), "src", "org.eclipse.debug.tests.targets", "Source_$_Lookup.java");
 		assertTrue("did not find compilation unit for Source_$_Lookup.java", cu.exists());
 		LocalFileStorage expectedSource = new LocalFileStorage(cu.getResource().getLocation().toFile());
-				
+
 		assertEquals("Source lookup failed", expectedSource, location.findSourceElement("org.eclipse.debug.tests.targets.Source_$_Lookup$Inner$Nested"));
-	}		
+	}
 }

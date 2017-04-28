@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,10 +28,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * Processes add/removed/changed VMs.
  */
 public class JREsUpdater {
-	
+
 	// the VMs defined when this updated is instantiated
-	private VMDefinitionsContainer fOriginalVMs;	
-	
+	private VMDefinitionsContainer fOriginalVMs;
+
 	/**
 	 * Contstructs a new VM updater to update VM install settings.
 	 */
@@ -41,7 +41,7 @@ public class JREsUpdater {
 		if (def != null) {
 			fOriginalVMs.setDefaultVMInstallCompositeID(JavaRuntime.getCompositeIdFromVM(def));
 		}
-	
+
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstall[] vms = types[i].getVMInstalls();
@@ -50,41 +50,41 @@ public class JREsUpdater {
 			}
 		}
 	}
-	
+
 	/**
 	 * Updates VM settings and returns whether the update was successful.
-	 * 
+	 *
 	 * @param jres new installed JREs
 	 * @param defaultJRE new default VM
 	 * @return whether the update was successful
 	 */
 	public boolean updateJRESettings(IVMInstall[] jres, IVMInstall defaultJRE) {
-		
+
 		// Create a VM definition container
 		VMDefinitionsContainer vmContainer = new VMDefinitionsContainer();
-		
+
 		// Set the default VM Id on the container
 		String defaultVMId = JavaRuntime.getCompositeIdFromVM(defaultJRE);
 		vmContainer.setDefaultVMInstallCompositeID(defaultVMId);
-		
+
 		// Set the VMs on the container
 		for (int i = 0; i < jres.length; i++) {
 			vmContainer.addVM(jres[i]);
 		}
-		
-		
+
+
 		// Generate XML for the VM defs and save it as the new value of the VM preference
 		saveVMDefinitions(vmContainer);
-		
+
 		return true;
 	}
-	
+
 	private void saveVMDefinitions(final VMDefinitionsContainer container) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					monitor.beginTask(JREMessages.JREsUpdater_0, 100); 
+					monitor.beginTask(JREMessages.JREsUpdater_0, 100);
 					String vmDefXML = container.getAsXML();
 					monitor.worked(40);
 					IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
@@ -99,7 +99,7 @@ public class JREsUpdater {
 				} finally {
 					monitor.done();
 				}
-				
+
 			}
 		};
 		try {

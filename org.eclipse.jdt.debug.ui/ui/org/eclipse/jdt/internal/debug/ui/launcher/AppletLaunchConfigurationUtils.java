@@ -43,11 +43,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 
 public class AppletLaunchConfigurationUtils {
-	
+
 	/**
 	 * Throws a core exception with an error status object built from
 	 * the given message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message the status message
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
@@ -65,13 +65,13 @@ public class AppletLaunchConfigurationUtils {
 	}
 
 	/**
-	 * Return the <code>IType</code> referenced by the specified name and contained in 
-	 * the specified project or throw a <code>CoreException</code> whose message explains why 
+	 * Return the <code>IType</code> referenced by the specified name and contained in
+	 * the specified project or throw a <code>CoreException</code> whose message explains why
 	 * this couldn't be done.
 	 */
 	public static IType getMainType(String mainTypeName, IJavaProject javaProject) throws CoreException {
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
-			abort(LauncherMessages.appletlauncher_utils_error_main_type_not_specified, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
+			abort(LauncherMessages.appletlauncher_utils_error_main_type_not_specified, null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		IType mainType = null;
 		try {
@@ -79,11 +79,11 @@ public class AppletLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(NLS.bind(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); 
+			abort(NLS.bind(LauncherMessages.appletlauncher_utils_error_main_type_does_not_exist, new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
 		}
 		return mainType;
-	}		
-	
+	}
+
 
 	/**
 	 * Find the specified (fully-qualified) type name in the specified java project.
@@ -100,15 +100,15 @@ public class AppletLaunchConfigurationUtils {
 		} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE) {
 			return ((IClassFile) javaElement).getType();
 		}
-		return null; 
+		return null;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static Set<IType> collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
 		IType[] types;
-		HashSet<IType> result = new HashSet<IType>(5);
+		HashSet<IType> result = new HashSet<>(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
 			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
@@ -127,7 +127,7 @@ public class AppletLaunchConfigurationUtils {
 		monitor.done();
 		return result;
 	}
-	
+
 	public static void collectTypes(Object element, IProgressMonitor monitor, Set<Object> result) throws JavaModelException/*, InvocationTargetException*/ {
 		element= computeScope(element);
 		while(element instanceof IMember) {
@@ -174,13 +174,13 @@ public class AppletLaunchConfigurationUtils {
 	}
 
 	private static List<IType> searchSubclassesOfApplet(IProgressMonitor pm, IJavaElement javaElement) {
-		return new ArrayList<IType>(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
+		return new ArrayList<>(collectAppletTypesInProject(pm, javaElement.getJavaProject()));
 	}
-	
+
 	private static boolean isSubclassOfApplet(IProgressMonitor pm, IType type) {
 		return collectAppletTypesInProject(pm, type.getJavaProject()).contains(type);
 	}
-	
+
 	private static Object computeScope(Object element) {
         if (element instanceof IJavaElement) {
             return element;
@@ -196,7 +196,7 @@ public class AppletLaunchConfigurationUtils {
 			} else {
 			    element= javaElement;
             }
-            
+
 		}
 		return element;
 	}
@@ -210,14 +210,14 @@ public class AppletLaunchConfigurationUtils {
 	 * @throws InterruptedException
 	 */
 	public static IType[] findApplets(IRunnableContext context, final Object[] elements) throws InvocationTargetException, InterruptedException {
-		final Set<Object> result= new HashSet<Object>();
-	
+		final Set<Object> result= new HashSet<>();
+
 		if (elements.length > 0) {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
 				@Override
 				public void run(IProgressMonitor pm) throws InterruptedException {
 					int nElements= elements.length;
-					pm.beginTask(LauncherMessages.appletlauncher_search_task_inprogress, nElements); 
+					pm.beginTask(LauncherMessages.appletlauncher_search_task_inprogress, nElements);
 					try {
 						for (int i= 0; i < nElements; i++) {
 							try {
@@ -234,7 +234,7 @@ public class AppletLaunchConfigurationUtils {
 					}
 				}
 			};
-			context.run(true, true, runnable);			
+			context.run(true, true, runnable);
 		}
 		return result.toArray(new IType[result.size()]) ;
 	}

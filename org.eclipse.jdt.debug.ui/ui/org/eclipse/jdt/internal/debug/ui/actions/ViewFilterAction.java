@@ -27,14 +27,14 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ *
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
-		
+
 	private IViewPart fView;
 	private IAction fAction;
 	private IPropertyChangeListener fListener = new Updater();
-	
+
 	class Updater implements IPropertyChangeListener {
 
 		/* (non-Javadoc)
@@ -46,9 +46,9 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 					event.getProperty().equals(getCompositeKey())) {
 				fAction.setChecked(getPreferenceValue());
 			}
-			
+
 		}
-		
+
 	}
 
 	public ViewFilterAction() {
@@ -125,11 +125,11 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	protected IPreferenceStore getPreferenceStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Returns the value of this filters preference (on/off) for the given
 	 * view.
-	 * 
+	 *
 	 * @param part
 	 * @return boolean
 	 */
@@ -142,20 +142,20 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		} else {
 			value = store.getBoolean(getPreferenceKey());
 		}
-		return value;		
+		return value;
 	}
-	
+
 	/**
 	 * Returns the key for this action's preference
-	 * 
+	 *
 	 * @return String
 	 */
-	protected abstract String getPreferenceKey(); 
+	protected abstract String getPreferenceKey();
 
 	/**
 	 * Returns the key used by this action to store its preference value/setting.
 	 * Based on a base key (suffix) and part id (prefix).
-	 *  
+	 *
 	 * @return preference store key
 	 */
 	protected String getCompositeKey() {
@@ -163,11 +163,11 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		String viewKey = getView().getSite().getId();
 		return viewKey + "." + baseKey; //$NON-NLS-1$
 	}
-	
+
 	protected IViewPart getView() {
 		return fView;
 	}
-	
+
 	protected StructuredViewer getStructuredViewer() {
 		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
@@ -175,13 +175,13 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 			if (viewer instanceof StructuredViewer) {
 				return (StructuredViewer)viewer;
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether this action is selected/checked.
-	 * 
+	 *
 	 * @return whether this action is selected/checked
 	 */
 	protected boolean getValue() {

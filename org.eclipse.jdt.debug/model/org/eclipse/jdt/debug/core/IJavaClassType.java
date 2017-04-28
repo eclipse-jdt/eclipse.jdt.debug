@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * The class of an object on a Java debug target.
- * 
+ *
  * @see IJavaValue
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -29,7 +29,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 	 * location when this method invocation is complete. This method does not
 	 * return until the method invocation is complete. Resuming the specified
 	 * thread can result in breakpoints being hit, infinite loops, and deadlock.
-	 * 
+	 *
 	 * @param signature
 	 *            the JNI style signature of the method to be invoked
 	 * @param args
@@ -68,7 +68,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 	 * complete. This method does not return until the method invocation is
 	 * complete. Resuming the specified thread can result in breakpoints being
 	 * hit, infinite loops, and deadlock.
-	 * 
+	 *
 	 * @param selector
 	 *            the selector of the method to be invoked
 	 * @param signature
@@ -103,7 +103,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 	/**
 	 * Returns the superclass of this class type, or <code>null</code> if no
 	 * such class exists.
-	 * 
+	 *
 	 * @return the superclass of this class type, or <code>null</code>
 	 * @exception DebugException
 	 *                if this method fails. Reasons include:
@@ -119,7 +119,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 	 * Returns the interface objects associated with the interfaces this class
 	 * directly implements. Only those interfaces declared in the
 	 * <code>implements</code> clause for this class are included.
-	 * 
+	 *
 	 * @return the interface objects associated with the interfaces this class
 	 *         directly implements
 	 * @exception DebugException
@@ -136,7 +136,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 	/**
 	 * Returns the interface objects associated with <em>all</em> interfaces
 	 * this class implements, directly or indirectly.
-	 * 
+	 *
 	 * @return the interface objects associated with the interfaces this class
 	 *         directly implements, directly or indirectly
 	 * @exception DebugException
@@ -152,7 +152,7 @@ public interface IJavaClassType extends IJavaReferenceType {
 
 	/**
 	 * Returns whether this type is declared as a type safe enumeration.
-	 * 
+	 *
 	 * @return <code>true</code> if this type is a type safe enumeration,
 	 *         <code>false</code> otherwise.
 	 * @exception DebugException

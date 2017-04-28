@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ import org.eclipse.osgi.util.NLS;
  *
  */
 public class WatchpointFieldChange extends WatchpointChange {
-	
+
 	private IField fDestField;
-	
+
 	public WatchpointFieldChange(IJavaWatchpoint watchpoint, IField destField) throws CoreException {
 		super(watchpoint);
 		fDestField = destField;
@@ -51,7 +51,7 @@ public class WatchpointFieldChange extends WatchpointChange {
 	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(IInternalDebugUIConstants.WORKING_SET_NAME, getOriginalWorkingSets());// creating breakpoint in the original working set
 		BreakpointUtils.addJavaBreakpointAttributes(map, fDestField);
 		IResource resource = BreakpointUtils.getBreakpointResource(fDestField);

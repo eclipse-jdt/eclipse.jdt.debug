@@ -76,24 +76,24 @@ public class EventDispatcher implements Runnable {
 	 * Queue of debug model events to fire, created when processing events on
 	 * the target VM. Keyed by event sets, processed independently.
 	 */
-	private Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<EventSet, List<DebugEvent>>();
+	private Map<EventSet, List<DebugEvent>> fSetToQueue = new HashMap<>();
 
 	/**
 	 * Constructs a new event dispatcher listening for events originating from
 	 * the specified debug target's underlying VM.
-	 * 
+	 *
 	 * @param target
 	 *            the target this event dispatcher belongs to
 	 */
 	public EventDispatcher(JDIDebugTarget target) {
-		fEventHandlers = new HashMap<EventRequest, IJDIEventListener>(10);
+		fEventHandlers = new HashMap<>(10);
 		fTarget = target;
 		fShutdown = false;
 	}
 
 	/**
 	 * Dispatch the given event set.
-	 * 
+	 *
 	 * @param eventSet
 	 *            events to dispatch
 	 */
@@ -139,7 +139,7 @@ public class EventDispatcher implements Runnable {
 					try {
 						if (((IJavaLineBreakpoint) listener).isConditionEnabled()) {
 							if (deferredEvents == null) {
-								deferredEvents = new ArrayList<Event>(5);
+								deferredEvents = new ArrayList<>(5);
 							}
 							deferredEvents.add(event);
 							continue;
@@ -224,7 +224,7 @@ public class EventDispatcher implements Runnable {
 	 * Continuously reads events that are coming from the event queue, until
 	 * this event dispatcher is shutdown. A debug target starts a thread on this
 	 * method on startup.
-	 * 
+	 *
 	 * @see #shutdown()
 	 */
 	@Override
@@ -287,7 +287,7 @@ public class EventDispatcher implements Runnable {
 
 	/**
 	 * Returns whether this event dispatcher has been shutdown.
-	 * 
+	 *
 	 * @return whether this event dispatcher has been shutdown
 	 */
 	private boolean isShutdown() {
@@ -298,7 +298,7 @@ public class EventDispatcher implements Runnable {
 	 * Registers the given listener for with the given event request. When an
 	 * event is received from the underlying VM, that is associated with the
 	 * given event request, the listener will be notified.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to register
 	 * @param request
@@ -314,7 +314,7 @@ public class EventDispatcher implements Runnable {
 	 * De-registers the given listener and event request. The listener will no
 	 * longer be notified of events associated with the request. Listeners are
 	 * responsible for deleting the associated event request if required.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to de-register
 	 * @param request
@@ -327,7 +327,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Adds the given event to the queue of debug events to fire when done
 	 * dispatching events from the given event set.
-	 * 
+	 *
 	 * @param event
 	 *            the event to queue
 	 * @param set
@@ -337,7 +337,7 @@ public class EventDispatcher implements Runnable {
 		synchronized (fSetToQueue) {
 			List<DebugEvent> list = fSetToQueue.get(set);
 			if (list == null) {
-				list = new ArrayList<DebugEvent>(5);
+				list = new ArrayList<>(5);
 				fSetToQueue.put(set, list);
 			}
 			list.add(event);

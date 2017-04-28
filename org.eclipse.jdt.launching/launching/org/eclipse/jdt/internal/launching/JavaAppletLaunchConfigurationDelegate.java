@@ -43,19 +43,19 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate implements IDebugEventSetListener {
-		
+
 	/**
 	 * Mapping of ILaunch objects to File objects that represent the HTML file
 	 * used to initiate the applet launch.  This is used to delete the HTML
 	 * file when the launch terminates.
 	 */
-	private static Map<ILaunch, File> fgLaunchToFileMap = new HashMap<ILaunch, File>();
-	
+	private static Map<ILaunch, File> fgLaunchToFileMap = new HashMap<>();
+
 	/**
 	 * Used to map temporary file to launch object.
 	 */
 	private ILaunch fLaunch;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -73,12 +73,12 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 	/**
 	 * Returns the system property string for the policy file
-	 * 
+	 *
 	 * @param workingDir the working directory
 	 * @return system property for the policy file
 	 */
 	public String getJavaPolicyFile(File workingDir) {
-			File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$ 
+			File file = new File(workingDir, "java.policy.applet");//$NON-NLS-1$
 			if (!file.exists()) {
 				// copy it to the working directory
 				File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
@@ -94,7 +94,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 	/**
 	 * Using the specified launch configuration, build an HTML file that specifies the applet to launch. Return the name of the HTML file.
-	 * 
+	 *
 	 * @param configuration
 	 *            the launch config
 	 * @param dir
@@ -159,7 +159,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			return '"' + convertToHTMLContent(string) + '"';
 		}
 	}
-	
+
 	private static int count(String string, char character) {
 		int count = 0;
 		for (int i = 0; i < string.length(); i++) {
@@ -206,7 +206,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			DebugEvent event = events[i];
 			Object eventSource = event.getSource();
 			switch(event.getKind()) {
-				
+
 				// Delete the HTML file used for the launch
 				case DebugEvent.TERMINATE :
 					if (eventSource != null) {
@@ -226,10 +226,10 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			}
 		}
 	}
-	
+
 	/**
 	 * Cleans up event listener and temporary file for the launch.
-	 * 
+	 *
 	 * @param launch the launch
 	 */
 	private void cleanup(ILaunch launch) {
@@ -243,7 +243,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 					DebugPlugin.getDefault().removeDebugEventListener(this);
 				}
 			}
-		}		
+		}
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			return getInputStreamAsByteArray(stream, (int) file.length());
 		}
 	}
-	
+
 	/**
 	 * Returns the given input stream's contents as a byte array.
 	 * If a length is specified (ie. if length != -1), only length bytes
@@ -320,7 +320,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 		return contents;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -330,15 +330,15 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		// Construct the HTML file and set its name as a program argument
 		File htmlFile = buildHTMLFile(configuration, workingDir);
 		if (htmlFile == null) {
-			abort(LaunchingMessages.JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1, null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); 
-		}			
-		// Add a debug listener if necessary 
+			abort(LaunchingMessages.JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1, null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML);
+		}
+		// Add a debug listener if necessary
 		if (fgLaunchToFileMap.isEmpty()) {
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
-		// Add a mapping of the launch to the html file 
-		fgLaunchToFileMap.put(fLaunch, htmlFile);		
-		return htmlFile.getName();		
+		// Add a mapping of the launch to the html file
+		fgLaunchToFileMap.put(fLaunch, htmlFile);
+		return htmlFile.getName();
 	}
 
 	/* (non-Javadoc)
@@ -364,7 +364,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 
 	/**
 	 * Returns the applet's main type name.
-	 * 
+	 *
 	 * @param configuration the config
 	 * @return the main type name
 	 * @throws CoreException if a problem occurs
@@ -389,8 +389,8 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			//default to eclipse directory
 			return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
 		}
-		return resource.getLocation().toFile(); 
+		return resource.getLocation().toFile();
 	}
-	
-	
+
+
 }

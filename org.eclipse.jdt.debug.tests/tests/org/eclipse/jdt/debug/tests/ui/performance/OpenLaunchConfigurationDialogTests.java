@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,10 +36,10 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
     }
 
     /**
-     * The local java application id 
+     * The local java application id
      */
     public static String fgIdentifier= "org.eclipse.jdt.launching.localJavaApplication";
-    
+
     /**
      * Tests opening the LCD on a given launch configuration on the java tab group 100 times
      */
@@ -48,13 +48,13 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
         ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection= new StructuredSelection(config);
 		for (int i = 0; i < 100; i++) {
-		    openLCD(selection, fgIdentifier); 
+		    openLCD(selection, fgIdentifier);
         }
-		
+
 		commitMeasurements();
 		assertPerformance();
     }
-    
+
     /**
      * Tests opening the LCD on a specific launch configuration on the java tab group 1 time
      */
@@ -72,7 +72,7 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
      */
     private void openLCD(final IStructuredSelection selection, final String groupIdentifier) {
         //set a status to go to the classpath tab
-	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, IInternalDebugCoreConstants.EMPTY_STRING, null); 
+	    IStatus status = new Status(IStatus.INFO, IJavaDebugUIConstants.PLUGIN_ID, 1000, IInternalDebugCoreConstants.EMPTY_STRING, null);
 		LaunchConfigurationsDialog dialog= new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
 		dialog.setBlockOnOpen(false);
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);

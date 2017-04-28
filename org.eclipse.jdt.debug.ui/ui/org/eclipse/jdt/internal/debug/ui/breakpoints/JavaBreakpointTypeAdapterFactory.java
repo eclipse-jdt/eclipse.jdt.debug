@@ -34,11 +34,11 @@ import org.eclipse.osgi.util.NLS;
  * Factory for Java breakpoint types
  */
 public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
-    
-    private Map<String, Object> fStratumTypes = new HashMap<String, Object>();
-    
+
+    private Map<String, Object> fStratumTypes = new HashMap<>();
+
     // map of breakpoint type names to breakpoint type categories
-    private Map<String, IBreakpointTypeCategory> fOtherTypes = new HashMap<String, IBreakpointTypeCategory>();
+    private Map<String, IBreakpointTypeCategory> fOtherTypes = new HashMap<>();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -67,7 +67,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
                     if (stratum != null) {
                         Object type = fStratumTypes.get(stratum);
                         if (type == null) {
-                            String label = NLS.bind(BreakpointMessages.JavaBreakpointTypeAdapterFactory_0, new String[]{stratum}); 
+                            String label = NLS.bind(BreakpointMessages.JavaBreakpointTypeAdapterFactory_0, new String[]{stratum});
                             if (stratum.equalsIgnoreCase("jsp")) { //$NON-NLS-1$
                             	type = new BreakpointTypeCategory(label, getImageDescriptor(JavaDebugImages.IMG_OBJS_JSP_BRKPT_TYPE));
                             } else {
@@ -78,7 +78,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
 						return (T) type;
                     }
                 } catch (CoreException e) {
-                }                
+                }
             }
             if (adaptableObject instanceof IBreakpoint) {
             	IBreakpoint breakpoint = (IBreakpoint)adaptableObject;
@@ -113,7 +113,7 @@ public class JavaBreakpointTypeAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
         return new Class[]{IBreakpointTypeCategory.class};
     }
-	
+
 	private ImageDescriptor getImageDescriptor(String key) {
 		return JavaDebugImages.getImageDescriptor(key);
 	}

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.test.performance.Dimension;
 public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implements IValueDetailListener {
 
     private Object fLock = new Object();
-    
+
     /**
      * Constructor
      * @param name
@@ -45,9 +45,9 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
     		fLock.notifyAll();
 		}
 	}
-    
+
     /**
-     * Tests the performance of calculating the 'toString' method 
+     * Tests the performance of calculating the 'toString' method
      * @throws Exception
      */
     public void testToStringDetails() throws Exception {
@@ -66,7 +66,7 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         	assertNotNull("Missing variable 'v'", variable);
         	IDebugModelPresentation presentation = DebugUITools.newDebugModelPresentation("org.eclipse.jdt.debug");
         	IValue value = variable.getValue();
-        	
+
         	// warm up
         	for (int i = 0; i < 100; i++) {
         		synchronized (fLock) {
@@ -74,7 +74,7 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         			fLock.wait(30000);
         		}
         	}
-        	
+
         	// test
         	for (int i = 0; i < 300; i++) {
         		startMeasuring();
@@ -86,10 +86,10 @@ public class PerfVariableDetailTests extends AbstractDebugPerformanceTest implem
         		}
         		stopMeasuring();
         	}
-        	
+
         	commitMeasurements();
         	assertPerformance();
-        	
+
         } finally {
         	removeAllBreakpoints();
         	terminateAndRemove(thread);

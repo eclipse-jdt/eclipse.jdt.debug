@@ -31,10 +31,10 @@ public class SnippetMessages {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 */
 	public static String getFormattedString(String key, Object arg) {

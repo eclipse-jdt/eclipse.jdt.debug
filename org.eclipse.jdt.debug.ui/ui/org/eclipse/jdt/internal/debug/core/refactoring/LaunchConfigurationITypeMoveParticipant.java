@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 /**
  */
 public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
-	
+
 	private IType fType;
 	private IJavaElement fDestination;
 
@@ -61,7 +61,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	 */
 	@Override
 	public String getName() {
-		return RefactoringMessages.LaunchConfigurationParticipant_0; 
+		return RefactoringMessages.LaunchConfigurationParticipant_0;
 	}
 
 	/* (non-Javadoc)

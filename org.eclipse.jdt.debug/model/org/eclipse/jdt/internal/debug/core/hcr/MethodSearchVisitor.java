@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Yevgen Kogan - Bug 403475 - Hot Code Replace drops too much frames in some cases
@@ -125,7 +125,7 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	/**
 	 * Sets the signature of the method to search for
-	 * 
+	 *
 	 * @param methodName
 	 *            name of method to search for
 	 * @param methodSignature
@@ -147,7 +147,7 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	/**
 	 * Returns the search result, or <code>null</code> if none
-	 * 
+	 *
 	 * @return matching method declartion or <code>null</code>
 	 */
 	public MethodDeclaration getMatch() {
@@ -156,7 +156,7 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 	 * MethodDeclaration)
 	 */
@@ -206,7 +206,7 @@ public class MethodSearchVisitor extends ASTVisitor {
 
 	/**
 	 * Returns whether this visitor is still searching for a match.
-	 * 
+	 *
 	 * @return whether this visitor is still searching for a match
 	 */
 	private boolean isSearching() {

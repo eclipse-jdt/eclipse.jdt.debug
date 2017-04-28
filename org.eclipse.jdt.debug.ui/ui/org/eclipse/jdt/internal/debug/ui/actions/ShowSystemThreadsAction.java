@@ -18,6 +18,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
@@ -41,7 +42,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 	    if (!getValue()) {
-            
+
             IJavaThread thread = getJavaThread(element);
 
 	        if (thread != null) {
@@ -54,7 +55,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 	    }
 	    return true;
 	}
-    
+
 	private IJavaThread getJavaThread(Object element) {
 	    IJavaThread thread = null;
 
@@ -105,7 +106,7 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 			}
 		}
 	}
-	
+
 	private void refresh(Object source) {
         final IJavaThread thread = getJavaThread(source);
         if (thread != null) {
@@ -114,7 +115,10 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
-							getStructuredViewer().refresh();
+							StructuredViewer viewer = getStructuredViewer();
+							if (viewer != null) {
+								viewer.refresh();
+							}
 						}
 					};
 					JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
@@ -122,6 +126,6 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 				}
 			} catch (DebugException e) {
 			}
-		}		
+		}
 	}
 }

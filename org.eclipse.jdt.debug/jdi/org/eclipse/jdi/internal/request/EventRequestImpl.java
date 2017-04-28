@@ -43,7 +43,7 @@ import com.sun.jdi.request.StepRequest;
 /**
  * this class implements the corresponding interfaces declared by the JDI
  * specification. See the com.sun.jdi package for more information.
- * 
+ *
  */
 public abstract class EventRequestImpl extends MirrorImpl implements
 		EventRequest {
@@ -137,7 +137,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	protected ArrayList<ObjectReference> fInstanceFilters = null;
 	/**
 	 * source name filters
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected ArrayList<String> fSourceNameFilters = null;
@@ -177,7 +177,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	@Override
 	public void putProperty(Object key, Object value) {
 		if (fPropertyMap == null)
-			fPropertyMap = new HashMap<Object, Object>();
+			fPropertyMap = new HashMap<>();
 
 		if (value == null)
 			fPropertyMap.remove(key);
@@ -344,7 +344,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	public void addCountFilter(int count) throws InvalidRequestStateException {
 		checkDisabled();
 		if (fCountFilters == null)
-			fCountFilters = new ArrayList<Integer>();
+			fCountFilters = new ArrayList<>();
 
 		fCountFilters.add(new Integer(count));
 	}
@@ -360,7 +360,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		if (threadFilter.isCollected())
 			throw new ObjectCollectedException();
 		if (fThreadFilters == null)
-			fThreadFilters = new ArrayList<ThreadReference>();
+			fThreadFilters = new ArrayList<>();
 
 		fThreadFilters.add(threadFilter);
 	}
@@ -374,7 +374,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		checkVM(filter);
 		checkDisabled();
 		if (fClassFilterRefs == null)
-			fClassFilterRefs = new ArrayList<ReferenceType>();
+			fClassFilterRefs = new ArrayList<>();
 
 		fClassFilterRefs.add(filter);
 	}
@@ -387,7 +387,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			throws InvalidRequestStateException {
 		checkDisabled();
 		if (fClassFilters == null)
-			fClassFilters = new ArrayList<String>();
+			fClassFilters = new ArrayList<>();
 
 		fClassFilters.add(filter);
 	}
@@ -401,7 +401,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			throws InvalidRequestStateException {
 		checkDisabled();
 		if (fClassExclusionFilters == null)
-			fClassExclusionFilters = new ArrayList<String>();
+			fClassExclusionFilters = new ArrayList<>();
 
 		fClassExclusionFilters.add(filter);
 	}
@@ -416,7 +416,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		// Used in createBreakpointRequest.
 		checkVM(location);
 		if (fLocationFilters == null)
-			fLocationFilters = new ArrayList<LocationImpl>();
+			fLocationFilters = new ArrayList<>();
 
 		fLocationFilters.add(location);
 	}
@@ -434,7 +434,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 			checkVM(refType);
 
 		if (fExceptionFilters == null)
-			fExceptionFilters = new ArrayList<ExceptionFilter>();
+			fExceptionFilters = new ArrayList<>();
 
 		ExceptionFilter filter = new ExceptionFilter();
 		filter.fException = refType;
@@ -451,7 +451,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		// Used in createXWatchpointRequest methods.
 		checkVM(field);
 		if (fFieldFilters == null)
-			fFieldFilters = new ArrayList<FieldImpl>();
+			fFieldFilters = new ArrayList<>();
 
 		fFieldFilters.add(field);
 	}
@@ -467,7 +467,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		checkVM(thread);
 
 		if (fThreadStepFilters == null)
-			fThreadStepFilters = new ArrayList<ThreadStepFilter>();
+			fThreadStepFilters = new ArrayList<>();
 
 		ThreadStepFilter filter = new ThreadStepFilter();
 		filter.fThread = thread;
@@ -478,7 +478,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 	/**
 	 * Helper method which allows instance filters to be added
-	 * 
+	 *
 	 * @param instance
 	 *            the object ref instance to add to the listing
 	 */
@@ -486,7 +486,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 		checkDisabled();
 		checkVM(instance);
 		if (fInstanceFilters == null) {
-			fInstanceFilters = new ArrayList<ObjectReference>();
+			fInstanceFilters = new ArrayList<>();
 		}
 		fInstanceFilters.add(instance);
 	}
@@ -494,7 +494,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	/**
 	 * Adds a source name filter to the request. An exact match or pattern
 	 * beginning OR ending in '*'.
-	 * 
+	 *
 	 * @param pattern
 	 *            source name pattern
 	 * @since 3.3
@@ -502,7 +502,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 	public void addSourceNameFilter(String pattern) {
 		checkDisabled();
 		if (fSourceNameFilters == null) {
-			fSourceNameFilters = new ArrayList<String>();
+			fSourceNameFilters = new ArrayList<>();
 		}
 		fSourceNameFilters.add(pattern);
 	}
@@ -714,7 +714,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 	/**
 	 * Returns whether JDWP supports source name filters (a 1.6 feature).
-	 * 
+	 *
 	 * @return whether JDWP supports source name filters
 	 */
 	private boolean supportsSourceNameFilters() {
@@ -731,10 +731,10 @@ public abstract class EventRequestImpl extends MirrorImpl implements
 
 		java.lang.reflect.Field[] fields = EventRequestImpl.class
 				.getDeclaredFields();
-		fStepSizeMap = new HashMap<Integer, String>();
-		fStepDepthMap = new HashMap<Integer, String>();
-		fSuspendPolicyMap = new HashMap<Integer, String>();
-		fModifierKindMap = new HashMap<Integer, String>();
+		fStepSizeMap = new HashMap<>();
+		fStepDepthMap = new HashMap<>();
+		fSuspendPolicyMap = new HashMap<>();
+		fModifierKindMap = new HashMap<>();
 		for (Field field : fields) {
 			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0
 					|| (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0

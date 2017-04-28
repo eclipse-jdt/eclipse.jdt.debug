@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -70,13 +70,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 	static final int I_FC= 37;
 	static final int I_FD= 38;
 
-	static final String[] qualifiers= 
+	static final String[] qualifiers=
 		{"T_T",     "T_T_A",    "T_A",    "T_T_A_AA", "T_A_AA",   "T_AA",   "T_T_this", "T_T_Athis", "T_A_this", "T_B_this",
 		"T_C_this", "T_E_this", "I_A",    "I_AA",     "I_AB",     "I_AC",   "I_AD",     "I_AE",      "I_AF",     "I_B",
 		"I_BB",     "I_BC",     "I_BD",   "I_C",      "I_CB",     "I_CC",   "I_CD",     "I_D",       "I_DB",     "I_DC",
 		"I_DD",     "I_E",      "I_EB",   "I_EC",     "I_ED",     "I_F",    "I_FB",     "I_FC",      "I_FD",     "T_T_B",
 		"T_B",      "T_T_B_BB", "T_B_BB", "T_BB",     "T_T_A_AB", "T_A_AB", "T_AB"};
-	
+
 	static final int [] qualifiersLevel=
 		{0, 1, 1, 2, 2, 2, 0, 1, 1, 1,
 		 1, 1, 1, 2, 2, 2, 2, 2, 2, 1,
@@ -118,10 +118,10 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		gen_evalNestedTypeTestStatic();
 		System.out.println("done");
 	}
-	
+
 	public static void gen_AA_aa() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('c', 2, code);
 		createTest('d', 2, code);
@@ -137,13 +137,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestThis('i', 2, code);
 		createTestThis('j', 2, code);
 		createTestsStaticFields_A(code);
-		
+
 		createJavaFile(code, 65, 4);
 	}
-	
+
 	public static void gen_AA_aaStatic() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('d', 2, code);
 		createTest('f', 2, code);
@@ -153,10 +153,10 @@ public class NestedTypeTestGenerator extends TestGenerator {
 
 		createJavaFile(code, 69, 4);
 	}
-	
+
 	public static void gen_AB_ab() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('c', 2, code);
 		createTest('d', 2, code);
@@ -177,13 +177,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'd', code);
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
-		
+
 		createJavaFile(code, 94, 4);
 	}
 
 	public static void gen_AC_ac() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('g', 2, code);
 		createTest('h', 2, code);
@@ -192,13 +192,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'd', code);
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
-		
+
 		createJavaFile(code, 120, 4);
 	}
-	
+
 	public static void gen_AD_ad() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('g', 2, code);
 		createTest('h', 2, code);
@@ -207,13 +207,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'd', code);
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
-		
+
 		createJavaFile(code, 145, 4);
 	}
-	
+
 	public static void gen_A_a() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 1, code);
 		createTest('c', 1, code);
 		createTest('d', 1, code);
@@ -231,33 +231,33 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AB, 'f', code);
 		createTestQualifier(I_AB, 'i', code);
 		createTestQualifier(I_AB, 'j', code);
-		
+
 		createJavaFile(code, 155, 3);
 	}
-	
+
 	public static void gen_AE_ae() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('h', 2, code);
 		createTestsStaticFields_A(code);
-		
+
 		createJavaFile(code, 179, 4);
 	}
-	
+
 	public static void gen_AF_af() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTest('h', 2, code);
 		createTestsStaticFields_A(code);
-		
+
 		createJavaFile(code, 203, 4);
 	}
-	
+
 	public static void gen_A_aStatic() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 1, code);
 		createTest('d', 1, code);
 		createTest('f', 1, code);
@@ -269,13 +269,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AA, 'f', code);
 		createTestQualifier(I_AA, 'i', code);
 		createTestQualifier(I_AA, 'j', code);
-		
+
 		createJavaFile(code, 214, 3);
 	}
-	
+
 	public static void gen_BB_bb() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTest('c', 2, code);
@@ -303,13 +303,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 252, 4);
 	}
 
 	public static void gen_BC_bc() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTest('g', 2, code);
@@ -325,13 +325,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 279, 4);
 	}
 
 	public static void gen_BD_bd() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTest('g', 2, code);
@@ -347,13 +347,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 304, 4);
 	}
 
 	public static void gen_B_b() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 1, code);
 		createTest('b', 1, code);
 		createTest('c', 1, code);
@@ -379,13 +379,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_BB, 'f', code);
 		createTestQualifier(I_BB, 'i', code);
 		createTestQualifier(I_BB, 'j', code);
-		
+
 		createJavaFile(code, 315, 3);
 	}
 
 	public static void gen_CB_cb() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -395,13 +395,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 354, 4);
 	}
 
 	public static void gen_CC_cc() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -411,13 +411,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 381, 4);
 	}
 
 	public static void gen_CD_cd() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -427,13 +427,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 406, 4);
 	}
 
 	public static void gen_C_c() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 1, code);
 		createTest('b', 1, code);
 		createTest('e', 1, code);
@@ -445,13 +445,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 417, 3);
 	}
 
 	public static void gen_DB_db() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -461,13 +461,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 455, 4);
 	}
 
 	public static void gen_DC_dc() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -477,13 +477,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 481, 4);
 	}
 
 	public static void gen_DD_dd() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 2, code);
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
@@ -493,13 +493,13 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 506, 4);
 	}
 
 	public static void gen_D_d() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('a', 1, code);
 		createTest('b', 1, code);
 		createTest('e', 1, code);
@@ -511,14 +511,14 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'd', code);
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
-		
+
 		createJavaFile(code, 517, 3);
 	}
-	
+
 	public static void gen_evalNestedTypeTest() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
-		
+
+
 		createTest('a', 0, code);
 		createTest('b', 0, code);
 		createTest('c', 0, code);
@@ -542,87 +542,87 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_BB, 'f', code);
 		createTestQualifier(I_BB, 'i', code);
 		createTestQualifier(I_BB, 'j', code);
-		
+
 		createJavaFile(code, 529, 2);
 	}
 
 	public static void gen_EB_eb() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 566, 4);
 	}
 
 	public static void gen_EC_ec() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 592, 4);
 	}
 
 	public static void gen_ED_ed() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 616, 4);
 	}
 
 	public static void gen_E_e() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 1, code);
 		createTest('f', 1, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 626, 3);
 	}
-	
+
 	public static void gen_FB_fb() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 664, 4);
 	}
 
 	public static void gen_FC_fc() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 690, 4);
 	}
 
 	public static void gen_FD_fd() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 714, 4);
 	}
 
 	public static void gen_F_f() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 1, code);
 		createTest('f', 1, code);
 		createTestsStaticFields(code);
-		
+
 		createJavaFile(code, 724, 3);
 	}
-	
+
 	public static void gen_evalNestedTypeTestStatic() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTest('b', 0, code);
 		createTest('d', 0, code);
 		createTest('f', 0, code);
@@ -643,20 +643,20 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AB, 'f', code);
 		createTestQualifier(I_AB, 'i', code);
 		createTestQualifier(I_AB, 'j', code);
-		
+
 		createJavaFile(code, 739, 2);
 	}
-	
+
 	public static void gen_main() throws Exception {
 		StringBuffer code= new StringBuffer();
-		
+
 		createTestsStaticFields(code);
 
 		createJavaFile(code, 745, 1);
 	}
 
 	// ------------------------------
-	
+
 	public static void createTestsStaticFields(StringBuffer code) {
 		createTestQualifier(T_T, 'b', code);
 		createTestQualifier(T_T, 'd', code);
@@ -688,7 +688,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_B_BB, 'f', code);
 		createTestQualifier(T_B_BB, 'j', code);
 	}
-	
+
 	public static void createTestsStaticFields_A(StringBuffer code) {
 		createTestsStaticFields(code);
 		createTestQualifier(T_AA, 'd', code);
@@ -698,76 +698,76 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_AB, 'f', code);
 		createTestQualifier(T_AB, 'j', code);
 	}
-	
+
 	public static void createTestsStaticFields_B(StringBuffer code) {
 		createTestsStaticFields(code);
 		createTestQualifier(T_BB, 'd', code);
 		createTestQualifier(T_BB, 'f', code);
 		createTestQualifier(T_BB, 'j', code);
 	}
-	
+
 	// ------------------------------
-	
+
 	public static void createTest(char variable, int level, StringBuffer code) {
 		code.append("\tpublic void testEvalNestedTypeTest_" + variable + "() throws Throwable {\n");
 		tryBlockBegin(code);
-		
+
 		genCodeEval(IInternalDebugCoreConstants.EMPTY_STRING + variable + "Int", true, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + variable, "int", true, code);
 		genCodeReturnValueCheckPrimitiveType(IInternalDebugCoreConstants.EMPTY_STRING + variable, "int", "Int", variable + "IntValue_" + level, true, code);
 		code.append("\n");
-		
+
 		genCodeEval(IInternalDebugCoreConstants.EMPTY_STRING + variable + "String", false, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + variable, "java.lang.String", false, code);
 		genCodeReturnValueCheckStringType(IInternalDebugCoreConstants.EMPTY_STRING + variable, variable + "StringValue_" + level, true, code);
-		
+
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
 	}
-	
+
 	public static void createTestThis(char variable, int level, StringBuffer code) {
 		code.append("\tpublic void testEvalNestedTypeTest_this_" + variable + "() throws Throwable {\n");
 		tryBlockBegin(code);
-		
+
 		genCodeEval("THIS + " + variable + "Int", true, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + variable, "int", true, code);
 		genCodeReturnValueCheckPrimitiveType(IInternalDebugCoreConstants.EMPTY_STRING + variable, "int", "Int", variable + "IntValue_" + level, true, code);
 		code.append("\n");
-		
+
 		genCodeEval("THIS + " + variable + "String", false, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + variable, "java.lang.String", false, code);
 		genCodeReturnValueCheckStringType(IInternalDebugCoreConstants.EMPTY_STRING + variable, variable + "StringValue_" + level, true, code);
-		
+
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
 	}
-	
-	
-	
+
+
+
 	public static void createTestQualifier(int qualifier, char variable, StringBuffer code) {
 		String strQualifier= qualifiers[qualifier];
 		code.append("\tpublic void testEvalNestedTypeTest_" + strQualifier + "_" + variable + "() throws Throwable {\n");
 		tryBlockBegin(code);
-		
+
 		genCodeEval(strQualifier + " + " + variable + "Int", true, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + strQualifier + "_" + variable, "int", true, code);
 		genCodeReturnValueCheckPrimitiveType(IInternalDebugCoreConstants.EMPTY_STRING + strQualifier + "_" + variable, "int", "Int", variable + "IntValue_" + qualifiersLevel[qualifier], true, code);
 		code.append("\n");
-		
+
 		genCodeEval(strQualifier + " + " + variable + "String", false, code);
 		genCodeReturnTypeCheck(IInternalDebugCoreConstants.EMPTY_STRING + strQualifier + "_" + variable, "java.lang.String", false, code);
 		genCodeReturnValueCheckStringType(IInternalDebugCoreConstants.EMPTY_STRING + strQualifier + "_" + variable, variable + "StringValue_" + qualifiersLevel[qualifier], true, code);
-		
+
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
 	}
-	
+
 	//---------------------
-	
+
 	public static void createJavaFile(StringBuffer tests, int lineNumber, int numberFrames) throws Exception {
-		
+
 		StringBuffer code= new StringBuffer();
-		
+
 		code.append("/*******************************************************************************\n");
 		code.append(" * Copyright (c) 2002, 2003 IBM Corporation and others.\n");
 		code.append(" * All rights reserved. This program and the accompanying materials \n");
@@ -796,11 +796,11 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		code.append("\tprotected void end() throws Exception {\n");
 		code.append("\t\tdestroyFrame();\n");
 		code.append("\t}\n\n");
-		
+
 		code.append(tests.toString());
-		
+
 		code.append("}\n");
-		
+
 		try (Writer file = new FileWriter(new File("NestedTypeFieldValue_" + lineNumber + ".java").getAbsoluteFile())) {
 			file.write(code.toString());
 		}

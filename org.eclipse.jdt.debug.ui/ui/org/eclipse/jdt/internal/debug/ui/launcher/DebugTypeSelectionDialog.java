@@ -42,17 +42,17 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * This is a specialization of <code>FilteredItemsSelectionDialog</code> used to present
  * users with a listing of <code>IType</code>s that contain main methods
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
-	
+
 	/**
 	 * Main list label provider
 	 */
 	public class DebugTypeLabelProvider implements ILabelProvider {
-		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<ImageDescriptor, Image>();
+		HashMap<ImageDescriptor, Image> fImageMap = new HashMap<>();
 
 		@Override
 		public Image getImage(Object element) {
@@ -83,7 +83,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Returns the name of the declaring container name
 		 * @param type the type to find the container name for
@@ -100,9 +100,9 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 			return name;
 		}
-		
+
 		/**
-		 * Returns the narrowest enclosing <code>IJavaElement</code> which is either 
+		 * Returns the narrowest enclosing <code>IJavaElement</code> which is either
 		 * an <code>IType</code> (enclosing) or an <code>IPackageFragment</code> (contained in)
 		 * @param type the type to find the enclosing <code>IJavaElement</code> for.
 		 * @return the enclosing element or <code>null</code> if none
@@ -127,7 +127,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 		@Override
 		public void removeListener(ILabelProviderListener listener) {}
 	}
-	
+
 	/**
 	 * Provides a label and image for the details area of the dialog
 	 */
@@ -143,7 +143,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 						if(project != null) {
 							try {
 								return project.getOutputLocation().toOSString().substring(1)+" - "+name; //$NON-NLS-1$
-							} 
+							}
 							catch (JavaModelException e) {JDIDebugUIPlugin.log(e);}
 						}
 					}
@@ -162,7 +162,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			return super.getImage(element);
 		}
 	}
-	
+
 	/**
 	 * Simple items filter
 	 */
@@ -179,14 +179,14 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			return matches(((IType)item).getElementName());
 		}
 	}
-	
+
 	/**
 	 * The selection history for the dialog
 	 */
 	class DebugTypeSelectionHistory extends SelectionHistory {
 		@Override
 		protected Object restoreItemFromMemento(IMemento memento) {
-			IJavaElement element = JavaCore.create(memento.getTextData()); 
+			IJavaElement element = JavaCore.create(memento.getTextData());
 			return (element instanceof IType ? element : null);
 		}
 		@Override
@@ -196,7 +196,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 		}
 	}
-	
+
 	private static final String SETTINGS_ID = JDIDebugUIPlugin.getUniqueIdentifier() + ".MAIN_METHOD_SELECTION_DIALOG"; //$NON-NLS-1$
 	private IType[] fTypes = null;
 
@@ -234,7 +234,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 		IDialogSettings section = settings.getSection(SETTINGS_ID);
 		if (section == null) {
 			section = settings.addNewSection(SETTINGS_ID);
-		} 
+		}
 		return section;
 	}
 
@@ -254,7 +254,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
         };
         return comp;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
@@ -262,7 +262,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createExtendedContentArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -292,7 +292,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
 			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */

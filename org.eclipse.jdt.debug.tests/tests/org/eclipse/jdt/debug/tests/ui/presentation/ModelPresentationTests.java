@@ -17,7 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 
 /**
  * Tests for some of the methods of the model presentation
- * 
+ *
  * @see JDIModelPresentation
  */
 public class ModelPresentationTests extends AbstractDebugTest {
@@ -32,7 +32,7 @@ public class ModelPresentationTests extends AbstractDebugTest {
 	/**
 	 * Tests that the type signature + value signatures do not cause problems when the values are "&lt;unknown&gt;" - this
 	 * case arises when you manually suspend a VM and try to inspect / view object values
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testUnknownValueText() throws Exception {
@@ -48,11 +48,11 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			pres.dispose();
 		}
 	}
-	
+
 	/**
-	 * Tests passing all <code>null</code>s in for type information - should get an NPE 
+	 * Tests passing all <code>null</code>s in for type information - should get an NPE
 	 * from {@link JDIModelPresentation#getValueText(org.eclipse.jdt.debug.core.IJavaValue)}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testAllNullValueText() throws Exception {
@@ -70,10 +70,10 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			pres.dispose();
 		}
 	}
-	
+
 	/**
 	 * Tests getting the value text for a simple String type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSimpleStringValueText() throws Exception {
@@ -90,10 +90,10 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			pres.dispose();
 		}
 	}
-	
+
 	/**
 	 * Tests getting the value text for a simple String type
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testResolvedStringValueText() throws Exception {
@@ -110,10 +110,10 @@ public class ModelPresentationTests extends AbstractDebugTest {
 			pres.dispose();
 		}
 	}
-	
+
 	/**
 	 * Tests a simple array value text
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testSimpleArrayValueText() throws Exception {

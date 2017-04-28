@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,12 +33,12 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
             buffer.append("at org.eclipse.jdt.internal.debug.core.model.JDILocalVariable.retrieveValue(JDILocalVariable.java:56\n");
         }
         String text = buffer.toString();
-        
+
         //ensure class loading and JIT is done.
         for (int i= 0; i < 5; i++) {
             findMatches(text);
         }
-        
+
         try {
             for (int i= 0; i < 10; i++) {
                 fPerformanceMeter.start();
@@ -60,7 +60,7 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
     private int findMatches(String text) {
         Pattern pattern = Pattern.compile("\\w\\S*\\(\\S*\\.java:\\S*\\)");
         Matcher matcher = pattern.matcher(text);
-        
+
         int count = 0;
         while (matcher.find()) {
             count++;

@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Provides a page for changing the heap walking options. Interacts
  * with the HeapWalkingManager to get/set options.
- * 
+ *
  * @see HeapWalkingManager
  * @since 3.3
  */
@@ -42,15 +42,15 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	private Text fAllReferencesMaxCount;
 	private Text fAllInstancesMaxCount;
 	private Map<Object, String> fErrorMessages;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
-		fErrorMessages = new HashMap<Object, String>();
+		fErrorMessages = new HashMap<>();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -60,24 +60,24 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		// TODO: Help must be updated
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_HEAPWALKING_PREFERENCE_PAGE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		
+
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
-		
+
 		SWTFactory.createWrapLabel(comp, DebugUIMessages.HeapWalkingPreferencePage_0, 1, 300);
 		SWTFactory.createVerticalSpacer(comp, 2);
-		
+
 		fShowReferencesInVarView = SWTFactory.createCheckButton(comp, DebugUIMessages.HeapWalkingPreferencePage_5, null, HeapWalkingManager.getDefault().isShowReferenceInVarView(), 1);
 		SWTFactory.createVerticalSpacer(comp, 2);
-		
+
 		Group group = SWTFactory.createGroup(comp, DebugUIMessages.HeapWalkingPreferencePage_3, 2, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_4, 2);
-		
+
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_1, 1);
 		fAllInstancesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllInstancesMaxCount.addModifyListener(new ModifyListener(){
@@ -95,7 +95,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		fAllInstancesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllInstancesMaxCount()); //$NON-NLS-1$
-		
+
 		SWTFactory.createLabel(group, DebugUIMessages.HeapWalkingPreferencePage_2, 1);
 		fAllReferencesMaxCount = SWTFactory.createSingleText(group, 1);
 		fAllReferencesMaxCount.addModifyListener(new ModifyListener(){
@@ -113,10 +113,10 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		fAllReferencesMaxCount.setText("" + HeapWalkingManager.getDefault().getAllReferencesMaxCount()); //$NON-NLS-1$
-		
+
 		return comp;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
@@ -143,12 +143,12 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Sets an error message associated with a specific field.  Allows several
 	 * fields to have their own error message.  The dialog's error message will
 	 * be set to the given message.
-	 * 
+	 *
 	 * @param cause The field that the message is associated with
 	 * @param message The error message to display to the user
 	 */
@@ -157,12 +157,12 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 		setErrorMessage(message);
 		setValid(false);
 	}
-	
+
 	/**
 	 * Clears the error message associated with the given field.  If there are other
 	 * error messages, one will be displayed to the user.  If there are no more error
 	 * messages, the page becomes valid.
-	 * 
+	 *
 	 * @param cause The field associated with a current error message.
 	 */
 	private void clearErrorMessage(Object cause){
@@ -175,7 +175,7 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 			setValid(true);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -183,10 +183,10 @@ public class HeapWalkingPreferencePage extends PreferencePage implements IWorkbe
 	protected void performDefaults() {
 		HeapWalkingManager.getDefault().resetToDefaultSettings();
 		fAllReferencesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount()));
-		fAllInstancesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount())); 
+		fAllInstancesMaxCount.setText(Integer.toString(HeapWalkingManager.getDefault().getAllReferencesMaxCount()));
 		fShowReferencesInVarView.setSelection(HeapWalkingManager.getDefault().isShowReferenceInVarView());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
