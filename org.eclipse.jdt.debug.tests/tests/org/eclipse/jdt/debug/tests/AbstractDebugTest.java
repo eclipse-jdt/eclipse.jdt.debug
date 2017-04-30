@@ -2502,10 +2502,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (TestAgainException e) {
 				TestUtil.log(IStatus.ERROR, getName(), "Test failed attempt " + attempts + ". Re-testing.", e);
 				TestUtil.cleanUp(getName());
-				if (attempts > 5) {
-					tryAgain = false;
+				if (attempts > 4) {
+					// the next attempt will fail
+					break;
 				}
 			}
+		}
+		if (tryAgain) {
+			// last attempt and if it fails then we should fail, see bug 515988
+			super.runBare();
 		}
 	}
 

@@ -176,7 +176,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
-		createLineBreakpoint(16, A_RUN_JAR);
+		createLineBreakpoint(18, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {
@@ -203,7 +203,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 */
 	public void testShowClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
-		createLineBreakpoint(16, A_RUN_JAR);
+		createLineBreakpoint(18, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {
