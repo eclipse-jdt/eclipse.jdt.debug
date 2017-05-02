@@ -185,6 +185,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
 	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
+	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
  "DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
@@ -399,6 +400,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug403028"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug484686"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.GenericMethodEntryTest"));
+				cfgs.add(createLaunchConfiguration(jp, "org.eclipse.debug.tests.targets.HcrClass", true));
 				loaded15 = true;
 				waitForBuild();
 	        }
@@ -1178,6 +1180,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName, boolean register) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(project, mainTypeName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
+		return launchToBreakpoint(config, register);
+	}
+
+	/**
+	 * Launches the type with the given name, and waits for a breakpoint-caused
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 *
+	 * @param mainTypeName the program to launch
+	 * @param register whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName, String launchName, boolean register) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(project, launchName);
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
 		return launchToBreakpoint(config, register);
 	}
@@ -2446,8 +2463,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
      * Creates a shared launch configuration for the type with the given name.
      */
     protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String mainTypeName) throws Exception {
+		return createLaunchConfiguration(project, mainTypeName, false);
+	}
+
+	/**
+	 * Creates a shared launch configuration for the type with the given name.
+	 *
+	 * @param clone
+	 *            true if the launch config name should be different from the main type name
+	 */
+	protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String mainTypeName, boolean clone) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-        ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
+		String configName = clone ? mainTypeName + CLONE_SUFFIX : mainTypeName;
+		ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), configName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
 		Set<String> modes = new HashSet<>();

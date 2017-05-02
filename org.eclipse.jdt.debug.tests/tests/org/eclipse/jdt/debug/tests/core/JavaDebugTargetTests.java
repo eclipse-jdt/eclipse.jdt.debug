@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.lang.reflect.Method;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -104,6 +109,62 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			assertFalse(proxy.isAvailable());
 			assertFalse(proxy.isDisconnecting());
 			assertFalse(proxy.isTerminating());
+		}
+		finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	/**
+	 * Tests that debug target ignores breakpoints from unrelated projects, see bugs 5188 and 508524
+	 */
+	public void testSupportsResource() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
+		IJavaProject project1 = get14Project();
+		IJavaProject project2 = get15Project();
+		IType type1 = project1.findType(typeName);
+		IType type2 = project2.findType(typeName);
+		assertNotEquals(type1, type2);
+
+		// Types FQNs are same
+		assertEquals(type1.getFullyQualifiedName(), type2.getFullyQualifiedName());
+
+		// Paths are same, except the project part
+		assertEquals(type1.getResource().getFullPath().removeFirstSegments(1), type2.getResource().getFullPath().removeFirstSegments(1));
+
+		final int lineNumber = 21;
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(type1, lineNumber);
+		IJavaLineBreakpoint bp2 = createLineBreakpoint(type2, lineNumber);
+		assertNotEquals(bp1, bp2);
+
+		IJavaThread thread = null;
+		try {
+			// Launch the first project config: the breakpoint from second one shouldn't be supported
+			thread = launchToBreakpoint(project1, typeName, typeName, true);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			JDIDebugTarget target = (JDIDebugTarget) thread.getDebugTarget();
+			assertTrue(target.isAvailable());
+			assertEquals(1, target.getBreakpoints().size());
+			assertEquals(bp1, target.getBreakpoints().get(0));
+			assertTrue(target.supportsResource(() -> typeName, type1.getResource()));
+			assertFalse(target.supportsResource(() -> typeName, type2.getResource()));
+			terminateAndRemove(thread);
+			// Line above *deletes all breakpoints!*
+
+			bp1 = createLineBreakpoint(type1, lineNumber);
+			bp2 = createLineBreakpoint(type2, lineNumber);
+			assertNotEquals(bp1, bp2);
+
+			// Launch the second project config: the breakpoint from first one shouldn't be supported
+			thread = launchToBreakpoint(project2, typeName, typeName + CLONE_SUFFIX, true);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			target = (JDIDebugTarget) thread.getDebugTarget();
+			assertTrue(target.isAvailable());
+			assertEquals(1, target.getBreakpoints().size());
+			assertEquals(bp2, target.getBreakpoints().get(0));
+			assertFalse(target.supportsResource(() -> typeName, type1.getResource()));
+			assertTrue(target.supportsResource(() -> typeName, type2.getResource()));
 		}
 		finally {
 			terminateAndRemove(thread);

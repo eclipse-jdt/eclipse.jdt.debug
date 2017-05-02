@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import static org.junit.Assert.assertNotEquals;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -1209,6 +1214,76 @@ public class HcrTests extends AbstractDebugTest {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
 		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			JDIDebugModel.removeHotCodeReplaceListener(listener);
+		}
+	}
+
+	/**
+	 * Tests that HCR is NOT triggered if the code change is happened on an unrelated type, see bug 508524 and 5188
+	 */
+	public void testNoHcrOnUnrelatedType() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.HcrClass";
+		IJavaProject unrelatedProject = get14Project();
+		IJavaProject debuggedProject = get15Project();
+		IType type1 = unrelatedProject.findType(typeName);
+		IType type2 = debuggedProject.findType(typeName);
+		assertNotEquals(type1, type2);
+
+		// Types FQNs are same
+		assertEquals(type1.getFullyQualifiedName(), type2.getFullyQualifiedName());
+
+		// Paths are same, except the project part
+		assertEquals(type1.getResource().getFullPath().removeFirstSegments(1), type2.getResource().getFullPath().removeFirstSegments(1));
+
+		final int lineNumber = 39;
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(type1, lineNumber);
+		IJavaLineBreakpoint bp2 = createLineBreakpoint(type2, lineNumber);
+		assertNotEquals(bp1, bp2);
+
+		HCRListener listener = new HCRListener();
+		HCRListener listener2 = new HCRListener();
+		JDIDebugModel.addHotCodeReplaceListener(listener);
+		IJavaThread thread = null;
+		try {
+			// We start debugging on the one project but do modifications on the unrelated one!
+			thread = launchToBreakpoint(debuggedProject, typeName, typeName + CLONE_SUFFIX, true);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IJavaDebugTarget target = (IJavaDebugTarget) thread.getDebugTarget();
+			if (target.supportsHotCodeReplace()) {
+				target.addHotCodeReplaceListener(listener2);
+				// look at the value of 'x' - it should be "One"
+				IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
+				IJavaVariable variable = findVariable(frame, "x");
+				assertNotNull("Could not find 'x'", variable);
+				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
+				removeAllBreakpoints();
+				// now modify the source in *unrelated* project => NO HCR should happen, even if type names are same!
+				ICompilationUnit cu = getCompilationUnit(unrelatedProject, "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
+				assertTrue("HcrClass.java does not exist", cu.exists());
+				IBuffer buffer = cu.getBuffer();
+				String contents = buffer.getContents();
+				int index = contents.indexOf("\"One\"");
+				assertTrue("Could not find code to replace", index > 0);
+				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
+				buffer.setContents(newCode);
+
+				// save contents
+				cu.commitWorkingCopy(true, null);
+				waitForBuild();
+				assertFalse("Specific listener should not have been notified", listener2.waitNotification());
+				assertFalse("General listener should not have been notified", listener.wasNotified());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
+			}
+		}
+		finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 			JDIDebugModel.removeHotCodeReplaceListener(listener);

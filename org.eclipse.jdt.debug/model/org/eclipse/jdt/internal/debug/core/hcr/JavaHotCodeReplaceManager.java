@@ -469,8 +469,15 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			// unloaded types on a per-target basis.
 			List<IResource> resourcesToReplace = new ArrayList<>(resources);
 			List<String> qualifiedNamesToReplace = new ArrayList<>(qualifiedNames);
-			filterUnloadedTypes(target, resourcesToReplace,
-					qualifiedNamesToReplace);
+
+			// Make sure we only try to replace types from related projects
+			filterUnrelatedResources(target, resourcesToReplace, qualifiedNamesToReplace);
+			if (qualifiedNamesToReplace.isEmpty()) {
+				// If none of the changed types are related to our target, do nothing.
+				continue;
+			}
+
+			filterUnloadedTypes(target, resourcesToReplace, qualifiedNamesToReplace);
 			if (qualifiedNamesToReplace.isEmpty()) {
 				// If none of the changed types are loaded, do nothing.
 				continue;
@@ -539,6 +546,18 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			JDIDebugPlugin.log(ms);
 		}
 		fDeltaCache.clear();
+	}
+
+	private void filterUnrelatedResources(JDIDebugTarget target, List<IResource> resourcesToReplace, List<String> qualifiedNamesToReplace) {
+		Iterator<IResource> resources = resourcesToReplace.iterator();
+		Iterator<String> names = qualifiedNamesToReplace.iterator();
+		while (resources.hasNext()) {
+			boolean supported = target.supportsResource(() -> names.next(), resources.next());
+			if (!supported) {
+				resources.remove();
+				names.remove();
+			}
+		}
 	}
 
 	/**

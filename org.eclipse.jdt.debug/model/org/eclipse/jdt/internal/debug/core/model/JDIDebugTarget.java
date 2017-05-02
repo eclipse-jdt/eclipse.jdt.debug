@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IFile;
@@ -1391,7 +1392,15 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			return true;
 		}
 
-		IResource resource = marker.getResource();
+		return supportsResource(() -> jBreakpoint.getTypeName(), marker.getResource());
+	}
+
+
+	public boolean supportsResource(Callable<String> typeNameSupplier, IResource resource) {
+		if (fScope == null) {
+			// No checks, everything in scope: the filtering is disabled
+			return true;
+		}
 		// Java exception breakpoints have wsp root as resource
 		if(resource == null || resource == ResourcesPlugin.getWorkspace().getRoot()) {
 			return true;
@@ -1427,7 +1436,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		// This can be also an incomplete resource mapping.
 		// Try to see if the type available multiple times in workspace
 		try {
-			String typeName = jBreakpoint.getTypeName();
+			String typeName = typeNameSupplier.call();
 			if(typeName != null){
 				Boolean known = knownTypes.get(typeName);
 				if(known != null){
@@ -1437,7 +1446,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				knownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
 				return supportedBreakpoint;
 			}
-		} catch (CoreException e) {
+		}
+		catch (Exception e) {
 			logError(e);
 		}
 		// we don't know why computation failed, so let assume the breakpoint is supported.
