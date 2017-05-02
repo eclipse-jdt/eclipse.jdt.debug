@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.debug.tests.TestUtil;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -108,6 +109,9 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			// Get and check the selection form the tree, we expect only one method selected
 			TreeItem[] selected = getSelectedItemsFromDebugView(true);
 			Object[] selectedText = sync(() -> Arrays.stream(selected).map(x -> x.getText()).toArray());
+			if (selected.length != 1) {
+				throw new TestAgainException("Unexpected selection: " + Arrays.toString(selectedText));
+			}
 			assertEquals("Unexpected selection: " + Arrays.toString(selectedText), 1, selected.length);
 			TreeItem selectedTreeItem = selected[selected.length - 1];
 			IJavaStackFrame selectedFrame = (IJavaStackFrame) sync(() -> {
@@ -166,9 +170,9 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			long start = System.currentTimeMillis();
 
 			// At least on GTK3 it takes some time until we see the viewer selection propagated to the SWT tree
-			while (selected.length != 1 && System.currentTimeMillis() - start < 3000) {
+			while (selected.length != 1 && System.currentTimeMillis() - start < 5000) {
 				processUiEvents(500);
-				TestUtil.log(IStatus.INFO, getName(), "Waiting for selection...");
+				TestUtil.log(IStatus.INFO, getName(), "Waiting for selection, current size: " + selected.length);
 				selected = tree.getSelection();
 			}
 			return selected;
