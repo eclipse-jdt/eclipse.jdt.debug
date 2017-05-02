@@ -507,10 +507,9 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		IJavaThread thread = null;
 		try {
 			thread = launchToLineBreakpoint(typeName, bp1);
-
+			assertNotNull(thread);
 		}
 		finally {
-			assertNotNull(thread);
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
