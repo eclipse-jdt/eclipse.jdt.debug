@@ -160,6 +160,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Whether in the process of terminating
 	 */
 	private boolean fTerminating;
+
+	/**
+	 * Whether in the process of disconnecting
+	 */
+	private boolean fDisconnecting;
+
 	/**
 	 * Whether disconnected
 	 */
@@ -349,6 +355,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setTerminated(false);
 		setTerminating(false);
 		setDisconnected(false);
+		setDisconnecting(false);
 		setName(name);
 		prepareBreakpointsSearchScope();
 		setBreakpoints(new ArrayList<IBreakpoint>(5));
@@ -862,6 +869,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 
 		try {
+			setDisconnecting(true);
 			disposeThreadHandler();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
@@ -1136,7 +1144,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Returns whether this target is available to handle VM requests
 	 */
 	public boolean isAvailable() {
-		return !(isTerminated() || isTerminating() || isDisconnected());
+		return !(isTerminated() || isTerminating() || isDisconnected() || isDisconnecting());
 	}
 
 	/**
@@ -1839,6 +1847,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	@Override
 	protected void disconnected() {
+		setDisconnecting(false);
 		if (!isDisconnected()) {
 			setDisconnected(true);
 			cleanup();
@@ -2260,6 +2269,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	protected void setTerminating(boolean terminating) {
 		fTerminating = terminating;
+	}
+
+	protected boolean isDisconnecting() {
+		return fDisconnecting;
+	}
+
+	protected void setDisconnecting(boolean disconnecting) {
+		fDisconnecting = disconnecting;
 	}
 
 	/**
