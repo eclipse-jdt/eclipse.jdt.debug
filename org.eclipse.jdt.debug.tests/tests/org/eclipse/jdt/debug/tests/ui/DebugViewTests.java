@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -110,6 +111,10 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			TreeItem[] selected = getSelectedItemsFromDebugView(true);
 			Object[] selectedText = sync(() -> Arrays.stream(selected).map(x -> x.getText()).toArray());
 			if (selected.length != 1) {
+				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+					// skip this test on Mac - see bug 516024
+					return;
+				}
 				throw new TestAgainException("Unexpected selection: " + Arrays.toString(selectedText));
 			}
 			assertEquals("Unexpected selection: " + Arrays.toString(selectedText), 1, selected.length);
