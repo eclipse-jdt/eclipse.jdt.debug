@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 *
 	 * @return local variable or <code>null</code>
 	 */
-	private IVariable findLocalVariable(IJavaStackFrame frame, String variableName) {
+	public static IVariable findLocalVariable(IJavaStackFrame frame, String variableName) {
 		if (frame != null) {
 			try {
 				return frame.findVariable(variableName);
@@ -391,8 +391,13 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             				boolean equal = false;
             				if (method.isBinary()) {
             					// compare resolved signatures
-            					if (method.getSignature().equals(frame.getSignature())) {
+								if (method.getSignature().equals(frame.getSignature()) && method.getElementName().equals(frame.getMethodName())) {
             						equal = true;
+								} else {
+									// Check if there are variables captured by lambda, see bug 516278
+									if (LambdaUtils.isLambdaFrame(frame)) {
+										return LambdaUtils.findLocalVariableFromLambdaScope(frame, var);
+									}
             					}
             				} else {
             					// compare unresolved signatures
@@ -420,6 +425,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 										}
 										catch (NumberFormatException ex) {
 										}
+									} else {
+										// Check if there are variables captured by lambda, see bug 516278
+										if (LambdaUtils.isLambdaFrame(frame)) {
+											return LambdaUtils.findLocalVariableFromLambdaScope(frame, var);
+										}
 									}
 								}
             				}
@@ -438,9 +448,6 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	    return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
-	 */
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new ExpressionInformationControlCreator();
 	}

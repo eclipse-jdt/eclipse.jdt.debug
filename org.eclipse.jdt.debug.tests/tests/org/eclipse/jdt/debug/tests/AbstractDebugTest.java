@@ -199,8 +199,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
 			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest" };
 
-	final String[] LAUNCH_CONFIG_NAMES_1_8 = {"LargeSourceFile"};
-
 	/**
 	 * the default timeout
 	 */
@@ -459,6 +457,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTest18"));
 	    		cfgs.add(createLaunchConfiguration(jp, "EvalTestIntf18"));
 				cfgs.add(createLaunchConfiguration(jp, "EvalIntfSuperDefault"));
+				cfgs.add(createLaunchConfiguration(jp, "DebugHoverTest18"));
 	    		loaded18 = true;
 	    		waitForBuild();
 	        }
@@ -475,7 +474,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         	catch (CoreException ce) {
         		//ignore
 			}
-			handleProjectCreationException(e, ONE_SEVEN_PROJECT_NAME, jp);
+			handleProjectCreationException(e, ONE_EIGHT_PROJECT_NAME, jp);
         }
 	}
 
