@@ -15,7 +15,6 @@ import java.util.Objects;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
@@ -31,6 +30,7 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.test.OrderedTestSuite;
@@ -132,17 +132,23 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			// Now we inspect the children of the stopped thread (parent element of selected method)
 			TreeItem threadItem = sync(() -> selectedTreeItem.getParentItem());
 			TreeItem[] children = sync(() -> threadItem.getItems());
-			Object[] childrenData = sync(() -> Arrays.stream(children).map(x -> x.getText()).toArray());
+			Object[] childrenText = sync(() -> Arrays.stream(children).map(x -> x.getText()).toArray());
 
 			// we expect to see one monitor + frames
 			final int expectedChildrenCount = expectedFramesNumber + 1;
-			assertEquals("Unexpected stack: " + dumpFrames(childrenData), expectedChildrenCount, childrenData.length);
+			assertEquals("Unexpected stack: " + dumpFrames(childrenText), expectedChildrenCount, childrenText.length);
 
 			// Now we will check if the very first frame (main) is shown in the tree (on the bottom of the stack)
-			Object firstFrame = childrenData[expectedChildrenCount - 1].toString();
+			Object firstFrame = childrenText[expectedChildrenCount - 1].toString();
+
+			String frameLabel = firstFrame.toString();
+			if (frameLabel.trim().isEmpty()) {
+				// Some times (see bug 516024 comment 7) tree items are there but they are "empty", let restart test
+				throw new TestAgainException("Tree children not rendered: " + dumpFrames(childrenText));
+			}
 
 			assertTrue("Unexpected first frame: " + firstFrame + ", ALL: "
-					+ dumpFrames(childrenData), firstFrame.toString().contains("DropTests.main"));
+					+ dumpFrames(childrenText), frameLabel.contains("DropTests.main"));
 		}
 		finally {
 			terminateAndRemove(thread);
@@ -151,18 +157,7 @@ public class DebugViewTests extends AbstractDebugUiTests {
 	}
 
 	private String dumpFrames(Object[] childrenData) {
-		childrenData = Arrays.stream(childrenData).map(x -> {
-			if (x instanceof JDIStackFrame) {
-				try {
-					return ((JDIStackFrame) x).getName();
-				}
-				catch (DebugException e) {
-					return e.getMessage();
-				}
-			}
-			return Objects.toString(x);
-		}).toArray();
-		return Arrays.toString(childrenData);
+		return Arrays.toString(Arrays.stream(childrenData).map(x -> Objects.toString(x)).toArray());
 	}
 
 	private TreeItem[] getSelectedItemsFromDebugView(boolean wait) throws Exception {
@@ -175,7 +170,9 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			long start = System.currentTimeMillis();
 
 			// At least on GTK3 it takes some time until we see the viewer selection propagated to the SWT tree
-			while (selected.length != 1 && System.currentTimeMillis() - start < 5000) {
+			while (selected.length != 1 && System.currentTimeMillis() - start < 10000) {
+				TreeViewer treeViewer = (TreeViewer) debugView.getViewer();
+				treeViewer.refresh(true);
 				processUiEvents(500);
 				TestUtil.log(IStatus.INFO, getName(), "Waiting for selection, current size: " + selected.length);
 				selected = tree.getSelection();
