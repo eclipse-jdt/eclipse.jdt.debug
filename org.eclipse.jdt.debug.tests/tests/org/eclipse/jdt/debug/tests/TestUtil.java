@@ -158,7 +158,7 @@ public class TestUtil {
 		StringBuilder sb = new StringBuilder();
 		for (Job job : jobs) {
 			runningJobs.add(job);
-			sb.append("'").append(job.getName()).append("'/");
+			sb.append("'").append(job.toString()).append("'/");
 			sb.append(job.getClass().getName());
 			sb.append(", ");
 		}

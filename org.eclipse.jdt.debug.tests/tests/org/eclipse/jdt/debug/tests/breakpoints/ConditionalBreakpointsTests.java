@@ -209,6 +209,8 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("Missing top frame", frame);
 			assertEquals("Wrong location", "calculateSum", frame.getName());
+			thread.resume();
+			assertFalse("Thread should be resumed", thread.isSuspended());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
