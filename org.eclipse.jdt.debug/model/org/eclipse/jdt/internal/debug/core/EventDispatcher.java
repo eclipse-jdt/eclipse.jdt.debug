@@ -65,7 +65,7 @@ public class EventDispatcher implements Runnable {
 	/**
 	 * Whether this dispatcher is shutdown.
 	 */
-	private boolean fShutdown;
+	private volatile boolean fShutdown;
 	/**
 	 * Table of event listeners. Table is a mapping of <code>EventRequest</code>
 	 * to <code>IJDIEventListener</code>.
@@ -220,6 +220,50 @@ public class EventDispatcher implements Runnable {
 		}
 	}
 
+	private boolean requiresExpressionEvaluation(EventSet eventSet) {
+		EventIterator iter = eventSet.eventIterator();
+		while (iter.hasNext()) {
+			Event event = iter.nextEvent();
+			if (event == null) {
+				continue;
+			}
+			IJDIEventListener listener = fEventHandlers.get(event.request());
+			if (listener instanceof IJavaLineBreakpoint) {
+				try {
+					if (((IJavaLineBreakpoint) listener).isConditionEnabled()) {
+						return true;
+					}
+				}
+				catch (CoreException e) {
+					return true; // assume the worst
+				}
+			}
+		}
+		return false;
+	}
+
+	/** @noreference public for test purposes */
+	public abstract class AbstractDispatchJob extends Job {
+		protected AbstractDispatchJob(String name) {
+			super(name);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == EventDispatcher.class || family == EventDispatcher.this;
+		}
+
+		@Override
+		public String toString() {
+			try {
+				return super.toString() + " for [" + fTarget.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			catch (DebugException e) {
+				return super.toString();
+			}
+		}
+	}
+
 	/**
 	 * Continuously reads events that are coming from the event queue, until
 	 * this event dispatcher is shutdown. A debug target starts a thread on this
@@ -232,9 +276,9 @@ public class EventDispatcher implements Runnable {
 		VirtualMachine vm = fTarget.getVM();
 		if (vm != null) {
 			EventQueue q = vm.eventQueue();
-			EventSet eventSet = null;
 			while (!isShutdown()) {
 				try {
+					EventSet eventSet;
 					try {
 						// Get the next event set.
 						eventSet = q.remove(1000);
@@ -242,42 +286,21 @@ public class EventDispatcher implements Runnable {
 						break;
 					}
 
-					if (!isShutdown() && eventSet != null) {
-						final EventSet set = eventSet;
-						Job job = new Job("JDI Event Dispatch") { //$NON-NLS-1$
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								dispatch(set);
-								return Status.OK_STATUS;
-							}
-
-							@Override
-							public boolean belongsTo(Object family) {
-								if (family instanceof Class) {
-									Class<?> clazz = (Class<?>) family;
-									EventIterator iterator = set.eventIterator();
-									while (iterator.hasNext()) {
-										Event event = iterator.nextEvent();
-										if (clazz.isInstance(event)) {
-											return true;
-										}
-									}
+					if (eventSet != null) {
+						if (!requiresExpressionEvaluation(eventSet)) {
+							dispatch(eventSet);
+						} else {
+							// 269231 always evaluate expressions in a separate job to avoid deadlocks
+							Job job = new AbstractDispatchJob("JDI Expression Evaluation Event Dispatch") { //$NON-NLS-1$
+								@Override
+								protected IStatus run(IProgressMonitor monitor) {
+									dispatch(eventSet);
+									return Status.OK_STATUS;
 								}
-								return false;
-							}
-
-							@Override
-							public String toString() {
-								try {
-									return super.toString() + " for [" + fTarget.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								catch (DebugException e) {
-									return super.toString();
-								}
-							}
-						};
-						job.setSystem(true);
-						job.schedule();
+							};
+							job.setSystem(true);
+							job.schedule();
+						}
 					}
 				} catch (InterruptedException e) {
 					break;
@@ -293,6 +316,7 @@ public class EventDispatcher implements Runnable {
 	 */
 	public void shutdown() {
 		fShutdown = true;
+		Job.getJobManager().cancel(this);
 	}
 
 	/**

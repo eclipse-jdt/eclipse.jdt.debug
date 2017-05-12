@@ -27,6 +27,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests;
+import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.MiscBreakpointsTests;
@@ -38,7 +39,6 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
-import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
@@ -58,6 +58,7 @@ import org.eclipse.jdt.debug.tests.core.ConsoleTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
 import org.eclipse.jdt.debug.tests.core.EEDefinitionTests;
 import org.eclipse.jdt.debug.tests.core.EnvironmentTests;
+import org.eclipse.jdt.debug.tests.core.EventDispatcherTest;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExecutionEnvironmentTests;
 import org.eclipse.jdt.debug.tests.core.HcrTests;
@@ -277,6 +278,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(StratumTests.class));
 		addTest(new TestSuite(JavaDebugTargetTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
+		addTest(new TestSuite(EventDispatcherTest.class));
 
 	// Refactoring tests
 		//TODO: project rename

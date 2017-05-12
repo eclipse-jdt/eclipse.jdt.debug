@@ -2440,13 +2440,6 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			ThreadReference ref = ((ThreadDeathEvent) event).thread();
 			JDIThread thread = findThread(ref);
 			if (thread == null) {
-				// wait for any thread start event sets to complete processing
-				// see bug 272494
-				try {
-					Job.getJobManager().join(ThreadStartEvent.class, null);
-				} catch (OperationCanceledException e) {
-				} catch (InterruptedException e) {
-				}
 				thread = target.findThread(ref);
 			}
 			if (thread != null) {
