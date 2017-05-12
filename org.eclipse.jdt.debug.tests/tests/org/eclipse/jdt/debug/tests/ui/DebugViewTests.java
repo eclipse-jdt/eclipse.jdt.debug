@@ -138,17 +138,19 @@ public class DebugViewTests extends AbstractDebugUiTests {
 			final int expectedChildrenCount = expectedFramesNumber + 1;
 			assertEquals("Unexpected stack: " + dumpFrames(childrenText), expectedChildrenCount, childrenText.length);
 
-			// Now we will check if the very first frame (main) is shown in the tree (on the bottom of the stack)
-			Object firstFrame = childrenText[expectedChildrenCount - 1].toString();
+			// This is too unstable, see bug 516024 comment 10
 
-			String frameLabel = firstFrame.toString();
-			if (frameLabel.trim().isEmpty()) {
-				// Some times (see bug 516024 comment 7) tree items are there but they are "empty", let restart test
-				throw new TestAgainException("Tree children not rendered: " + dumpFrames(childrenText));
-			}
-
-			assertTrue("Unexpected first frame: " + firstFrame + ", ALL: "
-					+ dumpFrames(childrenText), frameLabel.contains("DropTests.main"));
+			// // Now we will check if the very first frame (main) is shown in the tree (on the bottom of the stack)
+			// Object firstFrame = childrenText[expectedChildrenCount - 1].toString();
+			//
+			// String frameLabel = firstFrame.toString();
+			// if (frameLabel.trim().isEmpty()) {
+			// // Some times (see bug 516024 comment 7) tree items are there but they are "empty", let restart test
+			// throw new TestAgainException("Tree children not rendered: " + dumpFrames(childrenText));
+			// }
+			//
+			// assertTrue("Unexpected first frame: " + firstFrame + ", ALL: "
+			// + dumpFrames(childrenText), frameLabel.contains("DropTests.main"));
 		}
 		finally {
 			terminateAndRemove(thread);
