@@ -136,6 +136,9 @@ public class DebugViewTests extends AbstractDebugUiTests {
 
 			// we expect to see one monitor + frames
 			final int expectedChildrenCount = expectedFramesNumber + 1;
+			if (childrenText.length != expectedChildrenCount) {
+				throw new TestAgainException("Not all frames shown: " + dumpFrames(childrenText));
+			}
 			assertEquals("Unexpected stack: " + dumpFrames(childrenText), expectedChildrenCount, childrenText.length);
 
 			// This is too unstable, see bug 516024 comment 10
