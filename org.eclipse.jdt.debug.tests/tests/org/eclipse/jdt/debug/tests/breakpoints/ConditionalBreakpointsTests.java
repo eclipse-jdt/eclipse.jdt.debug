@@ -195,7 +195,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 	public void testSuspendLongRunningCondition() throws Exception {
 		String typeName = "MethodLoop";
 		IJavaLineBreakpoint first = createLineBreakpoint(19, typeName);
-		createConditionalLineBreakpoint(29, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x);} Thread.sleep(200); return true;", true);
+		createConditionalLineBreakpoint(29, typeName, "for (int x = 0; x < 1000; x++) { System.out.println(x); Thread.sleep(30); } return true;", true);
 
 		IJavaThread thread= null;
 		try {
@@ -203,7 +203,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			IStackFrame top = thread.getTopStackFrame();
 			assertNotNull("Missing top frame", top);
 			thread.resume();
-			Thread.sleep(100);
+			Thread.sleep(3000);
 			thread.suspend();
 			assertTrue("Thread should be suspended", thread.isSuspended());
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
