@@ -36,6 +36,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentationExtension;
@@ -97,6 +98,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -1146,9 +1149,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
             try {
                 IValue value= ((IVariable) element).getValue();
                 ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
-		        if (types.length > 0) {
-		        	return flags |= JDIImageDescriptor.LOGICAL_STRUCTURE;
+				if (types.length == 0) {
+					return flags; // no logical structure is defined for the value type
 		        }
+				ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
+				if (enabledType == null) {
+					return flags; // no logical structure is enabled for this type
+				}
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (IWorkbenchWindow window : windows) {
+					IWorkbenchPage page = window.getActivePage();
+					IViewPart viewPart = page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+					if (viewPart instanceof VariablesView) {
+						if (((VariablesView) viewPart).isShowLogicalStructure()) {
+							// a logical structure is enabled for this type and global toggle to show logical structure is on
+							return flags |= JDIImageDescriptor.LOGICAL_STRUCTURE;
+						}
+						return flags;
+					}
+				}
             }catch (DebugException e) {
 				DebugUIPlugin.log(e.getStatus());
             }
