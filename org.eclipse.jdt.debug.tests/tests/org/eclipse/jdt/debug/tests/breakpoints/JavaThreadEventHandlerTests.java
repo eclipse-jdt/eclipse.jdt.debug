@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.TestAgainException;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaDebugTargetProxy;
 import org.eclipse.jdt.internal.debug.ui.threadgroups.JavaThreadEventHandler;
@@ -139,7 +140,7 @@ public class JavaThreadEventHandlerTests extends AbstractDebugTest {
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertTrue("breakpoint was not a method breakpoint", hit instanceof IJavaMethodBreakpoint);
 
-			final int sleepTimeMillis = 1000;
+			final int sleepTimeMillis = 750;
 			String snippet = "java.lang.Thread.sleep(" + sleepTimeMillis + "); return true;";
 			TaskOnFrame task = new TaskOnFrame() {
 				@Override
@@ -154,6 +155,9 @@ public class JavaThreadEventHandlerTests extends AbstractDebugTest {
 					// indexOf method waits for evaluation and computes the right result
 					for (int i = 0; i < expectedFramesCount; i++) {
 						int index = eventHandler.indexOf(frames[i]);
+						if (index == -1) {
+							throw new TestAgainException("Evaluation took too long");
+						}
 						assertEquals(i, index);
 					}
 					Thread.sleep(sleepTimeMillis);
