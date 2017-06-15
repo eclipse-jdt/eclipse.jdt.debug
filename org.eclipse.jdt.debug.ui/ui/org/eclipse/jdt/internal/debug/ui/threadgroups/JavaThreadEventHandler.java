@@ -145,15 +145,12 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 	    return fDisplayMonitors;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.ThreadEventHandler#indexOf(org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	protected int indexOf(IStackFrame frame) {
+		int index = 0;
 		if (isDisplayMonitors()) {
-			if (((IJavaDebugTarget)frame.getDebugTarget()).supportsMonitorInformation()) {
-				IJavaThread thread = (IJavaThread)frame.getThread();
-				int index = 0;
+			if (((IJavaDebugTarget) frame.getDebugTarget()).supportsMonitorInformation()) {
+				IJavaThread thread = (IJavaThread) frame.getThread();
 				try {
 					index = thread.getOwnedMonitors().length;
 					if (thread.getContendedMonitor() != null) {
@@ -161,12 +158,41 @@ public class JavaThreadEventHandler extends ThreadEventHandler implements IPrope
 					}
 				} catch (DebugException e) {
 				}
-				return index;
+			} else {
+				// make room for the 'no monitor info' element
+				index = 1;
 			}
-			// make room for the 'no monitor info' element
-			return 1;
 		}
-		return super.indexOf(frame);
+		IThread thread = frame.getThread();
+		if (thread instanceof IJavaThread) {
+			// If the thread is performing evaluation right now, it will report no frames and so we would be unable to compute the right index.
+			// Check and in case evaluation is running, wait a second, see bug 515206
+			waitIfEvaluationRuns((IJavaThread) thread, 1000);
+		}
+		return index + super.indexOf(frame);
+	}
+
+	/**
+	 * Waits given time in case thread is performing evaluation.
+	 *
+	 * @param thread
+	 *            non null
+	 * @param maxWaitTimeMillis
+	 *            max time to wait in milliseconds
+	 */
+	private void waitIfEvaluationRuns(IJavaThread thread, final long maxWaitTimeMillis) {
+		long start = System.currentTimeMillis();
+		while (thread.isPerformingEvaluation() && !thread.isTerminated()) {
+			try {
+				Thread.sleep(50);
+			}
+			catch (InterruptedException e) {
+				break;
+			}
+			if (System.currentTimeMillis() - start > maxWaitTimeMillis) {
+				break;
+			}
+		}
 	}
 
 	/**

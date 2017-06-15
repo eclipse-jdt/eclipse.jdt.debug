@@ -465,4 +465,71 @@ public class GeneralEvalTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 		}
 	}
+
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=508105
+	 *
+	 * @throws Exception
+	 */
+	public void testMultiByteCharacters() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+
+			String snippet = "int äüßö€ = 1; { if(äüßö€ < 0) return false; }; return äüßö€ > 0";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of 'int äüßö€ = 1; { if(äüßö€ < 0) return false; }; return äüßö€ > 0' should be true", Boolean.parseBoolean(value.getValueString()));
+
+			snippet = "\"ทดสอบ\".length() > 0";
+			value = doEval(thread, snippet);
+			assertTrue("The result of '\"ทดสอบ\".length() > 0' should be true", Boolean.parseBoolean(value.getValueString()));
+
+			snippet = "return \"ทดสอบ\".length() == 5";
+			value = doEval(thread, snippet);
+			assertTrue("The result of 'return \"ทดสอบ\".length() == 5' should be true", Boolean.parseBoolean(value.getValueString()));
+
+			snippet = "{return \"ทดสอบ\".length() != 5;}";
+			value = doEval(thread, snippet);
+			assertFalse("The result of '{return \"ทดสอบ\".length() != 5;}' should be false", Boolean.parseBoolean(value.getValueString()));
+
+			snippet = "{/**/};\n{return \"ทดสอบ\".charAt(0) == '\\\\';}";
+			value = doEval(thread, snippet);
+			assertFalse("The result of '{/**/};\\n{return \\\"ทดสอบ\\\".charAt(0) == '\\\\\\\\';}' should be false", Boolean.parseBoolean(value.getValueString()));
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
+
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=508105
+	 *
+	 * @throws Exception
+	 */
+	public void XtestAReturn() throws Exception {
+		IJavaThread thread = null;
+		try {
+			String typename = "bug401270";
+			createLineBreakpoint(25, typename);
+			thread = launchToBreakpoint(typename);
+			assertNotNull("the program did not suspend", thread);
+
+			String snippet = "int a = 1; return a > 0";
+			IValue value = doEval(thread, snippet);
+			assertTrue("The result of 'int a = 1; return a > 0' should be true", Boolean.parseBoolean(value.getValueString()));
+
+			snippet = "int areturn = 1; return areturn > 0";
+			value = doEval(thread, snippet);
+			assertTrue("The result of 'int areturn = 1; return areturn > 0' should be true", Boolean.parseBoolean(value.getValueString()));
+
+		}
+		finally {
+			removeAllBreakpoints();
+			terminateAndRemove(thread);
+		}
+	}
 }

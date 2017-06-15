@@ -17,7 +17,6 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -76,8 +75,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "setUp");
-		assertWelcomeScreenClosed();
+		super.setUp();
 		TestUtil.cleanUp(getName());
 		IPath testrpath = new Path("testresources");
 		IProject jarProject = createProjectClone(fJarProject, testrpath.append(fJarProject).toString(), true);
@@ -110,7 +108,19 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	protected void tearDown() throws Exception {
 		removeAllBreakpoints();
 		if (fgJarProject.exists()) {
-			fgJarProject.getProject().delete(true, null);
+			IProject project = fgJarProject.getProject();
+			// Before deleting, let indexer to finish his work to avoid error below (see 516351)
+			TestUtil.waitForJobs(getName(), 100, 3000);
+			try {
+				project.delete(true, null);
+			}
+			catch (ResourceException e) {
+				// Indexer still running on our jars?
+				TestUtil.waitForJobs(getName(), 1000, 5000);
+				if (project.exists()) {
+					project.delete(true, null);
+				}
+			}
 		}
 		super.tearDown();
 	}
@@ -176,7 +186,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 */
 	public void testInspectClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
-		createLineBreakpoint(16, A_RUN_JAR);
+		createLineBreakpoint(18, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {
@@ -203,7 +213,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 	 */
 	public void testShowClassFileFromJar() throws Exception {
 		createLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
-		createLineBreakpoint(16, A_RUN_JAR);
+		createLineBreakpoint(18, A_RUN_JAR);
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IJavaThread thread = null;
 		try {

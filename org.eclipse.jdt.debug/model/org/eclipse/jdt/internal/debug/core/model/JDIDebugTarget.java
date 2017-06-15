@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IFile;
@@ -160,6 +161,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Whether in the process of terminating
 	 */
 	private boolean fTerminating;
+
+	/**
+	 * Whether in the process of disconnecting
+	 */
+	private boolean fDisconnecting;
+
 	/**
 	 * Whether disconnected
 	 */
@@ -349,6 +356,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		setTerminated(false);
 		setTerminating(false);
 		setDisconnected(false);
+		setDisconnecting(false);
 		setName(name);
 		prepareBreakpointsSearchScope();
 		setBreakpoints(new ArrayList<IBreakpoint>(5));
@@ -862,6 +870,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 
 		try {
+			setDisconnecting(true);
 			disposeThreadHandler();
 			VirtualMachine vm = getVM();
 			if (vm != null) {
@@ -1136,7 +1145,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 * Returns whether this target is available to handle VM requests
 	 */
 	public boolean isAvailable() {
-		return !(isTerminated() || isTerminating() || isDisconnected());
+		return !(isTerminated() || isTerminating() || isDisconnected() || isDisconnecting());
 	}
 
 	/**
@@ -1383,7 +1392,15 @@ public class JDIDebugTarget extends JDIDebugElement implements
 			return true;
 		}
 
-		IResource resource = marker.getResource();
+		return supportsResource(() -> jBreakpoint.getTypeName(), marker.getResource());
+	}
+
+
+	public boolean supportsResource(Callable<String> typeNameSupplier, IResource resource) {
+		if (fScope == null) {
+			// No checks, everything in scope: the filtering is disabled
+			return true;
+		}
 		// Java exception breakpoints have wsp root as resource
 		if(resource == null || resource == ResourcesPlugin.getWorkspace().getRoot()) {
 			return true;
@@ -1419,7 +1436,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		// This can be also an incomplete resource mapping.
 		// Try to see if the type available multiple times in workspace
 		try {
-			String typeName = jBreakpoint.getTypeName();
+			String typeName = typeNameSupplier.call();
 			if(typeName != null){
 				Boolean known = knownTypes.get(typeName);
 				if(known != null){
@@ -1429,7 +1446,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				knownTypes.put(typeName, Boolean.valueOf(supportedBreakpoint));
 				return supportedBreakpoint;
 			}
-		} catch (CoreException e) {
+		}
+		catch (Exception e) {
 			logError(e);
 		}
 		// we don't know why computation failed, so let assume the breakpoint is supported.
@@ -1839,6 +1857,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	@Override
 	protected void disconnected() {
+		setDisconnecting(false);
 		if (!isDisconnected()) {
 			setDisconnected(true);
 			cleanup();
@@ -2260,6 +2279,14 @@ public class JDIDebugTarget extends JDIDebugElement implements
 
 	protected void setTerminating(boolean terminating) {
 		fTerminating = terminating;
+	}
+
+	protected boolean isDisconnecting() {
+		return fDisconnecting;
+	}
+
+	protected void setDisconnecting(boolean disconnecting) {
+		fDisconnecting = disconnecting;
 	}
 
 	/**

@@ -74,6 +74,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDi
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
+import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -184,6 +185,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public static final String ONE_SEVEN_PROJECT_NAME = "OneSeven";
 	public static final String ONE_EIGHT_PROJECT_NAME = "OneEight";
 	public static final String BOUND_JRE_PROJECT_NAME = "BoundJRE";
+	public static final String CLONE_SUFFIX = "Clone";
 
 	final String[] LAUNCH_CONFIG_NAMES_1_4 = {"LargeSourceFile", "LotsOfFields", "Breakpoints", "InstanceVariablesTests", "LocalVariablesTests", "LocalVariableTests2", "StaticVariablesTests",
  "DropTests", "ThrowsNPE", "ThrowsException", "org.eclipse.debug.tests.targets.Watchpoint",
@@ -329,7 +331,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	synchronized void assert14Project() {
 		IJavaProject jp = null;
-		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
         try {
 	        if (!loaded14) {
 	        	try {
@@ -386,7 +388,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	void assert15Project() {
 		IJavaProject jp = null;
-		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
         try {
 	        if (!loaded15) {
 				jp = createProject(ONE_FIVE_PROJECT_NAME, JavaProjectHelper.TEST_1_5_SRC_DIR.toString(), JavaProjectHelper.J2SE_1_5_EE_NAME, true);
@@ -398,6 +400,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug403028"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.bug484686"));
 				cfgs.add(createLaunchConfiguration(jp, "a.b.c.GenericMethodEntryTest"));
+				cfgs.add(createLaunchConfiguration(jp, "org.eclipse.debug.tests.targets.HcrClass", true));
 				loaded15 = true;
 				waitForBuild();
 	        }
@@ -423,7 +426,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	synchronized void assert17Project() {
 		IJavaProject jp = null;
-		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
         try {
 	        if (!loaded17) {
 	        	jp = createProject(ONE_SEVEN_PROJECT_NAME, JavaProjectHelper.TEST_1_7_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, false);
@@ -453,7 +456,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	synchronized void assert18Project() {
 		IJavaProject jp = null;
-		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<ILaunchConfiguration>(1);
+		ArrayList<ILaunchConfiguration> cfgs = new ArrayList<>(1);
         try {
 	        if (!loaded18) {
 	        	jp = createProject(ONE_EIGHT_PROJECT_NAME, JavaProjectHelper.TEST_1_8_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_8_EE_NAME, false);
@@ -1182,6 +1185,21 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 	/**
+	 * Launches the type with the given name, and waits for a breakpoint-caused
+	 * suspend event in that program. Returns the thread in which the suspend
+	 * event occurred.
+	 *
+	 * @param mainTypeName the program to launch
+	 * @param register whether to register the launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected IJavaThread launchToBreakpoint(IJavaProject project, String mainTypeName, String launchName, boolean register) throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration(project, launchName);
+		assertNotNull("Could not locate launch configuration for " + mainTypeName, config); //$NON-NLS-1$
+		return launchToBreakpoint(config, register);
+	}
+
+	/**
 	 * Launches the given configuration in debug mode, and waits for a breakpoint-caused
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
@@ -1656,7 +1674,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected Map<String, Object> getExtraBreakpointAttributes(IMember element) throws Exception {
 		if (element != null && element.exists()) {
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 			ISourceRange sourceRange = element.getSourceRange();
 			int start = sourceRange.getOffset();
 			int end = start + sourceRange.getLength();
@@ -2379,6 +2397,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
             try {
                 Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
                 Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+				// Let also all other pending jobs proceed, ignore console jobs
+				TestUtil.waitForJobs("waitForBuild", 100, 1000, ProcessConsole.class);
                 wasInterrupted = false;
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
@@ -2443,19 +2463,30 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
      * Creates a shared launch configuration for the type with the given name.
      */
     protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String mainTypeName) throws Exception {
+		return createLaunchConfiguration(project, mainTypeName, false);
+	}
+
+	/**
+	 * Creates a shared launch configuration for the type with the given name.
+	 *
+	 * @param clone
+	 *            true if the launch config name should be different from the main type name
+	 */
+	protected ILaunchConfiguration createLaunchConfiguration(IJavaProject project, String mainTypeName, boolean clone) throws Exception {
         ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-        ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), mainTypeName);
+		String configName = clone ? mainTypeName + CLONE_SUFFIX : mainTypeName;
+		ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), configName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
-		Set<String> modes = new HashSet<String>();
+		Set<String> modes = new HashSet<>();
 		modes.add(ILaunchManager.RUN_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
-		modes = new HashSet<String>();
+		modes = new HashSet<>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
-        Map<String, String> map = new HashMap<String, String>(1);
+        Map<String, String> map = new HashMap<>(1);
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         return config.doSave();
@@ -2469,15 +2500,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(containername), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
-		Set<String> modes = new HashSet<String>();
+		Set<String> modes = new HashSet<>();
 		modes.add(ILaunchManager.RUN_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
-		modes = new HashSet<String>();
+		modes = new HashSet<>();
 		modes.add(ILaunchManager.DEBUG_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
         // use 'java' instead of 'javaw' to launch tests (javaw is problematic
         // on JDK1.4.2)
-        Map<String, String> map = new HashMap<String, String>(1);
+        Map<String, String> map = new HashMap<>(1);
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         return config.doSave();
@@ -2499,10 +2530,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			} catch (TestAgainException e) {
 				TestUtil.log(IStatus.ERROR, getName(), "Test failed attempt " + attempts + ". Re-testing.", e);
 				TestUtil.cleanUp(getName());
-				if (attempts > 5) {
-					tryAgain = false;
+				if (attempts > 4) {
+					// the next attempt will fail
+					break;
 				}
 			}
+		}
+		if (tryAgain) {
+			// last attempt and if it fails then we should fail, see bug 515988
+			super.runBare();
 		}
 	}
 

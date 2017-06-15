@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,9 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceListVariable;
-import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.ui.IActionFilter;
 
@@ -213,9 +211,6 @@ public class JavaVarActionFilter implements IActionFilter {
 						return JavaDetailFormattersManager.getDefault().hasSuperclassDetailFormatter(((IJavaObject)varValue).getJavaType());
 					}
 				}
-				else if (name.equals("JavaLogicalStructureFilter") && value.equals("canEditLogicalStructure")) {  //$NON-NLS-1$ //$NON-NLS-2$
-                    return varValue instanceof JavaStructureErrorValue || EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
-                }
 			} catch (DebugException e) {}
 		}
 		else if (target instanceof JavaInspectExpression) {

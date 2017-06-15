@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -158,15 +160,22 @@ public class TestUtil {
 		StringBuilder sb = new StringBuilder();
 		for (Job job : jobs) {
 			runningJobs.add(job);
-			sb.append("'").append(job.getName()).append("'/");
+			sb.append("\n'").append(job.toString()).append("'/");
 			sb.append(job.getClass().getName());
+			Thread thread = job.getThread();
+			if (thread != null) {
+				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().getThreadInfo(new long[] { thread.getId() }, true, true);
+				if (threadInfos[0] != null) {
+					sb.append("\nthread info: ").append(threadInfos[0]);
+				}
+			}
 			sb.append(", ");
 		}
 		sb.setLength(sb.length() - 2);
 		return sb.toString();
 	}
 
-	private static List<Job> getRunningOrWaitingJobs(Object jobFamily, Object... excludedFamilies) {
+	public static List<Job> getRunningOrWaitingJobs(Object jobFamily, Object... excludedFamilies) {
 		List<Job> running = new ArrayList<>();
 		Job[] jobs = Job.getJobManager().find(jobFamily);
 		for (Job job : jobs) {

@@ -38,6 +38,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
+import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
@@ -116,6 +117,7 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
+import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
@@ -192,6 +194,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
 		addTest(new TestSuite(TriggerPointBreakpointsTests.class));
+		addTest(new TestSuite(JavaThreadEventHandlerTests.class));
 
 		if (JavaProjectHelper.isJava8Compatible()) {
 			addTest(new TestSuite(TestToggleBreakpointsTarget8.class));
@@ -314,6 +317,9 @@ public class AutomatedSuite extends DebugSuite {
 
 	// Layout tests
 		addTest(new TestSuite(ViewManagementTests.class));
+
+	// Debug view tests
+		addTest(new TestSuite(DebugViewTests.class));
 
 	// Leak tests
 		addTest(new TestSuite(InstructionPointerTests.class));

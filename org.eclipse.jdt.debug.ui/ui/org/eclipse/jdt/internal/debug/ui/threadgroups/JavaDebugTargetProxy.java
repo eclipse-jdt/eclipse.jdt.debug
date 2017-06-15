@@ -67,9 +67,6 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 				new StackFrameEventHandler(this, fThreadEventHandler)};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		if (fIsScrapbook) {
@@ -86,6 +83,11 @@ public class JavaDebugTargetProxy extends DebugTargetProxy {
 					doInstalled(finalViewer);
 				}
 				return Status.OK_STATUS;
+			}
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return JavaDebugTargetProxy.this == family;
 			}
 		};
 		job.setSystem(true);

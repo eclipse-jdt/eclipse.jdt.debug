@@ -79,8 +79,11 @@ public class EvaluationSourceGenerator {
 	 */
 	protected String getCompleteSnippet(String codeSnippet) {
 		codeSnippet = codeSnippet.trim(); // remove whitespaces at the end
+		if(codeSnippet.isEmpty()) {
+			return "return;"; //$NON-NLS-1$
+		}
 		boolean inString = false;
-		byte[] chars = codeSnippet.getBytes();
+		char[] chars = codeSnippet.toCharArray();
 
 		int semicolonIndex = -1;
 		int lastSemilcolonIndex = -1;

@@ -265,6 +265,16 @@ public class EventDispatcher implements Runnable {
 								}
 								return false;
 							}
+
+							@Override
+							public String toString() {
+								try {
+									return super.toString() + " for [" + fTarget.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+								}
+								catch (DebugException e) {
+									return super.toString();
+								}
+							}
 						};
 						job.setSystem(true);
 						job.schedule();

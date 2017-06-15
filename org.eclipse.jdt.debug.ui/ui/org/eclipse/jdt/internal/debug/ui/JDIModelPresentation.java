@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
@@ -29,10 +30,13 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentationExtension;
@@ -84,6 +88,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementImageDescriptor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -93,6 +98,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -913,9 +920,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected Image getVariableImage(IAdaptable element) {
-		JavaElementImageDescriptor descriptor= new JavaElementImageDescriptor(
+		CompositeImageDescriptor descriptor = new JavaElementImageDescriptor(
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
-		return JavaPlugin.getImageDescriptorRegistry().get(descriptor);
+		descriptor = new JDIElementImageDescriptor(descriptor, computeLogicalStructureAdornmentFlags(element), BIG_SIZE);
+		Image image = JDIDebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
+
+		return image;
 	}
 
 	/**
@@ -1131,6 +1141,38 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			// no need to log errors - elements may no longer exist by the time we render them
 		}
 		return flags;
+	}
+
+	private int computeLogicalStructureAdornmentFlags(IAdaptable element) {
+		int flags = 0;
+		 if (element instanceof IVariable) {
+            try {
+                IValue value= ((IVariable) element).getValue();
+                ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
+				if (types.length == 0) {
+					return flags; // no logical structure is defined for the value type
+		        }
+				ILogicalStructureType enabledType = DebugPlugin.getDefaultStructureType(types);
+				if (enabledType == null) {
+					return flags; // no logical structure is enabled for this type
+				}
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (IWorkbenchWindow window : windows) {
+					IWorkbenchPage page = window.getActivePage();
+					IViewPart viewPart = page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+					if (viewPart instanceof VariablesView) {
+						if (((VariablesView) viewPart).isShowLogicalStructure()) {
+							// a logical structure is enabled for this type and global toggle to show logical structure is on
+							return flags |= JDIImageDescriptor.LOGICAL_STRUCTURE;
+						}
+						return flags;
+					}
+				}
+            }catch (DebugException e) {
+				DebugUIPlugin.log(e.getStatus());
+            }
+		}
+        return flags;
 	}
 
 	/**

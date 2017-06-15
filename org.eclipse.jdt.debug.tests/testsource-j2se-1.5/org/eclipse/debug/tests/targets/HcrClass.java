@@ -4,32 +4,39 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.debug.tests.targets;
 
-public class DropTests {
-
- 	public static void main(String[] args) {
- 		DropTests dt = new DropTests();
- 		dt.method1();
- 	}
-
- 	public void method1() {
- 		method2();
- 	}
-
- 	public void method2() {
- 		method3();
- 	}
-
- 	public void method3() {
- 		method4();
- 	}
-
- 	public synchronized void method4() {
- 		System.out.println("Finally, I got to method 4");
- 	}
+/**
+ * Class used to test hot code replace
+ */
+public class HcrClass {
+	
+	protected String instVar = null;
+	
+	public static void main(String[] args) {
+		new HcrClass().one();
+	}
+	
+	public void one() {
+		instVar = "One";
+		two();
+	}
+	
+	public void two() {
+		three();
+	}
+	
+	public void three() {
+		four();
+	}
+	
+	public void four() {
+		String x = instVar;
+		System.out.println(x);
+	}
 
 }

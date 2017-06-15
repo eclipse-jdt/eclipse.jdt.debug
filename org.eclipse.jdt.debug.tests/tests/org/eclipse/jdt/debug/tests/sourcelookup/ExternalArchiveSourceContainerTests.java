@@ -11,6 +11,10 @@
 package org.eclipse.jdt.debug.tests.sourcelookup;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -150,5 +154,52 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		objects = container.findSourceElements("folder/file-c.txt");
 		storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "file-c.txt", storage.getName());
+	}
+
+	/**
+	 * Test for bug 515941 (ConcurrentModificationException on container dispose)
+	 */
+	public void testDisposed() throws Exception {
+		int threads = Math.min(Runtime.getRuntime().availableProcessors(), 4);
+		ExecutorService exec = Executors.newFixedThreadPool(threads);
+		AtomicReference<Throwable> err = new AtomicReference<>();
+		AtomicReference<ExternalArchiveSourceContainer> container = new AtomicReference<>();
+		AtomicReference<Boolean> stop = new AtomicReference<>(Boolean.FALSE);
+		CountDownLatch latch = new CountDownLatch(1);
+		for (int i = 0; i < threads; i++) {
+			exec.submit(() -> {
+				try {
+					latch.await();
+					while (!stop.get()) {
+						ExternalArchiveSourceContainer c = container.get();
+						if (c != null) {
+							c.dispose();
+						}
+					}
+				}
+				catch (Throwable e) {
+					err.set(e);
+				}
+			});
+		}
+		latch.countDown();
+		try {
+			for (int i = 0; i < 5_000; i++) {
+				ExternalArchiveSourceContainer cont = getContainer("testresources/source-test.zip", true, false);
+				try {
+					container.set(cont);
+					Thread.sleep(1);
+					cont.findSourceElements("one/two/Three.java");
+
+				}
+				finally {
+					cont.dispose();
+				}
+			}
+		}
+		finally {
+			stop.set(true);
+			exec.shutdownNow();
+		}
 	}
 }
