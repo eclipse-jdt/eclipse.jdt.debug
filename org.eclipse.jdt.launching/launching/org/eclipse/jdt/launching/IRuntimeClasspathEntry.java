@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -347,4 +347,12 @@ public interface IRuntimeClasspathEntry {
 	 * @since 3.0
 	 */
 	public IJavaProject getJavaProject();
+
+	/**
+	 * Returns <code>true</code> if the java project associated is an AutoModule.
+	 *
+	 * @return <code>true</code> if the Java project associated is an AutoModule or <code>null</false> if none
+	 * @since 3.9
+	 */
+	public boolean isAutomodule();
 }

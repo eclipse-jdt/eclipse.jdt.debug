@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,8 @@ public class VMRunnerConfiguration {
 	private String[] fEnvironment;
 	private String[] fClassPath;
 	private String[] fBootClassPath;
+	private String[] fModulepath;
+	private String fModuleDescription;
 	private String fWorkingDirectory;
 	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
@@ -263,5 +265,47 @@ public class VMRunnerConfiguration {
 	 */
 	public boolean isResumeOnStartup() {
 		return fResume;
+	}
+
+	/**
+	 * Sets the modulepath.
+	 *
+	 * @param modulepath
+	 *            modulepath
+	 * @since 3.9
+	 */
+	public void setModulepath(String[] modulepath) {
+		this.fModulepath = modulepath;
+	}
+
+	/**
+	 * Returns the Modulepath.
+	 *
+	 * @return the modulepath
+	 * @since 3.9
+	 */
+	public String[] getModulepath() {
+		return this.fModulepath;
+	}
+
+	/**
+	 * Sets the fModuleDescription.
+	 *
+	 * @param fModuleDescription
+	 *            fModuleDescription
+	 * @since 3.9
+	 */
+	public void setModuleDescription(String fModuleDescription) {
+		this.fModuleDescription = fModuleDescription;
+	}
+
+	/**
+	 * Returns the ModuleDescription.
+	 *
+	 * @return the ModuleDescription
+	 * @since 3.9
+	 */
+	public String getModuleDescription() {
+		return this.fModuleDescription;
 	}
 }

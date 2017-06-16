@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -657,6 +658,28 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path) {
 		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, null, null));
+	}
+
+	/**
+	 * Returns a new runtime classpath entry for the given archive (possibly
+	 * external).
+	 *
+	 * @param path absolute path to an archive
+ 	 * @param sourceAttachmentPath the absolute path of the corresponding source archive or folder,
+	 *   or <code>null</code> if none. Note, since 3.0, an empty path is allowed to denote no source attachment.
+	 *   and will be automatically converted to <code>null</code>. Since 3.4, this path can also denote a path external
+	 *   to the workspace.
+	 * @param sourceAttachmentRootPath the location of the root of the source files within the source archive or folder
+	 *    or <code>null</code> if this location should be automatically detected.
+	 * @param accessRules the possibly empty list of access rules for this entry
+	 * @param extraAttributes the possibly empty list of extra attributes to persist with this entry
+	 * @param isExported indicates whether this entry is contributed to dependent
+	 * 	  projects in addition to the output location
+	 * @return runtime classpath entry
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IAccessRule[] accessRules, IClasspathAttribute[] extraAtributes, boolean isExported) {
+		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, accessRules, extraAtributes, isExported));
 	}
 
 	/**

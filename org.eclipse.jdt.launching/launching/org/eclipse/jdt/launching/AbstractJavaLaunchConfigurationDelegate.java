@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,9 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -410,21 +412,93 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
-		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
+		IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = entries[i].getLocation();
+			IRuntimeClasspathEntry entry = entries[i];
+			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = entry.getLocation();
 				if (location != null) {
-					if (!set.contains(location)) {
-						userEntries.add(location);
+					if (proj.getModuleDescription() != null) {
+						if (isModuleEntry(proj, entry)) {
+							continue;
+						}
+						set.add(location);
+					} else {
 						set.add(location);
 					}
 				}
 			}
 		}
-		return userEntries.toArray(new String[userEntries.size()]);
+		return set.toArray(new String[set.size()]);
 	}
+
+	/**
+	 * Returns the entries that should appear on the user portion of the classpath and modulepath as specified by the given launch configuration, as
+	 * an array of resolved strings. The returned array is empty if no classpath and modulepath is specified.
+	 *
+	 * @param configuration
+	 *            launch configuration
+	 * @return the classpath and modulepath specified by the given launch configuration, possibly an empty array
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 * @since 3.9
+	 */
+	public String[][] getClasspathAndModulepath(ILaunchConfiguration config) throws CoreException {
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, config);
+		String[][] path = new String[2][entries.length];
+		Set<String> classpathSet = new HashSet<>(entries.length);
+		Set<String> modulepathSet = new HashSet<>(entries.length);
+		IJavaProject proj = JavaRuntime.getJavaProject(config);
+		for (IRuntimeClasspathEntry entry : entries) {
+			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = entry.getLocation();
+				if (location != null) {
+					if (proj.getModuleDescription() != null) {
+						if (isModuleEntry(proj, entry)) {
+							modulepathSet.add(location);
+						} else {
+							classpathSet.add(location);
+						}
+					}
+					else {
+						classpathSet.add(location);
+					}
+				}
+			}
+		}
+		path[0] = classpathSet.toArray(new String[classpathSet.size()]);
+		path[1] = modulepathSet.toArray(new String[modulepathSet.size()]);
+		return path;
+	}
+
+
+	private boolean isModuleEntry(IJavaProject proj, IRuntimeClasspathEntry entry) throws JavaModelException {
+		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.PROJECT:
+				IResource resource = entry.getResource();
+				if (resource != null && resource.getType() == IResource.PROJECT) {
+					IJavaProject javaProject = JavaCore.create((IProject) resource);
+					if (proj.getElementName().equals(javaProject.getElementName()) || javaProject.getModuleDescription() != null) {
+						return true;
+					}
+				}
+				break;
+			default:
+				if (entry.isAutomodule()) {
+					return true;
+				}
+				// This is based on the assumption that the entries don't contain any container or variable entries.
+				IPackageFragmentRoot root = proj.findPackageFragmentRoot(entry.getPath());
+				if (root.getModuleDescription() != null) {
+					return true;
+				}
+				break;
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the Java project specified by the given launch configuration, or
 	 * <code>null</code> if none.

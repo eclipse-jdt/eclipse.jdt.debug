@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -715,5 +715,16 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	public void setJavaProject(IJavaProject project) {
 		fJavaProject = project;
+	}
+
+	@Override
+	public boolean isAutomodule() {
+		IClasspathAttribute[] extraAttributes = getClasspathEntry().getExtraAttributes();
+		for (IClasspathAttribute attribute : extraAttributes) {
+			if (IClasspathAttribute.AUTOMATIC_MODULE.equals(attribute.getName()) && Boolean.TRUE.toString().equals(attribute.getValue())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
