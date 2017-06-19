@@ -351,7 +351,7 @@ public interface IRuntimeClasspathEntry {
 	/**
 	 * Returns <code>true</code> if the java project associated is an AutoModule.
 	 *
-	 * @return <code>true</code> if the Java project associated is an AutoModule or <code>null</false> if none
+	 * @return <code>true</code> if the Java project associated is an AutoModule or <code>false</code> if not
 	 * @since 3.9
 	 */
 	public boolean isAutomodule();
