@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
-			"StepResult2", "StepResult3", "TriggerPoint_01" };
+			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01" };
 
 	final String[] LAUNCH_CONFIG_NAMES_1_8 = {"LargeSourceFile"};
 

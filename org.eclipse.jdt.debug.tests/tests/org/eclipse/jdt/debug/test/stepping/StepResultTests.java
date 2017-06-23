@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Till Brychcy and others.
+ * Copyright (c) 2017 Till Brychcy and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,9 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public class StepResultTests extends AbstractDebugTest {
 
@@ -43,7 +46,6 @@ public class StepResultTests extends AbstractDebugTest {
 			IVariable varInG = stackFrame.getVariables()[0];
 			assertEquals("h() returned", varInG.getName());
 			assertEquals("\"h-i\"", varInG.getValue().toString());
-
 
 			// skip the synthetic via a step filter.
 			IJavaDebugTarget javaDebugTarget = (IJavaDebugTarget) stackFrame.getDebugTarget();
@@ -470,4 +472,35 @@ public class StepResultTests extends AbstractDebugTest {
 		}
 	}
 
+	public void testStepUncaught() throws Exception {
+		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean origPrefValue = preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+		preferenceStore.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+		String typeName = "StepUncaught";
+		ILineBreakpoint bp = createLineBreakpoint(15, "StepUncaught");
+		bp.setEnabled(true);
+
+		IJavaThread thread = null;
+		try {
+			thread = launchAndSuspend(typeName);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("main", stackFrame.getMethodName());
+
+			stepOver(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("main", stackFrame.getMethodName());
+			assertEquals("f() threw", stackFrame.getVariables()[0].getName());
+
+			stepOverToBreakpoint(stackFrame);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+		}
+		finally {
+			preferenceStore.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, origPrefValue);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }
