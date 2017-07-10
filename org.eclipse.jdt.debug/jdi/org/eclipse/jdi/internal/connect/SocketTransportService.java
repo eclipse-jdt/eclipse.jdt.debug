@@ -193,8 +193,9 @@ public class SocketTransportService extends TransportService {
 		} catch (InterruptedException e1) {
 		}
 
-		if (handshakeCompleted[0])
+		if (handshakeCompleted[0]) {
 			return;
+		}
 
 		try {
 			in.close();
@@ -202,8 +203,9 @@ public class SocketTransportService extends TransportService {
 		} catch (IOException e) {
 		}
 
-		if (ex[0] != null)
+		if (ex[0] != null) {
 			throw ex[0];
+		}
 
 		throw new TransportTimeoutException();
 	}
@@ -213,8 +215,9 @@ public class SocketTransportService extends TransportService {
 			DataInputStream in = new DataInputStream(input);
 			byte[] handshakeInput = new byte[handshakeBytes.length];
 			in.readFully(handshakeInput);
-			if (!Arrays.equals(handshakeInput, handshakeBytes))
+			if (!Arrays.equals(handshakeInput, handshakeBytes)) {
 				throw new IOException("Received invalid handshake"); //$NON-NLS-1$
+			}
 		} catch (EOFException e) {
 			throw new ClosedConnectionException();
 		}
@@ -274,9 +277,10 @@ public class SocketTransportService extends TransportService {
 	@Override
 	public ListenKey startListening(String address) throws IOException {
 		String host = null;
-		int port = 0; // jdt debugger will always specify an address in
-						// the form localhost:port
+		int port = -1;
 		if (address != null) {
+			// jdt debugger will always specify an address in
+			// the form localhost:port
 			String[] strings = address.split(":"); //$NON-NLS-1$
 			host = "localhost"; //$NON-NLS-1$
 			if (strings.length == 2) {
@@ -285,6 +289,9 @@ public class SocketTransportService extends TransportService {
 			} else {
 				port = Integer.parseInt(strings[0]);
 			}
+		}
+		if (port == -1) {
+			throw new IOException("Unable to decode port from address: " + address); //$NON-NLS-1$
 		}
 		if (host == null) {
 			host = "localhost"; //$NON-NLS-1$
