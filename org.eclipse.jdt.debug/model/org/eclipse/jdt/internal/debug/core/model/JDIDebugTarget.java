@@ -3339,4 +3339,51 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	public ListenerList<IJavaHotCodeReplaceListener> getHotCodeReplaceListeners() {
 		return fHCRListeners;
 	}
+
+	/**
+	 * Filters elements out of the given collections of resources and qualified names if there is no related resources in the given debug target. This
+	 * method allows us to avoid bogus HCR attempts and "HCR failed" notifications.
+	 *
+	 * @param resourcesToFilter
+	 *            the list of resources to filter
+	 * @param qualifiedNamesToFilter
+	 *            the list of qualified names to filter, which corresponds to the list of resources on a one-to-one-basis
+	 */
+	public void filterUnrelatedResources(List<IResource> resourcesToFilter, List<String> qualifiedNamesToFilter) {
+		Iterator<IResource> resources = resourcesToFilter.iterator();
+		Iterator<String> names = qualifiedNamesToFilter.iterator();
+		while (resources.hasNext()) {
+			boolean supported = supportsResource(() -> names.next(), resources.next());
+			if (!supported) {
+				resources.remove();
+				names.remove();
+			}
+		}
+	}
+
+	/**
+	 * Filters elements out of the given collections of resources and qualified names if there is no type corresponding type loaded in the given debug
+	 * target. This method allows us to avoid bogus HCR attempts and "HCR failed" notifications.
+	 *
+	 * @param resources
+	 *            the list of resources to filter
+	 * @param qualifiedNames
+	 *            the list of qualified names to filter, which corresponds to the list of resources on a one-to-one-basis
+	 */
+	public void filterNotLoadedTypes(List<IResource> resources, List<String> qualifiedNames) {
+		for (int i = 0, numElements = qualifiedNames.size(); i < numElements; i++) {
+			String name = qualifiedNames.get(i);
+			List<ReferenceType> list = jdiClassesByName(name);
+			if (list.isEmpty()) {
+				// If no classes with the given name are loaded in the VM, don't
+				// waste cycles trying to replace.
+				qualifiedNames.remove(i);
+				resources.remove(i);
+				// Decrement the index and number of elements to compensate for
+				// item removal
+				i--;
+				numElements--;
+			}
+		}
+	}
 }

@@ -331,39 +331,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 	}
 
 	/**
-	 * Filters elements out of the given collections of resources and qualified
-	 * names if there is no type corresponding type loaded in the given debug
-	 * target. This method allows us to avoid bogus HCR attempts and
-	 * "HCR failed" notifications.
-	 *
-	 * @param target
-	 *            the debug target
-	 * @param resources
-	 *            the list of resources to filter
-	 * @param qualifiedNames
-	 *            the list of qualified names to filter, which corresponds to
-	 *            the list of resources on a one-to-one-basis
-	 */
-	private void filterUnloadedTypes(JDIDebugTarget target, List<IResource> resources,
-			List<String> qualifiedNames) {
-		for (int i = 0, numElements = qualifiedNames.size(); i < numElements; i++) {
-			String name = qualifiedNames.get(i);
-			List<ReferenceType> list = target.jdiClassesByName(name);
-			if (list.isEmpty()) {
-				// If no classes with the given name are loaded in the VM, don't
-				// waste
-				// cycles trying to replace.
-				qualifiedNames.remove(i);
-				resources.remove(i);
-				// Decrement the index and number of elements to compensate for
-				// item removal
-				i--;
-				numElements--;
-			}
-		}
-	}
-
-	/**
 	 * Notify the given targets that HCR failed for classes with the given fully
 	 * qualified names.
 	 */
@@ -379,8 +346,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 				// unloaded types on a per-target basis.
 				List<IResource> resourcesToReplace = new ArrayList<>(resources);
 				List<String> qualifiedNamesToReplace = new ArrayList<>(qualifiedNames);
-				filterUnloadedTypes(target, resourcesToReplace,
-						qualifiedNamesToReplace);
+				target.filterNotLoadedTypes(resourcesToReplace, qualifiedNamesToReplace);
 
 				if (!qualifiedNamesToReplace.isEmpty()) {
 					// Don't notify if the changed types aren't loaded.
@@ -471,13 +437,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			List<String> qualifiedNamesToReplace = new ArrayList<>(qualifiedNames);
 
 			// Make sure we only try to replace types from related projects
-			filterUnrelatedResources(target, resourcesToReplace, qualifiedNamesToReplace);
+			target.filterUnrelatedResources(resourcesToReplace, qualifiedNamesToReplace);
 			if (qualifiedNamesToReplace.isEmpty()) {
 				// If none of the changed types are related to our target, do nothing.
 				continue;
 			}
 
-			filterUnloadedTypes(target, resourcesToReplace, qualifiedNamesToReplace);
+			target.filterNotLoadedTypes(resourcesToReplace, qualifiedNamesToReplace);
 			if (qualifiedNamesToReplace.isEmpty()) {
 				// If none of the changed types are loaded, do nothing.
 				continue;
@@ -546,18 +512,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener,
 			JDIDebugPlugin.log(ms);
 		}
 		fDeltaCache.clear();
-	}
-
-	private void filterUnrelatedResources(JDIDebugTarget target, List<IResource> resourcesToReplace, List<String> qualifiedNamesToReplace) {
-		Iterator<IResource> resources = resourcesToReplace.iterator();
-		Iterator<String> names = qualifiedNamesToReplace.iterator();
-		while (resources.hasNext()) {
-			boolean supported = target.supportsResource(() -> names.next(), resources.next());
-			if (!supported) {
-				resources.remove();
-				names.remove();
-			}
-		}
 	}
 
 	/**
