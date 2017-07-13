@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -356,7 +355,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	/** The following are the stored results of JDWP calls. */
 	protected List<InterfaceType> fInterfaces = null;
 	private List<Method> fMethods = null;
-	private Hashtable<JdwpMethodID, Method> fMethodTable = null;
+	private Map<JdwpMethodID, Method> fMethodTable = null;
 	private List<Field> fFields = null;
 	private List<Method> fAllMethods = null;
 	private List<Method> fVisibleMethods = null;
@@ -522,8 +521,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public int modifiers() {
-		if (fModifierBits != -1)
+		if (fModifierBits != -1) {
 			return fModifierBits;
+		}
 
 		initJdwpRequest();
 		try {
@@ -564,8 +564,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public List<Method> visibleMethods() {
-		if (fVisibleMethods != null)
+		if (fVisibleMethods != null) {
 			return fVisibleMethods;
+		}
 
 		/*
 		 * Recursion: The methods of its own (own methods() command); All
@@ -596,9 +597,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		// If it is a class, all methods of it's superclass.
 		if (this instanceof ClassType) {
 			ClassType superclass = ((ClassType) this).superclass();
-			if (superclass != null)
+			if (superclass != null) {
 				addVisibleMethods(superclass.visibleMethods(),
 						namesAndSignatures, visibleMethods);
+			}
 		}
 
 		fVisibleMethods = visibleMethods;
@@ -612,8 +614,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public List<Method> allMethods() {
-		if (fAllMethods != null)
+		if (fAllMethods != null) {
 			return fAllMethods;
+		}
 
 		/*
 		 * Recursion: The methods of its own (own methods() command); All
@@ -637,8 +640,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		// If it is a class, all methods of it's superclass.
 		if (this instanceof ClassType) {
 			ClassType superclass = ((ClassType) this).superclass();
-			if (superclass != null)
+			if (superclass != null) {
 				resultSet.addAll(superclass.allMethods());
+			}
 		}
 
 		fAllMethods = new ArrayList<>(resultSet);
@@ -710,8 +714,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public List<Field> visibleFields() {
-		if (fVisibleFields != null)
+		if (fVisibleFields != null) {
 			return fVisibleFields;
+		}
 
 		/*
 		 * Recursion: The fields of its own (own fields() command); All fields
@@ -737,9 +742,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		// If it is a class, all fields of it's superclass.
 		if (this instanceof ClassType) {
 			ClassType superclass = ((ClassType) this).superclass();
-			if (superclass != null)
+			if (superclass != null) {
 				addVisibleFields(superclass.visibleFields(), fieldNames,
 						visibleFields);
+			}
 		}
 
 		fVisibleFields = visibleFields;
@@ -753,8 +759,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public List<Field> allFields() {
-		if (fAllFields != null)
+		if (fAllFields != null) {
 			return fAllFields;
+		}
 
 		/*
 		 * Recursion: The fields of its own (own fields() command); All fields
@@ -779,8 +786,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		// If it is a class, all fields of it's superclass.
 		if (this instanceof ClassType) {
 			ClassType superclass = ((ClassType) this).superclass();
-			if (superclass != null)
+			if (superclass != null) {
 				resultSet.addAll(superclass.allFields());
+			}
 		}
 
 		fAllFields = new ArrayList<>(resultSet);
@@ -793,8 +801,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public ClassLoaderReference classLoader() {
-		if (fClassLoader != null)
+		if (fClassLoader != null) {
 			return fClassLoader;
+		}
 
 		initJdwpRequest();
 		try {
@@ -818,8 +827,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public ClassObjectReference classObject() {
-		if (fClassObject != null)
+		if (fClassObject != null) {
 			return fClassObject;
+		}
 
 		initJdwpRequest();
 		try {
@@ -898,8 +908,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		Iterator<Field> iter = visibleFields().iterator();
 		while (iter.hasNext()) {
 			FieldImpl field = (FieldImpl) iter.next();
-			if (field.name().equals(name))
+			if (field.name().equals(name)) {
 				return field;
+			}
 		}
 		return null;
 	}
@@ -953,8 +964,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		Iterator<Field> iter = fields().iterator();
 		while (iter.hasNext()) {
 			FieldImpl field = (FieldImpl) iter.next();
-			if (field.getFieldID().equals(fieldID))
+			if (field.getFieldID().equals(fieldID)) {
 				return field;
+			}
 		}
 		return null;
 	}
@@ -970,12 +982,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 					"", null, -1); //$NON-NLS-1$
 		}
 		if (fMethodTable == null) {
-			fMethodTable = new Hashtable<>();
+			// 509259 use temporary variable to workaround fMethodTable lazy initialization race
+			Map<JdwpMethodID, Method> methodTable = new HashMap<>();
 			Iterator<Method> iter = methods().iterator();
 			while (iter.hasNext()) {
 				MethodImpl method = (MethodImpl) iter.next();
-				fMethodTable.put(method.getMethodID(), method);
+				methodTable.put(method.getMethodID(), method);
 			}
+			fMethodTable = Collections.unmodifiableMap(methodTable);
 		}
 		return fMethodTable.get(methodID);
 	}
@@ -1020,9 +1034,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			DataInputStream replyData = replyPacket.dataInStream();
 			HashMap<Field, Value> map = new HashMap<>();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
-			if (nrOfElements != fieldsSize)
+			if (nrOfElements != fieldsSize) {
 				throw new InternalError(
 						JDIMessages.ReferenceTypeImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_3);
+			}
 
 			for (int i = 0; i < nrOfElements; i++) {
 				map.put(fields.get(i), ValueImpl.readWithTag(this, replyData));
@@ -1066,8 +1081,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	@Override
 	public int compareTo(ReferenceType type) {
-		if (type == null || !type.getClass().equals(this.getClass()))
+		if (type == null || !type.getClass().equals(this.getClass())) {
 			throw new ClassCastException(JDIMessages.ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4);
+		}
 		return name().compareTo(type.name());
 	}
 
@@ -1111,8 +1127,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	public List<Method> methods() {
 		// Note that ArrayReference overwrites this method by returning an empty
 		// list.
-		if (fMethods != null)
+		if (fMethods != null) {
 			return fMethods;
+		}
 
 		// Note: Methods are returned in the order they occur in the class file,
 		// therefore their
@@ -1263,8 +1280,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	@Override
 	public int getClassFileVersion() {
 		virtualMachineImpl().checkHCRSupported();
-		if (fGotClassFileVersion)
+		if (fGotClassFileVersion) {
 			return fClassFileVersion;
+		}
 
 		initJdwpRequest();
 		try {
@@ -1310,8 +1328,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			throws IOException {
 		fReferenceTypeID.write(out);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println(
 					"referenceType", fReferenceTypeID.value()); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -1324,7 +1344,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 				target.virtualMachineImpl());
 		ID.write(out);
 		if (target.fVerboseWriter != null)
+		 {
 			target.fVerboseWriter.println("referenceType", ID.value()); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -2367,8 +2389,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 	 */
 	protected int optionsToJdwpOptions(int options) {
 		int jdwpOptions = 0;
-		if ((options & ClassType.INVOKE_SINGLE_THREADED) != 0)
+		if ((options & ClassType.INVOKE_SINGLE_THREADED) != 0) {
 			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
+		}
 		return jdwpOptions;
 	}
 
@@ -2396,15 +2419,18 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 		MethodImpl methodImpl = (MethodImpl) method;
 
 		// Perform some checks for IllegalArgumentException.
-		if (!visibleMethods().contains(method))
+		if (!visibleMethods().contains(method)) {
 			throw new IllegalArgumentException(
 					JDIMessages.ClassTypeImpl_Class_does_not_contain_given_method_1);
-		if (method.argumentTypeNames().size() != arguments.size())
+		}
+		if (method.argumentTypeNames().size() != arguments.size()) {
 			throw new IllegalArgumentException(
 					JDIMessages.ClassTypeImpl_Number_of_arguments_doesn__t_match_2);
-		if (method.isConstructor() || method.isStaticInitializer())
+		}
+		if (method.isConstructor() || method.isStaticInitializer()) {
 			throw new IllegalArgumentException(
 					JDIMessages.ClassTypeImpl_Method_is_constructor_or_intitializer_3);
+		}
 
 		// check the type and the VM of the arguments. Convert the values if
 		// needed
@@ -2454,8 +2480,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements
 			ValueImpl value = ValueImpl.readWithTag(this, replyData);
 			ObjectReferenceImpl exception = ObjectReferenceImpl
 					.readObjectRefWithTag(this, replyData);
-			if (exception != null)
+			if (exception != null) {
 				throw new InvocationException(exception);
+			}
 			return value;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
