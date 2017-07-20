@@ -2714,9 +2714,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 			if (applyStepFilters() && isStepFiltersEnabled()) {
 				Location currentLocation = getOriginalStepLocation();
-				if (currentLocation == null
-						|| !JAVA_STRATUM_CONSTANT.equals(currentLocation
-								.declaringType().defaultStratum())) {
+				if (!isSupported(currentLocation)) {
 					return;
 				}
 				// Removed the fix for bug 5587, to address bug 41510
@@ -3732,6 +3730,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
     }
 	public static boolean showStepResultIsEnabled() {
 		return Platform.getPreferencesService().getBoolean(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugModel.PREF_SHOW_STEP_RESULT, true, null);
+	}
+
+	protected boolean isSupported(Location currentLocation) {
+		if (currentLocation == null) {
+			return false;
+		}
+		return JAVA_STRATUM_CONSTANT.equals(currentLocation.declaringType().defaultStratum());
 	}
 
 }
