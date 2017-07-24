@@ -118,7 +118,6 @@ import org.eclipse.jdt.debug.tests.sourcelookup.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.sourcelookup.TypeResolutionTests;
 import org.eclipse.jdt.debug.tests.state.RefreshStateTests;
-import org.eclipse.jdt.debug.tests.ui.DebugViewTests;
 import org.eclipse.jdt.debug.tests.ui.DetailPaneManagerTests;
 import org.eclipse.jdt.debug.tests.ui.OpenFromClipboardTests;
 import org.eclipse.jdt.debug.tests.ui.ViewManagementTests;
@@ -321,7 +320,8 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ViewManagementTests.class));
 
 	// Debug view tests
-		addTest(new TestSuite(DebugViewTests.class));
+		// Test is not stable, see bug 516024
+		// addTest(new TestSuite(DebugViewTests.class));
 
 	// Leak tests
 		addTest(new TestSuite(InstructionPointerTests.class));
