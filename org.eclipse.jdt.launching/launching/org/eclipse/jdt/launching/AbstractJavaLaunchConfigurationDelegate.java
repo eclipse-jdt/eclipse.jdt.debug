@@ -491,7 +491,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 				}
 				// This is based on the assumption that the entries don't contain any container or variable entries.
 				IPackageFragmentRoot root = proj.findPackageFragmentRoot(entry.getPath());
-				if (root.getModuleDescription() != null) {
+				if (root != null && root.getModuleDescription() != null) {
 					return true;
 				}
 				break;
