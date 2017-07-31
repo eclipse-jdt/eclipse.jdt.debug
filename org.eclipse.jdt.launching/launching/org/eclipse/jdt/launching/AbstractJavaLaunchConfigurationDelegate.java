@@ -419,7 +419,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entry.getLocation();
 				if (location != null) {
-					if (proj.getModuleDescription() != null) {
+					if (proj != null && proj.getModuleDescription() != null) {
 						if (isModuleEntry(proj, entry)) {
 							continue;
 						}
@@ -455,7 +455,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entry.getLocation();
 				if (location != null) {
-					if (proj.getModuleDescription() != null) {
+					if (proj != null && proj.getModuleDescription() != null) {
 						if (isModuleEntry(proj, entry)) {
 							modulepathSet.add(location);
 						} else {
