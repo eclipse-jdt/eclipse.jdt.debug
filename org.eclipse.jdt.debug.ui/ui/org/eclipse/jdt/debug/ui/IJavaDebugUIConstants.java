@@ -87,6 +87,13 @@ public interface IJavaDebugUIConstants {
 	public static final String PREF_SHOW_SYSTEM_THREADS = PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference indicating whether running threads should appear visible in the debug view.
+	 *
+	 * @since 3.10
+	 */
+	public static final String PREF_SHOW_RUNNING_THREADS = PLUGIN_ID + ".show_running_threads"; //$NON-NLS-1$
+
+	/**
 	 * Boolean preference indicating whether thread groups should be displayed in the debug view.
 	 *
 	 * @since 3.2
