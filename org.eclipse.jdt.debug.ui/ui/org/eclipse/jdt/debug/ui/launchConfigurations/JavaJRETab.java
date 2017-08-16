@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,6 +44,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
@@ -65,6 +69,7 @@ import org.eclipse.ui.PlatformUI;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 
+@SuppressWarnings("restriction")
 public class JavaJRETab extends JavaLaunchTab {
 
 	// JRE Block
@@ -80,6 +85,8 @@ public class JavaJRETab extends JavaLaunchTab {
 
 	// State
 	protected boolean fIsInitializing = false;
+	private boolean fCurrentJREModular;
+
 
 	// Selection changed listener (checked JRE)
 	private IPropertyChangeListener fCheckListener = new IPropertyChangeListener() {
@@ -497,6 +504,7 @@ public class JavaJRETab extends JavaLaunchTab {
 
 	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
 		fLaunchConfiguration = launchConfiguration;
+		fCurrentJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
 	}
 
 	/**
@@ -606,5 +614,42 @@ public class JavaJRETab extends JavaLaunchTab {
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	@Override
+	public boolean OkToLeaveTab() {
+		boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+		if (fCurrentJREModular != newJREModular) {
+			return handleClasspathDependenciesChange(newJREModular);
+		}
+
+		return true;
+	}
+	
+	private void handleConfiguraionDialog() {
+		ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		if (dialog instanceof LaunchConfigurationsDialog) {
+			LaunchConfigurationTabGroupViewer tabViewer = ((LaunchConfigurationsDialog) dialog).getTabViewer();
+			tabViewer.handleApplyPressed();
+			tabViewer.setInput(getLaunchConfiguration());
+		}
+	}
+
+	private boolean handleClasspathDependenciesChange(boolean newJREModular) {
+		String title = LauncherMessages.JavaJRETab_10;
+		String message = LauncherMessages.JavaJRETab_11;
+		String[] buttonLabels = new String[] { LauncherMessages.JavaJRETab_12, LauncherMessages.JavaJRETab_13 };
+
+		MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION, buttonLabels, 0);
+		int res = dialog.open();
+		if (res == 0) { // apply
+			fCurrentJREModular = newJREModular;
+			handleConfiguraionDialog();
+			return true;
+		}
+		return false;
 	}
 }

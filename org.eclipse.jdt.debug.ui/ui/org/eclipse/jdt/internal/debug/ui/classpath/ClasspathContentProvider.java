@@ -27,11 +27,11 @@ import org.eclipse.jface.viewers.Viewer;
  * viewer.
  */
 public class ClasspathContentProvider implements ITreeContentProvider {
-	private TreeViewer treeViewer;
-	private ClasspathModel model= null;
-	private boolean refreshEnabled= false;
-	private boolean refreshRequested= false;
-	private JavaClasspathTab fTab;
+	protected TreeViewer treeViewer;
+	protected ClasspathModel model = null;
+	private boolean refreshEnabled = false;
+	private boolean refreshRequested = false;
+	protected JavaClasspathTab fTab;
 
 	public ClasspathContentProvider(JavaClasspathTab tab) {
 		fTab = tab;
@@ -67,7 +67,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		refresh();
 	}
 
-	private void refresh() {
+	protected void refresh() {
 		if (refreshEnabled) {
 			treeViewer.refresh();
 			refreshRequested= false;

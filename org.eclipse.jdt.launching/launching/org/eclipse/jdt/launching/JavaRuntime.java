@@ -66,6 +66,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
+import org.eclipse.jdt.internal.launching.DefaultProjectDependencies;
 import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
@@ -626,6 +627,18 @@ public final class JavaRuntime {
 	}
 
 	/**
+	 * Returns a new runtime classpath entry containing the default classpath for the specified Java project.
+	 *
+	 * @param project
+	 *            Java project
+	 * @return runtime classpath entry
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry newDefaultProjectDependencies(IJavaProject project) {
+		return new DefaultProjectDependencies(project);
+	}
+
+	/**
 	 * Returns a new runtime classpath entry for the given project.
 	 *
 	 * @param project Java project
@@ -731,6 +744,16 @@ public final class JavaRuntime {
 	}
 
 	/**
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IClasspathEntry entry, IJavaProject project) {
+		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry) ? IRuntimeClasspathEntry.MODULE_PATH
+				: IRuntimeClasspathEntry.CLASS_PATH);
+		runTimeEntry.setJavaProject(project);
+		return runTimeEntry;
+	}
+
+	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
 	 *
 	 * @param memento a memento for a runtime classpath entry
@@ -832,6 +855,124 @@ public final class JavaRuntime {
 		}
 		classpathEntries.add(newDefaultProjectClasspathEntry(project));
 		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
+	}
+
+	/**
+	 * Computes and returns the default unresolved runtime classpath for the given project.
+	 *
+	 * @param project
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
+	 * @return runtime classpath entries
+	 * @exception CoreException
+	 *                if unable to compute the runtime classpath
+	 * @see IRuntimeClasspathEntry
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
+		IClasspathEntry[] entries = project.getRawClasspath();
+		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			switch (entry.getEntryKind()) {
+				case IClasspathEntry.CPE_CONTAINER:
+					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+					if (container != null) {
+						switch (container.getKind()) {
+							case IClasspathContainer.K_APPLICATION:
+								// don't look at application entries
+								break;
+							case IClasspathContainer.K_DEFAULT_SYSTEM:
+								if (isModule(entry)) {
+									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
+								} else {
+									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
+								}
+								break;
+							case IClasspathContainer.K_SYSTEM:
+								if (isModule(entry)) {
+									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
+								} else {
+									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
+								}
+								break;
+						}
+					}
+					break;
+				case IClasspathEntry.CPE_VARIABLE:
+					if (JRELIB_VARIABLE.equals(entry.getPath().segment(0))) {
+						IRuntimeClasspathEntry jre = newVariableRuntimeClasspathEntry(entry.getPath());
+						jre.setClasspathProperty(IRuntimeClasspathEntry.MODULE_PATH);
+						classpathEntries.add(jre);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		classpathEntries.add(newDefaultProjectDependencies(project));
+		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
+	}
+
+	/**
+	 * Checks if classpath entry is module.
+	 *
+	 * @param entry
+	 *            the classpath entry
+	 * @return boolean <code>true</code> if entry is module else <code>false</code>
+	 * @since 3.9
+	 */
+	public static boolean isModule(IClasspathEntry entry) {
+		if (entry == null) {
+			return false;
+		}
+		for (IClasspathAttribute classpathAttribute : entry.getExtraAttributes()) {
+			if (classpathAttribute.getName().equals(IClasspathAttribute.AUTOMATIC_MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	/**
+	 * Checks if configuration JRE is greater than 8.
+	 *
+	 * @param configuration
+	 *            the launch configuration
+	 * @return boolean <code>true</code> if jre used in configuration is greater than 8 else <code>false</code>
+	 * @since 3.9
+	 */
+	public static boolean isModularConfiguration(ILaunchConfiguration configuration) {
+
+		try {
+			IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+			return isModularJava(vm);
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	/**
+	 * @since 3.9
+	 */
+	public static boolean isModularJava(IVMInstall vm) {
+
+		if (vm instanceof AbstractVMInstall) {
+			AbstractVMInstall install = (AbstractVMInstall) vm;
+			String vmver = install.getJavaVersion();
+			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.7, etc
+			if (vmver.length() > 3) {
+				vmver = vmver.substring(0, 3);
+			}
+			if (JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_1_8) > 0) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 
 	/**
@@ -2123,6 +2264,113 @@ public final class JavaRuntime {
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES);
 									case IClasspathContainer.K_SYSTEM:
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+								}
+							}
+						}
+					}
+					break;
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a runtime classpath entry identifying the JRE to use when launching the specified configuration or <code>null</code> if none is
+	 * specified. The entry returned represents a either a classpath variable or classpath container that resolves to a JRE.
+	 * <p>
+	 * The entry is resolved as follows:
+	 * <ol>
+	 * <li>If the <code>ATTR_JRE_CONTAINER_PATH</code> is present, it is used to create a classpath container referring to a JRE.</li>
+	 * <li>Next, if the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_NAME</code> attributes are present, they are used to create a
+	 * classpath container.</li>
+	 * <li>When none of the above attributes are specified, a default entry is created which refers to the JRE referenced by the build path of the
+	 * configuration's associated Java project. This could be a classpath variable or classpath container.</li>
+	 * <li>When there is no Java project associated with a configuration, the workspace default JRE is used to create a container path.</li>
+	 * </ol>
+	 * </p>
+	 *
+	 * @param configuration
+	 *            the backing {@link ILaunchConfiguration}
+	 * @return classpath container path identifying a JRE or <code>null</code>
+	 * @exception org.eclipse.core.runtime.CoreException
+	 *                if an exception occurs retrieving attributes from the specified launch configuration
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry computeModularJREEntry(ILaunchConfiguration configuration) throws CoreException {
+		String jreAttr = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
+		IPath containerPath = null;
+		if (jreAttr == null) {
+			@SuppressWarnings("deprecation")
+			String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String) null);
+			if (type == null) {
+				// default JRE for the launch configuration
+				IJavaProject proj = getJavaProject(configuration);
+				if (proj == null) {
+					containerPath = newDefaultJREContainerPath();
+				} else {
+					return computeJREEntry(proj);
+				}
+			} else {
+				@SuppressWarnings("deprecation")
+				String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String) null);
+				if (name != null) {
+					containerPath = newDefaultJREContainerPath().append(type).append(name);
+				}
+			}
+		} else {
+			containerPath = Path.fromPortableString(jreAttr);
+		}
+		if (containerPath != null) {
+			return newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.MODULE_PATH);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a runtime classpath entry identifying the JRE referenced by the specified project, or <code>null</code> if none. The entry returned
+	 * represents a either a classpath variable or classpath container that resolves to a JRE.
+	 *
+	 * @param project
+	 *            Java project
+	 * @return JRE runtime classpath entry or <code>null</code>
+	 * @exception org.eclipse.core.runtime.CoreException
+	 *                if an exception occurs accessing the project's classpath
+	 * @since 3.9
+	 */
+	public static IRuntimeClasspathEntry computeModularJREEntry(IJavaProject project) throws CoreException {
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		IRuntimeClasspathEntryResolver2 resolver = null;
+		for (int i = 0; i < rawClasspath.length; i++) {
+			IClasspathEntry entry = rawClasspath[i];
+			switch (entry.getEntryKind()) {
+				case IClasspathEntry.CPE_VARIABLE:
+					resolver = getVariableResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						if (resolver.isVMInstallReference(entry)) {
+							return newRuntimeClasspathEntry(entry);
+						}
+					}
+					break;
+				case IClasspathEntry.CPE_CONTAINER:
+					resolver = getContainerResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						if (resolver.isVMInstallReference(entry)) {
+							IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+							if (container != null) {
+								switch (container.getKind()) {
+									case IClasspathContainer.K_APPLICATION:
+										break;
+									case IClasspathContainer.K_DEFAULT_SYSTEM:
+										if (isModule(entry)) {
+											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
+										}
+										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
+									case IClasspathContainer.K_SYSTEM:
+										if (isModule(entry)) {
+											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
+										}
+										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
 								}
 							}
 						}

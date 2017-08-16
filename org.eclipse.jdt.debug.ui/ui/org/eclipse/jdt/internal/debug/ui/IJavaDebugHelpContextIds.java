@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public interface IJavaDebugHelpContextIds {
 	// application launch configuration dialog tabs
 	public static final String LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB= PREFIX + "launch_configuration_dialog_arguments_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB= PREFIX + "launch_configuration_dialog_classpath_tab"; //$NON-NLS-1$
+	public static final String LAUNCH_CONFIGURATION_DIALOG_DEPENDENCIES_TAB = PREFIX + "launch_configuration_dialog_classpath_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB= PREFIX + "launch_configuration_dialog_connect_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_JRE_TAB= PREFIX + "launch_configuration_dialog_jre_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB= PREFIX + "launch_configuration_dialog_main_tab"; //$NON-NLS-1$

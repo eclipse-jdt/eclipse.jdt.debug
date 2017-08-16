@@ -96,6 +96,16 @@ public interface IRuntimeClasspathEntry {
 	public static final int USER_CLASSES = 3;
 
 	/**
+	 * @since 3.9
+	 */
+	public static final int MODULE_PATH = 4;
+
+	/**
+	 * @since 3.9
+	 */
+	public static final int CLASS_PATH = 5;
+
+	/**
 	 * Returns this classpath entry's type. The type of a runtime classpath entry is
 	 * identified by one of the following constants:
 	 * <ul>

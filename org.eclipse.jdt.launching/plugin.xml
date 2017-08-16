@@ -144,6 +144,10 @@
             class="org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry">
       </runtimeClasspathEntry>
       <runtimeClasspathEntry
+            id="org.eclipse.jdt.launching.classpathentry.defaultDependencies"
+            class="org.eclipse.jdt.internal.launching.DefaultProjectDependencies">
+      </runtimeClasspathEntry>
+      <runtimeClasspathEntry
             id="org.eclipse.jdt.launching.classpathentry.variableClasspathEntry"
             class="org.eclipse.jdt.internal.launching.VariableClasspathEntry">
       </runtimeClasspathEntry>

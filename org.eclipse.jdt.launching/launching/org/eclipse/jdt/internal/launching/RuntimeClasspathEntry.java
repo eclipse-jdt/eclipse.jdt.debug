@@ -113,8 +113,18 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case IClasspathEntry.CPE_CONTAINER:
 				setType(CONTAINER);
 				break;
+			case IClasspathEntry.CPE_PROJECT:
+				setType(PROJECT);
+				break;
+			case IClasspathEntry.CPE_LIBRARY:
+				setType(ARCHIVE);
+				break;
+			case IClasspathEntry.CPE_VARIABLE:
+				setType(VARIABLE);
+				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()}));
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {
+						entry.toString() }));
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
