@@ -73,6 +73,7 @@ public class LauncherMessages extends NLS {
 	public static String JavaMainTab_20;
 	public static String JavaMainTab_21;
 	public static String JavaMainTab_22;
+	public static String JavaMainTab_missing_project;
 
 	public static String JavaUISourceLocator_askagain_message;
 	public static String JavaUISourceLocator_selectprojects_message;

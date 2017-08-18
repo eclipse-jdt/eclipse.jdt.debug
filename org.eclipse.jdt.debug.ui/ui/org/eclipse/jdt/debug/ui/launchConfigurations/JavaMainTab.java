@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -228,6 +227,9 @@ public class JavaMainTab extends SharedJavaMainTab {
 				setErrorMessage(NLS.bind(LauncherMessages.JavaMainTab_19, new String[]{status.getMessage()}));
 				return false;
 			}
+		} else {
+			setErrorMessage(LauncherMessages.JavaMainTab_missing_project);
+			return false;
 		}
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
