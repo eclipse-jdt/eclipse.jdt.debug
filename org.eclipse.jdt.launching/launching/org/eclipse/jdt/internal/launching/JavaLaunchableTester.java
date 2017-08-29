@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
@@ -143,8 +144,8 @@ public class JavaLaunchableTester extends PropertyTester {
         if (element instanceof ICompilationUnit) {
             type= ((ICompilationUnit) element).findPrimaryType();
         }
-        else if (element instanceof IClassFile) {
-            type = ((IClassFile)element).getType();
+		else if (element instanceof IOrdinaryClassFile) {
+			type = ((IOrdinaryClassFile) element).getType();
         }
         else if (element instanceof IType) {
             type = (IType) element;

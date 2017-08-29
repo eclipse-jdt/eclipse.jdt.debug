@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,10 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -223,8 +223,8 @@ public class JavaDebugUtils {
 			IJavaElement javaElement) {
 		IType type = null;
 		String[] typeNames = getNestedTypeNames(qualifiedName);
-		if (javaElement instanceof IClassFile) {
-			type = ((IClassFile) javaElement).getType();
+		if (javaElement instanceof IOrdinaryClassFile) {
+			type = ((IOrdinaryClassFile) javaElement).getType();
 		} else if (javaElement instanceof ICompilationUnit) {
 			type = ((ICompilationUnit) javaElement).getType(typeNames[0]);
 		} else if (javaElement instanceof IType) {
