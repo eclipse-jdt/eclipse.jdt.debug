@@ -620,6 +620,20 @@ public class JavaJRETab extends JavaLaunchTab {
 	 * @since 3.8
 	 */
 	@Override
+	public void postApply() {
+		boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+		if (fCurrentJREModular != newJREModular) {
+			ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+			if (dialog instanceof LaunchConfigurationsDialog) {
+				LaunchConfigurationTabGroupViewer tabViewer = ((LaunchConfigurationsDialog) dialog).getTabViewer();
+				tabViewer.refreshTabs(true);
+			}
+		}
+	}
+	/**
+	 * @since 3.8
+	 */
+	@Override
 	public boolean OkToLeaveTab() {
 		boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
 		if (fCurrentJREModular != newJREModular) {
@@ -628,13 +642,13 @@ public class JavaJRETab extends JavaLaunchTab {
 
 		return true;
 	}
-	
+
 	private void handleConfiguraionDialog() {
 		ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 		if (dialog instanceof LaunchConfigurationsDialog) {
 			LaunchConfigurationTabGroupViewer tabViewer = ((LaunchConfigurationsDialog) dialog).getTabViewer();
 			tabViewer.handleApplyPressed();
-			tabViewer.setInput(getLaunchConfiguration());
+			tabViewer.refreshTabs(false);
 		}
 	}
 
