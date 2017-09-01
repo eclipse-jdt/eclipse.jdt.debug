@@ -926,7 +926,7 @@ public final class JavaRuntime {
 			return false;
 		}
 		for (IClasspathAttribute classpathAttribute : entry.getExtraAttributes()) {
-			if (classpathAttribute.getName().equals(IClasspathAttribute.AUTOMATIC_MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
+			if (classpathAttribute.getName().equals(IClasspathAttribute.MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
 				return true;
 			}
 		}

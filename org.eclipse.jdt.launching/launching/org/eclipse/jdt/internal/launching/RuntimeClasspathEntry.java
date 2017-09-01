@@ -731,7 +731,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public boolean isAutomodule() {
 		IClasspathAttribute[] extraAttributes = getClasspathEntry().getExtraAttributes();
 		for (IClasspathAttribute attribute : extraAttributes) {
-			if (IClasspathAttribute.AUTOMATIC_MODULE.equals(attribute.getName()) && Boolean.TRUE.toString().equals(attribute.getValue())) {
+			if (IClasspathAttribute.MODULE.equals(attribute.getName()) && Boolean.TRUE.toString().equals(attribute.getValue())) {
 				return true;
 			}
 		}
