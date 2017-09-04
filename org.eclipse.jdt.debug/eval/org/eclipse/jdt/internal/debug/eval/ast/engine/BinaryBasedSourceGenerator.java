@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,10 +61,19 @@ public class BinaryBasedSourceGenerator {
 		fLocalVariableNames = localVariables;
 		fIsInStaticMethod = isInStaticMethod;
 		int index = sourceLevel.indexOf('.');
-		String num = sourceLevel.substring(0, index);
+		String num;
+		if (index != -1) {
+			num = sourceLevel.substring(0, index);
+		} else {
+			num = sourceLevel;
+		}
 		fSourceMajorLevel = Integer.valueOf(num).intValue();
-		num = sourceLevel.substring(index + 1);
-		fSourceMinorLevel = Integer.valueOf(num).intValue();
+		if (index != -1) {
+			num = sourceLevel.substring(index + 1);
+			fSourceMinorLevel = Integer.valueOf(num).intValue();
+		} else {
+			fSourceMinorLevel = 0;
+		}
 	}
 
 	/**
