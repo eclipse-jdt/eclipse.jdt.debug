@@ -50,13 +50,12 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			}
 			IRuntimeClasspathEntry[] entries = null;
 			if (isModular) {
-					entries = JavaRuntime.computeUnresolvedRuntimeDependencies(proj);
-			}
-			if (entries == null) {
+				entries = JavaRuntime.computeUnresolvedRuntimeDependencies(proj);
+			} else {
 				entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
 			}
 			// replace project JRE with config's JRE
-			IRuntimeClasspathEntry projEntry = JavaRuntime.computeJREEntry(proj);
+			IRuntimeClasspathEntry projEntry = isModular ? JavaRuntime.computeModularJREEntry(proj) : JavaRuntime.computeJREEntry(proj);
 			if (jreEntry != null && projEntry != null) {
 				if (!jreEntry.equals(projEntry)) {
 					for (int i = 0; i < entries.length; i++) {
