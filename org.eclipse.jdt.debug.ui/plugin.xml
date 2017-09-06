@@ -3682,6 +3682,16 @@ M4 = Platform-specific fourth key
        </enabledWhen>
     </handler>
  </extension>
+ <extension
+       point="org.eclipse.core.runtime.adapters">
+    <factory
+          adaptableType="org.eclipse.jface.text.TextSelection"
+          class="org.eclipse.jdt.internal.debug.ui.SelectionToIVaraibleAdapterFactory">
+       <adapter
+             type="org.eclipse.debug.core.model.IVariable">
+       </adapter>
+    </factory>
+ </extension>
   
    
  
