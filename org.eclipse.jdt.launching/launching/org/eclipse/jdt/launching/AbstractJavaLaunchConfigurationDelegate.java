@@ -412,25 +412,30 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+
+		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
 		IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
-			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = entry.getLocation();
+			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String location = entries[i].getLocation();
 				if (location != null) {
-					if (proj != null && proj.getModuleDescription() != null) {
-						if (isModuleEntry(proj, entry)) {
-							continue;
+					if (!set.contains(location)) {
+						if (proj != null && proj.getModuleDescription() != null) {
+							if (isModuleEntry(proj, entries[i])) {
+								continue;
+							}
+							userEntries.add(location);
+							set.add(location);
+						} else {
+							userEntries.add(location);
+							set.add(location);
 						}
-						set.add(location);
-					} else {
-						set.add(location);
 					}
 				}
 			}
 		}
-		return set.toArray(new String[set.size()]);
+		return userEntries.toArray(new String[userEntries.size()]);
 	}
 
 	/**
@@ -448,31 +453,37 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, config);
 		String[][] path = new String[2][entries.length];
+		List<String> classpathEntries = new ArrayList<>(entries.length);
+		List<String> modulepathEntries = new ArrayList<>(entries.length);
 		Set<String> classpathSet = new HashSet<>(entries.length);
 		Set<String> modulepathSet = new HashSet<>(entries.length);
-		IJavaProject proj = JavaRuntime.getJavaProject(config);
 		for (IRuntimeClasspathEntry entry : entries) {
-			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = entry.getLocation();
-				if (location != null) {
-					if (proj != null && proj.getModuleDescription() != null) {
-						if (isModuleEntry(proj, entry)) {
-							modulepathSet.add(location);
-						} else {
-							classpathSet.add(location);
-						}
-					}
-					else {
+			String location = entry.getLocation();
+			if (location != null) {
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+					if (!classpathSet.contains(location)) {
+						classpathEntries.add(location);
 						classpathSet.add(location);
 					}
+				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.CLASS_PATH) {
+					if (!classpathSet.contains(location)) {
+						classpathEntries.add(location);
+						classpathSet.add(location);
+					}
+
+				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.MODULE_PATH) {
+					if (!modulepathSet.contains(location)) {
+						modulepathEntries.add(location);
+						modulepathSet.add(location);
+					}
 				}
+
 			}
 		}
-		path[0] = classpathSet.toArray(new String[classpathSet.size()]);
-		path[1] = modulepathSet.toArray(new String[modulepathSet.size()]);
+		path[0] = classpathEntries.toArray(new String[classpathEntries.size()]);
+		path[1] = modulepathEntries.toArray(new String[classpathEntries.size()]);
 		return path;
 	}
-
 
 	private boolean isModuleEntry(IJavaProject proj, IRuntimeClasspathEntry entry) throws JavaModelException {
 		switch (entry.getType()) {
