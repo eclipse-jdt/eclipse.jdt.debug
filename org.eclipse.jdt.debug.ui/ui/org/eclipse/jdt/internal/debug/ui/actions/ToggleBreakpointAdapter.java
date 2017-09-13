@@ -848,7 +848,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					if(member.getElementType() == IJavaElement.TYPE) {
 						return ((IType)member).isInterface();
 					}
-					return member.getDeclaringType().isInterface();
+					IType type = member.getDeclaringType();
+					return type != null && type.isInterface();
 				}
 				else if(obj instanceof IJavaFieldVariable) {
 					IJavaFieldVariable var = (IJavaFieldVariable) obj;
