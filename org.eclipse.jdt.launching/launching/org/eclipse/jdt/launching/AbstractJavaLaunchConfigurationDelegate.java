@@ -41,9 +41,7 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -415,22 +413,13 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 
 		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
-		IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entries[i].getLocation();
 				if (location != null) {
 					if (!set.contains(location)) {
-						if (proj != null && proj.getModuleDescription() != null) {
-							if (isModuleEntry(proj, entries[i])) {
-								continue;
-							}
-							userEntries.add(location);
-							set.add(location);
-						} else {
-							userEntries.add(location);
-							set.add(location);
-						}
+						userEntries.add(location);
+						set.add(location);
 					}
 				}
 			}
@@ -483,31 +472,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		path[0] = classpathEntries.toArray(new String[classpathEntries.size()]);
 		path[1] = modulepathEntries.toArray(new String[classpathEntries.size()]);
 		return path;
-	}
-
-	private boolean isModuleEntry(IJavaProject proj, IRuntimeClasspathEntry entry) throws JavaModelException {
-		switch (entry.getType()) {
-			case IRuntimeClasspathEntry.PROJECT:
-				IResource resource = entry.getResource();
-				if (resource != null && resource.getType() == IResource.PROJECT) {
-					IJavaProject javaProject = JavaCore.create((IProject) resource);
-					if (proj.getElementName().equals(javaProject.getElementName()) || javaProject.getModuleDescription() != null) {
-						return true;
-					}
-				}
-				break;
-			default:
-				if (entry.isAutomodule()) {
-					return true;
-				}
-				// This is based on the assumption that the entries don't contain any container or variable entries.
-				IPackageFragmentRoot root = proj.findPackageFragmentRoot(entry.getPath());
-				if (root != null && root.getModuleDescription() != null) {
-					return true;
-				}
-				break;
-		}
-		return false;
 	}
 
 	/**
