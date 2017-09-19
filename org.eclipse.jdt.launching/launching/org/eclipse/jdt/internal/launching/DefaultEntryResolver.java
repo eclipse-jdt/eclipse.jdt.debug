@@ -34,11 +34,7 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
 		IRuntimeClasspathEntry[] entries;
-		if (entry2 instanceof DefaultProjectDependencies) {
-			entries = ((DefaultProjectDependencies) entry2).getDefualtDependencies();
-		} else {
-			entries = entry2.getRuntimeClasspathEntries(configuration);
-		}
+		entries = entry2.getRuntimeClasspathEntries(configuration);
 		List<IRuntimeClasspathEntry> resolved = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);

@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -51,7 +49,6 @@ import org.eclipse.jdt.internal.debug.ui.classpath.DependencyModel;
 import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.launching.DefaultProjectDependencies;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -259,25 +256,7 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 			entry= entries[i];
 			switch (entry.getClasspathProperty()) {
 				case IRuntimeClasspathEntry.MODULE_PATH:
-
-					if (entry instanceof DefaultProjectDependencies) {
-						DefaultProjectDependencies r = (DefaultProjectDependencies) entry;
-						IRuntimeClasspathEntry[] runtimeClasspathEntries = r.getDefualtDependencies();
-						for (IRuntimeClasspathEntry iRuntimeClasspathEntry : runtimeClasspathEntries) {
-							if (iRuntimeClasspathEntry.getClasspathEntry().getEntryKind() == org.eclipse.jdt.core.IClasspathEntry.CPE_LIBRARY) {
-								IJavaProject project = JavaRuntime.getJavaProject(configuration);
-								IPackageFragmentRoot root = project.findPackageFragmentRoot(iRuntimeClasspathEntry.getClasspathEntry().getPath());
-								if (!root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
-									fModel.addEntry(DependencyModel.MODULE_PATH, iRuntimeClasspathEntry);
-								}
-							} else {
-								fModel.addEntry(DependencyModel.MODULE_PATH, iRuntimeClasspathEntry);
-							}
-						}
-					}
-					else {
 						fModel.addEntry(DependencyModel.MODULE_PATH, entry);
-					}
 					break;
 				default:
 					if (JavaRuntime.isModule(entry.getClasspathEntry())) {
