@@ -386,7 +386,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add(convertClassPath(cp));
 		}
 
-		if (isModular(config, fVMInstance) && (mp != null && mp.length > 0)) {
+		if (isModular(config, fVMInstance)) {
 			arguments.add("-m"); //$NON-NLS-1$
 			arguments.add(config.getModuleDescription() + "/" + config.getClassToLaunch()); //$NON-NLS-1$
 		} else {
