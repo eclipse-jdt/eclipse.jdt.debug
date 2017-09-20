@@ -110,10 +110,13 @@ public abstract class AbstractVMRunner implements IVMRunner {
 
 	private static boolean needsQuoting(String s) {
 		int len = s.length();
-		if (len == 0) // empty string has to be quoted
+		if (len == 0) {
 			return true;
+		}
 		if ("\"\"".equals(s)) //$NON-NLS-1$
+		 {
 			return false; // empty quotes must not be quoted again
+		}
 		for (int i = 0; i < len; i++) {
 			switch (s.charAt(i)) {
 				case ' ': case '\t': case '\\': case '"':
@@ -124,8 +127,9 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	}
 
 	private static String winQuote(String s) {
-		if (! needsQuoting(s))
+		if (! needsQuoting(s)) {
 			return s;
+		}
 		s = s.replaceAll("([\\\\]*)\"", "$1$1\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
 		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -218,7 +222,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @param vmInstall
 	 *            VM install
 	 * @return <code>true</code> if project is a module and uses JRE version 9 or more, or <code>false</code> otherwise
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	protected boolean isModular(VMRunnerConfiguration config, IVMInstall vmInstall) {
 		if (config.getModuleDescription() != null && config.getModuleDescription().length() > 0 && vmInstall instanceof AbstractVMInstall) {

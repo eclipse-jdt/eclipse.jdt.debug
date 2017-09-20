@@ -617,7 +617,7 @@ public class JavaJRETab extends JavaLaunchTab {
 	}
 
 	/**
-	 * @since 3.8
+	 * @since 3.9
 	 */
 	@Override
 	public void postApply() {
@@ -630,8 +630,9 @@ public class JavaJRETab extends JavaLaunchTab {
 			}
 		}
 	}
+	
 	/**
-	 * @since 3.8
+	 * @since 3.9
 	 */
 	@Override
 	public boolean OkToLeaveTab() {

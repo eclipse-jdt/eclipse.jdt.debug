@@ -434,7 +434,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @return the classpath and modulepath specified by the given launch configuration, possibly an empty array
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public String[][] getClasspathAndModulepath(ILaunchConfiguration config) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(config);

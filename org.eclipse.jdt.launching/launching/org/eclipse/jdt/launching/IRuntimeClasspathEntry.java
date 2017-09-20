@@ -96,12 +96,12 @@ public interface IRuntimeClasspathEntry {
 	public static final int USER_CLASSES = 3;
 
 	/**
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static final int MODULE_PATH = 4;
 
 	/**
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static final int CLASS_PATH = 5;
 
@@ -362,7 +362,7 @@ public interface IRuntimeClasspathEntry {
 	 * Returns <code>true</code> if the java project associated is an AutoModule.
 	 *
 	 * @return <code>true</code> if the Java project associated is an AutoModule or <code>false</code> if not
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public boolean isAutomodule();
 }

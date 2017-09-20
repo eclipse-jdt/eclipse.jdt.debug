@@ -272,7 +272,7 @@ public class VMRunnerConfiguration {
 	 *
 	 * @param modulepath
 	 *            modulepath
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public void setModulepath(String[] modulepath) {
 		this.fModulepath = modulepath;
@@ -282,7 +282,7 @@ public class VMRunnerConfiguration {
 	 * Returns the Modulepath.
 	 *
 	 * @return the modulepath
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public String[] getModulepath() {
 		return this.fModulepath;
@@ -293,7 +293,7 @@ public class VMRunnerConfiguration {
 	 *
 	 * @param fModuleDescription
 	 *            fModuleDescription
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public void setModuleDescription(String fModuleDescription) {
 		this.fModuleDescription = fModuleDescription;
@@ -303,7 +303,7 @@ public class VMRunnerConfiguration {
 	 * Returns the ModuleDescription.
 	 *
 	 * @return the ModuleDescription
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public String getModuleDescription() {
 		return this.fModuleDescription;

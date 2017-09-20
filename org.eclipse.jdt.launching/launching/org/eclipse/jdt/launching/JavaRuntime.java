@@ -644,11 +644,11 @@ public final class JavaRuntime {
 	 *
 	 * @param project
 	 *            Java project
-	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
-	 * 	<code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>, <code>MODULE_PATH</code>
-	 *  or <code>CLASS_PATH</code>
+	 * @param classpathProperty
+	 *            the type of entry - one of <code>USER_CLASSES</code>, <code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>,
+	 *            <code>MODULE_PATH</code> or <code>CLASS_PATH</code>
 	 * @return runtime classpath entry
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project, int classpathProperty) {
 		return newRuntimeClasspathEntry(JavaCore.newProjectEntry(project.getProject().getFullPath()), classpathProperty);
@@ -667,15 +667,15 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a new runtime classpath entry for the given archive(possibly
-	 * external).
+	 * Returns a new runtime classpath entry for the given archive(possibly external).
 	 *
-	 * @param path absolute path to an archive
-	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
-	 * 	<code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>, <code>MODULE_PATH</code>
-	 *  or <code>CLASS_PATH</code>
+	 * @param path
+	 *            absolute path to an archive
+	 * @param classpathProperty
+	 *            the type of entry - one of <code>USER_CLASSES</code>, <code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>,
+	 *            <code>MODULE_PATH</code> or <code>CLASS_PATH</code>
 	 * @return runtime classpath entry
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, int classpathProperty) {
 		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, null, null), classpathProperty);
@@ -694,22 +694,25 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a new runtime classpath entry for the given archive (possibly
-	 * external).
+	 * Returns a new runtime classpath entry for the given archive (possibly external).
 	 *
-	 * @param path absolute path to an archive
- 	 * @param sourceAttachmentPath the absolute path of the corresponding source archive or folder,
-	 *   or <code>null</code> if none. Note, since 3.0, an empty path is allowed to denote no source attachment.
-	 *   and will be automatically converted to <code>null</code>. Since 3.4, this path can also denote a path external
-	 *   to the workspace.
-	 * @param sourceAttachmentRootPath the location of the root of the source files within the source archive or folder
-	 *    or <code>null</code> if this location should be automatically detected.
-	 * @param accessRules the possibly empty list of access rules for this entry
-	 * @param extraAttributes the possibly empty list of extra attributes to persist with this entry
-	 * @param isExported indicates whether this entry is contributed to dependent
-	 * 	  projects in addition to the output location
+	 * @param path
+	 *            absolute path to an archive
+	 * @param sourceAttachmentPath
+	 *            the absolute path of the corresponding source archive or folder, or <code>null</code> if none. Note, since 3.0, an empty path is
+	 *            allowed to denote no source attachment. and will be automatically converted to <code>null</code>. Since 3.4, this path can also
+	 *            denote a path external to the workspace.
+	 * @param sourceAttachmentRootPath
+	 *            the location of the root of the source files within the source archive or folder or <code>null</code> if this location should be
+	 *            automatically detected.
+	 * @param accessRules
+	 *            the possibly empty list of access rules for this entry
+	 * @param extraAttributes
+	 *            the possibly empty list of extra attributes to persist with this entry
+	 * @param isExported
+	 *            indicates whether this entry is contributed to dependent projects in addition to the output location
 	 * @return runtime classpath entry
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IAccessRule[] accessRules, IClasspathAttribute[] extraAtributes, boolean isExported) {
 		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, accessRules, extraAtributes, isExported));
@@ -765,7 +768,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IClasspathEntry entry, IJavaProject project) {
 		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry, project) ? IRuntimeClasspathEntry.MODULE_PATH
@@ -900,7 +903,7 @@ public final class JavaRuntime {
 	 * @exception CoreException
 	 *                if unable to compute the runtime classpath
 	 * @see IRuntimeClasspathEntry
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
 		IClasspathEntry[] entries = project.getResolvedClasspath(true);
@@ -986,7 +989,7 @@ public final class JavaRuntime {
 	 * @param entry
 	 *            the classpath entry
 	 * @return boolean <code>true</code> if entry is module else <code>false</code>
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static boolean isModule(IClasspathEntry entry, IJavaProject proj) {
 		if (!isModularProject(proj)) {
@@ -1011,7 +1014,7 @@ public final class JavaRuntime {
 	 * @param configuration
 	 *            the launch configuration
 	 * @return boolean <code>true</code> if jre used in configuration is greater than 8 else <code>false</code>
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static boolean isModularConfiguration(ILaunchConfiguration configuration) {
 
@@ -1032,7 +1035,7 @@ public final class JavaRuntime {
 	 * @param entry
 	 *            the vm install
 	 * @return boolean <code>true</code> if vm install is modular else <code>false</code>
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static boolean isModularJava(IVMInstall vm) {
 
@@ -1057,7 +1060,7 @@ public final class JavaRuntime {
 	 * @param entry
 	 *            the project
 	 * @return boolean <code>true</code> if project is modular else <code>false</code>
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static boolean isModularProject(IJavaProject proj) {
 
@@ -2408,7 +2411,7 @@ public final class JavaRuntime {
 	 * @return JRE runtime classpath entry or <code>null</code>
 	 * @exception org.eclipse.core.runtime.CoreException
 	 *                if an exception occurs accessing the project's classpath
-	 * @since 3.9
+	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry computeModularJREEntry(IJavaProject project) throws CoreException {
 		IClasspathEntry[] rawClasspath = project.getRawClasspath();

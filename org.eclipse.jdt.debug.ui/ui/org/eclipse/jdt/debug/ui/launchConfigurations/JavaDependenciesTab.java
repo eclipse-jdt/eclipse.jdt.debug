@@ -74,7 +74,7 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated.
  * </p>
  *
- * @since 3.8
+ * @since 3.9
  * @noextend This class is not intended to be sub-classed by clients.
  */
 public class JavaDependenciesTab extends JavaClasspathTab {

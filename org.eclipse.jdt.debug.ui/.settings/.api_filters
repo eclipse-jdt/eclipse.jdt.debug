@@ -7,12 +7,27 @@
                 <message_argument value="3.8.0"/>
             </message_arguments>
         </filter>
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="3.8.50"/>
+                <message_argument value="3.8.1"/>
+            </message_arguments>
+        </filter>
     </resource>
     <resource path="ui/org/eclipse/jdt/debug/ui/launchConfigurations/JavaClasspathTab.java" type="org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab">
         <filter comment="Known illegal extension" id="576720909">
             <message_arguments>
                 <message_argument value="AbstractJavaClasspathTab"/>
                 <message_argument value="JavaClasspathTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="ui/org/eclipse/jdt/debug/ui/launchConfigurations/JavaDependenciesTab.java" type="org.eclipse.jdt.debug.ui.launchConfigurations.JavaDependenciesTab">
+        <filter id="1108344834">
+            <message_arguments>
+                <message_argument value="3.9"/>
+                <message_argument value="3.8"/>
+                <message_argument value="org.eclipse.jdt.debug.ui.launchConfigurations.JavaDependenciesTab"/>
             </message_arguments>
         </filter>
     </resource>
