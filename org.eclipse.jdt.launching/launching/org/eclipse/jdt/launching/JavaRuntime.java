@@ -903,6 +903,8 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
 		IClasspathEntry[] entries = project.getResolvedClasspath(true);
 		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
+		IClasspathEntry entry1 = JavaCore.newProjectEntry(project.getProject().getFullPath());
+		classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.MODULE_PATH));
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
 			switch (entry.getEntryKind()) {
@@ -965,8 +967,7 @@ public final class JavaRuntime {
 					break;
 			}
 		}
-		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
-		classpathEntries.add(new RuntimeClasspathEntry(entry, IRuntimeClasspathEntry.MODULE_PATH));
+
 
 		classpathEntries.add(JavaRuntime.computeModularJREEntry(project));
 		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
@@ -1480,6 +1481,25 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		if (isModularConfiguration(configuration)) {
+			IRuntimeClasspathEntry[] entries1 = getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+			ArrayList<IRuntimeClasspathEntry> entries2 = new ArrayList<>(entries1.length);
+			for (IRuntimeClasspathEntry entry : entries1) {
+				switch (entry.getClasspathEntry().getEntryKind()) {
+					case IClasspathEntry.CPE_LIBRARY:
+						IJavaProject project = JavaRuntime.getJavaProject(configuration);
+						IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
+						if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
+							entries2.add(entry);
+						}
+						break;
+					default:
+						entries2.add(entry);
+
+				}
+			}
+			return entries2.toArray(new IRuntimeClasspathEntry[entries2.size()]);
+		}
 		return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
 	}
 
@@ -2267,9 +2287,9 @@ public final class JavaRuntime {
 				if (proj == null) {
 					containerPath = newDefaultJREContainerPath();
 				} else {
-					/*
-					 * if (isModularConfiguration(configuration)) { return computeModularJREEntry(proj); }
-					 */
+					if (isModularConfiguration(configuration)) {
+						return computeModularJREEntry(proj);
+					}
 					return computeJREEntry(proj);
 				}
 			} else {

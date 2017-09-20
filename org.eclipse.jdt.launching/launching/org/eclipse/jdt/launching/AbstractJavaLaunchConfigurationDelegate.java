@@ -414,7 +414,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				String location = entries[i].getLocation();
 				if (location != null) {
 					if (!set.contains(location)) {
@@ -422,7 +421,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 						set.add(location);
 					}
 				}
-			}
 		}
 		return userEntries.toArray(new String[userEntries.size()]);
 	}
