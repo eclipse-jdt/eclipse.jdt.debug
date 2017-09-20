@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -299,7 +299,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 								IPackageFragmentRoot[] roots = project.findPackageFragmentRoots(entry);
 								for (int i = 0; i < roots.length; i++) {
 									IPackageFragmentRoot root = roots[i];
-									r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath());
+									r = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath(), entry.getSourceAttachmentPath(), entry.getSourceAttachmentRootPath(), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
 									r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 									r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 									if (!expandedPath.contains(r)) {

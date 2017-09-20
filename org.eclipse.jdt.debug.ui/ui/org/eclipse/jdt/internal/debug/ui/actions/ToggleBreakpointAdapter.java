@@ -44,6 +44,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -847,7 +848,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 					if(member.getElementType() == IJavaElement.TYPE) {
 						return ((IType)member).isInterface();
 					}
-					return member.getDeclaringType().isInterface();
+					IType type = member.getDeclaringType();
+					return type != null && type.isInterface();
 				}
 				else if(obj instanceof IJavaFieldVariable) {
 					IJavaFieldVariable var = (IJavaFieldVariable) obj;
@@ -1152,8 +1154,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                     break;
                 }
             }
-        } else if (element instanceof IClassFile) {
-            type = ((IClassFile) element).getType();
+        } else if (element instanceof IOrdinaryClassFile) {
+			type = ((IOrdinaryClassFile) element).getType();
         }
         if (type != null) {
             String[] sigs = Signature.getParameterTypes(signature);

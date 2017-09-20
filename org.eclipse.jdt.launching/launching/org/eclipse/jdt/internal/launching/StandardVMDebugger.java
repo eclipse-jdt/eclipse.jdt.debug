@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,6 +209,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 		addArguments(ensureEncoding(launch, allVMArgs), arguments);
 		addBootClassPathArguments(arguments, config);
 
+		String[] mp = config.getModulepath();
+		if (isModular(config, fVMInstance) && (mp != null && mp.length > 0)) {
+			arguments.add("-p"); //$NON-NLS-1$
+			arguments.add(convertClassPath(mp));
+		}
+
 		String[] cp= config.getClassPath();
 		int cpidx = -1;
 		if (cp.length > 0) {
@@ -217,7 +223,19 @@ public class StandardVMDebugger extends StandardVMRunner {
 			arguments.add(convertClassPath(cp));
 		}
 
-		arguments.add(config.getClassToLaunch());
+		if (isModular(config, fVMInstance)) {
+			arguments.add("-m"); //$NON-NLS-1$
+			arguments.add(config.getModuleDescription() + "/" + config.getClassToLaunch()); //$NON-NLS-1$
+		} else {
+			arguments.add(config.getClassToLaunch());
+		}
+
+		/*
+		 * String[] cp= config.getClassPath(); int cpidx = -1; if (cp.length > 0) { cpidx = arguments.size(); arguments.add("-classpath");
+		 * //$NON-NLS-1$ arguments.add(convertClassPath(cp)); }
+		 *
+		 * arguments.add(config.getClassToLaunch());
+		 */
 		addArguments(config.getProgramArguments(), arguments);
 
 		//With the newer VMs and no backwards compatibility we have to always prepend the current env path (only the runtime one)

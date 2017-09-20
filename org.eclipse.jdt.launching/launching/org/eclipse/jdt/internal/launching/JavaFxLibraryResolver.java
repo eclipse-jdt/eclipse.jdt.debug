@@ -52,7 +52,7 @@ public class JavaFxLibraryResolver implements ILibraryLocationResolver {
 	public URL getJavadocLocation(IPath libraryPath) {
 		if (isJavaFx(libraryPath)) {
 			/*
-			 * TODO: We don't know if JavaSE-1.9 will ship JavaFX in the ext folder as well. If yes, then we have to use something like
+			 * TODO: We don't know if JavaSE-9 will ship JavaFX in the ext folder as well. If yes, then we have to use something like
 			 * JavaRuntime#getVMInstall(IPath) and IVMInstall2#getJavaVersion() to determine the right Javadoc URL.
 			 */
 			try {

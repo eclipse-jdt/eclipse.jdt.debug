@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaCore;
@@ -97,8 +97,8 @@ public class AppletLaunchConfigurationUtils {
 		} else if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 			String simpleName= Signature.getSimpleName(mainTypeName);
 			return ((ICompilationUnit) javaElement).getType(simpleName);
-		} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE) {
-			return ((IClassFile) javaElement).getType();
+		} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE && javaElement instanceof IOrdinaryClassFile) {
+			return ((IOrdinaryClassFile) javaElement).getType();
 		}
 		return null;
 	}
@@ -148,8 +148,8 @@ public class AppletLaunchConfigurationUtils {
 					result.add(types[i]);
 				}
 			}
-		} else if (element instanceof IClassFile) {
-			IType type = ((IClassFile)element).getType();
+		} else if (element instanceof IOrdinaryClassFile) {
+			IType type = ((IOrdinaryClassFile) element).getType();
 			if (isSubclassOfApplet(monitor, type)) {
 				result.add(type);
 			}

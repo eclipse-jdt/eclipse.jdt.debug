@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -451,12 +451,27 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 				if (is != null) {
 					Properties profile = new Properties();
 					profile.load(is);
+					fixJavaSE9ComplianceSourceTargetLevels(profile);
 					return profile;
 				}
 			} catch (IOException e) {
 			}
 		}
 		return null;
+	}
+
+
+	/**
+	 * Bug 470616: [1.9] JavaSE-9 Execution Environment should set proper compiler compliance/source/target levels
+	 * <p>
+	 * This is a workaround for Bug 495497: [9] JavaSE-9.profile Execution Environment should set compiler levels to 9
+	 */
+	private void fixJavaSE9ComplianceSourceTargetLevels(Properties profile) {
+		if (ExecutionEnvironmentAnalyzer.JavaSE_9.equals(getId())) {
+			profile.setProperty(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_9);
+			profile.setProperty(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_9);
+			profile.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_9);
+		}
 	}
 
 	/* (non-Javadoc)

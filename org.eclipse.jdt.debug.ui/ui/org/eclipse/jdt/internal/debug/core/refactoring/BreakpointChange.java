@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportContainer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -232,7 +232,9 @@ public abstract class BreakpointChange extends Change {
 							currentElement = ((ICompilationUnit)currentElement).getType(child.getElementName());
 							break;
 						case IJavaElement.CLASS_FILE:
-							currentElement = ((IClassFile)currentElement).getType();
+							if (currentElement instanceof IOrdinaryClassFile) {
+								currentElement = ((IOrdinaryClassFile) currentElement).getType();
+							}
 							break;
 						case IJavaElement.TYPE:
 							currentElement = ((IType)currentElement).getType(child.getElementName());
