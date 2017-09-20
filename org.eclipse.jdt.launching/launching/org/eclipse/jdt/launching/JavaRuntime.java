@@ -62,8 +62,10 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
@@ -766,7 +768,7 @@ public final class JavaRuntime {
 	 * @since 3.9
 	 */
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IClasspathEntry entry, IJavaProject project) {
-		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry) ? IRuntimeClasspathEntry.MODULE_PATH
+		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry, project) ? IRuntimeClasspathEntry.MODULE_PATH
 				: IRuntimeClasspathEntry.CLASS_PATH);
 		runTimeEntry.setJavaProject(project);
 		return runTimeEntry;
@@ -903,8 +905,13 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
 		IClasspathEntry[] entries = project.getResolvedClasspath(true);
 		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
+
 		IClasspathEntry entry1 = JavaCore.newProjectEntry(project.getProject().getFullPath());
-		classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.MODULE_PATH));
+		if (isModularProject(project)) {
+			classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.MODULE_PATH));
+		} else {
+			classpathEntries.add(new RuntimeClasspathEntry(entry1, IRuntimeClasspathEntry.CLASS_PATH));
+		}
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
 			switch (entry.getEntryKind()) {
@@ -916,14 +923,14 @@ public final class JavaRuntime {
 								// don't look at application entries
 								break;
 							case IClasspathContainer.K_DEFAULT_SYSTEM:
-								if (isModule(entry)) {
+								if (isModule(entry, project)) {
 									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
 								} else {
 									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
 								}
 								break;
 							case IClasspathContainer.K_SYSTEM:
-								if (isModule(entry)) {
+								if (isModule(entry, project)) {
 									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.MODULE_PATH, project));
 								} else {
 									classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.CLASS_PATH, project));
@@ -936,7 +943,7 @@ public final class JavaRuntime {
 					String name = entry.getPath().lastSegment();
 					IProject dep = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 					IJavaProject javaProject = JavaCore.create(dep);
-					if (isModule(entry)) {
+					if (isModule(entry, project)) {
 						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject, IRuntimeClasspathEntry.MODULE_PATH));
 					} else {
 						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject, IRuntimeClasspathEntry.CLASS_PATH));
@@ -953,7 +960,7 @@ public final class JavaRuntime {
 					IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
 					if (!root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
 						IRuntimeClasspathEntry r;
-						if (JavaRuntime.isModule(entry)) {
+						if (JavaRuntime.isModule(entry, project)) {
 							r = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
 						} else {
 							r = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
@@ -981,7 +988,11 @@ public final class JavaRuntime {
 	 * @return boolean <code>true</code> if entry is module else <code>false</code>
 	 * @since 3.9
 	 */
-	public static boolean isModule(IClasspathEntry entry) {
+	public static boolean isModule(IClasspathEntry entry, IJavaProject proj) {
+		if (!isModularProject(proj)) {
+			return false;
+		}
+
 		if (entry == null) {
 			return false;
 		}
@@ -1016,6 +1027,11 @@ public final class JavaRuntime {
 	}
 
 	/**
+	 * Checks if vm install is modular.
+	 *
+	 * @param entry
+	 *            the vm install
+	 * @return boolean <code>true</code> if vm install is modular else <code>false</code>
 	 * @since 3.9
 	 */
 	public static boolean isModularJava(IVMInstall vm) {
@@ -1033,6 +1049,29 @@ public final class JavaRuntime {
 		}
 		return false;
 
+	}
+
+	/**
+	 * Checks if project entry is modular
+	 *
+	 * @param entry
+	 *            the project
+	 * @return boolean <code>true</code> if project is modular else <code>false</code>
+	 * @since 3.9
+	 */
+	public static boolean isModularProject(IJavaProject proj) {
+
+		IModuleDescription module;
+		try {
+			module = proj == null ? null : proj.getModuleDescription();
+			String modName = module == null ? null : module.getElementName();
+			if (modName != null && modName.length() > 0) {
+				return true;
+			}
+		}
+		catch (JavaModelException e) {
+		}
+		return false;
 	}
 
 	/**
@@ -2381,7 +2420,7 @@ public final class JavaRuntime {
 					resolver = getVariableResolver(entry.getPath().segment(0));
 					if (resolver != null) {
 						if (resolver.isVMInstallReference(entry)) {
-							if (isModule(entry)) {
+							if (isModule(entry, project)) {
 								return newRuntimeClasspathEntry(entry, IRuntimeClasspathEntry.MODULE_PATH);
 							}
 							return newRuntimeClasspathEntry(entry, IRuntimeClasspathEntry.CLASS_PATH);
@@ -2398,12 +2437,12 @@ public final class JavaRuntime {
 									case IClasspathContainer.K_APPLICATION:
 										break;
 									case IClasspathContainer.K_DEFAULT_SYSTEM:
-										if (isModule(entry)) {
+										if (isModule(entry, project)) {
 											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
 										}
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
 									case IClasspathContainer.K_SYSTEM:
-										if (isModule(entry)) {
+										if (isModule(entry, project)) {
 											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
 										}
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);

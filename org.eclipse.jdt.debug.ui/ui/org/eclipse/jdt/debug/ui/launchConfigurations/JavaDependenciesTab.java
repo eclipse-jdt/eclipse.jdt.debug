@@ -259,7 +259,7 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 						fModel.addEntry(DependencyModel.MODULE_PATH, entry);
 					break;
 				default:
-					if (JavaRuntime.isModule(entry.getClasspathEntry())) {
+					if (JavaRuntime.isModule(entry.getClasspathEntry(), JavaRuntime.getJavaProject(configuration))) {
 						fModel.addEntry(DependencyModel.MODULE_PATH, entry);
 					} else {
 						fModel.addEntry(DependencyModel.CLASS_PATH, entry);
