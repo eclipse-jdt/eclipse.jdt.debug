@@ -644,9 +644,9 @@ public final class JavaRuntime {
 	 *
 	 * @param project
 	 *            Java project
-	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
-	 * 	<code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>, <code>MODULE_PATH</code>
-	 *  or <code>CLASS_PATH</code>
+	 * @param classpathProperty
+	 *            the type of entry - one of <code>USER_CLASSES</code>, <code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>,
+	 *            <code>MODULE_PATH</code> or <code>CLASS_PATH</code>
 	 * @return runtime classpath entry
 	 * @since 3.9
 	 */
@@ -667,13 +667,13 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a new runtime classpath entry for the given archive(possibly
-	 * external).
+	 * Returns a new runtime classpath entry for the given archive(possibly external).
 	 *
-	 * @param path absolute path to an archive
-	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
-	 * 	<code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>, <code>MODULE_PATH</code>
-	 *  or <code>CLASS_PATH</code>
+	 * @param path
+	 *            absolute path to an archive
+	 * @param classpathProperty
+	 *            the type of entry - one of <code>USER_CLASSES</code>, <code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>,
+	 *            <code>MODULE_PATH</code> or <code>CLASS_PATH</code>
 	 * @return runtime classpath entry
 	 * @since 3.9
 	 */
@@ -694,20 +694,23 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a new runtime classpath entry for the given archive (possibly
-	 * external).
+	 * Returns a new runtime classpath entry for the given archive (possibly external).
 	 *
-	 * @param path absolute path to an archive
- 	 * @param sourceAttachmentPath the absolute path of the corresponding source archive or folder,
-	 *   or <code>null</code> if none. Note, since 3.0, an empty path is allowed to denote no source attachment.
-	 *   and will be automatically converted to <code>null</code>. Since 3.4, this path can also denote a path external
-	 *   to the workspace.
-	 * @param sourceAttachmentRootPath the location of the root of the source files within the source archive or folder
-	 *    or <code>null</code> if this location should be automatically detected.
-	 * @param accessRules the possibly empty list of access rules for this entry
-	 * @param extraAttributes the possibly empty list of extra attributes to persist with this entry
-	 * @param isExported indicates whether this entry is contributed to dependent
-	 * 	  projects in addition to the output location
+	 * @param path
+	 *            absolute path to an archive
+	 * @param sourceAttachmentPath
+	 *            the absolute path of the corresponding source archive or folder, or <code>null</code> if none. Note, since 3.0, an empty path is
+	 *            allowed to denote no source attachment. and will be automatically converted to <code>null</code>. Since 3.4, this path can also
+	 *            denote a path external to the workspace.
+	 * @param sourceAttachmentRootPath
+	 *            the location of the root of the source files within the source archive or folder or <code>null</code> if this location should be
+	 *            automatically detected.
+	 * @param accessRules
+	 *            the possibly empty list of access rules for this entry
+	 * @param extraAttributes
+	 *            the possibly empty list of extra attributes to persist with this entry
+	 * @param isExported
+	 *            indicates whether this entry is contributed to dependent projects in addition to the output location
 	 * @return runtime classpath entry
 	 * @since 3.9
 	 */
@@ -762,16 +765,6 @@ public final class JavaRuntime {
 		RuntimeClasspathEntry entry = new RuntimeClasspathEntry(JavaCore.newContainerEntry(path), classpathProperty);
 		entry.setJavaProject(project);
 		return entry;
-	}
-
-	/**
-	 * @since 3.9
-	 */
-	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IClasspathEntry entry, IJavaProject project) {
-		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry, project) ? IRuntimeClasspathEntry.MODULE_PATH
-				: IRuntimeClasspathEntry.CLASS_PATH);
-		runTimeEntry.setJavaProject(project);
-		return runTimeEntry;
 	}
 
 	/**
@@ -892,13 +885,13 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Computes and returns the default unresolved runtime classpath for the given project.
+	 * Computes and returns the default unresolved runtime classpath and modulepath for the given project.
 	 *
 	 * @param project
-	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
-	 * @return runtime classpath entries
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath and modulepath for
+	 * @return runtime classpath and modulepath entries
 	 * @exception CoreException
-	 *                if unable to compute the runtime classpath
+	 *                if unable to compute the runtime classpath and/or modulepath
 	 * @see IRuntimeClasspathEntry
 	 * @since 3.9
 	 */
@@ -981,7 +974,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Checks if classpath entry is module.
+	 * Checks if classpath entry is modular and project is modular .
 	 *
 	 * @param entry
 	 *            the classpath entry
@@ -1027,7 +1020,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Checks if vm install is modular.
+	 * Checks if vm install is modular( version greater than 8).
 	 *
 	 * @param entry
 	 *            the vm install
@@ -2405,12 +2398,12 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a runtime classpath entry identifying the JRE referenced by the specified project, or <code>null</code> if none. The entry returned
-	 * represents a either a classpath variable or classpath container that resolves to a JRE.
+	 * Returns a runtime classpath or modulepath entry identifying the JRE referenced by the specified project, or <code>null</code> if none. The
+	 * entry returned represents a either a classpath variable or classpath container that resolves to a JRE.
 	 *
 	 * @param project
 	 *            Java project
-	 * @return JRE runtime classpath entry or <code>null</code>
+	 * @return JRE runtime classpath or modulepath entry or <code>null</code>
 	 * @exception org.eclipse.core.runtime.CoreException
 	 *                if an exception occurs accessing the project's classpath
 	 * @since 3.9
