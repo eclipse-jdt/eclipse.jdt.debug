@@ -84,10 +84,12 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 			// current module name, if so
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
-			IModuleDescription module = proj == null ? null : proj.getModuleDescription();
-			String modName = module == null ? null : module.getElementName();
-			if (modName != null) {
-				runConfig.setModuleDescription(modName);
+			if (proj != null) {
+				IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+				String modName = module == null ? null : module.getElementName();
+				if (modName != null) {
+					runConfig.setModuleDescription(modName);
+				}
 			}
 
 			// Bootpath

@@ -1530,9 +1530,14 @@ public final class JavaRuntime {
 				switch (entry.getClasspathEntry().getEntryKind()) {
 					case IClasspathEntry.CPE_LIBRARY:
 						IJavaProject project = JavaRuntime.getJavaProject(configuration);
-						IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
-						if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
+						if (project == null) {
 							entries2.add(entry);
+						}
+						else {
+							IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
+							if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
+								entries2.add(entry);
+							}
 						}
 						break;
 					default:
