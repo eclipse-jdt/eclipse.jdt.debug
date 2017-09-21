@@ -96,11 +96,15 @@ public interface IRuntimeClasspathEntry {
 	public static final int USER_CLASSES = 3;
 
 	/**
+	 * Classpath property identifier for entries that should appear on the module path for modular project.
+	 * 
 	 * @since 3.10
 	 */
 	public static final int MODULE_PATH = 4;
 
 	/**
+	 * Classpath property identifier for entries that should appear on the class path for modular project.
+	 * 
 	 * @since 3.10
 	 */
 	public static final int CLASS_PATH = 5;

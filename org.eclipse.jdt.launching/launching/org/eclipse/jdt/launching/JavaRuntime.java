@@ -768,16 +768,6 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * @since 3.10
-	 */
-	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IClasspathEntry entry, IJavaProject project) {
-		RuntimeClasspathEntry runTimeEntry = new RuntimeClasspathEntry(entry, isModule(entry, project) ? IRuntimeClasspathEntry.MODULE_PATH
-				: IRuntimeClasspathEntry.CLASS_PATH);
-		runTimeEntry.setJavaProject(project);
-		return runTimeEntry;
-	}
-
-	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
 	 *
 	 * @param memento a memento for a runtime classpath entry
@@ -895,13 +885,13 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Computes and returns the default unresolved runtime classpath for the given project.
+	 * Computes and returns the default unresolved runtime classpath and modulepath for the given project.
 	 *
 	 * @param project
-	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
-	 * @return runtime classpath entries
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath and modulepath for
+	 * @return runtime classpath and modulepath entries
 	 * @exception CoreException
-	 *                if unable to compute the runtime classpath
+	 *                if unable to compute the runtime classpath and/or modulepath
 	 * @see IRuntimeClasspathEntry
 	 * @since 3.10
 	 */
@@ -984,7 +974,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Checks if classpath entry is module.
+	 * Checks if classpath entry is modular and project is modular .
 	 *
 	 * @param entry
 	 *            the classpath entry
@@ -1030,7 +1020,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Checks if vm install is modular.
+	 * Checks if vm install is modular( version greater than 8).
 	 *
 	 * @param entry
 	 *            the vm install
@@ -2408,12 +2398,12 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a runtime classpath entry identifying the JRE referenced by the specified project, or <code>null</code> if none. The entry returned
-	 * represents a either a classpath variable or classpath container that resolves to a JRE.
+	 * Returns a runtime classpath or modulepath entry identifying the JRE referenced by the specified project, or <code>null</code> if none. The
+	 * entry returned represents a either a classpath variable or classpath container that resolves to a JRE.
 	 *
 	 * @param project
 	 *            Java project
-	 * @return JRE runtime classpath entry or <code>null</code>
+	 * @return JRE runtime classpath or modulepath entry or <code>null</code>
 	 * @exception org.eclipse.core.runtime.CoreException
 	 *                if an exception occurs accessing the project's classpath
 	 * @since 3.10
