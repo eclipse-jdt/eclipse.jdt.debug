@@ -429,7 +429,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * Returns the entries that should appear on the user portion of the classpath and modulepath as specified by the given launch configuration, as
 	 * an array of resolved strings. The returned array is empty if no classpath and modulepath is specified.
 	 *
-	 * @param configuration
+	 * @param config
 	 *            launch configuration
 	 * @return the classpath and modulepath specified by the given launch configuration, possibly an empty array
 	 * @exception CoreException

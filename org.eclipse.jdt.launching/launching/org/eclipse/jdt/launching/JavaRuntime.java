@@ -714,8 +714,8 @@ public final class JavaRuntime {
 	 * @return runtime classpath entry
 	 * @since 3.10
 	 */
-	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IAccessRule[] accessRules, IClasspathAttribute[] extraAtributes, boolean isExported) {
-		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, accessRules, extraAtributes, isExported));
+	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IAccessRule[] accessRules, IClasspathAttribute[] extraAttributes, boolean isExported) {
+		return newRuntimeClasspathEntry(JavaCore.newLibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, accessRules, extraAttributes, isExported));
 	}
 
 	/**
@@ -1022,7 +1022,7 @@ public final class JavaRuntime {
 	/**
 	 * Checks if vm install is modular( version greater than 8).
 	 *
-	 * @param entry
+	 * @param vm
 	 *            the vm install
 	 * @return boolean <code>true</code> if vm install is modular else <code>false</code>
 	 * @since 3.10
@@ -1047,7 +1047,7 @@ public final class JavaRuntime {
 	/**
 	 * Checks if project entry is modular
 	 *
-	 * @param entry
+	 * @param proj
 	 *            the project
 	 * @return boolean <code>true</code> if project is modular else <code>false</code>
 	 * @since 3.10
