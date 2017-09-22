@@ -238,6 +238,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 */
 	public String[] getBootpath(ILaunchConfiguration configuration)
 			throws CoreException {
+		if (JavaRuntime.isModularConfiguration(configuration)) {
+			return null;
+		}
 		String[][] paths = getBootpathExt(configuration);
 		String[] pre = paths[0];
 		String[] main = paths[1];

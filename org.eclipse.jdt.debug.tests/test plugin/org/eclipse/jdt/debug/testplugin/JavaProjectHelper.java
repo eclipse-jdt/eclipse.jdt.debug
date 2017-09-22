@@ -94,6 +94,15 @@ public class JavaProjectHelper {
 	public static boolean isJava8Compatible() {
 		return isCompatible(8);
 	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 9
+	 *
+	 * @return <code>true</code> if a Java 9 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava9Compatible() {
+		return isCompatible(9);
+	}
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
 	 *
@@ -141,6 +150,15 @@ public class JavaProjectHelper {
 						}
 					}
 				} catch (NumberFormatException e) {
+				}
+			} else if (nums.length == 1) {
+				try {
+					int major = Integer.parseInt(nums[0]);
+					if (major >= ver) {
+						return true;
+					}
+				}
+				catch (NumberFormatException e) {
 				}
 			}
 		}

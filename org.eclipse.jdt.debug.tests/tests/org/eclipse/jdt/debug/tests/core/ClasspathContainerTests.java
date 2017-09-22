@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -183,6 +183,9 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	public void testJREContainerIndex() throws Exception {
 		// get the current VM
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
+		if (JavaRuntime.isModularJava(def)) {
+			return;
+		}
 		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
 		// generate an index for the first library location only (to save time - do not need an index for all libraries)
 		URL indexURL = this.getIndexForLibrary(libs[0]);
@@ -225,6 +228,9 @@ public class ClasspathContainerTests extends AbstractDebugTest {
 	public void testJREContainerIndex2() throws Exception {
 		// get the current VM
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
+		if (JavaRuntime.isModularJava(def)) {
+			return;
+		}
 		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(def);
 		// generate an index for the first library location only (to save time - do not need an index for all libraries)
 		URL indexURL = this.getIndexForLibrary(libs[0]);

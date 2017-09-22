@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.ExceptionBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.ImportBreakpointsTest;
 import org.eclipse.jdt.debug.tests.breakpoints.JavaBreakpointListenerTests;
+import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.MethodBreakpointTests15;
 import org.eclipse.jdt.debug.tests.breakpoints.MiscBreakpointsTests;
@@ -38,7 +39,6 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
-import org.eclipse.jdt.debug.tests.breakpoints.JavaThreadEventHandlerTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
@@ -250,7 +250,9 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(ClasspathContainerTests.class));
 		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
 		addTest(new TestSuite(ClasspathProviderTests.class));
-		addTest(new TestSuite(BootpathTests.class));
+		if (!JavaProjectHelper.isJava9Compatible()) {
+			addTest(new TestSuite(BootpathTests.class));
+		}
 		addTest(new TestSuite(EEDefinitionTests.class));
 
 	//VM Install/Environment tests

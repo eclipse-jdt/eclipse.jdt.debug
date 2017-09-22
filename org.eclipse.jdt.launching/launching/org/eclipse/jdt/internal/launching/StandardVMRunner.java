@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 
@@ -595,18 +596,30 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] appendBootCP= null;
 		Map<String, Object> map = config.getVMSpecificAttributesMap();
 		if (map != null) {
-			prependBootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
-			bootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
+			prependBootCP = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
+			bootCP = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
+			if (JavaRuntime.isModularJava(fVMInstance)) {
+				if (prependBootCP != null) {
+					prependBootCP = null;
+					LaunchingPlugin.log(LaunchingMessages.RunnerBootpathPError);
+				}
+				if (bootCP != null) {
+					bootCP = null;
+					LaunchingPlugin.log(LaunchingMessages.RunnerBootpathError);
+				}
+			}
 			appendBootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND);
 		}
-		if (prependBootCP == null && bootCP == null && appendBootCP == null) {
-			// use old single attribute instead of new attributes if not specified
-			bootCP = config.getBootClassPath();
+		if (!JavaRuntime.isModularJava(fVMInstance)) {
+			if (prependBootCP == null && bootCP == null && appendBootCP == null) {
+				// use old single attribute instead of new attributes if not specified
+				bootCP = config.getBootClassPath();
+			}
 		}
-		// Bug 497945 -Temporary testing to see if we can launch inner eclipse in Mac after this.
-		/*
-		 * if (prependBootCP != null) { arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$ }
-		 */
+		 if (prependBootCP != null) {
+			 arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
+		 }
+
 		if (bootCP != null) {
 			if (bootCP.length > 0) {
 				arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
