@@ -599,11 +599,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 			prependBootCP = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
 			bootCP = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
 			if (JavaRuntime.isModularJava(fVMInstance)) {
-				if (prependBootCP != null) {
+				if (prependBootCP != null && prependBootCP.length > 0) {
 					prependBootCP = null;
 					LaunchingPlugin.log(LaunchingMessages.RunnerBootpathPError);
 				}
-				if (bootCP != null) {
+				if (bootCP != null && bootCP.length > 0) {
 					bootCP = null;
 					LaunchingPlugin.log(LaunchingMessages.RunnerBootpathError);
 				}
