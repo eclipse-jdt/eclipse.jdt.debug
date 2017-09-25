@@ -2418,7 +2418,7 @@ public final class JavaRuntime {
 					resolver = getVariableResolver(entry.getPath().segment(0));
 					if (resolver != null) {
 						if (resolver.isVMInstallReference(entry)) {
-							if (isModule(entry, project)) {
+							if (isModularProject(project)) {
 								return newRuntimeClasspathEntry(entry, IRuntimeClasspathEntry.MODULE_PATH);
 							}
 							return newRuntimeClasspathEntry(entry, IRuntimeClasspathEntry.CLASS_PATH);
@@ -2435,12 +2435,12 @@ public final class JavaRuntime {
 									case IClasspathContainer.K_APPLICATION:
 										break;
 									case IClasspathContainer.K_DEFAULT_SYSTEM:
-										if (isModule(entry, project)) {
+										if (isModularProject(project)) {
 											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
 										}
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
 									case IClasspathContainer.K_SYSTEM:
-										if (isModule(entry, project)) {
+										if (isModularProject(project)) {
 											return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
 										}
 										return newRuntimeContainerClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.CLASS_PATH);
