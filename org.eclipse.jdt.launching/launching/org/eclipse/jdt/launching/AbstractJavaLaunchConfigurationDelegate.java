@@ -416,14 +416,16 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 
 		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-				String location = entries[i].getLocation();
-				if (location != null) {
+		for (IRuntimeClasspathEntry entry : entries) {
+			String location = entry.getLocation();
+			if (location != null) {
+				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.MODULE_PATH) {
 					if (!set.contains(location)) {
 						userEntries.add(location);
 						set.add(location);
 					}
 				}
+			}
 		}
 		return userEntries.toArray(new String[userEntries.size()]);
 	}

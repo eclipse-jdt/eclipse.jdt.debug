@@ -70,13 +70,10 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			// VM-specific attributes
 			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-			// Classpath
+			// Bug 522333 :to be used for modulepath only for 4.7.* 
 			String[][] paths = getClasspathAndModulepath(configuration);
-
-
-
 			// Create VM config
-			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, paths[0]);
+			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
 			runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 			runConfig.setEnvironment(envp);
 			runConfig.setVMArguments(execArgs.getVMArgumentsArray());
@@ -92,11 +89,13 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 				}
 			}
 
-			// Bootpath
-			runConfig.setBootClassPath(getBootpath(configuration));
-
-			// module path
-			runConfig.setModulepath(paths[1]);
+			if (!JavaRuntime.isModularConfiguration(configuration)) {
+				// Bootpath
+				runConfig.setBootClassPath(getBootpath(configuration));
+			} else {
+				// module path
+				runConfig.setModulepath(paths[1]);
+			}
 
 			// check for cancellation
 			if (monitor.isCanceled()) {
