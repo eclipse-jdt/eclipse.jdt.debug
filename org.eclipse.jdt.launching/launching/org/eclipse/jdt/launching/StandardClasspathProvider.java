@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.jdt.launching;
 
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -36,6 +37,7 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+		boolean isModular = JavaRuntime.isModularConfiguration(configuration);
 		if (useDefault) {
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 			IRuntimeClasspathEntry jreEntry = JavaRuntime.computeJREEntry(configuration);
@@ -46,9 +48,14 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 				}
 				return new IRuntimeClasspathEntry[]{jreEntry};
 			}
-			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
+			IRuntimeClasspathEntry[] entries = null;
+			if (isModular) {
+				entries = JavaRuntime.computeUnresolvedRuntimeDependencies(proj);
+			} else {
+				entries = JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
+			}
 			// replace project JRE with config's JRE
-			IRuntimeClasspathEntry projEntry = JavaRuntime.computeJREEntry(proj);
+			IRuntimeClasspathEntry projEntry = isModular ? JavaRuntime.computeModularJREEntry(proj) : JavaRuntime.computeJREEntry(proj);
 			if (jreEntry != null && projEntry != null) {
 				if (!jreEntry.equals(projEntry)) {
 					for (int i = 0; i < entries.length; i++) {
@@ -63,6 +70,13 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 			return entries;
 		}
 		// recover persisted classpath
+		if (isModular) {
+			IRuntimeClasspathEntry[] runtimeModulePaths = recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_MODULEPATH);
+			IRuntimeClasspathEntry[] runtimeClasspaths = recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
+			IRuntimeClasspathEntry[] result = Arrays.copyOf(runtimeModulePaths, runtimeModulePaths.length + runtimeClasspaths.length);
+			System.arraycopy(runtimeClasspaths, 0, result, runtimeModulePaths.length, runtimeClasspaths.length);
+			return result;
+		}
 		return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,6 +238,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 */
 	public String[] getBootpath(ILaunchConfiguration configuration)
 			throws CoreException {
+		if (JavaRuntime.isModularConfiguration(configuration)) {
+			return null;
+		}
 		String[][] paths = getBootpathExt(configuration);
 		String[] pre = paths[0];
 		String[] main = paths[1];
@@ -410,12 +413,13 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(configuration);
 		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+
 		List<String> userEntries = new ArrayList<>(entries.length);
 		Set<String> set = new HashSet<>(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = entries[i].getLocation();
-				if (location != null) {
+		for (IRuntimeClasspathEntry entry : entries) {
+			String location = entry.getLocation();
+			if (location != null) {
+				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.MODULE_PATH) {
 					if (!set.contains(location)) {
 						userEntries.add(location);
 						set.add(location);
@@ -425,6 +429,54 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return userEntries.toArray(new String[userEntries.size()]);
 	}
+
+	/**
+	 * Returns the entries that should appear on the user portion of the classpath and modulepath as specified by the given launch configuration, as
+	 * an array of resolved strings. The returned array is empty if no classpath and modulepath is specified.
+	 *
+	 * @param config
+	 *            launch configuration
+	 * @return the classpath and modulepath specified by the given launch configuration, possibly an empty array
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 * @since 3.10
+	 */
+	public String[][] getClasspathAndModulepath(ILaunchConfiguration config) throws CoreException {
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, config);
+		String[][] path = new String[2][entries.length];
+		List<String> classpathEntries = new ArrayList<>(entries.length);
+		List<String> modulepathEntries = new ArrayList<>(entries.length);
+		Set<String> classpathSet = new HashSet<>(entries.length);
+		Set<String> modulepathSet = new HashSet<>(entries.length);
+		for (IRuntimeClasspathEntry entry : entries) {
+			String location = entry.getLocation();
+			if (location != null) {
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+					if (!classpathSet.contains(location)) {
+						classpathEntries.add(location);
+						classpathSet.add(location);
+					}
+				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.CLASS_PATH) {
+					if (!classpathSet.contains(location)) {
+						classpathEntries.add(location);
+						classpathSet.add(location);
+					}
+
+				} else if (entry.getClasspathProperty() == IRuntimeClasspathEntry.MODULE_PATH) {
+					if (!modulepathSet.contains(location)) {
+						modulepathEntries.add(location);
+						modulepathSet.add(location);
+					}
+				}
+
+			}
+		}
+		path[0] = classpathEntries.toArray(new String[classpathEntries.size()]);
+		path[1] = modulepathEntries.toArray(new String[classpathEntries.size()]);
+		return path;
+	}
+
 	/**
 	 * Returns the Java project specified by the given launch configuration, or
 	 * <code>null</code> if none.

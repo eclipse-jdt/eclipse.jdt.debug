@@ -750,66 +750,58 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 			EvaluationRunnable er = new EvaluationRunnable();
 			CoreException exception = null;
+			long start = System.currentTimeMillis();
 			try {
-				long start = System.currentTimeMillis();
-				try {
-					fThread.runEvaluation(er, null, fEvaluationDetail,
-							fHitBreakpoints);
-				} catch (DebugException e) {
-					exception = e;
-				} catch (Exception e) {
-					IStatus status = new Status(IStatus.ERROR,
-							JDIDebugPlugin.getUniqueIdentifier(),
-							JDIDebugPlugin.ERROR,
-							EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation, e);
-					exception = new DebugException(status);
-				}
-				long end = System.currentTimeMillis();
+				fThread.runEvaluation(er, null, fEvaluationDetail,
+						fHitBreakpoints);
+			} catch (DebugException e) {
+				exception = e;
+			}
+			long end = System.currentTimeMillis();
 
-				IJavaValue value = interpreter.getResult();
+			IJavaValue value = interpreter.getResult();
 
-				if (exception == null) {
-					exception = er.getException();
-				}
+			if (exception == null) {
+				exception = er.getException();
+			}
 
-				result.setTerminated(er.fTerminated);
-				if (exception != null) {
-					if (JDIDebugOptions.DEBUG_AST_EVAL) {
-						StringBuffer buf = new StringBuffer();
-						buf.append("\tException: "); //$NON-NLS-1$
-						buf.append(exception.toString());
-						JDIDebugOptions.trace(buf.toString());
-					}
-					if (exception instanceof DebugException) {
-						result.setException((DebugException) exception);
-					} else {
-						result.setException(new DebugException(exception
-								.getStatus()));
-					}
-				} else {
-					if (value != null) {
-						result.setValue(value);
-						if (JDIDebugOptions.DEBUG_AST_EVAL) {
-							StringBuffer buf = new StringBuffer();
-							buf.append("\tResult: "); //$NON-NLS-1$
-							buf.append(value);
-							JDIDebugOptions.trace(buf.toString());
-						}
-					} else {
-						result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation);
-					}
-				}
-
+			result.setTerminated(er.fTerminated);
+			if (exception != null) {
 				if (JDIDebugOptions.DEBUG_AST_EVAL) {
 					StringBuffer buf = new StringBuffer();
-					buf.append("\tDuration: "); //$NON-NLS-1$
-					buf.append(end - start);
-					buf.append("ms"); //$NON-NLS-1$
+					buf.append("\tException: "); //$NON-NLS-1$
+					buf.append(exception.toString());
 					JDIDebugOptions.trace(buf.toString());
 				}
-			} finally {
-				evaluationFinished(result);
+				if (exception instanceof DebugException) {
+					result.setException((DebugException) exception);
+				} else {
+					result.setException(new DebugException(exception
+							.getStatus()));
+				}
+			} else {
+				if (value != null) {
+					result.setValue(value);
+					if (JDIDebugOptions.DEBUG_AST_EVAL) {
+						StringBuffer buf = new StringBuffer();
+						buf.append("\tResult: "); //$NON-NLS-1$
+						buf.append(value);
+						JDIDebugOptions.trace(buf.toString());
+					}
+				} else {
+					result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation);
+				}
 			}
+
+			if (JDIDebugOptions.DEBUG_AST_EVAL) {
+				StringBuffer buf = new StringBuffer();
+				buf.append("\tDuration: "); //$NON-NLS-1$
+				buf.append(end - start);
+				buf.append("ms"); //$NON-NLS-1$
+				JDIDebugOptions.trace(buf.toString());
+			}
+
+			evaluationFinished(result);
 		}
 
 		private void evaluationFinished(IEvaluationResult result) {

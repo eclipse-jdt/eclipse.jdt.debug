@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jdt.internal.launching.EEVMInstall;
 import org.eclipse.jdt.internal.launching.EEVMType;
-
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstall3;
@@ -38,6 +36,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
+	static final String JavaSE_9 = "JavaSE-9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
@@ -76,6 +75,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
+		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -101,7 +101,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("1.8")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("9")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_9);
+				} else if (javaVersion.startsWith("1.8")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_8);
 				} else if (javaVersion.startsWith("1.7")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_7);

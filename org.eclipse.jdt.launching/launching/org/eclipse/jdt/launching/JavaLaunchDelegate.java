@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.osgi.util.NLS;
 
@@ -68,19 +70,32 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			// VM-specific attributes
 			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-			// Classpath
-			String[] classpath = getClasspath(configuration);
-
+			// Bug 522333 :to be used for modulepath only for 4.7.* 
+			String[][] paths = getClasspathAndModulepath(configuration);
 			// Create VM config
-			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
+			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
 			runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 			runConfig.setEnvironment(envp);
 			runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 			runConfig.setWorkingDirectory(workingDirName);
 			runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+			// current module name, if so
+			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+			if (proj != null) {
+				IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+				String modName = module == null ? null : module.getElementName();
+				if (modName != null) {
+					runConfig.setModuleDescription(modName);
+				}
+			}
 
-			// Bootpath
-			runConfig.setBootClassPath(getBootpath(configuration));
+			if (!JavaRuntime.isModularConfiguration(configuration)) {
+				// Bootpath
+				runConfig.setBootClassPath(getBootpath(configuration));
+			} else {
+				// module path
+				runConfig.setModulepath(paths[1]);
+			}
 
 			// check for cancellation
 			if (monitor.isCanceled()) {

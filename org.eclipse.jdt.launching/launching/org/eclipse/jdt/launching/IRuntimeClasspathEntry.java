@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,20 @@ public interface IRuntimeClasspathEntry {
 	 * user classpath.
 	 */
 	public static final int USER_CLASSES = 3;
+
+	/**
+	 * Classpath property identifier for entries that should appear on the module path for modular project.
+	 * 
+	 * @since 3.10
+	 */
+	public static final int MODULE_PATH = 4;
+
+	/**
+	 * Classpath property identifier for entries that should appear on the class path for modular project.
+	 * 
+	 * @since 3.10
+	 */
+	public static final int CLASS_PATH = 5;
 
 	/**
 	 * Returns this classpath entry's type. The type of a runtime classpath entry is
@@ -347,4 +361,12 @@ public interface IRuntimeClasspathEntry {
 	 * @since 3.0
 	 */
 	public IJavaProject getJavaProject();
+
+	/**
+	 * Returns <code>true</code> if the java project associated is an AutoModule.
+	 *
+	 * @return <code>true</code> if the Java project associated is an AutoModule or <code>false</code> if not
+	 * @since 3.10
+	 */
+	public boolean isAutomodule();
 }

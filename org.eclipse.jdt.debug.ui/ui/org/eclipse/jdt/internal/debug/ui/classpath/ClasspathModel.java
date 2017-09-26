@@ -167,7 +167,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 	}
 
-	private ClasspathGroup createGroupEntry(IRuntimeClasspathEntry[] entries, ClasspathGroup entryParent, String name, boolean canBeRemoved, boolean addEntry) {
+	protected ClasspathGroup createGroupEntry(IRuntimeClasspathEntry[] entries, ClasspathGroup entryParent, String name, boolean canBeRemoved, boolean addEntry) {
 
 		ClasspathGroup group= new ClasspathGroup(name, entryParent, canBeRemoved);
 
@@ -212,6 +212,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	 */
 	public ClasspathModel() {
 		super();
+		createEntries();
+
+	}
+
+	public void createEntries() {
 		getBootstrapEntry();
 		getUserEntry();
 	}

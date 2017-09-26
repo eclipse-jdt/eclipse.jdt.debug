@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,8 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
-		IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(configuration);
+		IRuntimeClasspathEntry[] entries;
+		entries = entry2.getRuntimeClasspathEntries(configuration);
 		List<IRuntimeClasspathEntry> resolved = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);

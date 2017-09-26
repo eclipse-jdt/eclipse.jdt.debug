@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,6 +244,11 @@ public class JavaStackTraceHyperlink implements IHyperlink {
             if (qualifier.length() > 0) {
                 typeName = qualifier + "." + typeName; //$NON-NLS-1$
             }
+            // Remove the module name if exists
+			int index = typeName.lastIndexOf('/');
+			if (index != -1) {
+				typeName = typeName.substring(index + 1);
+			}
             return typeName;
         }
         IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.JavaStackTraceHyperlink_Unable_to_parse_type_name_from_hyperlink__5, null);

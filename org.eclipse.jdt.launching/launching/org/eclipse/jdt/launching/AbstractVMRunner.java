@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.osgi.service.environment.Constants;
@@ -109,10 +110,13 @@ public abstract class AbstractVMRunner implements IVMRunner {
 
 	private static boolean needsQuoting(String s) {
 		int len = s.length();
-		if (len == 0) // empty string has to be quoted
+		if (len == 0) {
 			return true;
+		}
 		if ("\"\"".equals(s)) //$NON-NLS-1$
+		 {
 			return false; // empty quotes must not be quoted again
+		}
 		for (int i = 0; i < len; i++) {
 			switch (s.charAt(i)) {
 				case ' ': case '\t': case '\\': case '"':
@@ -123,8 +127,9 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	}
 
 	private static String winQuote(String s) {
-		if (! needsQuoting(s))
+		if (! needsQuoting(s)) {
 			return s;
+		}
 		s = s.replaceAll("([\\\\]*)\"", "$1$1\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
 		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -207,5 +212,30 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		System.arraycopy(vmVMArgs, 0, allVMArgs, 0, vmVMArgs.length);
 		System.arraycopy(launchVMArgs, 0, allVMArgs, vmVMArgs.length, launchVMArgs.length);
 		return allVMArgs;
+	}
+
+	/**
+	 * Examines the project and install for presence of module and execution support.
+	 *
+	 * @param config
+	 *            runner configuration
+	 * @param vmInstall
+	 *            VM install
+	 * @return <code>true</code> if project is a module and uses JRE version 9 or more, or <code>false</code> otherwise
+	 * @since 3.10
+	 */
+	protected boolean isModular(VMRunnerConfiguration config, IVMInstall vmInstall) {
+		if (config.getModuleDescription() != null && config.getModuleDescription().length() > 0 && vmInstall instanceof AbstractVMInstall) {
+			AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+			String vmver = install.getJavaVersion();
+			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.9, etc
+			if (vmver.length() > 3) {
+				vmver = vmver.substring(0, 3);
+			}
+			if (JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_9) >= 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

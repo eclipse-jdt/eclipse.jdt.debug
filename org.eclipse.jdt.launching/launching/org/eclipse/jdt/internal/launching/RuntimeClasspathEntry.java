@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,8 +113,18 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case IClasspathEntry.CPE_CONTAINER:
 				setType(CONTAINER);
 				break;
+			case IClasspathEntry.CPE_PROJECT:
+				setType(PROJECT);
+				break;
+			case IClasspathEntry.CPE_LIBRARY:
+				setType(ARCHIVE);
+				break;
+			case IClasspathEntry.CPE_VARIABLE:
+				setType(VARIABLE);
+				break;
 			default:
-				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {entry.toString()}));
+				throw new IllegalArgumentException(NLS.bind(LaunchingMessages.RuntimeClasspathEntry_Illegal_classpath_entry__0__1, new String[] {
+						entry.toString() }));
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
@@ -715,5 +725,16 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 */
 	public void setJavaProject(IJavaProject project) {
 		fJavaProject = project;
+	}
+
+	@Override
+	public boolean isAutomodule() {
+		IClasspathAttribute[] extraAttributes = getClasspathEntry().getExtraAttributes();
+		for (IClasspathAttribute attribute : extraAttributes) {
+			if (IClasspathAttribute.MODULE.equals(attribute.getName()) && Boolean.TRUE.toString().equals(attribute.getValue())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

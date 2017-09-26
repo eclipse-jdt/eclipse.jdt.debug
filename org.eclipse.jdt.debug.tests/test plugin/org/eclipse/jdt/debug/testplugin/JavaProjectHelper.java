@@ -5,10 +5,6 @@
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  *
- * This is an implementation of an early-draft specification developed under the Java
- * Community Process (JCP) and is made available for testing and evaluation purposes
- * only. The code is not compatible with any specification of the JCP.
- *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jesper S. Møller - bug 422029: [1.8] Enable debug evaluation support for default methods
@@ -98,6 +94,15 @@ public class JavaProjectHelper {
 	public static boolean isJava8Compatible() {
 		return isCompatible(8);
 	}
+
+	/**
+	 * Returns if the currently running VM is version compatible with Java 9
+	 *
+	 * @return <code>true</code> if a Java 9 (or greater) VM is running <code>false</code> otherwise
+	 */
+	public static boolean isJava9Compatible() {
+		return isCompatible(9);
+	}
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
 	 *
@@ -145,6 +150,15 @@ public class JavaProjectHelper {
 						}
 					}
 				} catch (NumberFormatException e) {
+				}
+			} else if (nums.length == 1) {
+				try {
+					int major = Integer.parseInt(nums[0]);
+					if (major >= ver) {
+						return true;
+					}
+				}
+				catch (NumberFormatException e) {
 				}
 			}
 		}
