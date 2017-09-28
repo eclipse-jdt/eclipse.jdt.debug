@@ -7,6 +7,12 @@
                 <message_argument value="3.8.0"/>
             </message_arguments>
         </filter>
+        <filter comment="Backported Java 9 work" id="924844039">
+            <message_arguments>
+                <message_argument value="3.8.50"/>
+                <message_argument value="3.8.0"/>
+            </message_arguments>
+        </filter>
         <filter id="924844039">
             <message_arguments>
                 <message_argument value="3.8.50"/>
