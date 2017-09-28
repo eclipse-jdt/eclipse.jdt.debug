@@ -34,7 +34,6 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 	/**
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
-	@SuppressWarnings("restriction")
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		JavaClasspathTab tab = null;
