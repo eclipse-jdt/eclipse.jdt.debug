@@ -951,7 +951,7 @@ public final class JavaRuntime {
 					break;
 				case IClasspathEntry.CPE_LIBRARY:
 					IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
-					if (!root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
+					if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
 						IRuntimeClasspathEntry r;
 						if (JavaRuntime.isModule(entry, project)) {
 							r = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath(), IRuntimeClasspathEntry.MODULE_PATH);
@@ -982,13 +982,13 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static boolean isModule(IClasspathEntry entry, IJavaProject proj) {
+		if (entry == null) {
+			return false;
+		}
 		if (!isModularProject(proj)) {
 			return false;
 		}
 
-		if (entry == null) {
-			return false;
-		}
 		for (IClasspathAttribute classpathAttribute : entry.getExtraAttributes()) {
 			if (classpathAttribute.getName().equals(IClasspathAttribute.MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
 				return true;
