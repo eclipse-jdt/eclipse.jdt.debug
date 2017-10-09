@@ -982,13 +982,13 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static boolean isModule(IClasspathEntry entry, IJavaProject proj) {
+		if (entry == null) {
+			return false;
+		}
 		if (!isModularProject(proj)) {
 			return false;
 		}
 
-		if (entry == null) {
-			return false;
-		}
 		for (IClasspathAttribute classpathAttribute : entry.getExtraAttributes()) {
 			if (classpathAttribute.getName().equals(IClasspathAttribute.MODULE) && "true".equals(classpathAttribute.getValue())) {//$NON-NLS-1$
 				return true;
