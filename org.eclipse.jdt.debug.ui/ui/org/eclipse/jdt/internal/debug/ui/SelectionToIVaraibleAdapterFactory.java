@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2017, Red Hat Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation (from JavaDebugHover)
+ *     Mickael Istria (Red Hat Inc.) - 521960 adaptation from JavaDebugHover
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
 import java.lang.reflect.Field;
@@ -79,7 +90,7 @@ public class SelectionToIVaraibleAdapterFactory implements IAdapterFactory {
 		if (document == null) {
 			return null;
 		}
-		return (T) getVariable(document, new Region(selection.getOffset(), selection.getLength()));
+		return adapterType.cast(getVariable(document, new Region(selection.getOffset(), selection.getLength())));
 	}
 
 	@Override
@@ -198,7 +209,7 @@ public class SelectionToIVaraibleAdapterFactory implements IAdapterFactory {
 							ITypeRoot typeRoot = (ITypeRoot) codeAssist;
 							ASTNode root = SharedASTProvider.getAST(typeRoot, SharedASTProvider.WAIT_NO, null);
 							if (root == null) {
-								ASTParser parser = ASTParser.newParser(AST.JLS4);
+								ASTParser parser = ASTParser.newParser(AST.JLS9);
 								parser.setSource(typeRoot);
 								parser.setFocalPosition(region.getOffset());
 								root = parser.createAST(null);
