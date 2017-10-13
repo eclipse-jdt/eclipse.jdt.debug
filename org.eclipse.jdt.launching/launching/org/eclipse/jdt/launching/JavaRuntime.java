@@ -968,8 +968,10 @@ public final class JavaRuntime {
 			}
 		}
 
-
-		classpathEntries.add(JavaRuntime.computeModularJREEntry(project));
+		IRuntimeClasspathEntry jreEntry = JavaRuntime.computeModularJREEntry(project);
+		if (jreEntry != null) { // With some jre stub jars don't have jre entries
+			classpathEntries.add(jreEntry);
+		}
 		return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
 	}
 
