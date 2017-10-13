@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,9 +47,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class RunToLineAdapter implements IRunToLineTarget {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
-	 */
 	@Override
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		ITextEditor textEditor = getTextEditor(part);
@@ -73,7 +70,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						@Override
 						public void run() {
 							lineNumber[0] = textSelection.getStartLine() + 1;
-							ASTParser parser = ASTParser.newParser(AST.JLS4);
+							ASTParser parser = ASTParser.newParser(AST.JLS9);
 							parser.setSource(document.get().toCharArray());
 							CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 							ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
@@ -116,9 +113,6 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				errorMessage, null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
-	 */
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 	    if (target instanceof IDebugElement && target.canResume()) {
