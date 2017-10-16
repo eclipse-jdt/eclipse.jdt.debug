@@ -151,6 +151,7 @@ public class LaunchingMessages extends NLS {
 
 	public static String vmInstall_assert_idNotNull;
 	public static String vmInstall_assert_typeNotNull;
+	public static String vmInstall_could_not_determine_java_Version;
 
 	public static String vmInstallType_duplicateVM;
 

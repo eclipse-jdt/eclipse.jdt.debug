@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.osgi.util.NLS;
 
 public class StandardVM extends AbstractVMInstall {
 
@@ -68,6 +69,7 @@ public class StandardVM extends AbstractVMInstall {
                     return version.toString();
                 }
             }
+            LaunchingPlugin.log(NLS.bind(LaunchingMessages.vmInstall_could_not_determine_java_Version, installLocation.getAbsolutePath()));
         }
         return null;
     }

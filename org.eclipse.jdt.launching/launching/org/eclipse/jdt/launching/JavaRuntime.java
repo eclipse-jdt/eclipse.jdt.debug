@@ -1034,6 +1034,9 @@ public final class JavaRuntime {
 		if (vm instanceof AbstractVMInstall) {
 			AbstractVMInstall install = (AbstractVMInstall) vm;
 			String vmver = install.getJavaVersion();
+			if (vmver == null) {
+				return false;
+			}
 			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.7, etc
 			if (vmver.length() > 3) {
 				vmver = vmver.substring(0, 3);

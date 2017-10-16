@@ -13,10 +13,13 @@ package org.eclipse.jdt.internal.launching.macosx;
 import java.io.File;
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.osgi.util.NLS;
 
 public class MacOSXVMInstall extends AbstractVMInstall {
 
@@ -26,11 +29,13 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 
 	@Override
 	public IVMRunner getVMRunner(String mode) {
-		if (ILaunchManager.RUN_MODE.equals(mode))
+		if (ILaunchManager.RUN_MODE.equals(mode)) {
 			return new MacOSXVMRunner(this);
+		}
 		
-		if (ILaunchManager.DEBUG_MODE.equals(mode))
+		if (ILaunchManager.DEBUG_MODE.equals(mode)) {
 			return new MacOSXDebugVMRunner(this);
+		}
 		
 		return null;
 	}
@@ -41,7 +46,7 @@ public class MacOSXVMInstall extends AbstractVMInstall {
         if (installLocation != null) {
             File executable= StandardVMType.findJavaExecutable(installLocation);
             if (executable != null) {
-                MacOSXVMInstallType installType= (MacOSXVMInstallType) getVMInstallType();        
+                MacOSXVMInstallType installType= (MacOSXVMInstallType) getVMInstallType();
                 String vmVersion= installType.getVMVersion(installLocation, executable);
                 // strip off extra info
                 StringBuffer version= new StringBuffer();
@@ -57,6 +62,7 @@ public class MacOSXVMInstall extends AbstractVMInstall {
                     return version.toString();
                 }
             }
+			LaunchingPlugin.log(NLS.bind(LaunchingMessages.vmInstall_could_not_determine_java_Version, installLocation.getAbsolutePath()));
         }
         return null;
     }
