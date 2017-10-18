@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jdt.debug.ui" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter id="924844039">
-            <message_arguments>
-                <message_argument value="3.8.0"/>
-                <message_argument value="3.8.0"/>
-            </message_arguments>
-        </filter>
-        <filter id="924844039">
-            <message_arguments>
-                <message_argument value="3.8.50"/>
-                <message_argument value="3.8.1"/>
-            </message_arguments>
-        </filter>
         <filter comment="API was backported to 4.7.1a" id="926941240">
             <message_arguments>
                 <message_argument value="3.9.0"/>
@@ -25,15 +13,6 @@
             <message_arguments>
                 <message_argument value="AbstractJavaClasspathTab"/>
                 <message_argument value="JavaClasspathTab"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="ui/org/eclipse/jdt/debug/ui/launchConfigurations/JavaDependenciesTab.java" type="org.eclipse.jdt.debug.ui.launchConfigurations.JavaDependenciesTab">
-        <filter id="1108344834">
-            <message_arguments>
-                <message_argument value="3.9"/>
-                <message_argument value="3.8"/>
-                <message_argument value="org.eclipse.jdt.debug.ui.launchConfigurations.JavaDependenciesTab"/>
             </message_arguments>
         </filter>
     </resource>
