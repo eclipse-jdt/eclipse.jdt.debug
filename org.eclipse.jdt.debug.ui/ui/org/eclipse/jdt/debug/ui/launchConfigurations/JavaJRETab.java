@@ -504,7 +504,14 @@ public class JavaJRETab extends JavaLaunchTab {
 
 	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
 		fLaunchConfiguration = launchConfiguration;
-		fCurrentJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+		try {
+			JavaRuntime.getJavaProject(launchConfiguration);
+			fCurrentJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+		}
+		catch (CoreException ex) {
+			// If not a Java project
+			fCurrentJREModular = false;
+		}
 	}
 
 	/**
@@ -630,7 +637,7 @@ public class JavaJRETab extends JavaLaunchTab {
 			}
 		}
 	}
-	
+
 	/**
 	 * @since 3.9
 	 */

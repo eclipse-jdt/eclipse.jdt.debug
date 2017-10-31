@@ -70,7 +70,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			// VM-specific attributes
 			Map<String, Object> vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
-			// Bug 522333 :to be used for modulepath only for 4.7.* 
+			// Bug 522333 :to be used for modulepath only for 4.7.*
 			String[][] paths = getClasspathAndModulepath(configuration);
 			// Create VM config
 			VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, getClasspath(configuration));
@@ -80,13 +80,18 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			runConfig.setWorkingDirectory(workingDirName);
 			runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 			// current module name, if so
-			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
-			if (proj != null) {
-				IModuleDescription module = proj == null ? null : proj.getModuleDescription();
-				String modName = module == null ? null : module.getElementName();
-				if (modName != null) {
-					runConfig.setModuleDescription(modName);
+			try {
+				IJavaProject proj = JavaRuntime.getJavaProject(configuration);
+				if (proj != null) {
+					IModuleDescription module = proj == null ? null : proj.getModuleDescription();
+					String modName = module == null ? null : module.getElementName();
+					if (modName != null) {
+						runConfig.setModuleDescription(modName);
+					}
 				}
+			}
+			catch (CoreException e) {
+				// Not a java Project so no need to set module description
 			}
 
 			if (!JavaRuntime.isModularConfiguration(configuration)) {
