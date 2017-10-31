@@ -829,6 +829,10 @@ public class StandardVMType extends AbstractVMInstallType {
 	private synchronized String readReleaseVersion(File javaHome) {
 
 		String version = ""; //$NON-NLS-1$
+
+		if (Files.notExists(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE))) {
+			return version;
+		}
 		try (Stream<String> lines = Files.lines(Paths.get(javaHome.getAbsolutePath(), RELEASE_FILE)).filter(s -> s.contains(JAVA_VERSION))) {
 			Optional<String> hasVersion = lines.findFirst();
 			if (hasVersion.isPresent()) {
