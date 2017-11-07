@@ -66,6 +66,7 @@ import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
@@ -896,8 +897,12 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
-		IClasspathEntry[] entries = project.getResolvedClasspath(true);
 		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
+		if (!(project instanceof JavaProject)) {
+			return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
+		}
+		JavaProject javaProject = (JavaProject) project;
+		IClasspathEntry[] entries = javaProject.getExpandedClasspath();
 
 		IClasspathEntry entry1 = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		if (isModularProject(project)) {
@@ -935,11 +940,11 @@ public final class JavaRuntime {
 				case IClasspathEntry.CPE_PROJECT:
 					String name = entry.getPath().lastSegment();
 					IProject dep = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-					IJavaProject javaProject = JavaCore.create(dep);
+					IJavaProject javaProject1 = JavaCore.create(dep);
 					if (isModule(entry, project)) {
-						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject, IRuntimeClasspathEntry.MODULE_PATH));
+						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject1, IRuntimeClasspathEntry.MODULE_PATH));
 					} else {
-						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject, IRuntimeClasspathEntry.CLASS_PATH));
+						classpathEntries.add(newProjectRuntimeClasspathEntry(javaProject1, IRuntimeClasspathEntry.CLASS_PATH));
 					}
 					break;
 				case IClasspathEntry.CPE_VARIABLE:
