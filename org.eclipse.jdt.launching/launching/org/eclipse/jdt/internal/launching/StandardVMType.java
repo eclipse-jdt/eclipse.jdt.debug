@@ -74,6 +74,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	private static final String BAR = "|"; //$NON-NLS-1$
 	private static final String RELEASE_FILE = "release"; //$NON-NLS-1$
 	private static final String JAVA_VERSION = "JAVA_VERSION"; //$NON-NLS-1$
+	private static final String JRT_FS_JAR = "jrt-fs.jar"; //$NON-NLS-1$
 
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
 
@@ -441,22 +442,22 @@ public class StandardVMType extends AbstractVMInstallType {
 				// Code referencing org.eclipse.jdt.internal.compiler.util.JimageUtil.JRT_FS_JAR looks for this file.
 				IPath sourceRootPath = Path.EMPTY;
 				// src zip moved to lib folder from JDK 9 EA Build 151
-				IPath path = new Path(installLocation.getAbsolutePath()).append("lib").append("src.zip"); //$NON-NLS-1$ //$NON-NLS-2$
+				IPath path = new Path(installLocation.getAbsolutePath()).append(LIB).append(SRC_ZIP);
 				File lib = path.toFile();
 				if (lib.exists() && lib.isFile()) {
 					sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
 				} else {
-					path = new Path(installLocation.getAbsolutePath()).append("src.zip"); //$NON-NLS-1$
+					path = new Path(installLocation.getAbsolutePath()).append(SRC_ZIP);
 					lib = path.toFile();
 					if (lib.exists() && lib.isFile()) {
 						sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
 					}
 				}
-				IPath pathName = new Path(installLocation.getAbsolutePath()).append("lib").append("jrt-fs.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+				IPath pathName = new Path(installLocation.getAbsolutePath()).append(LIB).append(JRT_FS_JAR);
 				// From Java 9 149 version, we see that jrt-fs.jar is moved to lib directory so we need to look at both places
 				File jrtfsJar = pathName.toFile();
 				if (!jrtfsJar.exists()) {
-					pathName = new Path(installLocation.getAbsolutePath()).append("jrt-fs.jar"); //$NON-NLS-1$
+					pathName = new Path(installLocation.getAbsolutePath()).append(JRT_FS_JAR);
 				}
 
 				LibraryLocation libraryLocation = new LibraryLocation(pathName,
