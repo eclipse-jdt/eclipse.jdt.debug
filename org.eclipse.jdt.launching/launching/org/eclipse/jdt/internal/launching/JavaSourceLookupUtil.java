@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,35 +54,39 @@ public class JavaSourceLookupUtil {
 			IRuntimeClasspathEntry entry = entries[i];
 			switch (entry.getType()) {
 				case IRuntimeClasspathEntry.ARCHIVE:
-					IPackageFragmentRoot root = getPackageFragmentRoot(entry);
-					if (root == null) {
-						String path = entry.getSourceAttachmentLocation();
-						ISourceContainer container = null;
-						if (path == null) {
-							// use the archive itself
-							path = entry.getLocation();
-						}
-						if (path != null) {
-							// check if file or folder
-							File file = new File(path);
-							if (file.isDirectory()) {
-								IResource resource = entry.getResource();
-								if (resource instanceof IContainer) {
-									container = new FolderSourceContainer((IContainer)resource, false);
-								} else {
-									container = new DirectorySourceContainer(file, false);
-								}
-							} else {
-								container = new ExternalArchiveSourceContainer(path, true);
+					if (entry.getPath().lastSegment().equals("jrt-fs.jar")) { //$NON-NLS-1$
+						getPackageFragmentRootContainers(entry, containers);
+					} else {
+						IPackageFragmentRoot root = getPackageFragmentRoot(entry);
+						if (root == null) {
+							String path = entry.getSourceAttachmentLocation();
+							ISourceContainer container = null;
+							if (path == null) {
+								// use the archive itself
+								path = entry.getLocation();
 							}
+							if (path != null) {
+								// check if file or folder
+								File file = new File(path);
+								if (file.isDirectory()) {
+									IResource resource = entry.getResource();
+									if (resource instanceof IContainer) {
+										container = new FolderSourceContainer((IContainer) resource, false);
+									} else {
+										container = new DirectorySourceContainer(file, false);
+									}
+								} else {
+									container = new ExternalArchiveSourceContainer(path, true);
+								}
+								if (!containers.contains(container)) {
+									containers.add(container);
+								}
+							}
+						} else {
+							ISourceContainer container = new PackageFragmentRootSourceContainer(root);
 							if (!containers.contains(container)) {
 								containers.add(container);
 							}
-						}
-					} else {
-						ISourceContainer container = new PackageFragmentRootSourceContainer(root);
-						if (!containers.contains(container)) {
-							containers.add(container);
 						}
 					}
 					break;
@@ -189,5 +193,43 @@ public class JavaSourceLookupUtil {
 			LaunchingPlugin.log(e);
 		}
 		return null;
+	}
+
+
+	/**
+	 * Determines the package fragment roots from the java model and adds corresponding PackageFragmentRootSourceContainer to the list of containers
+	 * if their source attachment and path is same as the entry.
+	 *
+	 * @param entry
+	 *            archive runtime classpath entry for jrt-fs.jar
+	 * @param containers
+	 *            container list to be updated
+	 */
+
+	private static void getPackageFragmentRootContainers(IRuntimeClasspathEntry entry, List<ISourceContainer> containers) {
+		IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+		IPath entryPath = entry.getPath();
+		try {
+			IJavaProject[] jps = model.getJavaProjects();
+			for (int i = 0; i < jps.length; i++) {
+				IJavaProject jp = jps[i];
+				IProject p = jp.getProject();
+				if (p.isOpen()) {
+					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
+					for (int j = 0; j < allRoots.length; j++) {
+						IPackageFragmentRoot root = allRoots[j];
+						if (root.getPath().equals(entryPath) && isSourceAttachmentEqual(root, entry)) {
+							PackageFragmentRootSourceContainer container = new PackageFragmentRootSourceContainer(root);
+							if (!containers.contains(container)) {
+								containers.add(container);
+							}
+						}
+					}
+				}
+			}
+		}
+		catch (JavaModelException e) {
+			LaunchingPlugin.log(e);
+		}
 	}
 }
