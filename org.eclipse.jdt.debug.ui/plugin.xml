@@ -550,7 +550,7 @@
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.ui.console.ConsoleView"
-               visible="false"
+               visible="true"
                relationship="stack"
                id="org.eclipse.jdt.debug.ui.DisplayView">
          </view>
@@ -570,7 +570,7 @@
                relative="org.eclipse.ui.console.ConsoleView"
                visible="false"
                relationship="stack"
-               id="org.eclipse.search.SearchResultView">
+               id="org.eclipse.search.ui.views.SearchView">
          </view>
          <viewShortcut
                id="org.eclipse.jdt.debug.ui.DisplayView">
