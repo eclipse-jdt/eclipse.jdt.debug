@@ -67,7 +67,7 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 
 			// Program & VM arguments
 			String pgmArgs = getProgramArguments(configuration);
-			String vmArgs = getVMArguments(configuration);
+			String vmArgs = concat(getVMArguments(configuration), getVMArguments(configuration, mode));
 			ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 
 			// VM-specific attributes
@@ -134,4 +134,15 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 		}
 	}
 
+	private static String concat(String args1, String args2) {
+		StringBuilder args = new StringBuilder();
+		if (args1 != null && !args1.isEmpty()) {
+			args.append(args1);
+		}
+		if (args2 != null && !args2.isEmpty()) {
+			args.append(" "); //$NON-NLS-1$
+			args.append(args2);
+		}
+		return args.toString();
+	}
 }

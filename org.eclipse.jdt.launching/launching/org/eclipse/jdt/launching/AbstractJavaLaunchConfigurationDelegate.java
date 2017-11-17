@@ -9,6 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.launching;
+
+import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.createAdvancedLaunch;
+import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.getJavaagentString;
+import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.isAdvancedSourcelookupEnabled;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,10 +67,13 @@ import org.eclipse.osgi.util.NLS;
  * @since 2.0
  */
 public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
+	private boolean allowAdvancedSourcelookup;
+
 	/**
 	 * A list of prerequisite projects ordered by their build order.
 	 */
 	private IProject[] fOrderedProjects;
+
 	/**
 	 * Convenience method to get the launch manager.
 	 *
@@ -596,6 +604,33 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 		return args;
 	}
+
+	/**
+	 * Returns the VM arguments specified by the given launch configuration, as a string. The returned string is empty if no VM arguments are
+	 * specified.
+	 *
+	 * @param configuration
+	 *            launch configuration
+	 * @param mode
+	 *            the mode in which to launch, one of the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
+	 *            <code>DEBUG_MODE</code>.
+	 * @return the VM arguments specified by the given launch configuration, possibly an empty string
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 * @since 3.10
+	 */
+	public String getVMArguments(ILaunchConfiguration configuration, String mode) throws CoreException {
+		if (!isAdvancedSourcelup(mode)) {
+			return ""; //$NON-NLS-1$
+		}
+
+		return getJavaagentString();
+	}
+
+	private boolean isAdvancedSourcelup(String mode) {
+		return allowAdvancedSourcelookup && ILaunchManager.DEBUG_MODE.equals(mode) && isAdvancedSourcelookupEnabled();
+	}
+
 	/**
 	 * Returns the Map of VM-specific attributes specified by the given launch
 	 * configuration, or <code>null</code> if none.
@@ -1050,5 +1085,24 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		if (!isAdvancedSourcelup(mode)) {
+			return null;
+		}
+		return createAdvancedLaunch(configuration, mode);
+	}
+
+	/**
+	 * Enabled advanced sourcelookup for this launch delegate. Advanced source lookup is disabled by default. This call has not effect if advanced
+	 * source lookup is disabled at workspace level, i.e. advanced source lookup will remain disabled even if this method is called for the launch
+	 * delegate instance.
+	 *
+	 * @since 3.10
+	 */
+	protected final void allowAdvancedSourcelookup() {
+		this.allowAdvancedSourcelookup = true;
 	}
 }

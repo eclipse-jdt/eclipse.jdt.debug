@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.sourcelookup.advanced;
 
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.createAdvancedLaunch;
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.getJavaagentString;
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.isAdvancedSourcelookupEnabled;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 
 /**
@@ -27,20 +20,8 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
  */
 public class AdvancedJavaLaunchDelegate extends JavaLaunchDelegate {
 
-	@Override
-	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		if (!isAdvancedSourcelookupEnabled()) {
-			return super.getVMArguments(configuration);
-		}
-		// TODO wish we had API similar to zt-exec or at least commons-exec
-		return getJavaagentString() + " " + super.getVMArguments(configuration); //$NON-NLS-1$
+	public AdvancedJavaLaunchDelegate() {
+		allowAdvancedSourcelookup();
 	}
 
-	@Override
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		if (!isAdvancedSourcelookupEnabled()) {
-			return super.getLaunch(configuration, mode);
-		}
-		return createAdvancedLaunch(configuration, mode);
-	}
 }

@@ -10,22 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.sourcelookup.advanced;
 
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.createAdvancedLaunch;
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.isAdvancedSourcelookupEnabled;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate;
 
 public class AdvancedRemoteJavaLaunchDelegate extends JavaRemoteApplicationLaunchConfigurationDelegate {
 
-	@Override
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		if (!isAdvancedSourcelookupEnabled()) {
-			return super.getLaunch(configuration, mode);
-		}
-		return createAdvancedLaunch(configuration, mode);
+	public AdvancedRemoteJavaLaunchDelegate() {
+		allowAdvancedSourcelookup();
 	}
 
 }
