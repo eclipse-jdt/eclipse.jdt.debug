@@ -115,7 +115,7 @@ public class AdvancedSourceLookupSupport {
 	}
 
 	public static String getJavaagentString() {
-		return "-javaagent:" + getJavaagentLocation(); //$NON-NLS-1$
+		return "-javaagent:\"" + getJavaagentLocation() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String getJavaagentLocation() {
