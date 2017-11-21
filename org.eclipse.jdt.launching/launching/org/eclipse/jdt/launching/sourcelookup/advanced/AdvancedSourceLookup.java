@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching.sourcelookup.advanced;
 
-import static org.eclipse.jdt.internal.launching.sourcelookup.advanced.AdvancedSourceLookupSupport.getJavaagentLocation;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -93,7 +91,7 @@ public class AdvancedSourceLookup {
 	 * Returns {@code -javaagent} jvm launch argument.
 	 */
 	public static String getJavaagentString() {
-		return "-javaagent:" + getJavaagentLocation(); //$NON-NLS-1$
+		return AdvancedSourceLookupSupport.getJavaagentString();
 	}
 
 	/**
