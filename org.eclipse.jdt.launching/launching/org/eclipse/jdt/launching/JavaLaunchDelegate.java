@@ -103,6 +103,11 @@ public class JavaLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate 
 			} else {
 				// module path
 				runConfig.setModulepath(paths[1]);
+				if (!configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
+					runConfig.setOverrideDependencies(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "")); //$NON-NLS-1$
+				} else {
+					runConfig.setOverrideDependencies(getModuleCLIOptions(configuration));
+				}
 			}
 
 			// check for cancellation

@@ -58,6 +58,17 @@ public class RestoreDefaultEntriesAction extends RuntimeClasspathAction {
 				copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 				getViewer().setEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(copy));
 			}
+			if (!config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
+				ILaunchConfigurationWorkingCopy copy = null;
+				if (config.isWorkingCopy()) {
+					copy = (ILaunchConfigurationWorkingCopy) config;
+				} else {
+					copy = config.getWorkingCopy();
+				}
+				copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true);
+				copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, ""); //$NON-NLS-1$
+
+			}
 		}
 		catch (CoreException e) {return;}
 	}

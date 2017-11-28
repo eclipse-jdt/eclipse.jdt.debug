@@ -34,6 +34,7 @@ public class VMRunnerConfiguration {
 	private String[] fModulepath;
 	private String fModuleDescription;
 	private String fWorkingDirectory;
+	private String fOverrideDependencies;
 	private Map<String, Object> fVMSpecificAttributesMap;
 	private boolean fResume = true;
 
@@ -308,4 +309,26 @@ public class VMRunnerConfiguration {
 	public String getModuleDescription() {
 		return this.fModuleDescription;
 	}
+
+	/**
+	 * Gets the fOverrideDependencies.
+	 * 
+	 * @return the fOverrideDependencies
+	 * @since 3.10
+	 */
+	public String getOverrideDependencies() {
+		return fOverrideDependencies;
+	}
+
+	/**
+	 * Sets the fOverrideDependencies.
+	 * 
+	 * @param fOverrideDependencies
+	 *            the fOverrideDependencies to set
+	 * @since 3.10
+	 */
+	public void setOverrideDependencies(String fOverrideDependencies) {
+		this.fOverrideDependencies = fOverrideDependencies;
+	}
+
 }

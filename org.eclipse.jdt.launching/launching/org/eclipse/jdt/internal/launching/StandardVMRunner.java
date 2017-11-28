@@ -379,13 +379,21 @@ public class StandardVMRunner extends AbstractVMRunner {
 			arguments.add("-p"); //$NON-NLS-1$
 			arguments.add(convertClassPath(mp));
 		}
-
-		String[] cp= config.getClassPath();
+		String[] cp = config.getClassPath();
 		int cpidx = -1;
 		if (cp.length > 0) {
 			cpidx = arguments.size();
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(cp));
+		}
+
+		String dependencies = config.getOverrideDependencies();
+		if (dependencies != null && dependencies.length() > 0) {
+			String[] parseArguments = DebugPlugin.parseArguments(dependencies);
+			for (String string : parseArguments) {
+				arguments.add(string);
+			}
+
 		}
 
 		if (isModular(config, fVMInstance)) {

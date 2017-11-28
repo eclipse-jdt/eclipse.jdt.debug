@@ -66,6 +66,7 @@ import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.provisional.JavaModelAccess;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
@@ -3236,5 +3237,97 @@ public final class JavaRuntime {
 			return standin;
 		}
 		throw new CoreException(status);
+	}
+
+	private static String PATCH_MODULE = "--" + IClasspathAttribute.PATCH_MODULE; //$NON-NLS-1$
+
+	/**
+	 * Returns the module-related command line options for the configuration that are needed at runtime as equivalents of those options specified by
+	 * {@link IClasspathAttribute}s of the following names:
+	 * <ul>
+	 * <li>{@link IClasspathAttribute#ADD_EXPORTS}</li>
+	 * <li>{@link IClasspathAttribute#ADD_READS}</li>
+	 * <li>{@link IClasspathAttribute#LIMIT_MODULES}</li>
+	 * <li>{@link IClasspathAttribute#PATCH_MODULE}</li>
+	 * </ul>
+	 *
+	 * @since 3.10
+	 */
+	public static String getModuleCLIOptions(ILaunchConfiguration configuration) {
+		StringBuilder cliOptionString = new StringBuilder();
+		try {
+			IRuntimeClasspathEntry[] entries;
+			entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+			entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			for (IRuntimeClasspathEntry iRuntimeClasspathEntry : entries) {
+				if (iRuntimeClasspathEntry.getClasspathEntry().getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					IResource res = root.findMember(iRuntimeClasspathEntry.getClasspathEntry().getPath());
+					IJavaProject jp = (IJavaProject) JavaCore.create(res);
+					IClasspathEntry[] rawClasspath = jp.getRawClasspath();
+					for (IClasspathEntry iClasspathEntry : rawClasspath) {
+						if (iClasspathEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							if (JavaRuntime.JRE_CONTAINER.equals(iClasspathEntry.getPath().segment(0))) {
+								String cliOptions = JavaModelAccess.getModuleCLIOptions(jp, iClasspathEntry);
+								String str11 = cliOptions;
+								int index = cliOptions.indexOf(":"); //$NON-NLS-1$
+								StringBuffer cliOptionBuffer = new StringBuffer();
+								if ( index != -1) {
+									String[] splited = str11.split("\\s+"); //$NON-NLS-1$
+									int i = 0;
+									for (String string : splited) {
+										if (string.equals(PATCH_MODULE)) {
+											cliOptionBuffer.append(" "); //$NON-NLS-1$
+											cliOptionBuffer.append(string);
+											i++;
+											continue;
+										}
+										if (i > 0) {
+											if (splited[i - 1].equals(PATCH_MODULE)) {
+												cliOptionBuffer.append(" "); //$NON-NLS-1$
+												cliOptionBuffer.append(string);
+												i++;
+												continue;
+											}
+										}
+										index = string.indexOf(":"); //$NON-NLS-1$
+										if (index == -1) {
+											if (i > 0) {
+												cliOptionBuffer.append(" "); //$NON-NLS-1$
+											}
+											cliOptionBuffer.append(string);
+
+										} else {
+											String[] splited1 = string.split(":"); //$NON-NLS-1$
+											int j = 0;
+											for (String string2 : splited1) {
+												if (j > 0) {
+													cliOptionBuffer.append(" "); //$NON-NLS-1$
+													cliOptionBuffer.append(splited[i - 1]);
+												}
+												cliOptionBuffer.append(" "); //$NON-NLS-1$
+												cliOptionBuffer.append(string2);
+												j++;
+											}
+										}
+										i++;
+									}
+								}
+								else {
+									cliOptionBuffer.append(cliOptions);
+								}
+								cliOptionString.append(cliOptionBuffer);
+							}
+						}
+					}
+
+				}
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return cliOptionString.toString().trim();
 	}
 }

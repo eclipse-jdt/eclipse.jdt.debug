@@ -34,9 +34,9 @@ import org.eclipse.jdt.internal.debug.ui.actions.AddLibraryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
-import org.eclipse.jdt.internal.debug.ui.actions.EditClasspathEntryAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
+import org.eclipse.jdt.internal.debug.ui.actions.OverrideDependenciesAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RestoreDefaultEntriesAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
@@ -172,12 +172,14 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 		IAction[] adv = advancedActions.toArray(new IAction[advancedActions.size()]);
 		createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
 
-		action = new EditClasspathEntryAction(fClasspathViewer, getLaunchConfiguration());
+		action = new OverrideDependenciesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);
+		action.setEnabled(true);
 
 		action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);
 		action.setEnabled(true);
+
 	}
 
 	/**

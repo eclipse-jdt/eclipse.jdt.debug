@@ -159,6 +159,10 @@ public class ActionMessages extends NLS {
 
 	public static String TracepointToggleAction_Unavailable;
 
+	public static String Override_Dependencies_title;
+	public static String Override_Dependencies_button;
+	public static String Override_Dependencies_button1;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);

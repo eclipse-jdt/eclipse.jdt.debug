@@ -44,6 +44,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -1104,5 +1105,21 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 */
 	protected final void allowAdvancedSourcelookup() {
 		this.allowAdvancedSourcelookup = true;
+	}
+
+	/**
+	 * Returns the module-related command line options for the configuration that are needed at runtime as equivalents of those options specified by
+	 * {@link IClasspathAttribute}s of the following names:
+	 * <ul>
+	 * <li>{@link IClasspathAttribute#ADD_EXPORTS}</li>
+	 * <li>{@link IClasspathAttribute#ADD_READS}</li>
+	 * <li>{@link IClasspathAttribute#LIMIT_MODULES}</li>
+	 * <li>{@link IClasspathAttribute#PATCH_MODULE}</li>
+	 * </ul>
+	 *
+	 * @since 3.10
+	 */
+	protected String getModuleCLIOptions(ILaunchConfiguration configuration) {
+		return JavaRuntime.getModuleCLIOptions(configuration);
 	}
 }

@@ -224,6 +224,15 @@ public class StandardVMDebugger extends StandardVMRunner {
 			arguments.add(convertClassPath(cp));
 		}
 
+		String dependencies = config.getOverrideDependencies();
+		if (dependencies != null && dependencies.length() > 0) {
+			String[] parseArguments = DebugPlugin.parseArguments(dependencies);
+			for (String string : parseArguments) {
+				arguments.add(string);
+			}
+
+		}
+
 		if (isModular(config, fVMInstance)) {
 			arguments.add("-m"); //$NON-NLS-1$
 			arguments.add(config.getModuleDescription() + "/" + config.getClassToLaunch()); //$NON-NLS-1$
