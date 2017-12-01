@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jdt.launching.ui.macosx;singleton:=true
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.2.100.qualifier
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %providerName
@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.jdt.launching;bundle-version="[3.5.0,4.0.0)",
 Bundle-Activator: org.eclipse.jdt.internal.ui.macbundler.MacOSXUILaunchingPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.jdt.internal.ui.macbundler;x-internal:=true
+Automatic-Module-Name: org.eclipse.jdt.launching.ui.macosx

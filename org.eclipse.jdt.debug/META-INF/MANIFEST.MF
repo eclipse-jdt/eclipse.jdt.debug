@@ -41,3 +41,4 @@ Bundle-ActivationPolicy: lazy
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
+Automatic-Module-Name: org.eclipse.jdt.debug
