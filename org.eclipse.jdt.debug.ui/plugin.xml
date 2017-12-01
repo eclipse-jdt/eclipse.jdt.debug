@@ -127,9 +127,9 @@
             visible="false"
             id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          <menu
-               label="%DebugMenu.label"
+               label="%RunMenu.label"
                path="additions"
-               id="org.eclipse.ui.debug">
+               id="org.eclipse.ui.run">
             <separator
                   name="jdtGroup">
             </separator>
@@ -141,7 +141,7 @@
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.png"
                helpContextId="toggle_tracepoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.RetargetToggleTracepointAction"
-               menubarPath="org.eclipse.ui.debug/lineBreakpointBeforeGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointBeforeGroup"
                id="org.eclipse.jdt.debug.ui.actions.ToggleTracepoint">
          </action>
          <action
@@ -150,7 +150,7 @@
                icon="$nl$/icons/full/obj16/class_obj.png"
                helpContextId="add_class_prepare_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddClassPrepareBreakpointAction"
-               menubarPath="org.eclipse.ui.debug/lineBreakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddClassPrepareBreakpoint">
          </action>
          <action
@@ -159,7 +159,7 @@
                icon="$nl$/icons/full/elcl16/exc_catch.png"
                helpContextId="add_exception_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
-               menubarPath="org.eclipse.ui.debug/lineBreakpointGroup"
+               menubarPath="org.eclipse.ui.run/lineBreakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddExceptionBreakpoint">
          </action>
          <action
@@ -168,7 +168,7 @@
                definitionId="org.eclipse.jdt.debug.ui.commands.ForceReturn"
                label="%ForceReturn.label"
                helpContextId="force_return_action_context"
-               menubarPath="org.eclipse.ui.debug/jdtGroup">
+               menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
                   <systemProperty
@@ -195,7 +195,7 @@
                icon="$nl$/icons/full/etool16/run_sbook.png"
                label="%Execute.label"
                helpContextId="execute_action_context"
-               menubarPath="org.eclipse.ui.debug/jdtGroup">
+               menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
                   <or>
@@ -223,7 +223,7 @@
                icon="$nl$/icons/full/etool16/disp_sbook.png"
                label="%Display.label"
                helpContextId="display_action_context"
-               menubarPath="org.eclipse.ui.debug/jdtGroup">
+               menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
                   <or>
@@ -251,7 +251,7 @@
                icon="$nl$/icons/full/etool16/insp_sbook.png"
                label="%Inspect.label"
                helpContextId="inspect_action_context"
-               menubarPath="org.eclipse.ui.debug/jdtGroup">
+               menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
                   <or>
@@ -284,7 +284,7 @@
                icon="$nl$/icons/full/etool16/watch_exp.png"
                id="org.eclipse.jdt.debug.ui.Watch"
                label="%Watch.label"
-               menubarPath="org.eclipse.ui.debug/jdtGroup">
+               menubarPath="org.eclipse.ui.run/jdtGroup">
             <enablement>
                <and>
                   <systemProperty
@@ -308,7 +308,7 @@
                helpContextId="instance_count_action_context"
                id="org.eclipse.jdt.debug.ui.actions.InstanceCount"
                label="%instanceCount.label"
-               menubarPath="org.eclipse.ui.debug/jdtGroup"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
                tooltip="%instanceCount.tooltip">
                            <enablement>
                               <and>
@@ -344,7 +344,7 @@
                icon="icons/full/elcl16/all_instances.png"
                id="org.eclipse.jdt.debug.ui.actions.AllInstances"
                label="%allInstances.label"
-               menubarPath="org.eclipse.ui.debug/jdtGroup"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
                tooltip="%allInstances.tooltip">
                            <enablement>
                               <and>
@@ -380,7 +380,7 @@
                icon="icons/full/elcl16/all_references.png"
                id="org.eclipse.jdt.debug.ui.actions.AllReferences"
                label="%allReferences.label"
-               menubarPath="org.eclipse.ui.debug/jdtGroup"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
                tooltip="%allReferences.tooltip">
                            <enablement>
                               <and>
@@ -421,7 +421,7 @@
        </menuContribution>
        <menuContribution
              allPopups="false"
-             locationURI="menu:org.eclipse.ui.debug?endof=stepIntoGroup">
+             locationURI="menu:org.eclipse.ui.run?endof=stepIntoGroup">
           <command
                 commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                 style="push">
