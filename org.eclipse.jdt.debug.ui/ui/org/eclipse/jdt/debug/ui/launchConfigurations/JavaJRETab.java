@@ -645,9 +645,19 @@ public class JavaJRETab extends JavaLaunchTab {
 	 */
 	@Override
 	public boolean OkToLeaveTab() {
-		boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
-		if (fCurrentJREModular != newJREModular) {
-			return handleClasspathDependenciesChange(newJREModular);
+		ILaunchConfiguration launchConfiguration = getLaunchConfiguration();
+		try {
+			String id = launchConfiguration.getType().getIdentifier();
+			// Add "org.eclipse.jdt.launching.javaApplet" after support for java 9 is added in javaapplet
+			if (id.equals("org.eclipse.jdt.launching.localJavaApplication")) { //$NON-NLS-1$
+				boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+				if (fCurrentJREModular != newJREModular) {
+					return handleClasspathDependenciesChange(newJREModular);
+				}
+			}
+		}
+		catch (CoreException e) {
+			e.printStackTrace();
 		}
 
 		return true;
