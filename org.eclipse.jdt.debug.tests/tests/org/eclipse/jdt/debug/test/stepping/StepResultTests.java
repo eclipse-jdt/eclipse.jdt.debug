@@ -14,6 +14,8 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -503,4 +505,34 @@ public class StepResultTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}
 	}
+
+	public void testMethodResultOnMethodExitAndExceptionBreakpoints() throws Exception {
+		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean origPrefValue = preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+		preferenceStore.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+		String typeName = "MethodExitAndException";
+		IJavaMethodBreakpoint methodExitBreakpoint = createMethodBreakpoint("MethodExitAndException", "f", null, false, true);
+		IJavaExceptionBreakpoint exceptionBreakpoint = createExceptionBreakpoint("MyException", true, true);
+		methodExitBreakpoint.setEnabled(true);
+		exceptionBreakpoint.setEnabled(true);
+		IJavaThread thread = null;
+		try {
+			thread = launchAndSuspend(typeName);
+			IJavaStackFrame stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("f", stackFrame.getMethodName());
+			assertEquals("f() is returning", stackFrame.getVariables()[0].getName());
+
+			resume(thread);
+
+			stackFrame = (IJavaStackFrame) thread.getTopStackFrame();
+			assertEquals("g", stackFrame.getMethodName());
+			assertEquals("g() is throwing", stackFrame.getVariables()[0].getName());
+		}
+		finally {
+			preferenceStore.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, origPrefValue);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
 }

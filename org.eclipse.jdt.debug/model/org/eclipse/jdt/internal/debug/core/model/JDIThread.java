@@ -55,6 +55,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.ConditionalBreakpointHandler;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.BooleanValue;
@@ -290,9 +291,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private int fStepReturnTargetFrameCount;
 
-	private StepResult fStepResultCandidate;
+	private MethodResult fStepResultCandidate;
 
-	StepResult fStepResult;
+	/**
+	 * Result of the last step step-over or step-return operation or method exit breakpoint of exception break point
+	 */
+	private MethodResult fMethodResult;
 
 	/**
 	 * Creates a new thread on the underlying thread reference in the given
@@ -1697,7 +1701,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		try {
 			setRunning(true);
-			clearStepReturnResult();
+			clearMethodResult();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
@@ -1728,8 +1732,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 	}
 
-	private void clearStepReturnResult() {
-		fStepResult = null;
+	private void clearMethodResult() {
+		setMethodResult(null);
 	}
 
 	/**
@@ -2069,7 +2073,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected synchronized void resumedByVM() throws DebugException {
 		fClientSuspendRequest = false;
 		setRunning(true);
-		clearStepReturnResult();
+		clearMethodResult();
 		preserveStackFrames();
 		// This method is called *before* the VM is actually resumed.
 		// To ensure that all threads will fully resume when the VM
@@ -2444,7 +2448,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setPendingStepHandler(this);
 				addJDIEventListener(this, getStepRequest());
 				setRunning(true);
-				clearStepReturnResult();
+				clearMethodResult();
 				preserveStackFrames();
 				fireResumeEvent(getStepDetail());
 				invokeThread();
@@ -2768,14 +2772,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					if (stepResultMethod != null) {
 						MethodExitEvent methodExitEvent = (MethodExitEvent) event;
 						if (methodExitEvent.location().method().equals(stepResultMethod)) {
-							fStepResultCandidate = new StepResult(fStepResultMethod, fStepReturnTargetFrameCount, methodExitEvent.returnValue(), true);
+							fStepResultCandidate = new MethodResult(fStepResultMethod, fStepReturnTargetFrameCount, methodExitEvent.returnValue(), ResultType.returned);
 						}
 						return true;
 					}
 				}
 				if (event instanceof ExceptionEvent) {
 					ExceptionEvent exceptionEvent = (ExceptionEvent) event;
-					fStepResultCandidate = new StepResult(fStepResultMethod, fStepReturnTargetFrameCount, exceptionEvent.exception(), false);
+					fStepResultCandidate = new MethodResult(fStepResultMethod, fStepReturnTargetFrameCount, exceptionEvent.exception(), ResultType.threw);
 					return true;
 				}
 				if (event instanceof MethodEntryEvent) {
@@ -2793,7 +2797,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				Location currentLocation = stepEvent.location();
 
 				if (fStepResultCandidate != null) {
-					fStepResult = fStepResultCandidate;
+					setMethodResult(fStepResultCandidate);
 					fStepResultMethod = null;
 					fStepReturnTargetFrameCount = -1;
 					fStepResultCandidate = null;
@@ -2840,7 +2844,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					setRunning(true);
 					deleteStepRequest();
 					createSecondaryStepRequest();
-					clearStepReturnResult();
+					clearMethodResult();
 					return true;
 					// otherwise, we're done stepping
 				}
@@ -3183,7 +3187,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setRunning(true);
 				deleteStepRequest();
 				createSecondaryStepRequest();
-				clearStepReturnResult();
+				clearMethodResult();
 				return true;
 			} catch (DebugException e) {
 				logError(e);
@@ -3737,6 +3741,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return false;
 		}
 		return JAVA_STRATUM_CONSTANT.equals(currentLocation.declaringType().defaultStratum());
+	}
+
+	public MethodResult getMethodResult() {
+		return fMethodResult;
+	}
+
+	public void setMethodResult(MethodResult fMethodResult) {
+		this.fMethodResult = fMethodResult;
 	}
 
 }

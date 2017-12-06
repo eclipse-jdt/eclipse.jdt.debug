@@ -32,6 +32,8 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Location;
@@ -343,6 +345,18 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements
 	@Override
 	public boolean handleBreakpointEvent(Event event, JDIThread thread,
 			boolean suspendVote) {
+		boolean result = handleBreakpointEventInternal(event, thread, suspendVote);
+		if (!result) {
+			if (event instanceof ExceptionEvent) {
+				// about to suspend, store result
+				ExceptionEvent exceptionEvent = (ExceptionEvent) event;
+				thread.setMethodResult(new MethodResult(exceptionEvent.location().method(), -1, exceptionEvent.exception(), ResultType.throwing));
+			}
+		}
+		return result;
+	}
+
+	private boolean handleBreakpointEventInternal(Event event, JDIThread thread, boolean suspendVote) {
 		if (event instanceof ExceptionEvent) {
 			ObjectReference ex = ((ExceptionEvent) event).exception();
 			fLastTarget = thread.getJavaDebugTarget();

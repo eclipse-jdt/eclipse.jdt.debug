@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Location;
@@ -438,8 +440,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements
 			MethodExitEvent exitEvent = (MethodExitEvent) event;
 			fLastEventTypes.put(thread.getDebugTarget(), EXIT_EVENT);
 			//inActivateTriggerPoint(event);
-			return handleMethodEvent(exitEvent, exitEvent.method(), thread,
+			boolean result = handleMethodEvent(exitEvent, exitEvent.method(), thread,
 					suspendVote);
+			if (!result) {
+				// about to suspend, store result
+				thread.setMethodResult(new MethodResult(exitEvent.method(), -1, exitEvent.returnValue(), ResultType.returning));
+			}
+			return result;
 		} else if (event instanceof BreakpointEvent) {
 			fLastEventTypes.put(thread.getDebugTarget(), ENTRY_EVENT);
 			return super.handleBreakpointEvent(event, thread, suspendVote);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -30,12 +29,9 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-
 import org.eclipse.jdi.internal.ValueImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
-
 import org.eclipse.jdt.core.Signature;
-
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -44,9 +40,9 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
+import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
 import com.ibm.icu.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
@@ -384,22 +380,28 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	private void addStepReturnValue(List<IJavaVariable> variables) {
 		if (fIsTop) {
-			StepResult stepResult = fThread.fStepResult;
-			if (stepResult != null) {
-				if (stepResult.fIsReturnValue) {
-					if (fDepth + 1 != stepResult.fTargetFrameCount) {
+			MethodResult methodResult = fThread.getMethodResult();
+			if (methodResult != null) {
+				if (methodResult.fResultType == ResultType.returned) {
+					if (fDepth + 1 != methodResult.fTargetFrameCount) {
 						// can happen e.g., because of checkPackageAccess/System.getSecurityManager()
 						return;
 					}
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, stepResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue), true));
-				} else {
-					if (fDepth + 1 > stepResult.fTargetFrameCount) {
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturnValue, methodResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+				} else if (methodResult.fResultType == ResultType.returning) {
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ReturningValue, methodResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+				} else if (methodResult.fResultType == ResultType.threw) {
+					if (fDepth + 1 > methodResult.fTargetFrameCount) {
 						// don't know if this really can happen, but other jvm suprises were not expected either
 						return;
 					}
-					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, stepResult.fMethod.name());
-					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), stepResult.fValue), true));
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ExceptionThrown, methodResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
+				} else if (methodResult.fResultType == ResultType.throwing) {
+					String name = MessageFormat.format(JDIDebugModelMessages.JDIStackFrame_ThrowingException, methodResult.fMethod.name());
+					variables.add(0, new JDIReturnValueVariable(name, JDIValue.createValue(getJavaDebugTarget(), methodResult.fValue), true));
 				}
 			} else if(JDIThread.showStepResultIsEnabled()) {
 				variables.add(0, new JDIReturnValueVariable(JDIDebugModelMessages.JDIStackFrame_NoMethodReturnValue, new JDIPlaceholderValue(getJavaDebugTarget(), ""), false)); //$NON-NLS-1$
