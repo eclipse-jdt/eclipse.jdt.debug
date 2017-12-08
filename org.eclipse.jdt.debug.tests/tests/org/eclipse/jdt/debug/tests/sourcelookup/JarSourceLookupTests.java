@@ -137,7 +137,7 @@ public class JarSourceLookupTests extends AbstractDebugTest {
 		ILaunchConfiguration config = getLaunchConfiguration(fgJarProject, LAUNCHCONFIGURATIONS, A_RUN_JAR);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 		if (JavaRuntime.isModularConfiguration(config)) {
-			// JRE Container is also part of it from Java 9 onwards
+			// There is no DefaultProjectClasspath entry so 2 entries inside it becomes 2 separate entries now
 			assertEquals("There should be 3 containers returned (JRE and classpath)", 3, entries.length);
 		} else {
 			assertEquals("There should be 2 containers returned (JRE and classpath)", 2, entries.length);
