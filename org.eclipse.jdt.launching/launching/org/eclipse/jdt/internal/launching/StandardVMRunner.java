@@ -374,7 +374,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		addBootClassPathArguments(arguments, config);
 
 		String[] mp = config.getModulepath();
-		if (isModular(config, fVMInstance) && (mp != null && mp.length > 0)) {
+		if (mp != null && mp.length > 0) { // There can be scenarios like junit where launched class is in classpath
+											// with modular path entries
 			arguments.add("-p"); //$NON-NLS-1$
 			arguments.add(convertClassPath(mp));
 		}
