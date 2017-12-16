@@ -30,7 +30,12 @@ public interface IJDIPreferencesConstants {
 	 * execution when a compilation error is encountered
 	 * (while debugging).
 	 */
-	public static final String PREF_SUSPEND_ON_COMPILATION_ERRORS= IJavaDebugUIConstants.PLUGIN_ID + ".suspend_on_compilation_errors"; //$NON-NLS-1$
+	public static final String PREF_SUSPEND_ON_COMPILATION_ERRORS = IJavaDebugUIConstants.PLUGIN_ID + ".suspend_on_compilation_errors"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether to listen to thread name changes (while debugging).
+	 */
+	public static final String PREF_LISTEN_ON_THREAD_NAME_CHANGES = IJavaDebugUIConstants.PLUGIN_ID + ".javaDebug.ListenOnThreadNameChanges"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference controlling whether synthetic

@@ -171,9 +171,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 	 */
 	class Collector implements IJavaBreakpointListener {
 
-		public List<IJavaBreakpoint> HIT = new ArrayList<IJavaBreakpoint>();
-		public List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<IJavaLineBreakpoint>();
-		public List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<IJavaLineBreakpoint>();
+		public List<IJavaBreakpoint> HIT = new ArrayList<>();
+		public List<IJavaLineBreakpoint> COMPILATION_ERRORS = new ArrayList<>();
+		public List<IJavaLineBreakpoint> RUNTIME_ERRORS = new ArrayList<>();
 
 		@Override
 		public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
@@ -989,14 +989,14 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		try {
 			thread= launchToLineBreakpoint(typeName, bp);
 
-			assertEquals("Should be ADDED", bp, GlobalBreakpointListener.ADDED);
-			assertEquals("Should be INSTALLING", bp, GlobalBreakpointListener.INSTALLING);
-			assertEquals("Should be INSTALLED", bp, GlobalBreakpointListener.INSTALLED);
-			assertEquals("Should be HIT", bp, GlobalBreakpointListener.HIT);
-			assertNull("Should not be REMOVED", GlobalBreakpointListener.REMOVED);
+			assertTrue("Should be ADDED", GlobalBreakpointListener.ADDED.contains(bp));
+			assertTrue("Should be INSTALLING", GlobalBreakpointListener.INSTALLING.contains(bp));
+			assertTrue("Should be INSTALLED", GlobalBreakpointListener.INSTALLED.contains(bp));
+			assertTrue("Should be HIT", GlobalBreakpointListener.HIT.contains(bp));
+			assertFalse("Should not be REMOVED", GlobalBreakpointListener.REMOVED.contains(bp));
 
 			bp.delete();
-			assertEquals("Should be REMOVED", bp, GlobalBreakpointListener.REMOVED);
+			assertTrue("Should be REMOVED", GlobalBreakpointListener.REMOVED.contains(bp));
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

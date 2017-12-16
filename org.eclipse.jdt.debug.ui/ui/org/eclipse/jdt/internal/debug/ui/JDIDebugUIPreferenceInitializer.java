@@ -24,16 +24,12 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);

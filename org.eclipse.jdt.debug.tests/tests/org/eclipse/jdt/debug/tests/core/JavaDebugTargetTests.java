@@ -13,7 +13,9 @@ package org.eclipse.jdt.debug.tests.core;
 import static org.junit.Assert.assertNotEquals;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -21,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 
 /**
  * Tests IJavaDebugTarget API
@@ -145,8 +148,9 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			JDIDebugTarget target = (JDIDebugTarget) thread.getDebugTarget();
 			assertTrue(target.isAvailable());
-			assertEquals(1, target.getBreakpoints().size());
-			assertEquals(bp1, target.getBreakpoints().get(0));
+			List<IBreakpoint> breakpoints = getUserBreakpoints(target);
+			assertEquals(1, breakpoints.size());
+			assertEquals(bp1, getUserBreakpoints(target).get(0));
 			assertTrue(target.supportsResource(() -> typeName, type1.getResource()));
 			assertFalse(target.supportsResource(() -> typeName, type2.getResource()));
 			terminateAndRemove(thread);
@@ -161,8 +165,8 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			target = (JDIDebugTarget) thread.getDebugTarget();
 			assertTrue(target.isAvailable());
-			assertEquals(1, target.getBreakpoints().size());
-			assertEquals(bp2, target.getBreakpoints().get(0));
+			assertEquals(1, getUserBreakpoints(target).size());
+			assertEquals(bp2, getUserBreakpoints(target).get(0));
 			assertFalse(target.supportsResource(() -> typeName, type1.getResource()));
 			assertTrue(target.supportsResource(() -> typeName, type2.getResource()));
 		}
@@ -170,6 +174,12 @@ public class JavaDebugTargetTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
+	}
+
+	private List<IBreakpoint> getUserBreakpoints(JDIDebugTarget target) {
+		List<IBreakpoint> breakpoints = target.getBreakpoints();
+		breakpoints.remove(JavaDebugOptionsManager.getDefault().getThreadNameChangeBreakpoint());
+		return breakpoints;
 	}
 
 	static private class JDIDebugTargetProxy {
