@@ -2139,8 +2139,10 @@ public final class JavaRuntime {
                     javadocLocations[i]= defJavaDocLocation;
                 }
                 indexes[i] = dflts[i].getIndexLocation();
-				if (!libraryPaths[i].toFile().isFile()) {
-					libraryPaths[i]= Path.EMPTY;
+				if (compareJavaVersions(vm, JavaCore.VERSION_9) < 0) {
+					if (!libraryPaths[i].toFile().isFile()) {
+						libraryPaths[i] = Path.EMPTY;
+					}
 				}
 
 				annotationPaths[i] = Path.EMPTY;

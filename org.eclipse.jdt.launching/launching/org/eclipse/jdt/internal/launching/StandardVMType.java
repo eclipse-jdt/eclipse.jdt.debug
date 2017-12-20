@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,6 @@ public class StandardVMType extends AbstractVMInstallType {
 	private static final String BAR = "|"; //$NON-NLS-1$
 	private static final String RELEASE_FILE = "release"; //$NON-NLS-1$
 	private static final String JAVA_VERSION = "JAVA_VERSION"; //$NON-NLS-1$
-	private static final String JRT_FS_JAR = "jrt-fs.jar"; //$NON-NLS-1$
 
 	public static final String ID_STANDARD_VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"; //$NON-NLS-1$
 
@@ -453,11 +452,10 @@ public class StandardVMType extends AbstractVMInstallType {
 						sourceRootPath = getDefaultSystemLibrarySource(lib); // To attach source if available
 					}
 				}
-				IPath pathName = new Path(installLocation.getAbsolutePath()).append(LIB).append(JRT_FS_JAR);
-				// From Java 9 149 version, we see that jrt-fs.jar is moved to lib directory so we need to look at both places
+				IPath pathName = new Path(installLocation.getAbsolutePath());
 				File jrtfsJar = pathName.toFile();
 				if (!jrtfsJar.exists()) {
-					pathName = new Path(installLocation.getAbsolutePath()).append(JRT_FS_JAR);
+					pathName = new Path(installLocation.getAbsolutePath());
 				}
 
 				LibraryLocation libraryLocation = new LibraryLocation(pathName,

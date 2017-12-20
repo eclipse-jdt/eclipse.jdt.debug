@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,9 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			for (int i = 0; i < locations.length; i++) {
 				LibraryLocation location = locations[i];
 				String name = location.getSystemLibraryPath().lastSegment();
-				if (name.equalsIgnoreCase("rt.jar")) { //$NON-NLS-1$
+				if ("rt.jar".equalsIgnoreCase(name)) { //$NON-NLS-1$
 					rtjar = location;
-				} else if (name.equalsIgnoreCase("classes.zip")) { //$NON-NLS-1$
+				} else if ("classes.zip".equalsIgnoreCase(name)) { //$NON-NLS-1$
 					classeszip = location;
 				}
 			}
