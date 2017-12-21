@@ -132,6 +132,8 @@ public class ActionMessages extends NLS {
 	public static String ToggleBreakpointAdapter_confirmDeleteMessage;
 	public static String ToggleBreakpointAdapter_confirmDeleteShowAgain;
 	public static String ToggleBreakpointAdapter_10;
+	public static String ToggleBreakpointAdapter_ErrorTitle;
+	public static String ToggleBreakpointAdapter_ErrorMessage;
 	public static String StepIntoSelectionHandler_1;
 	public static String StepIntoSelectionHandler_2;
 

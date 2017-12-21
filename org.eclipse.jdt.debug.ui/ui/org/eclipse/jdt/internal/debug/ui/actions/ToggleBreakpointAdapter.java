@@ -34,6 +34,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2;
 import org.eclipse.jdt.core.Flags;
@@ -86,6 +87,7 @@ import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.text.BadLocationException;
@@ -365,6 +367,16 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
                 	else {
                 		type = member.getDeclaringType();
                 	}
+					if (type == null) {
+						IStatus status = new Status(IStatus.INFO, DebugUIPlugin.getUniqueIdentifier(), ActionMessages.ToggleBreakpointAdapter_ErrorMessage);
+						 Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								ErrorDialog.openError(JDIDebugUIPlugin.getShell(), ActionMessages.ToggleBreakpointAdapter_ErrorTitle, null, status);
+							}
+						});
+						return status;
+					}
 					if (locator == null && BreakpointToggleUtils.isToggleTracepoints()) {
 						CompilationUnit cUnit = parseCompilationUnit(type.getTypeRoot());
 						locator = new ValidBreakpointLocationLocator(cUnit, tsel.getStartLine() + 1, true, bestMatch);
