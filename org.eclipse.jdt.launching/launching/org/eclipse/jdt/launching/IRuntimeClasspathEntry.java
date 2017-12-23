@@ -97,17 +97,24 @@ public interface IRuntimeClasspathEntry {
 
 	/**
 	 * Classpath property identifier for entries that should appear on the module path for modular project.
-	 * 
+	 *
 	 * @since 3.10
 	 */
 	public static final int MODULE_PATH = 4;
 
 	/**
 	 * Classpath property identifier for entries that should appear on the class path for modular project.
-	 * 
+	 *
 	 * @since 3.10
 	 */
 	public static final int CLASS_PATH = 5;
+
+	/**
+	 * Classpath property identifier for entries that should appear as --patch-module argument for a modular project.
+	 *
+	 * @since 3.10
+	 */
+	public static final int PATCH_MODULE = 6;
 
 	/**
 	 * Returns this classpath entry's type. The type of a runtime classpath entry is

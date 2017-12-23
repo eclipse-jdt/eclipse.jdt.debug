@@ -18,8 +18,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -47,6 +49,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -428,7 +431,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		for (IRuntimeClasspathEntry entry : entries) {
 			String location = entry.getLocation();
 			if (location != null) {
-				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.MODULE_PATH) {
+				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.MODULE_PATH
+						&& entry.getClasspathProperty() != IRuntimeClasspathEntry.PATCH_MODULE) {
 					if (!set.contains(location)) {
 						userEntries.add(location);
 						set.add(location);
@@ -1117,9 +1121,53 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * <li>{@link IClasspathAttribute#PATCH_MODULE}</li>
 	 * </ul>
 	 *
+	 * @throws CoreException
+	 *
 	 * @since 3.10
 	 */
-	protected String getModuleCLIOptions(ILaunchConfiguration configuration) {
-		return JavaRuntime.getModuleCLIOptions(configuration);
+	public String getModuleCLIOptions(ILaunchConfiguration configuration) throws CoreException {
+		String moduleCLIOptions = JavaRuntime.getModuleCLIOptions(configuration);
+
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
+		LinkedHashMap<String, String> moduleToLocations = new LinkedHashMap<>();
+
+		for (IRuntimeClasspathEntry entry : entries) {
+			String location = entry.getLocation();
+			if (location != null) {
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.PATCH_MODULE) {
+					IJavaProject javaProject = entry.getJavaProject();
+					IModuleDescription moduleDescription = javaProject == null ? null : javaProject.getModuleDescription();
+					if (moduleDescription != null) {
+						String moduleName = moduleDescription.getElementName();
+						String locations = moduleToLocations.get(moduleName);
+						if (locations == null) {
+							moduleToLocations.put(moduleName, location);
+						} else {
+							moduleToLocations.put(moduleName, locations + File.pathSeparator + location);
+						}
+					} else {
+						// should not happen, log?
+					}
+				}
+			}
+		}
+		if (moduleToLocations.isEmpty()) {
+			return moduleCLIOptions;
+		}
+		StringBuilder sb = new StringBuilder(moduleCLIOptions);
+
+		for (Entry<String, String> entry : moduleToLocations.entrySet()) {
+			if (sb.length() > 0) {
+				sb.append(' ');
+			}
+			sb.append("--patch-module"); //$NON-NLS-1$
+			sb.append(' ');
+			sb.append(entry.getKey());
+			sb.append('=');
+			sb.append(entry.getValue());
+		}
+
+		return sb.toString();
 	}
 }

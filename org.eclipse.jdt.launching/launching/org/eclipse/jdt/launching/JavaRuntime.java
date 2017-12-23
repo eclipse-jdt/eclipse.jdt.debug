@@ -1317,7 +1317,9 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		if (nonDefault.isEmpty()) {
+		boolean isModular = project.getModuleDescription() != null;
+		if (nonDefault.isEmpty() && !isModular) {
+			// return here only if non-modular, because patch-module might be needed otherwise
 			return null;
 		}
 		// add the default location if not already included
@@ -1329,9 +1331,18 @@ public final class JavaRuntime {
 		for (int i = 0; i < locations.length; i++) {
 			IClasspathEntry newEntry = JavaCore.newLibraryEntry(nonDefault.get(i), null, null);
 			locations[i] = new RuntimeClasspathEntry(newEntry);
-			locations[i].setClasspathProperty(classpathProperty);
+			if (isModular && !containsModuleInfo(locations[i])) {
+				locations[i].setClasspathProperty(IRuntimeClasspathEntry.PATCH_MODULE);
+				((RuntimeClasspathEntry) locations[i]).setJavaProject(project);
+			} else {
+				locations[i].setClasspathProperty(classpathProperty);
+			}
 		}
 		return locations;
+	}
+
+	private static boolean containsModuleInfo(IRuntimeClasspathEntry entry) {
+		return new File(entry.getLocation() + File.separator + "module-info.class").exists(); //$NON-NLS-1$
 	}
 
 	/**

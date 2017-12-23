@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -71,7 +75,10 @@ public class OverrideDependenciesDialog extends MessageDialog {
 				fModuleArgumentsText.setText(str);
 
 			} else {
-				fModuleArgumentsText.setText(JavaRuntime.getModuleCLIOptions(flaunchConfiguration));
+				AbstractJavaLaunchConfigurationDelegate delegate = getJavaLaunchConfigurationDelegate();
+				if (delegate != null) {
+					fModuleArgumentsText.setText(delegate.getModuleCLIOptions(flaunchConfiguration));
+				}
 			}
 			fOriginalText = fModuleArgumentsText.getText();
 
@@ -80,6 +87,19 @@ public class OverrideDependenciesDialog extends MessageDialog {
 			e.printStackTrace();
 		}
 		return comp;
+	}
+
+	public AbstractJavaLaunchConfigurationDelegate getJavaLaunchConfigurationDelegate() throws CoreException {
+		Set<String> modes = flaunchConfiguration.getModes();
+		modes.add(ILaunchManager.RUN_MODE);
+		AbstractJavaLaunchConfigurationDelegate delegate = null;
+		for (ILaunchDelegate launchDelegate : flaunchConfiguration.getType().getDelegates(modes)) {
+			if (launchDelegate.getDelegate() instanceof AbstractJavaLaunchConfigurationDelegate) {
+				delegate = (AbstractJavaLaunchConfigurationDelegate) launchDelegate.getDelegate();
+				break;
+			}
+		}
+		return delegate;
 	}
 
 	/* (non-Javadoc)
