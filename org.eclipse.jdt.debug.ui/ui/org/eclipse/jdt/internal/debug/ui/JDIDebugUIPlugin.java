@@ -193,12 +193,14 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Logs an internal error with the specified message.
+	 * Logs an internal error with the specified message and throwable
 	 *
 	 * @param message the error message to log
+	 * @param e
+	 *            the exception to be logged
 	 */
-	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, null));
+	public static void log(String message, Throwable e) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, message, e));
 	}
 
 	/**
@@ -207,7 +209,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e));   //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal Error", e)); //$NON-NLS-1$
 	}
 
 	/**

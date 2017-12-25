@@ -1326,70 +1326,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		IMember member = (IMember) ((IStructuredSelection) sel).getFirstElement();
 		int mtype = member.getElementType();
 		if (mtype == IJavaElement.FIELD || mtype == IJavaElement.METHOD || mtype == IJavaElement.INITIALIZER) {
-			// remove line breakpoint if present first
-			if (!(selection instanceof ITextSelection)) {
-				return;
-			}
-			ITextSelection ts = (ITextSelection) selection;
-			IJavaLineBreakpoint breakpoint = null;
-			ITextEditor editor = getTextEditor(part);
-			IAnnotationModel annotationModel = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
-			IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-			if (annotationModel != null) {
-				Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
-				while (iterator.hasNext()) {
-					Object object = iterator.next();
-					if (!(object instanceof SimpleMarkerAnnotation)) {
-						continue;
-					}
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
-					IMarker marker = markerAnnotation.getMarker();
-					try {
-						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-							Position position = annotationModel.getPosition(markerAnnotation);
-							int line = document.getLineOfOffset(position.getOffset());
-							if (line == ts.getStartLine()) {
-								IBreakpoint oldBreakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-								if (oldBreakpoint instanceof IJavaLineBreakpoint) {
-									breakpoint = (IJavaLineBreakpoint) oldBreakpoint;
-									break;
-								}
-							}
-						}
-					}
-					catch (BadLocationException e) {
-						JDIDebugUIPlugin.log(e);
-					}
-					catch (CoreException e) {
-						logBadAnnotation(markerAnnotation, e);
-					}
-				}
-			}
-
-			if (breakpoint != null) {
-				if (BreakpointToggleUtils.isToggleTracepoints()) {
-					deleteTracepoint(breakpoint, part, null);
-					BreakpointToggleUtils.setUnsetTracepoints(false);
-				} else {
-					deleteBreakpoint(breakpoint, part, null);
-				}
-				return;
-			}
-			CompilationUnit unit = parseCompilationUnit(getTextEditor(part));
-			ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
-			unit.accept(loc);
-			if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
-				toggleMethodBreakpoints(part, ts);
-			} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
-				if (BreakpointToggleUtils.isToggleTracepoints()) {
-					BreakpointToggleUtils.report(ActionMessages.TracepointToggleAction_Unavailable, part);
-					BreakpointToggleUtils.setUnsetTracepoints(false);
-					return;
-				}
-				toggleWatchpoints(part, ts);
-			} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
-				toggleLineBreakpoints(part, ts, false, loc);
-			}
+			toggleFieldOrMethodBreakpoints(part, selection);
 		} else if (member.getElementType() == IJavaElement.TYPE) {
 			if (BreakpointToggleUtils.isToggleTracepoints()) {
 				BreakpointToggleUtils.report(ActionMessages.TracepointToggleAction_Unavailable, part);
@@ -1401,7 +1338,91 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			// fall back to old behavior, always create a line breakpoint
 			toggleLineBreakpoints(part, selection, true, null);
 		}
-    }
+	}
+
+	private static IJavaLineBreakpoint findExistingBreakpoint(ITextEditor editor, ITextSelection ts) {
+		IDocumentProvider documentProvider = editor.getDocumentProvider();
+		if (documentProvider == null) {
+			return null;
+		}
+		IEditorInput editorInput = editor.getEditorInput();
+		IAnnotationModel annotationModel = documentProvider.getAnnotationModel(editorInput);
+		if (annotationModel == null) {
+			return null;
+		}
+		IDocument document = documentProvider.getDocument(editorInput);
+		if (document == null) {
+			return null;
+		}
+		Iterator<Annotation> iterator = annotationModel.getAnnotationIterator();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			if (!(object instanceof SimpleMarkerAnnotation)) {
+				continue;
+			}
+			SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+			IMarker marker = markerAnnotation.getMarker();
+			try {
+				if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+					Position position = annotationModel.getPosition(markerAnnotation);
+					int line = document.getLineOfOffset(position.getOffset());
+					if (line == ts.getStartLine()) {
+						IBreakpoint oldBreakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+						if (oldBreakpoint instanceof IJavaLineBreakpoint) {
+							return (IJavaLineBreakpoint) oldBreakpoint;
+						}
+					}
+				}
+			} catch (BadLocationException e) {
+				JDIDebugUIPlugin.log(e);
+			} catch (CoreException e) {
+				logBadAnnotation(markerAnnotation, e);
+			}
+		}
+		return null;
+	}
+
+	private void toggleFieldOrMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+		if (!(selection instanceof ITextSelection)) {
+			return;
+		}
+		ITextSelection ts = (ITextSelection) selection;
+		ITextEditor editor = getTextEditor(part);
+		if (editor == null) {
+			return;
+		}
+		// remove line breakpoint if present first
+		IJavaLineBreakpoint breakpoint = findExistingBreakpoint(editor, ts);
+		if (breakpoint != null) {
+			if (BreakpointToggleUtils.isToggleTracepoints()) {
+				deleteTracepoint(breakpoint, part, null);
+				BreakpointToggleUtils.setUnsetTracepoints(false);
+			} else {
+				deleteBreakpoint(breakpoint, part, null);
+			}
+			return;
+		}
+		// no breakpoint found: we create new one
+		CompilationUnit unit = parseCompilationUnit(editor);
+		if (unit == null) {
+			JDIDebugUIPlugin.log("Failed to parse CU for: " + editor.getTitle(), new IllegalStateException()); //$NON-NLS-1$
+			return;
+		}
+		ValidBreakpointLocationLocator loc = new ValidBreakpointLocationLocator(unit, ts.getStartLine() + 1, true, true);
+		unit.accept(loc);
+		if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_METHOD) {
+			toggleMethodBreakpoints(part, ts);
+		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_FIELD) {
+			if (BreakpointToggleUtils.isToggleTracepoints()) {
+				BreakpointToggleUtils.report(ActionMessages.TracepointToggleAction_Unavailable, part);
+				BreakpointToggleUtils.setUnsetTracepoints(false);
+				return;
+			}
+			toggleWatchpoints(part, ts);
+		} else if (loc.getLocationType() == ValidBreakpointLocationLocator.LOCATION_LINE) {
+			toggleLineBreakpoints(part, ts, false, loc);
+		}
+	}
 
 	/**
 	 * Additional diagnosis info for bug 528321
@@ -1411,8 +1432,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		message += "text: " + annotation.getText(); //$NON-NLS-1$
 		message += ", type: " + annotation.getType(); //$NON-NLS-1$
 		message += ", " + annotation.getMarker(); //$NON-NLS-1$
-		JDIDebugUIPlugin.log(e);
-		JDIDebugUIPlugin.logErrorMessage(message);
+		JDIDebugUIPlugin.log(message, e);
 	}
 
 	/**
