@@ -1398,6 +1398,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 								catch (BadLocationException e) {
 									JDIDebugUIPlugin.log(e);
 								}
+								catch (CoreException e) {
+									logBadAnnotation(markerAnnotation, e);
+								}
 							}
 						}
 					}
@@ -1444,6 +1447,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
     		}
     	}
     }
+
+	/**
+	 * Additional diagnosis info for bug 528321
+	 */
+	private static void logBadAnnotation(SimpleMarkerAnnotation annotation, CoreException e) {
+		String message = "Editor annotation with non existing marker found: "; //$NON-NLS-1$
+		message += "text: " + annotation.getText(); //$NON-NLS-1$
+		message += ", type: " + annotation.getType(); //$NON-NLS-1$
+		message += ", " + annotation.getMarker(); //$NON-NLS-1$
+		JDIDebugUIPlugin.log(e);
+		JDIDebugUIPlugin.logErrorMessage(message);
+	}
 
 	/**
 	 * Deletes the given breakpoint using the operation history, which allows to undo the deletion.
