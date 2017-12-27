@@ -3337,6 +3337,7 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
+            icon="$nl$/icons/full/obj16/jrtexception_obj.png"
             label="%javaStackTraceConsole.label"
             class="org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
