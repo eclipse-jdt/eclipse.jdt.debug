@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeContainerComparator;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -136,10 +137,22 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 */
 	@Override
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
+		boolean excludeTestCode = configuration != null
+				&& configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
+		return getRuntimeClasspathEntries(excludeTestCode);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(boolean)
+	 */
+	@Override
+	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(boolean excludeTestCode) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
 		List<Object> classpathEntries = new ArrayList<>(5);
 		List<IClasspathEntry> expanding = new ArrayList<>(5);
-		expandProject(entry, classpathEntries, expanding);
+		expandProject(entry, classpathEntries, expanding, excludeTestCode);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			Object e = classpathEntries.get(i);
@@ -161,17 +174,20 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	}
 
 	/**
-	 * Returns the transitive closure of classpath entries for the
-	 * given project entry.
+	 * Returns the transitive closure of classpath entries for the given project entry.
 	 *
-	 * @param projectEntry project classpath entry
-	 * @param expandedPath a list of entries already expanded, should be empty
-	 * to begin, and contains the result
-	 * @param expanding a list of projects that have been or are currently being
-	 * expanded (to detect cycles)
-	 * @exception CoreException if unable to expand the classpath
+	 * @param projectEntry
+	 *            project classpath entry
+	 * @param expandedPath
+	 *            a list of entries already expanded, should be empty to begin, and contains the result
+	 * @param expanding
+	 *            a list of projects that have been or are currently being expanded (to detect cycles)
+	 * @param excludeTestCode
+	 *            if true, test dependencies will be excluded
+	 * @exception CoreException
+	 *                if unable to expand the classpath
 	 */
-	private void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding) throws CoreException {
+	private void expandProject(IClasspathEntry projectEntry, List<Object> expandedPath, List<IClasspathEntry> expanding, boolean excludeTestCode) throws CoreException {
 		expanding.add(projectEntry);
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
@@ -194,6 +210,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		boolean projectAdded = false;
 		for (int i = 0; i < buildPath.length; i++) {
 			IClasspathEntry classpathEntry = buildPath[i];
+			if (excludeTestCode && classpathEntry.isTest()) {
+				continue;
+			}
 			if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				if (!projectAdded) {
 					projectAdded = true;
@@ -220,7 +239,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT:
 						if (!expanding.contains(entry)) {
-							expandProject(entry, expandedPath, expanding);
+							expandProject(entry, expandedPath, expanding, excludeTestCode);
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:

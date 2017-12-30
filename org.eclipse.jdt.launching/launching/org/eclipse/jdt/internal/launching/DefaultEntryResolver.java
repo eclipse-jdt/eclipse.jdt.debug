@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,11 +49,22 @@ public class DefaultEntryResolver implements IRuntimeClasspathEntryResolver {
 	 */
 	@Override
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+		return resolveRuntimeClasspathEntry(entry, project, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(org.eclipse.jdt.launching.IRuntimeClasspathEntry,
+	 * org.eclipse.jdt.core.IJavaProject, boolean)
+	 */
+	@Override
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project, boolean excludeTestCode) throws CoreException {
 		IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
-		IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(null);
+		IRuntimeClasspathEntry[] entries = entry2.getRuntimeClasspathEntries(excludeTestCode);
 		List<IRuntimeClasspathEntry> resolved = new ArrayList<>();
 		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], project);
+			IRuntimeClasspathEntry[] temp = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], project, excludeTestCode);
 			for (int j = 0; j < temp.length; j++) {
 				resolved.add(temp[j]);
 			}

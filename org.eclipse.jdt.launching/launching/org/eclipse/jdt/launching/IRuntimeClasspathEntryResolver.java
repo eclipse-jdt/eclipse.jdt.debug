@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,12 +86,31 @@ public interface IRuntimeClasspathEntryResolver {
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException;
 
 	/**
-	 * Returns a VM install associated with the given classpath entry,
-	 * or <code>null</code> if none.
+	 * Returns resolved runtime classpath entries for the given runtime classpath entry, in the context of the given Java project.
 	 *
-	 * @param entry classpath entry
+	 * @param entry
+	 *            runtime classpath entry to resolve, of type <code>VARIABLE</code> or <code>CONTAINTER</code>
+	 * @param project
+	 *            context in which the runtime classpath entry needs to be resolved
+	 * @param excludeTestCode
+	 *            when true, test code should be excluded
+	 * @return resolved entries (zero or more)
+	 * @exception CoreException
+	 *                if unable to resolve the entry
+	 * @since 3.10
+	 */
+	default public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project, boolean excludeTestCode) throws CoreException {
+		return resolveRuntimeClasspathEntry(entry, project);
+	}
+
+	/**
+	 * Returns a VM install associated with the given classpath entry, or <code>null</code> if none.
+	 *
+	 * @param entry
+	 *            classpath entry
 	 * @return vm install associated with entry or <code>null</code> if none
-	 * @exception CoreException if unable to resolve a VM
+	 * @exception CoreException
+	 *                if unable to resolve a VM
 	 */
 	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -359,6 +359,15 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 3.7
 	 */
 	public static final String ATTR_USE_START_ON_FIRST_THREAD = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_USE_START_ON_FIRST_THREAD"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying whether output folders corresponding to test sources should not be added
+	 * to the runtime classpath and test dependencies should not be added to the default classpath.
+	 *
+	 * @since 3.10
+	 */
+	public static final String ATTR_EXCLUDE_TEST_CODE = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_EXCLUDE_TEST_CODE"; //$NON-NLS-1$
+
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a project when a project is required.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,20 @@ public interface IRuntimeClasspathEntry2 extends IRuntimeClasspathEntry {
 	 * @throws CoreException if unable to retrieve contained entries
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException;
+
+	/**
+	 * Returns the classpath entries this entry is composed of, or an empty collection if this entry is not a composite entry.
+	 *
+	 * @param excludeTestCode
+	 *            true, if test code should be excluded
+	 * @return the classpath entries this entry is composed of, or an empty collection if this entry is not a composite entry
+	 * @throws CoreException
+	 *             if unable to retrieve contained entries
+	 * @since 3.10
+	 */
+	default public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(boolean excludeTestCode) throws CoreException {
+		return getRuntimeClasspathEntries(null);
+	}
 
 	/**
 	 * Returns a human readable name for this classpath entry.

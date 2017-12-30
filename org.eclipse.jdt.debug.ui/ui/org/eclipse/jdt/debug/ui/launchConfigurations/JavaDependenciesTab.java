@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 IBM Corporation and others.
+ * Copyright (c) 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -55,6 +56,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -87,6 +90,8 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 	 * The last launch config this tab was initialized from
 	 */
 	protected ILaunchConfiguration fLaunchConfiguration;
+
+	private Button fExcludeTestCodeButton;
 
 	/**
 	 * Constructor
@@ -135,6 +140,17 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 		pathButtonComp.setFont(font);
 
 		createPathButtons(pathButtonComp);
+
+		SWTFactory.createVerticalSpacer(comp, 2);
+
+		fExcludeTestCodeButton = SWTFactory.createCheckButton(comp, LauncherMessages.JavaClasspathTab_Exclude_Test_Code, null, false, 2);
+		fExcludeTestCodeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 
 	/**
@@ -210,6 +226,10 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		refresh(configuration);
 		fClasspathViewer.getTreeViewer().expandToLevel(2);
+		try {
+			fExcludeTestCodeButton.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false));
+		} catch (CoreException e) {
+		}
 	}
 
 	/* (non-Javadoc)
@@ -301,6 +321,16 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 					JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus());
 				}
 			}
+			try {
+				boolean previousExcludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
+				if (previousExcludeTestCode != fExcludeTestCodeButton.getSelection()) {
+					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, fExcludeTestCodeButton.getSelection());
+					fClasspathViewer.setEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
+				}
+			}
+			catch (CoreException e) {
+				JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus());
+			}
 		}
 	}
 
@@ -361,6 +391,19 @@ public class JavaDependenciesTab extends JavaClasspathTab {
 			ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(wc);
+			ArrayList<IRuntimeClasspathEntry> grouped = new ArrayList<>(entries.length);
+			// move all modulepath entries to the front, like in the ui
+			for (IRuntimeClasspathEntry entry : entries) {
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.MODULE_PATH) {
+					grouped.add(entry);
+				}
+			}
+			for (IRuntimeClasspathEntry entry : entries) {
+				if (entry.getClasspathProperty() != IRuntimeClasspathEntry.MODULE_PATH) {
+					grouped.add(entry);
+				}
+			}
+			entries = grouped.toArray(new IRuntimeClasspathEntry[grouped.size()]);
 			if (classpath.length == entries.length) {
 				for (int i = 0; i < entries.length; i++) {
 					IRuntimeClasspathEntry entry = entries[i];

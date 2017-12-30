@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,10 +55,10 @@ public class ProjectClasspathVariableResolver implements IDynamicVariableResolve
 		IJavaProject javaProject = JavaCore.create(proj);
 		if (javaProject.exists()) {
 			IRuntimeClasspathEntry2 defClassPath = (IRuntimeClasspathEntry2) JavaRuntime.newDefaultProjectClasspathEntry(javaProject);
-			IRuntimeClasspathEntry[] entries = defClassPath.getRuntimeClasspathEntries(null);
+			IRuntimeClasspathEntry[] entries = defClassPath.getRuntimeClasspathEntries(false);
 			List<IRuntimeClasspathEntry> collect = new ArrayList<>();
 			for (int i = 0; i < entries.length; i++) {
-				IRuntimeClasspathEntry[] children = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], javaProject);
+				IRuntimeClasspathEntry[] children = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], javaProject, false);
 				for (int j = 0; j < children.length; j++) {
 					collect.add(children[j]);
 				}

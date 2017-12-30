@@ -840,16 +840,35 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Computes and returns the default unresolved runtime classpath for the
-	 * given project.
+	 * Computes and returns the default unresolved runtime classpath for the given project.
 	 *
-	 * @param project the {@link IJavaProject} to compute the unresolved runtime classpath for
+	 * @param project
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
+	 * @param excludeTestCode
 	 * @return runtime classpath entries
-	 * @exception CoreException if unable to compute the runtime classpath
+	 * @exception CoreException
+	 *                if unable to compute the runtime classpath
 	 * @see IRuntimeClasspathEntry
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
+		return computeUnresolvedRuntimeClasspath(project, false);
+	}
+
+	/**
+	 * Computes and returns the default unresolved runtime classpath for the given project.
+	 *
+	 * @param project
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources and test dependencies are excluded
+	 * @return runtime classpath entries
+	 * @exception CoreException
+	 *                if unable to compute the runtime classpath
+	 * @see IRuntimeClasspathEntry
+	 * @since 3.10
+	 */
+	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project, boolean excludeTestCode) throws CoreException {
 		IClasspathEntry[] entries = project.getRawClasspath();
 		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
 		for (int i = 0; i < entries.length; i++) {
@@ -898,12 +917,29 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project) throws CoreException {
+		return computeUnresolvedRuntimeDependencies(project, false);
+	}
+
+	/**
+	 * Computes and returns the default unresolved runtime classpath and modulepath for the given project.
+	 *
+	 * @param project
+	 *            the {@link IJavaProject} to compute the unresolved runtime classpath and modulepath for
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources and test dependencies are excluded
+	 * @return runtime classpath and modulepath entries
+	 * @exception CoreException
+	 *                if unable to compute the runtime classpath and/or modulepath
+	 * @see IRuntimeClasspathEntry
+	 * @since 3.10
+	 */
+	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeDependencies(IJavaProject project, boolean excludeTestCode) throws CoreException {
 		List<IRuntimeClasspathEntry> classpathEntries = new ArrayList<>(3);
 		if (!(project instanceof JavaProject)) {
 			return classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
 		}
 		JavaProject javaProject = (JavaProject) project;
-		IClasspathEntry[] entries = javaProject.getExpandedClasspath();
+		IClasspathEntry[] entries = javaProject.getExpandedClasspath(excludeTestCode);
 
 		IClasspathEntry entry1 = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		if (isModularProject(project)) {
@@ -1187,6 +1223,7 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		boolean excludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.PROJECT:
 				// if the project has multiple output locations, they must be returned
@@ -1197,7 +1234,7 @@ public final class JavaRuntime {
 					if (project == null || !p.isOpen() || !project.exists()) {
 						return new IRuntimeClasspathEntry[0];
 					}
-					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty());
+					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty(), excludeTestCode);
 					if (entries != null) {
 						return entries;
 					}
@@ -1211,7 +1248,7 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
-					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, null, configuration);
+					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, null, false, configuration);
 					if (resolved != null) {
 						return resolved;
 					}
@@ -1221,7 +1258,7 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
-					return computeDefaultContainerEntries(entry, configuration);
+					return computeDefaultContainerEntries(entry, configuration, excludeTestCode);
 				}
 				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 			case IRuntimeClasspathEntry.ARCHIVE:
@@ -1258,16 +1295,21 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Default resolution for a classpath variable - resolve to an archive. Only
-	 * one of project/configuration can be non-null.
+	 * Default resolution for a classpath variable - resolve to an archive. Only one of project/configuration can be non-null.
 	 *
-	 * @param entry the {@link IRuntimeClasspathEntry} to try and resolve
-	 * @param project the project context or <code>null</code>
-	 * @param configuration configuration context or <code>null</code>
+	 * @param entry
+	 *            the {@link IRuntimeClasspathEntry} to try and resolve
+	 * @param project
+	 *            the project context or <code>null</code>
+	 * @param excludeTestCode
+	 *            if true, exclude test-code (only used if project is non-null)
+	 * @param configuration
+	 *            configuration context or <code>null</code>
 	 * @return IRuntimeClasspathEntry[]
-	 * @throws CoreException if a problem is encountered trying to resolve the given classpath entry
+	 * @throws CoreException
+	 *             if a problem is encountered trying to resolve the given classpath entry
 	 */
-	private static IRuntimeClasspathEntry[] resolveVariableEntry(IRuntimeClasspathEntry entry, IJavaProject project, ILaunchConfiguration configuration) throws CoreException {
+	private static IRuntimeClasspathEntry[] resolveVariableEntry(IRuntimeClasspathEntry entry, IJavaProject project, boolean excludeTestCode, ILaunchConfiguration configuration) throws CoreException {
 		// default resolution - an archive
 		IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
 		if (archPath != null) {
@@ -1300,7 +1342,7 @@ public final class JavaRuntime {
 				IRuntimeClasspathEntry runtimeArchEntry = newRuntimeClasspathEntry(archEntry);
 				runtimeArchEntry.setClasspathProperty(entry.getClasspathProperty());
 				if (configuration == null) {
-					return resolveRuntimeClasspathEntry(runtimeArchEntry, project);
+					return resolveRuntimeClasspathEntry(runtimeArchEntry, project, excludeTestCode);
 				}
 				return resolveRuntimeClasspathEntry(runtimeArchEntry, configuration);
 			}
@@ -1309,17 +1351,23 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns runtime classpath entries corresponding to the output locations
-	 * of the given project, or null if the project only uses the default
+	 * Returns runtime classpath entries corresponding to the output locations of the given project, or null if the project only uses the default
 	 * output location.
 	 *
-	 * @param project the {@link IJavaProject} to resolve the output locations for
-	 * @param classpathProperty the type of classpath entries to create
+	 * @param project
+	 *            the {@link IJavaProject} to resolve the output locations for
+	 * @param classpathProperty
+	 *            the type of classpath entries to create
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources are excluded
+	 *
 	 * @return IRuntimeClasspathEntry[] or <code>null</code>
-	 * @throws CoreException if output resolution encounters a problem
+	 * @throws CoreException
+	 *             if output resolution encounters a problem
 	 */
-	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty) throws CoreException {
+	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project, int classpathProperty, boolean excludeTestCode) throws CoreException {
 		List<IPath> nonDefault = new ArrayList<>();
+		boolean defaultUsedByNonTest = false;
 		if (project.exists() && project.getProject().isOpen()) {
 			IClasspathEntry entries[] = project.getRawClasspath();
 			for (int i = 0; i < entries.length; i++) {
@@ -1327,20 +1375,28 @@ public final class JavaRuntime {
 				if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = classpathEntry.getOutputLocation();
 					if (path != null) {
-						nonDefault.add(path);
+						if (!(excludeTestCode && classpathEntry.isTest())) {
+							nonDefault.add(path);
+						}
+					} else {
+						if (!classpathEntry.isTest()) {
+							defaultUsedByNonTest = true;
+						}
 					}
 				}
 			}
 		}
 		boolean isModular = project.getModuleDescription() != null;
-		if (nonDefault.isEmpty() && !isModular) {
+		if (nonDefault.isEmpty() && !isModular && !excludeTestCode) {
 			// return here only if non-modular, because patch-module might be needed otherwise
 			return null;
 		}
 		// add the default location if not already included
 		IPath def = project.getOutputLocation();
-		if (!nonDefault.contains(def)) {
-			nonDefault.add(def);
+		if (!excludeTestCode || defaultUsedByNonTest) {
+			if (!nonDefault.contains(def)) {
+				nonDefault.add(def);
+			}
 		}
 		IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
 		for (int i = 0; i < locations.length; i++) {
@@ -1383,6 +1439,34 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+		return resolveRuntimeClasspathEntry(entry, project, false);
+	}
+
+	/**
+	 * Returns resolved entries for the given entry in the context of the given
+	 * Java project. If the entry is of kind
+	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and container
+	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
+	 * and the associated Java project specifies non-default output locations,
+	 * the corresponding output locations are returned. Otherwise, the given
+	 * entry is returned.
+	 * <p>
+	 * If the given entry is a variable entry, and a resolver is not registered,
+	 * the entry itself is returned. If the given entry is a container, and a
+	 * resolver is not registered, resolved runtime classpath entries are calculated
+	 * from the associated container classpath entries, in the context of the
+	 * given project.
+	 * </p>
+	 * @param entry runtime classpath entry
+	 * @param project Java project context
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources and test dependencies are excluded
+	 * @return resolved runtime classpath entry
+	 * @exception CoreException if unable to resolve
+	 * @see IRuntimeClasspathEntryResolver
+	 * @since 3.10
+	 */
+	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project, boolean excludeTestCode) throws CoreException {
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.PROJECT:
 				// if the project has multiple output locations, they must be returned
@@ -1391,7 +1475,7 @@ public final class JavaRuntime {
 					IProject p = (IProject)resource;
 					IJavaProject jp = JavaCore.create(p);
 					if (jp != null && p.isOpen() && jp.exists()) {
-						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty());
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty(), excludeTestCode);
 						if (entries != null) {
 							return entries;
 						}
@@ -1403,22 +1487,22 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
-					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, project, null);
+					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, project, excludeTestCode, null);
 					if (resolved != null) {
 						return resolved;
 					}
 					break;
 				}
-				return resolver.resolveRuntimeClasspathEntry(entry, project);
+				return resolver.resolveRuntimeClasspathEntry(entry, project, excludeTestCode);
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
-					return computeDefaultContainerEntries(entry, project);
+					return computeDefaultContainerEntries(entry, project, excludeTestCode);
 				}
-				return resolver.resolveRuntimeClasspathEntry(entry, project);
+				return resolver.resolveRuntimeClasspathEntry(entry, project, excludeTestCode);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
-				return resolver.resolveRuntimeClasspathEntry(entry, project);
+				return resolver.resolveRuntimeClasspathEntry(entry, project, excludeTestCode);
 			default:
 				break;
 		}
@@ -1426,30 +1510,40 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Performs default resolution for a container entry.
-	 * Delegates to the Java model.
-	 * @param entry the {@link IRuntimeClasspathEntry} to compute default container entries for
-	 * @param config the backing {@link ILaunchConfiguration}
+	 * Performs default resolution for a container entry. Delegates to the Java model.
+	 *
+	 * @param entry
+	 *            the {@link IRuntimeClasspathEntry} to compute default container entries for
+	 * @param config
+	 *            the backing {@link ILaunchConfiguration}
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources and test dependencies are excluded
 	 * @return the complete listing of default container entries or an empty list, never <code>null</code>
-	 * @throws CoreException if the computation encounters a problem
+	 * @throws CoreException
+	 *             if the computation encounters a problem
 	 */
-	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
+	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config, boolean excludeTestCode) throws CoreException {
 		IJavaProject project = entry.getJavaProject();
 		if (project == null) {
 			project = getJavaProject(config);
 		}
-		return computeDefaultContainerEntries(entry, project);
+		return computeDefaultContainerEntries(entry, project, excludeTestCode);
 	}
 
 	/**
-	 * Performs default resolution for a container entry.
-	 * Delegates to the Java model.
-	 * @param entry the {@link IRuntimeClasspathEntry} to compute default container entries for
-	 * @param project the backing {@link IJavaProject}
+	 * Performs default resolution for a container entry. Delegates to the Java model.
+	 *
+	 * @param entry
+	 *            the {@link IRuntimeClasspathEntry} to compute default container entries for
+	 * @param project
+	 *            the backing {@link IJavaProject}
+	 * @param excludeTestCode
+	 *            if true, output folders corresponding to test sources and test dependencies are excluded
 	 * @return the complete listing of default container entries or an empty list, never <code>null</code>
-	 * @throws CoreException if the computation encounters a problem
+	 * @throws CoreException
+	 *             if the computation encounters a problem
 	 */
-	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
+	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, IJavaProject project, boolean excludeTestCode) throws CoreException {
 		if (project == null || entry == null) {
 			// cannot resolve without entry or project context
 			return new IRuntimeClasspathEntry[0];
@@ -1493,7 +1587,7 @@ public final class JavaRuntime {
 					if (!projects.contains(jp)) {
 						projects.add(jp);
 						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
-						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
+						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp, excludeTestCode);
 						for (int j = 0; j < entries.length; j++) {
 							IRuntimeClasspathEntry e = entries[j];
 							if (!resolved.contains(e)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -57,6 +58,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -91,6 +94,8 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	 * The last launch config this tab was initialized from
 	 */
 	protected ILaunchConfiguration fLaunchConfiguration;
+
+	private Button fExcludeTestCodeButton;
 
 	/**
 	 * Constructor
@@ -140,6 +145,16 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 		pathButtonComp.setFont(font);
 
 		createPathButtons(pathButtonComp);
+		SWTFactory.createVerticalSpacer(comp, 2);
+
+		fExcludeTestCodeButton = SWTFactory.createCheckButton(comp, LauncherMessages.JavaClasspathTab_Exclude_Test_Code, null, false, 2);
+		fExcludeTestCodeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				setDirty(true);
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 
 	/**
@@ -211,6 +226,10 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		refresh(configuration);
 		fClasspathViewer.getTreeViewer().expandToLevel(2);
+		try {
+			fExcludeTestCodeButton.setSelection(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false));
+		} catch (CoreException e) {
+		}
 	}
 
 	/* (non-Javadoc)
@@ -291,6 +310,16 @@ public class JavaClasspathTab extends AbstractJavaClasspathTab {
 				} catch (CoreException e) {
 					JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus());
 				}
+			}
+			try {
+				boolean previousExcludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
+				if (previousExcludeTestCode != fExcludeTestCodeButton.getSelection()) {
+					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, fExcludeTestCodeButton.getSelection());
+					fClasspathViewer.setEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
+				}
+			}
+			catch (CoreException e) {
+				JDIDebugUIPlugin.statusDialog(LauncherMessages.JavaClasspathTab_Unable_to_save_classpath_1, e.getStatus());
 			}
 		}
 	}
