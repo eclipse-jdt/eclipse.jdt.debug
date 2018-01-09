@@ -482,7 +482,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			}
 		}
 		path[0] = classpathEntries.toArray(new String[classpathEntries.size()]);
-		path[1] = modulepathEntries.toArray(new String[classpathEntries.size()]);
+		path[1] = modulepathEntries.toArray(new String[modulepathEntries.size()]);
 		return path;
 	}
 
