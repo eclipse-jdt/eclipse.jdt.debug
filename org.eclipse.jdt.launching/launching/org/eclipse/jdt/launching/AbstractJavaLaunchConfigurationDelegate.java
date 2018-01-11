@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.provisional.JavaModelAccess;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -1182,6 +1183,23 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			sb.append(entry.getValue());
 		}
 
+		boolean excludeTestCode = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, false);
+		if (!excludeTestCode) {
+			// TODO: revisit to examine other possible solutions
+			IJavaProject project = getJavaProject(configuration);
+			if (project != null) {
+				for (String moduleName : JavaModelAccess.determineModulesOfProjectsWithNonEmptyClasspath(project)) {
+					if (sb.length() > 0) {
+						sb.append(' ');
+					}
+					sb.append("--add-reads"); //$NON-NLS-1$
+					sb.append(' ');
+					sb.append(moduleName);
+					sb.append('=');
+					sb.append("ALL-UNNAMED"); //$NON-NLS-1$
+				}
+			}
+		}
 		return sb.toString();
 	}
 }
