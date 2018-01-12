@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 IBM Corporation and others.
+ * Copyright (c) 2017, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -38,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class OverrideDependenciesDialog extends MessageDialog {
 	Text fModuleArgumentsText;
-	String fOriginalText;
+	Text fModuleArgumentsNewText;
 	ILaunchConfiguration flaunchConfiguration;
 
 
@@ -55,33 +56,54 @@ public class OverrideDependenciesDialog extends MessageDialog {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
 		Font font = parent.getFont();
+
 		Group group = new Group(comp, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		group.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = convertHeightInCharsToPixels(15);
-		gd.widthHint = convertWidthInCharsToPixels(45);
+		gd.heightHint = convertHeightInCharsToPixels(20);
+		gd.widthHint = convertWidthInCharsToPixels(70);
 		group.setLayoutData(gd);
 		group.setFont(font);
 
+
+		Label description = new Label(group, SWT.WRAP);
+		description.setText(ActionMessages.Override_Dependencies_label1);
 		fModuleArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = convertHeightInCharsToPixels(10);
-		gd.widthHint = convertWidthInCharsToPixels(35);
+		gd.widthHint = convertWidthInCharsToPixels(60);
 		fModuleArgumentsText.setLayoutData(gd);
+
+
+		Label description1 = new Label(group, SWT.WRAP);
+		description1.setText(ActionMessages.Override_Dependencies_label2);
+		fModuleArgumentsNewText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = convertHeightInCharsToPixels(10);
+		gd.widthHint = convertWidthInCharsToPixels(60);
+		fModuleArgumentsNewText.setLayoutData(gd);
+
+		String moduleCLIOptions = ""; //$NON-NLS-1$
+		try {
+			AbstractJavaLaunchConfigurationDelegate delegate = getJavaLaunchConfigurationDelegate();
+			if (delegate != null) {
+				moduleCLIOptions = delegate.getModuleCLIOptions(flaunchConfiguration);
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+
+		fModuleArgumentsText.setText(moduleCLIOptions);
+		fModuleArgumentsText.setEditable(false);
 		try {
 			if (!flaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true)) {
 				String str = flaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, "");//$NON-NLS-1$
-				fModuleArgumentsText.setText(str);
+				fModuleArgumentsNewText.setText(str);
 
 			} else {
-				AbstractJavaLaunchConfigurationDelegate delegate = getJavaLaunchConfigurationDelegate();
-				if (delegate != null) {
-					fModuleArgumentsText.setText(delegate.getModuleCLIOptions(flaunchConfiguration));
-				}
+				fModuleArgumentsNewText.setText(moduleCLIOptions);
 			}
-			fOriginalText = fModuleArgumentsText.getText();
-
 		}
 		catch (CoreException e) {
 			e.printStackTrace();
@@ -108,12 +130,13 @@ public class OverrideDependenciesDialog extends MessageDialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if(buttonId == OK) {
-			if (!fModuleArgumentsText.getText().equals(fOriginalText)) {
+			// Save if overridden
+			if (!fModuleArgumentsNewText.getText().equals(fModuleArgumentsText.getText())) {
 				ILaunchConfigurationWorkingCopy workingCopy;
 				try {
 					workingCopy = flaunchConfiguration.getWorkingCopy();
 					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, false);
-					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, fModuleArgumentsText.getText());
+					workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, fModuleArgumentsNewText.getText());
 					workingCopy.doSave();
 				}
 				catch (CoreException e) {
