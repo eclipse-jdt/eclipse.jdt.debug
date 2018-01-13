@@ -308,7 +308,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		if (BreakpointToggleUtils.isToggleTracepoints() && finalSelection instanceof ITextSelection && part instanceof CompilationUnitEditor) {
 			String pattern = getCodeTemplate((ITextSelection) finalSelection, (CompilationUnitEditor) part);
 			if (pattern != null) {
-				pattern.trim();
+				pattern = pattern.trim();
 				pattern = pattern.replaceAll("\\\t", ""); //$NON-NLS-1$//$NON-NLS-2$
 				methodBreakpoint.setCondition(pattern);
 				methodBreakpoint.setConditionEnabled(true);
@@ -408,7 +408,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 			if (BreakpointToggleUtils.isToggleTracepoints() && selection instanceof ITextSelection && part instanceof CompilationUnitEditor) {
 				String pattern = getCodeTemplate((ITextSelection) selection, (CompilationUnitEditor) part);
 				if (pattern != null) {
-					pattern.trim();
+					pattern = pattern.trim();
 					pattern = pattern.replaceAll("\\\t", ""); //$NON-NLS-1$//$NON-NLS-2$
 					breakpoint.setCondition(pattern);
 					breakpoint.setConditionEnabled(true);
@@ -886,24 +886,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
      * @return true if the selection is a field false otherwise
      */
 	private static boolean isFields(IStructuredSelection selection) {
-        if (!selection.isEmpty()) {
-        	try {
-	            Iterator<?> iterator = selection.iterator();
-	            while (iterator.hasNext()) {
-	                Object thing = iterator.next();
-	                if (thing instanceof IField) {
-	                	int flags = ((IField)thing).getFlags();
-	                	return !Flags.isFinal(flags) & !(Flags.isFinal(flags) & Flags.isStatic(flags));
-	                }
-	                else if(thing instanceof IJavaFieldVariable) {
-	                	IJavaFieldVariable fv = (IJavaFieldVariable)thing;
-	                	return !fv.isFinal() & !(fv.isFinal() & fv.isStatic());
-	                }
-	            }
-        	}
-        	catch(JavaModelException e) {return false;}
-        	catch(DebugException de) {return false;}
+		if (selection.isEmpty()) {
+			return false;
         }
+		try {
+			Iterator<?> iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				Object thing = iterator.next();
+				if (thing instanceof IField) {
+					int flags = ((IField) thing).getFlags();
+					return !Flags.isFinal(flags);
+				} else if (thing instanceof IJavaFieldVariable) {
+					IJavaFieldVariable fv = (IJavaFieldVariable) thing;
+					return !fv.isFinal();
+				}
+			}
+		} catch (JavaModelException | DebugException e) {
+			return false;
+		}
         return false;
     }
 
@@ -963,7 +963,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (fin) {
 					fin = javaField.getConstant() != null; // watch point is allowed if no constant value
 				}
-				allowed = !(fin) & !(Flags.isStatic(f) & fin);
+				allowed = !fin;
 			} else if (element instanceof IJavaFieldVariable) {
 				IJavaFieldVariable var = (IJavaFieldVariable) element;
 				typeName = var.getDeclaringType().getName();
@@ -972,7 +972,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				if (fin) {
 					fin = javaField.getConstant() != null; // watch point is allowed if no constant value
 				}
-				allowed = !(fin) & !(var.isStatic() & fin);
+				allowed = !fin;
 			}
 			IJavaBreakpoint breakpoint = getWatchpoint(typeName, fieldName);
 			if (breakpoint != null) {
@@ -1493,9 +1493,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 		String condition = ((IJavaLineBreakpoint) breakpoint).getCondition();
 		boolean conditionChanged = true;
 		if (condition != null) {
-			int index = condition.indexOf(";"); //$NON-NLS-1$
+			int index = condition.indexOf(';');
 			if (index != -1) {
-				int lastIndex = condition.lastIndexOf(";"); //$NON-NLS-1$
+				int lastIndex = condition.lastIndexOf(';');
 				if (index == lastIndex) {
 					conditionChanged = false;
 				}
