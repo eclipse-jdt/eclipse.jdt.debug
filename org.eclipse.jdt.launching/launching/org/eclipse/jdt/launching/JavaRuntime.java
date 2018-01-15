@@ -23,6 +23,8 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -66,7 +68,6 @@ import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.provisional.JavaModelAccess;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
@@ -3366,7 +3367,11 @@ public final class JavaRuntime {
 		throw new CoreException(status);
 	}
 
-	private static String PATCH_MODULE = "--" + IClasspathAttribute.PATCH_MODULE; //$NON-NLS-1$
+	private static final String BLANK = " "; //$NON-NLS-1$
+	private static final String COMMA = ","; //$NON-NLS-1$
+	private static final String OPTION_START = "--"; //$NON-NLS-1$
+	private static final String ADD_MODULES = "--add-modules "; //$NON-NLS-1$
+	private static final String LIMIT_MODULES = "--limit-modules "; //$NON-NLS-1$
 
 	/**
 	 * Returns the module-related command line options for the configuration that are needed at runtime as equivalents of those options specified by
@@ -3396,58 +3401,11 @@ public final class JavaRuntime {
 					for (IClasspathEntry iClasspathEntry : rawClasspath) {
 						if (iClasspathEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 							if (JavaRuntime.JRE_CONTAINER.equals(iClasspathEntry.getPath().segment(0))) {
-								String cliOptions = JavaModelAccess.getModuleCLIOptions(jp, iClasspathEntry);
-								String str11 = cliOptions;
-								int index = cliOptions.indexOf(":"); //$NON-NLS-1$
-								StringBuffer cliOptionBuffer = new StringBuffer();
-								if ( index != -1) {
-									String[] splited = str11.split("\\s+"); //$NON-NLS-1$
-									int i = 0;
-									for (String string : splited) {
-										if (string.equals(PATCH_MODULE)) {
-											cliOptionBuffer.append(" "); //$NON-NLS-1$
-											cliOptionBuffer.append(string);
-											i++;
-											continue;
-										}
-										if (i > 0) {
-											if (splited[i - 1].equals(PATCH_MODULE)) {
-												cliOptionBuffer.append(" "); //$NON-NLS-1$
-												cliOptionBuffer.append(string);
-												i++;
-												continue;
-											}
-										}
-										index = string.indexOf(":"); //$NON-NLS-1$
-										if (index == -1) {
-											if (i > 0) {
-												cliOptionBuffer.append(" "); //$NON-NLS-1$
-											}
-											cliOptionBuffer.append(string);
-
-										} else {
-											String[] splited1 = string.split(":"); //$NON-NLS-1$
-											int j = 0;
-											for (String string2 : splited1) {
-												if (j > 0) {
-													cliOptionBuffer.append(" "); //$NON-NLS-1$
-													cliOptionBuffer.append(splited[i - 1]);
-												}
-												cliOptionBuffer.append(" "); //$NON-NLS-1$
-												cliOptionBuffer.append(string2);
-												j++;
-											}
-										}
-										i++;
-									}
-								}
-								else {
-									cliOptionBuffer.append(cliOptions);
-								}
-								if (cliOptionString.length() > 0 && cliOptionBuffer.length() > 0) {
+								String cliOptions = getModuleCLIOptions(jp, iClasspathEntry);
+								if (cliOptionString.length() > 0 && cliOptions.length() > 0) {
 									cliOptionString.append(" "); //$NON-NLS-1$
 								}
-								cliOptionString.append(cliOptionBuffer);
+								cliOptionString.append(cliOptions);
 							}
 						}
 					}
@@ -3459,5 +3417,80 @@ public final class JavaRuntime {
 			e.printStackTrace();
 		}
 		return cliOptionString.toString().trim();
+	}
+
+	/**
+	 * Returns the module-related command line options that are needed at runtime as equivalents of those options specified by
+	 * {@link IClasspathAttribute}s of the following names:
+	 * <ul>
+	 * <li>{@link IClasspathAttribute#ADD_EXPORTS}</li>
+	 * <li>{@link IClasspathAttribute#ADD_READS}</li>
+	 * <li>{@link IClasspathAttribute#LIMIT_MODULES}</li>
+	 * </ul>
+	 * <p>
+	 * Note that the {@link IClasspathAttribute#LIMIT_MODULES} value may be split into an {@code --add-modules} part and a {@code --limit-modules}
+	 * part.
+	 * </p>
+	 *
+	 * @param project
+	 *            the project holding the main class to be launched
+	 * @param systemLibrary
+	 *            the classpath entry of the given project which represents the JRE System Library
+	 * @return module-related command line options suitable for running the application.
+	 * @throws JavaModelException
+	 *             when access to the classpath or module description of the given project fails.
+	 */
+	private static String getModuleCLIOptions(IJavaProject project, IClasspathEntry systemLibrary) throws JavaModelException {
+		StringBuilder buf = new StringBuilder();
+		for (IClasspathEntry classpathEntry : project.getRawClasspath()) {
+			for (IClasspathAttribute classpathAttribute : classpathEntry.getExtraAttributes()) {
+				String optName = classpathAttribute.getName();
+				switch (optName) {
+					case IClasspathAttribute.ADD_EXPORTS:
+					case IClasspathAttribute.ADD_READS:
+						for (String value : classpathAttribute.getValue().split(COMMA)) {
+							buf.append(OPTION_START).append(optName).append(BLANK).append(value).append(BLANK);
+						}
+						break;
+					case IClasspathAttribute.LIMIT_MODULES:
+						addLimitModules(buf, project, systemLibrary, classpathAttribute.getValue());
+						break;
+				}
+			}
+		}
+		return buf.toString().trim();
+	}
+
+	private static void addLimitModules(StringBuilder buf, IJavaProject prj, IClasspathEntry systemLibrary, String value) throws JavaModelException {
+		String[] modules = value.split(COMMA);
+		boolean isUnnamed = prj.getModuleDescription() == null;
+		if (isUnnamed) {
+			Set<String> selected = new HashSet<>(Arrays.asList(modules));
+			List<IPackageFragmentRoot> allSystemRoots = Arrays.asList(prj.findUnfilteredPackageFragmentRoots(systemLibrary));
+			Set<String> defaultModules = new HashSet<>(JavaProject.defaultRootModules(allSystemRoots));
+
+			Set<String> limit = new HashSet<>(defaultModules);
+			if (limit.retainAll(selected)) { // limit = selected ∩ default -- only add the option, if limit ⊂ default
+				if (limit.isEmpty()) {
+					throw new IllegalArgumentException("Cannot hide all modules, at least java.base is required"); //$NON-NLS-1$
+				}
+				buf.append(LIMIT_MODULES).append(joinedSortedList(limit)).append(BLANK);
+			}
+
+			Set<String> add = new HashSet<>(selected);
+			add.removeAll(defaultModules);
+			if (!add.isEmpty()) { // add = selected \ default
+				buf.append(ADD_MODULES).append(joinedSortedList(add)).append(BLANK);
+			}
+		} else {
+			Arrays.sort(modules);
+			buf.append(LIMIT_MODULES).append(String.join(COMMA, modules)).append(BLANK);
+		}
+	}
+
+	private static String joinedSortedList(Collection<String> list) {
+		String[] limitArray = list.toArray(new String[list.size()]);
+		Arrays.sort(limitArray);
+		return String.join(COMMA, limitArray);
 	}
 }
