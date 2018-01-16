@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1036,25 +1036,40 @@ public final class JavaRuntime {
 	 * @since 3.10
 	 */
 	public static boolean isModularJava(IVMInstall vm) {
+		if (compareJavaVersions(vm, JavaCore.VERSION_1_8) > 0) {
+			return true;
+		}
+		return false;
+	}
 
+	/**
+	 * Compares the version of vm and a version of the Java platform.
+	 *
+	 * @param vm
+	 *            IVMInstall to be compared
+	 * @param ver
+	 *            version to be compared
+	 * @return the value {@code 0} if both versions are the same; a value less than {@code 0} if <code>vm</code> is smaller than <code>ver</code>; and
+	 *         a value greater than {@code 0} if <code>vm</code> is higher than <code>ver</code>; a value {@code -1} in case of any exceptions;
+	 *
+	 * @since 3.10
+	 */
+	public static int compareJavaVersions(IVMInstall vm, String ver) {
 		if (vm instanceof AbstractVMInstall) {
 			AbstractVMInstall install = (AbstractVMInstall) vm;
 			String vmver = install.getJavaVersion();
 			if (vmver == null) {
-				return false;
+				return -1;
 			}
 			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.7, etc
 			if (vmver.length() > 3) {
 				vmver = vmver.substring(0, 3);
 			}
-			if (JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_1_8) > 0) {
-				return true;
-			}
+			return JavaCore.compareJavaVersions(vmver, ver);
 		}
-		return false;
+		return -1;
 
 	}
-
 	/**
 	 * Checks if project entry is modular
 	 *
