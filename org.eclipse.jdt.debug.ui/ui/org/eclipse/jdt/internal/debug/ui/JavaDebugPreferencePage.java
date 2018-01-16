@@ -92,7 +92,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fPerformHCRWithCompilationErrors;
 	private Button fShowStepResult;
 	private Button fAdvancedSourcelookup;
-	private Button fListenToThreadNameChanges;
 
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
@@ -177,9 +176,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		SWTFactory.createVerticalSpacer(composite, 1);
 		fAdvancedSourcelookup = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_advancedSourcelookup, null, false, 1);
 
-		SWTFactory.createVerticalSpacer(composite, 1);
-		fListenToThreadNameChanges = SWTFactory.createCheckButton(composite, DebugUIMessages.JavaDebugPreferencePage_listenToThreadNameChanges, null, false, 1);
-
 		setValues();
 
 		fTimeoutText.setPropertyChangeListener(this);
@@ -201,7 +197,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT, fPromptDeleteConditionalBreakpoint.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION, fOpenInspector.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES, fListenToThreadNameChanges.getSelection());
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
 			prefs.putBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, fEnableHCRButton.getSelection());
@@ -250,7 +245,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptUnableToInstallBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fPromptDeleteConditionalBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
-		fListenToThreadNameChanges.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES));
 		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
 			fEnableHCRButton.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, true));
@@ -286,7 +280,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		fPromptDeleteConditionalBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_PROMPT_DELETE_CONDITIONAL_BREAKPOINT));
 		fOpenInspector.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_OPEN_INSPECT_POPUP_ON_EXCEPTION));
-		fListenToThreadNameChanges.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_LISTEN_ON_THREAD_NAME_CHANGES));
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JDIDebugPlugin.getUniqueIdentifier());
 		if(prefs != null) {
 			fEnableHCRButton.setSelection(prefs.getBoolean(JDIDebugPlugin.PREF_ENABLE_HCR, true));
