@@ -844,7 +844,6 @@ public final class JavaRuntime {
 	 *
 	 * @param project
 	 *            the {@link IJavaProject} to compute the unresolved runtime classpath for
-	 * @param excludeTestCode
 	 * @return runtime classpath entries
 	 * @exception CoreException
 	 *                if unable to compute the runtime classpath
