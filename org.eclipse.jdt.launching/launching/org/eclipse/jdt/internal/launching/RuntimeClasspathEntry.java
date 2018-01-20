@@ -14,6 +14,8 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -674,14 +676,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	private static IClasspathAttribute[] setClasspathAttribute(IClasspathAttribute[] attributes, String name, String value) {
 		for (int i = attributes.length; --i >= 0;) {
 			if (name.equals(attributes[i].getName())) {
-				IClasspathAttribute[] nw = new IClasspathAttribute[attributes.length];
-				System.arraycopy(nw, 0, attributes, 0, attributes.length);
+				IClasspathAttribute[] nw = Arrays.copyOf(attributes, attributes.length);
 				nw[i] = JavaCore.newClasspathAttribute(name, value);
 				return nw;
 			}
 		}
-		IClasspathAttribute[] nw = new IClasspathAttribute[attributes.length + 1];
-		System.arraycopy(nw, 0, attributes, 0, attributes.length);
+		IClasspathAttribute[] nw = Arrays.copyOf(attributes, attributes.length + 1);
 		nw[attributes.length] = JavaCore.newClasspathAttribute(name, value);
 		return nw;
 	}
