@@ -3377,7 +3377,6 @@ public final class JavaRuntime {
 		try {
 			IRuntimeClasspathEntry[] entries;
 			entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-			entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			for (IRuntimeClasspathEntry iRuntimeClasspathEntry : entries) {
