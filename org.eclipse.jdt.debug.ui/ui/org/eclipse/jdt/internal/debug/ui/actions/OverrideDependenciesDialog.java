@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -140,7 +141,21 @@ public class OverrideDependenciesDialog extends MessageDialog {
 					workingCopy.doSave();
 				}
 				catch (CoreException e) {
-					e.printStackTrace();
+					JDIDebugUIPlugin.log(e);
+				}
+			} else {
+				ILaunchConfigurationWorkingCopy workingCopy;
+				try {
+					workingCopy = flaunchConfiguration.getWorkingCopy();
+					boolean attribute = workingCopy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true);
+					if (!attribute) {
+						workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_MODULE_CLI_OPTIONS, true);
+						workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MODULE_CLI_OPTIONS, fModuleArgumentsNewText.getText());
+						workingCopy.doSave();
+					}
+
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 
