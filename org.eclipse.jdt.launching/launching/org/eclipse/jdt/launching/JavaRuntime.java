@@ -3380,8 +3380,9 @@ public final class JavaRuntime {
 
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			for (IRuntimeClasspathEntry iRuntimeClasspathEntry : entries) {
-				if (iRuntimeClasspathEntry.getClasspathEntry().getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-					IResource res = root.findMember(iRuntimeClasspathEntry.getClasspathEntry().getPath());
+				IClasspathEntry classpathEntry = iRuntimeClasspathEntry.getClasspathEntry();
+				if (classpathEntry != null && classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					IResource res = root.findMember(classpathEntry.getPath());
 					IJavaProject jp = (IJavaProject) JavaCore.create(res);
 					IClasspathEntry[] rawClasspath = jp.getRawClasspath();
 					for (IClasspathEntry iClasspathEntry : rawClasspath) {
