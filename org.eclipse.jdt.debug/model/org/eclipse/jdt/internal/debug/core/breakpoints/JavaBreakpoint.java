@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,10 +471,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void disableTriggerPoint(Event event) {
 		try{
 			if (isTriggerPoint() && isEnabled()) {
-					DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
+				if (this instanceof JavaLineBreakpoint) {
+					JavaLineBreakpoint lbp = (JavaLineBreakpoint) this;
+					if (lbp.hasCondition()) {
+						return;
+					}
+				}
+				DebugPlugin.getDefault().getBreakpointManager().enableTriggerPoints(null, false);
 					// make a note that we auto-disabled the trigger point for this breakpoint.
 					// we re enable it at cleanup of JDITarget
-				}
+			}
 			}catch (CoreException ce) {
 				JDIDebugPlugin.log(ce);
 			}
