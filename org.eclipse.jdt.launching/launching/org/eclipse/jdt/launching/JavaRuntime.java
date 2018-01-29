@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1040,6 +1040,9 @@ public final class JavaRuntime {
 			AbstractVMInstall install = (AbstractVMInstall) vm;
 			String vmver = install.getJavaVersion();
 			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.7, etc
+			if (vmver == null) {
+				return false;
+			}
 			if (vmver.length() > 3) {
 				vmver = vmver.substring(0, 3);
 			}
