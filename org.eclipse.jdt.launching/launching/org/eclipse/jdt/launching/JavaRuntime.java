@@ -496,11 +496,15 @@ public final class JavaRuntime {
 	 * 			VM was set or when the default VM has been disposed.
 	 */
 	public static IVMInstall getDefaultVMInstall() {
+
 		IVMInstall install= getVMFromCompositeId(getDefaultVMId());
 		if (install != null) {
 			File location = install.getInstallLocation();
 			if (location != null) {
 				if (location.exists()) {
+					if (LaunchingPlugin.isVMLogging()) {
+						LaunchingPlugin.log(LaunchingMessages.VMLogging_3 + install.getInstallLocation());
+					}
 					return install;
 				}
 			}
@@ -514,7 +518,11 @@ public final class JavaRuntime {
 			fgVMTypes = null;
 			initializeVMs();
 		}
-		return getVMFromCompositeId(getDefaultVMId());
+		install = getVMFromCompositeId(getDefaultVMId());
+		if (LaunchingPlugin.isVMLogging()) {
+			LaunchingPlugin.log(LaunchingMessages.VMLogging_3 + install.getInstallLocation());
+		}
+		return install;
 	}
 
 	/**

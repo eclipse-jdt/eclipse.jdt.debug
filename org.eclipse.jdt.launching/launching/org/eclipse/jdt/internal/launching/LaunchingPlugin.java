@@ -424,6 +424,9 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 	 * @param info the library information, or <code>null</code> to remove
 	 */
 	public static void setLibraryInfo(String javaInstallPath, LibraryInfo info) {
+		if (isVMLogging()) {
+			LaunchingPlugin.log(LaunchingMessages.VMLogging_2 + javaInstallPath);
+		}
 		if (fgLibraryInfoMap == null) {
 			restoreLibraryInfo();
 		}
@@ -440,6 +443,11 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 		//once the library info has been set we can forget it has changed
 		fgHasChanged.remove(javaInstallPath);
 		saveLibraryInfo();
+	}
+
+	public static boolean isVMLogging() {
+		String vmLogging = System.getProperty("jdt.debug.launching.vmLogging"); //$NON-NLS-1$
+		return "true".equalsIgnoreCase(vmLogging); //$NON-NLS-1$
 	}
 
 	/**
@@ -947,6 +955,9 @@ public class LaunchingPlugin extends Plugin implements DebugOptionsListener, IEc
 							String[] extDirs = getPathsFromXML(element, "extensionDirs"); //$NON-NLS-1$
 							String[] endDirs = getPathsFromXML(element, "endorsedDirs"); //$NON-NLS-1$
 							if (location != null) {
+								if (isVMLogging()) {
+									LaunchingPlugin.log(LaunchingMessages.VMLogging_1 + location);
+								}
 								LibraryInfo info = new LibraryInfo(version, bootpath, extDirs, endDirs);
 								fgLibraryInfoMap.put(location, info);
 							}
