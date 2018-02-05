@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -2473,6 +2474,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(LAUNCHCONFIGURATIONS), configName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+        setEnvironment(config);
 		Set<String> modes = new HashSet<>();
 		modes.add(ILaunchManager.RUN_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
@@ -2495,6 +2497,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         ILaunchConfigurationWorkingCopy config = type.newInstance(project.getProject().getFolder(containername), mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+        setEnvironment(config);
 		Set<String> modes = new HashSet<>();
 		modes.add(ILaunchManager.RUN_MODE);
 		config.setPreferredLaunchDelegate(modes, LOCAL_JAVA_APPLICATION_TYPE_ID);
@@ -2507,6 +2510,14 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, JAVA);
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
         return config.doSave();
+    }
+
+    private void setEnvironment(ILaunchConfigurationWorkingCopy workingCopy) {
+      Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream()
+        .filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+      workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
     }
 
 	/**
@@ -2779,4 +2790,3 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 
 }
-

@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -344,6 +345,13 @@ public class ArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+
+    Map<String, String> env = getLaunchManager().getNativeEnvironment().entrySet().stream()
+  		.filter(e -> !"JAVA_TOOL_OPTIONS".equals(e.getKey()))
+  		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, env);
+
 		IVMInstall vm = JavaRuntime.getVMInstall(get14Project());
 		assertNotNull("shold be able to get the default VM install from the 1.4 project", vm);
 		//workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, JavaRuntime.newJREContainerPath(vm).toPortableString());
