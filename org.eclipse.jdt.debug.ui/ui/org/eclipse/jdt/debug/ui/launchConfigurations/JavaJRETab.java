@@ -97,6 +97,8 @@ public class JavaJRETab extends JavaLaunchTab {
 		}
 	};
 
+	private boolean fCheckForClasspathDependenciesChange;
+
 	/**
 	 * Constructor
 	 */
@@ -104,6 +106,21 @@ public class JavaJRETab extends JavaLaunchTab {
 		super();
 		setHelpContextId(IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param checkForClasspathDependenciesChange
+	 *            if this is true, and the user changes between a non-modular jvm and a modular jvm, the user will be asked to apply changes before
+	 *            the tab is exited and the tabs will be refreshed.
+	 *
+	 * @since 3.9
+	 */
+	public JavaJRETab(boolean checkForClasspathDependenciesChange) {
+		this();
+		this.fCheckForClasspathDependenciesChange = checkForClasspathDependenciesChange;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
@@ -645,19 +662,11 @@ public class JavaJRETab extends JavaLaunchTab {
 	 */
 	@Override
 	public boolean OkToLeaveTab() {
-		ILaunchConfiguration launchConfiguration = getLaunchConfiguration();
-		try {
-			String id = launchConfiguration.getType().getIdentifier();
-			// Add "org.eclipse.jdt.launching.javaApplet" after support for java 9 is added in javaapplet
-			if (id.equals("org.eclipse.jdt.launching.localJavaApplication")) { //$NON-NLS-1$
-				boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
-				if (fCurrentJREModular != newJREModular) {
-					return handleClasspathDependenciesChange(newJREModular);
-				}
+		if (fCheckForClasspathDependenciesChange) {
+			boolean newJREModular = JavaRuntime.isModularConfiguration(getLaunchConfiguration());
+			if (fCurrentJREModular != newJREModular) {
+				return handleClasspathDependenciesChange(newJREModular);
 			}
-		}
-		catch (CoreException e) {
-			e.printStackTrace();
 		}
 
 		return true;

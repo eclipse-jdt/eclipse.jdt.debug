@@ -13,10 +13,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -38,27 +37,13 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		JavaClasspathTab tab = null;
-		if (dialog instanceof LaunchConfigurationsDialog) {
-			LaunchConfigurationTabGroupViewer tabViewer = ((LaunchConfigurationsDialog) dialog).getTabViewer();
-			if (tabViewer != null) {
-				Object input = tabViewer.getInput();
-				if (input instanceof ILaunchConfiguration) {
-					ILaunchConfiguration configuration = (ILaunchConfiguration) input;
-					if (JavaRuntime.isModularConfiguration(configuration)) {
-						tab = new JavaDependenciesTab();
-					}
-				}
-			}
-		}
-		if (tab == null) {
-			tab = new JavaClasspathTab();
-		}
+		ILaunchConfiguration configuration = DebugUITools.getLaunchConfiguration(dialog);
+		boolean isModularConfiguration = configuration != null && JavaRuntime.isModularConfiguration(configuration);
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new JavaMainTab(),
 			new JavaArgumentsTab(),
-			new JavaJRETab(),
-				tab,
+			new JavaJRETab(true), 
+			isModularConfiguration ? new JavaDependenciesTab() : new JavaClasspathTab(),
 			new SourceLookupTab(),
 			new EnvironmentTab(),
 			new CommonTab(),
