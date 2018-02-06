@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,10 @@ import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContaine
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -44,6 +48,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -173,8 +178,8 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			@Override
 			public void paneChanged(String newPaneID) {
 				if (newPaneID.equals(DefaultDetailPane.ID)){
-					fDetailPane.getCurrentControl().setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-					fDetailPane.getCurrentControl().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+					fDetailPane.getCurrentControl().setForeground(getSystemForegroundColor());
+					fDetailPane.getCurrentControl().setBackground(getSystemBackgroundColor());
 				}
 			}
 
@@ -359,8 +364,8 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			});
 
-	        setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-	        setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+	        setForegroundColor(getSystemForegroundColor());
+	        setBackgroundColor(getSystemBackgroundColor());
 		}
 
 
@@ -475,5 +480,26 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		return new ExpressionInformationControl(parent, false);
 	}
 
+	private static Color getSystemForegroundColor() {
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+		Color foreground = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+
+		if (foreground == null) {
+			return JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+		}
+
+		return foreground;
+	}
+
+	private static Color getSystemBackgroundColor() {
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+		Color background = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+
+		if (background == null) {
+			return JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
+
+		return background;
+	}
 
 }
