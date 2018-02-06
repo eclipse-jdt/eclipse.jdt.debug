@@ -29,7 +29,7 @@ public class DisplayMessages extends NLS {
 	public static String DisplayView_SelectAll_description;
 	public static String DisplayView_SelectAll_label;
 	public static String DisplayView_SelectAll_tooltip;
-	public static String DisplayView_Initial_Comment;
+	public static String DisplayView_Content_Description;
 
 	public static String JavaInspectExpression_0;
 

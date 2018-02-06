@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - Bug 530664 - Debug Shell hint moved to content description
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.display;
 
@@ -82,7 +83,6 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.ViewPart;
-
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -171,16 +171,13 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		fSourceViewer= new JDISourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.LEFT_TO_RIGHT);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
-		IDocument doc= getRestoredDocument();
-		if (doc.getLength() == 0) {
-			doc.set(DisplayMessages.DisplayView_Initial_Comment);
-		}
-		fSourceViewer.setDocument(doc);
+		fSourceViewer.setDocument(getRestoredDocument());
 		fSourceViewer.addTextInputListener(this);
 		fRestoredContents= null;
 		createActions();
 		createUndoRedoActions();
 		initializeToolBar();
+		this.setContentDescription(DisplayMessages.DisplayView_Content_Description);
 
 		// create context menu
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
