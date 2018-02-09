@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 import org.eclipse.jdt.launching.JavaRuntime;
 
-@SuppressWarnings("restriction")
 public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	/**
@@ -42,7 +41,7 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new JavaMainTab(),
 			new JavaArgumentsTab(),
-			new JavaJRETab(true), 
+			new JavaJRETab(true),
 			isModularConfiguration ? new JavaDependenciesTab() : new JavaClasspathTab(),
 			new SourceLookupTab(),
 			new EnvironmentTab(),
