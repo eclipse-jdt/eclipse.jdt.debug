@@ -341,10 +341,10 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		LibraryLocation[] libs = new LibraryLocation[entries.length];
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY || entry.getEntryKind() == IClasspathEntry.CPE_JRT_SYSTEM) {
+			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 				IPath path = entry.getPath();
 				File lib = path.toFile();
-				if (lib.exists()) {
+				if (lib.exists() && lib.isFile()) {
 					IPath srcPath = entry.getSourceAttachmentPath();
 					if (srcPath == null) {
 						srcPath = Path.EMPTY;

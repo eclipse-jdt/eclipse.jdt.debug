@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -30,7 +29,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -305,36 +303,6 @@ public class JREContainer implements IClasspathContainer {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(environmentId);
 			if (environment != null) {
 				rules = environment.getAccessRules(vm, libs, project);
-			}
-		}
-		if (vm instanceof IVMInstall2) {
-			// vm.getInstallLocation()
-			String version = ((IVMInstall2) vm).getJavaVersion();
-			if (JavaCore.compareJavaVersions(version, JavaCore.VERSION_1_8) > 0) {
-				IPath sourcePath = null;
-				IPath rootPath = null;
-				if (libs != null && libs.length > 0) {
-					sourcePath = libs[0].getSystemLibrarySourcePath();
-					rootPath = libs[0].getPackageRootPath();
-				}
-				IPath jdkPath = new Path(vm.getInstallLocation().getAbsolutePath());
-				if (sourcePath.isEmpty()) {
-					sourcePath = null;
-				}
-
-				if (rootPath.isEmpty()) {
-					rootPath = null;
-				}
-				// construct the classpath attributes for this library location
-				IClasspathAttribute[] attributes = JREContainer.buildClasspathAttributes(vm, libs[0], overrideJavaDoc);
-				IAccessRule[] libRules = null;
-				if (rules != null) {
-					libRules = rules[0];
-				} else {
-					libRules = EMPTY_RULES;
-				}
-				IClasspathEntry jrtEntry = JavaCore.newJrtEntry(jdkPath, sourcePath, rootPath, libRules, attributes, false);
-				return new IClasspathEntry[] { jrtEntry };
 			}
 		}
 		RuleKey key = null;
