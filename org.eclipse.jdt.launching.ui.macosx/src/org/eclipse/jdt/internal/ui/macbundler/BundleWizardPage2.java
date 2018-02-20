@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 			addButton1.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FileDialog fd= new FileDialog(addButton1.getShell(), SWT.OPEN);
+				FileDialog fd = new FileDialog(addButton1.getShell(), SWT.OPEN | SWT.SHEET);
 					fd.setText(Util.getString("page2.chooseFileDialog.title")); //$NON-NLS-1$
 					String path= fd.open();
 					if (path != null) {
@@ -70,7 +70,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 			addButton2.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					DirectoryDialog fd= new DirectoryDialog(addButton2.getShell(), SWT.OPEN);
+				DirectoryDialog fd = new DirectoryDialog(addButton2.getShell(), SWT.OPEN | SWT.SHEET);
 					fd.setText(Util.getString("page2.chooseFolder.dialog.title")); //$NON-NLS-1$
 					String path= fd.open();
 					if (path != null) {

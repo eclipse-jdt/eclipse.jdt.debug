@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell());
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
 				File file = new File(fJRERoot.getText());
 				String text = fJRERoot.getText();
 				if (file.isFile()) {

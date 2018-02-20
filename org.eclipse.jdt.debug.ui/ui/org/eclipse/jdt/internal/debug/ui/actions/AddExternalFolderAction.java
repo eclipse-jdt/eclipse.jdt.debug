@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class AddExternalFolderAction extends OpenDialogAction {
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
-		DirectoryDialog dialog= new DirectoryDialog(getShell(), SWT.MULTI);
+		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.MULTI | SWT.SHEET);
 		dialog.setText(ActionMessages.AddExternalFolderAction_Folder_Selection_3);
 		dialog.setFilterPath(lastUsedPath);
 		String res= dialog.open();

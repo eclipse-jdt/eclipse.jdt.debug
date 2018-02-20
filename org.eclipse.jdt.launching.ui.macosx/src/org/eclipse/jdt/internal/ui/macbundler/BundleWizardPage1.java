@@ -118,7 +118,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		browse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(browse.getShell(), SWT.SAVE);
+				DirectoryDialog dd = new DirectoryDialog(browse.getShell(), SWT.SAVE | SWT.SHEET);
 				dd.setMessage(Util.getString("page1.appFolder.browseDialog.message")); //$NON-NLS-1$
 				dd.setText(Util.getString("page1.appFolder.browseDialog.title")); //$NON-NLS-1$
 				String name = dd.open();
@@ -152,7 +152,7 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fd = new FileDialog(b.getShell(), SWT.OPEN);
+				FileDialog fd = new FileDialog(b.getShell(), SWT.OPEN | SWT.SHEET);
 				fd.setText(Util.getString("page1.appIcon.chooseDialog.title")); //$NON-NLS-1$
 				fd.setFilterExtensions(new String[] { "icns" }); //$NON-NLS-1$
 				String name = fd.open();
