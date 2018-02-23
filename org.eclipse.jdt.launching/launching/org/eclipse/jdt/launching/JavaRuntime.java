@@ -3444,6 +3444,9 @@ public final class JavaRuntime {
 								else {
 									cliOptionBuffer.append(cliOptions);
 								}
+								if (cliOptionString.length() > 0 && cliOptionBuffer.length() > 0) {
+									cliOptionString.append(" "); //$NON-NLS-1$
+								}
 								cliOptionString.append(cliOptionBuffer);
 							}
 						}
