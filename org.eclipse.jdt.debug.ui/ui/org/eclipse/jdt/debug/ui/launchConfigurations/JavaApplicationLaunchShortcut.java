@@ -25,12 +25,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.provisional.JavaModelAccess;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -48,12 +50,32 @@ import org.eclipse.jface.operation.IRunnableContext;
  * @since 3.3
  */
 public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
+	/**
+	 * Test if a type is from a location marked as test code (from the perspective of the project where it is defined.)
+	 *
+	 * @param type
+	 *            the type that is examined
+	 * @return false, if the corresponding class path entry is found and is not marked as test, otherwise true
+	 * @throws JavaModelException
+	 *             when access to the classpath entry corresponding to the given type fails.
+	 */
+	private static boolean isTestCode(IType type) throws JavaModelException {
+		IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) type.getPackageFragment().getParent();
+		IJavaProject javaProject = packageFragmentRoot.getJavaProject();
+		if (javaProject != null) {
+			IClasspathEntry entry = javaProject.getClasspathEntryFor(packageFragmentRoot.getPath());
+			if (entry != null && !entry.isTest()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
-	 * Returns the Java elements corresponding to the given objects. Members are translated
-	 * to corresponding declaring types where possible.
+	 * Returns the Java elements corresponding to the given objects. Members are translated to corresponding declaring types where possible.
 	 *
-	 * @param objects selected objects
+	 * @param objects
+	 *            selected objects
 	 * @return corresponding Java elements
 	 * @since 3.5
 	 */
@@ -90,7 +112,7 @@ public class JavaApplicationLaunchShortcut extends JavaLaunchShortcut {
 			wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(type.getTypeQualifiedName('.')));
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-			if (!JavaModelAccess.isTestCode(type)) {
+			if (!isTestCode(type)) {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_EXCLUDE_TEST_CODE, true);
 			}
 			wc.setMappedResources(new IResource[] {type.getUnderlyingResource()});

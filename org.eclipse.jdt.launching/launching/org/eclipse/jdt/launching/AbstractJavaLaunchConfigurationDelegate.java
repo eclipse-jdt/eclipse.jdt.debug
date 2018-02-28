@@ -51,7 +51,6 @@ import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IModuleDescription;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.provisional.JavaModelAccess;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -1188,7 +1187,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 			// TODO: revisit to examine other possible solutions
 			IJavaProject project = getJavaProject(configuration);
 			if (project != null) {
-				for (String moduleName : JavaModelAccess.determineModulesOfProjectsWithNonEmptyClasspath(project)) {
+				for (String moduleName : project.determineModulesOfProjectsWithNonEmptyClasspath()) {
 					if (sb.length() > 0) {
 						sb.append(' ');
 					}
