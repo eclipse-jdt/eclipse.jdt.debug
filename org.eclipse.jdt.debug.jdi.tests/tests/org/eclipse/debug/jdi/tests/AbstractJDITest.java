@@ -713,9 +713,9 @@ public abstract class AbstractJDITest extends TestCase {
 			int index = 0;
 			String binDirectory =
 				fTargetAddress
-					+ System.getProperty("file.separator")
+					+ File.separatorChar
 					+ "bin"
-					+ System.getProperty("file.separator");
+					+ File.separatorChar;
 
 			proxyString[index++] = binDirectory + "j9proxy";
 			proxyString[index++] = "localhost:" + (fBackEndPort - 1);
@@ -759,8 +759,8 @@ public abstract class AbstractJDITest extends TestCase {
 			} else {
 				binDirectory.append(fTargetAddress);
 			}
-			binDirectory.append(System.getProperty("file.separator"));
-			binDirectory.append("bin").append(System.getProperty("file.separator"));
+			binDirectory.append(File.separatorChar);
+			binDirectory.append("bin").append(File.separatorChar);
 
 			Vector<String> commandLine = new Vector<>();
 
@@ -798,9 +798,9 @@ public abstract class AbstractJDITest extends TestCase {
 			// Launch target VM
 			String binDirectory =
 				fTargetAddress
-					+ System.getProperty("file.separator")
+					+ File.separatorChar
 					+ "bin"
-					+ System.getProperty("file.separator");
+					+ File.separatorChar;
 
 			Vector<String> commandLine = new Vector<>();
 

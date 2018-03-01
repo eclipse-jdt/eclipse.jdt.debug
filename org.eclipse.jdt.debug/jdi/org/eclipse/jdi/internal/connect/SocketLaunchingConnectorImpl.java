@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.jdi.internal.connect;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
@@ -184,8 +185,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements
 		String address = listenConnector.startListening(args);
 
 		// String for Executable.
-		String slash = System.getProperty("file.separator"); //$NON-NLS-1$
-		String execString = fHome + slash + "bin" + slash + fLauncher; //$NON-NLS-1$
+		String execString = fHome + File.separatorChar + "bin" + File.separatorChar + fLauncher; //$NON-NLS-1$
 
 		// Add Debug options.
 		execString += " -Xdebug -Xnoagent -Djava.compiler=NONE"; //$NON-NLS-1$
