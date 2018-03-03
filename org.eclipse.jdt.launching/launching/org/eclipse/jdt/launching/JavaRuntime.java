@@ -693,6 +693,25 @@ public final class JavaRuntime {
 	}
 
 	/**
+	 * Returns a new runtime classpath entry for the given archive(possibly external).
+	 *
+	 * @param path
+	 *            absolute path to an archive
+	 * @param classpathProperty
+	 *            the type of entry - one of <code>USER_CLASSES</code>, <code>BOOTSTRAP_CLASSES</code>,<code>STANDARD_CLASSES</code>,
+	 *            <code>MODULE_PATH</code>, <code>CLASS_PATH</code> or <code>PATCH_MODULE</code>
+	 * @param javaProject
+	 *            the javaProject to be returned by {@link IRuntimeClasspathEntry#getJavaProject()}, required for PATCH_MODULE
+	 * @return runtime classpath entry
+	 * @since 3.10
+	 */
+	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path, int classpathProperty, IJavaProject javaProject) {
+		RuntimeClasspathEntry entry = new RuntimeClasspathEntry(JavaCore.newLibraryEntry(path, null, null), classpathProperty);
+		entry.setJavaProject(javaProject);
+		return entry;
+	}
+
+	/**
 	 * Returns a new runtime classpath entry for the given archive (possibly
 	 * external).
 	 *
