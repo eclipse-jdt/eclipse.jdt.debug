@@ -113,7 +113,12 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		}
 		catch (InterruptedException e) {return;}
 		catch (CoreException e) {
-			MessageDialog.openError(getShell(), LauncherMessages.JavaLaunchShortcut_0, e.getMessage());
+			JDIDebugUIPlugin.log(e);
+			String message = e.getMessage();
+			if (message == null || message.isEmpty()) {
+				message = LauncherMessages.JavaLaunchShortcut_1;
+			}
+			MessageDialog.openError(getShell(), LauncherMessages.JavaLaunchShortcut_0, message);
 			return;
 		}
 		IType type = null;
@@ -258,9 +263,6 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		return JDIDebugUIPlugin.getActiveWorkbenchShell();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-	 */
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
@@ -270,9 +272,6 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-	 */
 	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
@@ -280,17 +279,11 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public IResource getLaunchableResource(IEditorPart editorpart) {
 		return getLaunchableResource(editorpart.getEditorInput());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -320,18 +313,12 @@ public abstract class JavaLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
 		// let the framework resolve configurations based on resource mapping
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		// let the framework resolve configurations based on resource mapping
