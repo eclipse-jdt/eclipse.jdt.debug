@@ -2580,7 +2580,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						methodExitRequest.addClassFilter(currentFrame.location().declaringType());
 
 						if (manager.virtualMachine().canUseInstanceFilters()) {
-							ObjectReference thisObject = currentFrame.thisObject();
+							ObjectReference thisObject = null;
+							try {
+								thisObject = currentFrame.thisObject();
+							} catch (Exception e) {
+								// ignore errors here, continue without filtering
+							}
 							if (thisObject != null) {
 								methodExitRequest.addInstanceFilter(thisObject);
 							}
