@@ -39,6 +39,7 @@ import org.eclipse.jdt.debug.tests.breakpoints.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget;
 import org.eclipse.jdt.debug.tests.breakpoints.TestToggleBreakpointsTarget8;
 import org.eclipse.jdt.debug.tests.breakpoints.ThreadFilterBreakpointsTests;
+import org.eclipse.jdt.debug.tests.breakpoints.ThreadNameChangeTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TriggerPointBreakpointsTests;
 import org.eclipse.jdt.debug.tests.breakpoints.TypeNameBreakpointTests;
 import org.eclipse.jdt.debug.tests.breakpoints.WatchpointTests;
@@ -191,6 +192,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointListenerTests.class));
 		addTest(new TestSuite(JavaBreakpointListenerTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
+		addTest(new TestSuite(ThreadNameChangeTests.class));
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(RunToLineTests.class));
 		addTest(new TestSuite(TestToggleBreakpointsTarget.class));
@@ -325,7 +327,7 @@ public class AutomatedSuite extends DebugSuite {
 	// Debug view tests
 		// Test is not stable, see bug 516024
 		// addTest(new TestSuite(DebugViewTests.class));
-		
+
 	// Debug hover tests
 		addTest(new TestSuite(DebugHoverTests.class));
 

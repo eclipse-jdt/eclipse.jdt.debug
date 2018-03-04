@@ -198,7 +198,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			"bug329294", "bug401270", "org.eclipse.debug.tests.targets.HcrClass2", "org.eclipse.debug.tests.targets.HcrClass3", "org.eclipse.debug.tests.targets.HcrClass4",
 			"org.eclipse.debug.tests.targets.HcrClass5", "org.eclipse.debug.tests.targets.HcrClass6", "org.eclipse.debug.tests.targets.HcrClass7", "org.eclipse.debug.tests.targets.HcrClass8",
 			"org.eclipse.debug.tests.targets.HcrClass9", "TestContributedStepFilterClass", "TerminateAll_01", "TerminateAll_02", "StepResult1",
-			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException", "ThreadNameChange" };
+			"StepResult2", "StepResult3", "StepUncaught", "TriggerPoint_01", "BulkThreadCreationTest", "MethodExitAndException" };
 
 	/**
 	 * the default timeout
@@ -426,6 +426,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	        if (!loaded17) {
 	        	jp = createProject(ONE_SEVEN_PROJECT_NAME, JavaProjectHelper.TEST_1_7_SRC_DIR.toString(), JavaProjectHelper.JAVA_SE_1_7_EE_NAME, false);
 	    		cfgs.add(createLaunchConfiguration(jp, LiteralTests17.LITERAL_TYPE_NAME));
+				cfgs.add(createLaunchConfiguration(jp, "ThreadNameChange"));
 	    		loaded17 = true;
 	    		waitForBuild();
 	        }
