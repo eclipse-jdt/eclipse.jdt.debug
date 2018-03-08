@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,13 @@ public class DefaultAccessRuleParticipant implements IAccessRuleParticipant {
 	 */
 	@Override
 	public IAccessRule[][] getAccessRules(IExecutionEnvironment environment, IVMInstall vm, LibraryLocation[] libraries, IJavaProject project) {
+		Map<String, String> complianceOptions = environment.getComplianceOptions();
+		if (complianceOptions != null) {
+			String compliance = complianceOptions.get(JavaCore.COMPILER_COMPLIANCE);
+			if (JavaCore.compareJavaVersions(compliance, "9") >= 0) { //$NON-NLS-1$
+				return new IAccessRule[0][]; // in 9+ access rules are superseded by limit-modules
+			}
+		}
 		IAccessRule[][] allRules = null;
 		allRules = fgRules.get(environment.getId());
 		if (allRules == null || allRules.length != libraries.length) {
