@@ -1684,7 +1684,7 @@ public final class JavaRuntime {
 							}
 							else {
 								IPackageFragmentRoot root = project.findPackageFragmentRoot(entry.getPath());
-								if (root == null) {
+								if (root == null && !entry.getPath().lastSegment().contains("jrt-fs.jar")) { //$NON-NLS-1$
 									entries2.add(entry);
 								} else if (root != null && !root.getRawClasspathEntry().getPath().segment(0).contains("JRE_CONTAINER")) { //$NON-NLS-1$
 									entries2.add(entry);
