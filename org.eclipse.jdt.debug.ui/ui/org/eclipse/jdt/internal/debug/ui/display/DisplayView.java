@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
@@ -39,6 +40,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -52,9 +54,12 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -88,6 +93,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.themes.IThemeManager;
 
 public class DisplayView extends ViewPart implements ITextInputListener, IPerspectiveListener2 {
 
@@ -170,6 +176,19 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	public void createPartControl(Composite parent) {
 		fSourceViewer= new JDISourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.LEFT_TO_RIGHT);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
+		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT));
+		IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (PreferenceConstants.EDITOR_TEXT_FONT.equals(event.getProperty())) {
+					final StyledText textWidget = fSourceViewer.getTextWidget();
+					textWidget.getDisplay().asyncExec(() -> textWidget.setFont(JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT)));
+				}
+			}
+		};
+		IThemeManager themeManager = getViewSite().getWorkbenchWindow().getWorkbench().getThemeManager();
+		themeManager.addPropertyChangeListener(fontListener);
+		fSourceViewer.getTextWidget().addDisposeListener(e -> themeManager.removePropertyChangeListener(fontListener));
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fSourceViewer.setDocument(getRestoredDocument());
 		fSourceViewer.addTextInputListener(this);
