@@ -99,6 +99,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="compliance" type="string">
+            <annotation>
+               <documentation>
+                  In the absence of profileProperties this will provide the value for org.eclipse.jdt.core.compiler.compliance
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

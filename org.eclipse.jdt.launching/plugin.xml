@@ -305,6 +305,7 @@
       <environment
             description="%environment.description.14"
             id="JavaSE-10"
+            compliance="10"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
       </environment>            
       <analyzer
