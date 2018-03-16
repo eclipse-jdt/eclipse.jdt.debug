@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -64,6 +65,22 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		assertTrue("vm should be J2SE-1.4 compliant", false);
 	}
 
+	private int compareJavaVersions(IVMInstall vm, String ver) {
+		if (vm instanceof AbstractVMInstall) {
+			AbstractVMInstall install = (AbstractVMInstall) vm;
+			String vmver = install.getJavaVersion();
+			if (vmver == null) {
+				return -1;
+			}
+			// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.7, etc
+			if (vmver.length() > 3) {
+				vmver = vmver.substring(0, 3);
+			}
+			return JavaCore.compareJavaVersions(vmver, ver);
+		}
+		return -1;
+
+	}
 	public void testAccessRuleParticipants() throws Exception {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment environment = manager.getEnvironment("org.eclipse.jdt.debug.tests.environment.j2se14x");
@@ -72,6 +89,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
 		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
+		if (compareJavaVersions(vm, "9") >= 0) {
+			assertEquals("Wrong number of rules", 1, accessRules.length);
+			return;
+		}
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] rules = accessRules[i];
@@ -91,6 +112,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
 		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
+		if (compareJavaVersions(vm, "9") >= 0) {
+			assertEquals("Wrong number of rules", 1, accessRules.length);
+			return;
+		}
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] rules = accessRules[i];
@@ -106,6 +131,10 @@ public class ExecutionEnvironmentTests extends AbstractDebugTest {
 		LibraryLocation[] libraries = JavaRuntime.getLibraryLocations(vm);
 		IAccessRule[][] accessRules = environment.getAccessRules(vm, libraries, get14Project());
 		assertNotNull("Missing access rules", accessRules);
+		if (compareJavaVersions(vm, "9") >= 0) {
+			assertEquals("Wrong number of rules", 1, accessRules.length);
+			return;
+		}
 		assertEquals("Wrong number of rules", libraries.length, accessRules.length);
 		for (int i = 0; i < accessRules.length; i++) {
 			IAccessRule[] rules = accessRules[i];
