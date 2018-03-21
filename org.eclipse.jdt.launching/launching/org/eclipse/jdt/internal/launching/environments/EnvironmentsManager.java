@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
@@ -189,6 +190,34 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 		return collection.toArray(new Analyzer[collection.size()]);
 	}
 
+	private String getExecutionEnvironmentCompliance(IExecutionEnvironment executionEnvironment) {
+		String desc = executionEnvironment.getId();
+		if (desc.indexOf(JavaCore.VERSION_10) != -1) {
+			return JavaCore.VERSION_10;
+		} else if (desc.indexOf(JavaCore.VERSION_9) != -1) {
+			return JavaCore.VERSION_9;
+		} else if (desc.indexOf(JavaCore.VERSION_1_8) != -1) {
+			return JavaCore.VERSION_1_8;
+		} else if (desc.indexOf(JavaCore.VERSION_1_7) != -1) {
+			return JavaCore.VERSION_1_7;
+		} else if (desc.indexOf(JavaCore.VERSION_1_6) != -1) {
+			return JavaCore.VERSION_1_6;
+		} else if (desc.indexOf(JavaCore.VERSION_1_5) != -1) {
+			return JavaCore.VERSION_1_5;
+		} else if (desc.indexOf(JavaCore.VERSION_1_4) != -1) {
+			return JavaCore.VERSION_1_4;
+		} else if (desc.indexOf(JavaCore.VERSION_1_3) != -1) {
+			return JavaCore.VERSION_1_3;
+		} else if (desc.indexOf(JavaCore.VERSION_1_2) != -1) {
+			return JavaCore.VERSION_1_2;
+		} else if (desc.indexOf(JavaCore.VERSION_1_1) != -1) {
+			return JavaCore.VERSION_1_1;
+		} else if (desc.indexOf("1.0") != -1) { //$NON-NLS-1$
+			return "1.0"; //$NON-NLS-1$
+		}
+		return JavaCore.VERSION_1_3;
+	}
+
 	private synchronized void initializeExtensions() {
 		if (fEnvironments == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
@@ -196,7 +225,13 @@ public class EnvironmentsManager implements IExecutionEnvironmentsManager, IVMIn
 			fEnvironments = new TreeSet<>(new Comparator<IExecutionEnvironment>() {
 				@Override
 				public int compare(IExecutionEnvironment o1, IExecutionEnvironment o2) {
-					return o1.getId().compareTo(o2.getId());
+					String compliance1 = getExecutionEnvironmentCompliance(o1);
+					String compliance2 = getExecutionEnvironmentCompliance(o2);
+					int result = JavaCore.compareJavaVersions(compliance1, compliance2);
+					if (result == 0) {
+						return o1.getId().compareTo(o2.getId());
+					}
+					return result;
 				}
 			});
 			fRuleParticipants = new LinkedHashSet<>();

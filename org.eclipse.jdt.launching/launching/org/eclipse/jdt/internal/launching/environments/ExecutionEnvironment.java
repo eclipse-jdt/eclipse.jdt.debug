@@ -444,20 +444,29 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 	 * @return properties or <code>null</code> if none
 	 */
 	private Properties getJavaProfileProperties(Bundle bundle, String path) {
+		Properties profile = new Properties();
 		URL profileURL = bundle.getEntry(path);
 		if (profileURL != null) {
 			try (InputStream is = profileURL.openStream()) {
 				profileURL = FileLocator.resolve(profileURL);
 				if (is != null) {
-					Properties profile = new Properties();
 					profile.load(is);
 					fixJavaSE9ComplianceSourceTargetLevels(profile);
-					return profile;
 				}
 			} catch (IOException e) {
+				return null;
 			}
+		} else {
+			if (getCompliance() == null) {
+				return null;
+			}
+			profile.setProperty(JavaCore.COMPILER_COMPLIANCE, getCompliance());
+			profile.setProperty(JavaCore.COMPILER_SOURCE, getCompliance());
+			profile.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, getCompliance());
+			profile.setProperty("org.eclipse.jdt.core.compiler.problem.assertIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
+			profile.setProperty("org.eclipse.jdt.core.compiler.problem.enumIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return null;
+		return profile;
 	}
 
 
@@ -518,5 +527,9 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			}
 		}
 		return null;
+	}
+
+	private String getCompliance() {
+		return fElement.getAttribute("compliance"); //$NON-NLS-1$
 	}
 }

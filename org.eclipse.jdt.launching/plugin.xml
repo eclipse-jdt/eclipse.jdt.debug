@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2017 IBM Corporation and others.
+     Copyright (c) 2005, 2018 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+ 
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -310,6 +310,12 @@
       <environment
             description="%environment.description.13"
             id="JavaSE-9"
+            ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
+      </environment> 
+      <environment
+            description="%environment.description.14"
+            id="JavaSE-10"
+            compliance="10"
             ruleParticipant="org.eclipse.jdt.internal.launching.environments.DefaultAccessRuleParticipant">
       </environment>            
       <analyzer

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
+	private static final String JavaSE_10 = "JavaSE-10"; //$NON-NLS-1$
 	static final String JavaSE_9 = "JavaSE-9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
@@ -76,6 +77,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_7, new String[] {JavaSE_1_6});
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
+		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -101,7 +103,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					types = getTypes(CDC_FOUNDATION_1_1);
 				}
 			} else {
-				if (javaVersion.startsWith("9")) { //$NON-NLS-1$
+				if (javaVersion.startsWith("10")) { //$NON-NLS-1$
+					types = getTypes(JavaSE_10);
+				} else if (javaVersion.startsWith("9")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_9);
 				} else if (javaVersion.startsWith("1.8")) { //$NON-NLS-1$
 					types = getTypes(JavaSE_1_8);
