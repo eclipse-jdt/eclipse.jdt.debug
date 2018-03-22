@@ -467,6 +467,7 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			profile.setProperty("org.eclipse.jdt.core.compiler.problem.assertIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
 			profile.setProperty("org.eclipse.jdt.core.compiler.problem.enumIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
 			profile.setProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, calculateVMExecutionEnvs(new Version(getCompliance())));
+			profile.setProperty(JavaCore.COMPILER_RELEASE, JavaCore.ENABLED);
 
 		}
 		return profile;
