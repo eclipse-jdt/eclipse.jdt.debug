@@ -1544,7 +1544,9 @@ public final class JavaRuntime {
 						}
 						catch (CoreException ex) {
 							// Not a java project
-							entries2.add(entry);
+							if (!entry.getPath().lastSegment().contains("jrt-fs.jar")) { //$NON-NLS-1$
+								entries2.add(entry);
+							}
 						}
 						break;
 					default:
