@@ -48,6 +48,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /**
  * A contributed execution environment.
@@ -465,8 +466,29 @@ class ExecutionEnvironment implements IExecutionEnvironment {
 			profile.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, getCompliance());
 			profile.setProperty("org.eclipse.jdt.core.compiler.problem.assertIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
 			profile.setProperty("org.eclipse.jdt.core.compiler.problem.enumIdentifier", "error"); //$NON-NLS-1$ //$NON-NLS-2$
+			profile.setProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, calculateVMExecutionEnvs(new Version(getCompliance())));
+
 		}
 		return profile;
+	}
+
+	private static final String JAVASE = "JavaSE"; //$NON-NLS-1$
+
+	private String calculateVMExecutionEnvs(Version javaVersion) {
+		StringBuilder result = new StringBuilder("OSGi/Minimum-1.0, OSGi/Minimum-1.1, OSGi/Minimum-1.2, JavaSE/compact1-1.8, JavaSE/compact2-1.8, JavaSE/compact3-1.8, JRE-1.1, J2SE-1.2, J2SE-1.3, J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7, JavaSE-1.8"); //$NON-NLS-1$
+		Version v = new Version(9, 0, 0);
+		while (v.compareTo(javaVersion) <= 0) {
+			result.append(',').append(' ').append(JAVASE).append('-').append(v.getMajor());
+			if (v.getMinor() > 0) {
+				result.append('.').append(v.getMinor());
+			}
+			if (v.getMajor() == javaVersion.getMajor()) {
+				v = new Version(v.getMajor(), v.getMinor() + 1, 0);
+			} else {
+				v = new Version(v.getMajor() + 1, 0, 0);
+			}
+		}
+		return result.toString();
 	}
 
 
