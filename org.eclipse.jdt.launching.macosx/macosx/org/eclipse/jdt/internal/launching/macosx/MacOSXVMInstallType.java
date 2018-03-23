@@ -288,17 +288,19 @@ public class MacOSXVMInstallType extends StandardVMType {
 		File lib = new File(installLocation, "lib"); //$NON-NLS-1$
 		File extDir = new File(lib, "ext"); //$NON-NLS-1$
 		String[] dirs = null;
-		if (extDir.exists())
+		if (extDir.exists()) {
 			dirs = new String[] {extDir.getAbsolutePath()};
-		else
+		} else {
 			dirs = new String[0];
+		}
 
 		File endDir = new File(lib, "endorsed"); //$NON-NLS-1$
 		String[] endDirs = null;
-		if (endDir.exists())
+		if (endDir.exists()) {
 			endDirs = new String[] {endDir.getAbsolutePath()};
-		else
-			endDirs = new String[0]; 
+		} else {
+			endDirs = new String[0];
+		} 
 		
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
@@ -324,7 +326,12 @@ public class MacOSXVMInstallType extends StandardVMType {
 				src = getSourceInParent(parent);
 			}
 			if(src != null) {
-				setDefaultRootPath(SRC_NAME);
+				if (src.getName().endsWith(".jar")) { //$NON-NLS-1$
+					setDefaultRootPath(SRC_NAME);
+				} else {
+					setDefaultRootPath(""); //$NON-NLS-1$
+				}
+
 				return new Path(src.getPath());
 			}
 			parent = parent.getParentFile();
@@ -366,7 +373,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
 		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
 		if (java.isFile())
+		 {
 			return new Status(IStatus.OK, id, 0, "ok", null); //$NON-NLS-1$
+		}
 		return new Status(IStatus.ERROR, id, 0, Messages.MacOSXVMInstallType_2, null);
 	}
 	
@@ -380,8 +389,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 		try {
 			String post= File.separator + JVM_HOME;
 			String path= installLocation.getCanonicalPath();
-			if (path.startsWith(JVM_VERSION_LOC) && path.endsWith(post))
+			if (path.startsWith(JVM_VERSION_LOC) && path.endsWith(post)) {
 				id= path.substring(JVM_VERSION_LOC.length(), path.length()-post.length());
+			}
 		} catch (IOException ex) {
 			// we use the fall back from below
 		}
@@ -391,8 +401,9 @@ public class MacOSXVMInstallType extends StandardVMType {
 			if (!docLocation.exists()) {
 				s= JAVADOC_LOC + id;
 				docLocation= new File(s);
-				if (!docLocation.exists())
+				if (!docLocation.exists()) {
 					s= null;
+				}
 			}
 			if (s != null) {
 				try {
