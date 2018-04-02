@@ -2834,14 +2834,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					if (stepResultMethod != null) {
 						MethodExitEvent methodExitEvent = (MethodExitEvent) event;
 						if (methodExitEvent.location().method().equals(stepResultMethod)) {
-							fStepResultCandidate = new MethodResult(fStepResultMethod, fStepReturnTargetFrameCount, methodExitEvent.returnValue(), ResultType.returned);
+							fStepResultCandidate = new MethodResult(stepResultMethod, fStepReturnTargetFrameCount, methodExitEvent.returnValue(), ResultType.returned);
 						}
-						return true;
 					}
+					return true;
 				}
 				if (event instanceof ExceptionEvent) {
 					ExceptionEvent exceptionEvent = (ExceptionEvent) event;
-					fStepResultCandidate = new MethodResult(fStepResultMethod, fStepReturnTargetFrameCount, exceptionEvent.exception(), ResultType.threw);
+					Method stepResultMethod = fStepResultMethod;
+					if (stepResultMethod != null) { // should always be true unless some third-party plugins manipulate internal state
+						fStepResultCandidate = new MethodResult(stepResultMethod, fStepReturnTargetFrameCount, exceptionEvent.exception(), ResultType.threw);
+					}
 					return true;
 				}
 				if (event instanceof MethodEntryEvent) {
