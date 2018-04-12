@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -24,8 +25,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.StandardVM;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -154,15 +157,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				} else {
 					//if we change the VM make sure the compliance level supports
 					//generated class files
-					String compliance = getCurrentCompilerCompliance();
-					if(!supportsCurrentCompliance(install, compliance)) {
-						setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
-						fCompliance.setVisible(true);
-					}
-					else {
-						setMessage(null);
-						fCompliance.setVisible(false);
-					}
+					validateComplianceAndJRE(install);
 					setValid(true);
 					setErrorMessage(null);
 				}
@@ -177,16 +172,43 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	@Override
 	public boolean isValid() {
+		validateComplianceAndJRE(getCurrentDefaultVM());
+		return super.isValid();
+	}
+
+	private void validateComplianceAndJRE(IVMInstall vmInstall) {
 		String compliance = getCurrentCompilerCompliance();
-		if(!supportsCurrentCompliance(getCurrentDefaultVM(), compliance)) {
+		if (!supportsCurrentCompliance(vmInstall, compliance)) {
 			setMessage(NLS.bind(JREMessages.JREsPreferencePage_0, new String[] {compliance}), IMessageProvider.WARNING);
 			fCompliance.setVisible(true);
 		}
 		else {
-			setMessage(null);
-			fCompliance.setVisible(false);
+			List<String> allVersions = JavaCore.getAllVersions();
+			String latest = allVersions.get(allVersions.size() - 1);
+			String vmver = null;
+			if (vmInstall instanceof AbstractVMInstall) {
+				AbstractVMInstall vm = (AbstractVMInstall) vmInstall;
+				vmver = vm.getJavaVersion();
+			}
+			if (vmver == null) {
+				IVMInstallType vmType = vmInstall.getVMInstallType();
+				IVMInstall vm = vmType.findVMInstall(vmInstall.getId());
+				if (vm == null) {
+					vm = vmType.createVMInstall(vmInstall.getId());
+				}
+				if (vm instanceof StandardVM) {
+					((StandardVM) vm).setInstallLocation(vmInstall.getInstallLocation());
+					vmver = ((StandardVM) vm).getJavaVersion();
+				}
+			}
+			if (vmver != null && JavaCore.compareJavaVersions(vmver, latest) > 0) {
+				setMessage(NLS.bind(JREMessages.JREsPreferencePage_9, new String[] { compliance }), IMessageProvider.WARNING);
+				fCompliance.setVisible(true);
+			} else {
+				setMessage(null);
+				fCompliance.setVisible(false);
+			}
 		}
-		return super.isValid();
 	}
 
 	/**

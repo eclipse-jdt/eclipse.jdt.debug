@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -20,11 +21,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AbstractVMInstallPage;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.StatusInfo;
+import org.eclipse.jdt.internal.launching.StandardVM;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.Dialog;
@@ -238,6 +242,22 @@ public class StandardVMPage extends AbstractVMInstallPage {
 			}
 		}
 		detectJavadocLocation();
+		if (s.isOK()) {
+			List<String> allVersions = JavaCore.getAllVersions();
+			String latest = allVersions.get(allVersions.size() - 1);
+			IVMInstallType vmType = fVM.getVMInstallType();
+			IVMInstall vm = vmType.findVMInstall(fVM.getId());
+			if (vm == null) {
+				vm = vmType.createVMInstall(fVM.getId());
+			}
+			if (vm instanceof StandardVM) {
+				((StandardVM) vm).setInstallLocation(getInstallLocation());
+				String vmver = ((StandardVM) vm).getJavaVersion();
+				if (vmver != null && JavaCore.compareJavaVersions(vmver, latest) > 0) {
+					s = new StatusInfo(IStatus.INFO, JREMessages.JREsPreferencePage_9);
+				}
+			}
+		}
 		setJRELocationStatus(s);
 		fLibraryBlock.setSelection(fVM);
 		updatePageStatus();

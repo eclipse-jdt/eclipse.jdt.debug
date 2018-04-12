@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class JREMessages extends NLS {
 	public static String JREsPreferencePage_0;
 
 	public static String JREsPreferencePage_1;
+	public static String JREsPreferencePage_9;
 
 	public static String JREsPreferencePage_14;
 	public static String JREsPreferencePage_2;

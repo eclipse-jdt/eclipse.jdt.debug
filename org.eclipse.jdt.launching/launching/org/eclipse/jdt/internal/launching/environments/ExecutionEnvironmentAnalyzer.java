@@ -36,6 +36,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 
 	// XXX: Note that this string is not yet standardized by OSGi, see http://wiki.osgi.org/wiki/Execution_Environment
+	private static final String JavaSE_10_Plus = "JavaSE-10+"; //$NON-NLS-1$
 	private static final String JavaSE_10 = "JavaSE-10"; //$NON-NLS-1$
 	static final String JavaSE_9 = "JavaSE-9"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
@@ -78,6 +79,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 		mappings.put(JavaSE_1_8, new String[] { JavaSE_1_7 });
 		mappings.put(JavaSE_9, new String[] { JavaSE_1_8 });
 		mappings.put(JavaSE_10, new String[] { JavaSE_9 });
+		mappings.put(JavaSE_10_Plus, new String[] { JavaSE_10 });
 	}
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
@@ -131,6 +133,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 					if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) {
 						types = getTypes(CDC_FOUNDATION_1_0);
 					}
+				} else if (javaVersion.startsWith("1") && javaVersion.length() >= 2 && javaVersion.charAt(1) != '.') { //$NON-NLS-1$
+					// At the moment only caters to versions 11 to 19.
+					types = getTypes(JavaSE_10_Plus);
 				}
 			}
 		}
