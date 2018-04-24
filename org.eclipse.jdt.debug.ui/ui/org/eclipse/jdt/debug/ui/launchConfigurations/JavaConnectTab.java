@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdi.internal.connect.ConnectMessages;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
@@ -364,7 +365,7 @@ public class JavaConnectTab extends AbstractJavaMainTab implements IPropertyChan
 				String value = ((StringFieldEditor)editor).getStringValue();
 				if (!arg.isValid(value)) {
 					StringBuffer label = new StringBuffer(LegacyActionTools.removeMnemonics(arg.label()));
-					if (label.lastIndexOf(":") == label.length() - 1) { //$NON-NLS-1$
+					if (label.lastIndexOf(ConnectMessages.SocketConnectionLabelSeparator) == label.length() - 1) {
 						label = label.deleteCharAt(label.length() - 1);
 					}
 					setErrorMessage(label.toString() + LauncherMessages.JavaConnectTab__is_invalid__5);

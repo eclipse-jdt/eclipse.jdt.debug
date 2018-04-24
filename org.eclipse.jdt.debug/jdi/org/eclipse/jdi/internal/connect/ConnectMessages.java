@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class ConnectMessages extends NLS {
 	public static String PacketReceiveManager_0;
 	public static String SocketTransportService_0;
 	public static String SocketTransportService_1;
+	public static String SocketConnectionLabelSeparator;
 
 	static {
 		// load message values from bundle file
