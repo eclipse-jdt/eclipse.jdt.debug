@@ -246,9 +246,22 @@ public final class JavaRuntime {
 	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
 
 	/**
+	 * Preference key for the default problem severity when an compiler compliance that is set 
+	 * does not match the used JRE. Value is one of
+	 * {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, or {@link JavaCore#IGNORE}
+	 * <p>
+	 * This preference will not be applicable if the JRE used is 9 or above and {@link JavaCore#COMPILER_RELEASE} option is enabled.
+	 * </p>
+	 *
+	 * @since 3.10
+	 */
+	public static final String PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE"; //$NON-NLS-1$
+
+	/**
 	 * Unique identifier constant (value <code>"org.eclipse.jdt.launching"</code>)
 	 * for the Java launching plug-in.
 	 *
+	 * This preference will not be applicable if the JRE used is 9 or above and {@link JavaCore#COMPILER_RELEASE} option is enabled.
 	 * @since 3.5
 	 */
 	public static final String ID_PLUGIN = LaunchingPlugin.ID_PLUGIN;

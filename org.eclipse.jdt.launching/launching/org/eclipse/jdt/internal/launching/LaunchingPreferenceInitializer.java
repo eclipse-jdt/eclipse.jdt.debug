@@ -36,6 +36,7 @@ public class LaunchingPreferenceInitializer extends AbstractPreferenceInitialize
 		}
 		dnode.putInt(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 		dnode.put(JavaRuntime.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE, JavaCore.WARNING);
+		dnode.put(JavaRuntime.PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE, JavaCore.WARNING);
 		dnode.putBoolean(JavaRuntime.PREF_ONLY_INCLUDE_EXPORTED_CLASSPATH_ENTRIES, false);
 		try {
 			dnode.flush();

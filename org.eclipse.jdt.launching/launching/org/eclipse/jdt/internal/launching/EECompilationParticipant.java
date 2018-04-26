@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -91,7 +92,64 @@ public class EECompilationParticipant extends CompilationParticipant {
 			if (container != null && eeId != null) {
 				IVMInstall vm = JREContainerInitializer.resolveVM(container);
 				validateEnvironment(eeId, project, vm);
+				if (vm instanceof IVMInstall2) {
+					eeId = getCompilerCompliance((IVMInstall2) vm);
+					if (eeId != null) {
+						validateCompliance(eeId, project, vm);
+					}
+				}
 
+			} else if (container != null) {
+				IVMInstall vm = JREContainerInitializer.resolveVM(container);
+				if (vm instanceof IVMInstall2) {
+					eeId = getCompilerCompliance((IVMInstall2) vm);
+					if (eeId != null) {
+						validateCompliance(eeId, project, vm);
+					}
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * Validates the compliance, creating a problem marker for the project as required.
+	 *
+	 * @param id execution environment ID
+	 * @param project associated project
+	 * @param vm VM binding resolved for the project
+	 */
+	private void validateCompliance(String eeId, final IJavaProject project, IVMInstall vm) {
+		String id = project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		if (!eeId.equals(id)) {
+			boolean validateCompliance = true;
+			if (JavaCore.compareJavaVersions(JavaCore.VERSION_9, eeId) <= 0) {
+				if (JavaCore.compareJavaVersions(JavaCore.VERSION_1_6, id) <= 0) {
+					String releaseVal = project.getOption(JavaCore.COMPILER_RELEASE, true);
+					if (JavaCore.ENABLED.equals(releaseVal)) {
+						validateCompliance = false;
+					}
+				}
+			}
+			if (validateCompliance) {
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+				IExecutionEnvironment finalEnvironment = null;
+				for (IExecutionEnvironment environment : environments) {
+					if (environment.getId().indexOf(id) != -1) {
+						finalEnvironment = environment;
+						break;
+					}
+				}
+				if (finalEnvironment != null) {
+					if (!finalEnvironment.isStrictlyCompatible(vm)) {
+						String message = NLS.bind(LaunchingMessages.LaunchingPlugin_39, new String[] { id, eeId });
+						int sev = getSeverityLevel(JavaRuntime.PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE, project.getProject());
+						if (sev != -1) {
+							createProblemMarker(project, message, sev, "org.eclipse.jdt.core.problem", LaunchingMessages.LaunchingPlugin_40); //$NON-NLS-1$
+						}
+					}
+				}
 			}
 		}
 	}
@@ -138,6 +196,34 @@ public class EECompilationParticipant extends CompilationParticipant {
 				}
 			}
 		}
+	}
+
+	public static String getCompilerCompliance(IVMInstall2 vMInstall) {
+		String version = vMInstall.getJavaVersion();
+		if (version == null) {
+			return null;
+		} else if (version.startsWith(JavaCore.VERSION_10)) {
+			return JavaCore.VERSION_10;
+		} else if (version.startsWith(JavaCore.VERSION_9)) {
+			return JavaCore.VERSION_9;
+		} else if (version.startsWith(JavaCore.VERSION_1_8)) {
+			return JavaCore.VERSION_1_8;
+		} else if (version.startsWith(JavaCore.VERSION_1_7)) {
+			return JavaCore.VERSION_1_7;
+		} else if (version.startsWith(JavaCore.VERSION_1_6)) {
+			return JavaCore.VERSION_1_6;
+		} else if (version.startsWith(JavaCore.VERSION_1_5)) {
+			return JavaCore.VERSION_1_5;
+		} else if (version.startsWith(JavaCore.VERSION_1_4)) {
+			return JavaCore.VERSION_1_4;
+		} else if (version.startsWith(JavaCore.VERSION_1_3)) {
+			return JavaCore.VERSION_1_3;
+		} else if (version.startsWith(JavaCore.VERSION_1_2)) {
+			return JavaCore.VERSION_1_3;
+		} else if (version.startsWith(JavaCore.VERSION_1_1)) {
+			return JavaCore.VERSION_1_3;
+		}
+		return null;
 	}
 
 	/**
@@ -193,6 +279,34 @@ public class EECompilationParticipant extends CompilationParticipant {
 						new Integer(severity),
 						LaunchingMessages.LaunchingPlugin_37
 					});
+		} catch (CoreException e) {
+			return;
+		}
+	}
+
+	/**
+	 * creates a problem marker for a Java problem
+	 *
+	 * @param javaProject
+	 *                        the {@link IJavaProject}
+	 * @param message
+	 *                        the message to set on the new problem
+	 * @param severity
+	 *                        the severity level for the new problem
+	 */
+	private void createProblemMarker(IJavaProject javaProject, String message, int severity, String problemId, String location) {
+		try {
+			IMarker marker = javaProject.getProject().createMarker(problemId);
+			marker.setAttributes(
+					new String[] {
+							IMarker.MESSAGE,
+							IMarker.SEVERITY,
+							IMarker.LOCATION },
+						new Object[] {
+								message,
+								new Integer(severity),
+								location
+						});
 		} catch (CoreException e) {
 			return;
 		}
