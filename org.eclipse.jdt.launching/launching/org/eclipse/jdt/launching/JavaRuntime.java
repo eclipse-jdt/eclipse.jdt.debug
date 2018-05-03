@@ -236,9 +236,8 @@ public final class JavaRuntime {
 	public static final String PREF_VM_XML = LaunchingPlugin.getUniqueIdentifier() + ".PREF_VM_XML"; //$NON-NLS-1$
 
 	/**
-	 * Preference key for the default problem severity when an execution environment is bound
-	 * to a project's build path for which there is no strictly compatible JRE available in the
-	 * workspace. Value is one of {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, or
+	 * Preference key for the problem severity when an execution environment is bound to a project's build path for which there is no strictly
+	 * compatible JRE available in the workspace. Value is one of {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, {@link JavaCore#INFO}, or
 	 * {@link JavaCore#IGNORE}
 	 *
 	 * @since 3.5
@@ -246,9 +245,8 @@ public final class JavaRuntime {
 	public static final String PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE = LaunchingPlugin.getUniqueIdentifier() + ".PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"; //$NON-NLS-1$
 
 	/**
-	 * Preference key for the default problem severity when an compiler compliance that is set 
-	 * does not match the used JRE. Value is one of
-	 * {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, or {@link JavaCore#IGNORE}
+	 * Preference key for the problem severity when an compiler compliance that is set does not match the used JRE. Value is one of
+	 * {@link JavaCore#ERROR}, {@link JavaCore#WARNING}, {@link JavaCore#INFO}, or {@link JavaCore#IGNORE}
 	 * <p>
 	 * This preference will not be applicable if the JRE used is 9 or above and {@link JavaCore#COMPILER_RELEASE} option is enabled.
 	 * </p>
