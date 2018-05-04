@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 IBM Corporation and others.
+ * Copyright (c) 2017, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class LambdaUtils {
 	 *            the frame which needs to be evaluated
 	 * @param local
 	 *            the local variable to be found
-	 * @return <code>null</code> if loval variable not found or return the found variable
+	 * @return <code>null</code> if local variable not found or return the found variable
 	 * @since 3.8
 	 */
 	public static IVariable findLocalVariableFromLambdaScope(IJavaStackFrame frame, ILocalVariable local) throws DebugException, CoreException {
