@@ -28,19 +28,8 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 /**
  * Utility class for Lambda Expressions and Stack frames Place holder for all Lambda operation encapsulation.
  */
-public class LambdaUtils {
+public class LambdaUtils extends org.eclipse.jdt.internal.debug.core.model.LambdaUtils {
 
-	/**
-	 * Evaluates if the input frame is a lambda frame.
-	 *
-	 * @param frame
-	 *            the frame which needs to be evaluated
-	 * @return <code>True</code> if the frame is a lambda frame else return <code>False</Code>
-	 * @since 3.8
-	 */
-	public static boolean isLambdaFrame(IJavaStackFrame frame) throws DebugException {
-		return frame.isSynthetic() && frame.getName().startsWith("lambda$"); //$NON-NLS-1$
-	}
 
 	private static int indexOf(IJavaStackFrame frame, IStackFrame[] stackFrames) {
 		int j = 0;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JDILambdaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JDIReturnValueVariable;
 import org.eclipse.jdt.internal.debug.core.model.MethodResult.ResultType;
 
@@ -355,6 +356,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					if (t != null) {
 						fVariables.add(new JDIThisVariable(
 								(JDIDebugTarget) getDebugTarget(), t));
+					}
+					if (LambdaUtils.isLambdaFrame(this)) {
+						List<IJavaStackFrame> frames = fThread.computeStackFrames();
+						int previousIndex = frames.indexOf(this) + 1;
+						if (previousIndex > 0 && previousIndex < frames.size()) {
+							IJavaStackFrame previousFrame = frames.get(previousIndex);
+							fVariables.add(new JDILambdaVariable((JDIDebugTarget) getDebugTarget(), previousFrame, ((JDIStackFrame) previousFrame).getUnderlyingThisObject()));
+						}
 					}
 				}
 				addStepReturnValue(fVariables);
