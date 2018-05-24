@@ -59,6 +59,7 @@ public class JavaProjectHelper {
 	public static final String JAVA_SE_1_6_EE_NAME = "JavaSE-1.6";
 	public static final String JAVA_SE_1_7_EE_NAME = "JavaSE-1.7";
 	public static final String JAVA_SE_1_8_EE_NAME = "JavaSE-1.8";
+	public static final String JAVA_SE_9_EE_NAME = "JavaSE-9";
 
 	/**
 	 * path to the test src for 'testprograms'

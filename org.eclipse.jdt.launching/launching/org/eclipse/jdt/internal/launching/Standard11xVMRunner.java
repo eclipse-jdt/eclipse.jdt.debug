@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,9 +84,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			combinedPath[offset] = classPath[i];
 			offset++;
 		}
-		int cpidx = -1;
 		if (combinedPath.length > 0) {
-			cpidx = arguments.size();
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(combinedPath));
 		}
@@ -94,12 +93,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		String[] programArgs= config.getProgramArguments();
 
 		String[] envp = prependJREPath(config.getEnvironment());
-		String[] newenvp = checkClasspath(arguments, classPath, envp);
-		if(newenvp != null) {
-			envp = newenvp;
-			arguments.remove(cpidx);
-			arguments.remove(cpidx);
-		}
+		int lastVMArgumentIndex = arguments.size() - 1;
 		addArguments(programArgs, arguments);
 
 		String[] cmdLine= new String[arguments.size()];
@@ -109,12 +103,17 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		if (monitor.isCanceled()) {
 			return;
 		}
+		File workingDir = getWorkingDir(config);
+		ClasspathShortener classpathShortener = new ClasspathShortener(fVMInstance, launch, cmdLine, lastVMArgumentIndex, workingDir, envp);
+		if (classpathShortener.shortenCommandLineIfNecessary()) {
+			cmdLine = classpathShortener.getCmdLine();
+			envp = classpathShortener.getEnvp();
+		}
 
 		subMonitor.worked(1);
 		subMonitor.subTask(LaunchingMessages.StandardVMRunner_Starting_virtual_machine____3);
 
 		Process p= null;
-		File workingDir = getWorkingDir(config);
 		String[] newCmdLine = validateCommandLine(launch.getLaunchConfiguration(), cmdLine);
 		if(newCmdLine != null) {
 			cmdLine = newCmdLine;
@@ -137,6 +136,10 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		process.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, ltime != null ? ltime : timestamp);
 		if(workingDir != null) {
 			process.setAttribute(DebugPlugin.ATTR_WORKING_DIRECTORY, workingDir.getAbsolutePath());
+		}
+		if (!classpathShortener.getProcessTempFiles().isEmpty()) {
+			String tempFiles = classpathShortener.getProcessTempFiles().stream().map(file -> file.getAbsolutePath()).collect(Collectors.joining(File.pathSeparator));
+			process.setAttribute(LaunchingPlugin.ATTR_LAUNCH_TEMP_FILES, tempFiles);
 		}
 		subMonitor.worked(1);
 	}

@@ -369,8 +369,12 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_EXCLUDE_TEST_CODE = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_EXCLUDE_TEST_CODE"; //$NON-NLS-1$
 
 	/**
-	 * Status code indicating a launch configuration does not
-	 * specify a project when a project is required.
+	 * @since 3.11
+	 */
+	public static final String ATTR_USE_CLASSPATH_ONLY_JAR = LaunchingPlugin.getUniqueIdentifier() + ".ATTR_USE_CLASSPATH_ONLY_JAR"; //$NON-NLS-1$
+
+	/**
+	 * Status code indicating a launch configuration does not specify a project when a project is required.
 	 */
 	public static final int ERR_UNSPECIFIED_PROJECT = 100;
 
@@ -538,6 +542,11 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 3.0
 	 */
 	public static final int ERR_PROJECT_CLOSED = 124;
+
+	/**
+	 * @since 3.11
+	 */
+	public static final int ERR_CLASSPATH_TOO_LONG = 125;
 
 	/**
 	 * Status code indicating an unexpected internal error.

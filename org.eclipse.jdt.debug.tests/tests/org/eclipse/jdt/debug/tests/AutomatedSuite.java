@@ -84,6 +84,7 @@ import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
 import org.eclipse.jdt.debug.tests.eval.GeneralEvalTests;
 import org.eclipse.jdt.debug.tests.eval.GenericsEvalTests;
+import org.eclipse.jdt.debug.tests.launching.ClasspathShortenerTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationEncodingTests;
 import org.eclipse.jdt.debug.tests.launching.ConfigurationResourceMappingTests;
 import org.eclipse.jdt.debug.tests.launching.ContributedTabTests;
@@ -94,6 +95,8 @@ import org.eclipse.jdt.debug.tests.launching.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchShortcutTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchTests;
 import org.eclipse.jdt.debug.tests.launching.LaunchesTests;
+import org.eclipse.jdt.debug.tests.launching.LongClassPathTests;
+import org.eclipse.jdt.debug.tests.launching.LongModulePathTests;
 import org.eclipse.jdt.debug.tests.launching.MigrationDelegateTests;
 import org.eclipse.jdt.debug.tests.launching.PListParserTests;
 import org.eclipse.jdt.debug.tests.launching.ProjectClasspathVariableTests;
@@ -345,5 +348,12 @@ public class AutomatedSuite extends DebugSuite {
 	//add the complete eval suite
 		addTest(new TestSuite(GeneralEvalTests.class));
 		//addTest(EvalTestSuite.suite());
+
+		// long classpath tests
+		addTest(new TestSuite(ClasspathShortenerTests.class));
+		addTest(LongClassPathTests.suite());
+		if (JavaProjectHelper.isJava9Compatible()) {
+			addTest(new TestSuite(LongModulePathTests.class));
+		}
 	}
 }

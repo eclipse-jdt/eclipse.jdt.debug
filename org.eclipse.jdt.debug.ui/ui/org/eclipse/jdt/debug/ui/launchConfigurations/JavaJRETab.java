@@ -220,6 +220,11 @@ public class JavaJRETab extends JavaLaunchTab {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 
+		// we don't want to use classpath only jars for modular projects
+		if (JavaRuntime.isModularConfiguration(configuration)) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_USE_CLASSPATH_ONLY_JAR, false);
+		}
+
 		// Handle any attributes in the VM-specific area
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab == null) {

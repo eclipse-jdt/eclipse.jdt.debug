@@ -2495,6 +2495,12 @@
             class="org.eclipse.jdt.internal.debug.ui.EvaluationStackFrameContextStatusHandler"
             id="org.eclipse.jdt.debug.ui.statusHandler.evaluationStackFrameContextStatusHandler"
             plugin="org.eclipse.jdt.debug"/>
+      <statusHandler
+            class="org.eclipse.jdt.internal.debug.ui.launcher.ClasspathTooLongStatusHandler"
+            code="125"
+            id="org.eclipse.jdt.debug.ui.statusHandler.classpathTooLongStatusHandler"
+            plugin="org.eclipse.jdt.launching">
+      </statusHandler>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">
