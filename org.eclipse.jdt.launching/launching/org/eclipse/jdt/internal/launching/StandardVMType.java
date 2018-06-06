@@ -827,7 +827,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		return null;
 	}
 
-	private synchronized String readReleaseVersion(File javaHome) {
+	public synchronized String readReleaseVersion(File javaHome) {
 
 		String version = ""; //$NON-NLS-1$
 
