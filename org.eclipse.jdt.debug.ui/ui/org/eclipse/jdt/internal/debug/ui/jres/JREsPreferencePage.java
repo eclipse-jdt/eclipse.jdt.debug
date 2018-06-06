@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.launching.StandardVM;
+import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -192,16 +192,11 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 			if (vmver == null) {
 				IVMInstallType vmType = vmInstall.getVMInstallType();
-				IVMInstall vm = vmType.findVMInstall(vmInstall.getId());
-				if (vm == null) {
-					vm = vmType.createVMInstall(vmInstall.getId());
-				}
-				if (vm instanceof StandardVM) {
-					((StandardVM) vm).setInstallLocation(vmInstall.getInstallLocation());
-					vmver = ((StandardVM) vm).getJavaVersion();
+				if ( vmType instanceof StandardVMType) {
+					vmver = ((StandardVMType) vmType).readReleaseVersion(vmInstall.getInstallLocation());
 				}
 			}
-			if (vmver != null && JavaCore.compareJavaVersions(vmver, latest) > 0) {
+			if (vmver != null && vmver.length() != 0 && JavaCore.compareJavaVersions(vmver, latest) > 0) {
 				setMessage(NLS.bind(JREMessages.JREsPreferencePage_9, new String[] { compliance }), IMessageProvider.WARNING);
 				fCompliance.setVisible(true);
 			} else {
