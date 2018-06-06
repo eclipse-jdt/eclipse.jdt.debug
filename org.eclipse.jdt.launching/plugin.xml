@@ -250,6 +250,13 @@
       	 name= "%jreContainerMarkerProblemName">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent value="true"/>
+   </extension>
+   <extension
+         id="jreCompilerComplianceMarker"
+         name="%jreComplilerComplianceMarkerProblemName"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
    </extension> 
    
       <extension
@@ -334,6 +341,9 @@
                id="org.eclipse.jdt.launching.compilationParticipant.ee">
             <managedMarker
                   markerType="org.eclipse.jdt.launching.jreContainerMarker">
+            </managedMarker>
+            <managedMarker
+                  markerType="org.eclipse.jdt.launching.jreCompilerComplianceMarker">
             </managedMarker>
          </compilationParticipant>
       </extension>

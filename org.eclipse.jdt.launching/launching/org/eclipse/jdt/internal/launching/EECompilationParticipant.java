@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class EECompilationParticipant extends CompilationParticipant {
 						String message = NLS.bind(LaunchingMessages.LaunchingPlugin_39, new String[] { id, eeId });
 						int sev = getSeverityLevel(JavaRuntime.PREF_COMPILER_COMPLIANCE_DOES_NOT_MATCH_JRE, project.getProject());
 						if (sev != -1) {
-							createProblemMarker(project, message, sev, "org.eclipse.jdt.core.problem", LaunchingMessages.LaunchingPlugin_40); //$NON-NLS-1$
+							createProblemMarker(project, message, sev, JavaRuntime.JRE_COMPILER_COMPLIANCE_MARKER, LaunchingMessages.LaunchingPlugin_40);
 						}
 					}
 				}

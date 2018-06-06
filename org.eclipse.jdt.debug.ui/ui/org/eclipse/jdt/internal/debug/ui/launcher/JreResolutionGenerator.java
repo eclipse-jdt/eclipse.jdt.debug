@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.jres.ExecutionEnvironmentsPreferencePage;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -44,6 +45,11 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 						new String[] {ExecutionEnvironmentsPreferencePage.ID, JREsPreferencePage.ID},
 						LauncherMessages.JreResolutionGenerator_open_ee_prefs,
 						LauncherMessages.JreResolutionGenerator_opens_ee_prefs)};
+			} else if (JavaRuntime.JRE_COMPILER_COMPLIANCE_MARKER.equals(marker.getType())) {
+				IJavaProject project = getJavaProject(marker);
+				return new IMarkerResolution[] { new OpenPropertyPageResolution(project, JavaUI.ID_COMPILER_COMPLIANCE_PROPERTY_PAGE, new String[] {
+						JavaUI.ID_COMPILER_COMPLIANCE_PROPERTY_PAGE,
+						JavaUI.ID_JAVA_BUILD_PREFERENCE_PROPERTY_PAGE }, LauncherMessages.JreResolutionGenerator_open_cc_props, LauncherMessages.JreResolutionGenerator_opens_cc_props) };
 			}
 			int id = marker.getAttribute(IJavaModelMarker.ID, -1);
 			switch (id) {
@@ -109,7 +115,8 @@ public class JreResolutionGenerator implements IMarkerResolutionGenerator2 {
 		try {
 			String type = marker.getType();
 			return IJavaModelMarker.BUILDPATH_PROBLEM_MARKER.equals(type) ||
-				   JavaRuntime.JRE_CONTAINER_MARKER.equals(type);
+				   JavaRuntime.JRE_CONTAINER_MARKER.equals(type) ||
+				   JavaRuntime.JRE_COMPILER_COMPLIANCE_MARKER.equals(type);
 		} catch (CoreException ce) {}
 		return false;
 	}
