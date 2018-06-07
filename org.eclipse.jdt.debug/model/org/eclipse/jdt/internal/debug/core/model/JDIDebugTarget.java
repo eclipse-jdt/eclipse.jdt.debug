@@ -2323,7 +2323,7 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * @return <code>true</code> - the thread should be resumed
 		 */
 		@Override
-		public boolean handleEvent(Event event, JDIDebugTarget target,
+		public void eventSetComplete(Event event, JDIDebugTarget target,
 				boolean suspendVote, EventSet eventSet) {
 			ThreadReference ref = ((ThreadDeathEvent) event).thread();
 			JDIThread thread = findThread(ref);
@@ -2336,13 +2336,12 @@ public class JDIDebugTarget extends JDIDebugElement implements
 				}
 				thread.terminated();
 			}
-			return true;
 		}
 
 		@Override
-		public void eventSetComplete(Event event, JDIDebugTarget target,
+		public boolean handleEvent(Event event, JDIDebugTarget target,
 				boolean suspend, EventSet eventSet) {
-			// do nothing
+			return true;
 		}
 
 	}
