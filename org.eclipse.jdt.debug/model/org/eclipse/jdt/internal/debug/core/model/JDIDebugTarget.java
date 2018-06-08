@@ -2289,6 +2289,9 @@ public class JDIDebugTarget extends JDIDebugElement implements
 	 */
 	class ThreadDeathHandler implements IJDIEventListener {
 
+		// terminated threads marked for removal from the fThreads list
+		private Map<Event, JDIThread> toRemove = Collections.synchronizedMap(new HashMap<>());
+
 		protected ThreadDeathHandler() {
 			createRequest();
 		}
@@ -2311,10 +2314,8 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		}
 
 		/**
-		 * Locates the model thread associated with the underlying JDI thread
-		 * that has terminated, and removes it from the collection of threads
-		 * belonging to this debug target. A terminate event is fired for the
-		 * model thread.
+		 * Locates the model thread associated with the underlying JDI thread that has terminated, and marks it for removal from the collection of
+		 * threads belonging to this debug target. A terminate event is fired for the model thread.
 		 *
 		 * @param event
 		 *            a thread death event
@@ -2323,25 +2324,38 @@ public class JDIDebugTarget extends JDIDebugElement implements
 		 * @return <code>true</code> - the thread should be resumed
 		 */
 		@Override
-		public void eventSetComplete(Event event, JDIDebugTarget target,
-				boolean suspendVote, EventSet eventSet) {
+		public boolean handleEvent(Event event, JDIDebugTarget target,
+				boolean suspend, EventSet eventSet) {
 			ThreadReference ref = ((ThreadDeathEvent) event).thread();
 			JDIThread thread = findThread(ref);
 			if (thread == null) {
 				thread = target.findThread(ref);
 			}
 			if (thread != null) {
+				toRemove.put(event, thread);
+				// triggers DebugEvent
+				thread.terminated();
+			}
+			return true;
+		}
+
+		/**
+		 * Removes the model thread associated with the underlying JDI thread that has terminated from the collection of threads belonging to this
+		 * debug target.
+		 *
+		 * @param event
+		 *            a thread death event
+		 * @param target
+		 *            the target in which the thread died
+		 */
+		@Override
+		public void eventSetComplete(Event event, JDIDebugTarget target, boolean suspendVote, EventSet eventSet) {
+			JDIThread thread = toRemove.remove(event);
+			if (thread != null) {
 				synchronized (fThreads) {
 					fThreads.remove(thread);
 				}
-				thread.terminated();
 			}
-		}
-
-		@Override
-		public boolean handleEvent(Event event, JDIDebugTarget target,
-				boolean suspend, EventSet eventSet) {
-			return true;
 		}
 
 	}
