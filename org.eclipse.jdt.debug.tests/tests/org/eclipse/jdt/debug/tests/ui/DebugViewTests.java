@@ -180,6 +180,14 @@ public class DebugViewTests extends AbstractDebugUiTests {
 		doTestWrongSelectionBug534319(iterations, typeName, breakpointMethodName);
 	}
 
+	public void testWrongSelectionBug534319startBetwen() throws Exception {
+		// Run a few times since the problem doesn't occur always
+		int iterations = 5;
+		final String typeName = "Bug534319startBetwen";
+		final String breakpointMethodName = "breakpointMethod";
+		doTestWrongSelectionBug534319(iterations, typeName, breakpointMethodName);
+	}
+
 	/**
 	 * Test for Bug 534319 - Debug View shows wrong information due to threads with short lifetime
 	 *
