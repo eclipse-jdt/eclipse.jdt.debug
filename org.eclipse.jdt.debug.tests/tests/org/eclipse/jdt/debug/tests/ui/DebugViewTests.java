@@ -246,8 +246,10 @@ public class DebugViewTests extends AbstractDebugUiTests {
 
 	@Override
 	protected boolean enableUIEventLoopProcessingInWaiter() {
-		// We depend on proper event processing in the UI
-		return true;
+		// After fixes for bug 535686 and 534319 we do not depend on proper event processing in the UI
+		// so we can allow UI thread to be blocked while waiting.
+		// Note: if this test start to fail, we still have some issues with event dispatching in debug UI.
+		return false;
 	}
 
 	private void createMethodBreakpoint(final String typeName, final String breakpointMethodName) throws Exception, CoreException {
