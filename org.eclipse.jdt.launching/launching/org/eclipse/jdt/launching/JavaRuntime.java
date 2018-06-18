@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Frits Jalvingh - Contribution for Bug 459831 - [launching] Support attaching
  *     	external annotations to a JRE container
+ *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
@@ -3325,8 +3329,11 @@ public final class JavaRuntime {
 				} else if (javaVersion.startsWith(JavaCore.VERSION_10)
 						&& (javaVersion.length() == JavaCore.VERSION_10.length() || javaVersion.charAt(JavaCore.VERSION_10.length()) == '.')) {
 					compliance = JavaCore.VERSION_10;
+				} else if (javaVersion.startsWith(JavaCore.VERSION_11)
+						&& (javaVersion.length() == JavaCore.VERSION_11.length() || javaVersion.charAt(JavaCore.VERSION_11.length()) == '.')) {
+					compliance = JavaCore.VERSION_11;
 				} else {
-					compliance = JavaCore.VERSION_10; // use latest by default
+					compliance = JavaCore.VERSION_11; // use latest by default
 				}
 
             	Hashtable<String, String> options= JavaCore.getOptions();
